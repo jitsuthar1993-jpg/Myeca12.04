@@ -1,0 +1,48 @@
+@media print {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --border: 0 0% 80%;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Remove decorative backgrounds and shadows */
+  .soft-shadow, .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+    box-shadow: none !important;
+  }
+  .bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b {
+    background: none !important;
+  }
+
+  /* Hide non-print elements */
+  header, nav, .UnifiedFAB, .ToastViewport, .chat-widget, .footer {
+    display: none !important;
+  }
+
+  /* Images and cards */
+  img {
+    filter: grayscale(100%);
+  }
+  .card, .Card, .rounded-xl {
+    border: 1px solid #E0E0E0 !important;
+    background: #fff !important;
+  }
+
+  /* Page breaks for sections */
+  .break-before {
+    break-before: page;
+  }
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Links show URLs */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: var(--text-sm);
+  }
+}

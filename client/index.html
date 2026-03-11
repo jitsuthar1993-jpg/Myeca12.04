@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="mask-icon" href="/favicon.svg" color="#2563eb" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="MyeCA.in - India's premier digital platform for expert tax filing with Chartered Accountant assistance. Fill, File and Smile with our smart calculators and expert support." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="MyeCA.in - Expert Income Tax Filing" />
+    <meta property="og:description" content="Fill, File and Smile with India's most trusted tax filing platform. Expert CA support, smart calculations, and maximum refund guaranteed." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://myeca.in/" />
+    <meta property="og:image" content="https://myeca.in/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="MyeCA.in" />
+    <meta property="og:locale" content="en_IN" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://myeca.in/" />
+    <meta property="twitter:title" content="MyeCA.in - Expert Income Tax Filing" />
+    <meta property="twitter:description" content="File your income tax return with expert CA assistance. Save up to ₹86,500 in taxes. 15L+ happy customers." />
+    <meta property="twitter:image" content="https://myeca.in/og-image.jpg" />
+    <meta property="twitter:site" content="@myecain" />
+    
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="MyeCA.in" />
+    <meta name="keywords" content="income tax filing, ITR filing, tax return, CA assistance, tax calculator, India tax, e-filing" />
+    <link rel="canonical" href="https://myeca.in/" />
+    
+    <title>MyeCA.in - Expert Income Tax Filing | ITR e-Filing in India</title>
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/favicon.svg" />
+    
+    <!-- Browser specific optimizations -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MyeCA" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="MyeCA" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- Preconnect and fonts - Non-blocking async load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"></noscript>
+
+    <!-- Inline skeleton shimmer animation -->
+    <style>
+      @keyframes skel{0%{background-position:-200% 0}100%{background-position:200% 0}}
+      .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:skel 1.5s infinite}
+      @media(prefers-reduced-motion:reduce){.skel{animation:none}}
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div style="min-height:100vh;background:#fff;display:flex;flex-direction:column">
+        <div style="height:64px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;padding:0 24px">
+          <div class="skel" style="width:40px;height:40px;border-radius:12px"></div>
+          <div class="skel" style="margin-left:12px;width:100px;height:20px;border-radius:6px"></div>
+        </div>
+        <div style="flex:1;max-width:896px;margin:48px auto;padding:0 16px;width:100%;text-align:center">
+          <div class="skel" style="width:160px;height:20px;border-radius:9999px;margin:0 auto 16px"></div>
+          <div class="skel" style="width:75%;height:40px;border-radius:8px;margin:0 auto 12px"></div>
+          <div class="skel" style="width:60%;height:24px;border-radius:8px;margin:0 auto 24px"></div>
+          <div style="display:flex;gap:12px;justify-content:center">
+            <div class="skel" style="width:144px;height:44px;border-radius:8px"></div>
+            <div class="skel" style="width:144px;height:44px;border-radius:8px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Global error handler for uncaught errors
+      window.onerror = function(msg, url, line) {
+        document.getElementById('root').innerHTML = '<div style="padding:20px;background:#fee;border:2px solid red;margin:20px;border-radius:8px;"><h2 style="color:red;">JavaScript Error</h2><p><strong>' + msg + '</strong></p><p style="color:#666;">At: ' + url + ':' + line + '</p><p style="margin-top:15px;"><button onclick="location.reload(true)" style="padding:10px 20px;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;">Reload Page</button></p></div>';
+        return false;
+      };
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

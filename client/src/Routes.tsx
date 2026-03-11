@@ -1,0 +1,378 @@
+import { Switch, Route } from "wouter";
+import { Suspense, lazy } from 'react';
+import { lazyWithRetry } from '@/utils/bundle-optimization';
+import { PageSkeleton } from '@/components/ui/page-skeleton';
+
+const SEOAccessibilityDemoPage = lazyWithRetry(() => import("@/pages/SEOAccessibilityDemo"));
+const APIRateLimitFixPage = lazyWithRetry(() => import("@/pages/api-rate-limit-fix"));
+const EnhancedSearchPage = lazyWithRetry(() => import("@/pages/enhanced-search.page"));
+const AIAssistantPage = lazyWithRetry(() => import("@/pages/ai-assistant.page"));
+
+// Route components loaded lazily to reduce initial bundle size
+const NotFound = lazyWithRetry(() => import("@/pages/not-found"));
+const HomePage = lazyWithRetry(() => import("@/pages/home.page"));
+const IncomeTaxCalculator = lazyWithRetry(() => import("@/pages/calculators/income-tax.page"));
+const TaxRegimeCalculator = lazyWithRetry(() => import("@/pages/calculators/tax-regime.page"));
+const HRACalculator = lazyWithRetry(() => import("@/pages/calculators/hra.page"));
+const SIPCalculator = lazyWithRetry(() => import("@/pages/calculators/sip.page"));
+const EnhancedSIPCalculatorPage = lazyWithRetry(() => import("@/pages/calculators/sip-enhanced.page"));
+const EMICalculator = lazyWithRetry(() => import("@/pages/calculators/emi.page"));
+const TDSCalculator = lazyWithRetry(() => import("@/pages/calculators/tds.page"));
+const FDCalculator = lazyWithRetry(() => import("@/pages/calculators/fd.page"));
+const EnhancedFDCalculatorPage = lazyWithRetry(() => import("@/pages/calculators/fd-enhanced.page"));
+const PPFCalculator = lazyWithRetry(() => import("@/pages/calculators/ppf.page"));
+const WithdrawalPlannerPage = lazyWithRetry(() => import("@/pages/calculators/withdrawal-planner.page"));
+const CapitalGainsCalculator = lazyWithRetry(() => import("@/pages/calculators/capital-gains.page"));
+const HomeLoanCalculator = lazyWithRetry(() => import("@/pages/calculators/home-loan.page"));
+const CarLoanCalculator = lazyWithRetry(() => import("@/pages/calculators/car-loan.page"));
+const PersonalLoanCalculator = lazyWithRetry(() => import("@/pages/calculators/personal-loan.page"));
+const EducationLoanCalculator = lazyWithRetry(() => import("@/pages/calculators/education-loan.page"));
+const CalculatorsPage = lazyWithRetry(() => import("@/pages/calculators.page"));
+const TaxOptimizerPage = lazyWithRetry(() => import("@/pages/tax-optimizer.page"));
+const RegimeComparatorPage = lazyWithRetry(() => import("@/pages/calculators/regime-comparator.page"));
+const AdvanceTaxCalculatorPage = lazyWithRetry(() => import("@/pages/calculators/advance-tax.page"));
+const GeneralCalculatorPage = lazyWithRetry(() => import("@/pages/calculators/general.page"));
+const ITRStatusTrackerPage = lazyWithRetry(() => import("@/pages/itr/status-tracker.page"));
+const TDSRefundTrackerPage = lazyWithRetry(() => import("@/pages/tds-refund-tracker.page"));
+const TaxLossHarvestingPage = lazyWithRetry(() => import("@/pages/tax-loss-harvesting.page"));
+
+// AI & Automation Features
+const TaxAssistantPage = lazyWithRetry(() => import("@/pages/tax-assistant.page"));
+const Form16ParserPage = lazyWithRetry(() => import("@/pages/form16-parser.page"));
+const BankAnalyzerPage = lazyWithRetry(() => import("@/pages/bank-analyzer.page"));
+const AISViewerPage = lazyWithRetry(() => import("@/pages/ais-viewer.page"));
+const CapitalGainsImportPage = lazyWithRetry(() => import("@/pages/capital-gains-import.page"));
+
+// Investment Integration Features
+const NPSCalculatorPage = lazyWithRetry(() => import("@/pages/calculators/nps.page"));
+const ELSSComparatorPage = lazyWithRetry(() => import("@/pages/elss-comparator.page"));
+const PortfolioDashboardPage = lazyWithRetry(() => import("@/pages/portfolio-dashboard.page"));
+const InvestmentDashboardPage = lazyWithRetry(() => import("@/pages/investment/dashboard.page"));
+const StockDetailsPage = lazyWithRetry(() => import("@/pages/investment/stock-details.page"));
+const WatchlistPage = lazyWithRetry(() => import("@/pages/investment/watchlist.page"));
+const RiskAssessmentPage = lazyWithRetry(() => import("@/pages/investment/risk-assessment.page"));
+const PortfolioSimulatorPage = lazyWithRetry(() => import("@/pages/investment/portfolio-simulator.page"));
+const InvestmentEducationPage = lazyWithRetry(() => import("@/pages/learn/investment-basics.page"));
+const GlossaryPage = lazyWithRetry(() => import("@/pages/learn/glossary.page"));
+
+// Educational Content Features
+const LearnPage = lazyWithRetry(() => import("@/pages/learn/index.page"));
+const VideoTutorialsPage = lazyWithRetry(() => import("@/pages/learn/videos.page"));
+const TaxGuidesPage = lazyWithRetry(() => import("@/pages/learn/guides.page"));
+const TaxGuidePage = lazyWithRetry(() => import("@/pages/learn/guide/[slug].page"));
+const ConsultationsPage = lazyWithRetry(() => import("@/pages/learn/consultations.page"));
+
+// Professional Services Platform
+const ServicesMarketplacePage = lazyWithRetry(() => import("@/pages/services/marketplace.page"));
+const DocumentGeneratorPage = lazyWithRetry(() => import("@/pages/documents/generator.page"));
+const DocumentGeneratorRegistry = lazyWithRetry(() => import("@/pages/documents/registry.page"));
+const BusinessDashboardPage = lazyWithRetry(() => import("@/pages/business/dashboard.page"));
+const VirtualCFOPage = lazyWithRetry(() => import("@/pages/business/virtual-cfo.page"));
+
+const NoticeCompliancePage = lazyWithRetry(() => import("@/pages/services/notice-compliance.page"));
+const TdsFilingPage = lazyWithRetry(() => import("@/pages/services/tds-filing.page"));
+const GstRegistrationPage = lazyWithRetry(() => import("@/pages/services/gst-registration.page"));
+const CompanyRegistrationPage = lazyWithRetry(() => import("@/pages/services/company-registration.page"));
+const StartupIndiaRegistrationPage = lazyWithRetry(() => import("@/pages/services/startup-india-registration.page"));
+const MSMEUdyamRegistrationPage = lazyWithRetry(() => import("@/pages/services/msme-udyam-registration.page"));
+const FSSAIRegistrationPage = lazyWithRetry(() => import("@/pages/services/fssai-registration.page"));
+const TradeLicensePage = lazyWithRetry(() => import("@/pages/services/trade-license.page"));
+const GSTReturnsPage = lazyWithRetry(() => import("@/pages/services/gst-returns.page"));
+const TrademarkRegistrationPage = lazyWithRetry(() => import("@/pages/services/trademark-registration.page"));
+const ISOCertificationPage = lazyWithRetry(() => import("@/pages/services/iso-certification.page"));
+const LabourLawCompliancePage = lazyWithRetry(() => import("@/pages/services/labour-law-compliance.page"));
+const StartupServicesPage = lazyWithRetry(() => import("@/pages/startup-services.page"));
+const FundingPage = lazyWithRetry(() => import("@/pages/startup/funding.page"));
+const StartupRegistrationPage = lazyWithRetry(() => import("@/pages/startup/registration.page"));
+const TaxPlanningPage = lazyWithRetry(() => import("@/pages/services/tax-planning.page"));
+const ComplianceManagementPage = lazyWithRetry(() => import("@/pages/services/compliance-management.page"));
+const AuditServicesPage = lazyWithRetry(() => import("@/pages/services/audit-services.page"));
+const DocumentVaultServicePage = lazyWithRetry(() => import("@/pages/services/document-vault.page"));
+const PricingPage = lazyWithRetry(() => import("@/pages/pricing.page"));
+const ContactPage = lazyWithRetry(() => import("@/pages/contact.page"));
+const AboutPage = lazyWithRetry(() => import("@/pages/about.page"));
+const LoginPage = lazyWithRetry(() => import("@/pages/auth/login.page"));
+const RegisterPage = lazyWithRetry(() => import("@/pages/auth/register.page"));
+const AdminLoginPage = lazyWithRetry(() => import("@/pages/auth/admin-login.page"));
+const UserDashboard = lazyWithRetry(() => import("@/pages/user-dashboard.page"));
+const AccountSettingsPage = lazyWithRetry(() => import("@/pages/settings/account.page"));
+const ProfilesPage = lazyWithRetry(() => import("@/pages/profiles.page"));
+const DocumentsPage = lazyWithRetry(() => import("@/pages/documents.page"));
+const ReportsPage = lazyWithRetry(() => import("@/pages/reports.page"));
+const WorkflowsPage = lazyWithRetry(() => import("@/pages/workflows.page"));
+const TeamsPage = lazyWithRetry(() => import("@/pages/teams.page"));
+const ReferralsPage = lazyWithRetry(() => import("@/pages/referrals.page"));
+const ComparisonToolsPage = lazyWithRetry(() => import("@/components/comparison/ComparisonToolsPage"));
+const ServerErrorPage = lazyWithRetry(() => import("@/pages/server-error.page"));
+
+const BlogManagementPage = lazyWithRetry(() => import("@/pages/admin/blog-management.page"));
+const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/index.page"));
+const ForbiddenPage = lazyWithRetry(() => import("@/pages/forbidden.page"));
+const RequireAdmin = lazyWithRetry(() => import("@/components/auth/RequireAdmin").then(m => ({ default: m.RequireAdmin })));
+const AdminServices = lazyWithRetry(() => import("@/pages/admin/services.page"));
+const AdminBlog = lazyWithRetry(() => import("@/pages/admin/blog.page"));
+const AdminAnalytics = lazyWithRetry(() => import("@/pages/admin/analytics.page"));
+const AdminUsers = lazyWithRetry(() => import("@/pages/admin/users.page"));
+const AdminUserManagement = lazyWithRetry(() => import("@/pages/admin/user-management.page"));
+const AdminCreateAdmin = lazyWithRetry(() => import("@/pages/admin/create-admin.page"));
+const AdminFeedbackManagement = lazyWithRetry(() => import("@/pages/admin/feedback-management.page"));
+const AdminSettings = lazyWithRetry(() => import("@/pages/admin/settings.page"));
+const CategoriesManagementPage = lazyWithRetry(() => import("@/pages/admin/categories-management.page"));
+const UpdatesManagementPage = lazyWithRetry(() => import("@/pages/admin/updates-management.page"));
+const MediaManagementPage = lazyWithRetry(() => import("@/pages/admin/media-management.page"));
+const ITRFilingPage = lazyWithRetry(() => import("@/pages/itr/filing.page"));
+const ITRFormSelectorPage = lazyWithRetry(() => import("@/pages/itr/form-selector.page"));
+const ITRSuccessPage = lazyWithRetry(() => import("@/pages/itr/success.page"));
+const ITRStepByStepGuide = lazyWithRetry(() => import("@/pages/itr/step-by-step-guide.page"));
+const CompactFilingGuidePage = lazyWithRetry(() => import("@/pages/itr/compact-filing-guide.page").then(mod => ({ default: mod.CompactFilingGuidePage })));
+const SearchPage = lazyWithRetry(() => import("@/pages/search.page"));
+const AnalyticsPage = lazyWithRetry(() => import("@/pages/analytics.page"));
+const AnalyticsDashboardPage = lazyWithRetry(() => import("@/pages/analytics-dashboard.page"));
+const SettingsPage = lazyWithRetry(() => import("@/pages/settings.page"));
+const ApiDocsPage = lazyWithRetry(() => import("@/pages/api-docs.page"));
+const ExportCenterPage = lazyWithRetry(() => import("@/pages/export-center.page"));
+const IntegrationsPage = lazyWithRetry(() => import("@/pages/integrations.page"));
+const AdvancedDemoPage = lazyWithRetry(() => import("@/pages/advanced-demo.page"));
+const BlogIndexPage = lazyWithRetry(() => import("@/pages/blog.page"));
+const BlogDetailPage = lazyWithRetry(() => import("@/pages/blog/[slug].page"));
+const ServicesPage = lazyWithRetry(() => import("@/pages/services.page"));
+const AllServicesPage = lazyWithRetry(() => import("@/pages/all-services.page"));
+const AdvancedFeaturesPage = lazyWithRetry(() => import("@/pages/advanced-features.page"));
+const PrivacyPolicyPage = lazyWithRetry(() => import("@/pages/legal/privacy-policy.page"));
+const TermsOfServicePage = lazyWithRetry(() => import("@/pages/legal/terms-of-service.page"));
+const RefundPolicyPage = lazyWithRetry(() => import("@/pages/legal/refund-policy.page"));
+const DisclaimerPage = lazyWithRetry(() => import("@/pages/legal/disclaimer.page"));
+const FormDemoPage = lazyWithRetry(() => import("@/pages/form-demo.page"));
+const SecurityDemoPage = lazyWithRetry(() => import("@/pages/security-demo.page"));
+const ComplianceCalendarPage = lazyWithRetry(() => import("@/pages/compliance-calendar.page"));
+const ExpertConsultationPage = lazyWithRetry(() => import("@/pages/expert-consultation.page"));
+const ImageOptimizationDemoPage = lazyWithRetry(() => import("@/pages/image-optimization-demo.page"));
+const PerformanceDemoPage = lazyWithRetry(() => import("@/pages/performance-demo.page"));
+const HelpCenterPage = lazyWithRetry(() => import("@/pages/help/help-center.page"));
+const FAQPage = lazyWithRetry(() => import("@/pages/help/faq.page"));
+const UserGuidePage = lazyWithRetry(() => import("@/pages/help/user-guide.page"));
+const KnowledgeBasePage = lazyWithRetry(() => import("@/pages/help/knowledge-base.page"));
+
+const AppLoading = () => <PageSkeleton />;
+
+export default function Routes() {
+  return (
+    <Suspense fallback={<AppLoading />}>
+      <Switch>
+        <Route path="/" component={HomePage} />
+        <Route path="/calculators/income-tax" component={IncomeTaxCalculator} />
+        <Route path="/calculators/tax-regime" component={TaxRegimeCalculator} />
+        <Route path="/calculators/hra" component={HRACalculator} />
+        <Route path="/calculators/sip" component={SIPCalculator} />
+        <Route path="/calculators/sip-enhanced" component={EnhancedSIPCalculatorPage} />
+        <Route path="/calculators/emi" component={EMICalculator} />
+        <Route path="/calculators/tds" component={TDSCalculator} />
+        <Route path="/calculators/fd" component={FDCalculator} />
+        <Route path="/calculators/fd-enhanced" component={EnhancedFDCalculatorPage} />
+        <Route path="/calculators/ppf" component={PPFCalculator} />
+        <Route path="/calculators/withdrawal-planner" component={WithdrawalPlannerPage} />
+        <Route path="/calculators/capital-gains" component={CapitalGainsCalculator} />
+        <Route path="/calculators/home-loan" component={HomeLoanCalculator} />
+        <Route path="/calculators/car-loan" component={CarLoanCalculator} />
+        <Route path="/calculators/personal-loan" component={PersonalLoanCalculator} />
+        <Route path="/calculators/education-loan" component={EducationLoanCalculator} />
+        <Route path="/calculators" component={CalculatorsPage} />
+        <Route path="/calculators/regime-comparator" component={RegimeComparatorPage} />
+        <Route path="/calculators/advance-tax" component={AdvanceTaxCalculatorPage} />
+        <Route path="/calculators/general" component={GeneralCalculatorPage} />
+        <Route path="/tax-optimizer" component={TaxOptimizerPage} />
+        <Route path="/itr/status-tracker" component={ITRStatusTrackerPage} />
+        <Route path="/tds-refund-tracker" component={TDSRefundTrackerPage} />
+        <Route path="/tax-loss-harvesting" component={TaxLossHarvestingPage} />
+
+        {/* AI & Automation Features */}
+        <Route path="/tax-assistant" component={TaxAssistantPage} />
+        <Route path="/form16-parser" component={Form16ParserPage} />
+        <Route path="/bank-analyzer" component={BankAnalyzerPage} />
+        <Route path="/ais-viewer" component={AISViewerPage} />
+        <Route path="/capital-gains-import" component={CapitalGainsImportPage} />
+
+        {/* Investment Integration Features */}
+        <Route path="/calculators/nps" component={NPSCalculatorPage} />
+        <Route path="/elss-comparator" component={ELSSComparatorPage} />
+        <Route path="/portfolio-dashboard" component={PortfolioDashboardPage} />
+        <Route path="/investment/dashboard" component={InvestmentDashboardPage} />
+        <Route path="/investment/stocks" component={StockDetailsPage} />
+        <Route path="/investment/watchlist" component={WatchlistPage} />
+        <Route path="/investment/risk-assessment" component={RiskAssessmentPage} />
+        <Route path="/investment/portfolio-simulation" component={PortfolioSimulatorPage} />
+        <Route path="/learn/investment-basics" component={InvestmentEducationPage} />
+
+        {/* Educational Content */}
+        <Route path="/learn" component={LearnPage} />
+        <Route path="/learn/glossary" component={GlossaryPage} />
+        <Route path="/learn/videos" component={VideoTutorialsPage} />
+        <Route path="/learn/guides" component={TaxGuidesPage} />
+        <Route path="/learn/guide/:slug" component={TaxGuidePage} />
+        <Route path="/learn/consultations" component={ConsultationsPage} />
+
+        {/* Professional Services Platform */}
+        <Route path="/services/marketplace" component={ServicesMarketplacePage} />
+        <Route path="/documents/generator" component={DocumentGeneratorRegistry} />
+        <Route path="/documents/generator_page" component={DocumentGeneratorRegistry} />
+        <Route path="/documents/generator/:type" component={DocumentGeneratorPage} />
+        <Route path="/business/dashboard" component={BusinessDashboardPage} />
+        <Route path="/business/virtual-cfo" component={VirtualCFOPage} />
+
+        <Route path="/services/notice-compliance" component={NoticeCompliancePage} />
+        <Route path="/services/tds-filing" component={TdsFilingPage} />
+        <Route path="/services/gst-registration" component={GstRegistrationPage} />
+        <Route path="/services/company-registration" component={CompanyRegistrationPage} />
+        <Route path="/services/startup-india-registration" component={StartupIndiaRegistrationPage} />
+        <Route path="/startup/registration" component={StartupRegistrationPage} />
+        <Route path="/services/msme-udyam-registration" component={MSMEUdyamRegistrationPage} />
+        <Route path="/services/fssai-registration" component={FSSAIRegistrationPage} />
+        <Route path="/services/trade-license" component={TradeLicensePage} />
+        <Route path="/services/company-incorporation" component={CompanyRegistrationPage} />
+        <Route path="/services/gst-returns" component={GSTReturnsPage} />
+        <Route path="/services/trademark-registration" component={TrademarkRegistrationPage} />
+        <Route path="/services/iso-certification" component={ISOCertificationPage} />
+        <Route path="/services/labour-law-compliance" component={LabourLawCompliancePage} />
+        <Route path="/startup/funding" component={FundingPage} />
+        <Route path="/startup-services" component={StartupServicesPage} />
+        <Route path="/services/funding-assistance" component={FundingPage} />
+        <Route path="/services/tax-planning" component={TaxPlanningPage} />
+        <Route path="/services/compliance-management" component={ComplianceManagementPage} />
+        <Route path="/services/audit-services" component={AuditServicesPage} />
+        <Route path="/services/document-vault" component={DocumentVaultServicePage} />
+        <Route path="/services" component={ServicesPage} />
+        <Route path="/all-services" component={AllServicesPage} />
+        <Route path="/pricing" component={PricingPage} />
+        <Route path="/contact" component={ContactPage} />
+        <Route path="/about" component={AboutPage} />
+        <Route path="/auth/login" component={LoginPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/auth/admin-login" component={AdminLoginPage} />
+        <Route path="/auth/register" component={RegisterPage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/dashboard" component={UserDashboard} />
+        <Route path="/settings/account" component={AccountSettingsPage} />
+        <Route path="/profiles" component={ProfilesPage} />
+        <Route path="/documents" component={DocumentsPage} />
+        <Route path="/admin/blog-management" component={() => (
+          <RequireAdmin>
+            <BlogManagementPage />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/categories-management" component={() => (
+          <RequireAdmin>
+            <CategoriesManagementPage />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/updates-management" component={() => (
+          <RequireAdmin>
+            <UpdatesManagementPage />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/media-management" component={() => (
+          <RequireAdmin>
+            <MediaManagementPage />
+          </RequireAdmin>
+        )} />
+        <Route path="/403" component={ForbiddenPage} />
+        <Route path="/admin/dashboard" component={() => (
+          <RequireAdmin>
+            <AdminDashboard />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin" component={() => (
+          <RequireAdmin>
+            <AdminDashboard />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/services" component={() => (
+          <RequireAdmin>
+            <AdminServices />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/blog" component={() => (
+          <RequireAdmin>
+            <AdminBlog />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/analytics" component={() => {
+          const AdminAnalytics = lazyWithRetry(() => import("@/pages/admin/analytics/index.page"))
+          return (
+            <RequireAdmin>
+              <AdminAnalytics />
+            </RequireAdmin>
+          )
+        }} />
+        <Route path="/admin/users" component={() => {
+          const AdminUsers = lazyWithRetry(() => import("@/pages/admin/users/index.page"))
+          return (
+            <RequireAdmin>
+              <AdminUsers />
+            </RequireAdmin>
+          )
+        }} />
+        <Route path="/admin/user-management" component={() => (
+          <RequireAdmin>
+            <AdminUserManagement />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/create-admin" component={() => (
+          <RequireAdmin>
+            <AdminCreateAdmin />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/feedback" component={() => (
+          <RequireAdmin>
+            <AdminFeedbackManagement />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/settings" component={() => (
+          <RequireAdmin>
+            <AdminSettings />
+          </RequireAdmin>
+        )} />
+        <Route path="/itr/form-selector" component={ITRFormSelectorPage} />
+        <Route path="/itr/filing" component={ITRFilingPage} />
+        <Route path="/itr/success" component={ITRSuccessPage} />
+        <Route path="/itr/step-by-step-guide" component={ITRStepByStepGuide} />
+        <Route path="/itr/compact-filing" component={CompactFilingGuidePage} />
+        <Route path="/search" component={SearchPage} />
+        <Route path="/blog" component={BlogIndexPage} />
+        <Route path="/blog/:slug" component={BlogDetailPage} />
+        <Route path="/analytics" component={AnalyticsPage} />
+        <Route path="/legal/privacy-policy" component={PrivacyPolicyPage} />
+        <Route path="/legal/terms-of-service" component={TermsOfServicePage} />
+        <Route path="/legal/refund-policy" component={RefundPolicyPage} />
+        <Route path="/legal/disclaimer" component={DisclaimerPage} />
+        <Route path="/form-demo" component={FormDemoPage} />
+        <Route path="/security-demo" component={SecurityDemoPage} />
+        <Route path="/compliance-calendar" component={ComplianceCalendarPage} />
+        <Route path="/expert-consultation" component={ExpertConsultationPage} />
+        <Route path="/image-optimization-demo" component={ImageOptimizationDemoPage} />
+        <Route path="/performance-demo" component={PerformanceDemoPage} />
+        <Route path="/help" component={HelpCenterPage} />
+        <Route path="/help/faq" component={FAQPage} />
+        <Route path="/help/user-guide" component={UserGuidePage} />
+        <Route path="/help/knowledge-base" component={KnowledgeBasePage} />
+        <Route path="/advanced-features" component={AdvancedFeaturesPage} />
+        <Route path="/analytics-dashboard" component={AnalyticsDashboardPage} />
+        <Route path="/settings" component={SettingsPage} />
+        <Route path="/compare" component={ComparisonToolsPage} />
+        <Route path="/api-docs" component={ApiDocsPage} />
+        <Route path="/export" component={ExportCenterPage} />
+        <Route path="/integrations" component={IntegrationsPage} />
+        <Route path="/advanced-demo" component={AdvancedDemoPage} />
+        <Route path="/reports" component={ReportsPage} />
+        <Route path="/workflows" component={WorkflowsPage} />
+        <Route path="/teams" component={TeamsPage} />
+        <Route path="/referrals" component={ReferralsPage} />
+        <Route path="/seo-accessibility-demo" component={SEOAccessibilityDemoPage} />
+        <Route path="/api-rate-limit-fix" component={APIRateLimitFixPage} />
+        <Route path="/enhanced-search" component={EnhancedSearchPage} />
+        <Route path="/ai-assistant" component={AIAssistantPage} />
+        <Route path="/500" component={ServerErrorPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
+  );
+}

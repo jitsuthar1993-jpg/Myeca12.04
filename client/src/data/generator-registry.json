@@ -1,0 +1,94 @@
+{
+  "categories": [
+    { "id": "tax", "name": "Tax & Compliance" },
+    { "id": "hr", "name": "HR & Payroll" },
+    { "id": "legal", "name": "Legal & Contracts" }
+  ],
+  "generators": [
+    {
+      "id": "rent-receipt",
+      "name": "Rent Receipt",
+      "description": "Generate rent receipts for HRA exemption",
+      "category": "tax",
+      "type": "document",
+      "priority": 1,
+      "version": "1.0.0",
+      "status": "available",
+      "icon": "Home",
+      "owner": "docs-team",
+      "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
+      "docs": "rent-receipt"
+    },
+    {
+      "id": "salary-slip",
+      "name": "Salary Slip",
+      "description": "Create monthly salary slips",
+      "category": "hr",
+      "type": "document",
+      "priority": 2,
+      "version": "0.1.0",
+      "status": "coming_soon",
+      "icon": "Receipt",
+      "owner": "docs-team",
+      "dependencies": [],
+      "docs": "salary-slip"
+    },
+    {
+      "id": "form-12bb",
+      "name": "Form 12BB",
+      "description": "Investment declaration form",
+      "category": "tax",
+      "type": "document",
+      "priority": 3,
+      "version": "0.1.0",
+      "status": "coming_soon",
+      "icon": "FileCheck",
+      "owner": "docs-team",
+      "dependencies": [],
+      "docs": "form-12bb"
+    },
+    {
+      "id": "invoice",
+      "name": "GST Invoice",
+      "description": "Professional GST-compliant invoices",
+      "category": "legal",
+      "type": "document",
+      "priority": 3,
+      "version": "0.1.0",
+      "status": "coming_soon",
+      "icon": "FileText",
+      "owner": "docs-team",
+      "dependencies": [],
+      "docs": "invoice"
+    },
+    {
+      "id": "experience-letter",
+      "name": "Experience Letter",
+      "description": "Employment experience certificate",
+      "category": "hr",
+      "type": "document",
+      "priority": 4,
+      "version": "0.1.0",
+      "status": "coming_soon",
+      "icon": "Award",
+      "owner": "docs-team",
+      "dependencies": [],
+      "docs": "experience-letter"
+    },
+    {
+      "id": "noc",
+      "name": "NOC Letter",
+      "description": "No Objection Certificate templates",
+      "category": "legal",
+      "type": "document",
+      "priority": 4,
+      "version": "0.1.0",
+      "status": "coming_soon",
+      "icon": "Mail",
+      "owner": "docs-team",
+      "dependencies": [],
+      "docs": "noc"
+    }
+  ]
+}

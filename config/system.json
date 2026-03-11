@@ -1,0 +1,13 @@
+{
+  "siteName": "SmartTax Dev",
+  "allowRegistrations": true,
+  "maintenanceMode": false,
+  "supportEmail": "support@smarttax.local",
+  "security": {
+    "passwordMinLen": 10,
+    "requireUppercase": true,
+    "requireLowercase": true,
+    "requireNumber": true,
+    "requireSpecial": true
+  }
+}

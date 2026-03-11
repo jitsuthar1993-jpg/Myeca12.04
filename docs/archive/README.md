@@ -1,0 +1,1 @@
+Archived docs moved here during consolidation. These are reference-only and kept for historical context. If you need to restore any, move them back or link from the main docs.

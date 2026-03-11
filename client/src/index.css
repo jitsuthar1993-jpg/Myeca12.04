@@ -1,0 +1,577 @@
+@import "./styles/design-tokens.css";
+@import "./styles/typography.css";
+@import "./styles/print.css";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+
+/* Professional button styles and layout fixes */
+@layer base {
+
+  /* Ensure all buttons are properly visible with good text contrast */
+  button {
+    color: inherit;
+    transition: all 0.2s ease;
+  }
+
+  /* Standard button variants */
+  .btn-primary {
+    background: hsl(215, 70%, 50%);
+    color: hsl(0, 0%, 98%);
+    border: 1px solid hsl(215, 70%, 50%);
+  }
+
+  .btn-primary:hover {
+    background: hsl(215, 70%, 40%);
+    border-color: hsl(215, 70%, 40%);
+  }
+
+  .btn-secondary {
+    background: hsl(210, 40%, 96%);
+    color: hsl(215, 25%, 27%);
+    border: 1px solid hsl(210, 20%, 87%);
+  }
+
+  .btn-secondary:hover {
+    background: hsl(210, 40%, 94%);
+  }
+
+  /* Clean focus states */
+  button:focus,
+  a:focus {
+    outline: 2px solid hsl(215, 70%, 50%);
+    outline-offset: 2px;
+  }
+}
+
+:root {
+  /* Header Layout Variables */
+  /* Header Layout Variables */
+  --header-promo-height: 28px;
+  --header-main-height: 64px;
+  --header-main-height-lg: 72px;
+  --header-total-height: 92px;
+  --header-total-height-lg: 100px;
+  --page-top-padding: 96px;
+  --page-top-padding-lg: 92px;
+
+  /* Light Theme Only - Premium Financial Services Colors v2.0 */
+  --background: 0 0% 100%;
+  /* Pure white */
+  --foreground: 0 0% 20%;
+  /* Body text #333333 */
+  --heading: 0 0% 0%;
+  /* Headings #000000 */
+  --muted: 60 9% 97%;
+  /* Warm gray #FAFAF9 */
+  --muted-foreground: 25 6% 45%;
+  /* Medium warm gray #78716C */
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14% 12%;
+  --border: 0 0% 88%;
+  /* Neutral border #E0E0E0 */
+  --input: 20 6% 90%;
+
+  /* Primary - Professional Slate */
+  --primary: 215 28% 17%;
+  /* Slate #334155 */
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary - Light Gray */
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 84% 5%;
+
+  /* Accent - Subtle Blue */
+  --accent: 217 91% 60%;
+  /* Blue #3b82f6 */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 84% 60%;
+  /* Red for errors */
+  --destructive-foreground: 0 0% 100%;
+  --ring: 215 28% 17%;
+  /* Slate ring */
+  --radius: 0.5rem;
+  /* Clean rounded corners */
+
+  /* Status Colors */
+  --success: 142 76% 36%;
+  /* Green #059669 */
+  --warning: 25 95% 53%;
+  /* Orange */
+  --error: 0 84% 60%;
+  /* Red */
+  --info: 217 91% 60%;
+  /* Blue */
+
+  /* Chart Colors - Updated palette */
+  --chart-1: 239 84% 67%;
+  /* Indigo */
+  --chart-2: 160 84% 39%;
+  /* Emerald */
+  --chart-3: 271 81% 56%;
+  /* Purple */
+  --chart-4: 38 92% 50%;
+  /* Amber */
+  --chart-5: 0 84% 60%;
+  /* Red */
+}
+
+/* Dark mode removed - Light theme only */
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: hsl(var(--heading));
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+@layer utilities {
+  .service-card {
+    position: relative;
+    padding-bottom: 72px;
+  }
+
+  .btn-explore {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    background-color: #2E86DE;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    white-space: nowrap;
+    transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  }
+
+  .btn-explore:hover {
+    background-color: #2878C5;
+    transform: translateX(-50%) translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  }
+
+  .btn-explore:active {
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    transform: translateX(-50%) translateY(0) scale(0.98);
+  }
+
+  @media (max-width: 640px) {
+    .btn-explore {
+      padding: 8px 16px;
+    }
+  }
+  /* Consistent vertical rhythm: minimum 16px between siblings */
+  .flow-16 > * + * {
+    margin-top: 16px;
+  }
+
+  /* Soft borders and shadows for depth */
+  .soft-border {
+    border: 1px solid hsl(var(--border));
+  }
+  .soft-shadow {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .font-jakarta {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Premium Gradients v2.0 - Indigo based */
+  .gradient-primary {
+    background: #6366F1;
+  }
+
+  .gradient-secondary {
+    background: #FAFAF9;
+  }
+
+  .gradient-hero {
+    background: #ffffff;
+  }
+
+  .gradient-success {
+    background: #10B981;
+  }
+
+  .gradient-accent {
+    background: #6366F1;
+  }
+
+  /* Professional text gradient */
+  /* Professional text gradient */
+  .text-gradient {
+    color: #334155;
+  }
+
+  /* Theme Color Utilities v2.0 - Indigo based */
+  .text-theme-primary {
+    color: #6366F1;
+  }
+
+  .text-theme-accent {
+    color: #10B981;
+  }
+
+  .text-theme-gray {
+    color: #78716C;
+  }
+
+  .bg-theme-primary {
+    background-color: #6366F1;
+  }
+
+  .bg-theme-primary-light {
+    background-color: #EEF2FF;
+  }
+
+  .bg-theme-secondary {
+    background-color: #FAFAF9;
+  }
+
+  .bg-theme-light {
+    background-color: #ffffff;
+  }
+
+  /* Premium Animations */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    33% {
+      transform: translateY(-10px) rotate(1deg);
+    }
+
+    66% {
+      transform: translateY(5px) rotate(-1deg);
+    }
+  }
+
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+
+    50% {
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Glass Morphism Effects */
+  .header-glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .card-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  /* Professional Button Styles */
+  .btn-primary-new {
+    @apply bg-slate-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200 hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .btn-secondary-new {
+    @apply bg-white text-slate-700 font-semibold rounded-lg border border-gray-200 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  /* Minimalist Hero Background */
+  .hero-gradient {
+    background: #f8fafc;
+  }
+
+  /* Light theme utility classes */
+  .text-gray-900 {
+    color: #111827;
+  }
+
+  .text-gray-600 {
+    color: #4b5563;
+  }
+
+  .bg-white {
+    background-color: #ffffff;
+  }
+
+  .bg-gray-50 {
+    background-color: #f9fafb;
+  }
+
+  .border-gray-200 {
+    border-color: #e5e7eb;
+  }
+
+  /* Enhanced button styles */
+  .btn-modern {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5;
+  }
+
+  .btn-cta {
+    @apply btn-modern bg-cta-primary hover:bg-cta-primary text-white;
+  }
+
+  .btn-primary-modern {
+    @apply btn-modern bg-primary hover:bg-primary-hover text-primary-foreground;
+  }
+
+  /* Hide scrollbars */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Animation for bulletin banner */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 30s linear infinite;
+}
+
+
+
+/* Mobile bottom navigation spacing */
+@media (max-width: 768px) {
+  .mobile-safe-bottom {
+    padding-bottom: 5rem;
+  }
+}
+
+/* Fix for all input fields - ensuring proper text visibility */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+textarea,
+select {
+  color: #111827 !important;
+  /* text-gray-900 */
+  background-color: white !important;
+  border-color: #d1d5db !important;
+  /* border-gray-300 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  /* text-gray-500 */
+}
+
+/* Focus states for all form elements - Updated to Indigo */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border-color: #6366F1 !important;
+  /* border-indigo-500 */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+  /* ring-indigo-500/15 */
+}
+
+/* Respect user prefers-reduced-motion to improve accessibility and performance */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hint browser to skip offscreen rendering work and reduce layout shift for images */
+img {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 200px;
+  /* fallback size helps reserve space */
+}
+
+/* Admin Dashboard Loading Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg,
+      #f0f0f0 0px,
+      #e0e0e0 40px,
+      #f0f0f0 80px);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* ReactQuill Editor Custom Styles */
+.quill-editor-container .ql-editor {
+  min-height: 300px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1a202c; /* text-gray-900 equivalent */
+}
+
+.quill-editor-container .ql-toolbar.ql-snow {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.quill-editor-container .ql-container.ql-snow {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-color: #e2e8f0;
+  background: white;
+}
+
+.quill-editor-container .ql-snow .ql-stroke {
+  stroke: #475569;
+}
+
+.quill-editor-container .ql-snow .ql-fill {
+  fill: #475569;
+}
+
+.quill-editor-container .ql-snow.ql-toolbar button:hover,
+.quill-editor-container .ql-snow.ql-toolbar button:focus,
+.quill-editor-container .ql-snow.ql-toolbar button.ql-active {
+  color: #6366F1;
+}
+
+.quill-editor-container .ql-snow.ql-toolbar button:hover .ql-stroke,
+.quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-stroke {
+  stroke: #6366F1;
+}
+
+.quill-editor-container .ql-snow.ql-toolbar button:hover .ql-fill,
+.quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-fill {
+  fill: #6366F1;
+}
+
+.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-label::before {
+  content: 'Normal';
+}
+
+.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
+  content: 'Heading 1';
+}
+
+.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
+  content: 'Heading 2';
+}
+
+.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
+  content: 'Heading 3';
+}
