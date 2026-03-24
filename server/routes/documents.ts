@@ -28,29 +28,35 @@ const multerStorage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+// Map of allowed MIME types to their permitted file extensions
+const ALLOWED_MIME_EXTENSIONS: Record<string, string[]> = {
+  'application/pdf': ['.pdf'],
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/jpg': ['.jpg', '.jpeg'],
+  'application/msword': ['.doc'],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+  'application/vnd.ms-excel': ['.xls'],
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+};
+
+const upload = multer({
   storage: multerStorage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (_req, file, cb) => {
-    const allowedTypes = [
-      'application/pdf',
-      'image/jpeg',
-      'image/png',
-      'image/jpg',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ];
-    
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only PDF, images, Word, and Excel files are allowed.'));
+    const allowedExtensions = ALLOWED_MIME_EXTENSIONS[file.mimetype];
+    if (!allowedExtensions) {
+      return cb(new Error('Invalid file type. Only PDF, images, Word, and Excel files are allowed.'));
     }
-  }
+    // Also validate that the extension matches the declared MIME type
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+      return cb(new Error(`File extension '${ext}' does not match the declared file type.`));
+    }
+    cb(null, true);
+  },
 });
 
 // Document schema

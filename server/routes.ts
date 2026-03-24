@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import fs from "fs";
 import path from "path";
 import { adminDb } from "./firebase-admin";
+import { authLimiter, adminLimiter, uploadLimiter } from "./middleware/rate-limits";
 import documentsRouter from "./routes/documents";
 import referralsRouter from "./routes/referrals";
 import notificationsRouter from "./routes/notifications";
@@ -167,10 +168,10 @@ Disallow: /api/`;
   
   // Auth endpoints for User management (Firebase)
   const authRouter = (await import("./routes/auth")).default;
-  app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1/auth", authLimiter, authRouter);
 
   // Mount feature routers
-  app.use("/api/documents", documentsRouter);
+  app.use("/api/documents", uploadLimiter, documentsRouter);
   app.use("/api/referrals", referralsRouter);
   app.use("/api/notifications", notificationsRouter);
   app.use("/api/teams", teamsRouter);
@@ -188,7 +189,7 @@ Disallow: /api/`;
   app.use("/api/public", publicRouter);
 
   // Admin routes
-  app.use("/api/admin", adminRouter);
+  app.use("/api/admin", adminLimiter, adminRouter);
 
   // CA routes
   const caRouter = (await import("./routes/ca")).default;

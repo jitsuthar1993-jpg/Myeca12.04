@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { adminDb } from "../firebase-admin";
 import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth";
+import { convertTimestamp } from "../utils/firestore";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
@@ -16,52 +17,59 @@ router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = Math.min(parseInt(req.query.limit as string) || API_CONFIG.DEFAULT_PAGE_SIZE, API_CONFIG.MAX_PAGE_SIZE);
-    
     const search = req.query.search as string;
-    
-    let query: any = adminDb.collection("users");
 
-    const convertTimestamp = (ts: any) => {
-      if (!ts) return null;
-      if (typeof ts.toDate === 'function') return ts.toDate();
-      if (typeof ts._seconds === 'number') return new Date(ts._seconds * 1000);
-      return ts;
-    };
-
-    const snapshot = await query.get();
-    let allUsers = snapshot.docs.map((doc: any) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: convertTimestamp(data.createdAt),
-        updatedAt: convertTimestamp(data.updatedAt),
-      };
-    });
+    let allUsers: any[];
 
     if (search) {
+      // Full-text search requires fetching all docs; apply a reasonable cap to protect memory
+      const snapshot = await (adminDb.collection("users") as any).limit(1000).get();
       const searchLower = search.toLowerCase();
-      allUsers = allUsers.filter((u: any) => 
-        (u.firstName?.toLowerCase().includes(searchLower)) || 
-        (u.lastName?.toLowerCase().includes(searchLower)) || 
-        (u.email?.toLowerCase().includes(searchLower))
-      );
+      allUsers = snapshot.docs
+        .map((doc: any) => {
+          const data = doc.data();
+          return { id: doc.id, ...data, createdAt: convertTimestamp(data.createdAt), updatedAt: convertTimestamp(data.updatedAt) };
+        })
+        .filter((u: any) =>
+          u.firstName?.toLowerCase().includes(searchLower) ||
+          u.lastName?.toLowerCase().includes(searchLower) ||
+          u.email?.toLowerCase().includes(searchLower)
+        );
+    } else {
+      // No search — use Firestore-level pagination to avoid loading the entire collection
+      const offset = (page - 1) * limit;
+      const countSnapshot = await (adminDb.collection("users") as any).count().get();
+      const total = countSnapshot.data().count;
+
+      const snapshot = await (adminDb.collection("users") as any)
+        .orderBy('createdAt', 'desc')
+        .offset(offset)
+        .limit(limit)
+        .get();
+
+      const paginatedUsers = snapshot.docs.map((doc: any) => {
+        const data = doc.data();
+        return { id: doc.id, ...data, createdAt: convertTimestamp(data.createdAt), updatedAt: convertTimestamp(data.updatedAt) };
+      });
+
+      return res.json({
+        success: true,
+        data: {
+          users: paginatedUsers,
+          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+        }
+      });
     }
-    
+
     const total = allUsers.length;
     const offset = (page - 1) * limit;
     const paginatedUsers = allUsers.slice(offset, offset + limit);
-    
+
     res.json({
       success: true,
       data: {
         users: paginatedUsers,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit)
-        }
+        pagination: { page, limit, total, pages: Math.ceil(total / limit) }
       }
     });
   } catch (error: any) {
@@ -169,14 +177,27 @@ router.delete('/users/:id', requireAuth, requireAdmin, async (req: AuthRequest, 
 
 router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
-    const usersSnapshot = await adminDb.collection("users").get();
-    const blogSnapshot = await adminDb.collection("blog_posts").get();
-    const categorySnapshot = await adminDb.collection("categories").get();
-    const updatesSnapshot = await adminDb.collection("daily_updates").get();
-    const userServicesSnapshot = await adminDb.collection("user_services").get();
-    const taxReturnsSnapshot = await adminDb.collection("tax_returns").get();
+    // Fetch all collections in parallel instead of sequentially
+    const [
+      usersSnapshot,
+      blogSnapshot,
+      categorySnapshot,
+      updatesSnapshot,
+      userServicesSnapshot,
+      taxReturnsSnapshot,
+    ] = await Promise.all([
+      adminDb.collection("users").get(),
+      adminDb.collection("blog_posts").get(),
+      adminDb.collection("categories").get(),
+      adminDb.collection("daily_updates").get(),
+      adminDb.collection("user_services").get(),
+      adminDb.collection("tax_returns").get(),
+    ]);
 
     const allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+    // Build O(1) lookup map — avoids repeated O(n) .find() calls below
+    const userMap = new Map<string, any>(allUsers.map(u => [u.id, u]));
+
     const totalUsers = allUsers.length;
     const caUsers = allUsers.filter(u => u.role === 'ca');
     const adminUsers = allUsers.filter(u => u.role === 'admin');
@@ -186,7 +207,7 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
     const pendingServices = userServicesSnapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() as any }))
       .filter(s => s.status !== 'completed' && s.status !== 'cancelled');
-    
+
     const pendingTaxReturns = taxReturnsSnapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() as any }))
       .filter(r => r.status !== 'filed' && r.status !== 'completed');
@@ -197,25 +218,28 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         type: 'service',
         title: s.serviceName || 'Custom Service',
         userId: s.userId,
-        userName: allUsers.find(u => u.id === s.userId)?.firstName || 'Unknown',
+        userName: userMap.get(s.userId)?.firstName || 'Unknown',
         assignedCaId: s.assignedCaId,
-        assignedCaName: allUsers.find(u => u.id === s.assignedCaId)?.firstName || 'Unassigned',
+        assignedCaName: userMap.get(s.assignedCaId)?.firstName || 'Unassigned',
         status: s.status,
         price: parseFloat(s.price) || 0,
         createdAt: s.createdAt?.toDate?.() || s.createdAt
       })),
-      ...pendingTaxReturns.map(r => ({
-        id: r.id,
-        type: 'tax_return',
-        title: `ITR Filing (${r.filingType || 'General'})`,
-        userId: r.userId,
-        userName: allUsers.find(u => u.id === r.userId)?.firstName || 'Unknown',
-        assignedCaId: allUsers.find(u => u.id === r.userId)?.assignedCaId,
-        assignedCaName: allUsers.find(u => u.id === allUsers.find(u => u.id === r.userId)?.assignedCaId)?.firstName || 'Unassigned',
-        status: r.status,
-        price: 1499, // Default CA Expert price for revenue projection
-        createdAt: r.createdAt?.toDate?.() || r.createdAt
-      }))
+      ...pendingTaxReturns.map(r => {
+        const owner = userMap.get(r.userId);
+        return {
+          id: r.id,
+          type: 'tax_return',
+          title: `ITR Filing (${r.filingType || 'General'})`,
+          userId: r.userId,
+          userName: owner?.firstName || 'Unknown',
+          assignedCaId: owner?.assignedCaId,
+          assignedCaName: userMap.get(owner?.assignedCaId)?.firstName || 'Unassigned',
+          status: r.status,
+          price: 1499, // Default CA Expert price for revenue projection
+          createdAt: r.createdAt?.toDate?.() || r.createdAt
+        };
+      })
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const pendingRevenue = pendingWorkList.reduce((sum, item) => sum + item.price, 0);

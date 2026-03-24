@@ -7,8 +7,8 @@ import fs from "fs";
 import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+
 const app = express();
-app.use(compress());
 // Triggering server restart for technical asset fixes...
 
 app.use(helmet({
@@ -16,8 +16,25 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
+const ALLOWED_ORIGINS = [
+  "https://myeca.in",
+  "https://www.myeca.in",
+  // Allow any localhost port in development
+  ...(process.env.NODE_ENV !== "production"
+    ? [/^http:\/\/localhost(:\d+)?$/]
+    : []),
+];
+
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    const allowed = ALLOWED_ORIGINS.some(o =>
+      typeof o === "string" ? o === origin : o.test(origin)
+    );
+    if (allowed) return callback(null, true);
+    callback(new Error(`CORS: origin '${origin}' not allowed`));
+  },
   credentials: true,
 }));
 

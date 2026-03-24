@@ -1,6 +1,7 @@
 import { Router, Response } from "express";
 import { requireAuth, AuthRequest } from "../middleware/auth";
 import { adminDb } from "../firebase-admin";
+import { getCachedUser, setCachedUser } from "../utils/user-cache";
 
 const router = Router();
 
@@ -13,44 +14,50 @@ router.get("/me", requireAuth, async (req: AuthRequest, res: Response) => {
     }
 
     const userId = auth.userId;
-    const userDoc = await adminDb.collection("users").doc(userId).get();
 
-    if (!userDoc.exists) {
-      // Check if this is the first user in the system
-      const usersSnapshot = await adminDb.collection("users").limit(1).get();
-      const isFirstUser = usersSnapshot.empty;
+    // Serve from cache when possible to avoid per-request Firestore reads
+    let userData = getCachedUser(userId);
 
-      // Assign roles based on specific emails provided by the user
-      let role = "user";
-      if (auth.email === "cajsuthar@gmail.com") {
-        role = "admin";
-      } else if (auth.email === "jitender.kingofcage.suthar@gmail.com") {
-        role = "team_member";
-      } else if (isFirstUser) {
-        role = "admin";
+    if (!userData) {
+      const userDoc = await adminDb.collection("users").doc(userId).get();
+
+      if (!userDoc.exists) {
+        const usersSnapshot = await adminDb.collection("users").limit(1).get();
+        const isFirstUser = usersSnapshot.empty;
+
+        let role = "user";
+        if (auth.email === "cajsuthar@gmail.com") {
+          role = "admin";
+        } else if (auth.email === "jitender.kingofcage.suthar@gmail.com") {
+          role = "team_member";
+        } else if (isFirstUser) {
+          role = "admin";
+        }
+
+        const newUser: any = {
+          id: userId,
+          email: auth.email || null,
+          firstName: "User",
+          lastName: "",
+          role: role,
+          status: "active",
+          isVerified: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        await adminDb.collection("users").doc(userId).set(newUser);
+        setCachedUser(userId, newUser);
+        return res.json({ user: newUser });
       }
 
-      const newUser: any = {
-        id: userId,
-        email: auth.email || null,
-        firstName: "User",
-        lastName: "",
-        role: role,
-        status: "active",
-        isVerified: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      await adminDb.collection("users").doc(userId).set(newUser);
-      console.log(`Auto-synced user: ${userId} (role: ${newUser.role}, email: ${newUser.email})`);
-      return res.json({ user: newUser });
+      userData = { id: userDoc.id, ...userDoc.data() };
+      setCachedUser(userId, userData);
     }
 
-    const userData = userDoc.data()!;
-    const user: any = { id: userDoc.id, ...userData };
+    const user: any = { ...userData };
 
-    // If user has an assigned CA, fetch CA details
+    // If user has an assigned CA, fetch CA details (not cached — CA assignment changes less often)
     if (user.assignedCaId) {
       const caDoc = await adminDb.collection("users").doc(user.assignedCaId).get();
       if (caDoc.exists) {
@@ -117,37 +124,6 @@ router.post("/sync", requireAuth, async (req: AuthRequest, res: Response) => {
   } catch (error: any) {
     console.error("Error in /auth/sync:", error);
     return res.status(500).json({ error: error.message || "Internal server error" });
-  }
-});
-
-// Temporary endpoint to set specific user roles (should be removed after use)
-router.post("/setup-roles", async (_req, res) => {
-  try {
-    const rolesToSet = [
-      { email: "cajsuthar@gmail.com", role: "admin" },
-      { email: "jitender.kingofcage.suthar@gmail.com", role: "team_member" }
-    ];
-
-    const results = [];
-    for (const item of rolesToSet) {
-      const snapshot = await adminDb.collection("users")
-        .where("email", "==", item.email)
-        .get();
-
-      if (snapshot.empty) {
-        results.push({ email: item.email, status: "not_found" });
-        continue;
-      }
-
-      const doc = snapshot.docs[0];
-      await doc.ref.update({ role: item.role });
-      results.push({ email: item.email, status: "updated", role: item.role });
-    }
-
-    return res.json({ success: true, results });
-  } catch (error: any) {
-    console.error("Error in /setup-roles:", error);
-    return res.status(500).json({ error: error.message });
   }
 });
 

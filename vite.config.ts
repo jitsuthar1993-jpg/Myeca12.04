@@ -17,8 +17,8 @@ export default defineConfig({
   },
   root: path.resolve(process.cwd(), "client"),
   esbuild: {
-    // Keep debuggability in dev; trim noisy constructs in production builds
-    drop: process.env.NODE_ENV === "production" ? ["debugger"] : [],
+    // Keep debuggability in dev; strip console calls and debugger in production builds
+    drop: process.env.NODE_ENV === "production" ? ["console", "debugger"] : [],
   },
   build: {
     outDir: path.resolve(process.cwd(), "dist/public"),

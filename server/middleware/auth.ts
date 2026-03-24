@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { adminAuth, adminDb } from "../firebase-admin";
+import { getCachedUser, setCachedUser } from "../utils/user-cache";
+
+export { getCachedUser, setCachedUser } from "../utils/user-cache";
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -55,58 +58,67 @@ export function requireRole(allowedRoles: string[]) {
     (req as AuthRequest).auth = auth;
 
     try {
-      let userDoc = await adminDb.collection("users").doc(auth.userId).get();
-      
-      if (!userDoc.exists) {
-        // Auto-create user profile if it doesn't exist
-        const usersSnapshot = await adminDb.collection("users").limit(1).get();
-        const isFirstUser = usersSnapshot.empty;
-        
-        let role = "user";
+      // Check in-memory cache first to avoid a Firestore read on every request
+      let localUser = getCachedUser(auth.userId);
+
+      if (!localUser) {
+        let userDoc = await adminDb.collection("users").doc(auth.userId).get();
+
+        if (!userDoc.exists) {
+          // Auto-create user profile if it doesn't exist
+          const usersSnapshot = await adminDb.collection("users").limit(1).get();
+          const isFirstUser = usersSnapshot.empty;
+
+          let role = "user";
+          const userEmail = auth.email?.toLowerCase().trim();
+          if (userEmail === "cajsuthar@gmail.com") {
+            role = "admin";
+          } else if (userEmail === "jitender.kingofcage.suthar@gmail.com") {
+            role = "team_member";
+          } else if (isFirstUser) {
+            role = "admin";
+          }
+
+          const newUser = {
+            id: auth.userId,
+            email: auth.email || null,
+            firstName: "User",
+            lastName: "",
+            role: role,
+            status: "active",
+            isVerified: true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          await adminDb.collection("users").doc(auth.userId).set(newUser);
+          console.log(`[AUTH] Auto-created profile for: ${auth.userId} (role: ${role})`);
+
+          // Re-fetch to ensure we have correct data
+          userDoc = await adminDb.collection("users").doc(auth.userId).get();
+        }
+
+        localUser = userDoc.exists ? userDoc.data() : null;
+
         const userEmail = auth.email?.toLowerCase().trim();
+
+        // Hardcoded overrides for specific users to ensure they always have access
         if (userEmail === "cajsuthar@gmail.com") {
-          role = "admin";
+          if (!localUser || localUser.role !== 'admin') {
+            const update = { role: 'admin', updatedAt: new Date() };
+            await adminDb.collection("users").doc(auth.userId).set(update, { merge: true });
+            localUser = { ...(localUser || {}), ...update };
+          }
         } else if (userEmail === "jitender.kingofcage.suthar@gmail.com") {
-          role = "team_member";
-        } else if (isFirstUser) {
-          role = "admin";
+          if (!localUser || localUser.role !== 'team_member') {
+            const update = { role: 'team_member', updatedAt: new Date() };
+            await adminDb.collection("users").doc(auth.userId).set(update, { merge: true });
+            localUser = { ...(localUser || {}), ...update };
+          }
         }
 
-        const newUser = {
-          id: auth.userId,
-          email: auth.email || null,
-          firstName: "User",
-          lastName: "",
-          role: role,
-          status: "active",
-          isVerified: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-
-        await adminDb.collection("users").doc(auth.userId).set(newUser);
-        console.log(`[AUTH] Auto-created profile for: ${auth.userId} (role: ${role})`);
-        
-        // Re-fetch doc to ensure we have the correct data
-        userDoc = await adminDb.collection("users").doc(auth.userId).get();
-      }
-
-      let localUser = userDoc.exists ? userDoc.data() : null;
-      
-      const userEmail = auth.email?.toLowerCase().trim();
-      
-      // Hardcoded overrides for specific users to ensure they always have access
-      if (userEmail === "cajsuthar@gmail.com") {
-        if (!localUser || localUser.role !== 'admin') {
-           const update = { role: 'admin', updatedAt: new Date() };
-           await adminDb.collection("users").doc(auth.userId).set(update, { merge: true });
-           localUser = { ...(localUser || {}), ...update };
-        }
-      } else if (userEmail === "jitender.kingofcage.suthar@gmail.com") {
-        if (!localUser || localUser.role !== 'team_member') {
-           const update = { role: 'team_member', updatedAt: new Date() };
-           await adminDb.collection("users").doc(auth.userId).set(update, { merge: true });
-           localUser = { ...(localUser || {}), ...update };
+        if (localUser) {
+          setCachedUser(auth.userId, localUser);
         }
       }
 
@@ -114,8 +126,8 @@ export function requireRole(allowedRoles: string[]) {
         console.warn(`[AUTH] Access denied for ${auth.email}: Required ${allowedRoles.join(', ')}, found ${localUser?.role}`);
         return res.status(403).json({ error: `Access denied. Required role(s): ${allowedRoles.join(', ')}.` });
       }
-      
-      (req as AuthRequest).user = { id: auth.userId, ...localUser }; 
+
+      (req as AuthRequest).user = { id: auth.userId, ...localUser };
       next();
     } catch (error) {
       console.error("[AUTH] Role verification failed:", error);
