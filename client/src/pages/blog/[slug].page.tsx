@@ -1,15 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { m, AnimatePresence } from "framer-motion";
 import { Link, useParams } from "wouter";
-import { Calendar, User, ArrowLeft, Clock, Sparkles, ArrowRight, List, ChevronRight, Share2, Twitter, Facebook, Linkedin, Link as LinkIcon, BookOpen, Zap, Calculator } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Calendar, ArrowLeft, Clock, Eye, Printer, BookOpen, ArrowRight, ChevronRight, Home, Download } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import ShareButtons from "@/components/ShareButtons";
 import { Loader2 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
 interface TocItem {
   id: string;
@@ -17,19 +12,29 @@ interface TocItem {
   level: number;
 }
 
+// Parse inline bold **text**
+const formatInline = (text: string, keyPrefix: string = '') => {
+  return text.split('**').map((part, i) =>
+    i % 2 === 1
+      ? <strong key={`${keyPrefix}-b${i}`} style={{ fontWeight: 600, color: '#111827' }}>{part}</strong>
+      : part
+  );
+};
+
 const formatContent = (content: string, title?: string) => {
   if (!content) return null;
-  
+
   const lines = content.split('\n');
   const elements: React.ReactNode[] = [];
   let currentTableRows: React.ReactNode[] = [];
+  let currentBlockquoteLines: string[] = [];
   let skippedFirstH1 = false;
 
   const flushTable = (index: number) => {
     if (currentTableRows.length > 0) {
       elements.push(
-        <div key={`table-${index}`} className="mb-10 overflow-hidden rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div key={`table-${index}`} className="my-6 overflow-x-auto rounded-xl border border-gray-200">
+          <table className="w-full text-left" style={{ borderCollapse: 'collapse' }}>
             <tbody>{currentTableRows}</tbody>
           </table>
         </div>
@@ -38,23 +43,59 @@ const formatContent = (content: string, title?: string) => {
     }
   };
 
+  const flushBlockquote = (index: number) => {
+    if (currentBlockquoteLines.length > 0) {
+      const bqElements: React.ReactNode[] = [];
+      currentBlockquoteLines.forEach((bqLine, bi) => {
+        const text = bqLine.replace(/^>\s?/, '');
+        if (text.startsWith('- ') || text.startsWith('* ')) {
+          bqElements.push(
+            <li key={`bq-${index}-${bi}`} className="flex gap-3" style={{ marginBottom: '12px' }}>
+              <span style={{ color: '#0066ff', fontSize: '20px', lineHeight: 1, marginTop: '2px', flexShrink: 0 }}>•</span>
+              <span style={{ fontSize: '1.1rem', lineHeight: 1.7, color: '#374151' }}>{formatInline(text.substring(2), `bq-${index}-${bi}`)}</span>
+            </li>
+          );
+        } else if (text.trim() === '') {
+          // skip empty blockquote lines
+        } else {
+          bqElements.push(
+            <p key={`bq-${index}-${bi}`} style={{ fontSize: '1.1rem', lineHeight: 1.7, color: '#374151', marginBottom: '12px' }}>
+              {formatInline(text, `bq-${index}-${bi}`)}
+            </p>
+          );
+        }
+      });
+      elements.push(
+        <div key={`blockquote-${index}`} style={{ background: '#f8f9ff', borderLeft: '5px solid #0066ff', padding: '1.5rem', margin: '2rem 0' }}>
+          {bqElements}
+        </div>
+      );
+      currentBlockquoteLines = [];
+    }
+  };
+
   lines.forEach((line, index) => {
     const isTableLine = line.includes('|') && line.split('|').length > 2;
+    const isBlockquote = line.startsWith('> ') || line === '>';
 
-    if (isTableLine) {
-      const isHeaderRow = index < lines.length - 1 && lines[index + 1].includes('---');
+    if (!isBlockquote && currentBlockquoteLines.length > 0) flushBlockquote(index);
+
+    if (isBlockquote) {
+      flushTable(index);
+      currentBlockquoteLines.push(line);
+    } else if (isTableLine) {
+      const nextLineIsSeparator = index < lines.length - 1 && lines[index + 1].includes('---');
       const isSeparatorRow = line.includes('---');
-      
       if (!isSeparatorRow) {
         const cells = line.split('|').map(c => c.trim()).filter((c, i) => !(i === 0 && line.startsWith('|') && c === "") && !(i === line.split('|').length - 1 && line.endsWith('|') && c === ""));
-        
+        const isHeader = nextLineIsSeparator;
         currentTableRows.push(
-          <tr key={`row-${index}`} className={cn(isHeaderRow ? "bg-slate-50 border-b border-slate-100" : "border-b border-slate-50")}>
+          <tr key={`row-${index}`} className={isHeader ? 'bg-gray-50' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
             {cells.map((cell, i) => (
-              isHeaderRow ? (
-                <th key={i} className="px-5 py-4 text-left text-[11px] font-black text-slate-900 uppercase tracking-widest">{cell}</th>
+              isHeader ? (
+                <th key={i} className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b border-gray-200">{cell}</th>
               ) : (
-                <td key={i} className="px-5 py-5 text-sm font-black text-slate-800">{cell}</td>
+                <td key={i} className="px-4 py-3 text-sm text-gray-700 border-b border-gray-100">{formatInline(cell, `td-${index}-${i}`)}</td>
               )
             ))}
           </tr>
@@ -63,70 +104,57 @@ const formatContent = (content: string, title?: string) => {
     } else {
       flushTable(index);
 
-      // Headers
       if (line.startsWith('# ')) {
         const headerText = line.substring(2).trim();
-        // Skip first H1 if it matches title or is just redundant
-        if (!skippedFirstH1 && (headerText === title || index < 5)) {
-          skippedFirstH1 = true;
-          return;
-        }
-        elements.push(<h1 key={index} className="text-3xl md:text-5xl font-black text-slate-900 mb-8 mt-12 scroll-mt-32 leading-tight">{headerText}</h1>);
+        if (!skippedFirstH1 && (headerText === title || index < 5)) { skippedFirstH1 = true; return; }
+        elements.push(<h1 key={index} id={`h-${index}`} className="scroll-mt-28" style={{ fontSize: '2.25rem', lineHeight: 1.2, fontWeight: 700, color: '#111827', marginTop: '3rem', marginBottom: '1rem' }}>{headerText}</h1>);
       } else if (line.startsWith('## ')) {
-        elements.push(<h2 key={index} className="text-2xl md:text-3xl font-black text-slate-900 mb-6 mt-10 scroll-mt-32">{line.substring(3)}</h2>);
+        elements.push(<h2 key={index} id={`h-${index}`} className="scroll-mt-28" style={{ fontSize: '1.75rem', lineHeight: 1.3, fontWeight: 600, color: '#111827', marginTop: '3rem', marginBottom: '1rem' }}>{line.substring(3)}</h2>);
       } else if (line.startsWith('### ')) {
-        elements.push(<h3 key={index} className="text-xl md:text-2xl font-black text-slate-900 mb-4 mt-8 scroll-mt-32">{line.substring(4)}</h3>);
-      } 
-      // Lists
+        elements.push(<h3 key={index} id={`h-${index}`} className="scroll-mt-28" style={{ fontSize: '1.35rem', lineHeight: 1.4, fontWeight: 600, color: '#111827', marginTop: '2rem', marginBottom: '0.75rem' }}>{line.substring(4)}</h3>);
+      }
+      // Unordered lists
       else if (line.startsWith('- ') || line.startsWith('* ')) {
-        elements.push(<li key={index} className="text-slate-600 mb-2 ml-6 list-disc font-medium">{line.substring(2)}</li>);
+        elements.push(
+          <li key={index} style={{ fontSize: '1.1rem', lineHeight: 1.7, color: '#374151', marginBottom: '8px', marginLeft: '1.5rem', listStyleType: 'disc' }}>
+            {formatInline(line.substring(2), `li-${index}`)}
+          </li>
+        );
       }
+      // Ordered lists
       else if (/^\d+\.\s/.test(line)) {
-        elements.push(<li key={index} className="text-slate-600 mb-2 ml-6 list-decimal font-medium">{line.replace(/^\d+\.\s/, "")}</li>);
+        elements.push(
+          <li key={index} style={{ fontSize: '1.1rem', lineHeight: 1.7, color: '#374151', marginBottom: '8px', marginLeft: '1.5rem', listStyleType: 'decimal' }}>
+            {formatInline(line.replace(/^\d+\.\s/, ""), `ol-${index}`)}
+          </li>
+        );
       }
-      // Empty lines
       else if (line.trim() === '') {
-        if (elements.length > 0) {
-          elements.push(<div key={index} className="h-2" />);
-        }
+        if (elements.length > 0) elements.push(<div key={index} style={{ height: '8px' }} />);
       }
-      // Regular Paragraphs
+      // Paragraphs
       else {
-        const formattedLine = line.split('**').map((part, i) => i % 2 === 1 ? <strong key={i} className="text-slate-900 font-extrabold">{part}</strong> : part);
-        elements.push(<p key={index} className="text-[18px] text-slate-800/90 mb-6 leading-[1.8] font-medium tracking-tight">{formattedLine}</p>);
+        elements.push(<p key={index} style={{ fontSize: '1.1rem', lineHeight: 1.7, color: '#374151', marginBottom: '1.25rem' }}>{formatInline(line, `p-${index}`)}</p>);
       }
     }
   });
 
+  flushBlockquote(lines.length);
   flushTable(lines.length);
-  return <div className="space-y-4">{elements}</div>;
+  return <div>{elements}</div>;
 };
 
 export default function BlogPostPage() {
   const { slug } = useParams();
-  const [activeTocId, setActiveTocId] = useState<string>("");
   const contentRef = useRef<HTMLDivElement>(null);
   const [toc, setToc] = useState<TocItem[]>([]);
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [activeTocId, setActiveTocId] = useState<string>("");
 
-  const toggleExpand = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const { data: postData, isLoading, error } = useQuery({
+  const { data: postData, isLoading } = useQuery({
     queryKey: ["public-blog", slug],
     queryFn: async () => {
       const res = await fetch(`/api/public/blogs/${slug}`);
-      if (!res.ok) {
-        if (res.status === 404) return null;
-        throw new Error("Failed to fetch blog post");
-      }
+      if (!res.ok) { if (res.status === 404) return null; throw new Error("Failed to fetch blog post"); }
       const data = await res.json() as { post: any };
       return data.post;
     },
@@ -145,9 +173,7 @@ export default function BlogPostPage() {
   });
 
   const relatedPosts = allPostsData?.posts
-    ? allPostsData.posts
-      .filter((p: any) => p.slug !== slug && p.category === post?.category)
-      .slice(0, 3)
+    ? allPostsData.posts.filter((p: any) => p.slug !== slug && p.category === post?.category).slice(0, 3)
     : [];
 
   useEffect(() => {
@@ -157,35 +183,48 @@ export default function BlogPostPage() {
         const text = header.textContent || "";
         const id = text.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-") + "-" + index;
         header.id = id;
-        return {
-          id,
-          text,
-          level: parseInt(header.tagName.substring(1))
-        };
+        return { id, text, level: parseInt(header.tagName.substring(1)) };
       });
       setToc(tocItems);
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveTocId(entry.target.id);
-            }
-          });
-        },
-        { rootMargin: "-100px 0px -60% 0px" }
-      );
-
-      headers.forEach((header) => observer.observe(header));
-      return () => observer.disconnect();
     }
   }, [post]);
+
+  // IntersectionObserver to highlight active TOC item on scroll
+  useEffect(() => {
+    if (toc.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveTocId(entry.target.id);
+            break;
+          }
+        }
+      },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0.1 }
+    );
+    toc.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [toc]);
+
+  const formatDate = (dateObj: any) => {
+    try {
+      let date: Date;
+      if (dateObj?._seconds) date = new Date(dateObj._seconds * 1000);
+      else if (dateObj?.toDate) date = dateObj.toDate();
+      else date = new Date(dateObj);
+      return isNaN(date.getTime()) ? "No Date" : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch { return "No Date"; }
+  };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white">
-        <Loader2 className="h-10 w-10 text-slate-200 animate-spin mb-4" />
-        <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Preparing Expert Analysis...</p>
+        <Loader2 className="h-8 w-8 text-[#0066ff] animate-spin mb-3" />
+        <p className="text-gray-500 text-sm">Loading article...</p>
       </div>
     );
   }
@@ -194,13 +233,13 @@ export default function BlogPostPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-4">
         <div className="text-center p-12 max-w-md">
-          <BookOpen className="w-12 h-12 text-slate-100 mx-auto mb-6" />
-          <h1 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">Article Not Found</h1>
-          <p className="text-slate-500 mb-8 font-medium">This resource might have been moved or removed.</p>
+          <BookOpen className="w-12 h-12 mx-auto mb-5 text-gray-300" />
+          <h1 className="text-2xl font-semibold text-gray-900 mb-3">Article Not Found</h1>
+          <p className="text-gray-500 mb-6">This article might have been moved or removed.</p>
           <Link href="/blog">
-            <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 h-12 font-black text-xs uppercase tracking-widest">
-              Back to Hub
-            </Button>
+            <button className="text-white font-semibold px-8 py-3 rounded-2xl text-sm" style={{ background: 'linear-gradient(90deg, #0066ff, #0052cc)' }}>
+              Back to Knowledge Hub
+            </button>
           </Link>
         </div>
       </div>
@@ -209,300 +248,274 @@ export default function BlogPostPage() {
 
   const tagsArray = post.tags ? (typeof post.tags === 'string' ? JSON.parse(post.tags) : post.tags) : [];
 
+  // Browse by topics — static list of popular topics
+  const browseTopics = [
+    { label: "Income Tax e-Filing", href: "/blog" },
+    { label: "Income Tax Slabs FY 2025-26", href: "/blog" },
+    { label: "How To File ITR", href: "/blog" },
+    { label: "Which ITR Should I File", href: "/blog" },
+    { label: "Last Date To File ITR For 2025-26", href: "/blog" },
+    { label: "Old vs New Tax Regime", href: "/blog" },
+    { label: "HRA Exemption Guide", href: "/blog" },
+    { label: "Section 80C Deductions", href: "/blog" },
+    { label: "Capital Gains Tax", href: "/blog" },
+    { label: "GST Registration", href: "/blog" },
+    { label: "TDS on Salary", href: "/blog" },
+    { label: "Tax Saving Tips", href: "/blog" },
+  ];
+
+  // All posts for "Browse by topics" (use actual posts if available)
+  const allPosts = allPostsData?.posts || [];
+  const topicLinks = allPosts.length > 0
+    ? allPosts.filter((p: any) => p.slug !== slug).slice(0, 12).map((p: any) => ({ label: p.title, href: `/blog/${p.slug}` }))
+    : browseTopics;
+
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
       <MetaSEO
-        title={`${post.title} | MyeCA.in Expert Hub`}
+        title={`${post.title} | MyeCA.in Knowledge Hub`}
         description={post.excerpt}
         keywords={tagsArray}
         type="article"
       />
 
-      {/* Ultra-Compact High-Fidelity Header */}
-      <header className="pt-4 pb-2 border-b border-slate-50 bg-white sticky top-[74px] z-40 backdrop-blur-xl bg-white/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-12">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <Link href="/blog">
-                  <button className="text-slate-400 hover:text-slate-900 transition-colors bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg border border-slate-100 transition-all active:scale-90">
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                  </button>
-                </Link>
-                <div className="h-4 w-px bg-slate-200" />
-                <span className="text-blue-600 text-[9px] font-black uppercase tracking-[0.2em]">{post.category}</span>
-                <span className="text-slate-300 text-[10px]">•</span>
-                <span className="text-slate-400 text-[9px] font-black uppercase tracking-widest">Expert Analysis</span>
-              </div>
-              
-              <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight mb-2">
-                {post.title}
-              </h1>
-              
-              <div className="flex items-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                <span className="flex items-center gap-2">
-                  <Calendar className="w-3.5 h-3.5 text-slate-300" /> 
-                  {(() => {
-                    try {
-                      const dateObj = post.createdAt;
-                      let date: Date;
-                      if (dateObj?._seconds) {
-                        date = new Date(dateObj._seconds * 1000);
-                      } else if (dateObj?.toDate) {
-                        date = dateObj.toDate();
-                      } else {
-                        date = new Date(dateObj);
-                      }
-                      return isNaN(date.getTime()) ? "No Date" : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    } catch (e) {
-                      return "No Date";
-                    }
-                  })()}
-                </span>
-                <span className="flex items-center gap-2"><Clock className="w-3.5 h-3.5 text-slate-300" /> {post.readTime || 5} min read</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-end gap-2 shrink-0 self-stretch md:self-center">
-               <div className="bg-white border border-slate-100 p-3 rounded-[1.5rem] flex items-center gap-4 shadow-xl shadow-slate-200/10 relative overflow-hidden group w-full md:w-auto min-w-[200px]">
-                  {/* Background Aura */}
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-[30px] -mr-12 -mt-12 group-hover:bg-blue-500/10 transition-all duration-700" />
-                  
-                  <div className="relative z-10 flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-white p-0.5 shadow-md border border-slate-100 group-hover:scale-105 transition-transform duration-500 overflow-hidden shrink-0">
-                      <img 
-                        src="/contributor_logo.png" 
-                        alt="Expert Contributor"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-900 leading-none mb-1">
-                        {post.author?.firstName || "Admin"}
-                      </p>
-                      <p className="text-blue-600 text-[8px] font-black uppercase tracking-[0.1em] leading-none mb-2">
-                        Lead Contributor
-                      </p>
-                      <div className="flex items-center gap-1.5 opacity-80">
-                         <m.div 
-                           animate={{ opacity: [0.4, 1, 0.4] }}
-                           transition={{ duration: 2, repeat: Infinity }}
-                           className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" 
-                         />
-                         <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Online</span>
-                      </div>
-                    </div>
-                  </div>
-               </div>
-               <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest text-center w-full mr-1">Contributor Profile</p>
-            </div>
+      {/* Print Header — only visible when printing */}
+      <div className="print-header" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #0066ff', paddingBottom: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src="/myeca_logo.png" alt="MyeCA" style={{ height: '32px', filter: 'none' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          <div>
+            <p style={{ fontSize: '16pt', fontWeight: 700, color: '#000', margin: 0, lineHeight: 1.2 }}>MyeCA.in</p>
+            <p style={{ fontSize: '8pt', color: '#666', margin: 0 }}>Smart Tax Solutions</p>
           </div>
         </div>
-      </header>
+        <div style={{ textAlign: 'right' }}>
+          <p style={{ fontSize: '8pt', color: '#666', margin: 0 }}>www.myeca.in</p>
+          <p style={{ fontSize: '8pt', color: '#666', margin: 0 }}>support@myeca.in</p>
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20">
-        <div className="grid lg:grid-cols-12 gap-10 items-stretch">
-          
-          {/* Main Content Column */}
-          <div className="lg:col-span-8">
-            <article ref={contentRef} className="article-content max-w-none">
+      {/* 3-Column Layout */}
+      <div className="blog-layout max-w-[1400px] mx-auto px-4 pt-6 pb-16">
+        <div className="flex gap-0">
+
+          {/* LEFT SIDEBAR — Sticky TOC (ClearTax "Index") */}
+          <aside className="blog-sidebar hidden xl:block shrink-0" style={{ width: '240px' }}>
+            <div className="sticky" style={{ top: '80px' }}>
+              <h3 className="text-[#0066ff] font-semibold text-base mb-4 px-3">Index</h3>
+              <nav className="overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 140px)', scrollbarWidth: 'thin' }}>
+                {toc.length > 0 ? toc.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      const el = document.getElementById(item.id);
+                      if (el) window.scrollTo({ top: el.offsetTop - 90, behavior: "smooth" });
+                    }}
+                    className="w-full text-left block transition-all text-sm hover:text-[#0066ff]"
+                    style={{
+                      padding: '10px 12px',
+                      paddingLeft: item.level === 3 ? '28px' : '12px',
+                      color: activeTocId === item.id ? '#0066ff' : '#374151',
+                      fontWeight: activeTocId === item.id ? 600 : 400,
+                      backgroundColor: activeTocId === item.id ? '#EBF4FF' : 'transparent',
+                      borderLeft: activeTocId === item.id ? '3px solid #0066ff' : '3px solid transparent',
+                      lineHeight: 1.4,
+                      fontSize: item.level === 3 ? '13px' : '14px',
+                    }}
+                  >
+                    {item.text}
+                  </button>
+                )) : (
+                  <p className="text-sm text-gray-400 px-3">Loading...</p>
+                )}
+              </nav>
+            </div>
+          </aside>
+
+          {/* CENTER — Main Article Content */}
+          <div className="blog-content-center flex-1 min-w-0 max-w-[860px] mx-auto px-4 lg:px-8">
+
+            {/* Breadcrumbs */}
+            <nav className="blog-breadcrumbs flex items-center gap-1.5 text-sm flex-wrap mb-6">
+              <Link href="/" className="text-[#0066ff] hover:underline font-medium">Home</Link>
+              <span className="text-gray-400 mx-1">&gt;</span>
+              <Link href="/blog" className="text-[#0066ff] hover:underline font-medium">{post.category}</Link>
+              <span className="text-gray-400 mx-1">&gt;</span>
+              <span className="text-gray-500 truncate max-w-[300px]">{post.title}</span>
+            </nav>
+
+            {/* Article Title */}
+            <h1 style={{ fontSize: '2.25rem', lineHeight: 1.2, fontWeight: 700, color: '#111827' }}>
+              {post.title}
+            </h1>
+
+            {/* Meta / Byline — compact */}
+            <div className="blog-byline mt-4 flex flex-wrap items-center justify-between border-b border-gray-200 pb-3 gap-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-[#0066ff] flex items-center justify-center text-white font-semibold text-xs shrink-0 overflow-hidden">
+                  <img
+                    src="/contributor_logo.png"
+                    alt="Author"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).parentElement!.textContent = (post.author?.firstName?.charAt(0) || 'M') + (post.author?.lastName?.charAt(0) || '');
+                    }}
+                  />
+                </div>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>{post.author?.firstName || "Team"} {post.author?.lastName || "MyeCA"}</span>
+                <span style={{ fontSize: '12px', color: '#9ca3af' }}>·</span>
+                <span className="flex items-center gap-1" style={{ fontSize: '12px', color: '#6b7280' }}>
+                  <Calendar className="w-3 h-3" /> {formatDate(post.createdAt)}
+                </span>
+                <span style={{ fontSize: '12px', color: '#9ca3af' }}>·</span>
+                <span className="flex items-center gap-1" style={{ fontSize: '12px', color: '#6b7280' }}>
+                  <Clock className="w-3 h-3" /> {post.readTime || "5 min read"}
+                </span>
+              </div>
+              <div className="blog-share-actions flex items-center gap-2">
+                <ShareButtons title={post.title} />
+                <button
+                  onClick={() => window.print()}
+                  className="flex items-center gap-1 border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+                  style={{ borderRadius: '5px' }}
+                >
+                  <Printer className="w-3 h-3" /> Print
+                </button>
+              </div>
+            </div>
+
+            {/* Article Content */}
+            <div ref={contentRef} className="mt-8">
               {formatContent(post.content, post.title)}
-            </article>
+            </div>
 
-            {/* Expert Reviewer / Author Footer */}
-            <div className="mt-20 p-8 md:p-12 bg-slate-50 rounded-[3rem] border border-slate-100 relative overflow-hidden">
-              <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                <div className="w-24 h-24 bg-white rounded-[2rem] shadow-xl border border-slate-100 flex items-center justify-center text-4xl font-black text-blue-600">
-                  {post.author?.firstName?.charAt(0) || "A"}
+            {/* Inline CTA */}
+            <div className="blog-cta-inline my-10 flex justify-center">
+              <Link href="/itr/filing">
+                <button
+                  className="text-white font-semibold px-8 py-4 rounded-2xl text-lg flex items-center gap-3 shadow-lg transition-all hover:-translate-y-0.5"
+                  style={{ background: 'linear-gradient(90deg, #0066ff, #0052cc)' }}
+                >
+                  Talk to a CA About This Topic
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+
+            {/* Author Section */}
+            <div className="blog-author-card mt-10 rounded-2xl border border-gray-200 bg-gray-50/50 p-6">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center text-[#0066ff] font-bold text-lg shrink-0 overflow-hidden">
+                  <img
+                    src="/contributor_logo.png"
+                    alt="Author"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).parentElement!.textContent = (post.author?.firstName?.charAt(0) || 'A') + (post.author?.lastName?.charAt(0) || '');
+                    }}
+                  />
                 </div>
-                <div className="text-center md:text-left flex-1">
-                  <Badge variant="outline" className="bg-white border-blue-100 text-blue-600 px-3 py-1 mb-4 rounded-full text-[9px] font-black uppercase tracking-widest">
-                    Primary Contributor
-                  </Badge>
-                  <h3 className="text-2xl font-black text-slate-900 mb-3">{post.author?.firstName || "Admin"}</h3>
-                  <p className="text-slate-500 font-medium leading-relaxed mb-6 max-w-xl">
-                    Expert Chartered Accountant specializing in Indian taxation, corporate strategy, and financial planning. Dedicated to making complex financial laws accessible to everyone.
+                <div>
+                  <p className="font-semibold text-gray-900 text-lg">{post.author?.firstName || "Team"} {post.author?.lastName || "MyeCA"}</p>
+                  <p className="text-gray-500 text-sm mb-2">Chartered Accountant</p>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Expert CA specializing in Indian taxation, corporate strategy, and financial planning.
                   </p>
-                  <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                    <Button className="rounded-xl px-8 h-12 bg-slate-900 text-white hover:bg-slate-800 font-black text-sm transition-transform active:scale-95 shadow-xl">
-                      Consult Author
-                    </Button>
-                    <Button variant="ghost" className="rounded-xl px-4 h-12 text-slate-600 hover:text-blue-600 font-black text-sm">
-                      View Portfolio <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Lightened Tax Strategies CTA at the end of article */}
-            <div className="mt-12 p-8 bg-blue-50/50 rounded-[2.5rem] border border-blue-100/50 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 opacity-5 rounded-full blur-[80px] -mr-32 -mt-32" />
-              
-              <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                <div className="max-w-xl text-center md:text-left">
-                  <h4 className="text-2xl font-black text-slate-900 mb-2 leading-tight">Implement these <span className="text-blue-600">Tax Strategies?</span></h4>
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed">Our AI-powered optimizer helps you calculate exact benefits instantly based on the latest 2025-26 guidelines.</p>
-                </div>
-                
-                <div className="flex flex-col gap-3 min-w-[240px]">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-14 font-black text-sm shadow-xl shadow-blue-600/20 transition-all active:scale-95">
-                    Launch Tax Optimizer
-                  </Button>
-                  <Link href="/contact">
-                    <Button variant="ghost" className="w-full text-blue-600 hover:bg-blue-50 font-black text-xs h-10 uppercase tracking-widest">
-                      Questions? Talk to a CA
-                    </Button>
-                  </Link>
+            {/* Related Articles */}
+            {relatedPosts.length > 0 && (
+              <div className="blog-related-articles mt-12">
+                <h3 className="text-xl font-semibold text-gray-900 mb-5">Related Articles</h3>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {relatedPosts.map((rp: any) => (
+                    <Link key={rp.id} href={`/blog/${rp.slug}`}>
+                      <div className="group cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-xs font-semibold text-[#0066ff] mb-2">{rp.category}</p>
+                        <h4 className="text-base font-semibold text-gray-900 leading-snug mb-3 line-clamp-2 group-hover:text-[#0066ff] transition-colors">
+                          {rp.title}
+                        </h4>
+                        <span className="flex items-center gap-1.5 text-sm text-gray-500">
+                          <Clock className="w-3.5 h-3.5" />
+                          {rp.readTime || "5 min read"}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
+            )}
+
+            {/* Final CTA Banner */}
+            <div className="blog-cta-banner mt-14 rounded-3xl p-10 text-center text-white" style={{ background: 'linear-gradient(90deg, #0066ff, #0044aa)' }}>
+              <p className="mb-3 text-2xl font-semibold">Need expert help on this topic?</p>
+              <p className="text-blue-100 mb-6 text-base">Our Chartered Accountants can help you navigate the complexities.</p>
+              <Link href="/contact">
+                <button className="inline-block bg-white text-[#0066ff] px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-gray-100 transition-all hover:-translate-y-0.5 shadow-lg">
+                  Talk to an Expert
+                </button>
+              </Link>
             </div>
 
-            {/* Bottom Back Button for Easy Navigation */}
-            <div className="mt-12 pt-12 border-t border-slate-100 flex justify-center">
+            {/* Print Footer — only visible when printing */}
+            <div className="print-footer" style={{ display: 'none', borderTop: '2px solid #0066ff', paddingTop: '10px', marginTop: '24px', fontSize: '9pt', color: '#666', textAlign: 'center' }}>
+              <p style={{ margin: '0 0 2px' }}>
+                <strong style={{ color: '#000' }}>MyeCA.in</strong> — Smart Tax Solutions | India's Trusted CA Platform
+              </p>
+              <p style={{ margin: 0 }}>
+                www.myeca.in | support@myeca.in | +91-XXXX-XXXXXX
+              </p>
+              <p style={{ margin: '4px 0 0', fontSize: '7pt', color: '#999' }}>
+                This article is for informational purposes only. Consult a qualified CA for personalized advice.
+              </p>
+            </div>
+
+            {/* Back Button */}
+            <div className="blog-back-button mt-10 text-center">
               <Link href="/blog">
-                <Button variant="outline" className="rounded-full px-8 h-12 border-slate-200 text-slate-500 font-black text-[11px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all group">
-                  <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                <button className="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors group">
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                   Back to Knowledge Hub
-                </Button>
+                </button>
               </Link>
             </div>
           </div>
 
-          {/* Robust Sticky Sidebar - Fixed to aside for grid stability */}
-          <aside className="lg:col-span-4 sticky top-28 h-fit self-start space-y-8 pb-20">
-            <div className="space-y-8">
-              
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
-                    <div className="h-px bg-slate-200 flex-1" />
-                    Insight Navigation
-                    <div className="h-px bg-slate-200 flex-1" />
-                  </h4>
-                  
-                  <div className="space-y-3 border-l border-slate-100 pl-6">
-                    {toc.length > 0 ? toc.map((item, idx) => {
-                      const hasChildren = toc[idx + 1]?.level > item.level;
-                      const isExpanded = expandedIds.has(item.id);
-                      const isChild = item.level > 2;
-                      
-                      if (isChild && !expandedIds.has(toc.find((p, i) => i < idx && p.level === 2)?.id || "")) {
-                        return null;
-                      }
-
-                      return (
-                        <div key={item.id} className="space-y-1">
-                          <div
-                            className={cn(
-                              "w-full text-left py-2 text-[10px] font-black uppercase tracking-widest transition-all block relative group/nav cursor-pointer",
-                              activeTocId === item.id 
-                                ? "text-blue-600" 
-                                : "text-slate-400 hover:text-slate-600",
-                              item.level === 3 && "pl-4 normal-case tracking-normal font-bold text-[11px]"
-                            )}
-                            onClick={() => {
-                              const element = document.getElementById(item.id);
-                              if (element) {
-                                window.scrollTo({
-                                  top: element.offsetTop - 120,
-                                  behavior: "smooth"
-                                });
-                              }
-                            }}
-                          >
-                            {activeTocId === item.id && (
-                              <m.div 
-                                layoutId="activeToc"
-                                className="absolute -left-[25px] top-1/2 -translate-y-1/2 w-0.5 h-3 bg-blue-600 rounded-full"
-                              />
-                            )}
-                            <div className="flex items-center gap-2">
-                              {item.level === 2 && hasChildren ? (
-                                <button 
-                                  onClick={(e) => toggleExpand(item.id, e)}
-                                  className="p-1 -ml-1 hover:bg-slate-100 rounded-md transition-colors"
-                                >
-                                  <ChevronRight className={cn(
-                                    "w-3 h-3 transition-transform duration-300",
-                                    isExpanded ? "rotate-90 text-blue-600" : "text-slate-300"
-                                  )} />
-                                </button>
-                              ) : (
-                                <ChevronRight className={cn(
-                                  "w-2.5 h-2.5 transition-transform duration-300 opacity-50",
-                                  activeTocId === item.id ? "text-blue-600 translate-x-0.5" : "text-slate-300"
-                                )} />
-                              )}
-                              <span>{item.text}</span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }) : (
-                      <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Generating Outline...</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Nano Banana Quick Tools */}
-                <div className="p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] shadow-sm overflow-hidden relative group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#FDE047]/10 rounded-full blur-2xl -mr-12 -mt-12 group-hover:bg-[#FDE047]/20 transition-all duration-700" />
-                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
-                    <Zap className="w-3 h-3 text-[#FDE047] fill-[#FDE047]" />
-                    Quick Tools
-                  </h4>
-                  <div className="space-y-4">
-                    <Link href="/calculators/income-tax">
-                      <m.div whileHover={{ x: 5 }} className="flex items-center gap-4 cursor-pointer group/tool p-2 -ml-2 rounded-xl transition-all">
-                        <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover/tool:bg-[#FDE047] group-hover/tool:text-black transition-all">
-                          <Calculator className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-black text-slate-900 leading-none mb-1">Tax Calculator</p>
-                          <p className="text-[9px] font-medium text-slate-400">New vs Old Regime</p>
-                        </div>
-                        <ChevronRight className="w-3 h-3 ml-auto text-slate-200 group-hover/tool:text-black transition-colors" />
-                      </m.div>
-                    </Link>
-                    <Link href="/tax-assistant">
-                      <m.div whileHover={{ x: 5 }} className="flex items-center gap-4 cursor-pointer group/tool p-2 -ml-2 rounded-xl transition-all">
-                        <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover/tool:bg-[#FDE047] group-hover/tool:text-black transition-all">
-                          <Sparkles className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-black text-slate-900 leading-none mb-1">AI Refund Estimator</p>
-                          <p className="text-[9px] font-medium text-slate-400">Instant AI Check</p>
-                        </div>
-                        <ChevronRight className="w-3 h-3 ml-auto text-slate-200 group-hover/tool:text-black transition-colors" />
-                      </m.div>
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Upgraded Nano Banana Filing CTA */}
-                <div className="p-8 bg-[#FDE047] rounded-[2.5rem] border-2 border-white/50 shadow-[0_20px_50px_-10px_rgba(253,224,71,0.3)] relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-[40px] -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="flex h-2 w-2 rounded-full bg-red-600 animate-ping" />
-                      <h4 className="text-[10px] font-black text-black uppercase tracking-widest">ITR DEADLINE: 31 JULY</h4>
+          {/* RIGHT SIDEBAR — "Browse by topics" (sticky) */}
+          <aside className="blog-sidebar hidden xl:block shrink-0" style={{ width: '240px' }}>
+            <div className="sticky" style={{ top: '80px' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#111827', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px solid #0066ff' }}>Browse by topics</h3>
+              <nav className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 160px)', scrollbarWidth: 'thin' }}>
+                {topicLinks.map((topic, i) => (
+                  <Link key={i} href={topic.href}>
+                    <div
+                      className="group cursor-pointer"
+                      style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}
+                    >
+                      <p
+                        className="hover:text-[#0066ff] transition-colors"
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          color: '#374151',
+                          lineHeight: 1.4,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {topic.label}
+                      </p>
                     </div>
-                    <p className="text-black/80 text-[11px] font-black mb-8 leading-tight">2,847 people used MyeCA to file their ITR today. Ready to join them?</p>
-                    <Link href="/itr/filing">
-                      <Button className="w-full bg-black text-[#FDE047] hover:bg-slate-900 rounded-xl h-14 font-black text-[10px] uppercase tracking-widest transition-all shadow-2xl group flex items-center justify-center gap-3">
-                        File Your ITR Now
-                        <div className="w-6 h-6 rounded-full bg-[#FDE047] text-black flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </div>
-                      </Button>
-                    </Link>
-                    <p className="text-black/40 text-[8px] font-black text-center mt-6 uppercase tracking-widest">Takes less than 4 minutes</p>
-                  </div>
-                </div>
-              </div>
+                  </Link>
+                ))}
+              </nav>
             </div>
           </aside>
+
         </div>
       </div>
     </div>

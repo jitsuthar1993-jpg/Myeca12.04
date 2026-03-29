@@ -563,42 +563,48 @@ export default function Header() {
                       </NavigationMenuTrigger>
                     </div>
                     <NavigationMenuContent>
-                      <div className="w-[720px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
-                        {/* Main Categories */}
-                        <div className="flex-1 p-6 grid grid-cols-2 gap-8 bg-white">
+                      <div className="w-[1024px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
+                        {/* Main Categories — 3 columns */}
+                        <div className="flex-1 p-6 grid grid-cols-3 gap-8 bg-white">
+                           {/* Column 1: Tax Calculators */}
                            <div>
                               <div className="flex items-center gap-4 mb-6 px-0.5">
                                 <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
                                   <Landmark className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Income Tax</h4>
+                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
                                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Compliance Hub</p>
                                 </div>
                               </div>
                              <ul className="space-y-4">
                                {[
-                                 { href: "/calculators/income-tax", icon: Calculator, title: "Tax Calculator", desc: "New vs Old Regime Analysis", color: "emerald" },
-                                 { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" }
+                                 { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "New vs Old Regime Analysis", color: "emerald" },
+                                 { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
+                                 { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction on salary & more", color: "orange" },
+                                 { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" },
+                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" }
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
                                    <li key={idx}>
-                                     <Link 
-                                       href={item.href} 
+                                     <Link
+                                       href={item.href}
                                        onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 p-2.5 -ml-2 rounded-xl hover:bg-slate-50 transition-all duration-300"
+                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
                                      >
                                        <div className={cn(
-                                         "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-sm",
-                                         item.color === "emerald" && "bg-emerald-50 text-emerald-500",
-                                         item.color === "blue" && "bg-blue-50 text-blue-500"
+                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
                                        )}>
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[11px] text-slate-500 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -606,34 +612,40 @@ export default function Header() {
                                })}
                              </ul>
                            </div>
-                           
+
+                           {/* Column 2: Investment & Savings */}
                            <div>
                               <div className="flex items-center gap-4 mb-6 px-0.5">
                                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
-                                    <TrendingUp className="w-5 h-5" />
+                                    <PiggyBank className="w-5 h-5" />
                                  </div>
                                  <div>
-                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Investment</h4>
+                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
                                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
                                  </div>
                               </div>
                              <ul className="space-y-4">
                                {[
-                                 { href: "/calculators/sip", icon: Coins, title: "SIP Tool", desc: "Plan mutual fund returns", color: "orange" },
-                                 { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" }
+                                 { href: "/calculators/sip", icon: Coins, title: "SIP Calculator", desc: "Plan mutual fund returns", color: "orange" },
+                                 { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
+                                 { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public Provident Fund growth", color: "emerald" },
+                                 { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit returns", color: "blue" },
+                                 { href: "/elss-comparator", icon: LineChart, title: "ELSS Comparator", desc: "Compare tax saving funds", color: "orange" }
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
                                    <li key={idx}>
-                                     <Link 
-                                       href={item.href} 
+                                     <Link
+                                       href={item.href}
                                        onMouseEnter={() => preloadOnHover(item.href)}
                                        className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
                                      >
                                        <div className={cn(
                                          "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
                                          item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
+                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
                                        )}>
                                          <Icon className="w-5 h-5" />
                                        </div>
@@ -647,10 +659,57 @@ export default function Header() {
                                })}
                              </ul>
                            </div>
+
+                           {/* Column 3: Loan & EMI */}
+                           <div>
+                              <div className="flex items-center gap-4 mb-6 px-0.5">
+                                 <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100/50">
+                                    <Wallet className="w-5 h-5" />
+                                 </div>
+                                 <div>
+                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
+                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
+                                 </div>
+                              </div>
+                             <ul className="space-y-4">
+                               {[
+                                 { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
+                                 { href: "/calculators/home-loan", icon: Home, title: "Home Loan EMI", desc: "Housing loan planning", color: "blue" },
+                                 { href: "/calculators/car-loan", icon: Wallet, title: "Car Loan EMI", desc: "Vehicle finance planner", color: "indigo" },
+                                 { href: "/calculators/personal-loan", icon: Banknote, title: "Personal Loan", desc: "Unsecured loan EMI", color: "emerald" },
+                                 { href: "/calculators/education-loan", icon: FileText, title: "Education Loan", desc: "Study loan repayment", color: "orange" }
+                               ].map((item, idx) => {
+                                 const Icon = item.icon as any;
+                                 return (
+                                   <li key={idx}>
+                                     <Link
+                                       href={item.href}
+                                       onMouseEnter={() => preloadOnHover(item.href)}
+                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                     >
+                                       <div className={cn(
+                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100"
+                                       )}>
+                                         <Icon className="w-5 h-5" />
+                                       </div>
+                                       <div>
+                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                       </div>
+                                     </Link>
+                                   </li>
+                                 );
+                               })}
+                             </ul>
+                           </div>
                         </div>
-                        
+
                         {/* Sidebar */}
-                        <div className="w-64 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
+                        <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                            <div className="flex-1">
                               <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
                               <Link href="/tax-assistant" className="block group">
@@ -665,18 +724,26 @@ export default function Header() {
                                     <span className="inline-flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
                                  </div>
                               </Link>
-                              
-                              <div className="mt-6">
+
+                              <div className="mt-6 space-y-1">
                                 <Link href="/calculators/general" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
                                    <Grid className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
                                    <span className="text-xs font-bold text-slate-600">General Calculator</span>
                                 </Link>
+                                <Link href="/calculators/hsn-finder" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
+                                   <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
+                                   <span className="text-xs font-bold text-slate-600">HSN/SAC Finder</span>
+                                </Link>
+                                <Link href="/form16-parser" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
+                                   <FileText className="w-4 h-4 text-slate-400 group-hover:text-orange-600" />
+                                   <span className="text-xs font-bold text-slate-600">Form 16 Parser</span>
+                                </Link>
                               </div>
                            </div>
-                           
+
                            <div className="mt-8 pt-6 border-t border-slate-200/60">
                              <Link href="/calculators" className="inline-flex items-center gap-2 text-xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
-                               All Tools <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                               All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                              </Link>
                            </div>
                         </div>
@@ -899,10 +966,27 @@ export default function Header() {
                                  Calculators
                               </AccordionTrigger>
                               <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                                 <div className="grid grid-cols-1 gap-2">
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tax</p>
+                                 <div className="grid grid-cols-1 gap-1 mb-3">
                                     <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax Calculator</Link>
+                                    <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Exemption</Link>
+                                    <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
+                                    <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
+                                    <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
+                                 </div>
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Investment</p>
+                                 <div className="grid grid-cols-1 gap-1 mb-3">
                                     <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
-                                    <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Calculator</Link>
+                                    <Link href="/calculators/nps" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">NPS Calculator</Link>
+                                    <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
+                                    <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
+                                 </div>
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
+                                 <div className="grid grid-cols-1 gap-1">
+                                    <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
+                                    <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Home Loan EMI</Link>
+                                    <Link href="/calculators/car-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Car Loan EMI</Link>
+                                    <Link href="/calculators/personal-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Personal Loan</Link>
                                  </div>
                               </AccordionContent>
                            </AccordionItem>
