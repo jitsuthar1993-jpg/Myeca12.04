@@ -8,6 +8,8 @@
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Remove decorative backgrounds and shadows */
@@ -18,8 +20,131 @@
     background: none !important;
   }
 
-  /* Hide non-print elements */
-  header, nav, .UnifiedFAB, .ToastViewport, .chat-widget, .footer {
+  /* Hide non-print elements globally */
+  header, .UnifiedFAB, .ToastViewport, .chat-widget, .footer, footer {
+    display: none !important;
+  }
+
+  /* ========== BLOG PRINT STYLES ========== */
+
+  /* Hide sidebars, CTAs, share buttons, print button, back button, related articles, final CTA */
+  .blog-sidebar,
+  .blog-share-actions,
+  .blog-cta-inline,
+  .blog-cta-banner,
+  .blog-back-button,
+  .blog-related-articles,
+  .blog-author-card,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Show print header */
+  .print-header {
+    display: flex !important;
+  }
+
+  /* Print footer */
+  .print-footer {
+    display: block !important;
+  }
+
+  /* Make center column full width */
+  .blog-layout {
+    display: block !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .blog-content-center {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 20px !important;
+  }
+
+  /* Compact typography for print */
+  .blog-content-center h1 {
+    font-size: 22pt !important;
+    line-height: 1.2 !important;
+    margin-bottom: 8px !important;
+    color: #000 !important;
+  }
+
+  .blog-content-center h2 {
+    font-size: 16pt !important;
+    line-height: 1.3 !important;
+    margin-top: 18px !important;
+    margin-bottom: 6px !important;
+    color: #000 !important;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 4px;
+  }
+
+  .blog-content-center h3 {
+    font-size: 13pt !important;
+    line-height: 1.3 !important;
+    margin-top: 14px !important;
+    margin-bottom: 4px !important;
+    color: #000 !important;
+  }
+
+  .blog-content-center p {
+    font-size: 10.5pt !important;
+    line-height: 1.5 !important;
+    margin-bottom: 8px !important;
+    color: #222 !important;
+  }
+
+  .blog-content-center li {
+    font-size: 10.5pt !important;
+    line-height: 1.5 !important;
+    margin-bottom: 4px !important;
+    color: #222 !important;
+  }
+
+  /* Tables compact for print */
+  .blog-content-center table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 10px 0 !important;
+    font-size: 9.5pt !important;
+  }
+
+  .blog-content-center th,
+  .blog-content-center td {
+    padding: 5px 8px !important;
+    border: 1px solid #ccc !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  .blog-content-center th {
+    background: #f0f0f0 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Callout boxes — simpler for print */
+  .blog-content-center div[style*="border-left: 5px"] {
+    background: #f9f9f9 !important;
+    border-left: 3px solid #333 !important;
+    padding: 10px 14px !important;
+    margin: 10px 0 !important;
+  }
+
+  /* Breadcrumbs — hide in print */
+  .blog-breadcrumbs {
+    display: none !important;
+  }
+
+  /* Byline — compact for print */
+  .blog-byline {
+    border-bottom: 1px solid #ddd !important;
+    padding-bottom: 8px !important;
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .blog-byline img {
     display: none !important;
   }
 
@@ -32,7 +157,7 @@
     background: #fff !important;
   }
 
-  /* Page breaks for sections */
+  /* Page breaks */
   .break-before {
     break-before: page;
   }
@@ -40,9 +165,14 @@
     break-inside: avoid;
   }
 
-  /* Links show URLs */
-  a[href]:after {
-    content: " (" attr(href) ")";
-    font-size: var(--text-sm);
+  /* Don't show URLs after links in blog content */
+  .blog-content-center a[href]:after {
+    content: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 15mm 12mm;
+    size: A4;
   }
 }

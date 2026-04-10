@@ -114,6 +114,7 @@ export default function Header() {
 
   const getInitials = () => {
     if (!user) return 'U';
+    if (user.email === 'cajsuthar@gmail.com') return 'JS';
     if (user.firstName && user.lastName) {
       return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
     }
@@ -262,7 +263,7 @@ export default function Header() {
                                  { href: "/services/tds-filing", icon: Receipt, title: "TDS Filing", desc: "Quarterly returns & certificates", color: "blue" },
                                  { href: "/services/gst-returns", icon: Calculator, title: "GST Returns", desc: "GSTR-1, 3B & Annual filing", color: "emerald" },
                                  { href: "/services/notice-compliance", icon: Shield, title: "Notice Management", desc: "Expert reply drafting", color: "orange" },
-                                 { href: "/services/document-vault", icon: Lock, title: "Secure Vault", desc: "Bank-grade storage", color: "indigo" }
+                                 { href: "/services/reliable-storage", icon: Lock, title: "Secure Vault", desc: "Bank-grade storage", color: "indigo" }
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
@@ -432,175 +433,114 @@ export default function Header() {
                       </NavigationMenuTrigger>
                     </div>
                     <NavigationMenuContent>
-                      <div className="w-[1024px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
-                        {/* Main Categories */}
-                        <div className="flex-1 p-6 grid grid-cols-3 gap-8 bg-white">
-                          <div>
-                            <div className="flex items-center gap-4 mb-6 px-0.5">
-                              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
-                                <Rocket className="w-5 h-5" />
-                              </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Launch</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 Support</p>
-                              </div>
-                            </div>
-                            <ul className="space-y-4">
-                              {[
-                                { href: "/startup/registration", icon: Building2, title: "Entity Registration", desc: "Pvt Ltd, LLP, OPC & more", color: "purple" },
-                                { href: "/services/gst-registration", icon: Stamp, title: "GST Registration", desc: "Mandatory GST enrollment", color: "blue" },
-                                { href: "/services/msme-udyam-registration", icon: FileCheck, title: "MSME / Udyam", desc: "Udyam & FSSAI licensing", color: "orange" },
-                                { href: "/services/trade-license", icon: Scale, title: "Trade License", desc: "Shop Act & local permits", color: "indigo" },
-                              ].map((item, idx) => {
-                                const Icon = item.icon as any;
-                                return (
-                                  <li key={idx}>
-                                    <Link
-                                      href={item.href}
-                                      onMouseEnter={() => preloadOnHover(item.href)}
-                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                    >
-                                      <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
-                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                      )}>
-                                        <Icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                      </div>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-
-                          <div>
-                            <div className="flex items-center gap-4 mb-6 px-0.5">
-                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
-                                <TrendingUp className="w-5 h-5" />
-                              </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Scale</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth Engine</p>
-                              </div>
-                            </div>
-                            <ul className="space-y-4">
-                              {[
-                                { href: "/startup/funding", icon: Coins, title: "Funding Assistance", desc: "Get investment ready", color: "emerald" },
-                                { href: "/startup-services", icon: Target, title: "Strategic Advisory", desc: "Expert business consulting", color: "purple" },
-                                { href: "/services/trademark-registration", icon: Scale, title: "IPR & Trademarks", desc: "Protect your brand & IP", color: "blue" },
-                                { href: "/business/virtual-cfo", icon: BarChart3, title: "Virtual CFO", desc: "P&L & runway tracking", color: "indigo" },
-                              ].map((item, idx) => {
-                                const Icon = item.icon as any;
-                                return (
-                                  <li key={idx}>
-                                    <Link
-                                      href={item.href}
-                                      onMouseEnter={() => preloadOnHover(item.href)}
-                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                    >
-                                      <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
-                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                      )}>
-                                        <Icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                      </div>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-
-                          <div>
-                            <div className="flex items-center gap-4 mb-6 px-0.5">
-                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
-                                <FileText className="w-5 h-5" />
-                              </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Compliance</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Stay Legal</p>
-                              </div>
-                            </div>
-                            <ul className="space-y-4">
-                              {[
-                                { href: "/services/startup-india-registration", icon: Zap, title: "Startup India", desc: "DPIIT recognition & tax perks", color: "purple" },
-                                { href: "/services/gst-returns", icon: Receipt, title: "GST Returns", desc: "GSTR-1, 3B & annual filing", color: "emerald" },
-                                { href: "/documents/generator", icon: FileCheck, title: "Legal Documents", desc: "Agreements & contracts", color: "blue" },
-                                { href: "/services/tax-planning", icon: PieChart, title: "Tax Planning", desc: "Expert advisory for startups", color: "orange" },
-                              ].map((item, idx) => {
-                                const Icon = item.icon as any;
-                                return (
-                                  <li key={idx}>
-                                    <Link
-                                      href={item.href}
-                                      onMouseEnter={() => preloadOnHover(item.href)}
-                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                    >
-                                      <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
-                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                      )}>
-                                        <Icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                      </div>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-                        </div>
-
-                        {/* Sidebar */}
-                        <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
-                          <div className="flex-1">
-                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Spotlight</h5>
-                            <Link href="/services/startup-india-registration" className="block group relative">
-                              <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-purple-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-purple-50/80 to-white border border-purple-100/50 backdrop-blur-sm">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-400/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-                                <div className="relative z-10">
-                                  <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
-                                      <Zap className="w-4 h-4 fill-white/20" />
-                                    </div>
-                                    <span className="text-[10px] font-black text-purple-600 uppercase tracking-widest">Startup India</span>
-                                  </div>
-                                  <h6 className="text-xl font-black text-slate-900 leading-tight mb-2">Get DPIIT Recognition</h6>
-                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Avail 3 years of tax exemption and capital gains benefits.</p>
-                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
-                                    Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                                  </div>
+                       <div className="w-[720px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
+                          <div className="flex-1 p-6 grid grid-cols-2 gap-8 bg-white">
+                             <div>
+                                <div className="flex items-center gap-4 mb-6 px-0.5">
+                                   <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
+                                      <Rocket className="w-5 h-5" />
+                                   </div>
+                                   <div>
+                                      <h4 className="font-black text-slate-900 tracking-tight text-sm">Launch</h4>
+                                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 Support</p>
+                                   </div>
                                 </div>
-                              </div>
-                            </Link>
+                                <ul className="space-y-4">
+                                   {[
+                                     { href: "/startup/registration", icon: Building2, title: "Entity Registration", desc: "Incorporate your company", color: "purple" },
+                                     { href: "/services/gst-registration", icon: Stamp, title: "Essential Licenses", desc: "GST, MSME & Shop Act", color: "blue" }
+                                   ].map((item, idx) => {
+                                     const Icon = item.icon as any;
+                                     return (
+                                       <li key={idx}>
+                                         <Link 
+                                           href={item.href} 
+                                           onMouseEnter={() => preloadOnHover(item.href)}
+                                           className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                         >
+                                           <div className={cn(
+                                             "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                             item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
+                                             item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
+                                           )}>
+                                             <Icon className="w-5 h-5" />
+                                           </div>
+                                           <div>
+                                             <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                             <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                           </div>
+                                         </Link>
+                                       </li>
+                                     );
+                                   })}
+                                </ul>
+                             </div>
+                             
+                             <div>
+                                <div className="flex items-center gap-4 mb-6 px-0.5">
+                                   <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
+                                       <TrendingUp className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                       <h4 className="font-black text-slate-900 tracking-tight text-sm">Scale</h4>
+                                       <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth Engine</p>
+                                    </div>
+                                 </div>
+                                <ul className="space-y-4">
+                                   {[
+                                     { href: "/startup/funding", icon: Coins, title: "Funding Assistance", desc: "Get investment ready", color: "emerald" },
+                                     { href: "/startup-services", icon: Target, title: "Strategic Advisory", desc: "Expert business consulting", color: "purple" }
+                                   ].map((item, idx) => {
+                                     const Icon = item.icon as any;
+                                     return (
+                                       <li key={idx}>
+                                         <Link href={item.href} className="group flex items-center gap-4 p-2.5 -ml-2 rounded-xl hover:bg-slate-50 transition-all duration-300">
+                                           <div className={cn(
+                                             "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-sm",
+                                             item.color === "emerald" && "bg-emerald-50 text-emerald-500",
+                                             item.color === "purple" && "bg-purple-50 text-purple-500"
+                                           )}>
+                                             <Icon className="w-5 h-5" />
+                                           </div>
+                                           <div>
+                                             <span className="block text-sm font-bold text-slate-800 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                             <span className="block text-[11px] text-slate-500 font-medium">{item.desc}</span>
+                                           </div>
+                                         </Link>
+                                       </li>
+                                     );
+                                   })}
+                                </ul>
+                             </div>
                           </div>
-                          <div className="mt-8 pt-6 border-t border-slate-200/60">
-                            <Link href="/startup-services" className="inline-flex items-center gap-2 text-xs font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest group">
-                              Explore Hub <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                          
+                          {/* Sidebar */}
+                          <div className="w-64 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
+                             <div className="flex-1">
+                                <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Spotlight</h5>
+                                <div className="bg-gradient-to-br from-purple-50/80 to-white rounded-2xl p-6 shadow-xl shadow-purple-100/50 relative overflow-hidden group border border-purple-100/50">
+                                   <div className="absolute top-0 right-0 w-24 h-24 bg-purple-400/10 rounded-full -mr-8 -mt-8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                                   <div className="relative z-10">
+                                      <div className="flex items-center gap-2 mb-3">
+                                         <Zap className="w-4 h-4 text-purple-600 fill-purple-600/20" />
+                                         <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider">Startup India</span>
+                                      </div>
+                                      <h6 className="font-black text-slate-900 text-lg mb-2">Get Recognition</h6>
+                                      <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Avail 3 years of tax exemption and capital gains benefits.</p>
+                                      <Link href="/contact" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
+                                         Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                      </Link>
+                                   </div>
+                                </div>
+                             </div>
+                             
+                             <div className="mt-8 pt-6 border-t border-slate-200/60">
+                               <Link href="/startup-services" className="inline-flex items-center gap-2 text-xs font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest group">
+                                 Explore Hub <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                               </Link>
+                             </div>
                           </div>
-                        </div>
-                      </div>
+                       </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
 
@@ -624,172 +564,188 @@ export default function Header() {
                     </div>
                     <NavigationMenuContent>
                       <div className="w-[1024px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
-                        {/* Main Categories */}
+                        {/* Main Categories — 3 columns */}
                         <div className="flex-1 p-6 grid grid-cols-3 gap-8 bg-white">
-                          <div>
-                            <div className="flex items-center gap-4 mb-6 px-0.5">
-                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
-                                <Landmark className="w-5 h-5" />
+                           {/* Column 1: Tax Calculators */}
+                           <div>
+                              <div className="flex items-center gap-4 mb-6 px-0.5">
+                                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
+                                  <Landmark className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
+                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Compliance Hub</p>
+                                </div>
                               </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Income Tax</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Compliance Hub</p>
-                              </div>
-                            </div>
-                            <ul className="space-y-4">
-                              {[
-                                { href: "/calculators/income-tax", icon: Calculator, title: "Tax Calculator", desc: "New vs Old Regime Analysis", color: "emerald" },
-                                { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
-                                { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "orange" },
-                                { href: "/calculators/advance-tax", icon: Receipt, title: "Advance Tax", desc: "Quarterly tax estimates", color: "indigo" },
-                              ].map((item, idx) => {
-                                const Icon = item.icon as any;
-                                return (
-                                  <li key={idx}>
-                                    <Link
-                                      href={item.href}
-                                      onMouseEnter={() => preloadOnHover(item.href)}
-                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                    >
-                                      <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                      )}>
-                                        <Icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                      </div>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
+                             <ul className="space-y-4">
+                               {[
+                                 { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "New vs Old Regime Analysis", color: "emerald" },
+                                 { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
+                                 { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction on salary & more", color: "orange" },
+                                 { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" },
+                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" }
+                               ].map((item, idx) => {
+                                 const Icon = item.icon as any;
+                                 return (
+                                   <li key={idx}>
+                                     <Link
+                                       href={item.href}
+                                       onMouseEnter={() => preloadOnHover(item.href)}
+                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                     >
+                                       <div className={cn(
+                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
+                                       )}>
+                                         <Icon className="w-5 h-5" />
+                                       </div>
+                                       <div>
+                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                       </div>
+                                     </Link>
+                                   </li>
+                                 );
+                               })}
+                             </ul>
+                           </div>
 
-                          <div>
-                            <div className="flex items-center gap-4 mb-6 px-0.5">
-                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
-                                <LineChart className="w-5 h-5" />
+                           {/* Column 2: Investment & Savings */}
+                           <div>
+                              <div className="flex items-center gap-4 mb-6 px-0.5">
+                                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
+                                    <PiggyBank className="w-5 h-5" />
+                                 </div>
+                                 <div>
+                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
+                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
+                                 </div>
                               </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Investment</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
-                              </div>
-                            </div>
-                            <ul className="space-y-4">
-                              {[
-                                { href: "/calculators/sip", icon: Coins, title: "SIP Calculator", desc: "Plan mutual fund returns", color: "orange" },
-                                { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
-                                { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit maturity", color: "emerald" },
-                                { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public provident fund returns", color: "blue" },
-                              ].map((item, idx) => {
-                                const Icon = item.icon as any;
-                                return (
-                                  <li key={idx}>
-                                    <Link
-                                      href={item.href}
-                                      onMouseEnter={() => preloadOnHover(item.href)}
-                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                    >
-                                      <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                      )}>
-                                        <Icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                      </div>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
+                             <ul className="space-y-4">
+                               {[
+                                 { href: "/calculators/sip", icon: Coins, title: "SIP Calculator", desc: "Plan mutual fund returns", color: "orange" },
+                                 { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
+                                 { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public Provident Fund growth", color: "emerald" },
+                                 { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit returns", color: "blue" },
+                                 { href: "/elss-comparator", icon: LineChart, title: "ELSS Comparator", desc: "Compare tax saving funds", color: "orange" }
+                               ].map((item, idx) => {
+                                 const Icon = item.icon as any;
+                                 return (
+                                   <li key={idx}>
+                                     <Link
+                                       href={item.href}
+                                       onMouseEnter={() => preloadOnHover(item.href)}
+                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                     >
+                                       <div className={cn(
+                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
+                                       )}>
+                                         <Icon className="w-5 h-5" />
+                                       </div>
+                                       <div>
+                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                       </div>
+                                     </Link>
+                                   </li>
+                                 );
+                               })}
+                             </ul>
+                           </div>
 
-                          <div>
-                            <div className="flex items-center gap-4 mb-6 px-0.5">
-                              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
-                                <Wallet className="w-5 h-5" />
+                           {/* Column 3: Loan & EMI */}
+                           <div>
+                              <div className="flex items-center gap-4 mb-6 px-0.5">
+                                 <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100/50">
+                                    <Wallet className="w-5 h-5" />
+                                 </div>
+                                 <div>
+                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
+                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
+                                 </div>
                               </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Loans & More</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Smart Decisions</p>
-                              </div>
-                            </div>
-                            <ul className="space-y-4">
-                              {[
-                                { href: "/calculators/emi", icon: Banknote, title: "EMI Calculator", desc: "Monthly instalment planner", color: "purple" },
-                                { href: "/calculators/home-loan", icon: Home, title: "Home Loan", desc: "Housing loan EMI & interest", color: "blue" },
-                                { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction at source rates", color: "emerald" },
-                                { href: "/calculators/general", icon: Grid, title: "General Calculator", desc: "All-purpose calculator", color: "indigo" },
-                              ].map((item, idx) => {
-                                const Icon = item.icon as any;
-                                return (
-                                  <li key={idx}>
-                                    <Link
-                                      href={item.href}
-                                      onMouseEnter={() => preloadOnHover(item.href)}
-                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                    >
-                                      <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
-                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                      )}>
-                                        <Icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                      </div>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
+                             <ul className="space-y-4">
+                               {[
+                                 { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
+                                 { href: "/calculators/home-loan", icon: Home, title: "Home Loan EMI", desc: "Housing loan planning", color: "blue" },
+                                 { href: "/calculators/car-loan", icon: Wallet, title: "Car Loan EMI", desc: "Vehicle finance planner", color: "indigo" },
+                                 { href: "/calculators/personal-loan", icon: Banknote, title: "Personal Loan", desc: "Unsecured loan EMI", color: "emerald" },
+                                 { href: "/calculators/education-loan", icon: FileText, title: "Education Loan", desc: "Study loan repayment", color: "orange" }
+                               ].map((item, idx) => {
+                                 const Icon = item.icon as any;
+                                 return (
+                                   <li key={idx}>
+                                     <Link
+                                       href={item.href}
+                                       onMouseEnter={() => preloadOnHover(item.href)}
+                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                     >
+                                       <div className={cn(
+                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100"
+                                       )}>
+                                         <Icon className="w-5 h-5" />
+                                       </div>
+                                       <div>
+                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                       </div>
+                                     </Link>
+                                   </li>
+                                 );
+                               })}
+                             </ul>
+                           </div>
                         </div>
 
                         {/* Sidebar */}
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
-                          <div className="flex-1">
-                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
-                            <Link href="/tax-assistant" className="block group relative">
-                              <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-emerald-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-emerald-50/80 to-white border border-emerald-100/50 backdrop-blur-sm">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-                                <div className="relative z-10">
-                                  <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                                      <Bot className="w-4 h-4" />
+                           <div className="flex-1">
+                              <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
+                              <Link href="/tax-assistant" className="block group">
+                                 <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-1">
+                                    <div className="flex items-center gap-3 mb-3">
+                                       <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                          <Bot className="w-4 h-4" />
+                                       </div>
+                                       <span className="text-[10px] font-black text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
                                     </div>
-                                    <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">AI Tax Buddy</span>
-                                  </div>
-                                  <h6 className="text-xl font-black text-slate-900 leading-tight mb-2">Smart Tax Answers</h6>
-                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Instant ITR filing help & tax-saving tips from AI.</p>
-                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-emerald-200/50">
-                                    Talk to AI <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                                  </div>
-                                </div>
+                                    <p className="text-[11px] text-slate-500 leading-relaxed mb-4">Get instant answers for ITR filing & tax savings.</p>
+                                    <span className="inline-flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
+                                 </div>
+                              </Link>
+
+                              <div className="mt-6 space-y-1">
+                                <Link href="/calculators/general" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
+                                   <Grid className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                                   <span className="text-xs font-bold text-slate-600">General Calculator</span>
+                                </Link>
+                                <Link href="/calculators/hsn-finder" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
+                                   <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
+                                   <span className="text-xs font-bold text-slate-600">HSN/SAC Finder</span>
+                                </Link>
+                                <Link href="/form16-parser" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
+                                   <FileText className="w-4 h-4 text-slate-400 group-hover:text-orange-600" />
+                                   <span className="text-xs font-bold text-slate-600">Form 16 Parser</span>
+                                </Link>
                               </div>
-                            </Link>
-                          </div>
-                          <div className="mt-8 pt-6 border-t border-slate-200/60">
-                            <Link href="/calculators" className="inline-flex items-center gap-2 text-xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
-                              All Tools <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                          </div>
+                           </div>
+
+                           <div className="mt-8 pt-6 border-t border-slate-200/60">
+                             <Link href="/calculators" className="inline-flex items-center gap-2 text-xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
+                               All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                             </Link>
+                           </div>
                         </div>
                       </div>
                     </NavigationMenuContent>
@@ -838,7 +794,7 @@ export default function Header() {
                             {getInitials()}
                           </div>
                           <span className="hidden sm:inline text-xs font-bold text-slate-700">
-                            {user?.firstName}
+                             {user?.email === 'cajsuthar@gmail.com' ? 'J. Suthar' : user?.firstName}
                           </span>
                         </Button>
                       </DropdownMenuTrigger>
@@ -850,7 +806,7 @@ export default function Header() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="text-sm font-black text-slate-900 truncate">
-                              {[user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || user?.email}
+                                {user?.email === 'cajsuthar@gmail.com' ? 'Jitender Suthar' : `${user?.firstName} ${user?.lastName}`}
                               </span>
                               <span className="text-[10px] font-medium text-slate-500 truncate mt-0.5">
                                 {user?.email}
@@ -1010,10 +966,27 @@ export default function Header() {
                                  Calculators
                               </AccordionTrigger>
                               <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                                 <div className="grid grid-cols-1 gap-2">
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tax</p>
+                                 <div className="grid grid-cols-1 gap-1 mb-3">
                                     <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax Calculator</Link>
+                                    <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Exemption</Link>
+                                    <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
+                                    <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
+                                    <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
+                                 </div>
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Investment</p>
+                                 <div className="grid grid-cols-1 gap-1 mb-3">
                                     <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
-                                    <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Calculator</Link>
+                                    <Link href="/calculators/nps" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">NPS Calculator</Link>
+                                    <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
+                                    <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
+                                 </div>
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
+                                 <div className="grid grid-cols-1 gap-1">
+                                    <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
+                                    <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Home Loan EMI</Link>
+                                    <Link href="/calculators/car-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Car Loan EMI</Link>
+                                    <Link href="/calculators/personal-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Personal Loan</Link>
                                  </div>
                               </AccordionContent>
                            </AccordionItem>
