@@ -17,6 +17,7 @@ import {
 import SEO from "@/components/SEO";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
 import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, sanitizeFilename, formatFileSize } from "@/lib/file_utils";
+import { getAuthToken } from "@/lib/authToken";
 import { storage, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
@@ -124,12 +125,13 @@ export default function DocumentsPage() {
       });
       
       const downloadUrl = await getDownloadURL(uploadResult.ref);
+      const token = await getAuthToken();
       
       const response = await fetch("/api/documents/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           name: uploadData.name || file.name,

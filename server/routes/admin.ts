@@ -1,7 +1,12 @@
 import { Router, Response } from 'express';
+import { z } from "zod";
 import { adminDb } from "../firebase-admin";
 import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth";
 import { convertTimestamp } from "../utils/firestore";
+import { validateRequest } from "../middleware/security";
+import { safeError } from "../utils/error-response";
+import { syncRoleClaims } from "../services/user-accounts";
+import { invalidateCachedUser } from "../utils/user-cache";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
@@ -9,6 +14,10 @@ const API_CONFIG = {
 };
 
 const router = Router();
+const updateUserRoleSchema = z.object({
+  role: z.enum(['user', 'admin', 'ca', 'team_member']).optional(),
+  status: z.enum(['active', 'inactive', 'pending', 'suspended', 'rejected']).optional(),
+});
 
 // ==================== USER MANAGEMENT ====================
 
@@ -72,25 +81,16 @@ router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         pagination: { page, limit, total, pages: Math.ceil(total / limit) }
       }
     });
-  } catch (error: any) {
-    console.error('Get users error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve users.',
-      error: error.message
-    });
+  } catch (error) {
+    return safeError(res, error, 'Failed to retrieve users.');
   }
 });
 
 // Update user role
-router.patch('/users/:id/role', requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {
+router.patch('/users/:id/role', requireAuth, requireAdmin, validateRequest(updateUserRoleSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { role, status } = req.body;
-
-    if (role && !['user', 'admin', 'ca', 'team_member'].includes(role)) {
-      return res.status(400).json({ success: false, message: 'Invalid role. Must be one of: admin, team_member, ca, user' });
-    }
 
     const userRef = adminDb.collection("users").doc(id);
     const doc = await userRef.get();
@@ -104,15 +104,18 @@ router.patch('/users/:id/role', requireAuth, requireAdmin, async (req: AuthReque
     if (status) updates.status = status;
 
     await userRef.update(updates);
+    if (role) {
+      await syncRoleClaims(id, role);
+    }
+    invalidateCachedUser(id);
 
     res.json({
       success: true,
-      message: `User role updated to ${role}`,
-      user: { id, ...doc.data(), role }
+      message: role ? `User role updated to ${role}` : 'User updated successfully',
+      user: { id, ...doc.data(), ...updates }
     });
-  } catch (error: any) {
-    console.error('Update role error:', error);
-    res.status(500).json({ success: false, message: 'Failed to update role', error: error.message });
+  } catch (error) {
+    return safeError(res, error, 'Failed to update role');
   }
 });
 
@@ -131,6 +134,7 @@ router.patch('/users/:id/assign-ca', requireAuth, requireAdmin, async (req: Auth
 
     const userRef = adminDb.collection("users").doc(id);
     await userRef.update({ assignedCaId: caId || null, updatedAt: new Date() });
+    invalidateCachedUser(id);
     const updatedUser = await userRef.get();
 
     res.json({
@@ -138,9 +142,8 @@ router.patch('/users/:id/assign-ca', requireAuth, requireAdmin, async (req: Auth
       message: caId ? 'CA assigned successfully' : 'CA unassigned successfully',
       user: { id, ...updatedUser.data() }
     });
-  } catch (error: any) {
-    console.error('Assign CA error:', error);
-    res.status(500).json({ success: false, message: 'Failed to assign CA', error: error.message });
+  } catch (error) {
+    return safeError(res, error, 'Failed to assign CA');
   }
 });
 
@@ -162,14 +165,14 @@ router.delete('/users/:id', requireAuth, requireAdmin, async (req: AuthRequest, 
     }
 
     await userRef.update({ status: 'inactive', updatedAt: new Date() });
+    invalidateCachedUser(id);
 
     res.json({
       success: true,
       message: 'User deactivated successfully.'
     });
-  } catch (error: any) {
-    console.error('Delete user error:', error);
-    res.status(500).json({ success: false, message: 'Failed to deactivate user', error: error.message });
+  } catch (error) {
+    return safeError(res, error, 'Failed to deactivate user');
   }
 });
 

@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 // import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { getAuthToken } from "@/lib/authToken";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Gift, Users, Share2, TrendingUp, Star, Crown,
@@ -175,11 +176,12 @@ export default function ReferralsPage() {
   // Bulk import mutation
   const bulkImportMutation = useMutation({
     mutationFn: async (formData: FormData) => {
+      const token = await getAuthToken();
       const response = await fetch("/api/referrals/bulk-import", {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         }
       });
       if (!response.ok) {

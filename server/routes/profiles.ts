@@ -1,12 +1,49 @@
 import { Router, Response } from "express";
 import { z } from "zod";
-import { insertProfileSchema } from "../../shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { adminDb } from "../firebase-admin";
+import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption";
+import { safeError } from "../utils/error-response";
 
 const router = Router();
+const profileCreateSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  relation: z.string().trim().min(1).max(50).default("self"),
+  pan: z.string().trim().toUpperCase().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/).optional().or(z.literal("")),
+  aadhaar: z.string().trim().regex(/^[0-9]{12}$/).optional().or(z.literal("")),
+  dateOfBirth: z.string().trim().max(50).optional().or(z.literal("")),
+  address: z.string().trim().max(500).optional().or(z.literal("")),
+  isActive: z.boolean().optional().default(true),
+});
 
-// GET /api/profiles - list profiles for current user
+const profileUpdateSchema = profileCreateSchema.partial();
+
+function serializeProfile(docId: string, data: Record<string, any>) {
+  const pan = decryptPII(data.pan);
+  const aadhaar = decryptPII(data.aadhaar);
+
+  return {
+    id: docId,
+    ...data,
+    pan: maskPan(pan),
+    aadhaar: maskAadhaar(aadhaar),
+  };
+}
+
+function normalizeOptionalString(value?: string | null) {
+  if (typeof value !== "string") {
+    return value ?? null;
+  }
+
+  return value.trim() ? value.trim() : null;
+}
+
+function omitUndefined<T extends Record<string, any>>(value: T) {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, entryValue]) => entryValue !== undefined),
+  ) as Partial<T>;
+}
+
 router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   const auth = req.auth;
   if (!auth?.userId) {
@@ -17,16 +54,14 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     const snapshot = await adminDb.collection("profiles")
       .where("userId", "==", auth.userId)
       .get();
-    
-    const profiles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const profiles = snapshot.docs.map((doc) => serializeProfile(doc.id, doc.data() as Record<string, any>));
     res.json(profiles);
   } catch (error) {
-    console.error("[PROFILES] Fetch error:", error);
-    res.status(500).json({ error: "Failed to fetch profiles" });
+    return safeError(res, error, "Failed to fetch profiles");
   }
 });
 
-// POST /api/profiles - create a new profile for current user
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
@@ -34,28 +69,29 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    // Validate body
-    const data = insertProfileSchema.parse(req.body);
-
+    const data = profileCreateSchema.parse(req.body);
     const profileRef = adminDb.collection("profiles").doc();
     const newProfile = {
       ...data,
       userId: auth.userId,
+      pan: data.pan ? encryptPII(data.pan) : null,
+      aadhaar: data.aadhaar ? encryptPII(data.aadhaar) : null,
+      dateOfBirth: normalizeOptionalString(data.dateOfBirth),
+      address: normalizeOptionalString(data.address),
       createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     await profileRef.set(newProfile);
-    res.json({ id: profileRef.id, ...newProfile });
+    res.json(serializeProfile(profileRef.id, newProfile));
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
     }
-    console.error("[PROFILES] Create error:", error);
-    res.status(500).json({ error: "Failed to create profile" });
+    return safeError(res, error, "Failed to create profile");
   }
 });
 
-// PATCH /api/profiles/:id - update an existing profile
 router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
@@ -71,20 +107,39 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
       return res.status(404).json({ error: "Profile not found" });
     }
 
-    const updateData = insertProfileSchema.partial().parse(req.body);
-    await profileRef.update({
+    const updateData = profileUpdateSchema.parse(req.body);
+    const existingData = doc.data()!;
+    const finalUpdate = {
       ...updateData,
+      pan: updateData.pan
+        ? encryptPII(updateData.pan)
+        : updateData.pan === ""
+          ? existingData.pan ?? null
+          : undefined,
+      aadhaar: updateData.aadhaar
+        ? encryptPII(updateData.aadhaar)
+        : updateData.aadhaar === ""
+          ? existingData.aadhaar ?? null
+          : undefined,
+      dateOfBirth:
+        updateData.dateOfBirth !== undefined
+          ? normalizeOptionalString(updateData.dateOfBirth)
+          : undefined,
+      address:
+        updateData.address !== undefined
+          ? normalizeOptionalString(updateData.address)
+          : undefined,
       updatedAt: new Date(),
-    });
+    };
 
+    await profileRef.update(omitUndefined(finalUpdate));
     const updatedDoc = await profileRef.get();
-    res.json({ id: updatedDoc.id, ...updatedDoc.data() });
+    res.json(serializeProfile(updatedDoc.id, updatedDoc.data() as Record<string, any>));
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
     }
-    console.error("[PROFILES] Update error:", error);
-    res.status(500).json({ error: "Failed to update profile" });
+    return safeError(res, error, "Failed to update profile");
   }
 });
 

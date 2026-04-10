@@ -144,8 +144,7 @@ export function Layout({ children, title = 'Admin Panel' }: LayoutProps) {
             <div className="flex items-center gap-4">
                <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors">
                   <span className="text-sm font-bold text-slate-600">
-                    {user?.email === 'cajsuthar@gmail.com' ? 'JS' : 
-                     (user?.firstName && user?.lastName ? `${user.firstName[0]}${user.lastName[0]}` : 
+                    {(user?.firstName && user?.lastName ? `${user.firstName[0]}${user.lastName[0]}` : 
                       user?.firstName ? user.firstName[0] : 'U').toUpperCase()}
                   </span>
                </div>

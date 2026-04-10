@@ -6,6 +6,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { compressImage, getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, sanitizeFilename } from "@/lib/file_utils";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
+import { getAuthToken } from "@/lib/authToken";
 import { storage, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -127,13 +128,14 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
         });
         
         const downloadUrl = await getDownloadURL(uploadResult.ref);
+        const token = await getAuthToken();
 
         // Notify API of the new document
         await fetch("/api/documents/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
             name: docName,

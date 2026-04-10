@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getAuthToken } from "@/lib/authToken";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -14,11 +15,8 @@ export async function apiRequest(
     body?: string;
   }
 ): Promise<Response> {
-  const token = sessionStorage.getItem("token");
-  const mockRole = localStorage.getItem("mock_role") || "user";
-  const headers: HeadersInit = {
-    "x-mock-role": mockRole
-  };
+  const token = await getAuthToken();
+  const headers: HeadersInit = {};
   
   if (options?.body) {
     headers["Content-Type"] = "application/json";
@@ -46,11 +44,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const token = sessionStorage.getItem("token");
-    const mockRole = localStorage.getItem("mock_role") || "user";
-    const headers: HeadersInit = {
-      "x-mock-role": mockRole
-    };
+    const token = await getAuthToken();
+    const headers: HeadersInit = {};
     
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;

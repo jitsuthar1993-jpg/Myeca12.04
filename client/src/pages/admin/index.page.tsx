@@ -72,7 +72,7 @@ export default function AdminDashboard() {
     },
   });
 
-  const isMainAdmin = user?.email === 'cajsuthar@gmail.com';
+  const isMainAdmin = user?.role === 'admin';
 
   if (error) {
     return (
@@ -111,10 +111,10 @@ export default function AdminDashboard() {
            <div className="relative bg-white/60 backdrop-blur-3xl border border-white p-10 rounded-[32px] flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div>
                 <Badge className="bg-blue-100 text-blue-700 border-0 font-black px-4 py-1 mb-4 rounded-full uppercase tracking-widest text-[10px]">
-                  {isMainAdmin ? 'Super Admin Control' : 'Administrator'}
+                      {isMainAdmin ? 'Admin Control' : 'Administrator'}
                 </Badge>
                 <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">
-                  Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{isMainAdmin ? 'J. Suthar' : (user?.firstName && user.firstName !== 'User' ? user.firstName : 'Administrator')}</span>
+                    Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{user?.firstName && user.firstName !== 'User' ? user.firstName : 'Administrator'}</span>
                 </h2>
                 <p className="text-[15px] text-slate-500 font-medium max-w-xl">
                   You are viewing the <span className="text-slate-900 font-bold">CA Management Dashboard</span>. 

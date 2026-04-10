@@ -26,6 +26,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getAuthToken } from "@/lib/authToken";
 
 const profileFormSchema = insertProfileSchema.extend({
   pan: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Invalid PAN format").optional().or(z.literal("")),
@@ -169,11 +170,12 @@ export default function ProfilesPage() {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("profileId", profileId.toString());
+      const token = await getAuthToken();
 
       await fetch("/api/documents/upload", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: formData,
       });

@@ -12,17 +12,13 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isAuthenticated() && (
-        getUserData().role == 'admin' || 
-        request.auth.token.email == 'cajsuthar@gmail.com'
-      );
+      return isAuthenticated() && request.auth.token.admin == true;
     }
     
     function isTeamMember() {
       return isAuthenticated() && (
-        getUserData().role == 'team_member' || 
-        getUserData().role == 'admin' ||
-        request.auth.token.email == 'jitender.kingofcage.suthar@gmail.com'
+        request.auth.token.team_member == true ||
+        request.auth.token.admin == true
       );
     }
     
