@@ -4,86 +4,60 @@ import { Calendar, User, ArrowRight, Search, Tag, Clock, Rocket, Sparkles, Trend
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ShareButtons from "@/components/ShareButtons";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Loader2 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
-import { blogPosts as staticBlogPosts } from "@/data/blogPosts";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    scale: 1,
-    transition: { type: "spring", stiffness: 100, damping: 15 }
-  }
-};
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [page, setPage] = useState(1);
+  const POSTS_PER_PAGE = 12;
 
   const { data: postsData, isLoading: isLoadingPosts } = useQuery({
-    queryKey: ["public-blogs"],
+    queryKey: ["public-blogs", page, selectedCategory, searchQuery],
     queryFn: async () => {
-      const res = await fetch("/api/public/blogs");
-      const contentType = res.headers.get("content-type") || "";
-      if (!res.ok || !contentType.includes("application/json")) {
-        return { posts: [] };
-      }
-      return await res.json() as { posts: any[] };
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(POSTS_PER_PAGE),
+      });
+      if (selectedCategory !== "All") params.set("category", selectedCategory);
+      if (searchQuery) params.set("search", searchQuery);
+
+      const res = await fetch(`/api/public/blogs?${params}`);
+      if (!res.ok) throw new Error("Failed to fetch blogs");
+      return await res.json() as { posts: any[]; total: number; page: number; hasMore: boolean };
     },
+    placeholderData: (prev) => prev,
   });
 
   const { data: categoriesData } = useQuery({
     queryKey: ["public-categories"],
     queryFn: async () => {
       const res = await fetch("/api/public/categories");
-      const contentType = res.headers.get("content-type") || "";
-      if (!res.ok || !contentType.includes("application/json")) {
-        return { categories: [] };
-      }
+      if (!res.ok) throw new Error("Failed to fetch categories");
       return await res.json() as { categories: any[] };
     },
   });
 
-  // Use API data if available, otherwise fall back to static blog posts
-  const apiPosts = postsData?.posts || [];
-  const dbPosts = apiPosts.length > 0 ? apiPosts : staticBlogPosts.map(post => ({
-    ...post,
-    author: typeof post.author === "string"
-      ? { firstName: post.author.split(" ").slice(0, -1).join(" "), lastName: post.author.split(" ").slice(-1)[0] }
-      : post.author,
-    featuredImage: post.image,
-  }));
+  const filteredPosts = postsData?.posts || [];
+  const hasMore = postsData?.hasMore ?? false;
   const dbCategories = ["All", "Direct Tax", "GST", "New", "Updates", "Others"];
 
-  const filteredPosts = useMemo(() => {
-    return dbPosts.filter((post: any) => {
-      const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (post.excerpt || "").toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [dbPosts, searchQuery, selectedCategory]);
+  const handleSearch = useCallback(() => {
+    setSearchQuery(searchInput);
+    setPage(1);
+  }, [searchInput]);
 
-  const featuredPost = filteredPosts[0];
-  const regularPosts = filteredPosts.slice(1);
+  const handleCategoryChange = useCallback((category: string) => {
+    setSelectedCategory(category);
+    setPage(1);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white pb-32">
@@ -126,11 +100,13 @@ export default function BlogPage() {
               <Input
                 className="bg-transparent border-none text-slate-900 text-base h-12 focus-visible:ring-0 placeholder:text-slate-400 px-4 font-medium"
                 placeholder="Search financial intelligence..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
               />
-              <Button 
+              <Button
                 onClick={() => {
+                  handleSearch();
                   document.getElementById('blog-content')?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl h-10 px-6 font-black text-[10px] uppercase tracking-widest transition-all"
@@ -156,7 +132,7 @@ export default function BlogPage() {
               <m.button
                 key={category}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className={cn(
                   "px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 border whitespace-nowrap",
                   selectedCategory === category
@@ -189,22 +165,17 @@ export default function BlogPage() {
             <h3 className="text-xl font-bold text-slate-900 mb-2">No Insights Found</h3>
             <Button 
               variant="outline" 
-              onClick={() => { setSearchQuery(""); setSelectedCategory("All"); }}
+              onClick={() => { setSearchQuery(""); setSearchInput(""); setSelectedCategory("All"); setPage(1); }}
               className="mt-4 h-10 rounded-xl"
             >
               Reset Filters
             </Button>
           </m.div>
         ) : (
-          <m.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          >
-            {filteredPosts.map((post) => (
-              <m.div key={post.id} variants={itemVariants} className="group">
+          <>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredPosts.map((post: any) => (
+              <div key={post.id} className="group">
                 <Link href={`/blog/${post.slug}`}>
                   <Card className="h-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-500 cursor-pointer flex flex-col">
                     <div className="h-44 relative overflow-hidden bg-slate-50">
@@ -217,7 +188,7 @@ export default function BlogPage() {
                         </span>
                       </div>
                     </div>
-                    
+
                     <CardContent className="p-5 flex-grow flex flex-col">
                       <div className="flex items-center gap-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-4">
                         <span className="flex items-center gap-1.5">
@@ -225,15 +196,15 @@ export default function BlogPage() {
                           {post.readTime}
                         </span>
                       </div>
-                      
+
                       <h3 className="text-lg font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                         {post.title}
                       </h3>
-                      
+
                       <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6 line-clamp-2">
                         {post.excerpt}
                       </p>
-                      
+
                       <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
                          <div className="flex items-center gap-2">
                             <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-black text-[8px] border border-slate-200">
@@ -246,9 +217,31 @@ export default function BlogPage() {
                     </CardContent>
                   </Card>
                 </Link>
-              </m.div>
+              </div>
             ))}
-          </m.div>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center gap-4 mt-12">
+            <Button
+              variant="outline"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="rounded-xl h-10 px-6 font-black text-[10px] uppercase tracking-widest"
+            >
+              Previous
+            </Button>
+            <span className="text-sm font-bold text-slate-500">Page {page}</span>
+            <Button
+              variant="outline"
+              onClick={() => setPage(p => p + 1)}
+              disabled={!hasMore}
+              className="rounded-xl h-10 px-6 font-black text-[10px] uppercase tracking-widest"
+            >
+              Next
+            </Button>
+          </div>
+          </>
         )}
       </div>
 
@@ -266,13 +259,9 @@ export default function BlogPage() {
             </div>
             
             <div className="relative z-10 max-w-3xl mx-auto">
-              <m.div 
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 6, repeat: Infinity }}
-                className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-8 border border-slate-200 shadow-sm"
-              >
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-8 border border-slate-200 shadow-sm">
                 <Rocket className="w-8 h-8" />
-              </m.div>
+              </div>
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
                 Secure Your <span className="text-blue-600 italic">Financial Sovereignty</span>
               </h2>

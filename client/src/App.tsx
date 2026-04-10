@@ -18,7 +18,7 @@ import { AuthProvider, useAuth } from "@/components/AuthProvider";
 import Routes from "./Routes";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import { SessionWarningModal } from "@/components/auth/SessionWarningModal";
-import { LazyMotion, domMax } from "framer-motion";
+import { LazyMotion, domAnimation } from "framer-motion";
 
 const UnifiedFAB = lazy(() => import("@/components/UnifiedFAB").then(m => ({ default: m.UnifiedFAB })));
 const GlobalSearch = lazy(() => import("@/components/search/GlobalSearch"));
@@ -148,7 +148,7 @@ function AppContent() {
   }, []);
 
   return (
-    <LazyMotion features={domMax} strict={false}>
+    <LazyMotion features={domAnimation} strict={false}>
       <Toaster />
       <Router />
       {import.meta.env.PROD && (

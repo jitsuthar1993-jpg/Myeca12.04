@@ -85,19 +85,19 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
       }
     };
 
-    // Activity listeners
-    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'mousemove'];
-    
+    // Activity listeners — only mousedown and keydown (fewer events, lower overhead)
+    const events = ['mousedown', 'keydown'] as const;
+
     const throttledReset = () => {
       const now = Date.now();
-      // Throttle activity resets to once every 2 seconds
-      if (now - lastActivityRef.current > 2000) {
+      // Throttle activity resets to once every 10 seconds
+      if (now - lastActivityRef.current > 10000) {
         resetSession();
       }
     };
 
-    events.forEach(event => window.addEventListener(event, throttledReset));
-    
+    events.forEach(event => window.addEventListener(event, throttledReset, { passive: true }));
+
     // Initial start
     startTimers();
 

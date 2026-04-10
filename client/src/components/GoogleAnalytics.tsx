@@ -20,25 +20,33 @@ export default function GoogleAnalytics() {
       return;
     }
 
-    // Load GA script
-    const script1 = document.createElement('script');
-    script1.async = true;
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script1);
+    // Defer GA loading until browser is idle to avoid blocking render
+    const initGA = () => {
+      const script1 = document.createElement('script');
+      script1.async = true;
+      script1.defer = true;
+      script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+      document.head.appendChild(script1);
 
-    // Initialize GA
-    window.dataLayer = window.dataLayer || [];
-    function gtag(...args: any[]) {
-      window.dataLayer.push(arguments);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args: any[]) {
+        window.dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+
+      gtag('js', new Date());
+      gtag('config', GA_MEASUREMENT_ID, {
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: location
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(initGA, { timeout: 3000 });
+    } else {
+      setTimeout(initGA, 2000);
     }
-    window.gtag = gtag;
-    
-    gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID, {
-      page_title: document.title,
-      page_location: window.location.href,
-      page_path: location
-    });
   }, []);
 
   // Track page views on route change
