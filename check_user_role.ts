@@ -4,7 +4,7 @@ dotenv.config();
 import { adminDb } from "./server/firebase-admin";
 
 async function checkUser() {
-  const email = "jitender.kingofcage.suthar@gmail.com";
+  const email = process.env.CHECK_EMAIL || "user@example.com";
   try {
     const snapshot = await adminDb.collection("users").where("email", "==", email).get();
     if (snapshot.empty) {

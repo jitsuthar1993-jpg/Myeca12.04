@@ -15,8 +15,7 @@ service firebase.storage {
       return isAuthenticated() && (
         getUserData().role == 'admin' || 
         getUserData().role == 'team_member' ||
-        request.auth.token.email == 'cajsuthar@gmail.com' ||
-        request.auth.token.email == 'jitender.kingofcage.suthar@gmail.com'
+        getUserData().role == 'ca'
       );
     }
 

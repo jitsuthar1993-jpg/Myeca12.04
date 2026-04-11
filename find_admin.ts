@@ -5,7 +5,7 @@ import { adminDb } from "./server/firebase-admin";
 
 async function findAdmin() {
   try {
-    const email = "cajsuthar@gmail.com";
+    const email = process.env.ADMIN_EMAILS?.split(',')[0] || "admin@example.com";
     const snapshot = await adminDb.collection("users").where("email", "==", email).get();
     
     if (snapshot.empty) {
@@ -16,7 +16,7 @@ async function findAdmin() {
           console.log(`Found alternative admin: ${allAdmins.docs[0].id} (${allAdmins.docs[0].data().email})`);
       }
     } else {
-      console.log(`Found Jitender: ${snapshot.docs[0].id}`);
+      console.log(`Found admin: ${snapshot.docs[0].id}`);
     }
   } catch (error: any) {
     console.error("Error finding admin:", error.message);

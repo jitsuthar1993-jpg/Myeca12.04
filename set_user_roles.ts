@@ -3,8 +3,8 @@ import { adminDb } from "./server/firebase-admin";
 
 async function setUserRoles() {
   const usersToUpdate = [
-    { email: "cajsuthar@gmail.com", role: "admin" },
-    { email: "jitender.kingofcage.suthar@gmail.com", role: "team_member" }
+    { email: process.env.ADMIN_EMAILS?.split(',')[0] || "admin@example.com", role: "admin" },
+    { email: process.env.TEAM_MEMBER_EMAILS?.split(',')[0] || "team@example.com", role: "team_member" }
   ];
 
   for (const user of usersToUpdate) {

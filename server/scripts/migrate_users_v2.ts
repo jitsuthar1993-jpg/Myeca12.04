@@ -108,7 +108,7 @@ async function migrate() {
   });
 
   // FORCE ADMIN for requested email
-  const adminEmail = "cajsuthar@gmail.com";
+  const adminEmail = process.env.ADMIN_EMAILS?.split(',')[0] || "admin@example.com";
   const existingAdmin = migrationMap.get(adminEmail);
   if (existingAdmin) {
     console.log(`Setting ${adminEmail} to ADMIN role.`);

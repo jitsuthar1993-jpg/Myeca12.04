@@ -36,7 +36,7 @@ const db = admin.firestore();
 
 async function findAdmin() {
   try {
-    const email = "cajsuthar@gmail.com";
+    const email = process.env.ADMIN_EMAILS?.split(',')[0] || "admin@example.com";
     console.log(`Searching for admin: ${email}`);
     const snapshot = await db.collection("users").where("email", "==", email).get();
     
