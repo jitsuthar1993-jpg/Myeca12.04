@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { getAuthToken } from "@/lib/authToken";
 import { cn } from "@/lib/utils";
 import {
   type BlogCategory,
@@ -162,13 +163,12 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
     try {
       const formData = new FormData();
       formData.append("image", file);
-      const token = localStorage.getItem("token");
-      const mockRole = localStorage.getItem("mock_role") || "admin";
+      const token = await getAuthToken();
       const response = await fetch("/api/cms/upload", {
         method: "POST",
         body: formData,
         credentials: "include",
-        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), "x-mock-role": mockRole },
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       });
       if (!response.ok) throw new Error("Upload failed");
       const data = await response.json();
@@ -288,9 +288,9 @@ export default function AdminBlog() {
   const { data: categoriesData } = useQuery<{ categories: BlogCategory[] }>({ queryKey: ["/api/cms/categories"], queryFn: async () => (await apiRequest("/api/cms/categories")).json() });
   const { data: detailData } = useQuery<{ post: CmsPost }>({ queryKey: ["/api/cms/posts", editingId], enabled: Boolean(dialogOpen && editingId), queryFn: async () => (await apiRequest(`/api/cms/posts/${editingId}`)).json() });
 
-  const createMutation = useMutation({ mutationFn: (payload: BlogPostEditorInput) => apiRequest("/api/cms/posts", { method: "POST", body: JSON.stringify(payload) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article created", description: "The article was saved to Firestore." }); setDialogOpen(false); setEditingId(null); } });
+  const createMutation = useMutation({ mutationFn: (payload: BlogPostEditorInput) => apiRequest("/api/cms/posts", { method: "POST", body: JSON.stringify(payload) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article created", description: "The article was saved to Neon." }); setDialogOpen(false); setEditingId(null); } });
   const updateMutation = useMutation({ mutationFn: (payload: BlogPostEditorInput) => apiRequest(`/api/cms/posts/${editingId}`, { method: "PUT", body: JSON.stringify(payload) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); if (editingId) await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts", editingId] }); toast({ title: "Article updated", description: "The article changes were saved." }); setDialogOpen(false); setEditingId(null); } });
-  const deleteMutation = useMutation({ mutationFn: (id: string) => apiRequest(`/api/cms/posts/${id}`, { method: "DELETE" }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article deleted", description: "The article was removed from Firestore." }); } });
+  const deleteMutation = useMutation({ mutationFn: (id: string) => apiRequest(`/api/cms/posts/${id}`, { method: "DELETE" }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article deleted", description: "The article was removed from Neon." }); } });
 
   const posts = postsData?.posts ?? [];
   const categories = categoriesData?.categories ?? [];
@@ -307,7 +307,7 @@ export default function AdminBlog() {
     <div className="min-h-screen bg-slate-50 px-6 py-8 lg:px-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div><p className="text-sm font-medium text-blue-700">Editorial CMS</p><h1 className="mt-2 text-4xl font-semibold tracking-tight text-slate-900">Blog articles</h1><p className="mt-3 text-slate-600">Manage the Firestore-backed editorial system, metadata, and preview flow.</p></div>
+          <div><p className="text-sm font-medium text-blue-700">Editorial CMS</p><h1 className="mt-2 text-4xl font-semibold tracking-tight text-slate-900">Blog articles</h1><p className="mt-3 text-slate-600">Manage the Neon-backed editorial system, metadata, and preview flow.</p></div>
           <Button className="rounded-full bg-blue-600 px-5 text-white hover:bg-blue-700" onClick={() => { setEditingId(null); setDialogOpen(true); }}><Plus className="mr-2 h-4 w-4" />New article</Button>
         </div>
 

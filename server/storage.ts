@@ -1,4 +1,4 @@
-import { adminDb } from "./firebase-admin";
+import { adminDb } from "./neon-admin";
 import { type User, type InsertUser, type Profile, type InsertProfile } from "../shared/schema";
 
 export const storage = {
@@ -31,7 +31,7 @@ export const storage = {
       updatedAt: new Date(),
     };
     await userRef.set(userData);
-    return { id, ...userData } as User;
+    return userData as User;
   },
 
   async updateUser(id: string, data: Partial<InsertUser>): Promise<User | null> {
@@ -71,6 +71,7 @@ export const storage = {
     
     if (snapshot.empty) return null;
     const profileRef = snapshot.docs[0].ref;
+    if (!profileRef) return null;
     await profileRef.update(data);
     return { ...snapshot.docs[0].data(), ...data } as Profile;
   },

@@ -114,7 +114,6 @@ export default function Header() {
 
   const getInitials = () => {
     if (!user) return 'U';
-    if (user.email === 'cajsuthar@gmail.com') return 'JS';
     if (user.firstName && user.lastName) {
       return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
     }
@@ -794,7 +793,7 @@ export default function Header() {
                             {getInitials()}
                           </div>
                           <span className="hidden sm:inline text-xs font-bold text-slate-700">
-                             {user?.email === 'cajsuthar@gmail.com' ? 'J. Suthar' : user?.firstName}
+                            {user?.firstName}
                           </span>
                         </Button>
                       </DropdownMenuTrigger>
@@ -806,7 +805,7 @@ export default function Header() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="text-sm font-black text-slate-900 truncate">
-                                {user?.email === 'cajsuthar@gmail.com' ? 'Jitender Suthar' : `${user?.firstName} ${user?.lastName}`}
+                              {[user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || user?.email}
                               </span>
                               <span className="text-[10px] font-medium text-slate-500 truncate mt-0.5">
                                 {user?.email}

@@ -27,6 +27,15 @@ const referrals = new Map<number, any>();
 const rewards = new Map<number, any>();
 const referralStats = new Map<number, any>();
 
+function getAppBaseUrl() {
+  const url =
+    process.env.APP_URL ||
+    process.env.VITE_APP_URL ||
+    (process.env.NODE_ENV === "production" ? "https://myeca.in" : "http://localhost:5000");
+
+  return url.replace(/\/+$/, "");
+}
+
 // Initialize demo data
 referrals.set(1, {
   id: 1,
@@ -229,9 +238,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       const userEmail = user.email;
       
       // Generate referral link
-      const baseUrl = process.env.NODE_ENV === "production" 
-        ? "https://myeca.in" 
-        : process.env.REPLIT_DOMAINS || "http://localhost:5000";
+      const baseUrl = getAppBaseUrl();
       const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${referralData.serviceType || 'all_services'}`;
       
       // Get discount based on service type
@@ -349,9 +356,7 @@ router.post("/generate-link", authenticateToken, async (req: Request, res: Respo
   const { serviceType = "all_services" } = req.body;
   
   const referralCode = `REF-${userId}-${Date.now().toString(36).toUpperCase()}`;
-  const baseUrl = process.env.NODE_ENV === "production" 
-    ? "https://myeca.in" 
-    : process.env.REPLIT_DOMAINS || "http://localhost:5000";
+  const baseUrl = getAppBaseUrl();
   
   const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${serviceType}`;
   
@@ -557,9 +562,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
 
             // Send email if requested
             if (req.body.sendEmails === 'true') {
-              const baseUrl = process.env.NODE_ENV === "production" 
-                ? "https://myeca.in" 
-                : process.env.REPLIT_DOMAINS || "http://localhost:5000";
+              const baseUrl = getAppBaseUrl();
               const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${serviceType}`;
               
               const discounts: Record<string, string> = {
@@ -804,9 +807,7 @@ router.post("/:referralId/send-reminder", authenticateToken, async (req: Request
     const userName = user.firstName || user.email;
     const userEmail = user.email;
     
-    const baseUrl = process.env.NODE_ENV === "production" 
-      ? "https://myeca.in" 
-      : process.env.REPLIT_DOMAINS || "http://localhost:5000";
+    const baseUrl = getAppBaseUrl();
     const referralLink = `${baseUrl}/signup?ref=${referral.referralCode}&service=${referral.serviceType}`;
     
     const discounts: Record<string, string> = {

@@ -1,5 +1,5 @@
 import { Router, Response } from "express";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { requireAuth, AuthRequest } from "../middleware/auth";
 import * as speakeasy from "speakeasy";
 import QRCode from "qrcode";
@@ -109,7 +109,7 @@ router.post("/disable", requireAuth, async (req: AuthRequest, res: Response) => 
   }
 });
 
-// Verify 2FA token during login (Legacy logic, Firebase Auth handles MFA usually)
+// Verify 2FA token during login for legacy app-owned TOTP flows.
 router.post("/login-verify", async (req: AuthRequest, res: Response) => {
   try {
     const { email, token } = req.body;

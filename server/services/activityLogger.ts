@@ -1,8 +1,8 @@
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import type { Request } from "express";
 
 export async function logActivity(
-  userId: string, // Changed to string for Firebase UID
+  userId: string,
   action: string,
   entity: string,
   entityId: string | null, // Changed to string

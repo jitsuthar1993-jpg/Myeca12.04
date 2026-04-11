@@ -5,13 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Chrome, Mail, Lock, ArrowRight, Loader2, AlertCircle, Smartphone } from "lucide-react";
-import { m, AnimatePresence } from "framer-motion";
+import { Chrome, Mail, Lock, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { m } from "framer-motion";
 import Logo from "@/components/ui/logo";
-import { getMultiFactorResolver, PhoneAuthProvider, PhoneMultiFactorGenerator, RecaptchaVerifier } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-
-import { logMfaAction } from "@/lib/audit";
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
@@ -20,9 +16,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mfaResolver, setMfaResolver] = useState<any>(null);
-  const [mfaCode, setMfaCode] = useState("");
-  const [mfaVerificationId, setMfaVerificationId] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,45 +25,7 @@ export default function LoginPage() {
       await login(email, password);
       setLocation("/dashboard");
     } catch (err: any) {
-      if (err.code === 'auth/multi-factor-auth-required') {
-        const resolver = getMultiFactorResolver(auth, err);
-        setMfaResolver(resolver);
-        
-        // Setup reCAPTCHA and send code
-        const verifier = new RecaptchaVerifier(auth, 'recaptcha-login-container', {
-          size: 'invisible'
-        });
-        
-        const phoneInfoOptions = {
-          multiFactorHint: resolver.hints[0],
-          session: resolver.session
-        };
-        
-        const phoneAuthProvider = new PhoneAuthProvider(auth);
-        const vId = await phoneAuthProvider.verifyPhoneNumber(phoneInfoOptions, verifier);
-        setMfaVerificationId(vId);
-      } else {
-        setError(err.message || "Failed to sign in. Please check your credentials.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMfaSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!mfaResolver || !mfaVerificationId) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const cred = PhoneAuthProvider.credential(mfaVerificationId, mfaCode);
-      const assertion = PhoneMultiFactorGenerator.assertion(cred);
-      await mfaResolver.resolveWithAssertion(assertion);
-      await logMfaAction('verify_success');
-      setLocation("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Invalid verification code.");
+      setError(err.message || "Failed to sign in. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -138,17 +93,11 @@ export default function LoginPage() {
                 </div>
               )}
               
-              <div id="recaptcha-login-container"></div>
-
-              <AnimatePresence mode="wait">
-                {!mfaResolver ? (
-                  <m.div 
-                    key="login-fields"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    className="space-y-4"
-                  >
+              <m.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-4"
+              >
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-slate-400">Email Address</Label>
                       <div className="relative">
@@ -201,62 +150,7 @@ export default function LoginPage() {
                         </span>
                       )}
                     </Button>
-                  </m.div>
-                ) : (
-                  <m.div 
-                    key="mfa-fields"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="space-y-4"
-                  >
-                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 text-blue-600 text-sm">
-                      <Smartphone className="w-4 h-4 mt-0.5 shrink-0" />
-                      <div>
-                        <p className="font-bold">Two-Factor Authentication</p>
-                        <p className="font-medium opacity-80 text-xs">Enter the 6-digit code sent to your primary device.</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="mfaCode" className="text-xs font-black uppercase tracking-widest text-slate-400">Verification Code</Label>
-                      <Input 
-                        id="mfaCode" 
-                        type="text" 
-                        placeholder="123456" 
-                        className="h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-black text-center text-2xl tracking-[0.5em]"
-                        value={mfaCode}
-                        onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        required
-                        disabled={loading}
-                        autoFocus
-                      />
-                    </div>
-
-                    <Button 
-                      type="button"
-                      onClick={handleMfaSubmit}
-                      className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-200 transition-all disabled:opacity-70"
-                      disabled={loading || mfaCode.length < 6}
-                    >
-                      {loading ? (
-                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                      ) : (
-                        "Verify & Sign In"
-                      )}
-                    </Button>
-                    
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => setMfaResolver(null)} 
-                      className="w-full text-slate-500"
-                      disabled={loading}
-                    >
-                      Back to Login
-                    </Button>
-                  </m.div>
-                )}
-              </AnimatePresence>
+              </m.div>
             </form>
 
             <div className="relative mt-8">
@@ -282,7 +176,7 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="bg-slate-50/50 border-t border-slate-100 py-4 px-8 justify-center">
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">
-              Secured by Google Firebase Authentication
+              Secured by Clerk Authentication
             </p>
           </CardFooter>
         </Card>

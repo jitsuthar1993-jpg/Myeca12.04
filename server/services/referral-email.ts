@@ -13,6 +13,15 @@ interface ReferralEmailData {
   expiryDate: string;
 }
 
+function getAppBaseUrl() {
+  const url =
+    process.env.APP_URL ||
+    process.env.VITE_APP_URL ||
+    (process.env.NODE_ENV === "production" ? "https://myeca.in" : "http://localhost:5000");
+
+  return url.replace(/\/+$/, "");
+}
+
 async function generateQRCode(url: string): Promise<string> {
   try {
     return await QRCode.toDataURL(url, {
@@ -49,6 +58,7 @@ async function sendEmail(to: string, subject: string, html: string, text?: strin
 export async function sendReferralInvitation(data: ReferralEmailData) {
   try {
     const qrCode = await generateQRCode(data.referralLink);
+    const referralsUrl = `${getAppBaseUrl()}/referrals`;
     
     // Send email to referee (the person being referred)
     const refereeEmailHtml = `
@@ -159,7 +169,7 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
           <p>Track this and all your referrals in your dashboard at any time.</p>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.REPLIT_DOMAINS || 'http://localhost:5000'}/referrals" style="display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 5px;">View My Referrals</a>
+            <a href="${referralsUrl}" style="display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 5px;">View My Referrals</a>
           </div>
         </div>
         
@@ -175,7 +185,7 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
       data.referrerEmail,
       `Referral sent to ${data.refereeName} - MyeCA.in`,
       referrerEmailHtml,
-      `Hi ${data.referrerName}, your referral to ${data.refereeName} has been sent successfully. They can use code ${data.referralCode} to get ${data.discount} off. Track your referrals at: ${process.env.REPLIT_DOMAINS || 'http://localhost:5000'}/referrals`
+      `Hi ${data.referrerName}, your referral to ${data.refereeName} has been sent successfully. They can use code ${data.referralCode} to get ${data.discount} off. Track your referrals at: ${referralsUrl}`
     );
 
     return { success: true };
@@ -240,6 +250,7 @@ export async function sendReferralReminder(data: ReferralEmailData) {
 }
 
 export async function sendReferralConversionNotification(referrerEmail: string, referrerName: string, refereeName: string, rewardAmount: number, serviceType: string) {
+  const referralsUrl = `${getAppBaseUrl()}/referrals`;
   const conversionHtml = `
     <!DOCTYPE html>
     <html>
@@ -274,7 +285,7 @@ export async function sendReferralConversionNotification(referrerEmail: string, 
         <p>Your reward is now available in your account and can be redeemed at any time. Keep referring to earn more!</p>
         
         <div style="text-align: center;">
-          <a href="${process.env.REPLIT_DOMAINS || 'http://localhost:5000'}/referrals" class="button">View My Rewards</a>
+          <a href="${referralsUrl}" class="button">View My Rewards</a>
         </div>
       </div>
       
@@ -290,6 +301,6 @@ export async function sendReferralConversionNotification(referrerEmail: string, 
     referrerEmail,
     `🎉 You've earned ₹${rewardAmount} - Referral successful!`,
     conversionHtml,
-    `Hi ${referrerName}, great news! ${refereeName} has successfully used your referral. You've earned ₹${rewardAmount}. View your rewards at: ${process.env.REPLIT_DOMAINS || 'http://localhost:5000'}/referrals`
+    `Hi ${referrerName}, great news! ${refereeName} has successfully used your referral. You've earned ₹${rewardAmount}. View your rewards at: ${referralsUrl}`
   );
 }

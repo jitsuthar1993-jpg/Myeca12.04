@@ -2,7 +2,7 @@ import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
 import fs from "fs";
 import path from "path";
-import { adminDb } from "./firebase-admin";
+import { adminDb } from "./neon-admin";
 import { authLimiter, adminLimiter, uploadLimiter } from "./middleware/rate-limits";
 import documentsRouter from "./routes/documents";
 import referralsRouter from "./routes/referrals";
@@ -12,7 +12,6 @@ import workflowsRouter from "./routes/workflows";
 import reportsRouter from "./routes/reports";
 import cmsRouter from "./routes/cms";
 import analyticsRouter from "./routes/analytics";
-import dbAdminRouter from "./routes/db-admin";
 import systemRouter from "./routes/system";
 import userRouter from "./routes/user";
 import profilesRouter from "./routes/profiles";
@@ -180,7 +179,7 @@ Disallow: /api/`;
     res.status(200).json({ status: "logged" });
   });
   
-  // Auth endpoints for User management (Firebase)
+  // Auth endpoints for User management (Clerk + Neon)
   const authRouter = (await import("./routes/auth")).default;
   app.use("/api/v1/auth", authLimiter, authRouter);
 
@@ -193,7 +192,6 @@ Disallow: /api/`;
   app.use("/api/reports", reportsRouter);
   app.use("/api/cms", cmsRouter);
   app.use("/api/analytics", analyticsRouter);
-  app.use("/api/db", dbAdminRouter);
   app.use("/api/system", systemRouter);
   app.use("/api/audit", auditRouter);
   

@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { requireAuth, requireCA, AuthRequest } from "../middleware/auth";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 
 const router = Router();
 
@@ -35,7 +35,7 @@ router.get("/clients", requireAuth, requireCA, async (req: AuthRequest, res: Res
         let pendingCount = 0;
         
         for (const profile of clientProfiles) {
-          // In Firestore, we should probably have a better way to count than fetching all,
+          // This compatibility adapter can count server-side later; for now keep existing behavior.
           // but for now we follow the existing logic logic
           const filingsSnapshot = await adminDb.collection("tax_returns")
             .where("profileId", "==", profile.id)

@@ -102,7 +102,7 @@ const ServerErrorPage = lazyWithRetry(() => import("@/pages/server-error.page"))
 // Blog management is handled via AdminBlog below
 const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/index.page"));
 const ForbiddenPage = lazyWithRetry(() => import("@/pages/forbidden.page"));
-const RoleBasedRedirect = lazyWithRetry(() => import("@/components/RoleBasedRedirect").then(m => ({ default: m.default })));
+const ClerkCallback = lazyWithRetry(() => import("@/components/auth/ClerkCallback"));
 const RequireAdmin = lazyWithRetry(() => import("@/components/auth/RequireAdmin").then(m => ({ default: m.RequireAdmin })));
 const RequireRole = lazyWithRetry(() => import("@/components/auth/RequireRole").then(m => ({ default: m.RequireRole })));
 const RequireAuth = lazyWithRetry(() => import("@/components/auth/RequireAuth").then(m => ({ default: m.RequireAuth })));
@@ -243,7 +243,7 @@ export default function Routes() {
         <Route path="/auth/register" component={RegisterPage} />
         <Route path="/register" component={RegisterPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
-        <Route path="/auth/callback" component={RoleBasedRedirect} />
+        <Route path="/auth/callback" component={ClerkCallback} />
         <Route path="/dashboard" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
         <Route path="/profile" component={() => <RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="/settings/account" component={() => <RequireAuth><AccountSettingsPage /></RequireAuth>} />

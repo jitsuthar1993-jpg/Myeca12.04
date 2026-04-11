@@ -321,7 +321,7 @@ export default function SettingsPage() {
                 <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-start gap-3">
                   <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
                   <p className="text-xs text-blue-700 font-medium">
-                    2FA management is coming soon. Currently, your account is protected by enterprise-grade Firebase encryption.
+                    2FA management is available through Clerk account security settings.
                   </p>
                 </div>
               </div>

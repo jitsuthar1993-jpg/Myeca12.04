@@ -1,7 +1,7 @@
 import { Router, Response } from "express";
 import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption";
 import { safeError } from "../utils/error-response";
 

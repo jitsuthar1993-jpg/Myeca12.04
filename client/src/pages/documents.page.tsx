@@ -16,9 +16,8 @@ import {
 } from "lucide-react";
 import SEO from "@/components/SEO";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
-import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, sanitizeFilename, formatFileSize } from "@/lib/file_utils";
+import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, formatFileSize } from "@/lib/file_utils";
 import { getAuthToken } from "@/lib/authToken";
-import { auth, getStorageInstance } from "@/lib/firebase";
 import { 
   Dialog,
   DialogContent,
@@ -27,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 
 interface Document {
-  id: number;
+  id: string;
   name: string;
   category: string;
   fileName: string;
@@ -69,27 +68,26 @@ export default function DocumentsPage() {
   const [selectedDocForPreview, setSelectedDocForPreview] = useState<Document | null>(null);
 
   // Fetch documents
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<{ documents: Document[] }>({
     queryKey: ["/api/documents", categoryFilter, yearFilter, searchTerm],
-    queryFn: () => {
+    queryFn: async () => {
       const params = new URLSearchParams();
       if (categoryFilter !== "all") params.append("category", categoryFilter);
       if (yearFilter !== "all") params.append("year", yearFilter);
       if (searchTerm) params.append("search", searchTerm);
-      return apiRequest(`/api/documents?${params}`);
+      const response = await apiRequest(`/api/documents?${params}`);
+      return response.json();
     }
   });
 
   // Fetch stats
-  const { data: statsData } = useQuery({
+  const { data: statsData } = useQuery<{ stats: { total: number; byCategory: Record<string, number>; byYear: Record<string, number>; totalSize: number } }>({
     queryKey: ["/api/documents/stats/summary"],
   });
 
   // Upload mutation
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
-      if (!auth.currentUser) throw new Error("Not authenticated");
-
       // Security check
       if (file.size > MAX_FILE_SIZE_BYTES) {
         logAuditEvent({
@@ -111,43 +109,25 @@ export default function DocumentsPage() {
         throw new Error("Invalid file type.");
       }
 
-      const sanitizedName = sanitizeFilename(`${Date.now()}-${file.name}`);
-      const storageInstance = await getStorageInstance();
-      const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-      const storageRef = ref(storageInstance, `user_documents/${auth.currentUser.uid}/${sanitizedName}`);
-
-      const uploadResult = await uploadBytes(storageRef, file, {
-        contentType: file.type,
-        customMetadata: {
-          originalName: file.name,
-          category: uploadData.category,
-          year: uploadData.year
-        }
-      });
-
-      const downloadUrl = await getDownloadURL(uploadResult.ref);
       const token = await getAuthToken();
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", uploadData.name || file.name);
+      formData.append("category", uploadData.category);
+      formData.append("year", uploadData.year);
+      formData.append("description", uploadData.description);
       
-      const response = await fetch("/api/documents/register", {
+      const response = await fetch("/api/documents/upload", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({
-          name: uploadData.name || file.name,
-          url: downloadUrl,
-          category: uploadData.category,
-          year: uploadData.year,
-          description: uploadData.description,
-          storagePath: uploadResult.ref.fullPath,
-          size: file.size,
-          mimeType: file.type
-        })
+        body: formData,
       });
       
       if (!response.ok) {
-        throw new Error("Failed to register document on server");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to upload document");
       }
 
       await logDocumentAccess(file.name, 'uploaded_document');
@@ -181,7 +161,7 @@ export default function DocumentsPage() {
 
   // Delete mutation
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/documents/${id}`, { method: "DELETE" }),
+    mutationFn: (id: string) => apiRequest(`/api/documents/${id}`, { method: "DELETE" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
       queryClient.invalidateQueries({ queryKey: ["/api/documents/stats/summary"] });
@@ -199,10 +179,32 @@ export default function DocumentsPage() {
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + " B";
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  const handleDownload = async (doc: Document) => {
+    const token = await getAuthToken();
+    const response = await fetch(`/api/documents/${doc.id}/download`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    if (!response.ok) {
+      toast({
+        title: "Download failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = doc.originalName || doc.fileName || doc.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const documents = data?.documents || [];
@@ -393,7 +395,7 @@ export default function DocumentsPage() {
                               >
                                 <Eye className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" title="Download">
+                              <Button variant="ghost" size="icon" title="Download" onClick={() => handleDownload(doc)}>
                                 <Download className="h-4 w-4" />
                               </Button>
                               <Button 

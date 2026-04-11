@@ -6,22 +6,29 @@ export function validateEnv() {
   const warnings: string[] = [];
   const errors: string[] = [];
 
-  // Firebase is required
-  if (!process.env.FIREBASE_PROJECT_ID && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    errors.push('FIREBASE_PROJECT_ID or GOOGLE_APPLICATION_CREDENTIALS must be set');
+  if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
+    errors.push("DATABASE_URL or POSTGRES_URL must be set for Neon Postgres");
+  }
+
+  if (!process.env.CLERK_SECRET_KEY) {
+    errors.push("CLERK_SECRET_KEY must be set for Clerk authentication");
+  }
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    warnings.push("BLOB_READ_WRITE_TOKEN not set — document uploads will fail until Vercel Blob is connected");
   }
 
   // Optional but recommended
   if (!process.env.ADMIN_EMAILS) {
-    warnings.push('ADMIN_EMAILS not set — no admin role overrides configured');
+    warnings.push("ADMIN_EMAILS not set - no users will be auto-promoted to admin");
   }
 
   if (!process.env.PII_ENCRYPTION_KEY) {
-    warnings.push('PII_ENCRYPTION_KEY not set — PII encryption disabled');
+    warnings.push("PII_ENCRYPTION_KEY not set — PII encryption disabled");
   }
 
   if (!process.env.SESSION_SECRET) {
-    warnings.push('SESSION_SECRET not set — using auto-generated value');
+    warnings.push("SESSION_SECRET not set — using auto-generated value");
   }
 
   // Log warnings

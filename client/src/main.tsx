@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { ClerkProvider } from "@clerk/clerk-react";
 import App from "./App";
 import "./utils/safe-dom";
 import "./index.css";
@@ -37,8 +38,34 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 
 const root = document.getElementById("root");
+const clerkPublishableKey =
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
+  import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+function MissingClerkConfig() {
+  return (
+    <div style={{ padding: 24, fontFamily: "sans-serif" }}>
+      <h1>MyeCA configuration is incomplete</h1>
+      <p>Set VITE_CLERK_PUBLISHABLE_KEY or NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to enable Clerk authentication.</p>
+    </div>
+  );
+}
+
 if (root) {
-  createRoot(root).render(<App />);
+  createRoot(root).render(
+    clerkPublishableKey ? (
+      <ClerkProvider
+        publishableKey={clerkPublishableKey}
+        signInUrl="/auth/login"
+        signUpUrl="/auth/register"
+        afterSignOutUrl="/"
+      >
+        <App />
+      </ClerkProvider>
+    ) : (
+      <MissingClerkConfig />
+    ),
+  );
 } else {
   const fallback = document.createElement('div');
   fallback.style.cssText = 'padding:20px;background:white;';

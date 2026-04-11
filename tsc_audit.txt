@@ -1,5 +1,0 @@
-
-> rest-express@1.0.0 check
-> tsc
-
-client/src/pages/blog/index.page.tsx(311,1): error TS1128: Declaration or statement expected.

@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { webhooks } from "@shared/schema";
+import { webhooks } from "../db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import fetch from "node-fetch";
@@ -61,12 +61,15 @@ export class WebhookService {
       ...(webhook.headers || {})
     };
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30_000);
     const response = await fetch(webhook.url, {
       method: "POST",
       headers,
       body: JSON.stringify(payload),
-      timeout: 30000 // 30 second timeout
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!response.ok) {
       throw new Error(`Webhook failed with status ${response.status}`);

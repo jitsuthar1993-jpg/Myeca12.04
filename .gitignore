@@ -167,3 +167,4 @@ server/coverage/
 
 # Optional: Keep some logs for debugging
 # !logs/important.log
+.vercel

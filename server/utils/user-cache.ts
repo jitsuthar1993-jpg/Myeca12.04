@@ -1,6 +1,6 @@
 /**
- * Lightweight in-memory TTL cache for Firestore user documents.
- * Avoids a round-trip to Firestore on every authenticated request.
+ * Lightweight in-memory TTL cache for Neon-backed user profiles.
+ * Avoids a database round-trip on every authenticated request.
  */
 
 const USER_CACHE_TTL_MS = 60_000; // 60 seconds
@@ -21,7 +21,7 @@ export function setCachedUser(userId: string, data: any): void {
   _cache.set(userId, { data, expiresAt: Date.now() + USER_CACHE_TTL_MS });
 }
 
-/** Call this after a role/status update so the next request re-fetches from Firestore. */
+/** Call this after a role/status update so the next request re-fetches from Neon. */
 export function invalidateCachedUser(userId: string): void {
   _cache.delete(userId);
 }

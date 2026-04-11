@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
+  envPrefix: ["VITE_", "NEXT_PUBLIC_"],
   plugins: [
     react(),
   ],
@@ -34,7 +35,12 @@ export default defineConfig({
           if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
             return "vendor";
           }
-          if (id.includes("node_modules/wouter") || id.includes("node_modules/@tanstack/react-query")) {
+          if (
+            id.includes("node_modules/wouter") ||
+            id.includes("node_modules/@tanstack/react-query") ||
+            id.includes("node_modules/@clerk/") ||
+            id.includes("node_modules/use-sync-external-store")
+          ) {
             return "vendor";
           }
           // UI framework — Radix lives alongside React in vendor to prevent circular refs
@@ -49,9 +55,6 @@ export default defineConfig({
           }
           if (id.includes("node_modules/recharts") || id.includes("node_modules/d3-")) {
             return "charts";
-          }
-          if (id.includes("node_modules/firebase/")) {
-            return "firebase";
           }
           if (id.includes("node_modules/react-hook-form") || id.includes("node_modules/@hookform/") || id.includes("node_modules/zod")) {
             return "forms";

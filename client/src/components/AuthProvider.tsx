@@ -1,25 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, onIdTokenChanged, signOut, User as FirebaseUser, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import {
+  useAuth as useClerkAuth,
+  useClerk,
+  useSignIn,
+  useSignUp,
+  useUser,
+} from "@clerk/clerk-react";
 import { type User as AppUser } from "@shared/schema";
-import { logLogin, logAuditEvent } from "@/lib/audit";
+import { logAuditEvent, logLogin } from "@/lib/audit";
 
-// Role overrides loaded from env — no hardcoded emails in source
-const ROLE_OVERRIDES: Record<string, string> = {};
-const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
-const teamEmails = import.meta.env.VITE_TEAM_MEMBER_EMAILS?.split(',') || [];
-adminEmails.forEach((e: string) => { if (e.trim()) ROLE_OVERRIDES[e.trim().toLowerCase()] = 'admin'; });
-teamEmails.forEach((e: string) => { if (e.trim()) ROLE_OVERRIDES[e.trim().toLowerCase()] = 'team_member'; });
-
-function getRoleOverride(email: string | null | undefined): string | null {
-  if (!email) return null;
-  return ROLE_OVERRIDES[email.toLowerCase().trim()] || null;
-}
+type ClerkUserCompat = ReturnType<typeof useUser>["user"];
 
 interface AuthContextType {
   user: AppUser | null;
-  firebaseUser: FirebaseUser | null;
+  authUser: ClerkUserCompat | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -34,191 +28,199 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function normalizeUser(payload: any, fallback: ClerkUserCompat | null): AppUser {
+  const email = fallback?.primaryEmailAddress?.emailAddress || payload?.email || "";
+  const firstName = payload?.firstName || fallback?.firstName || "";
+  const lastName = payload?.lastName || fallback?.lastName || "";
+
+  return {
+    id: payload?.id || fallback?.id || "",
+    email,
+    firstName,
+    lastName,
+    role: payload?.role || "user",
+    status: payload?.status || "active",
+    isVerified: payload?.isVerified ?? !!fallback?.primaryEmailAddress?.verification,
+    createdAt: payload?.createdAt ? new Date(payload.createdAt) : new Date(),
+    updatedAt: payload?.updatedAt ? new Date(payload.updatedAt) : new Date(),
+    phoneNumber: payload?.phoneNumber || null,
+    assignedCaId: payload?.assignedCaId || null,
+    assignedCaName: payload?.assignedCaName || null,
+    assignedCaEmail: payload?.assignedCaEmail || null,
+    approvedBy: payload?.approvedBy || null,
+    approvedAt: payload?.approvedAt ? new Date(payload.approvedAt) : null,
+    rejectedReason: payload?.rejectedReason || null,
+  } as AppUser;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const clerk = useClerk();
+  const { getToken, isLoaded: authLoaded, isSignedIn } = useClerkAuth();
+  const { signIn, setActive: setSignInActive, isLoaded: signInLoaded } = useSignIn();
+  const { signUp, setActive: setSignUpActive, isLoaded: signUpLoaded } = useSignUp();
+  const { user: clerkUser, isLoaded: userLoaded } = useUser();
   const [appUser, setAppUser] = useState<AppUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(true);
 
   useEffect(() => {
-    // Auto-refresh token before expiry using Firebase's onIdTokenChanged
-    const unsubscribeToken = onIdTokenChanged(auth, async (user: FirebaseUser | null) => {
-      if (user) {
-        const token = await user.getIdToken();
-        sessionStorage.setItem("token", token);
-      } else {
+    let cancelled = false;
+
+    const syncUser = async () => {
+      if (!authLoaded || !userLoaded) return;
+
+      if (!isSignedIn || !clerkUser) {
         sessionStorage.removeItem("token");
-      }
-    });
-
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setFirebaseUser(user);
-
-      if (user) {
-        // Save ID token to sessionStorage (safer than localStorage — cleared on tab close)
-        const token = await user.getIdToken();
-        sessionStorage.setItem("token", token);
-        
-        try {
-          // Fetch additional user data including role from Firestore
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            let role = getRoleOverride(user.email) || userData.role || 'user';
-
-            let firstName = userData.firstName || '';
-            let lastName = userData.lastName || '';
-
-            setAppUser({
-              id: user.uid,
-              email: user.email || '',
-              firstName: firstName,
-              lastName: lastName,
-              role: role,
-              status: userData.status || 'active',
-              isVerified: userData.isVerified || false,
-              createdAt: userData.createdAt?.toDate() || new Date(),
-              updatedAt: userData.updatedAt?.toDate() || new Date(),
-              phoneNumber: userData.phoneNumber || null,
-              assignedCaId: userData.assignedCaId || null,
-              assignedCaName: userData.assignedCaName || null,
-              assignedCaEmail: userData.assignedCaEmail || null,
-              approvedBy: userData.approvedBy || null,
-              approvedAt: userData.approvedAt?.toDate() || null,
-              rejectedReason: userData.rejectedReason || null
-            } as AppUser);
-          } else {
-            // New user or doc not found, set basic info
-            let role = getRoleOverride(user.email) || 'user';
-
-            setAppUser({
-              id: user.uid,
-              email: user.email || '',
-              firstName: user.displayName?.split(' ')[0] || '',
-              lastName: user.displayName?.split(' ')[1] || '',
-              role: role,
-              status: 'active',
-              isVerified: false,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            } as any);
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-          setAppUser(null);
-        }
-      } else {
         setAppUser(null);
-        sessionStorage.removeItem("token");
+        setIsSyncing(false);
+        return;
       }
-      setIsLoading(false);
-    });
 
-    return () => {
-      unsubscribe();
-      unsubscribeToken();
+      setIsSyncing(true);
+      try {
+        const token = await getToken();
+        if (token) {
+          sessionStorage.setItem("token", token);
+        }
+
+        const response = await fetch("/api/v1/auth/sync", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            email: clerkUser.primaryEmailAddress?.emailAddress,
+            firstName: clerkUser.firstName,
+            lastName: clerkUser.lastName,
+            phoneNumber: clerkUser.primaryPhoneNumber?.phoneNumber,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to sync Clerk profile");
+        }
+
+        const data = await response.json();
+        if (!cancelled) {
+          setAppUser(normalizeUser(data.user || data, clerkUser));
+        }
+      } catch (error) {
+        console.error("Error syncing Clerk profile:", error);
+        if (!cancelled) {
+          setAppUser(normalizeUser(null, clerkUser));
+        }
+      } finally {
+        if (!cancelled) setIsSyncing(false);
+      }
     };
-  }, []);
+
+    syncUser();
+    const interval = window.setInterval(syncUser, 10 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [authLoaded, userLoaded, isSignedIn, clerkUser?.id, getToken]);
 
   const login = async (email: string, password: string) => {
+    if (!signInLoaded || !signIn || !setSignInActive) {
+      throw new Error("Authentication is still loading. Please try again.");
+    }
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // Log login success
+      const result = await signIn.create({ identifier: email, password });
+      if (result.status !== "complete") {
+        throw new Error("Additional verification is required. Please complete it in the Clerk flow.");
+      }
+      await setSignInActive({ session: result.createdSessionId });
       await logLogin(email);
     } catch (error: any) {
-      if (error.code !== 'auth/multi-factor-auth-required') {
-        await logAuditEvent({
-          action: 'login_failure',
-          category: 'authentication',
-          metadata: { email, error: error.code },
-          status: 'failure'
-        });
-      }
-      throw error;
+      await logAuditEvent({
+        action: "login_failure",
+        category: "authentication",
+        metadata: { email, error: error?.errors?.[0]?.code || error?.message },
+        status: "failure",
+      });
+      throw new Error(error?.errors?.[0]?.message || error?.message || "Failed to sign in.");
     }
   };
 
   const register = async (email: string, password: string, userData: Partial<AppUser>) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    
-    // Create user document in Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      ...userData,
-      email: email,
-      role: 'user',
-      status: 'active',
-      isVerified: false,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+    if (!signUpLoaded || !signUp || !setSignUpActive) {
+      throw new Error("Authentication is still loading. Please try again.");
+    }
+
+    const result = await signUp.create({
+      emailAddress: email,
+      password,
+      firstName: userData.firstName || undefined,
+      lastName: userData.lastName || undefined,
     });
+
+    if (result.status === "complete") {
+      await setSignUpActive({ session: result.createdSessionId });
+      return;
+    }
+
+    await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+    throw new Error("Check your email for the verification code to finish creating your account.");
   };
 
   const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const userCredential = await signInWithPopup(auth, provider);
-    const user = userCredential.user;
-
-    // Check if user exists in Firestore, if not create
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        firstName: user.displayName?.split(' ')[0] || '',
-        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-        role: 'user',
-        status: 'active',
-        isVerified: false,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+    if (!signInLoaded || !signIn) {
+      throw new Error("Authentication is still loading. Please try again.");
     }
+
+    await signIn.authenticateWithRedirect({
+      strategy: "oauth_google",
+      redirectUrl: "/auth/callback",
+      redirectUrlComplete: "/dashboard",
+    });
   };
 
   const logout = async () => {
-    const email = auth.currentUser?.email;
-    await signOut(auth);
-    // Log logout
+    const email = clerkUser?.primaryEmailAddress?.emailAddress;
+    await clerk.signOut();
+    sessionStorage.removeItem("token");
+    setAppUser(null);
     await logAuditEvent({
-      action: 'logout_success',
-      category: 'authentication',
-      metadata: { email }
+      action: "logout_success",
+      category: "authentication",
+      metadata: { email },
     });
-    // Sync logout across tabs
-    const channel = new BroadcastChannel('session_sync_channel');
-    channel.postMessage('LOGOUT');
+    const channel = new BroadcastChannel("session_sync_channel");
+    channel.postMessage("LOGOUT");
     channel.close();
   };
 
   const sendPasswordReset = async (email: string) => {
-    const { sendPasswordResetEmail } = await import("firebase/auth");
-    await sendPasswordResetEmail(auth, email);
+    if (!signInLoaded || !signIn) {
+      throw new Error("Authentication is still loading. Please try again.");
+    }
+
+    await signIn.create({ strategy: "reset_password_email_code", identifier: email });
   };
 
   const sendEmailVerification = async () => {
-    if (!auth.currentUser) return;
-    const { sendEmailVerification } = await import("firebase/auth");
-    await sendEmailVerification(auth.currentUser);
+    const primaryEmail = clerkUser?.primaryEmailAddress as any;
+    if (!primaryEmail?.prepareVerification) return;
+    await primaryEmail.prepareVerification({ strategy: "email_code" });
   };
 
   const deleteAccount = async () => {
-    if (!auth.currentUser) return;
-    const user = auth.currentUser;
-    const { deleteUser } = await import("firebase/auth");
-    
-    // Also delete the user document from Firestore
-    const { deleteDoc } = await import("firebase/firestore");
-    await deleteDoc(doc(db, "users", user.uid));
-    
-    await deleteUser(user);
+    if (!clerkUser) return;
+    await (clerkUser as any).delete();
+    sessionStorage.removeItem("token");
+    setAppUser(null);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user: appUser,
-        firebaseUser,
-        isLoading,
-        isAuthenticated: !!firebaseUser,
+        authUser: clerkUser,
+        isLoading: !authLoaded || !userLoaded || isSyncing,
+        isAuthenticated: !!isSignedIn,
         login,
         register,
         loginWithGoogle,
@@ -226,7 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         sendPasswordReset,
         sendEmailVerification,
         deleteAccount,
-        role: appUser?.role || 'user'
+        role: appUser?.role || "user",
       }}
     >
       {children}
@@ -241,4 +243,3 @@ export function useAuth() {
   }
   return context;
 }
-

@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Upload, File, X, CheckCircle, AlertCircle, Eye, Loader2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { compressImage, getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, sanitizeFilename } from "@/lib/file_utils";
+import { compressImage, getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/file_utils";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
 import { getAuthToken } from "@/lib/authToken";
-import { auth, getStorageInstance } from "@/lib/firebase";
 
 interface ServiceUploaderProps {
   serviceId: string;
@@ -110,41 +109,28 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
 
     try {
       for (const [docId, file] of filesToUpload) {
-        if (!file || !auth.currentUser) continue;
+        if (!file) continue;
         
         const docName = expectedDocs.find(d => d.id === docId)?.name || docId;
-        const sanitizedName = sanitizeFilename(`${Date.now()}-${file.name}`);
-        
-        // Direct Firebase Storage Upload
-        const storageInstance = await getStorageInstance();
-        const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-        const storageRef = ref(storageInstance, `user_documents/${auth.currentUser.uid}/${sanitizedName}`);
-        const uploadResult = await uploadBytes(storageRef, file, {
-          contentType: file.type,
-          customMetadata: {
-            originalName: file.name,
-            serviceType: serviceType,
-            docId: docId
-          }
-        });
-
-        const downloadUrl = await getDownloadURL(uploadResult.ref);
         const token = await getAuthToken();
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("name", docName);
+        formData.append("category", serviceType);
+        formData.append("tags", JSON.stringify([docId]));
 
-        // Notify API of the new document
-        await fetch("/api/documents/register", {
+        const response = await fetch("/api/documents/upload", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({
-            name: docName,
-            url: downloadUrl,
-            category: serviceType,
-            storagePath: uploadResult.ref.fullPath
-          })
+          body: formData,
         });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || `Failed to upload ${docName}`);
+        }
 
         await logDocumentAccess(docId, `uploaded_${docName}`);
       }

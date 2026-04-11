@@ -1,16 +1,17 @@
+import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
-}
+const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
 
-const isSqlite = process.env.DATABASE_URL?.startsWith("file:");
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL or POSTGRES_URL is required for Neon Postgres migrations");
+}
 
 export default defineConfig({
   out: "./migrations",
-  schema: "./shared/schema.ts",
-  dialect: isSqlite ? "sqlite" : "postgresql",
+  schema: "./server/db/schema.ts",
+  dialect: "postgresql",
   dbCredentials: {
-    url: isSqlite ? process.env.DATABASE_URL!.replace("file:", "") : process.env.DATABASE_URL!,
+    url: databaseUrl,
   },
 });

@@ -1,4 +1,4 @@
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { blogPosts } from "../../client/src/data/blogPosts";
 import { buildBlogPostWriteData, getCategoryLookup } from "../services/blog";
 import { estimateReadingTimeMinutes, slugifyHeading } from "@shared/blog";

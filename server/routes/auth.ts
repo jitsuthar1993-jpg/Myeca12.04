@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { z } from "zod";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { requireAuth, AuthRequest } from "../middleware/auth";
 import { validateRequest } from "../middleware/security";
 import { findOrCreateUserProfile, getBootstrapRoleForEmail, syncRoleClaims } from "../services/user-accounts";

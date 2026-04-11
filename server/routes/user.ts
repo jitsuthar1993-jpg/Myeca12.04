@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { z } from "zod";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { requireAnyAuth, AuthRequest } from "../middleware/auth";
 import { validateRequest } from "../middleware/security";
 import { safeError } from "../utils/error-response";

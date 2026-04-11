@@ -1,63 +1,55 @@
 # Deployment
 
-This consolidates previous deployment docs into a single guide for local, production, and Replit.
-
 ## Overview
-- Client builds to `dist/public` via Vite.
-- Server bundles to `dist/index.js` via esbuild.
-- Production serves static files from `dist/public` (handled in `server/serveStatic`).
-- Default port is `5000`.
+- Vite builds the client to `dist/public`.
+- Vercel serves static assets from `dist/public` on the CDN.
+- Express API routes are exposed through `api/index.ts` as a Vercel Node.js Function.
+- Data is stored in Neon Postgres via Drizzle.
+- Authentication is handled by Clerk.
+- Private user uploads and public CMS media use Vercel Blob.
 
 ## Required Environment Variables
-Set the following before running production:
-- `JWT_SECRET` — required in production.
-- `DATABASE_URL` — e.g. `file:./dev.db` (SQLite) or Postgres URL.
-- `NODE_ENV` — `production` for `npm run start`, `development` for local dev.
+Set these in Vercel and in `.env` for local development:
 
-### Windows note
-- PowerShell: `$env:NODE_ENV='development'; tsx server/index.ts`
-- CMD: `set NODE_ENV=development && tsx server/index.ts`
-- Or install `cross-env` and use it in scripts.
+- `DATABASE_URL` - Neon Postgres connection string. `POSTGRES_URL` and `POSTGRES_URL_NON_POOLING` are also accepted when provisioned by Vercel Marketplace.
+- `VITE_CLERK_PUBLISHABLE_KEY` - Clerk browser publishable key. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is also accepted for Vercel Marketplace compatibility.
+- `CLERK_SECRET_KEY` - Clerk server secret key.
+- `BLOB_READ_WRITE_TOKEN` - Vercel Blob read/write token.
+- `ADMIN_EMAILS` - comma-separated emails promoted to `admin` on auth sync.
+- `APP_URL` and `VITE_APP_URL` - deployed or local app URL.
 
 ## Local Development
 ```bash
 npm install
-npm run dev  # starts Express + Vite dev middleware on port 5000
+npm run dev
 ```
-If `npm run dev` fails due to Windows env var syntax, use the PowerShell command above.
 
-## Production Build & Start
+The local Express server listens on port `5000`.
+
+## Database
 ```bash
-npm ci
-npm run build  # produces dist/index.js and dist/public
-npm run start  # runs dist/index.js (port 5000)
+npm run db:generate
+npm run db:migrate
 ```
 
-## Static Assets
-Place SEO assets in `client/public/` so Vite copies them to `dist/public`:
-- `robots.txt`
-- `sitemap.xml`
-- `manifest.json`
-- `sw.js` (if used)
+After pulling Vercel preview envs locally, use:
 
-If assets are in the repository root `public/`, move them to `client/public/` before `npm run build`.
+```bash
+npm run db:migrate:preview
+npm run db:seed:preview
+```
 
-## Replit Deployment
-- The project includes `.replit` config with:
-  - Build: `npm run build`
-  - Run: `npm run start`
-- Add secrets under Deployments → Environment Variables:
-  - `JWT_SECRET` (required)
-  - `NODE_ENV=production`
-  - `DATABASE_URL` (optional but recommended)
+Use a fresh Neon database for this migration. Legacy provider data is not imported.
 
-## Troubleshooting
-- Port already in use (`EADDRINUSE`): stop the other process, or temporarily change the port in `server/index.ts` for local testing.
-- Missing `JWT_SECRET`: set it in environment; production requires it.
-- Static files 404 in production: ensure assets are in `client/public/` so they end up in `dist/public`.
+## Vercel Build
+```bash
+npm run build
+vercel build
+```
 
 ## Verification Checklist
-- App starts without errors.
-- Auth works and JWTs are issued.
-- Static pages and assets are served from `dist/public`.
-- Database connectivity verified (if applicable).
+- Clerk sign-in, sign-up, sign-out, `/api/v1/auth/me`, and `/api/v1/auth/sync`.
+- Role-protected admin, CA, team, and user routes.
+- Document upload, private download, delete, and listing via Vercel Blob plus Neon metadata.
+- Public blog/CMS routes, `/sitemap.xml`, `/robots.txt`, `/openapi.json`, `/llms.txt`.
+- SPA fallback routes load from `/index.html`.

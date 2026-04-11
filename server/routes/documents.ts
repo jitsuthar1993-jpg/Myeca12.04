@@ -1,35 +1,16 @@
 import { Response, Router } from "express";
 import { z } from "zod";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import sharp from "sharp";
+import { del, get, put } from "@vercel/blob";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { adminDb, adminStorage } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { safeError } from "../utils/error-response";
 
 const router = Router();
-const uploadsRoot = path.join(process.cwd(), "uploads");
-
-const multerStorage = multer.diskStorage({
-  destination: (req, _file, cb) => {
-    const userId = (req as AuthRequest).auth?.userId || "anonymous";
-    const uploadDir = path.join(process.cwd(), "uploads", "documents", userId);
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    cb(null, uploadDir);
-  },
-  filename: (_req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
-  }
-});
 
 const upload = multer({
-  storage: multerStorage,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024,
   },
@@ -83,19 +64,21 @@ function serializeDocument(docId: string, data: Record<string, any>) {
   };
 }
 
-function toAbsoluteUploadPath(filePath?: string) {
-  if (!filePath) {
-    return null;
+function safePathSegment(value: string) {
+  return value.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").slice(0, 160);
+}
+
+async function streamToBuffer(stream: ReadableStream<Uint8Array>) {
+  const reader = stream.getReader();
+  const chunks: Uint8Array[] = [];
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) chunks.push(value);
   }
 
-  const resolvedPath = path.resolve(filePath);
-  const normalizedRoot = `${uploadsRoot}${path.sep}`;
-
-  if (resolvedPath === uploadsRoot || resolvedPath.startsWith(normalizedRoot)) {
-    return resolvedPath;
-  }
-
-  return null;
+  return Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
 }
 
 router.post("/upload", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
@@ -118,33 +101,40 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
       year
     });
 
+    let fileBuffer = req.file.buffer;
     let finalSize = req.file.size;
+    let mimeType = req.file.mimetype;
+
     if (req.file.mimetype.startsWith("image/")) {
       try {
-        const compressedPath = req.file.path + "-compressed.jpg";
-        await sharp(req.file.path)
+        fileBuffer = await sharp(req.file.buffer)
           .resize(2000, 2000, { fit: "inside", withoutEnlargement: true })
           .jpeg({ quality: 80 })
-          .toFile(compressedPath);
-
-        fs.unlinkSync(req.file.path);
-        fs.renameSync(compressedPath, req.file.path);
-
-        const stats = fs.statSync(req.file.path);
-        finalSize = stats.size;
+          .toBuffer();
+        finalSize = fileBuffer.length;
+        mimeType = "image/jpeg";
       } catch (compressError) {
         console.error("Compression error:", compressError);
       }
     }
 
     const docRef = adminDb.collection("documents").doc();
+    const fileName = `${Date.now()}-${safePathSegment(req.file.originalname)}`;
+    const pathname = `documents/${userId}/${docRef.id}/${fileName}`;
+    const blob = await put(pathname, fileBuffer, {
+      access: "private",
+      contentType: mimeType,
+    });
+
     const newDoc = {
       userId,
-      fileName: req.file.filename,
+      fileName,
       originalName: req.file.originalname,
-      mimeType: req.file.mimetype.startsWith("image/") ? "image/jpeg" : req.file.mimetype,
+      mimeType,
       size: finalSize,
-      uploadPath: req.file.path,
+      uploadPath: blob.pathname,
+      blobUrl: blob.url,
+      downloadUrl: blob.downloadUrl,
       name: metadata.name,
       category: metadata.category,
       tags: metadata.tags || [],
@@ -180,7 +170,7 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
       category: z.string(),
       year: z.string().optional().nullable(),
       description: z.string().optional().nullable(),
-      storagePath: z.string(),
+      storagePath: z.string().optional(),
       size: z.number().optional(),
       mimeType: z.string().optional()
     });
@@ -194,7 +184,8 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
       category: data.category,
       year: data.year || null,
       description: data.description || null,
-      storagePath: data.storagePath,
+      storagePath: data.storagePath || data.url,
+      blobUrl: data.url,
       size: data.size || 0,
       mimeType: data.mimeType || "application/octet-stream",
       status: "active",
@@ -259,7 +250,9 @@ router.get("/stats/summary", authenticateToken, async (req: AuthRequest, res: Re
       .where("status", "==", "active")
       .get();
 
-    const docs = snapshot.docs.map(doc => doc.data());
+    const docs = snapshot.docs
+      .map((doc) => doc.data())
+      .filter((doc): doc is Record<string, any> => Boolean(doc));
     const stats = {
       total: docs.length,
       byCategory: {} as Record<string, number>,
@@ -301,22 +294,20 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
       "Content-Disposition",
       `attachment; filename="${encodeURIComponent(documentData.originalName || documentData.name || "document")}"`,
     );
+    res.setHeader("Content-Type", documentData.mimeType || "application/octet-stream");
 
-    if (documentData.isExternal && documentData.storagePath) {
-      const [signedUrl] = await adminStorage.bucket().file(documentData.storagePath).getSignedUrl({
-        action: "read",
-        expires: Date.now() + 5 * 60 * 1000,
-      });
-
-      return res.redirect(signedUrl);
-    }
-
-    const resolvedPath = toAbsoluteUploadPath(documentData.uploadPath);
-    if (!resolvedPath || !fs.existsSync(resolvedPath)) {
+    const blobUrl = documentData.blobUrl || documentData.url;
+    if (!blobUrl) {
       return res.status(404).json({ error: "Document file not found" });
     }
 
-    return res.sendFile(resolvedPath);
+    const blob = await get(blobUrl, { access: "private" });
+    if (!blob || blob.statusCode !== 200 || !blob.stream) {
+      return res.status(404).json({ error: "Document file not found" });
+    }
+
+    const file = await streamToBuffer(blob.stream);
+    return res.send(file);
   } catch (error) {
     return safeError(res, error, "Failed to download document");
   }
@@ -381,6 +372,13 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 
     if (!doc.exists || doc.data()?.userId !== userId) {
       return res.status(404).json({ error: "Document not found" });
+    }
+
+    const documentData = doc.data()!;
+    if (documentData.blobUrl || documentData.url) {
+      await del(documentData.blobUrl || documentData.url).catch((error) => {
+        console.warn("[BLOB] Failed to delete blob:", error);
+      });
     }
 
     await docRef.update({

@@ -1,5 +1,5 @@
+import { getAuth } from "@clerk/express";
 import { Request, Response, NextFunction } from "express";
-import { adminAuth } from "../firebase-admin";
 import { findOrCreateUserProfile } from "../services/user-accounts";
 import { safeError } from "../utils/error-response";
 import { getCachedUser, setCachedUser } from "../utils/user-cache";
@@ -14,27 +14,29 @@ export interface AuthRequest extends Request {
   };
 }
 
-async function verifyToken(req: Request) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
-    return null;
-  }
+function extractEmail(sessionClaims: unknown) {
+  const claims = sessionClaims as Record<string, any> | null | undefined;
+  return (
+    claims?.email ??
+    claims?.primary_email_address ??
+    claims?.primaryEmailAddress ??
+    claims?.email_address ??
+    undefined
+  );
+}
 
-  const idToken = authHeader.split("Bearer ")[1];
-  try {
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
-    return {
-      userId: decodedToken.uid,
-      email: decodedToken.email,
-    };
-  } catch (error) {
-    console.error("[AUTH] Token verification failed:", error);
-    return null;
-  }
+function readAuth(req: Request) {
+  const auth = getAuth(req);
+  if (!auth.userId) return null;
+
+  return {
+    userId: auth.userId,
+    email: extractEmail(auth.sessionClaims),
+  };
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const auth = await verifyToken(req);
+  const auth = readAuth(req);
 
   if (!auth) {
     return res.status(401).json({ error: "Authentication required" });
@@ -48,7 +50,7 @@ export const authenticateToken = requireAuth;
 
 export function requireRole(allowedRoles: string[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const auth = await verifyToken(req);
+    const auth = readAuth(req);
 
     if (!auth) {
       return res.status(401).json({ error: "Authentication required" });
@@ -70,7 +72,7 @@ export function requireRole(allowedRoles: string[]) {
 
       if (!localUser || !allowedRoles.includes(localUser.role)) {
         console.warn(
-          `[AUTH] Access denied for ${auth.email}: Required ${allowedRoles.join(", ")}, found ${localUser?.role}`,
+          `[AUTH] Access denied for ${auth.email ?? auth.userId}: Required ${allowedRoles.join(", ")}, found ${localUser?.role}`,
         );
         return res
           .status(403)

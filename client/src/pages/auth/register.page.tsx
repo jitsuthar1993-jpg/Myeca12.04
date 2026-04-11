@@ -198,7 +198,7 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="bg-slate-50/50 border-t border-slate-100 py-4 px-8 justify-center">
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">
-              Secured by Google Firebase Authentication
+              Secured by Clerk Authentication
             </p>
           </CardFooter>
         </Card>

@@ -1,6 +1,5 @@
 import "dotenv/config";
-import { adminDb } from "../firebase-admin.js";
-import admin from "firebase-admin";
+import { adminDb } from "../neon-admin.js";
 
 async function seed() {
   console.log("Seeding core tax guide blogs...");
@@ -946,8 +945,8 @@ The withdrawable amount depends on your reason for withdrawal, years of service,
         tags: blog.tags,
         featuredImage: blog.featuredImage,
         readTime: blog.readTime,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        publishedAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: new Date(),
+        publishedAt: new Date(),
       });
       console.log(`Inserted: ${blog.title}`);
     } else {

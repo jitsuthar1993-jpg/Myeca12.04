@@ -49,8 +49,9 @@ $env:NODE_ENV='development'; tsx server/index.ts
 | Styling | TailwindCSS, Radix UI |
 | State | TanStack Query, Zustand |
 | Backend | Express.js, Node.js |
-| Database | SQLite (better-sqlite3) |
-| Auth | JWT, Passport.js |
+| Database | Neon Postgres, Drizzle |
+| Auth | Clerk |
+| File Storage | Vercel Blob |
 
 ## 📖 Documentation
 
@@ -69,7 +70,10 @@ $env:NODE_ENV='development'; tsx server/index.ts
 |----------|---------|-------------|
 | `PORT` | 5000 | Server port |
 | `NODE_ENV` | development | Environment |
-| `DATABASE_URL` | dev.db | SQLite database path |
+| `DATABASE_URL` |  | Neon Postgres connection string; `POSTGRES_URL` is also accepted when provisioned by Vercel Marketplace |
+| `VITE_CLERK_PUBLISHABLE_KEY` |  | Clerk browser publishable key; `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is also accepted for Vercel Marketplace compatibility |
+| `CLERK_SECRET_KEY` |  | Clerk server secret key |
+| `BLOB_READ_WRITE_TOKEN` |  | Vercel Blob upload/download token |
 
 ## 🎯 Key Features
 
@@ -87,7 +91,11 @@ npm run dev      # Start development server
 npm run build    # Build for production
 npm run start    # Run production server
 npm run check    # TypeScript type checking
-npm run db:push  # Push database schema
+npm run db:generate # Generate Drizzle migrations
+npm run db:migrate  # Run Drizzle migrations
+npm run db:push     # Push database schema
+npm run db:migrate:preview # Run migrations using pulled Vercel preview env
+npm run db:seed:preview    # Seed using pulled Vercel preview env
 ```
 
 ## 📄 License

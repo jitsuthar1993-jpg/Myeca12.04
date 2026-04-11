@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import memoize from "memoizee";
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 const CACHE_HEADER = "public, max-age=300, stale-while-revalidate=600";
 
 // --- Helper: resolve author/category from denormalized or legacy data ---
-async function resolveAuthorAndCategory(data: FirebaseFirestore.DocumentData) {
+async function resolveAuthorAndCategory(data: Record<string, any>) {
   // Use denormalized fields if available (written at save time by CMS)
   let author = data.authorName
     ? { firstName: data.authorName.split(" ")[0] || "Team", lastName: data.authorName.split(" ").slice(1).join(" ") || "MyeCA" }
@@ -32,7 +32,7 @@ async function resolveAuthorAndCategory(data: FirebaseFirestore.DocumentData) {
       .limit(1)
       .get();
     if (!catSnapshot.empty) {
-      category = catSnapshot.docs[0].data().name;
+      category = catSnapshot.docs[0]?.data()?.name || category;
     }
   }
 
@@ -56,8 +56,8 @@ const getCachedBlogs = memoize(
   async (options: { page?: number; limit?: number; category?: string; search?: string } = {}) => {
     const { page = 1, limit = 12, category, search } = options;
 
-    // Query only published posts directly from Firestore
-    let query: FirebaseFirestore.Query = adminDb.collection("blog_posts")
+    // Query only published posts directly from the content repository.
+    let query = adminDb.collection("blog_posts")
       .where("status", "==", "published")
       .orderBy("createdAt", "desc");
 
@@ -71,6 +71,7 @@ const getCachedBlogs = memoize(
     // Batch resolve author/category (uses denormalized fields when available)
     const allPosts = await Promise.all(snapshot.docs.map(async (doc) => {
       const data = doc.data();
+      if (!data) return null;
       const { author, category: cat } = await resolveAuthorAndCategory(data);
 
       return {
@@ -85,9 +86,10 @@ const getCachedBlogs = memoize(
         category: cat,
       };
     }));
+    const posts = allPosts.filter((post): post is NonNullable<typeof post> => Boolean(post));
 
     // Apply optional filters
-    let filtered = allPosts;
+    let filtered = posts;
     if (category && category !== "All") {
       filtered = filtered.filter(p => p.category === category);
     }
@@ -125,6 +127,7 @@ const getCachedBlogBySlug = memoize(
     if (snapshot.empty) return null;
     const doc = snapshot.docs[0];
     const data = doc.data();
+    if (!data) return null;
     const { author, category } = await resolveAuthorAndCategory(data);
 
     return {

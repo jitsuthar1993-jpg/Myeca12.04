@@ -2,13 +2,13 @@
 
 ## 📋 Executive Summary
 
-This document provides a comprehensive overview of the SmartTaxCalculator system architecture, including backend infrastructure, frontend design, API specifications, security architecture, and deployment strategies. The system is designed with a development-first approach using dummy authentication for rapid prototyping, with clear migration paths to production-grade security.
+This document provides a comprehensive overview of the MyeCA.in system architecture, including Vercel hosting, frontend design, API specifications, security architecture, and deployment strategies. The current production path uses Clerk authentication, Neon Postgres with Drizzle, and Vercel Blob.
 
 ## 🎯 System Overview
 
 ### Architecture Philosophy
-- **Development-First**: Dummy authentication for rapid prototyping
-- **Security-Conscious**: Clear migration paths to production security
+- **Vercel-Native**: Static frontend on Vercel CDN with Express APIs served through Vercel Functions
+- **Security-Conscious**: Clerk authentication, Neon-backed roles, and audited API access
 - **Scalable**: Microservices-ready architecture
 - **Maintainable**: Modular, well-documented code structure
 - **Accessible**: WCAG 2.1 AA compliance built-in
@@ -16,7 +16,7 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ### Core Components
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           Frontend Layer (React/Vue)                        │
+│                            Frontend Layer (React)                           │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  UI Components  │  State Management  │  API Integration  │  Accessibility  │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -30,7 +30,7 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                         Data Access Layer                                   │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  SQLite (Dev)    │  PostgreSQL (Prod)  │  Redis (Sessions)  │  File Storage   │
+│       Neon Postgres + Drizzle        │       Vercel Blob File Storage        │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                      Infrastructure & Monitoring                            │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -41,10 +41,10 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ### Technology Stack
 - **Runtime**: Node.js 18+ with TypeScript
 - **Framework**: Express.js 4.18+
-- **Database**: SQLite (Development) → PostgreSQL (Production)
-- **Authentication**: Dummy (Development) → JWT/OAuth (Production)
-- **Caching**: Redis (Production)
-- **File Storage**: Local (Development) → AWS S3/Cloudinary (Production)
+- **Database**: Neon Postgres with Drizzle
+- **Authentication**: Clerk with server-side token verification
+- **Caching**: CDN/browser caching; no external cache dependency in the current baseline
+- **File Storage**: Vercel Blob for private documents and public CMS media
 - **Monitoring**: Winston logging, Health checks
 - **Documentation**: Swagger/OpenAPI 3.0
 
@@ -57,7 +57,7 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                    Authentication & Authorization                           │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Dummy Auth (Dev)  │  JWT Tokens  │  Role-Based Access  │  Audit Logs   │
+│  Clerk Auth  │  Bearer Tokens  │  Neon-Backed Roles  │  Audit Logs    │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                        Data Protection                                      │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -228,11 +228,11 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    Development Environment Setup                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Local Machine  │  Node.js 18+  │  SQLite Database  │  File System       │
+│  Local Machine  │  Node.js 20+  │  Neon Postgres  │  Vercel Blob        │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  Hot Reload  │  Development Warnings  │  Verbose Logging  │  Debug Mode    │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Port 3001  │  CORS Enabled  │  Dummy Auth  │  In-Memory Sessions     │
+│  Port 5000  │  CORS Enabled  │  Clerk Auth  │  Bearer Token API       │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -249,7 +249,7 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                          Data Layer                                         │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  PostgreSQL Cluster  │  Redis Cluster  │  File Storage (S3/Cloudinary)  │
+│  Neon Postgres  │  Vercel Blob  │  Vercel CDN Static Assets           │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                      Monitoring & Observability                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -268,7 +268,7 @@ This document provides a comprehensive overview of the SmartTaxCalculator system
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  Static Assets  │  API Responses  │  Session Data  │  Query Results      │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Cache Headers  │  ETags  │  Redis  │  Database Indexes  │  Query Optimization │
+│  Cache Headers  │  ETags  │  CDN  │  Database Indexes  │  Query Optimization │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -346,7 +346,7 @@ smarttaxcalculator/
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                          Caching Strategy                                  │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Redis Cluster  │  CDN Distribution  │  Application-level Caching    │
+│  CDN Distribution  │  Browser Cache  │  Application-level Caching    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -354,7 +354,7 @@ smarttaxcalculator/
 1. **Read Replicas**: Distribute read queries across multiple database instances
 2. **Connection Pooling**: Efficient database connection management
 3. **Query Optimization**: Indexed queries and optimized database schema
-4. **Caching Layer**: Redis for session data and frequently accessed information
+4. **Caching Layer**: CDN/browser caching plus application-level memoization for frequently accessed public information
 5. **Database Sharding**: Horizontal partitioning for large datasets
 
 ## 🧪 Testing Architecture
@@ -412,11 +412,11 @@ smarttaxcalculator/
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                          Phase 1: Security Upgrade                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Replace Dummy Auth  │  Implement JWT  │  Add Password Hashing  │  HTTPS   │
+│  Clerk Auth  │  Neon Roles  │  Blob Uploads  │  HTTPS on Vercel        │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                          Phase 2: Infrastructure Upgrade                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  PostgreSQL Migration  │  Redis Setup  │  Load Balancer  │  CDN Setup    │
+│  Neon Migration  │  Vercel Function API  │  Blob Store  │  CDN Setup     │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                          Phase 3: Monitoring & Scaling                    │
 ├─────────────────────────────────────────────────────────────────────────────┤

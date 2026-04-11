@@ -1,5 +1,4 @@
-import type { Firestore } from "firebase-admin/firestore";
-import { adminDb } from "../firebase-admin";
+import { adminDb, type NeonAdminDb } from "../neon-admin";
 import {
   type BlogCategory,
   type BlogFaqItem,
@@ -82,7 +81,7 @@ async function getUserSnapshot(userId: string | null | undefined) {
   };
 }
 
-export async function getCategoryLookup(db: Firestore = adminDb): Promise<CategoryLookup> {
+export async function getCategoryLookup(db: NeonAdminDb = adminDb): Promise<CategoryLookup> {
   const snapshot = await db.collection("categories").orderBy("name").get();
   const byId = new Map<string, BlogCategory>();
   const aliases = new Map<string, BlogCategory>();
@@ -179,7 +178,7 @@ export function normalizeStoredBlogPostRecord(
   };
 }
 
-export async function listAllBlogPosts(db: Firestore = adminDb): Promise<StoredBlogPost[]> {
+export async function listAllBlogPosts(db: NeonAdminDb = adminDb): Promise<StoredBlogPost[]> {
   const [lookup, snapshot] = await Promise.all([
     getCategoryLookup(db),
     db.collection("blog_posts").get(),
@@ -188,7 +187,7 @@ export async function listAllBlogPosts(db: Firestore = adminDb): Promise<StoredB
   return snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
 }
 
-export async function getBlogPostById(id: string, db: Firestore = adminDb): Promise<StoredBlogPost | null> {
+export async function getBlogPostById(id: string, db: NeonAdminDb = adminDb): Promise<StoredBlogPost | null> {
   const [lookup, doc] = await Promise.all([
     getCategoryLookup(db),
     db.collection("blog_posts").doc(id).get(),
@@ -202,7 +201,7 @@ export async function buildBlogPostWriteData(
   options?: {
     existing?: StoredBlogPost | null;
     authUserId?: string | null;
-    db?: Firestore;
+    db?: NeonAdminDb;
   },
 ) {
   const db = options?.db ?? adminDb;

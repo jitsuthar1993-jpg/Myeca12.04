@@ -7,7 +7,7 @@ const router = Router();
 
 // Notification schema
 const notificationSchema = z.object({
-  userId: z.number(),
+  userId: z.union([z.number(), z.string()]),
   title: z.string(),
   message: z.string(),
   type: z.enum(["info", "success", "warning", "error", "tax_update", "deadline"]),
@@ -17,11 +17,13 @@ const notificationSchema = z.object({
   metadata: z.record(z.any()).optional(),
   createdAt: z.date().default(() => new Date())
 });
+type Notification = z.infer<typeof notificationSchema> & { id: number };
 
 // Mock notifications data
-const mockNotifications = [
+const mockNotifications: Notification[] = [
   {
     id: 1,
+    userId: "system",
     title: "ITR Filing Deadline Approaching",
     message: "Your ITR filing deadline is on July 31, 2025. File now to avoid penalties.",
     type: "deadline" as const,
@@ -32,6 +34,7 @@ const mockNotifications = [
   },
   {
     id: 2,
+    userId: "system",
     title: "Tax Refund Processed",
     message: "Your tax refund of ₹15,500 has been processed and will be credited within 5-7 days.",
     type: "success" as const,
@@ -41,6 +44,7 @@ const mockNotifications = [
   },
   {
     id: 3,
+    userId: "system",
     title: "New Tax Regime Updates",
     message: "Important changes to the new tax regime for FY 2025-26. Review the updates.",
     type: "tax_update" as const,
@@ -124,6 +128,7 @@ router.post("/test", authenticateToken, (req: Request, res: Response) => {
     message: "This is a test notification created at " + new Date().toLocaleString(),
     type: "info" as const,
     category: "system" as const,
+    actionUrl: "/notifications",
     read: false,
     createdAt: new Date()
   };

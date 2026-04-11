@@ -1,8 +1,8 @@
 import { Router, Response } from 'express';
 import { z } from "zod";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth";
-import { convertTimestamp } from "../utils/firestore";
+import { convertTimestamp } from "../utils/timestamps";
 import { validateRequest } from "../middleware/security";
 import { safeError } from "../utils/error-response";
 import { syncRoleClaims } from "../services/user-accounts";
@@ -45,7 +45,7 @@ router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
           u.email?.toLowerCase().includes(searchLower)
         );
     } else {
-      // No search — use Firestore-level pagination to avoid loading the entire collection
+      // No search here to avoid loading the entire collection.
       const offset = (page - 1) * limit;
       const countSnapshot = await (adminDb.collection("users") as any).count().get();
       const total = countSnapshot.data().count;

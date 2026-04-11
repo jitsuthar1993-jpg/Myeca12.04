@@ -238,7 +238,7 @@ export const rateLimitHelpers = {
     return `rate_limit:${action}:${identifier}`;
   },
 
-  // Check if rate limited (to be used with Redis or in-memory store)
+  // Check if rate limited with any key-value store adapter.
   isRateLimited: async (
     store: any,
     key: string,

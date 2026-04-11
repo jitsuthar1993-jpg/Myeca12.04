@@ -1,4 +1,5 @@
-import { adminAuth, adminDb } from "../firebase-admin";
+import { clerkClient } from "@clerk/express";
+import { adminDb } from "../neon-admin";
 
 type Role = "admin" | "team_member" | "ca" | "user";
 
@@ -37,36 +38,32 @@ export function getBootstrapRoleForEmail(email?: string | null): Role | null {
 }
 
 export async function syncRoleClaims(userId: string, role?: string | null) {
-  const userRecord = await adminAuth.getUser(userId);
-  const existingClaims = userRecord.customClaims ?? {};
-  const nextClaims = {
-    ...existingClaims,
-    admin: role === "admin",
-    team_member: role === "team_member",
-  };
-
-  if (
-    existingClaims.admin === nextClaims.admin &&
-    existingClaims.team_member === nextClaims.team_member
-  ) {
-    return;
-  }
-
-  await adminAuth.setCustomUserClaims(userId, nextClaims);
+  if (!process.env.CLERK_SECRET_KEY || !role) return;
+  await clerkClient.users.updateUserMetadata(userId, {
+    publicMetadata: { role },
+  });
 }
 
 export async function findOrCreateUserProfile(auth: AuthIdentity) {
   const userRef = adminDb.collection("users").doc(auth.userId);
   let userDoc = await userRef.get();
+  let email = auth.email ?? null;
+
+  if (!email && process.env.CLERK_SECRET_KEY) {
+    try {
+      const clerkUser = await clerkClient.users.getUser(auth.userId);
+      email = clerkUser.primaryEmailAddress?.emailAddress ?? clerkUser.emailAddresses[0]?.emailAddress ?? null;
+    } catch (error) {
+      console.warn("[AUTH] Could not load Clerk user email:", error);
+    }
+  }
 
   if (!userDoc.exists) {
-    const usersSnapshot = await adminDb.collection("users").limit(1).get();
-    const isFirstUser = usersSnapshot.empty;
-    const role = getBootstrapRoleForEmail(auth.email) ?? (isFirstUser ? "admin" : "user");
+    const role = getBootstrapRoleForEmail(email) ?? "user";
 
     const newUser = {
       id: auth.userId,
-      email: auth.email ?? null,
+      email,
       firstName: "User",
       lastName: "",
       role,

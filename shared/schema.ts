@@ -3,7 +3,7 @@ import { z } from "zod";
 // --- Base Schemas ---
 
 export const userSchema = z.object({
-  id: z.string(), // Firebase UID
+  id: z.string(), // Clerk user ID
   username: z.string().optional().nullable(),
   email: z.string().email().optional().nullable(),
   phoneNumber: z.string().optional().nullable(),

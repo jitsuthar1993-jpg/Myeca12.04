@@ -1,120 +1,109 @@
 #!/usr/bin/env node
 
 /**
- * MyeCA.in Production Deployment Configuration
- * Ensures all environment variables and settings are properly configured for production
+ * MyeCA.in Vercel deployment configuration checker.
+ *
+ * This is intentionally secret-safe: it only reports whether values exist.
  */
 
-// Required environment variables for production deployment
-const REQUIRED_PRODUCTION_VARS = [
-  'JWT_SECRET',
-  'DATABASE_URL'
+const DATABASE_KEYS = ["DATABASE_URL", "POSTGRES_URL"];
+
+const REQUIRED_PRODUCTION_GROUPS = [
+  {
+    label: "Neon Postgres",
+    keys: DATABASE_KEYS,
+    any: true,
+  },
+  {
+    label: "Clerk server auth",
+    keys: ["CLERK_SECRET_KEY"],
+  },
+  {
+    label: "Clerk browser auth",
+    keys: ["VITE_CLERK_PUBLISHABLE_KEY", "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
+    any: true,
+  },
+  {
+    label: "Vercel Blob",
+    keys: ["BLOB_READ_WRITE_TOKEN"],
+  },
 ];
 
-// Optional but recommended environment variables
 const RECOMMENDED_VARS = [
-  'NODE_ENV',
-  'OPENAI_API_KEY',
-  'SENDGRID_API_KEY'
+  "NODE_ENV",
+  "APP_URL",
+  "VITE_APP_URL",
+  "ADMIN_EMAILS",
+  "PII_ENCRYPTION_KEY",
+  "SESSION_SECRET",
+  "OPENAI_API_KEY",
+  "SENDGRID_API_KEY",
 ];
+
+function hasValue(key) {
+  return Boolean(process.env[key]?.trim());
+}
+
+function formatGroup(group) {
+  if (group.any) {
+    return group.keys.some(hasValue)
+      ? `configured via ${group.keys.find(hasValue)}`
+      : `missing one of: ${group.keys.join(", ")}`;
+  }
+
+  const missing = group.keys.filter((key) => !hasValue(key));
+  return missing.length === 0 ? "configured" : `missing: ${missing.join(", ")}`;
+}
 
 function checkEnvironmentVariables() {
-  console.log('🔍 Checking Production Environment Configuration...\n');
-  
+  console.log("Checking MyeCA.in Vercel deployment configuration\n");
+
   let allRequiredPresent = true;
-  let warnings = [];
-  
-  // Check required variables
-  console.log('✅ Required Variables:');
-  for (const varName of REQUIRED_PRODUCTION_VARS) {
-    const value = process.env[varName];
-    if (value) {
-      console.log(`   ✓ ${varName}: ${value.length > 20 ? '***[CONFIGURED]***' : value}`);
-    } else {
-      console.log(`   ❌ ${varName}: MISSING`);
+  const warnings = [];
+
+  console.log("Required configuration:");
+  for (const group of REQUIRED_PRODUCTION_GROUPS) {
+    const configured = group.any
+      ? group.keys.some(hasValue)
+      : group.keys.every(hasValue);
+
+    if (!configured) {
       allRequiredPresent = false;
     }
+
+    console.log(`- ${group.label}: ${formatGroup(group)}`);
   }
-  
-  // Check recommended variables
-  console.log('\n📋 Recommended Variables:');
-  for (const varName of RECOMMENDED_VARS) {
-    const value = process.env[varName];
-    if (value) {
-      console.log(`   ✓ ${varName}: ${value.length > 20 ? '***[CONFIGURED]***' : value}`);
+
+  console.log("\nRecommended configuration:");
+  for (const key of RECOMMENDED_VARS) {
+    if (hasValue(key)) {
+      console.log(`- ${key}: configured`);
     } else {
-      console.log(`   ⚠️  ${varName}: Not set (optional)`);
-      warnings.push(varName);
+      console.log(`- ${key}: not set`);
+      warnings.push(key);
     }
   }
-  
-  // Production-specific checks
-  console.log('\n🏭 Production Environment Checks:');
-  
-  // Check NODE_ENV
-  const nodeEnv = process.env.NODE_ENV;
-  if (nodeEnv === 'production') {
-    console.log('   ✓ NODE_ENV: production');
-  } else {
-    console.log(`   ⚠️  NODE_ENV: ${nodeEnv || 'not set'} (should be "production" for deployment)`);
-    warnings.push('NODE_ENV should be set to "production"');
+
+  console.log("\nSummary:");
+  console.log(`Status: ${allRequiredPresent ? "ready" : "not ready"}`);
+
+  if (warnings.length > 0) {
+    console.log(`Warnings: ${warnings.join(", ")}`);
   }
-  
-  // Check JWT_SECRET strength
-  const jwtSecret = process.env.JWT_SECRET;
-  if (jwtSecret) {
-    if (jwtSecret.length >= 32) {
-      console.log('   ✓ JWT_SECRET: Strong (>=32 characters)');
-    } else {
-      console.log('   ⚠️  JWT_SECRET: Weak (<32 characters)');
-      warnings.push('JWT_SECRET should be at least 32 characters');
-    }
+
+  if (!allRequiredPresent) {
+    console.log("\nNext steps:");
+    console.log("- Connect Clerk, Neon, and Blob through Vercel Marketplace or add equivalent env vars.");
+    console.log("- Run `npx vercel env pull .vercel/.env.preview.local --environment=preview --yes`.");
+    console.log("- Run `npm run db:migrate:preview` after Neon is provisioned.");
   }
-  
-  // Summary
-  console.log('\n' + '='.repeat(50));
-  if (allRequiredPresent) {
-    console.log('🎉 DEPLOYMENT READY!');
-    console.log('All required environment variables are configured.');
-    
-    if (warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
-      warnings.forEach(warning => console.log(`   - ${warning}`));
-    }
-    
-    console.log('\n🚀 Next Steps:');
-    console.log('1. Deploy your application to Replit');
-    console.log('2. Monitor deployment logs for any issues');
-    console.log('3. Test authentication after deployment');
-    
-  } else {
-    console.log('❌ DEPLOYMENT NOT READY!');
-    console.log('Missing required environment variables.');
-    console.log('\n🔧 Fix Instructions:');
-    console.log('1. Add missing variables to Replit Deployment Secrets');
-    console.log('2. Run this script again to verify');
-    console.log('3. Deploy after all variables are configured');
-  }
-  
+
   return allRequiredPresent;
 }
 
-// Generate deployment summary
 function generateDeploymentSummary() {
-  const isReady = checkEnvironmentVariables();
-  
-  console.log('\n📄 Deployment Summary:');
-  console.log(`Status: ${isReady ? 'READY ✅' : 'NOT READY ❌'}`);
-  console.log(`JWT_SECRET: ${process.env.JWT_SECRET ? 'Configured' : 'Missing'}`);
-  console.log(`DATABASE_URL: ${process.env.DATABASE_URL ? 'Configured' : 'Missing'}`);
-  console.log(`NODE_ENV: ${process.env.NODE_ENV || 'Not set'}`);
-  
-  return isReady;
+  return checkEnvironmentVariables();
 }
-
-// Main execution
-console.log('🚀 MyeCA.in Deployment Configuration Checker');
-console.log('='.repeat(50));
 
 const isReady = generateDeploymentSummary();
 process.exit(isReady ? 0 : 1);
@@ -122,6 +111,6 @@ process.exit(isReady ? 0 : 1);
 export {
   checkEnvironmentVariables,
   generateDeploymentSummary,
-  REQUIRED_PRODUCTION_VARS,
-  RECOMMENDED_VARS
+  REQUIRED_PRODUCTION_GROUPS,
+  RECOMMENDED_VARS,
 };

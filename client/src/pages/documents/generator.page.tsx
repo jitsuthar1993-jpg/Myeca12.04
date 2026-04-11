@@ -30,20 +30,6 @@ import {
   AlertCircle,
   CheckCircle,
 } from 'lucide-react';
-import { db } from '@/lib/firebase';
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  serverTimestamp,
-  query,
-  where,
-  getDocs,
-  limit,
-  orderBy
-} from 'firebase/firestore';
-
 // Import modular configurations
 import { DOCUMENT_GENERATORS } from './generators';
 import { DocumentGeneratorConfig } from './generators/types';
@@ -89,37 +75,17 @@ export default function DocumentGenerator() {
       try {
         setSaveStatus('saving'); // Show loading state
         
-        // 1. Try Firestore first
-        const draftsRef = collection(db, "document_drafts");
-        const q = query(
-          draftsRef, 
-          where("userId", "==", user.id), 
-          where("type", "==", documentType),
-          orderBy("updatedAt", "desc"),
-          limit(1)
-        );
-        
-        const querySnapshot = await getDocs(q);
-        
-        if (!querySnapshot.empty) {
-          const draftDoc = querySnapshot.docs[0];
-          const draftData = draftDoc.data();
-          setDocumentId(draftDoc.id);
-          reset(draftData.content);
-          setLastSaved(draftData.updatedAt?.toDate() || new Date());
-          setSaveStatus('idle');
-          return;
-        }
-        
-        // 2. Fallback to LocalStorage
-        const localData = localStorage.getItem(`myeca_doc_latest_${documentType}`);
+        const localData = localStorage.getItem(`myeca_doc_latest_${user.id}_${documentType}`)
+          || localStorage.getItem(`myeca_doc_latest_${documentType}`);
         if (localData) {
           const parsed = JSON.parse(localData);
-          reset(parsed);
+          reset(parsed.content || parsed);
+          setDocumentId(parsed.id || null);
+          setLastSaved(parsed.updatedAt ? new Date(parsed.updatedAt) : null);
           setSaveStatus('idle');
         }
       } catch (error) {
-        console.error("Error loading draft from Firebase:", error);
+        console.error("Error loading local draft:", error);
         setSaveStatus('error');
       } finally {
         setSaveStatus('idle');
@@ -146,25 +112,18 @@ export default function DocumentGenerator() {
       setSaveStatus('saving');
       const content = getValues();
       
-      // Save to LocalStorage always
-      localStorage.setItem(`myeca_doc_latest_${documentType}`, JSON.stringify(content));
-
-      // Save to Firebase Firestore
+      const draftId = documentId || crypto.randomUUID();
       const draftData = {
+        id: draftId,
         userId: user.id,
         type: documentType,
         title: config.title,
         content: content,
-        updatedAt: serverTimestamp(),
+        updatedAt: new Date().toISOString(),
       };
 
-      if (documentId) {
-        await setDoc(doc(db, "document_drafts", documentId), draftData, { merge: true });
-      } else {
-        const docRef = doc(collection(db, "document_drafts"));
-        await setDoc(docRef, draftData);
-        setDocumentId(docRef.id);
-      }
+      localStorage.setItem(`myeca_doc_latest_${user.id}_${documentType}`, JSON.stringify(draftData));
+      setDocumentId(draftId);
 
       setSaveStatus('saved');
       setLastSaved(new Date());
@@ -187,27 +146,24 @@ export default function DocumentGenerator() {
 
     setIsSaving(true);
     try {
+      const draftId = documentId || crypto.randomUUID();
       const draftData = {
+        id: draftId,
         userId: user.id,
         type: documentType,
         title: config?.title || "Untitled Document",
         content: data,
-        updatedAt: serverTimestamp(),
+        updatedAt: new Date().toISOString(),
         isCertified: false // Future flag
       };
 
-      if (documentId) {
-        await setDoc(doc(db, "document_drafts", documentId), draftData, { merge: true });
-      } else {
-        const docRef = doc(collection(db, "document_drafts"));
-        await setDoc(docRef, draftData);
-        setDocumentId(docRef.id);
-      }
+      localStorage.setItem(`myeca_doc_latest_${user.id}_${documentType}`, JSON.stringify(draftData));
+      setDocumentId(draftId);
 
       setSaveStatus('saved');
       setLastSaved(new Date());
     } catch (error) {
-      console.error('Failed to save document to Firebase:', error);
+      console.error('Failed to save document draft:', error);
       alert('Failed to save document. Please try again.');
     } finally {
       setIsSaving(false);
@@ -310,7 +266,7 @@ export default function DocumentGenerator() {
     <div className="h-screen flex flex-col bg-slate-50 overflow-hidden font-sans">
       <MetaSEO 
         title={currentTitle}
-        description={`Create and download your ${config.title} online. Professional ${config.category} document draft with expert-approved clauses for the Indian legal system.`}
+        description={`Create and download your ${config.title} online with expert-approved clauses for the Indian legal system.`}
         breadcrumbs={[
           { name: "Home", url: "/" }, 
           { name: "Registry", url: "/documents/generator" },

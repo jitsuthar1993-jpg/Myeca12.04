@@ -1,7 +1,7 @@
 import { Router, Response } from "express";
 import { z } from "zod";
 import { requireAuth, requireAdmin, requireTeamMember, AuthRequest } from "../middleware/auth";
-import { adminDb } from "../firebase-admin";
+import { adminDb } from "../neon-admin";
 import { sanitize } from "../middleware/sanitize";
 import multer from "multer";
 import path from "path";
@@ -128,7 +128,7 @@ async function resolveDenormalizedFields(authorId?: string, categoryId?: number 
       .limit(1)
       .get();
     if (!catSnapshot.empty) {
-      categoryName = catSnapshot.docs[0].data().name;
+      categoryName = catSnapshot.docs[0]?.data()?.name || categoryName;
     }
   }
   return { authorName, categoryName };
