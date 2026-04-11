@@ -29,22 +29,33 @@ export default defineConfig({
     chunkSizeWarningLimit: 500, // Catch bloated chunks early
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "wouter", "@tanstack/react-query"],
-          motion: ["framer-motion"],
-          icons: ["lucide-react"],
-          ui: [
-            "@radix-ui/react-tooltip",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-navigation-menu",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-popover",
-            "@radix-ui/react-select",
-            "@radix-ui/react-tabs",
-          ],
-          charts: ["recharts"],
-          firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
-          forms: ["react-hook-form", "@hookform/resolvers", "zod"],
+        manualChunks(id) {
+          // React core — must be in one chunk to avoid circular deps
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
+            return "vendor";
+          }
+          if (id.includes("node_modules/wouter") || id.includes("node_modules/@tanstack/react-query")) {
+            return "vendor";
+          }
+          // UI framework — Radix lives alongside React in vendor to prevent circular refs
+          if (id.includes("node_modules/@radix-ui/")) {
+            return "vendor";
+          }
+          if (id.includes("node_modules/framer-motion")) {
+            return "motion";
+          }
+          if (id.includes("node_modules/lucide-react")) {
+            return "icons";
+          }
+          if (id.includes("node_modules/recharts") || id.includes("node_modules/d3-")) {
+            return "charts";
+          }
+          if (id.includes("node_modules/firebase/")) {
+            return "firebase";
+          }
+          if (id.includes("node_modules/react-hook-form") || id.includes("node_modules/@hookform/") || id.includes("node_modules/zod")) {
+            return "forms";
+          }
         },
       },
     },
