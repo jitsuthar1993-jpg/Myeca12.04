@@ -18,8 +18,7 @@ import SEO from "@/components/SEO";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
 import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, sanitizeFilename, formatFileSize } from "@/lib/file_utils";
 import { getAuthToken } from "@/lib/authToken";
-import { storage, auth } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, getStorageInstance } from "@/lib/firebase";
 import { 
   Dialog,
   DialogContent,
@@ -113,8 +112,10 @@ export default function DocumentsPage() {
       }
 
       const sanitizedName = sanitizeFilename(`${Date.now()}-${file.name}`);
-      const storageRef = ref(storage, `user_documents/${auth.currentUser.uid}/${sanitizedName}`);
-      
+      const storageInstance = await getStorageInstance();
+      const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+      const storageRef = ref(storageInstance, `user_documents/${auth.currentUser.uid}/${sanitizedName}`);
+
       const uploadResult = await uploadBytes(storageRef, file, {
         contentType: file.type,
         customMetadata: {
@@ -123,7 +124,7 @@ export default function DocumentsPage() {
           year: uploadData.year
         }
       });
-      
+
       const downloadUrl = await getDownloadURL(uploadResult.ref);
       const token = await getAuthToken();
       

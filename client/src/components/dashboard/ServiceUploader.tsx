@@ -7,8 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { compressImage, getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, sanitizeFilename } from "@/lib/file_utils";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
 import { getAuthToken } from "@/lib/authToken";
-import { storage, auth } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, getStorageInstance } from "@/lib/firebase";
 
 interface ServiceUploaderProps {
   serviceId: string;
@@ -116,8 +115,10 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
         const docName = expectedDocs.find(d => d.id === docId)?.name || docId;
         const sanitizedName = sanitizeFilename(`${Date.now()}-${file.name}`);
         
-        // Direct Firebase Storage Upload (Bypassing proxy for large files if needed, or keeping for consistency)
-        const storageRef = ref(storage, `user_documents/${auth.currentUser.uid}/${sanitizedName}`);
+        // Direct Firebase Storage Upload
+        const storageInstance = await getStorageInstance();
+        const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+        const storageRef = ref(storageInstance, `user_documents/${auth.currentUser.uid}/${sanitizedName}`);
         const uploadResult = await uploadBytes(storageRef, file, {
           contentType: file.type,
           customMetadata: {
@@ -126,7 +127,7 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
             docId: docId
           }
         });
-        
+
         const downloadUrl = await getDownloadURL(uploadResult.ref);
         const token = await getAuthToken();
 

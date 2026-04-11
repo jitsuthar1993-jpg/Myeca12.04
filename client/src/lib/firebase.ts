@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,26 +11,36 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
-
 const app = initializeApp(firebaseConfig);
 
-// Initialize App Check with reCAPTCHA Enterprise
-if (typeof window !== 'undefined') {
-  // Check if we have a site key, otherwise fallback to debug in dev or skip
-  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-  if (siteKey) {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaEnterpriseProvider(siteKey),
-      isTokenAutoRefreshEnabled: true
-    });
-  } else if (import.meta.env.DEV) {
-    // Optional: Enable debug token in development
-    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-  }
-}
-
+// Auth + Firestore needed immediately for AuthProvider
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+
+// Storage is lazy — only needed on documents/upload pages
+let _storage: any = null;
+export async function getStorageInstance() {
+  if (!_storage) {
+    const { getStorage } = await import("firebase/storage");
+    _storage = getStorage(app);
+  }
+  return _storage;
+}
+
+// Defer AppCheck — not needed for initial render
+if (typeof window !== 'undefined') {
+  setTimeout(async () => {
+    const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+    if (siteKey) {
+      const { initializeAppCheck, ReCaptchaEnterpriseProvider } = await import("firebase/app-check");
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(siteKey),
+        isTokenAutoRefreshEnabled: true
+      });
+    } else if (import.meta.env.DEV) {
+      (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    }
+  }, 5000);
+}
+
 export default app;

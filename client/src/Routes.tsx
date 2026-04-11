@@ -3,11 +3,6 @@ import { Suspense, lazy } from 'react';
 import { lazyWithRetry } from '@/utils/bundle-optimization';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 
-const SEOAccessibilityDemoPage = lazyWithRetry(() => import("@/pages/SEOAccessibilityDemo"));
-const APIRateLimitFixPage = lazyWithRetry(() => import("@/pages/api-rate-limit-fix"));
-const EnhancedSearchPage = lazyWithRetry(() => import("@/pages/enhanced-search.page"));
-const AIAssistantPage = lazyWithRetry(() => import("@/pages/ai-assistant.page"));
-
 // Route components loaded lazily to reduce initial bundle size
 const NotFound = lazyWithRetry(() => import("@/pages/not-found"));
 const HomePage = lazyWithRetry(() => import("@/pages/home.page"));
@@ -136,7 +131,6 @@ const SettingsPage = lazyWithRetry(() => import("@/pages/settings.page"));
 const ApiDocsPage = lazyWithRetry(() => import("@/pages/api-docs.page"));
 const ExportCenterPage = lazyWithRetry(() => import("@/pages/export-center.page"));
 const IntegrationsPage = lazyWithRetry(() => import("@/pages/integrations.page"));
-const AdvancedDemoPage = lazyWithRetry(() => import("@/pages/advanced-demo.page"));
 const BlogIndexPage = lazyWithRetry(() => import("@/pages/blog.page"));
 const BlogDetailPage = lazyWithRetry(() => import("@/pages/blog/[slug].page"));
 const ServicesPage = lazyWithRetry(() => import("@/pages/services.page"));
@@ -146,12 +140,8 @@ const PrivacyPolicyPage = lazyWithRetry(() => import("@/pages/legal/privacy-poli
 const TermsOfServicePage = lazyWithRetry(() => import("@/pages/legal/terms-of-service.page"));
 const RefundPolicyPage = lazyWithRetry(() => import("@/pages/legal/refund-policy.page"));
 const DisclaimerPage = lazyWithRetry(() => import("@/pages/legal/disclaimer.page"));
-const FormDemoPage = lazyWithRetry(() => import("@/pages/form-demo.page"));
-const SecurityDemoPage = lazyWithRetry(() => import("@/pages/security-demo.page"));
 const ComplianceCalendarPage = lazyWithRetry(() => import("@/pages/compliance-calendar.page"));
 const ExpertConsultationPage = lazyWithRetry(() => import("@/pages/expert-consultation.page"));
-const ImageOptimizationDemoPage = lazyWithRetry(() => import("@/pages/image-optimization-demo.page"));
-const PerformanceDemoPage = lazyWithRetry(() => import("@/pages/performance-demo.page"));
 const HelpCenterPage = lazyWithRetry(() => import("@/pages/help/help-center.page"));
 const FAQPage = lazyWithRetry(() => import("@/pages/help/faq.page"));
 const UserGuidePage = lazyWithRetry(() => import("@/pages/help/user-guide.page"));
@@ -374,12 +364,8 @@ export default function Routes() {
         <Route path="/legal/terms-of-service" component={TermsOfServicePage} />
         <Route path="/legal/refund-policy" component={RefundPolicyPage} />
         <Route path="/legal/disclaimer" component={DisclaimerPage} />
-        <Route path="/form-demo" component={FormDemoPage} />
-        <Route path="/security-demo" component={SecurityDemoPage} />
         <Route path="/compliance-calendar" component={ComplianceCalendarPage} />
         <Route path="/expert-consultation" component={ExpertConsultationPage} />
-        <Route path="/image-optimization-demo" component={ImageOptimizationDemoPage} />
-        <Route path="/performance-demo" component={PerformanceDemoPage} />
         <Route path="/help" component={HelpCenterPage} />
         <Route path="/help/faq" component={FAQPage} />
         <Route path="/help/user-guide" component={UserGuidePage} />
@@ -391,15 +377,10 @@ export default function Routes() {
         <Route path="/api-docs" component={ApiDocsPage} />
         <Route path="/export" component={ExportCenterPage} />
         <Route path="/integrations" component={IntegrationsPage} />
-        <Route path="/advanced-demo" component={AdvancedDemoPage} />
         <Route path="/reports" component={ReportsPage} />
         <Route path="/workflows" component={WorkflowsPage} />
         <Route path="/teams" component={TeamsPage} />
         <Route path="/referrals" component={ReferralsPage} />
-        <Route path="/seo-accessibility-demo" component={SEOAccessibilityDemoPage} />
-        <Route path="/api-rate-limit-fix" component={APIRateLimitFixPage} />
-        <Route path="/enhanced-search" component={EnhancedSearchPage} />
-        <Route path="/ai-assistant" component={AIAssistantPage} />
         <Route path="/500" component={ServerErrorPage} />
         <Route component={NotFound} />
       </Switch>

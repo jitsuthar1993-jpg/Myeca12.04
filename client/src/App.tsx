@@ -84,10 +84,6 @@ function AppContent() {
     const timer = setTimeout(async () => {
       const { addPerformanceHints } = await import('@/utils/performance-hints');
       addPerformanceHints();
-      if (import.meta.env.PROD) {
-        const { registerServiceWorker } = await import('@/utils/service-worker-registration');
-        registerServiceWorker();
-      }
     }, 3000);
 
     return () => clearTimeout(timer);

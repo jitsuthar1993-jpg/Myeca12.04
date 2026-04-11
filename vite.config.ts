@@ -70,9 +70,7 @@ export default defineConfig({
       "@tanstack/react-query",
       "lucide-react",
       "@radix-ui/react-tooltip",
-      "framer-motion",
       "react-helmet-async",
-      "recharts",
     ],
   },
 });
