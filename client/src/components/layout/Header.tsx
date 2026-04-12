@@ -1,6 +1,5 @@
 import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import { m, AnimatePresence } from "framer-motion";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -205,11 +204,7 @@ export default function Header() {
                       >
                         <div className="relative group">
                           {(location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard') && (
-                            <m.div 
-                              layoutId="active-pill"
-                              className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full"
-                              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                            />
+                            <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                           )}
                           <span className={cn(
                             "relative z-10 inline-flex items-center justify-center px-5 py-2.5 font-black transition-colors duration-300 cursor-pointer text-[17px]",
@@ -229,11 +224,7 @@ export default function Header() {
                   <NavigationMenuItem>
                     <div className="relative group">
                       {inServices && (
-                        <m.div 
-                          layoutId="active-pill"
-                          className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                        />
+                        <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
                         "relative z-10 bg-transparent font-black transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
@@ -417,11 +408,7 @@ export default function Header() {
                   <NavigationMenuItem>
                     <div className="relative group">
                       {inStartup && (
-                        <m.div 
-                          layoutId="active-pill"
-                          className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                        />
+                        <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
                         "relative z-10 bg-transparent font-black transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
@@ -603,11 +590,7 @@ export default function Header() {
                   <NavigationMenuItem>
                     <div className="relative group">
                       {inCalculators && (
-                        <m.div 
-                          layoutId="active-pill"
-                          className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                        />
+                        <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
                         "relative z-10 bg-transparent font-black transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
@@ -811,11 +794,7 @@ export default function Header() {
                     <Link href="/blog" onMouseEnter={() => preloadOnHover('/blog')}>
                       <div className="relative group">
                         {location.startsWith('/blog') && (
-                          <m.div 
-                            layoutId="active-pill"
-                            className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full"
-                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                          />
+                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                         )}
                         <span className={cn(
                           "relative z-10 inline-flex items-center justify-center px-5 py-2.5 font-black transition-colors duration-300 cursor-pointer text-[17px]",

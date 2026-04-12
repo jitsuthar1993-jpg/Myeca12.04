@@ -36,30 +36,36 @@ export default defineConfig({
           if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
             return "vendor";
           }
+          // Routing + query — small, needed on every page
           if (
             id.includes("node_modules/wouter") ||
             id.includes("node_modules/@tanstack/react-query") ||
-            id.includes("node_modules/@clerk/") ||
             id.includes("node_modules/use-sync-external-store")
           ) {
             return "vendor";
           }
-          // UI framework — Radix lives alongside React in vendor to prevent circular refs
+          // Radix UI — needed for buttons/tooltips on first paint
           if (id.includes("node_modules/@radix-ui/")) {
             return "vendor";
           }
+          // Clerk auth — heavy (~200KB), lazy-load separately
+          if (id.includes("node_modules/@clerk/")) {
+            return "clerk";
+          }
+          // Framer-motion — only needed after first paint
           if (id.includes("node_modules/framer-motion")) {
             return "motion";
           }
-          if (id.includes("node_modules/lucide-react")) {
-            return "icons";
-          }
+          // Charts — only needed on calculator/analytics pages, NOT homepage
+          // Let Vite tree-shake per-route instead of one fat chunk
           if (id.includes("node_modules/recharts") || id.includes("node_modules/d3-")) {
             return "charts";
           }
+          // Forms — only needed on form-heavy pages
           if (id.includes("node_modules/react-hook-form") || id.includes("node_modules/@hookform/") || id.includes("node_modules/zod")) {
             return "forms";
           }
+          // Icons — let Vite tree-shake per-route; don't bundle all icons together
         },
       },
     },

@@ -20,7 +20,7 @@ export default function GoogleAnalytics() {
       return;
     }
 
-    // Defer GA loading until browser is idle to avoid blocking render
+    // Defer GA + Clarity loading until browser is idle to avoid blocking render
     const initGA = () => {
       const script1 = document.createElement('script');
       script1.async = true;
@@ -40,6 +40,16 @@ export default function GoogleAnalytics() {
         page_location: window.location.href,
         page_path: location
       });
+
+      // Microsoft Clarity — deferred alongside GA
+      const clarityId = 'vyw4w3qe7p';
+      (window as any).clarity = (window as any).clarity || function(...args: any[]) {
+        ((window as any).clarity.q = (window as any).clarity.q || []).push(args);
+      };
+      const clarityScript = document.createElement('script');
+      clarityScript.async = true;
+      clarityScript.src = `https://www.clarity.ms/tag/${clarityId}`;
+      document.head.appendChild(clarityScript);
     };
 
     if ('requestIdleCallback' in window) {
