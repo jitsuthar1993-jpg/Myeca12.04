@@ -12,7 +12,7 @@ import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/
 
 const router = Router();
 
-const CACHE_HEADER = "public, max-age=300, stale-while-revalidate=600";
+const CACHE_HEADER = "public, max-age=0, must-revalidate";
 
 type PublicBlogSummaryCompat = PublicBlogSummary & {
   featuredImage: string | null;
@@ -183,6 +183,12 @@ const getCachedCategories = memoize(
   },
   { promise: true, maxAge: 300000 },
 );
+
+export function clearPublicBlogCaches() {
+  (getCachedBlogs as unknown as { clear: () => void }).clear();
+  (getCachedBlogBySlug as unknown as { clear: () => void }).clear();
+  (getCachedCategories as unknown as { clear: () => void }).clear();
+}
 
 router.get("/updates/active", async (_req, res) => {
   try {

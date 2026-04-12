@@ -56,7 +56,7 @@ function trimNullable(value: unknown): string | null {
 }
 
 function normalizeStatus(value: unknown): "draft" | "published" {
-  return value === "published" ? "published" : "draft";
+  return typeof value === "string" && value.trim().toLowerCase() === "published" ? "published" : "draft";
 }
 
 function parseNumeric(value: unknown): number | null {
@@ -131,7 +131,11 @@ export function normalizeStoredBlogPostRecord(
   data: Record<string, unknown>,
   lookup: CategoryLookup,
 ): StoredBlogPost {
-  const category = resolveCategory(data.categoryId, lookup);
+  const legacyPublished =
+    data.isPublished === true ||
+    data.published === true ||
+    (data.status === undefined && data.publishedAt !== undefined && data.publishedAt !== null);
+  const category = resolveCategory(data.categoryId ?? data.categoryName ?? data.category, lookup);
   const authorLegacy =
     typeof data.author === "object" && data.author
       ? data.author as { firstName?: string; lastName?: string }
@@ -158,7 +162,7 @@ export function normalizeStoredBlogPostRecord(
     slug: typeof data.slug === "string" ? data.slug : docId,
     excerpt: trimNullable(data.excerpt),
     content: normalizedContent,
-    status: normalizeStatus(data.status),
+    status: normalizeStatus(data.status ?? (legacyPublished ? "published" : undefined)),
     categoryId: category?.id ?? null,
     category,
     coverImage: trimNullable(data.coverImage) ?? trimNullable(data.featuredImage),

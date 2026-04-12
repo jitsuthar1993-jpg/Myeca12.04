@@ -7,6 +7,14 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import sharp from "sharp";
+import { blogPostEditorSchema, blogPostUpdateSchema, type BlogPostEditorInput } from "../../shared/blog.js";
+import {
+  buildBlogPostWriteData,
+  getCategoryLookup,
+  normalizeStoredBlogPostRecord,
+  type StoredBlogPost,
+} from "../services/blog.js";
+import { clearPublicBlogCaches } from "./public.js";
 
 const router = Router();
 
@@ -38,36 +46,45 @@ const upload = multer({
   }
 });
 
-// Validation schemas
-const createPostSchema = z.object({
-  title: z.string().min(3).max(200),
-  slug: z.string().min(3).max(200),
-  content: z.string().min(1),
-  excerpt: z.string().optional(),
-  status: z.enum(["draft", "published"]).default("draft"),
-  tags: z.array(z.string()).optional(),
-  featuredImage: z.string().optional().nullable(),
-  categoryId: z.number().optional().nullable(),
-});
-
-const updatePostSchema = createPostSchema.partial();
+function storedPostToEditorInput(post: StoredBlogPost): BlogPostEditorInput {
+  return blogPostEditorSchema.parse({
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    content: post.content,
+    status: post.status,
+    categoryId: post.categoryId,
+    coverImage: post.coverImage,
+    authorId: post.authorId,
+    authorName: post.authorName,
+    authorRole: post.authorRole,
+    authorBio: post.authorBio,
+    seoTitle: post.seoTitle,
+    seoDescription: post.seoDescription,
+    keyHighlights: post.keyHighlights,
+    faqItems: post.faqItems,
+    relatedPostIds: post.relatedPostIds,
+    ctaLabel: post.ctaLabel,
+    ctaHref: post.ctaHref,
+    isFeatured: post.isFeatured,
+    readingTimeMinutes: post.readingTimeMinutes,
+    publishedAt: post.publishedAt,
+    tags: post.tags,
+  });
+}
 
 // List posts with filters
 router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, res: Response) => {
   try {
     const { q, status } = req.query as { q?: string; status?: string };
-    
+
+    const lookup = await getCategoryLookup();
+
     // Fetch all posts to allow in-memory filtering and sorting without composite indexes
     const snapshot = await adminDb.collection("blog_posts").get();
-    let posts = snapshot.docs.map((doc: any) => {
-      const data = doc.data();
-      return { 
-        id: doc.id, 
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt || new Date()),
-        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : (data.updatedAt || new Date())
-      };
-    });
+    let posts = snapshot.docs.map((doc: any) =>
+      normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup),
+    );
 
     // Apply status filter
     if (status && (status === "draft" || status === "published")) {
@@ -85,8 +102,8 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
 
     // Sort by createdAt descending
     posts.sort((a: any, b: any) => {
-      const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt || 0);
-      const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt || 0);
+      const dateA = new Date(a.createdAt || a.updatedAt || 0);
+      const dateB = new Date(b.createdAt || b.updatedAt || 0);
       return dateB.getTime() - dateA.getTime();
     });
 
@@ -103,58 +120,30 @@ router.get("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequest
     const { id } = req.params;
     const doc = await adminDb.collection("blog_posts").doc(id).get();
     if (!doc.exists) return res.status(404).json({ error: "Post not found" });
-    res.json({ success: true, post: { id: doc.id, ...doc.data() } });
+    const lookup = await getCategoryLookup();
+    const post = normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
+    res.json({ success: true, post });
   } catch (error) {
     console.error("CMS get post error:", error);
     res.status(500).json({ error: "Failed to fetch post" });
   }
 });
 
-// Helper: resolve denormalized author/category names for blog_posts
-async function resolveDenormalizedFields(authorId?: string, categoryId?: number | null) {
-  let authorName: string | undefined;
-  let categoryName: string | undefined;
-
-  if (authorId) {
-    const authorDoc = await adminDb.collection("users").doc(authorId).get();
-    if (authorDoc.exists) {
-      const d = authorDoc.data()!;
-      authorName = [d.firstName, d.lastName].filter(Boolean).join(" ") || "Team MyeCA";
-    }
-  }
-  if (categoryId != null) {
-    const catSnapshot = await adminDb.collection("categories")
-      .where("id", "==", categoryId)
-      .limit(1)
-      .get();
-    if (!catSnapshot.empty) {
-      categoryName = catSnapshot.docs[0]?.data()?.name || categoryName;
-    }
-  }
-  return { authorName, categoryName };
-}
-
 // Create post
 router.post("/posts", requireAuth, requireTeamMember, sanitize, async (req: AuthRequest, res: Response) => {
   try {
-    const payload = createPostSchema.parse(req.body);
+    const payload = blogPostEditorSchema.parse(req.body);
     const authUser = req.auth;
 
-    // Denormalize author/category names into the document
-    const { authorName, categoryName } = await resolveDenormalizedFields(authUser?.userId, payload.categoryId);
-
     const postRef = adminDb.collection("blog_posts").doc();
-    const newPost = {
-      ...payload,
-      authorId: authUser?.userId,
-      authorName: authorName || "Team MyeCA",
-      categoryName: categoryName || "General",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    const writeData = await buildBlogPostWriteData(payload, { authUserId: authUser?.userId });
 
-    await postRef.set(newPost);
-    res.json({ success: true, post: { id: postRef.id, ...newPost } });
+    await postRef.set(writeData);
+    clearPublicBlogCaches();
+
+    const lookup = await getCategoryLookup();
+    const post = normalizeStoredBlogPostRecord(postRef.id, writeData as Record<string, unknown>, lookup);
+    res.json({ success: true, post });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
@@ -168,29 +157,29 @@ router.post("/posts", requireAuth, requireTeamMember, sanitize, async (req: Auth
 router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const payload = updatePostSchema.parse(req.body);
+    const payload = blogPostUpdateSchema.parse(req.body);
 
     const postRef = adminDb.collection("blog_posts").doc(id);
     const doc = await postRef.get();
     if (!doc.exists) return res.status(404).json({ error: "Post not found" });
 
-    const existingData = doc.data()!;
-
-    // Re-denormalize if category changed
-    const denorm: Record<string, string> = {};
-    if (payload.categoryId !== undefined && payload.categoryId !== existingData.categoryId) {
-      const { categoryName } = await resolveDenormalizedFields(undefined, payload.categoryId);
-      if (categoryName) denorm.categoryName = categoryName;
-    }
-
-    const updateData = {
+    const lookup = await getCategoryLookup();
+    const existing = normalizeStoredBlogPostRecord(id, doc.data() as Record<string, unknown>, lookup);
+    const completePayload = blogPostEditorSchema.parse({
+      ...storedPostToEditorInput(existing),
       ...payload,
-      ...denorm,
-      updatedAt: new Date(),
-    };
+    });
+    const writeData = await buildBlogPostWriteData(completePayload, {
+      existing,
+      authUserId: req.auth?.userId,
+    });
 
-    await postRef.update(updateData);
-    res.json({ success: true, post: { id, ...existingData, ...updateData } });
+    await postRef.update(writeData);
+    clearPublicBlogCaches();
+
+    const updatedLookup = await getCategoryLookup();
+    const post = normalizeStoredBlogPostRecord(id, writeData as Record<string, unknown>, updatedLookup);
+    res.json({ success: true, post });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
@@ -209,6 +198,7 @@ router.delete("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequ
     if (!doc.exists) return res.status(404).json({ error: "Post not found" });
 
     await postRef.delete();
+    clearPublicBlogCaches();
     res.json({ success: true });
   } catch (error) {
     console.error("CMS delete post error:", error);
@@ -326,6 +316,7 @@ router.post("/categories", requireAuth, requireTeamMember, sanitize, async (req:
     const payload = createCategorySchema.parse(req.body);
     const catRef = adminDb.collection("categories").doc();
     await catRef.set(payload);
+    clearPublicBlogCaches();
     res.json({ success: true, category: { id: catRef.id, ...payload } });
   } catch (error) {
     if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
