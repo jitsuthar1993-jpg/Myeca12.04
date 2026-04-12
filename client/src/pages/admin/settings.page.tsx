@@ -392,27 +392,30 @@ function AdminSettingsContent() {
                 Security Configuration
               </CardTitle>
               <CardDescription>
-                Authentication and security settings
+                Clerk-controlled authentication and MyeCA session policy settings
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="jwtExpiry">JWT Token Expiry</Label>
+                  <Label htmlFor="jwtExpiry">Clerk Session Policy</Label>
                   <Select value={jwtExpiry} onValueChange={setJwtExpiry}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1h">1 Hour</SelectItem>
-                      <SelectItem value="24h">24 Hours</SelectItem>
-                      <SelectItem value="7d">7 Days</SelectItem>
-                      <SelectItem value="30d">30 Days</SelectItem>
+                      <SelectItem value="1h">Strict session refresh</SelectItem>
+                      <SelectItem value="24h">Daily Clerk refresh</SelectItem>
+                      <SelectItem value="7d">Weekly Clerk refresh</SelectItem>
+                      <SelectItem value="30d">Monthly Clerk refresh</SelectItem>
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Configure actual session lifetime, MFA, and passwordless methods in Clerk.
+                  </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="passwordMinLength">Min Password Length</Label>
+                  <Label htmlFor="passwordMinLength">Password Policy Reference</Label>
                   <Input
                     id="passwordMinLength"
                     type="number"
@@ -420,7 +423,11 @@ function AdminSettingsContent() {
                     onChange={(e) => setPasswordMinLength(e.target.value)}
                     min="6"
                     max="20"
+                    disabled
                   />
+                  <p className="text-xs text-muted-foreground">
+                    MyeCA does not create admin passwords; Clerk owns passwordless and password rules.
+                  </p>
                 </div>
               </div>
               
@@ -431,18 +438,22 @@ function AdminSettingsContent() {
                     checked={twoFactorAuth}
                     onCheckedChange={setTwoFactorAuth}
                   />
-                  <Label htmlFor="twoFactorAuth">Two-Factor Authentication</Label>
+                  <Label htmlFor="twoFactorAuth">Require Clerk MFA for privileged users</Label>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="sessionTimeout">Session Timeout (hours)</Label>
+                  <Label htmlFor="sessionTimeout">Idle Auto Logout (minutes)</Label>
                   <Input
                     id="sessionTimeout"
                     type="number"
-                    value={sessionTimeout}
+                    value="15"
                     onChange={(e) => setSessionTimeout(e.target.value)}
-                    min="1"
-                    max="72"
+                    min="15"
+                    max="15"
+                    disabled
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Locked by policy: warning at 14 minutes, logout at 15 minutes.
+                  </p>
                 </div>
               </div>
               

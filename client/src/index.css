@@ -75,9 +75,9 @@
   /* Neutral border #E0E0E0 */
   --input: 20 6% 90%;
 
-  /* Primary - Professional Slate */
-  --primary: 215 28% 17%;
-  /* Slate #334155 */
+  /* Primary - MyeCA Deep Blue */
+  --primary: 219 100% 26%;
+  /* #003087 */
   --primary-foreground: 0 0% 100%;
 
   /* Secondary - Light Gray */
@@ -92,14 +92,14 @@
   --destructive: 0 84% 60%;
   /* Red for errors */
   --destructive-foreground: 0 0% 100%;
-  --ring: 215 28% 17%;
-  /* Slate ring */
+  --ring: 219 100% 26%;
+  /* MyeCA blue ring */
   --radius: 0.5rem;
   /* Clean rounded corners */
 
   /* Status Colors */
-  --success: 142 76% 36%;
-  /* Green #059669 */
+  --success: 158 94% 25%;
+  /* Accessible green derived from Trust Green */
   --warning: 25 95% 53%;
   /* Orange */
   --error: 0 84% 60%;

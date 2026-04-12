@@ -1,217 +1,96 @@
-import { useState } from "react";
-import { Link, useLocation } from "wouter";
-import { useAuth } from "@/components/AuthProvider";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Chrome, Mail, Lock, ArrowRight, Loader2, AlertCircle, User } from "lucide-react";
-import { m } from "framer-motion";
+import { SignUp } from "@clerk/clerk-react";
+import { Link } from "wouter";
+import { BadgeCheck, FileText, Fingerprint, UserRoundCheck } from "lucide-react";
 import Logo from "@/components/ui/logo";
 
+const onboardingSteps = [
+  ["Authenticate", "Email, OAuth, passwordless, or invite flows via Clerk.", Fingerprint],
+  ["Progressive profile", "PAN, Aadhaar-link state, user type, and family/business context.", UserRoundCheck],
+  ["Personalized cockpit", "Recommended ITR, vault checklist, deadlines, and CA route.", FileText],
+];
+
 export default function RegisterPage() {
-  const [, setLocation] = useLocation();
-  const { register, loginWithGoogle } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      await register(email, password, { firstName, lastName });
-      setLocation("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to create account. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSignup = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await loginWithGoogle();
-      setLocation("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to sign up with Google.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const redirectUrl = new URLSearchParams(window.location.search).get("redirect_url") || "/dashboard";
+  const signInUrl = `/auth/login?redirect_url=${encodeURIComponent(redirectUrl)}`;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <m.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
-      >
-        <div className="flex justify-center mb-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="lg" />
-            <span className="font-black text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+    <main className="grid min-h-screen bg-[#f6f9fd] lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
+            <Link href="/" className="inline-flex items-center gap-2 font-black text-[#003087]">
+              <Logo size="sm" />
               MyeCA.in
-            </span>
-          </Link>
-        </div>
-        <h2 className="text-center text-3xl font-black text-slate-900 tracking-tight">
-          Create an account
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 font-medium">
-          Already have an account?{" "}
-          <Link href="/login" className="font-black text-blue-600 hover:text-blue-500 transition-colors">
-            Sign in
-          </Link>
-        </p>
-      </m.div>
-
-      <m.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-      >
-        <Card className="border-slate-200/60 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden">
-          <CardHeader className="space-y-1 pt-8 px-8">
-            <CardTitle className="text-xl font-bold">Get Started</CardTitle>
-            <CardDescription className="text-slate-500">
-              Join thousands of businesses streamlining their taxes
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-8 pb-8">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-start gap-3 text-red-600 text-sm animate-in fade-in slide-in-from-top-1">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <p className="font-medium">{error}</p>
-                </div>
-              )}
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-xs font-black uppercase tracking-widest text-slate-400">First Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <Input 
-                      id="firstName" 
-                      placeholder="John" 
-                      className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-xs font-black uppercase tracking-widest text-slate-400">Last Name</Label>
-                  <Input 
-                    id="lastName" 
-                    placeholder="Doe" 
-                    className="h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-slate-400">Email Address</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="name@company.com" 
-                    className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-slate-400">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="At least 8 characters" 
-                    className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={8}
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-200 transition-all disabled:opacity-70"
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    Create Account <ArrowRight className="w-4 h-4" />
-                  </span>
-                )}
-              </Button>
-            </form>
-
-            <div className="relative mt-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200"></div>
-              </div>
-              <div className="relative flex justify-center text-xs font-bold uppercase tracking-widest">
-                <span className="bg-white px-4 text-slate-400">Or sign up with</span>
-              </div>
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 gap-4">
-              <Button 
-                variant="outline" 
-                className="h-12 border-slate-200 rounded-xl hover:bg-slate-50 font-bold transition-all transition-colors"
-                onClick={handleGoogleSignup}
-                disabled={loading}
-              >
-                <Chrome className="w-5 h-5 mr-3 text-red-500" />
-                Google Account
-              </Button>
-            </div>
-          </CardContent>
-          <CardFooter className="bg-slate-50/50 border-t border-slate-100 py-4 px-8 justify-center">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">
-              Secured by Clerk Authentication
+            </Link>
+          </div>
+          <div className="mb-6 text-center">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0050b5]">
+              Create account
             </p>
-          </CardFooter>
-        </Card>
-      </m.div>
+            <h2 className="mt-2 text-3xl font-black text-slate-950">Start with secure identity</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              We collect only what is needed first, then personalize the tax journey after sign-up.
+            </p>
+          </div>
+          <div className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_30px_90px_-60px_rgba(0,48,135,0.65)]">
+            <SignUp
+              path="/auth/register"
+              routing="path"
+              signInUrl={signInUrl}
+              fallbackRedirectUrl={redirectUrl}
+              appearance={{
+                elements: {
+                  rootBox: "w-full",
+                  card: "shadow-none border-0 w-full",
+                  headerTitle: "text-slate-950",
+                  formButtonPrimary: "bg-[#003087] hover:bg-[#082a5c]",
+                  footerActionLink: "text-[#003087]",
+                },
+              }}
+            />
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-8 text-center px-4">
-        <p className="text-xs text-slate-500 font-medium">
-          By signing up, you agree to our{" "}
-          <Link href="/legal/terms-of-service" className="underline hover:text-slate-700">Terms of Service</Link>
-          {" "}and{" "}
-          <Link href="/legal/privacy-policy" className="underline hover:text-slate-700">Privacy Policy</Link>.
-        </p>
-      </div>
-    </div>
+      <section className="mye-brand-panel hidden p-10 text-white lg:flex lg:flex-col lg:justify-between">
+        <Link href="/" className="flex items-center gap-3 font-black">
+          <Logo size="sm" />
+          MyeCA.in
+        </Link>
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-100">
+            Progressive onboarding
+          </p>
+          <h1 className="mt-4 max-w-xl text-5xl font-black tracking-tight">
+            No giant tax form on day one.
+          </h1>
+          <p className="mt-5 max-w-lg text-lg leading-8 text-blue-50/90">
+            The first session captures identity and intent, then MyeCA gathers deeper tax data only
+            when it is needed for a service, wizard, upload, or CA review.
+          </p>
+        </div>
+        <div className="grid gap-3">
+          {onboardingSteps.map(([title, description, Icon], index) => {
+            const TypedIcon = Icon as typeof Fingerprint;
+            return (
+              <div key={String(title)} className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-black text-[#003087]">
+                    {index + 1}
+                  </span>
+                  <TypedIcon className="h-5 w-5 text-emerald-200" />
+                  <span className="font-black">{String(title)}</span>
+                </div>
+                <p className="mt-2 pl-20 text-sm text-blue-50/80">{String(description)}</p>
+              </div>
+            );
+          })}
+          <div className="flex items-center gap-3 rounded-2xl bg-white p-4 text-[#003087]">
+            <BadgeCheck className="h-5 w-5" />
+            <span className="font-black">Admin bootstrap remains Neon-role backed.</span>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

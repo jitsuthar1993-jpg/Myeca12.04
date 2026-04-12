@@ -14,10 +14,8 @@ import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { SafeAuthProvider, useAuth } from "@/components/AuthProvider";
+import { SafeAuthProvider } from "@/components/AuthProvider";
 import Routes from "./Routes";
-import { useSessionTimeout } from "@/hooks/useSessionTimeout";
-import { SessionWarningModal } from "@/components/auth/SessionWarningModal";
 import { LazyMotion, domAnimation } from "framer-motion";
 
 const UnifiedFAB = lazy(() => import("@/components/UnifiedFAB").then(m => ({ default: m.UnifiedFAB })));
@@ -73,12 +71,6 @@ function AppContent() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-
-  const { logout, isAuthenticated } = useAuth();
-  const { showWarning, timeLeft, resetSession, handleLogout } = useSessionTimeout({
-    onLogout: logout,
-    isAuthenticated
-  });
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -182,13 +174,6 @@ function AppContent() {
           <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
         </Suspense>
       </ErrorBoundary>
-
-      <SessionWarningModal
-        isOpen={showWarning}
-        timeLeft={timeLeft}
-        onContinue={resetSession}
-        onLogout={handleLogout}
-      />
     </LazyMotion>
   );
 }

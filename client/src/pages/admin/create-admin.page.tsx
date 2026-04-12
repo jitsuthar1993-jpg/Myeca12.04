@@ -3,240 +3,233 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { AlertTriangle, CheckCircle2, MailPlus, Shield, UserRoundPlus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { UserPlus, Shield, AlertTriangle } from "lucide-react";
 
-const createAdminSchema = z.object({
+const inviteAdminSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string(),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
+  firstName: z.string().trim().max(100, "First name is too long").optional(),
+  lastName: z.string().trim().max(100, "Last name is too long").optional(),
+  role: z.enum(["admin", "team_member", "ca"]),
 });
 
-type CreateAdminForm = z.infer<typeof createAdminSchema>;
+type InviteAdminForm = z.infer<typeof inviteAdminSchema>;
+
+const roleCopy: Record<InviteAdminForm["role"], string> = {
+  admin: "Full platform administration, user management, settings, and content controls.",
+  team_member: "Operational back-office access for customer support and compliance workflows.",
+  ca: "CA workspace access for assigned filings, reviews, documents, and service timelines.",
+};
 
 export default function CreateAdminPage() {
   const { toast } = useToast();
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const form = useForm<CreateAdminForm>({
-    resolver: zodResolver(createAdminSchema),
+  const form = useForm<InviteAdminForm>({
+    resolver: zodResolver(inviteAdminSchema),
     defaultValues: {
       email: "",
-      password: "",
-      confirmPassword: "",
       firstName: "",
       lastName: "",
+      role: "team_member",
     },
   });
 
-  const createAdminMutation = useMutation({
-    mutationFn: async (data: CreateAdminForm) => {
-      const { confirmPassword, ...adminData } = data;
-      const response = await apiRequest("/api/admin/create-admin", {
+  const selectedRole = form.watch("role");
+
+  const inviteMutation = useMutation({
+    mutationFn: async (data: InviteAdminForm) => {
+      const response = await apiRequest("/api/admin/invitations", {
         method: "POST",
-        body: JSON.stringify(adminData),
+        body: JSON.stringify({
+          ...data,
+          firstName: data.firstName || undefined,
+          lastName: data.lastName || undefined,
+        }),
       });
       return response.json();
     },
     onSuccess: (data) => {
+      const message = data?.message || "Clerk invitation/provisioning completed successfully.";
       toast({
-        title: "Admin Created Successfully",
-        description: `Admin account for ${data.user.firstName} ${data.user.lastName} has been created.`,
+        title: "Access provisioned",
+        description: message,
       });
-      setShowSuccess(true);
-      form.reset();
+      setSuccessMessage(message);
+      form.reset({
+        email: "",
+        firstName: "",
+        lastName: "",
+        role: "team_member",
+      });
     },
     onError: (error: any) => {
       toast({
-        title: "Failed to Create Admin",
-        description: error.message || "An error occurred while creating the admin account.",
+        title: "Provisioning failed",
+        description: error.message || "Unable to provision this Clerk user. Please try again.",
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (data: CreateAdminForm) => {
-    createAdminMutation.mutate(data);
+  const onSubmit = (data: InviteAdminForm) => {
+    setSuccessMessage(null);
+    inviteMutation.mutate(data);
   };
-
-  if (showSuccess) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Account Created</h1>
-          <p className="text-gray-600 mt-2">New administrator account has been successfully created</p>
-        </div>
-
-        <Card className="max-w-md mx-auto">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                <UserPlus className="w-8 h-8 text-green-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">Admin Account Created</h3>
-                <p className="text-gray-600">
-                  The administrator can now log in and access all admin features.
-                </p>
-              </div>
-              <Button onClick={() => setShowSuccess(false)} className="w-full">
-                Create Another Admin
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Create Admin Account</h1>
-        <p className="text-gray-600 mt-2">Create a new administrator account with full system access</p>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#0050b5]">Clerk provisioning</p>
+        <h1 className="mt-2 text-3xl font-black text-slate-950">Invite Admin, CA, or Team Member</h1>
+        <p className="mt-2 max-w-3xl text-slate-600">
+          Passwords are no longer created inside MyeCA. Enter the person&apos;s email and role,
+          then Clerk handles the secure invite or reset flow.
+        </p>
       </div>
 
-      {/* Warning Banner */}
       <Card className="border-amber-200 bg-amber-50">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-600" />
             <div>
-              <h3 className="font-medium text-amber-800">Administrator Privileges</h3>
-              <p className="text-sm text-amber-700 mt-1">
-                Admin accounts have full access to all system features including user management, 
-                service management, and system settings. Only create admin accounts for trusted individuals.
+              <h3 className="font-bold text-amber-900">Role changes are effective after Clerk sync</h3>
+              <p className="mt-1 text-sm leading-6 text-amber-800">
+                Existing Clerk users are promoted immediately. New users receive a Clerk invitation,
+                and their Neon role is applied the first time they sign in with that email.
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Create Admin Form */}
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <CardTitle>New Administrator Details</CardTitle>
-              <CardDescription>
-                Enter the details for the new administrator account
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Name Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  {...form.register("firstName")}
-                  placeholder="Enter first name"
-                />
-                {form.formState.errors.firstName && (
-                  <p className="text-sm text-red-600">
-                    {form.formState.errors.firstName.message}
-                  </p>
-                )}
+      <div className="grid gap-6 lg:grid-cols-[1fr_0.72fr]">
+        <Card className="border-blue-100 shadow-[0_24px_80px_-60px_rgba(0,48,135,0.8)]">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#003087] text-white">
+                <MailPlus className="h-5 w-5" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  {...form.register("lastName")}
-                  placeholder="Enter last name"
-                />
-                {form.formState.errors.lastName && (
-                  <p className="text-sm text-red-600">
-                    {form.formState.errors.lastName.message}
-                  </p>
-                )}
+              <div>
+                <CardTitle>Send Clerk Invitation</CardTitle>
+                <CardDescription>
+                  Provision access without handling passwords, JWTs, or manual admin secrets.
+                </CardDescription>
               </div>
             </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input id="firstName" {...form.register("firstName")} placeholder="Aarav" />
+                  {form.formState.errors.firstName && (
+                    <p className="text-sm text-red-600">{form.formState.errors.firstName.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input id="lastName" {...form.register("lastName")} placeholder="Sharma" />
+                  {form.formState.errors.lastName && (
+                    <p className="text-sm text-red-600">{form.formState.errors.lastName.message}</p>
+                  )}
+                </div>
+              </div>
 
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                {...form.register("email")}
-                placeholder="Enter email address"
-              />
-              {form.formState.errors.email && (
-                <p className="text-sm text-red-600">
-                  {form.formState.errors.email.message}
-                </p>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...form.register("email")}
+                  placeholder="teammate@myeca.in"
+                  autoComplete="email"
+                />
+                {form.formState.errors.email && (
+                  <p className="text-sm text-red-600">{form.formState.errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select
+                  value={selectedRole}
+                  onValueChange={(value) => form.setValue("role", value as InviteAdminForm["role"], { shouldValidate: true })}
+                >
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Select access role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="team_member">Team Member</SelectItem>
+                    <SelectItem value="ca">Chartered Accountant</SelectItem>
+                    <SelectItem value="admin">Administrator</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm leading-6 text-slate-600">{roleCopy[selectedRole]}</p>
+                {form.formState.errors.role && (
+                  <p className="text-sm text-red-600">{form.formState.errors.role.message}</p>
+                )}
+              </div>
+
+              {successMessage && (
+                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5" />
+                  <p>{successMessage}</p>
+                </div>
               )}
-            </div>
 
-            {/* Password Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...form.register("password")}
-                  placeholder="Enter password"
-                />
-                {form.formState.errors.password && (
-                  <p className="text-sm text-red-600">
-                    {form.formState.errors.password.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...form.register("confirmPassword")}
-                  placeholder="Confirm password"
-                />
-                {form.formState.errors.confirmPassword && (
-                  <p className="text-sm text-red-600">
-                    {form.formState.errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="flex gap-4">
               <Button
                 type="submit"
-                disabled={createAdminMutation.isPending}
-                className="flex-1"
+                disabled={inviteMutation.isPending}
+                className="w-full bg-[#003087] font-bold hover:bg-[#082a5c]"
               >
-                {createAdminMutation.isPending ? (
-                  <>Creating Admin...</>
+                {inviteMutation.isPending ? (
+                  "Provisioning Access..."
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Create Admin Account
+                    <UserRoundPlus className="mr-2 h-4 w-4" />
+                    Send Invitation or Promote User
                   </>
                 )}
               </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-slate-50">
+          <CardHeader>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#003087] shadow-sm">
+              <Shield className="h-6 w-6" />
             </div>
-          </form>
-        </CardContent>
-      </Card>
+            <CardTitle>What changed?</CardTitle>
+            <CardDescription>MyeCA no longer stores or creates admin passwords.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm leading-6 text-slate-700">
+            <p>
+              Clerk owns sign-in, passwordless methods, MFA, reset links, and invite acceptance. MyeCA
+              stores the role in Neon and mirrors it to Clerk public metadata for faster UI rendering.
+            </p>
+            <p>
+              If a user already exists in Clerk, this page promotes their role immediately. If they do
+              not exist yet, they receive an invitation and the provisioned role is applied during
+              their first `/api/v1/auth/sync`.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

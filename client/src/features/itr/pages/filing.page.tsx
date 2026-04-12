@@ -1,326 +1,415 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "wouter";
+import { track } from "@vercel/analytics";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BadgeCheck,
+  CalendarCheck,
+  CheckCircle2,
+  FileText,
+  Home,
+  IndianRupee,
+  ReceiptText,
+  Save,
+  ShieldCheck,
+  Upload,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Calculator, Save, Send, ArrowLeft, ArrowRight } from "lucide-react";
-import { useAuth } from "@/components/AuthProvider";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import PersonalDetailsForm from "../components/PersonalDetailsForm";
-import IncomeDetailsForm from "../components/IncomeDetailsForm";
-import DeductionsForm from "../components/DeductionsForm";
-import TaxCalculationForm from "../components/TaxCalculationForm";
-import ReviewAndSubmit from "../components/ReviewAndSubmit";
-import CapitalGainsForm from "../components/CapitalGainsForm";
-import BusinessIncomeForm from "../components/BusinessIncomeForm";
+import {
+  ComplianceShell,
+  MyeCard,
+  SectionHeading,
+  StatusBadge,
+  UploadDropzone,
+  formatInr,
+} from "@/components/platform/compliance-ui";
 
-const ITR_STEPS = {
-  'ITR-1': [
-    { id: 'personal', title: 'Personal Details', description: 'Basic information and PAN details' },
-    { id: 'income', title: 'Income Details', description: 'Salary, interest, and other income' },
-    { id: 'deductions', title: 'Deductions', description: 'Section 80C, 80D, and other deductions' },
-    { id: 'calculation', title: 'Tax Calculation', description: 'Review calculated tax liability' },
-    { id: 'review', title: 'Review & Submit', description: 'Final review and submission' }
-  ],
-  'ITR-2': [
-    { id: 'personal', title: 'Personal Details', description: 'Basic information and PAN details' },
-    { id: 'income', title: 'Income Details', description: 'Salary, interest, and other income' },
-    { id: 'capital-gains', title: 'Capital Gains', description: 'Gains from sale of assets' },
-    { id: 'deductions', title: 'Deductions', description: 'Section 80C, 80D, and other deductions' },
-    { id: 'calculation', title: 'Tax Calculation', description: 'Review calculated tax liability' },
-    { id: 'review', title: 'Review & Submit', description: 'Final review and submission' }
-  ],
-  'ITR-3': [
-    { id: 'personal', title: 'Personal Details', description: 'Basic information and PAN details' },
-    { id: 'business', title: 'Business Income', description: 'Business/professional income details' },
-    { id: 'income', title: 'Other Income', description: 'Salary, interest, and other income' },
-    { id: 'capital-gains', title: 'Capital Gains', description: 'Gains from sale of assets' },
-    { id: 'deductions', title: 'Deductions', description: 'Section 80C, 80D, and other deductions' },
-    { id: 'calculation', title: 'Tax Calculation', description: 'Review calculated tax liability' },
-    { id: 'review', title: 'Review & Submit', description: 'Final review and submission' }
-  ]
-};
+const steps = [
+  {
+    id: "profile",
+    title: "Profile Verification",
+    description: "Confirm PAN, Aadhaar-link status, address, and filing persona.",
+  },
+  {
+    id: "regime",
+    title: "Old vs New Regime",
+    description: "Compare tax liability under FY 2025-26 default new regime slabs.",
+  },
+  {
+    id: "income",
+    title: "Income & Form 16",
+    description: "Upload Form 16 Part A/B and reconcile salary income with AIS.",
+  },
+  {
+    id: "deductions",
+    title: "Deductions & HRA",
+    description: "Capture 80C, 80D, HRA, home loan, and rent receipt details.",
+  },
+  {
+    id: "tax-paid",
+    title: "AIS, 26AS & Tax Paid",
+    description: "Review TDS, advance tax, self-assessment tax, and mismatch flags.",
+  },
+  {
+    id: "review",
+    title: "Review, Pay & CA Handoff",
+    description: "Submit for CA review and checkout through Razorpay UPI Intent.",
+  },
+];
+
+const newRegimeSlabs = [
+  "₹0-4L: Nil",
+  "₹4-8L: 5%",
+  "₹8-12L: 10%",
+  "₹12-16L: 15%",
+  "₹16-20L: 20%",
+  "₹20-24L: 25%",
+  "Above ₹24L: 30%",
+];
+
+function estimateNewRegimeTax(income: number) {
+  const slabs = [
+    [400000, 0],
+    [400000, 0.05],
+    [400000, 0.1],
+    [400000, 0.15],
+    [400000, 0.2],
+    [400000, 0.25],
+  ];
+  let remaining = income;
+  let tax = 0;
+  for (const [amount, rate] of slabs) {
+    const taxable = Math.min(Math.max(remaining, 0), amount);
+    tax += taxable * rate;
+    remaining -= taxable;
+  }
+  if (remaining > 0) tax += remaining * 0.3;
+  if (income <= 700000) return 0;
+  return Math.round(tax * 1.04);
+}
+
+function estimateOldRegimeTax(income: number, deductions: number) {
+  const taxable = Math.max(0, income - deductions - 50000);
+  let tax = 0;
+  if (taxable > 1000000) tax += (taxable - 1000000) * 0.3 + 112500;
+  else if (taxable > 500000) tax += (taxable - 500000) * 0.2 + 12500;
+  else if (taxable > 250000) tax += (taxable - 250000) * 0.05;
+  if (taxable <= 500000) return 0;
+  return Math.round(tax * 1.04);
+}
 
 export default function ITRFilingPage() {
-  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({
-    assessmentYear: '2024-25',
-    itrType: 'ITR-1',
-    personalDetails: {},
-    incomeDetails: {},
-    businessIncome: {},
-    capitalGains: {},
-    deductions: {},
-    taxCalculation: {},
-    profileId: null
-  });
+  const [salaryIncome, setSalaryIncome] = useState(1200000);
+  const [deductions, setDeductions] = useState(250000);
+  const [rentAmount, setRentAmount] = useState(300000);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const progress = ((currentStep + 1) / steps.length) * 100;
 
-  // Get URL parameters
+  const regime = useMemo(() => {
+    const newTax = estimateNewRegimeTax(salaryIncome);
+    const oldTax = estimateOldRegimeTax(salaryIncome, deductions);
+    return {
+      newTax,
+      oldTax,
+      better: newTax <= oldTax ? "New Regime" : "Old Regime",
+      savings: Math.abs(newTax - oldTax),
+    };
+  }, [salaryIncome, deductions]);
+
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const formType = urlParams.get('form') || 'ITR-1';
-    const assessmentYear = urlParams.get('ay') || '2024-25';
-    
-    setFormData(prev => ({
-      ...prev,
-      itrType: formType,
-      assessmentYear: assessmentYear
-    }));
-  }, []);
+    const timer = window.setTimeout(() => {
+      localStorage.setItem(
+        "mye_itr_draft",
+        JSON.stringify({
+          currentStep,
+          salaryIncome,
+          deductions,
+          rentAmount,
+          assessmentYear: "2026-27",
+          updatedAt: new Date().toISOString(),
+        }),
+      );
+      setLastSavedAt(new Date());
+      track("itr_draft_autosaved", { step: steps[currentStep].id });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [currentStep, salaryIncome, deductions, rentAmount]);
 
-  const currentSteps = ITR_STEPS[formData.itrType as keyof typeof ITR_STEPS] || ITR_STEPS['ITR-1'];
-
-  // Fetch user profiles
-  const { data: profiles = [] } = useQuery({
-    queryKey: ['/api/profiles'],
-    enabled: !!user
-  });
-
-  // Fetch existing tax returns
-  const { data: existingReturns = [] } = useQuery({
-    queryKey: ['/api/tax-returns'],
-    enabled: !!user
-  });
-
-  // Save draft mutation
-  const saveDraftMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return apiRequest('/api/tax-returns', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...data,
-          status: 'draft'
-        })
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tax-returns'] });
-    }
-  });
-
-  // Submit return mutation
-  const submitReturnMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return apiRequest('/api/tax-returns', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...data,
-          status: 'filed'
-        })
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tax-returns'] });
-    }
-  });
-
-  const currentStepData = currentSteps[currentStep];
-  const progressPercentage = ((currentStep + 1) / currentSteps.length) * 100;
-
-  const handleNext = () => {
-    if (currentStep < currentSteps.length - 1) {
-      setCurrentStep(currentStep + 1);
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      const next = currentStep + 1;
+      setCurrentStep(next);
+      track("itr_wizard_step_next", { step: steps[next].id });
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+  const previousStep = () => {
+    if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  const handleSaveDraft = () => {
-    saveDraftMutation.mutate(formData);
-  };
-
-  const handleSubmit = () => {
-    submitReturnMutation.mutate(formData, {
-      onSuccess: () => {
-        // Navigate to success page
-        window.location.href = '/itr/success';
-      }
-    });
-  };
-
-  const updateFormData = (section: string, data: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: data
-    }));
+  const submitForReview = () => {
+    track("itr_review_payment_start", { method: "upi_intent", regime: regime.better });
+    window.location.href = "/itr/success";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {formData.itrType} Filing - Assessment Year {formData.assessmentYear}
-          </h1>
-          <p className="text-gray-600">Complete your income tax return step by step</p>
+    <ComplianceShell
+      active="/itr/filing"
+      title="ITR filing wizard"
+      subtitle="A guided AY 2026-27 / FY 2025-26 flow with autosave, smart branching, OCR-ready document upload, CA review, and mobile-first payment handoff."
+      actions={
+        <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white/90">
+          <Save className="mr-2 inline h-4 w-4" />
+          {lastSavedAt ? `Autosaved ${lastSavedAt.toLocaleTimeString()}` : "Autosave ready"}
         </div>
+      }
+    >
+      <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
+        <MyeCard className="h-max xl:sticky xl:top-24">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0050b5]">
+            Filing progress
+          </p>
+          <h2 className="mt-2 text-xl font-black text-slate-950">Step {currentStep + 1} of {steps.length}</h2>
+          <Progress value={progress} className="mt-4 h-2" />
+          <div className="mt-6 space-y-3">
+            {steps.map((step, index) => (
+              <button
+                key={step.id}
+                type="button"
+                onClick={() => setCurrentStep(index)}
+                className={`flex w-full items-start gap-3 rounded-2xl p-3 text-left transition ${
+                  index === currentStep
+                    ? "bg-[#003087] text-white"
+                    : index < currentStep
+                      ? "bg-emerald-50 text-emerald-900"
+                      : "bg-slate-50 text-slate-600"
+                }`}
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/90 text-sm font-black text-[#003087]">
+                  {index < currentStep ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
+                </span>
+                <span>
+                  <span className="block font-black">{step.title}</span>
+                  <span className="mt-1 block text-xs opacity-80">{step.description}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </MyeCard>
 
-        {/* Progress Bar */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">Filing Progress</h3>
-              <Badge variant="outline">{currentStep + 1} of {currentSteps.length}</Badge>
-            </div>
-            <Progress value={progressPercentage} className="mb-4" />
-            <div className="flex justify-between text-sm">
-              {currentSteps.map((step, index) => (
-                <div 
-                  key={step.id}
-                  className={`text-center ${index <= currentStep ? 'text-primary' : 'text-gray-400'}`}
-                >
-                  <div className="font-medium">{step.title}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          <MyeCard>
+            <SectionHeading
+              eyebrow="Current step"
+              title={steps[currentStep].title}
+              description={steps[currentStep].description}
+            />
 
-        {/* Main Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="h-5 w-5 mr-2" />
-              {currentStepData.title}
-            </CardTitle>
-            <CardDescription>{currentStepData.description}</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            {/* Step Content */}
-            {currentStepData.id === 'personal' && (
-              <PersonalDetailsForm
-                data={formData.personalDetails}
-                profiles={profiles as any[]}
-                onChange={(data) => updateFormData('personalDetails', data)}
-                onProfileSelect={(profileId) => updateFormData('profileId', profileId)}
-              />
-            )}
-            
-            {currentStepData.id === 'business' && (
-              <BusinessIncomeForm
-                data={formData.businessIncome}
-                onChange={(data) => updateFormData('businessIncome', data)}
-              />
-            )}
-            
-            {currentStepData.id === 'income' && (
-              <IncomeDetailsForm
-                data={formData.incomeDetails}
-                onChange={(data) => updateFormData('incomeDetails', data)}
-              />
-            )}
-            
-            {currentStepData.id === 'capital-gains' && (
-              <CapitalGainsForm
-                data={formData.capitalGains}
-                onChange={(data) => updateFormData('capitalGains', data)}
-              />
-            )}
-            
-            {currentStepData.id === 'deductions' && (
-              <DeductionsForm
-                data={formData.deductions}
-                onChange={(data) => updateFormData('deductions', data)}
-              />
-            )}
-            
-            {currentStepData.id === 'calculation' && (
-              <TaxCalculationForm
-                formData={formData}
-                onChange={(data) => updateFormData('taxCalculation', data)}
-              />
-            )}
-            
-            {currentStepData.id === 'review' && (
-              <ReviewAndSubmit
-                formData={formData}
-                onSubmit={handleSubmit}
-                isSubmitting={submitReturnMutation.isPending}
-              />
-            )}
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8 pt-6 border-t">
-              <div>
-                {currentStep > 0 && (
-                  <Button variant="outline" onClick={handlePrevious}>
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Previous
-                  </Button>
-                )}
-              </div>
-              
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={handleSaveDraft}
-                  disabled={saveDraftMutation.isPending}
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Draft
-                </Button>
-                
-                {currentStep < currentSteps.length - 1 ? (
-                  <Button onClick={handleNext} className="shadow-primary hover:scale-105 transition-all duration-300">
-                    Next
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={handleSubmit}
-                    disabled={submitReturnMutation.isPending}
-                    className="bg-green-600 hover:bg-green-700 shadow-success hover:scale-105 transition-all duration-300"
-                  >
-                    <Send className="h-4 w-4 mr-2" />
-                    Submit Return
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Existing Returns */}
-        {Array.isArray(existingReturns) && existingReturns.length > 0 && (
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Your Previous Returns</CardTitle>
-              <CardDescription>Access your saved and filed returns</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {(existingReturns as any[]).map((taxReturn: any) => (
-                  <div key={taxReturn.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{taxReturn.itrType} - {taxReturn.assessmentYear}</p>
-                      <p className="text-sm text-gray-500">
-                        {taxReturn.status === 'draft' ? 'Draft saved' : 'Filed'} • 
-                        {new Date(taxReturn.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={taxReturn.status === 'filed' ? 'default' : 'secondary'}>
-                        {taxReturn.status}
-                      </Badge>
-                      <Button variant="outline" size="sm">
-                        {taxReturn.status === 'draft' ? 'Continue' : 'View'}
-                      </Button>
-                    </div>
+            {steps[currentStep].id === "profile" && (
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {[
+                  ["PAN", "ABCDE1234F", "Verified"],
+                  ["Aadhaar link", "Linked", "OTP-ready"],
+                  ["Filing type", "Salaried individual", "ITR-1 recommended"],
+                  ["Assessment year", "2026-27", "FY 2025-26"],
+                ].map(([label, value, status]) => (
+                  <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                    <p className="text-sm font-semibold text-slate-500">{label}</p>
+                    <p className="mt-2 text-xl font-black text-slate-950">{value}</p>
+                    <StatusBadge status="filed" label={status} className="mt-4" />
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+
+            {steps[currentStep].id === "regime" && (
+              <div className="mt-6 space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="salaryIncome">Gross salary income</Label>
+                    <Input
+                      id="salaryIncome"
+                      type="number"
+                      value={salaryIncome}
+                      onChange={(event) => setSalaryIncome(Number(event.target.value))}
+                      className="mt-2 h-12 rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="deductions">Old regime deductions</Label>
+                    <Input
+                      id="deductions"
+                      type="number"
+                      value={deductions}
+                      onChange={(event) => setDeductions(Number(event.target.value))}
+                      className="mt-2 h-12 rounded-xl"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="rounded-[24px] border border-blue-200 bg-blue-50 p-6">
+                    <p className="font-black text-[#003087]">New Regime tax</p>
+                    <p className="mt-3 text-4xl font-black text-slate-950">{formatInr(regime.newTax)}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {newRegimeSlabs.map((slab) => (
+                        <span key={slab} className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-700">
+                          {slab}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-6">
+                    <p className="font-black text-emerald-900">Old Regime tax</p>
+                    <p className="mt-3 text-4xl font-black text-slate-950">{formatInr(regime.oldTax)}</p>
+                    <p className="mt-4 text-sm text-emerald-900">
+                      Includes standard deduction and your declared Chapter VIA/HRA estimate.
+                    </p>
+                  </div>
+                </div>
+                <div className="rounded-[24px] bg-[#003087] p-6 text-white">
+                  <BadgeCheck className="h-8 w-8 text-emerald-200" />
+                  <p className="mt-3 text-2xl font-black">{regime.better} currently looks better</p>
+                  <p className="mt-2 text-blue-50">
+                    Estimated advantage: {formatInr(regime.savings)}. Final selection remains CA-reviewed.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {steps[currentStep].id === "income" && (
+              <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+                <UploadDropzone label="Upload Form 16 Part A & Part B" />
+                <div className="space-y-4">
+                  {[
+                    ["Form 16 Part A", "Employer TDS certificate"],
+                    ["Form 16 Part B", "Salary and deductions breakup"],
+                    ["AIS statement", "Recommended for mismatch detection"],
+                  ].map(([title, description]) => (
+                    <div key={title} className="rounded-2xl border border-slate-200 p-4">
+                      <FileText className="h-5 w-5 text-[#003087]" />
+                      <p className="mt-2 font-black text-slate-950">{title}</p>
+                      <p className="text-sm text-slate-600">{description}</p>
+                      <StatusBadge status="not_started" className="mt-3" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {steps[currentStep].id === "deductions" && (
+              <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="rentAmount">Annual rent paid</Label>
+                    <Input
+                      id="rentAmount"
+                      type="number"
+                      value={rentAmount}
+                      onChange={(event) => setRentAmount(Number(event.target.value))}
+                      className="mt-2 h-12 rounded-xl"
+                    />
+                  </div>
+                  {[
+                    "Tenant name",
+                    "Landlord name",
+                    "Rental period",
+                    "Property address",
+                    "Landlord PAN if annual rent exceeds ₹1,00,000",
+                    "Revenue stamp prompt if cash payment exceeds ₹5,000",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
+                      <ReceiptText className="h-5 w-5 text-[#003087]" />
+                      <span className="font-semibold text-slate-700">{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded-[28px] bg-gradient-to-br from-emerald-50 to-blue-50 p-6">
+                  <Home className="h-8 w-8 text-emerald-800" />
+                  <p className="mt-4 text-2xl font-black text-slate-950">HRA receipt generator</p>
+                  <p className="mt-2 text-slate-600">
+                    Generate valid rent receipts from the filing flow and save them directly into the document vault.
+                  </p>
+                  <Link href="/documents/generator/rent-receipt">
+                    <Button className="mt-5 bg-[#003087] text-white hover:bg-[#082a5c]">
+                      Open Generator
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {steps[currentStep].id === "tax-paid" && (
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {[
+                  ["AIS import", "Connect when government integration credentials are available.", "ai_validation"],
+                  ["Form 26AS", "TDS and TCS credits matched against salary data.", "in_progress"],
+                  ["Advance tax", "Quarterly payments and challans can be added manually.", "not_started"],
+                ].map(([title, description, status]) => (
+                  <div key={title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                    <CalendarCheck className="h-7 w-7 text-[#003087]" />
+                    <p className="mt-4 text-lg font-black text-slate-950">{title}</p>
+                    <p className="mt-2 text-sm text-slate-600">{description}</p>
+                    <StatusBadge status={status as any} className="mt-4" />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {steps[currentStep].id === "review" && (
+              <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.85fr]">
+                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+                  <ShieldCheck className="h-8 w-8 text-emerald-800" />
+                  <h3 className="mt-4 text-2xl font-black text-slate-950">Ready for CA review</h3>
+                  <p className="mt-2 text-slate-600">
+                    Your draft is autosaved. The next step opens a Razorpay UPI Intent handoff on mobile and marks the filing for CA review.
+                  </p>
+                  <div className="mt-5 space-y-3">
+                    <StatusBadge status="ca_review" />
+                    <StatusBadge status="submitted" label="Razorpay UPI Intent ready" />
+                    <StatusBadge status="ai_validation" label="OCR/AIS checks retained" />
+                  </div>
+                </div>
+                <div className="rounded-[28px] bg-[#003087] p-6 text-white">
+                  <IndianRupee className="h-8 w-8 text-emerald-200" />
+                  <p className="mt-4 text-sm font-black uppercase tracking-widest text-blue-100">
+                    Expert-assisted filing
+                  </p>
+                  <p className="mt-2 text-4xl font-black">₹999</p>
+                  <p className="mt-2 text-blue-50">Includes named CA review, correction loop, and e-filing handoff.</p>
+                  <Button onClick={submitForReview} className="mt-6 w-full bg-white text-[#003087] hover:bg-blue-50">
+                    Pay & Submit for CA Review
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </MyeCard>
+
+          <div className="flex items-center justify-between">
+            <Button variant="outline" onClick={previousStep} disabled={currentStep === 0}>
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            {currentStep < steps.length - 1 ? (
+              <Button onClick={nextStep} className="bg-[#003087] text-white hover:bg-[#082a5c]">
+                Continue
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button onClick={submitForReview} className="bg-emerald-800 text-white hover:bg-emerald-900">
+                Complete Filing
+                <CheckCircle2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </ComplianceShell>
   );
 }

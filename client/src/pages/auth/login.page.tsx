@@ -1,195 +1,113 @@
-import { useState } from "react";
-import { Link, useLocation } from "wouter";
-import { useAuth } from "@/components/AuthProvider";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Chrome, Mail, Lock, ArrowRight, Loader2, AlertCircle } from "lucide-react";
-import { m } from "framer-motion";
+import { SignIn } from "@clerk/clerk-react";
+import { Link } from "wouter";
+import { Bot, CheckCircle2, LockKeyhole, ShieldCheck } from "lucide-react";
 import Logo from "@/components/ui/logo";
 
+const reasonCopy: Record<string, { title: string; message: string }> = {
+  timeout: {
+    title: "Session timed out",
+    message: "For your security, we signed you out after 15 minutes of inactivity.",
+  },
+  forbidden: {
+    title: "Access restricted",
+    message: "Your account is signed in, but it does not have access to that area.",
+  },
+  session_expired: {
+    title: "Session expired",
+    message: "Please sign in again to continue where you left off.",
+  },
+  admin_required: {
+    title: "Admin sign in required",
+    message: "Use your Clerk administrator or team-member account to continue.",
+  },
+};
+
 export default function LoginPage() {
-  const [, setLocation] = useLocation();
-  const { login, loginWithGoogle } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      await login(email, password);
-      setLocation("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please check your credentials.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await loginWithGoogle();
-      setLocation("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in with Google.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const params = new URLSearchParams(window.location.search);
+  const redirectUrl = params.get("redirect_url") || "/dashboard";
+  const reason = params.get("reason");
+  const reasonState = reason ? reasonCopy[reason] : null;
+  const signUpUrl = `/auth/register?redirect_url=${encodeURIComponent(redirectUrl)}`;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <m.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
-      >
-        <div className="flex justify-center mb-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="lg" />
-            <span className="font-black text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              MyeCA.in
-            </span>
-          </Link>
+    <main className="grid min-h-screen bg-[#f6f9fd] lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="mye-brand-panel hidden p-10 text-white lg:flex lg:flex-col lg:justify-between">
+        <Link href="/" className="flex items-center gap-3 font-black">
+          <Logo size="sm" />
+          MyeCA.in
+        </Link>
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-100">
+            Secure login
+          </p>
+          <h1 className="mt-4 max-w-xl text-5xl font-black tracking-tight">
+            Continue your filing without restarting the story.
+          </h1>
+          <p className="mt-5 max-w-lg text-lg leading-8 text-blue-50/90">
+            Clerk manages authentication while MyeCA keeps PAN, documents, services, and role-based
+            dashboards protected behind bearer-token API checks.
+          </p>
         </div>
-        <h2 className="text-center text-3xl font-black text-slate-900 tracking-tight">
-          Welcome back
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 font-medium">
-          Don't have an account?{" "}
-          <Link href="/register" className="font-black text-blue-600 hover:text-blue-500 transition-colors">
-            Sign up for free
-          </Link>
-        </p>
-      </m.div>
-
-      <m.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-      >
-        <Card className="border-slate-200/60 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden">
-          <CardHeader className="space-y-1 pt-8 px-8">
-            <CardTitle className="text-xl font-bold">Sign In</CardTitle>
-            <CardDescription className="text-slate-500">
-              Enter your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-8 pb-8">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-start gap-3 text-red-600 text-sm animate-in fade-in slide-in-from-top-1">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <p className="font-medium">{error}</p>
-                </div>
-              )}
-              
-              <m.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="space-y-4"
-              >
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-slate-400">Email Address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input 
-                          id="email" 
-                          type="email" 
-                          placeholder="name@company.com" 
-                          className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          disabled={loading}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-slate-400">Password</Label>
-                        <Link href="/forgot-password" className="text-xs font-bold text-blue-600 hover:text-blue-500 transition-colors">
-                          Forgot password?
-                        </Link>
-                      </div>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input 
-                          id="password" 
-                          type="password" 
-                          placeholder="••••••••" 
-                          className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          disabled={loading}
-                        />
-                      </div>
-                    </div>
-
-                    <Button 
-                      type="submit" 
-                      className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-200 transition-all disabled:opacity-70"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                      ) : (
-                        <span className="flex items-center justify-center gap-2">
-                          Sign In <ArrowRight className="w-4 h-4" />
-                        </span>
-                      )}
-                    </Button>
-              </m.div>
-            </form>
-
-            <div className="relative mt-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200"></div>
+        <div className="grid gap-3">
+          {[
+            ["Passwordless-ready flows", Bot],
+            ["Role-aware dashboard access", ShieldCheck],
+            ["Private document vault protection", LockKeyhole],
+            ["CA-reviewed compliance handoff", CheckCircle2],
+          ].map(([label, Icon]) => {
+            const TypedIcon = Icon as typeof Bot;
+            return (
+              <div key={String(label)} className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur">
+                <TypedIcon className="h-5 w-5 text-emerald-200" />
+                <span className="font-bold">{String(label)}</span>
               </div>
-              <div className="relative flex justify-center text-xs font-bold uppercase tracking-widest">
-                <span className="bg-white px-4 text-slate-400">Or continue with</span>
-              </div>
-            </div>
+            );
+          })}
+        </div>
+      </section>
 
-            <div className="mt-8 grid grid-cols-1 gap-4">
-              <Button 
-                variant="outline" 
-                className="h-12 border-slate-200 rounded-xl hover:bg-slate-50 font-bold transition-all transition-colors"
-                onClick={handleGoogleLogin}
-                disabled={loading}
-              >
-                <Chrome className="w-5 h-5 mr-3 text-red-500" />
-                Google Account
-              </Button>
-            </div>
-          </CardContent>
-          <CardFooter className="bg-slate-50/50 border-t border-slate-100 py-4 px-8 justify-center">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">
-              Secured by Clerk Authentication
+      <section className="flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center lg:hidden">
+            <Link href="/" className="inline-flex items-center gap-2 font-black text-[#003087]">
+              <Logo size="sm" />
+              MyeCA.in
+            </Link>
+          </div>
+          <div className="mb-6 text-center">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0050b5]">
+              Welcome back
             </p>
-          </CardFooter>
-        </Card>
-      </m.div>
-
-      <div className="mt-8 text-center px-4">
-        <p className="text-xs text-slate-500 font-medium">
-          By continuing, you agree to our{" "}
-          <Link href="/legal/terms-of-service" className="underline hover:text-slate-700">Terms of Service</Link>
-          {" "}and{" "}
-          <Link href="/legal/privacy-policy" className="underline hover:text-slate-700">Privacy Policy</Link>.
-        </p>
-      </div>
-    </div>
+            <h2 className="mt-2 text-3xl font-black text-slate-950">Sign in securely</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Prefer passwordless? Enable email code or magic link in Clerk and it appears here.
+            </p>
+          </div>
+          {reasonState && (
+            <div className="mb-4 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950">
+              <p className="font-black">{reasonState.title}</p>
+              <p className="mt-1 text-blue-800">{reasonState.message}</p>
+            </div>
+          )}
+          <div className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_30px_90px_-60px_rgba(0,48,135,0.65)]">
+            <SignIn
+              path="/auth/login"
+              routing="path"
+              signUpUrl={signUpUrl}
+              fallbackRedirectUrl={redirectUrl}
+              appearance={{
+                elements: {
+                  rootBox: "w-full",
+                  card: "shadow-none border-0 w-full",
+                  headerTitle: "text-slate-950",
+                  formButtonPrimary: "bg-[#003087] hover:bg-[#082a5c]",
+                  footerActionLink: "text-[#003087]",
+                },
+              }}
+            />
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

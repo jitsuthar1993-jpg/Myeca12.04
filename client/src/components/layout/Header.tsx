@@ -432,114 +432,170 @@ export default function Header() {
                       </NavigationMenuTrigger>
                     </div>
                     <NavigationMenuContent>
-                       <div className="w-[720px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
-                          <div className="flex-1 p-6 grid grid-cols-2 gap-8 bg-white">
-                             <div>
-                                <div className="flex items-center gap-4 mb-6 px-0.5">
-                                   <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
-                                      <Rocket className="w-5 h-5" />
-                                   </div>
-                                   <div>
-                                      <h4 className="font-black text-slate-900 tracking-tight text-sm">Launch</h4>
-                                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 Support</p>
-                                   </div>
-                                </div>
-                                <ul className="space-y-4">
-                                   {[
-                                     { href: "/startup/registration", icon: Building2, title: "Entity Registration", desc: "Incorporate your company", color: "purple" },
-                                     { href: "/services/gst-registration", icon: Stamp, title: "Essential Licenses", desc: "GST, MSME & Shop Act", color: "blue" }
-                                   ].map((item, idx) => {
-                                     const Icon = item.icon as any;
-                                     return (
-                                       <li key={idx}>
-                                         <Link 
-                                           href={item.href} 
-                                           onMouseEnter={() => preloadOnHover(item.href)}
-                                           className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                         >
-                                           <div className={cn(
-                                             "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                             item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
-                                             item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
-                                           )}>
-                                             <Icon className="w-5 h-5" />
-                                           </div>
-                                           <div>
-                                             <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                             <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
-                                           </div>
-                                         </Link>
-                                       </li>
-                                     );
-                                   })}
-                                </ul>
-                             </div>
-                             
-                             <div>
-                                <div className="flex items-center gap-4 mb-6 px-0.5">
-                                   <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
-                                       <TrendingUp className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                       <h4 className="font-black text-slate-900 tracking-tight text-sm">Scale</h4>
-                                       <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth Engine</p>
-                                    </div>
-                                 </div>
-                                <ul className="space-y-4">
-                                   {[
-                                     { href: "/startup/funding", icon: Coins, title: "Funding Assistance", desc: "Get investment ready", color: "emerald" },
-                                     { href: "/startup-services", icon: Target, title: "Strategic Advisory", desc: "Expert business consulting", color: "purple" }
-                                   ].map((item, idx) => {
-                                     const Icon = item.icon as any;
-                                     return (
-                                       <li key={idx}>
-                                         <Link href={item.href} className="group flex items-center gap-4 p-2.5 -ml-2 rounded-xl hover:bg-slate-50 transition-all duration-300">
-                                           <div className={cn(
-                                             "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-sm",
-                                             item.color === "emerald" && "bg-emerald-50 text-emerald-500",
-                                             item.color === "purple" && "bg-purple-50 text-purple-500"
-                                           )}>
-                                             <Icon className="w-5 h-5" />
-                                           </div>
-                                           <div>
-                                             <span className="block text-sm font-bold text-slate-800 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                             <span className="block text-[11px] text-slate-500 font-medium">{item.desc}</span>
-                                           </div>
-                                         </Link>
-                                       </li>
-                                     );
-                                   })}
-                                </ul>
-                             </div>
-                          </div>
-                          
-                          {/* Sidebar */}
-                          <div className="w-64 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
-                             <div className="flex-1">
-                                <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Spotlight</h5>
-                                <div className="bg-gradient-to-br from-purple-50/80 to-white rounded-2xl p-6 shadow-xl shadow-purple-100/50 relative overflow-hidden group border border-purple-100/50">
-                                   <div className="absolute top-0 right-0 w-24 h-24 bg-purple-400/10 rounded-full -mr-8 -mt-8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                                   <div className="relative z-10">
-                                      <div className="flex items-center gap-2 mb-3">
-                                         <Zap className="w-4 h-4 text-purple-600 fill-purple-600/20" />
-                                         <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider">Startup India</span>
+                      <div className="w-[1024px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
+                        <div className="flex-1 p-6 grid grid-cols-3 gap-8 bg-white">
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100/50">
+                                <Rocket className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Launch</h4>
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 setup</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/startup-services", icon: Rocket, title: "Startup Hub", desc: "All founder services", color: "purple" },
+                                { href: "/startup/registration", icon: Building2, title: "Entity Registration", desc: "Pvt Ltd, LLP, OPC", color: "indigo" },
+                                { href: "/services/company-registration", icon: FileCheck, title: "Company Setup", desc: "MCA incorporation flow", color: "blue" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
                                       </div>
-                                      <h6 className="font-black text-slate-900 text-lg mb-2">Get Recognition</h6>
-                                      <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Avail 3 years of tax exemption and capital gains benefits.</p>
-                                      <Link href="/contact" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
-                                         Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                                      </Link>
-                                   </div>
-                                </div>
-                             </div>
-                             
-                             <div className="mt-8 pt-6 border-t border-slate-200/60">
-                               <Link href="/startup-services" className="inline-flex items-center gap-2 text-xs font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest group">
-                                 Explore Hub <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                               </Link>
-                             </div>
+                                      <div>
+                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
                           </div>
-                       </div>
+
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
+                                <Stamp className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Licenses</h4>
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Compliance ready</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/services/startup-india-registration", icon: Zap, title: "Startup India", desc: "DPIIT recognition", color: "purple" },
+                                { href: "/services/msme-udyam-registration", icon: Shield, title: "MSME Udyam", desc: "Udyam certificate", color: "emerald" },
+                                { href: "/services/gst-registration", icon: Receipt, title: "GST Registration", desc: "GSTIN for sales", color: "blue" },
+                                { href: "/services/fssai-registration", icon: Stamp, title: "FSSAI License", desc: "Food business approval", color: "orange" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
+                                <TrendingUp className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Scale</h4>
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth engine</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/startup/funding", icon: Coins, title: "Funding Assistance", desc: "Investor-ready support", color: "emerald" },
+                                { href: "/services/trademark-registration", icon: Scale, title: "Trademark", desc: "Protect your brand", color: "purple" },
+                                { href: "/services/iso-certification", icon: Gem, title: "ISO Certification", desc: "Trust and quality proof", color: "indigo" },
+                                { href: "/services/trade-license", icon: Landmark, title: "Trade License", desc: "Local business approval", color: "blue" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
+                          <div className="flex-1">
+                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Founder spotlight</h5>
+                            <Link href="/services/startup-india-registration" onMouseEnter={() => preloadOnHover("/services/startup-india-registration")} className="block">
+                              <div className="bg-gradient-to-br from-purple-50/80 via-white to-blue-50/70 rounded-2xl p-6 shadow-xl shadow-purple-100/50 relative overflow-hidden group border border-purple-100/50">
+                                <div className="absolute top-0 right-0 w-28 h-28 bg-purple-400/10 rounded-full -mr-8 -mt-8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                                <div className="relative z-10">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <Zap className="w-4 h-4 text-purple-600 fill-purple-600/20" />
+                                    <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider">Startup India</span>
+                                  </div>
+                                  <h6 className="font-black text-slate-900 text-lg mb-2">Recognition + tax benefits</h6>
+                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Get DPIIT recognition, IP support, and founder-friendly compliance guidance.</p>
+                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
+                                    Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+
+                          <div className="mt-8 pt-6 border-t border-slate-200/60">
+                            <Link href="/startup-services" className="inline-flex items-center gap-2 text-xs font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest group">
+                              Explore Startup Hub <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
 

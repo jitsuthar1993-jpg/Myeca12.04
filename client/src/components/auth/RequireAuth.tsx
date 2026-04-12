@@ -5,13 +5,14 @@ import { PageSkeleton } from "@/components/ui/page-skeleton";
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      setLocation("/");
+      const redirectUrl = encodeURIComponent(location || window.location.pathname + window.location.search);
+      setLocation(`/auth/login?redirect_url=${redirectUrl}`);
     }
-  }, [isLoading, isAuthenticated, setLocation]);
+  }, [isLoading, isAuthenticated, location, setLocation]);
 
   if (isLoading) {
     return <PageSkeleton />;

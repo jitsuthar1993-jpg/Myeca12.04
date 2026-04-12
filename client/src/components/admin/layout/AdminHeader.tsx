@@ -1,6 +1,6 @@
 // Admin Header Component
 
-import { Menu, Bell, Search, RefreshCw } from 'lucide-react';
+import { Menu, Bell, Search, RefreshCw, LogOut, ShieldCheck, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
+import { useAuth } from '@/components/AuthProvider';
 
 interface AdminHeaderProps {
   title?: string;
@@ -20,6 +20,16 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ title = 'Dashboard Overview', description, onMenuClick }: AdminHeaderProps) {
+  const { user, logout } = useAuth();
+  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.email || 'MyeCA Admin';
+  const role = user?.role || 'admin';
+  const initials = fullName
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <header className="bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 fixed top-0 left-0 right-0 z-30 lg:left-64 shadow-lg">
       <div className="flex items-center justify-between px-4 py-4 lg:px-8">
@@ -80,21 +90,33 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
                 className="gap-3 text-white hover:bg-white/20 p-2"
               >
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-white/30">
-                  AU
+                  {initials}
                 </div>
                 <div className="text-left hidden sm:block">
-                  <p className="text-sm font-semibold">Admin User</p>
-                  <p className="text-xs text-blue-100">Administrator</p>
+                  <p className="text-sm font-semibold">{fullName}</p>
+                  <p className="text-xs text-blue-100 capitalize">{role.replace("_", " ")}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <span className="block">My Account</span>
+                {user?.email && <span className="block truncate text-xs font-normal text-muted-foreground">{user.email}</span>}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>
+                <UserCircle className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Role: <span className="ml-1 capitalize">{role.replace("_", " ")}</span>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => void logout("manual")} className="text-red-600 focus:text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -102,4 +124,3 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
     </header>
   );
 }
-

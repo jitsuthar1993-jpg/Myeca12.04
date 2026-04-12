@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
   useAuth as useClerkAuth,
   useClerk,
@@ -8,8 +8,17 @@ import {
 } from "@clerk/clerk-react";
 import { type User as AppUser } from "@shared/schema";
 import { logAuditEvent, logLogin } from "@/lib/audit";
+import { SessionTimeoutDialog } from "@/components/auth/SessionTimeoutDialog";
+import { clearAuthToken, setAuthToken } from "@/lib/authToken";
 
 type ClerkUserCompat = ReturnType<typeof useUser>["user"];
+type LogoutReason = "manual" | "timeout" | "session_expired";
+
+const SESSION_CHANNEL = "session_sync_channel";
+const IDLE_TIMEOUT_MS = 15 * 60 * 1000;
+const IDLE_WARNING_MS = 14 * 60 * 1000;
+const WARNING_COUNTDOWN_SECONDS = 60;
+const ACTIVITY_THROTTLE_MS = 30 * 1000;
 
 interface AuthContextType {
   user: AppUser | null;
@@ -19,7 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, userData: Partial<AppUser>) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
-  logout: () => Promise<void>;
+  logout: (reason?: LogoutReason) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   sendEmailVerification: () => Promise<void>;
   deleteAccount: () => Promise<void>;
@@ -61,6 +70,120 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user: clerkUser, isLoaded: userLoaded } = useUser();
   const [appUser, setAppUser] = useState<AppUser | null>(null);
   const [isSyncing, setIsSyncing] = useState(true);
+  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
+  const [countdownSeconds, setCountdownSeconds] = useState(WARNING_COUNTDOWN_SECONDS);
+  const warningTimerRef = useRef<number | null>(null);
+  const logoutTimerRef = useRef<number | null>(null);
+  const countdownTimerRef = useRef<number | null>(null);
+  const lastActivityAtRef = useRef(Date.now());
+  const warningVisibleRef = useRef(false);
+  const logoutInProgressRef = useRef(false);
+
+  const clearSessionTimers = useCallback(() => {
+    if (warningTimerRef.current) window.clearTimeout(warningTimerRef.current);
+    if (logoutTimerRef.current) window.clearTimeout(logoutTimerRef.current);
+    if (countdownTimerRef.current) window.clearInterval(countdownTimerRef.current);
+    warningTimerRef.current = null;
+    logoutTimerRef.current = null;
+    countdownTimerRef.current = null;
+  }, []);
+
+  const postLogoutEvent = useCallback(
+    async (reason: LogoutReason) => {
+      try {
+        const token = await getToken();
+        await fetch("/api/v1/auth/logout-event", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ reason }),
+          keepalive: true,
+        });
+      } catch (error) {
+        console.warn("[AUTH] Could not audit logout event:", error);
+      }
+    },
+    [getToken],
+  );
+
+  const broadcastLogout = useCallback((reason: LogoutReason) => {
+    try {
+      const channel = new BroadcastChannel(SESSION_CHANNEL);
+      channel.postMessage({ type: "LOGOUT", reason });
+      channel.close();
+    } catch {
+      window.localStorage.setItem(
+        SESSION_CHANNEL,
+        JSON.stringify({ type: "LOGOUT", reason, ts: Date.now() }),
+      );
+    }
+  }, []);
+
+  const performLogout = useCallback(
+    async (reason: LogoutReason = "manual", broadcast = true) => {
+      if (logoutInProgressRef.current) return;
+      logoutInProgressRef.current = true;
+      clearSessionTimers();
+      warningVisibleRef.current = false;
+      setShowTimeoutWarning(false);
+
+      const email = clerkUser?.primaryEmailAddress?.emailAddress;
+      await postLogoutEvent(reason);
+
+      try {
+        await clerk.signOut();
+      } finally {
+        clearAuthToken();
+        setAppUser(null);
+        await logAuditEvent({
+          action: reason === "timeout" ? "logout_timeout" : "logout_success",
+          category: "authentication",
+          metadata: { email, reason },
+        });
+        if (broadcast) broadcastLogout(reason);
+        logoutInProgressRef.current = false;
+        const reasonParam = reason === "manual" ? "" : `?reason=${encodeURIComponent(reason)}`;
+        window.location.href = `/auth/login${reasonParam}`;
+      }
+    },
+    [broadcastLogout, clearSessionTimers, clerk, clerkUser?.primaryEmailAddress?.emailAddress, postLogoutEvent],
+  );
+
+  const startSessionTimers = useCallback(
+    (refreshToken = false) => {
+      clearSessionTimers();
+      if (!isSignedIn) return;
+
+      if (refreshToken) {
+        getToken()
+          .then((token) => {
+            if (token) setAuthToken(token);
+          })
+          .catch((error) => console.warn("[AUTH] Token refresh failed:", error));
+      }
+
+      lastActivityAtRef.current = Date.now();
+      warningVisibleRef.current = false;
+      setShowTimeoutWarning(false);
+      setCountdownSeconds(WARNING_COUNTDOWN_SECONDS);
+
+      warningTimerRef.current = window.setTimeout(() => {
+        warningVisibleRef.current = true;
+        setCountdownSeconds(WARNING_COUNTDOWN_SECONDS);
+        setShowTimeoutWarning(true);
+        countdownTimerRef.current = window.setInterval(() => {
+          setCountdownSeconds((value) => Math.max(0, value - 1));
+        }, 1000);
+      }, IDLE_WARNING_MS);
+
+      logoutTimerRef.current = window.setTimeout(() => {
+        void performLogout("timeout");
+      }, IDLE_TIMEOUT_MS);
+    },
+    [clearSessionTimers, getToken, isSignedIn, performLogout],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -69,9 +192,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!authLoaded || !userLoaded) return;
 
       if (!isSignedIn || !clerkUser) {
-        sessionStorage.removeItem("token");
+        clearAuthToken();
         setAppUser(null);
         setIsSyncing(false);
+        clearSessionTimers();
         return;
       }
 
@@ -79,7 +203,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const token = await getToken();
         if (token) {
-          sessionStorage.setItem("token", token);
+          setAuthToken(token);
         }
 
         const response = await fetch("/api/v1/auth/sync", {
@@ -121,6 +245,78 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.clearInterval(interval);
     };
   }, [authLoaded, userLoaded, isSignedIn, clerkUser?.id, getToken]);
+
+  useEffect(() => {
+    if (!authLoaded || !userLoaded || !isSignedIn) {
+      clearSessionTimers();
+      return;
+    }
+
+    startSessionTimers(false);
+    const activityEvents: Array<keyof WindowEventMap> = [
+      "mousemove",
+      "keydown",
+      "touchstart",
+      "scroll",
+      "click",
+    ];
+    const onActivity = () => {
+      if (warningVisibleRef.current) return;
+      const now = Date.now();
+      if (now - lastActivityAtRef.current < ACTIVITY_THROTTLE_MS) return;
+      startSessionTimers(false);
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") onActivity();
+    };
+
+    activityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, onActivity, { passive: true });
+    });
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      activityEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, onActivity);
+      });
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      clearSessionTimers();
+    };
+  }, [authLoaded, clearSessionTimers, isSignedIn, startSessionTimers, userLoaded]);
+
+  useEffect(() => {
+    const handleMessage = (message: MessageEvent) => {
+      if (message.data?.type !== "LOGOUT") return;
+      void performLogout(message.data.reason || "session_expired", false);
+    };
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(SESSION_CHANNEL);
+      channel.addEventListener("message", handleMessage);
+    } catch {}
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== SESSION_CHANNEL || !event.newValue) return;
+      try {
+        const payload = JSON.parse(event.newValue);
+        if (payload?.type === "LOGOUT") {
+          void performLogout(payload.reason || "session_expired", false);
+        }
+      } catch {}
+    };
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      channel?.removeEventListener("message", handleMessage);
+      channel?.close();
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [performLogout]);
+
+  const staySignedIn = useCallback(() => {
+    startSessionTimers(true);
+  }, [startSessionTimers]);
 
   const login = async (email: string, password: string) => {
     if (!signInLoaded || !signIn || !setSignInActive) {
@@ -178,20 +374,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const logout = async () => {
-    const email = clerkUser?.primaryEmailAddress?.emailAddress;
-    await clerk.signOut();
-    sessionStorage.removeItem("token");
-    setAppUser(null);
-    await logAuditEvent({
-      action: "logout_success",
-      category: "authentication",
-      metadata: { email },
-    });
-    const channel = new BroadcastChannel("session_sync_channel");
-    channel.postMessage("LOGOUT");
-    channel.close();
-  };
+  const logout = async (reason: LogoutReason = "manual") => performLogout(reason);
 
   const sendPasswordReset = async (email: string) => {
     if (!signInLoaded || !signIn) {
@@ -210,7 +393,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const deleteAccount = async () => {
     if (!clerkUser) return;
     await (clerkUser as any).delete();
-    sessionStorage.removeItem("token");
+    clearAuthToken();
     setAppUser(null);
   };
 
@@ -232,6 +415,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+      <SessionTimeoutDialog
+        open={showTimeoutWarning}
+        countdownSeconds={countdownSeconds}
+        onStaySignedIn={staySignedIn}
+        onLogout={() => void performLogout("manual")}
+      />
     </AuthContext.Provider>
   );
 }

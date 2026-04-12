@@ -1,337 +1,173 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
+import { track } from "@vercel/analytics";
 import {
+  ArrowRight,
   Bot,
-  Sparkles,
   Calculator,
   FileText,
-  HelpCircle,
-  Calendar,
-  PiggyBank,
-  TrendingUp,
-  Shield,
-  Clock,
-  CheckCircle,
-  ArrowRight,
   MessageCircle,
-  Lightbulb,
-  Target
+  PiggyBank,
+  Quote,
+  ShieldAlert,
+  Sparkles,
+  Upload,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { TaxChatbot } from "@/components/chat/TaxChatbot";
-import { SUGGESTED_QUESTIONS, TAX_TIPS } from "@/lib/chatbot-responses";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import {
+  ComplianceShell,
+  MyeCard,
+  SectionHeading,
+  StatusBadge,
+} from "@/components/platform/compliance-ui";
 
-// Quick help topics
-const HELP_TOPICS = [
+const contextChips = [
+  "Salary income detected",
+  "FY 2025-26 regime rules",
+  "Form 16 OCR-ready",
+  "Capital gains check pending",
+];
+
+const citedAnswers = [
   {
-    title: "Tax Calculation",
-    description: "Calculate your income tax liability",
-    icon: Calculator,
-    href: "/calculators/income-tax",
-    color: "bg-blue-500",
+    title: "Which regime should I choose?",
+    source: "Income-tax slab logic for FY 2025-26",
+    action: "Open Regime Analyzer",
+    href: "/itr/filing",
   },
   {
-    title: "ITR Filing",
-    description: "Step-by-step filing guidance",
-    icon: FileText,
-    href: "/itr/form-selector",
-    color: "bg-green-500",
+    title: "Can I claim HRA without rent agreement?",
+    source: "HRA calculation and rent receipt evidence workflow",
+    action: "Generate Rent Receipt",
+    href: "/documents/generator/rent-receipt",
   },
   {
-    title: "Tax Planning",
-    description: "Optimize your tax savings",
-    icon: Target,
-    href: "/tax-optimizer",
-    color: "bg-purple-500",
-  },
-  {
-    title: "Regime Comparison",
-    description: "Old vs New regime analysis",
-    icon: TrendingUp,
-    href: "/calculators/regime-comparator",
-    color: "bg-orange-500",
-  },
-  {
-    title: "Deadlines",
-    description: "Important tax dates",
-    icon: Calendar,
-    href: "/compliance-calendar",
-    color: "bg-red-500",
-  },
-  {
-    title: "Refund Status",
-    description: "Track your tax refund",
-    icon: Clock,
-    href: "/tds-refund-tracker",
-    color: "bg-teal-500",
+    title: "Why does AIS differ from Form 16?",
+    source: "AIS/26AS reconciliation guidance",
+    action: "Upload AIS",
+    href: "/documents",
   },
 ];
 
-// FAQs
-const FAQS = [
-  {
-    question: "Which tax regime should I choose?",
-    answer: "The new regime is beneficial if your total deductions (80C, 80D, HRA, etc.) are less than ₹3.75 lakh. If you have substantial deductions, the old regime may save more tax. Use our regime comparator for a personalized analysis.",
-  },
-  {
-    question: "What is the deadline for ITR filing?",
-    answer: "For individuals without audit requirements, the deadline is July 31st of the assessment year. For FY 2024-25, file by July 31, 2025. Late filing attracts penalties and interest.",
-  },
-  {
-    question: "How do I claim HRA exemption?",
-    answer: "HRA exemption is the minimum of: (1) Actual HRA received, (2) 50% of salary for metro/40% for non-metro, (3) Rent paid minus 10% of salary. Keep rent receipts and landlord PAN if rent exceeds ₹1 lakh/year.",
-  },
-  {
-    question: "What is advance tax and when to pay?",
-    answer: "Advance tax is paid quarterly if your tax liability exceeds ₹10,000. Due dates: June 15 (15%), Sept 15 (45%), Dec 15 (75%), March 15 (100%). Missing deadlines attracts interest under sections 234B and 234C.",
-  },
-  {
-    question: "How to e-verify my ITR?",
-    answer: "You can e-verify using: (1) Aadhaar OTP - fastest, (2) Net banking, (3) Demat account, (4) Bank ATM. Complete within 30 days of filing. Without verification, your ITR is considered invalid.",
-  },
+const goalPrompts = [
+  "Find missed deductions from my documents",
+  "Explain my tax notice in plain English",
+  "Compare Old vs New Regime for my salary",
+  "Prepare questions for my assigned CA",
 ];
 
 export default function TaxAssistantPage() {
-  const [activeTab, setActiveTab] = useState("chat");
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-100 relative overflow-hidden">
-        {/* Abstract background decorative element */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl -mr-32 -mt-32"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-100/20 rounded-full blur-3xl -ml-16 -mb-16"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="text-slate-500 hover:text-purple-600 transition-colors">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-slate-300" />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-slate-900 font-bold">AI Tax Assistant</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-purple-100 text-purple-600 rounded-xl shadow-sm border border-purple-200">
-              <Bot className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                AI Tax Assistant
-                <Badge variant="secondary" className="bg-amber-100 text-amber-700 border-amber-200">
-                  <Sparkles className="h-3 w-3 mr-1" />
-                  Beta
-                </Badge>
-              </h1>
-              <p className="text-slate-500 font-medium mt-1">
-                Get instant answers to your tax questions with our intelligent assistant
-              </p>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-white border border-slate-100 shadow-sm rounded-xl p-4">
-              <div className="text-2xl font-black text-slate-900">24/7</div>
-              <div className="text-sm text-slate-500 font-bold uppercase tracking-wider text-[10px]">Available</div>
-            </div>
-            <div className="bg-white border border-slate-100 shadow-sm rounded-xl p-4">
-              <div className="text-2xl font-black text-slate-900">100+</div>
-              <div className="text-sm text-slate-500 font-bold uppercase tracking-wider text-[10px]">Tax Topics</div>
-            </div>
-            <div className="bg-white border border-slate-100 shadow-sm rounded-xl p-4">
-              <div className="text-2xl font-black text-slate-900">Instant</div>
-              <div className="text-sm text-slate-500 font-bold uppercase tracking-wider text-[10px]">Responses</div>
-            </div>
-            <div className="bg-white border border-slate-100 shadow-sm rounded-xl p-4">
-              <div className="text-2xl font-black text-slate-900">Free</div>
-              <div className="text-sm text-slate-500 font-bold uppercase tracking-wider text-[10px]">To Use</div>
-            </div>
+    <ComplianceShell
+      active="/tax-assistant"
+      title="AI tax assistant"
+      subtitle="A workflow-aware tax advisor that answers with context, cites sources, and turns advice into filing actions."
+      actions={
+        <Link href="/itr/filing">
+          <Button className="bg-white text-[#003087] hover:bg-blue-50" onClick={() => track("ai_cta_click", { cta: "start_itr" })}>
+            Start ITR with AI
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
+      }
+    >
+      <MyeCard className="mb-6 border-amber-200 bg-amber-50">
+        <div className="flex gap-3 text-amber-950">
+          <ShieldAlert className="mt-1 h-5 w-5 shrink-0" />
+          <div>
+            <p className="font-black">AI guidance is assistive, not final tax advice.</p>
+            <p className="mt-1 text-sm">
+              MyeCA should show citations, preserve context, and route final filing decisions through CA review.
+            </p>
           </div>
         </div>
-      </div>
+      </MyeCard>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
-              Chat
-            </TabsTrigger>
-            <TabsTrigger value="topics" className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4" />
-              Topics
-            </TabsTrigger>
-            <TabsTrigger value="faqs" className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4" />
-              FAQs
-            </TabsTrigger>
-          </TabsList>
+      <div className="grid gap-6 xl:grid-cols-[1.35fr_0.75fr]">
+        <MyeCard className="min-h-[720px]">
+          <SectionHeading
+            eyebrow="Conversation"
+            title="Ask, verify, then act"
+            description="The embedded assistant remains available, now surrounded by context chips, source patterns, and direct task handoffs."
+          />
+          <div className="mt-5 flex flex-wrap gap-2">
+            {contextChips.map((chip) => (
+              <span key={chip} className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-[#003087]">
+                {chip}
+              </span>
+            ))}
+          </div>
+          <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50">
+            <TaxChatbot embedded />
+          </div>
+        </MyeCard>
 
-          {/* Chat Tab */}
-          <TabsContent value="chat" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Chatbot */}
-              <div className="lg:col-span-2">
-                <TaxChatbot embedded={true} />
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                {/* Quick Actions */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Target className="h-5 w-5 text-purple-600" />
-                      Quick Actions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <Link href="/calculators/income-tax">
-                      <Button variant="outline" className="w-full justify-start">
-                        <Calculator className="mr-2 h-4 w-4 text-blue-500" />
-                        Calculate Tax
-                      </Button>
-                    </Link>
-                    <Link href="/itr/form-selector">
-                      <Button variant="outline" className="w-full justify-start">
-                        <FileText className="mr-2 h-4 w-4 text-green-500" />
-                        File ITR
-                      </Button>
-                    </Link>
-                    <Link href="/tax-optimizer">
-                      <Button variant="outline" className="w-full justify-start">
-                        <PiggyBank className="mr-2 h-4 w-4 text-purple-500" />
-                        Tax Optimizer
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-
-                {/* Tax Tips */}
-                <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2 text-amber-800">
-                      <Lightbulb className="h-5 w-5" />
-                      Tax Tip of the Day
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-amber-900">
-                      {TAX_TIPS[Math.floor(Math.random() * TAX_TIPS.length)]}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                {/* Suggested Questions */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Popular Questions</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {SUGGESTED_QUESTIONS.map((question, index) => (
-                      <button
-                        key={index}
-                        className="w-full text-left text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                        onClick={() => {
-                          setActiveTab("chat");
-                          // Would trigger question in chatbot
-                        }}
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Topics Tab */}
-          <TabsContent value="topics">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {HELP_TOPICS.map((topic, index) => (
-                <Link key={index} href={topic.href}>
-                  <Card className="hover:shadow-lg transition-all cursor-pointer group h-full">
-                    <CardContent className="p-6">
-                      <div className={`w-12 h-12 ${topic.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                        <topic.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">
-                        {topic.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm">{topic.description}</p>
-                      <div className="mt-4 flex items-center text-blue-600 text-sm font-medium">
-                        Learn more
-                        <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+        <div className="space-y-6">
+          <MyeCard>
+            <SectionHeading eyebrow="Goal prompts" title="Skip prompt engineering" />
+            <div className="mt-5 space-y-3">
+              {goalPrompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  className="flex w-full items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold text-slate-800 transition hover:border-[#003087] hover:bg-blue-50"
+                  onClick={() => track("ai_goal_prompt_click", { prompt })}
+                >
+                  <span>{prompt}</span>
+                  <MessageCircle className="h-4 w-4 text-[#003087]" />
+                </button>
               ))}
             </div>
-          </TabsContent>
+          </MyeCard>
 
-          {/* FAQs Tab */}
-          <TabsContent value="faqs">
-            <Card>
-              <CardHeader>
-                <CardTitle>Frequently Asked Questions</CardTitle>
-                <CardDescription>Quick answers to common tax queries</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {FAQS.map((faq, index) => (
-                  <div key={index} className="border-b last:border-0 pb-6 last:pb-0">
-                    <h3 className="font-semibold text-lg flex items-start gap-2">
-                      <HelpCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                      {faq.question}
-                    </h3>
-                    <p className="text-gray-600 mt-2 pl-7">{faq.answer}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* CTA */}
-            <Card className="mt-6 bg-white border-2 border-purple-100 shadow-lg relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl -mr-12 -mt-12"></div>
-              <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-                <div>
-                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">Still have questions?</h3>
-                  <p className="text-slate-500 font-medium">Chat with our AI assistant or speak to a tax expert</p>
-                </div>
-                <div className="flex gap-4">
-                  <Button 
-                    variant="secondary" 
-                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-8 h-12 font-bold shadow-lg shadow-purple-500/20"
-                    onClick={() => setActiveTab("chat")}
-                  >
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Chat Now
-                  </Button>
-                  <Link href="/help">
-                    <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl px-8 h-12 font-bold">
-                      Contact Expert
+          <MyeCard>
+            <SectionHeading eyebrow="Source-backed answers" title="Citations and next actions" />
+            <div className="mt-5 space-y-4">
+              {citedAnswers.map((answer) => (
+                <div key={answer.title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                  <Quote className="h-5 w-5 text-[#003087]" />
+                  <h3 className="mt-3 font-black text-slate-950">{answer.title}</h3>
+                  <p className="mt-2 text-sm text-slate-600">{answer.source}</p>
+                  <StatusBadge status="submitted" label="Citation required" className="mt-3" />
+                  <Link href={answer.href}>
+                    <Button
+                      variant="outline"
+                      className="mt-4 w-full justify-between"
+                      onClick={() => track("ai_cta_click", { cta: answer.action })}
+                    >
+                      {answer.action}
+                      <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              ))}
+            </div>
+          </MyeCard>
+        </div>
       </div>
-    </div>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-4">
+        {[
+          ["Calculate tax", Calculator, "/calculators/income-tax"],
+          ["Upload proof", Upload, "/documents"],
+          ["Optimize deductions", PiggyBank, "/tax-optimizer"],
+          ["File return", FileText, "/itr/filing"],
+        ].map(([label, Icon, href]) => {
+          const TypedIcon = Icon as typeof Bot;
+          return (
+            <Link
+              key={String(label)}
+              href={String(href)}
+              className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#003087]"
+              onClick={() => track("ai_action_tile_click", { action: String(label) })}
+            >
+              <TypedIcon className="h-7 w-7 text-[#003087]" />
+              <p className="mt-4 font-black text-slate-950">{String(label)}</p>
+              <p className="mt-1 text-sm text-slate-500">Open the related MyeCA module.</p>
+            </Link>
+          );
+        })}
+      </div>
+    </ComplianceShell>
   );
 }
-

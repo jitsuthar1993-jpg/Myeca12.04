@@ -1,261 +1,153 @@
-import { m } from "framer-motion";
-import { useState } from "react";
-import MetaSEO from "@/components/seo/MetaSEO";
-import Breadcrumb from "@/components/Breadcrumb";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Check, Shield, Clock, Award, Users, Star, ArrowRight, Phone, Calculator, FileText, HeadphonesIcon, Zap } from "lucide-react";
 import { Link } from "wouter";
-import PricingSection from "@/components/PricingSection";
-import CTASection from "@/components/CTASection";
+import { ArrowRight, BadgeCheck, Bot, Building2, CheckCircle2, FileText, ShieldCheck } from "lucide-react";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { Button } from "@/components/ui/button";
+import Logo from "@/components/ui/logo";
+import { MyeCard, SectionHeading, StatusBadge } from "@/components/platform/compliance-ui";
 
-// FAQ Component for pricing page
-const PricingFAQ = () => {
-  const [openFAQ, setOpenFAQ] = useState<number | null>(0);
+const plans = [
+  {
+    name: "DIY Automated",
+    price: "₹499",
+    audience: "Simple salary returns",
+    status: "not_started" as const,
+    features: ["ITR-1 guided filing", "Regime comparison", "Basic document vault", "Email support"],
+  },
+  {
+    name: "Expert Assisted",
+    price: "₹999",
+    audience: "Most individuals and investors",
+    status: "ca_review" as const,
+    features: ["Named CA review", "Form 16 + AIS checks", "HRA/rent receipt support", "Refund tracking"],
+    featured: true,
+  },
+  {
+    name: "Premium vCFO",
+    price: "Custom",
+    audience: "Businesses and founders",
+    status: "registered" as const,
+    features: ["GST/TDS compliance", "Monthly dashboards", "Document workflows", "Strategic CFO review"],
+  },
+];
 
-  const faqs = [
-    {
-      question: "What's included in the FREE plan?",
-      answer: "The FREE plan includes ITR-1 filing, Form 16 auto-import, basic tax calculations, e-verification, and email support. Perfect for simple salary returns with no additional income sources."
-    },
-    {
-      question: "Can I upgrade from FREE to CA Expert plan later?",
-      answer: "Yes! You can upgrade anytime. If you start with FREE filing and need expert help, you can easily upgrade to CA Expert plan and get full CA consultation and review."
-    },
-    {
-      question: "What makes the CA Expert plan worth ₹1,499?",
-      answer: "You get 90-minute dedicated CA consultation, support for all ITR forms (1-4), real-time tax optimization, priority support, post-filing assistance, and maximum refund guarantee. The average tax savings is ₹15,000+."
-    },
-    {
-      question: "Is there any hidden cost or annual subscription?",
-      answer: "No hidden costs! All pricing is transparent and one-time for the current assessment year. No annual subscriptions or recurring charges. What you see is what you pay."
-    },
-    {
-      question: "How secure is my financial data?",
-      answer: "We use ISO 27001 certified security with bank-grade 256-bit SSL encryption. Your data is stored securely and never shared with third parties. We're compliant with all Indian data protection regulations."
-    },
-    {
-      question: "What if I'm not satisfied with the service?",
-      answer: "We offer 100% money-back guarantee within 30 days. If you're not completely satisfied with our service, we'll refund your full payment, no questions asked."
-    }
-  ];
-
-  return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Everything you need to know about our pricing plans
-          </p>
-        </m.div>
-
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <m.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card className="p-6 cursor-pointer hover:shadow-lg transition-all duration-300">
-                <div 
-                  className="flex justify-between items-center"
-                  onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 pr-4">
-                    {faq.question}
-                  </h3>
-                  <div className={`transform transition-transform duration-300 ${openFAQ === index ? 'rotate-45' : ''}`}>
-                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 font-bold text-xl">+</span>
-                    </div>
-                  </div>
-                </div>
-                {openFAQ === index && (
-                  <m.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="mt-4 pt-4 border-t border-gray-200"
-                  >
-                    <p className="text-gray-600 leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </m.div>
-                )}
-              </Card>
-            </m.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Testimonials Component
-const PricingTestimonials = () => {
-  const testimonials = [
-    {
-      name: "Priya Sharma",
-      role: "Software Engineer",
-      content: "MyeCA.in saved me ₹18,000 in taxes with their CA Expert plan. The consultation was thorough and the filing process was seamless.",
-      rating: 5,
-      savings: "₹18,000"
-    },
-    {
-      name: "Rajesh Kumar",
-      role: "Business Owner",
-      content: "Used the LIVE Premium CA plan for my business returns. The dedicated support and notice handling service is exceptional.",
-      rating: 5,
-      savings: "₹45,000"
-    },
-    {
-      name: "Anita Patel",
-      role: "Marketing Manager",
-      content: "Started with FREE plan and upgraded to CA Expert. The transition was smooth and I got maximum refund as promised.",
-      rating: 5,
-      savings: "₹12,500"
-    }
-  ];
-
-  return (
-    <section className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            What Our Customers Say
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Join thousands who've maximized their tax savings with us
-          </p>
-        </m.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <m.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card className="p-6 h-full hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4 italic">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
-                  </div>
-                  <Badge className="bg-green-100 text-green-800 font-semibold">
-                    Saved {testimonial.savings}
-                  </Badge>
-                </div>
-              </Card>
-            </m.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+const comparisonRows = [
+  ["Capital gains support", "Add-on", "Included", "Included"],
+  ["Foreign asset/NRI review", "Not included", "Add-on", "Custom advisory"],
+  ["Business income/GST", "Not included", "Add-on", "Included"],
+  ["CA chat", "No", "Yes", "Priority"],
+  ["Document OCR workflow", "Basic", "Advanced", "Advanced"],
+];
 
 export default function PricingPage() {
   return (
-    <>
-      <MetaSEO 
-        title={"ITR Filing Pricing - ₹499 DIY to ₹1,499 CA Expert | MyeCA.in"}
-        description={"Transparent ITR filing pricing. Choose FREE DIY plan or CA Expert Assisted plan starting at ₹1,499. Maximum refund guarantee with 15L+ happy customers."}
-        keywords={[
-          "ITR filing price", "income tax return cost", "CA charges", "tax filing fees", 
-          "ITR-1 price", "ITR-2 charges", "tax consultant fees", "maximum tax refund"
-        ]}
-        type="service"
-        serviceData={{
-          price: "1499",
-          rating: "4.8",
-          reviews: "15000",
-          availability: "https://schema.org/InStock"
-        }}
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Pricing", url: "/pricing" }
-        ]}
+    <main className="min-h-screen bg-[#f6f9fd]">
+      <MetaSEO
+        title="MyeCA Pricing | DIY, CA Assisted and vCFO Plans"
+        description="Compare MyeCA pricing for DIY ITR filing, expert CA-assisted filing, and Premium vCFO compliance support."
+        keywords={["ITR pricing", "CA assisted filing", "vCFO pricing", "tax filing plans"]}
       />
-      <div className="mobile-safe-bottom bg-white min-h-screen">
-        <Breadcrumb items={[{ name: 'Pricing' }]} />
-        
-        {/* Simple Hero */}
-        <section className="pt-12 pb-6 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <m.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                Simple <span className="text-blue-600">Transparent</span> Pricing
-              </h1>
-              <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-                No surprises. No hidden costs. Choose the plan that best suits your tax situation.
-              </p>
-            </m.div>
-          </div>
-        </section>
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-2 font-black text-[#003087]">
+            <Logo size="sm" />
+            MyeCA.in
+          </Link>
+          <Link href="/services">
+            <Button variant="outline">View services</Button>
+          </Link>
+        </div>
+      </header>
 
-        <PricingSection />
-        <PricingTestimonials />
-        <PricingFAQ />
-        
-        {/* Simplified Final CTA */}
-        <section className="py-20 bg-blue-50 text-slate-900 overflow-hidden relative border-t border-blue-100">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/5 rounded-full blur-[120px] -mr-48 -mt-48 transition-all"></div>
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
-              Ready to <span className="text-blue-600">Maximize</span> Your Refund?
-            </h2>
-            <p className="text-xl text-slate-500 mb-10 max-w-2xl mx-auto font-medium">
-              Join 1.5 million+ taxpayers who trust MyeCA.in for accuracy and speed.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/itr/compact-filing">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-7 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/20 w-full sm:w-auto border-none">
-                  Get Started for Free
+      <section className="mye-brand-panel px-4 py-16 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-100">Transparent pricing</p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight md:text-6xl">
+            Pick the amount of automation and expert review you need.
+          </h1>
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-blue-50/90">
+            Plans make complexity visible upfront, especially capital gains, NRI income, business income,
+            foreign assets, and CA-review requirements.
+          </p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {plans.map((plan) => (
+            <MyeCard
+              key={plan.name}
+              className={plan.featured ? "border-[#003087] ring-4 ring-blue-100" : undefined}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <StatusBadge status={plan.status} label={plan.featured ? "Recommended" : plan.audience} />
+                  <h2 className="mt-5 text-2xl font-black text-slate-950">{plan.name}</h2>
+                  <p className="mt-2 text-slate-600">{plan.audience}</p>
+                </div>
+                {plan.featured ? <BadgeCheck className="h-7 w-7 text-[#003087]" /> : null}
+              </div>
+              <p className="mt-6 text-5xl font-black text-slate-950">{plan.price}</p>
+              <ul className="mt-6 space-y-3">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-3 font-semibold text-slate-700">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-800" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/auth/register">
+                <Button className="mt-8 w-full bg-[#003087] text-white hover:bg-[#082a5c]">
+                  Get started
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/contact">
-                <Button size="lg" variant="outline" className="border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600 px-10 py-7 rounded-2xl text-lg font-bold w-full sm:w-auto bg-white transition-colors">
-                  Contact Support
-                </Button>
-              </Link>
+            </MyeCard>
+          ))}
+        </div>
+
+        <MyeCard className="mt-8">
+          <SectionHeading
+            eyebrow="Comparison"
+            title="Map complexity to the right plan"
+            description="This matrix prevents surprises after the user starts filing."
+          />
+          <div className="mt-6 overflow-hidden rounded-[24px] border border-slate-200">
+            <div className="grid grid-cols-4 bg-slate-50 p-4 text-xs font-black uppercase tracking-widest text-slate-500">
+              <span>Feature</span>
+              <span>DIY</span>
+              <span>Expert</span>
+              <span>vCFO</span>
             </div>
+            {comparisonRows.map((row) => (
+              <div key={row[0]} className="grid grid-cols-1 gap-2 border-t border-slate-200 p-4 text-sm md:grid-cols-4">
+                {row.map((cell, index) => (
+                  <span key={`${row[0]}-${cell}`} className={index === 0 ? "font-black text-slate-950" : "text-slate-700"}>
+                    {cell}
+                  </span>
+                ))}
+              </div>
+            ))}
           </div>
-        </section>
-      </div>
-    </>
+        </MyeCard>
+      </section>
+
+      <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-3">
+          {[
+            ["AI-assisted, CA-reviewed", Bot],
+            ["Private document vault", ShieldCheck],
+            ["Business compliance upgrade path", Building2],
+          ].map(([label, Icon]) => {
+            const TypedIcon = Icon as typeof FileText;
+            return (
+              <MyeCard key={String(label)} className="p-7">
+                <TypedIcon className="h-8 w-8 text-[#003087]" />
+                <p className="mt-4 text-xl font-black text-slate-950">{String(label)}</p>
+              </MyeCard>
+            );
+          })}
+        </div>
+      </section>
+    </main>
   );
 }

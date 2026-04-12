@@ -5,7 +5,7 @@ import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth.js";
 import { convertTimestamp } from "../utils/timestamps.js";
 import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
-import { syncRoleClaims } from "../services/user-accounts.js";
+import { provisionPrivilegedUser, syncRoleClaims } from "../services/user-accounts.js";
 import { invalidateCachedUser } from "../utils/user-cache.js";
 
 const API_CONFIG = {
@@ -14,12 +14,68 @@ const API_CONFIG = {
 };
 
 const router = Router();
+const optionalName = z.preprocess(
+  (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+  z.string().trim().max(100).optional(),
+);
+
 const updateUserRoleSchema = z.object({
   role: z.enum(['user', 'admin', 'ca', 'team_member']).optional(),
   status: z.enum(['active', 'inactive', 'pending', 'suspended', 'rejected']).optional(),
 });
 
+const invitePrivilegedUserSchema = z.object({
+  email: z.string().email("A valid email address is required."),
+  firstName: optionalName,
+  lastName: optionalName,
+  role: z.enum(["admin", "team_member", "ca"]),
+});
+
 // ==================== USER MANAGEMENT ====================
+
+router.post(
+  "/invitations",
+  requireAuth,
+  requireAdmin,
+  validateRequest(invitePrivilegedUserSchema),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const result = await provisionPrivilegedUser({
+        ...req.body,
+        invitedBy: req.auth?.userId,
+      });
+
+      if (result.mode === "promoted" && result.clerkUserId) {
+        invalidateCachedUser(result.clerkUserId);
+      }
+
+      await adminDb.collection("audit_logs").doc().set({
+        userId: req.auth?.userId ?? null,
+        action: result.mode === "promoted" ? "admin_user_promoted" : "admin_invitation_sent",
+        category: "admin",
+        status: "success",
+        metadata: {
+          email: req.body.email,
+          role: req.body.role,
+          mode: result.mode,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      return res.status(result.mode === "promoted" ? 200 : 201).json({
+        success: true,
+        message:
+          result.mode === "promoted"
+            ? "Existing Clerk user promoted successfully."
+            : "Clerk invitation sent successfully.",
+        data: result,
+      });
+    } catch (error) {
+      return safeError(res, error, "Failed to provision admin access.");
+    }
+  },
+);
 
 // Get all users with pagination and filtering
 router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {

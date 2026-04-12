@@ -1,212 +1,86 @@
-import { m } from "framer-motion";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import { Link, useLocation } from "wouter";
-import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Lock, User, Shield, CheckCircle, AlertCircle } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/components/AuthProvider";
-
-const adminLoginSchema = z.object({
-  username: z.string().min(3, "Username is required").max(255),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
-
-type AdminLoginData = z.infer<typeof adminLoginSchema>;
+import { SignIn } from "@clerk/clerk-react";
+import { Link } from "wouter";
+import { ArrowLeft, KeyRound, ShieldCheck, UserRoundPlus } from "lucide-react";
+import Logo from "@/components/ui/logo";
 
 export default function AdminLoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [, setLocation] = useLocation();
-  const { toast } = useToast();
-  const { login } = useAuth();
-
-  const form = useForm<AdminLoginData>({
-    resolver: zodResolver(adminLoginSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  const loginMutation = useMutation({
-    mutationFn: async (data: AdminLoginData) => {
-      const response = await apiRequest("/api/auth/admin-login", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-      return response.json();
-    },
-    onSuccess: (data) => {
-      login(data.token, data.user);
-      toast({
-        title: "Admin login successful",
-        description: `Welcome back, ${data.user.firstName}!`,
-      });
-      setLocation('/admin/dashboard');
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Login failed",
-        description: error.message || "Please check your credentials and try again.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const onSubmit = (data: AdminLoginData) => {
-    loginMutation.mutate(data);
-  };
+  const redirectUrl = new URLSearchParams(window.location.search).get("redirect_url") || "/admin/dashboard";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-md w-full space-y-8"
-      >
-        {/* Header */}
-        <div className="text-center">
-          <m.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6"
-          >
-            <Shield className="h-8 w-8 text-white" />
-          </m.div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Admin Sign In
-          </h2>
-          <p className="text-gray-600">
-            Secure access for administrators
-          </p>
-        </div>
-
-        {/* Login Form */}
-        <Card className="p-8 bg-white shadow-2xl border-0">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Username Field */}
-            <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-medium text-gray-700">
-                Username
-              </Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  className="pl-10 h-12 border-2 focus:border-blue-500"
-                  {...form.register("username")}
-                />
-              </div>
-              {form.formState.errors.username && (
-                <p className="text-sm text-red-600 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-1" />
-                  {form.formState.errors.username.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="pl-10 pr-10 h-12 border-2 focus:border-blue-500"
-                  {...form.register("password")}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              {form.formState.errors.password && (
-                <p className="text-sm text-red-600 flex items-center">
-                  <AlertCircle className="w-4 h-4 mr-1" />
-                  {form.formState.errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-              disabled={loginMutation.isPending}
-            >
-              {loginMutation.isPending ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Signing in...
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <CheckCircle className="w-5 h-5 mr-2" />
-                  Sign In as Admin
-                </div>
-              )}
-            </Button>
-
-            {/* Error Message */}
-            {loginMutation.error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  {(loginMutation.error as any)?.message || "Login failed. Please try again."}
-                </AlertDescription>
-              </Alert>
-            )}
-          </form>
-
-          <div className="mt-8">
-            <Separator className="my-6" />
-            <div className="text-center">
-              <p className="text-sm text-gray-600">
-                Not an admin?{" "}
-                <Link href="/auth/login">
-                  <span className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer">
-                    Go to user login
-                  </span>
-                </Link>
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,48,135,0.18),transparent_34%),linear-gradient(135deg,#f8fbff_0%,#eef5ff_52%,#ffffff_100%)] px-4 py-10">
+      <div className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-6xl items-center">
+        <div className="grid w-full overflow-hidden rounded-[36px] border border-blue-100 bg-white shadow-[0_35px_120px_-70px_rgba(0,48,135,0.75)] lg:grid-cols-[0.9fr_1.1fr]">
+          <section className="mye-brand-panel p-8 text-white sm:p-10">
+            <Link href="/" className="inline-flex items-center gap-3 font-black">
+              <Logo size="sm" />
+              MyeCA.in
+            </Link>
+            <div className="mt-16">
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-100">
+                Admin access
+              </p>
+              <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+                Clerk-secured control room for trusted operators.
+              </h1>
+              <p className="mt-5 max-w-lg text-base leading-8 text-blue-50/90">
+                This compatibility route now uses Clerk sign-in only. Admin, CA, and team roles are
+                provisioned from Neon-backed records and mirrored into Clerk metadata.
               </p>
             </div>
-          </div>
-        </Card>
+            <div className="mt-12 grid gap-3">
+              {[
+                ["No shared admin passwords", KeyRound],
+                ["Invite-first provisioning", UserRoundPlus],
+                ["Neon roles remain authoritative", ShieldCheck],
+              ].map(([label, Icon]) => {
+                const TypedIcon = Icon as typeof ShieldCheck;
+                return (
+                  <div key={String(label)} className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur">
+                    <TypedIcon className="h-5 w-5 text-emerald-200" />
+                    <span className="font-bold">{String(label)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* Security Notice */}
-        <div className="text-center">
-          <div className="inline-flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-full">
-            <Shield className="w-4 h-4 text-green-600 mr-2" />
-            <span className="text-sm text-green-700 font-medium">
-              Secured with 256-bit SSL encryption
-            </span>
-          </div>
+          <section className="flex items-center justify-center p-6 sm:p-10">
+            <div className="w-full max-w-md">
+              <Link href="/auth/login" className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#003087] hover:text-[#082a5c]">
+                <ArrowLeft className="h-4 w-4" />
+                User sign in
+              </Link>
+              <div className="mb-6">
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0050b5]">
+                  Administrator
+                </p>
+                <h2 className="mt-2 text-3xl font-black text-slate-950">Sign in with Clerk</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  If you were invited as an admin, team member, or CA, use the same email address
+                  from the Clerk invitation.
+                </p>
+              </div>
+              <div className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_30px_90px_-60px_rgba(0,48,135,0.65)]">
+                <SignIn
+                  path="/auth/admin-login"
+                  routing="path"
+                  signUpUrl="/auth/register?redirect_url=%2Fadmin%2Fdashboard"
+                  fallbackRedirectUrl={redirectUrl}
+                  appearance={{
+                    elements: {
+                      rootBox: "w-full",
+                      card: "shadow-none border-0 w-full",
+                      headerTitle: "text-slate-950",
+                      formButtonPrimary: "bg-[#003087] hover:bg-[#082a5c]",
+                      footerActionLink: "text-[#003087]",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          </section>
         </div>
-      </m.div>
-    </div>
+      </div>
+    </main>
   );
 }
