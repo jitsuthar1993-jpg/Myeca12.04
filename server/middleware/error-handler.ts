@@ -72,8 +72,17 @@ class Logger {
   }
   
   private ensureLogDirectory(): void {
+    if (!LOGGING_CONFIG.FILE_ENABLED) {
+      return;
+    }
+
     if (!fs.existsSync(this.logDir)) {
-      fs.mkdirSync(this.logDir, { recursive: true });
+      try {
+        fs.mkdirSync(this.logDir, { recursive: true });
+      } catch (error) {
+        console.warn("File logging disabled: failed to create log directory", error);
+        LOGGING_CONFIG.FILE_ENABLED = false;
+      }
     }
   }
   
