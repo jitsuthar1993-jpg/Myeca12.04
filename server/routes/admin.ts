@@ -1,12 +1,12 @@
 import { Router, Response } from 'express';
 import { z } from "zod";
-import { adminDb } from "../neon-admin";
-import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth";
-import { convertTimestamp } from "../utils/timestamps";
-import { validateRequest } from "../middleware/security";
-import { safeError } from "../utils/error-response";
-import { syncRoleClaims } from "../services/user-accounts";
-import { invalidateCachedUser } from "../utils/user-cache";
+import { adminDb } from "../neon-admin.js";
+import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth.js";
+import { convertTimestamp } from "../utils/timestamps.js";
+import { validateRequest } from "../middleware/security.js";
+import { safeError } from "../utils/error-response.js";
+import { syncRoleClaims } from "../services/user-accounts.js";
+import { invalidateCachedUser } from "../utils/user-cache.js";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,

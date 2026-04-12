@@ -1,5 +1,5 @@
-import { adminDb } from "./neon-admin";
-import { type User, type InsertUser, type Profile, type InsertProfile } from "../shared/schema";
+import { adminDb } from "./neon-admin.js";
+import { type User, type InsertUser, type Profile, type InsertProfile } from "../shared/schema.js";
 
 export const storage = {
   async getUser(id: string): Promise<User | null> {

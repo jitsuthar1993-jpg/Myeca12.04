@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
-import { requireAuth, requireCA, AuthRequest } from "../middleware/auth";
-import { adminDb } from "../neon-admin";
+import { requireAuth, requireCA, AuthRequest } from "../middleware/auth.js";
+import { adminDb } from "../neon-admin.js";
 
 const router = Router();
 

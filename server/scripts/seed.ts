@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content";
-import { adminDb } from "../neon-admin";
+import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content.js";
+import { adminDb } from "../neon-admin.js";
 
 async function upsertById(collection: string, id: string, data: Record<string, any>) {
   await adminDb.collection(collection).doc(id).set({

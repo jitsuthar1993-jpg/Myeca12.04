@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
-import { authenticateToken } from "../middleware/auth";
+import { authenticateToken } from "../middleware/auth.js";
 import { z } from "zod";
-import { sendReferralInvitation, sendReferralReminder, sendReferralConversionNotification } from "../services/referral-email";
+import { sendReferralInvitation, sendReferralReminder, sendReferralConversionNotification } from "../services/referral-email.js";
 import multer from "multer";
 import csv from "csv-parser";
 import { Readable } from "stream";

@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { db } from "../db";
-import { users, profiles } from "@shared/schema";
+import { db } from "../db.js";
+import { users, profiles } from "../../shared/schema.js";
 import bcrypt from "bcryptjs";
 
 const dummyUsers = [

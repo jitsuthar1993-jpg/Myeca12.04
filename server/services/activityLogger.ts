@@ -1,4 +1,4 @@
-import { adminDb } from "../neon-admin";
+import { adminDb } from "../neon-admin.js";
 import type { Request } from "express";
 
 export async function logActivity(

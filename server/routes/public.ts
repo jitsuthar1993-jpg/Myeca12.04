@@ -1,13 +1,13 @@
 import { Router } from "express";
 import memoize from "memoizee";
-import { defaultBlogCategories } from "../data/default-blog-content";
-import { adminDb } from "../neon-admin";
+import { defaultBlogCategories } from "../data/default-blog-content.js";
+import { adminDb } from "../neon-admin.js";
 import {
   buildPublicBlogDetail,
   listAllBlogPosts,
   sortPublishedPosts,
   toPublicBlogSummary,
-} from "../services/blog";
+} from "../services/blog.js";
 import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/blog";
 
 const router = Router();

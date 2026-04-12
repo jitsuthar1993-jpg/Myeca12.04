@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
-import * as schema from "./db/schema";
+import * as schema from "./db/schema.js";
 
 let sqlClient: NeonQueryFunction<false, false> | null = null;
 let drizzleClient: NeonHttpDatabase<typeof schema> | null = null;

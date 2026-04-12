@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import { storage } from "../storage";
+import { storage } from "../storage.js";
 import { z } from "zod";
 import type { User } from "@shared/schema";
 

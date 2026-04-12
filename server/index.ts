@@ -1,6 +1,6 @@
 import "dotenv/config";
-import app, { _routesReady } from "./app";
-import { log } from "./vite";
+import app, { _routesReady } from "./app.js";
+import { log } from "./vite.js";
 
 const port = Number(process.env.PORT ?? 5000);
 

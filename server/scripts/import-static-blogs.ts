@@ -1,7 +1,7 @@
-import { adminDb } from "../neon-admin";
-import { blogPosts } from "../../client/src/data/blogPosts";
-import { buildBlogPostWriteData, getCategoryLookup } from "../services/blog";
-import { estimateReadingTimeMinutes, slugifyHeading } from "@shared/blog";
+import { adminDb } from "../neon-admin.js";
+import { blogPosts } from "../../client/src/data/blogPosts.js";
+import { buildBlogPostWriteData, getCategoryLookup } from "../services/blog.js";
+import { estimateReadingTimeMinutes, slugifyHeading } from "../../shared/blog.js";
 
 async function ensureCategory(categoryName: string) {
   const lookup = await getCategoryLookup();

@@ -1,5 +1,5 @@
-import { adminDb, type NeonAdminDb } from "../neon-admin";
-import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content";
+import { adminDb, type NeonAdminDb } from "../neon-admin.js";
+import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content.js";
 import {
   type BlogCategory,
   type BlogFaqItem,
@@ -13,7 +13,7 @@ import {
   serializeTags,
   slugifyHeading,
   toIsoDate,
-} from "@shared/blog";
+} from "../../shared/blog.js";
 
 export interface StoredBlogPost {
   id: string;

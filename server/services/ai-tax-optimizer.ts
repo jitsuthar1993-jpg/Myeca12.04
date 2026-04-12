@@ -1,4 +1,4 @@
-import { TaxSlab } from "@shared/schema";
+import type { TaxSlab } from "../../shared/schema.js";
 
 interface TaxRegimeComparison {
   oldRegime: {

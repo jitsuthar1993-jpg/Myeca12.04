@@ -1,5 +1,5 @@
-import { db } from "../db";
-import { webhooks } from "../db/schema";
+import { db } from "../db.js";
+import { webhooks } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import fetch from "node-fetch";

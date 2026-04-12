@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { sanitize } from "../middleware/sanitize";
+import { sanitize } from "../middleware/sanitize.js";
 import { audit } from "../middleware/audit.js";
 
 const router = Router();

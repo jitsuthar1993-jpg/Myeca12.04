@@ -1,4 +1,4 @@
-import { type User } from "@shared/schema";
+import type { User } from "../shared/schema.js";
 
 // Extend Express Request interface to include user and session
 declare global {

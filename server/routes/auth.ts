@@ -1,11 +1,11 @@
 import { Router, Response } from "express";
 import { z } from "zod";
-import { adminDb } from "../neon-admin";
-import { requireAuth, AuthRequest } from "../middleware/auth";
-import { validateRequest } from "../middleware/security";
-import { findOrCreateUserProfile, getBootstrapRoleForEmail, syncRoleClaims } from "../services/user-accounts";
-import { safeError } from "../utils/error-response";
-import { getCachedUser, setCachedUser } from "../utils/user-cache";
+import { adminDb } from "../neon-admin.js";
+import { requireAuth, AuthRequest } from "../middleware/auth.js";
+import { validateRequest } from "../middleware/security.js";
+import { findOrCreateUserProfile, getBootstrapRoleForEmail, syncRoleClaims } from "../services/user-accounts.js";
+import { safeError } from "../utils/error-response.js";
+import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
 const router = Router();
 const syncUserSchema = z.object({

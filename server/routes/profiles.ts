@@ -1,9 +1,9 @@
 import { Router, Response } from "express";
 import { z } from "zod";
-import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { adminDb } from "../neon-admin";
-import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption";
-import { safeError } from "../utils/error-response";
+import { authenticateToken, AuthRequest } from "../middleware/auth.js";
+import { adminDb } from "../neon-admin.js";
+import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption.js";
+import { safeError } from "../utils/error-response.js";
 
 const router = Router();
 const profileCreateSchema = z.object({

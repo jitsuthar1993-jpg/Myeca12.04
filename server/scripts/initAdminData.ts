@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { db } from "../db";
+import { db } from "../db.js";
 import { 
   blogCategories, blogTags, siteSettings, emailTemplates, pages 
-} from "@shared/schema";
+} from "../../shared/schema.js";
 
 async function initAdminData() {
   try {

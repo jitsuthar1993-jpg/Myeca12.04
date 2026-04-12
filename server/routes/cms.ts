@@ -1,8 +1,8 @@
 import { Router, Response } from "express";
 import { z } from "zod";
-import { requireAuth, requireAdmin, requireTeamMember, AuthRequest } from "../middleware/auth";
-import { adminDb } from "../neon-admin";
-import { sanitize } from "../middleware/sanitize";
+import { requireAuth, requireAdmin, requireTeamMember, AuthRequest } from "../middleware/auth.js";
+import { adminDb } from "../neon-admin.js";
+import { sanitize } from "../middleware/sanitize.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";

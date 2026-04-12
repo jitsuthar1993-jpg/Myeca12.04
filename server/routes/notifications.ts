@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { authenticateToken } from "../middleware/auth";
+import { authenticateToken } from "../middleware/auth.js";
 import { z } from "zod";
 
 

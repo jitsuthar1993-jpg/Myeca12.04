@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { authenticateToken } from "../middleware/auth";
+import { authenticateToken } from "../middleware/auth.js";
 import * as speakeasy from "speakeasy";
 import * as qrcode from "qrcode";
 import { z } from "zod";

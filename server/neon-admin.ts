@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { getSql } from "./db";
+import { getSql } from "./db.js";
 
 type JsonRecord = Record<string, any>;
 type WhereClause = { field: string; op: string; value: unknown };

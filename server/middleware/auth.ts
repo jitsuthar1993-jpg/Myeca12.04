@@ -1,10 +1,10 @@
 import { getAuth } from "@clerk/express";
 import { Request, Response, NextFunction } from "express";
-import { findOrCreateUserProfile } from "../services/user-accounts";
-import { safeError } from "../utils/error-response";
-import { getCachedUser, setCachedUser } from "../utils/user-cache";
+import { findOrCreateUserProfile } from "../services/user-accounts.js";
+import { safeError } from "../utils/error-response.js";
+import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
-export { getCachedUser, setCachedUser } from "../utils/user-cache";
+export { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
 export interface AuthRequest extends Request {
   user?: any;

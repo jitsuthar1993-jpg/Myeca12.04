@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { validateEnv } from "./lib/env-validation";
+import { validateEnv } from "./lib/env-validation.js";
 validateEnv();
 
 import express from "express";
@@ -7,10 +7,10 @@ import cors from "cors";
 import compress from "compression";
 import { clerkMiddleware } from "@clerk/express";
 import path from "path";
-import { registerRoutes } from "./routes";
-import { customSecurityHeaders, securityHeaders } from "./middleware/security";
-import { globalErrorHandler } from "./middleware/error-handler";
-import { generalRateLimit } from "./middleware/rateLimiting";
+import { registerRoutes } from "./routes.js";
+import { customSecurityHeaders, securityHeaders } from "./middleware/security.js";
+import { globalErrorHandler } from "./middleware/error-handler.js";
+import { generalRateLimit } from "./middleware/rateLimiting.js";
 
 const app = express();
 const allowedOrigins: (string | RegExp)[] = [

@@ -1,5 +1,5 @@
 import { clerkClient } from "@clerk/express";
-import { adminDb } from "../neon-admin";
+import { adminDb } from "../neon-admin.js";
 
 type Role = "admin" | "team_member" | "ca" | "user";
 
