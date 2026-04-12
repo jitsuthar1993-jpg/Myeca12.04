@@ -4,9 +4,8 @@ import { requireAuth, requireAdmin, requireTeamMember, AuthRequest } from "../mi
 import { adminDb } from "../neon-admin.js";
 import { sanitize } from "../middleware/sanitize.js";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import sharp from "sharp";
+import { put, list } from "@vercel/blob";
 import { blogPostEditorSchema, blogPostUpdateSchema, type BlogPostEditorInput } from "../../shared/blog.js";
 import {
   buildBlogPostWriteData,
@@ -18,23 +17,9 @@ import { clearPublicBlogCaches } from "./public.js";
 
 const router = Router();
 
-// Configure multer storage
-const multerStorage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    const uploadDir = "public/uploads/blog";
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (_req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ 
-  storage: multerStorage,
+// Configure multer to use memory storage (buffer) for Vercel Blob uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (_req, file, cb) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -206,56 +191,40 @@ router.delete("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequ
   }
 });
 
-// --- Upload ---
+// --- Upload (Vercel Blob) ---
 router.post("/upload", requireAuth, requireTeamMember, upload.single("image"), async (req: AuthRequest, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-    
-    const filePath = req.file.path;
-    const fileName = req.file.filename;
-    const uploadDir = path.dirname(filePath);
-    const thumbDir = path.join(uploadDir, "thumbnails");
-    const thumbPath = path.join(thumbDir, fileName);
 
-    if (!fs.existsSync(thumbDir)) {
-      fs.mkdirSync(thumbDir, { recursive: true });
-    }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
 
-    // Process image: Compress original and create thumbnail
-    const image = sharp(filePath);
-    
-    // New filename with WebP extension
-    const webpFileName = fileName.replace(path.extname(fileName), '.webp');
-    const webpPath = path.join(uploadDir, webpFileName);
-
-    // 1. Generate Thumbnail
-    await sharp(filePath)
-      .resize(300, 300, { fit: 'inside', withoutEnlargement: true })
-      .webp({ quality: 70 })
-      .toFile(thumbPath.replace(path.extname(thumbPath), '.webp'));
-
-    // 2. Convert Original to WebP
-    await sharp(filePath)
-      .resize(1920, null, { fit: 'inside', withoutEnlargement: true })
+    // Compress and convert to WebP in memory
+    const webpBuffer = await sharp(req.file.buffer)
+      .resize(1920, null, { fit: "inside", withoutEnlargement: true })
       .webp({ quality: 80, effort: 6 })
-      .toFile(webpPath);
+      .toBuffer();
 
-    // Clean up original uploaded file if it wasn't already webp
-    if (path.extname(filePath).toLowerCase() !== '.webp') {
-      try {
-        fs.unlinkSync(filePath);
-      } catch (err) {
-        console.error("Failed to delete original upload:", err);
-      }
-    }
+    const thumbnailBuffer = await sharp(req.file.buffer)
+      .resize(300, 300, { fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 70 })
+      .toBuffer();
 
-    const publicUrl = `/uploads/blog/${webpFileName}`;
-    const thumbUrl = `/uploads/blog/thumbnails/${webpFileName}`;
+    // Upload both to Vercel Blob
+    const [mainBlob, thumbBlob] = await Promise.all([
+      put(`blog-images/${uniqueSuffix}.webp`, webpBuffer, {
+        access: "public",
+        contentType: "image/webp",
+      }),
+      put(`blog-images/thumbnails/${uniqueSuffix}.webp`, thumbnailBuffer, {
+        access: "public",
+        contentType: "image/webp",
+      }),
+    ]);
 
-    res.json({ 
-      success: true, 
-      url: publicUrl,
-      thumbnailUrl: thumbUrl
+    res.json({
+      success: true,
+      url: mainBlob.url,
+      thumbnailUrl: thumbBlob.url,
     });
   } catch (error: any) {
     console.error("CMS upload error:", error);
@@ -263,29 +232,27 @@ router.post("/upload", requireAuth, requireTeamMember, upload.single("image"), a
   }
 });
 
-// --- Media ---
+// --- Media (Vercel Blob) ---
 router.get("/media", requireAuth, requireTeamMember, async (_req: AuthRequest, res: Response) => {
   try {
-    const uploadDir = "public/uploads/blog";
-    if (!fs.existsSync(uploadDir)) {
-      return res.json({ success: true, files: [] });
-    }
-    
-    const files = fs.readdirSync(uploadDir)
-      .filter(file => /\.(webp)$/i.test(file)) // Only WebP after refactor
-      .map(file => {
-        const stats = fs.statSync(path.join(uploadDir, file));
-        return {
-          name: file,
-          url: `/uploads/blog/${file}`,
-          thumbnailUrl: fs.existsSync(path.join(uploadDir, "thumbnails", file)) 
-            ? `/uploads/blog/thumbnails/${file}`
-            : `/uploads/blog/${file}`,
-          size: stats.size,
-          mtime: stats.mtime
-        };
-      })
-      .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
+    const { blobs } = await list({ prefix: "blog-images/", limit: 100 });
+
+    // Filter out thumbnails for the main listing
+    const mainImages = blobs.filter((b) => !b.pathname.includes("/thumbnails/"));
+
+    const files = mainImages.map((blob) => {
+      const baseName = blob.pathname.split("/").pop() || blob.pathname;
+      const thumbBlob = blobs.find(
+        (b) => b.pathname === `blog-images/thumbnails/${baseName}`,
+      );
+      return {
+        name: baseName,
+        url: blob.url,
+        thumbnailUrl: thumbBlob?.url || blob.url,
+        size: blob.size,
+        mtime: new Date(blob.uploadedAt),
+      };
+    }).sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
     res.json({ success: true, files });
   } catch (error) {

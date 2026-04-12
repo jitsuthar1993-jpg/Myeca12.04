@@ -4,7 +4,7 @@ import { defaultBlogCategories } from "../data/default-blog-content.js";
 import { adminDb } from "../neon-admin.js";
 import {
   buildPublicBlogDetail,
-  listAllBlogPosts,
+  listPublishedBlogPosts,
   sortPublishedPosts,
   toPublicBlogSummary,
 } from "../services/blog.js";
@@ -12,7 +12,8 @@ import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/
 
 const router = Router();
 
-const CACHE_HEADER = "public, max-age=0, must-revalidate";
+// Cache at Vercel Edge for 5 min, stale-while-revalidate for 1 hour — fast + cheap
+const CACHE_HEADER = "public, s-maxage=300, stale-while-revalidate=3600";
 
 type PublicBlogSummaryCompat = PublicBlogSummary & {
   featuredImage: string | null;
@@ -115,7 +116,7 @@ const getCachedActiveUpdates = memoize(
 const getCachedBlogs = memoize(
   async (options: { page?: number; limit?: number; category?: string; search?: string } = {}) => {
     const { page = 1, limit = 12, category, search } = options;
-    const publishedPosts = sortPublishedPosts(await listAllBlogPosts());
+    const publishedPosts = sortPublishedPosts(await listPublishedBlogPosts());
     const summaries = publishedPosts.map(toPublicBlogSummary);
 
     const filtered = summaries.filter((post) => matchesCategory(post, category) && matchesSearch(post, search));
@@ -140,7 +141,7 @@ const getCachedBlogs = memoize(
 
 const getCachedBlogBySlug = memoize(
   async (slug: string) => {
-    const publishedPosts = sortPublishedPosts(await listAllBlogPosts());
+    const publishedPosts = sortPublishedPosts(await listPublishedBlogPosts());
     const post = publishedPosts.find((candidate) => candidate.slug === slug);
     if (!post) return null;
     return withDetailCompat(buildPublicBlogDetail(post, publishedPosts));

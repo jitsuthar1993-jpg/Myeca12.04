@@ -209,6 +209,27 @@ export async function listAllBlogPosts(db: NeonAdminDb = adminDb): Promise<Store
   return [...storedPosts, ...fallbackPosts];
 }
 
+/** Optimized: only fetch published posts from DB instead of all posts */
+export async function listPublishedBlogPosts(db: NeonAdminDb = adminDb): Promise<StoredBlogPost[]> {
+  const lookup = await getCategoryLookup(db);
+  let storedPosts: StoredBlogPost[] = [];
+
+  try {
+    const snapshot = await db.collection("blog_posts").where("status", "==", "published").get();
+    storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
+  } catch (error) {
+    console.warn("Falling back to default blog posts:", error);
+  }
+
+  const storedSlugs = new Set(storedPosts.map((post) => post.slug));
+  const fallbackPosts = defaultBlogPosts
+    .filter((post) => !storedSlugs.has(post.slug))
+    .filter((post) => (post as any).status === "published")
+    .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
+
+  return [...storedPosts, ...fallbackPosts];
+}
+
 export async function getBlogPostById(id: string, db: NeonAdminDb = adminDb): Promise<StoredBlogPost | null> {
   const lookup = await getCategoryLookup(db);
 
