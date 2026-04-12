@@ -24,7 +24,12 @@ const allowedOrigins: (string | RegExp)[] = [
 app.use(compress());
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
-app.use(clerkMiddleware());
+
+// Only attach Clerk middleware when the secret key is available;
+// without it, public routes still work — auth-protected routes will 401.
+if (process.env.CLERK_SECRET_KEY) {
+  app.use(clerkMiddleware());
+}
 
 app.use(
   cors({

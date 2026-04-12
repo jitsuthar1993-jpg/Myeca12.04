@@ -11,7 +11,7 @@ export function validateEnv() {
   }
 
   if (!process.env.CLERK_SECRET_KEY) {
-    errors.push("CLERK_SECRET_KEY must be set for Clerk authentication");
+    warnings.push("CLERK_SECRET_KEY not set — authentication disabled, public routes still work");
   }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -36,14 +36,8 @@ export function validateEnv() {
     console.warn(`[ENV] Warning: ${w}`);
   }
 
-  // Throw on critical errors
-  if (errors.length > 0) {
-    for (const e of errors) {
-      console.error(`[ENV] Error: ${e}`);
-    }
-    // Don't throw in development to allow easier setup
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error(`Missing required environment variables: ${errors.join(', ')}`);
-    }
+  // Log critical errors but don't crash — public routes should still work
+  for (const e of errors) {
+    console.error(`[ENV] Error: ${e}`);
   }
 }
