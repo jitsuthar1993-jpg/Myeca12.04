@@ -227,11 +227,12 @@ export default function FAQPage() {
           <div className="max-w-5xl mx-auto">
             {/* Category Tabs */}
             <Tabs value={selectedCategory} onValueChange={(value) => {
-              setSelectedCategory(value);
+              const categoryKey = value as keyof typeof faqCategories;
+              setSelectedCategory(categoryKey);
               trackContentEngagement({ 
                 content_type: 'faq_category',
-                content_id: value,
-                content_title: faqCategories[value].title
+                content_id: categoryKey,
+                content_title: faqCategories[categoryKey].title
               });
             }} className="w-full">
               <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 h-auto p-1 bg-gray-100">

@@ -11,7 +11,7 @@ export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch blog posts
-  const { data: blogPosts = [], isLoading } = useQuery({
+  const { data: blogPosts = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/blog'],
     enabled: true
   });

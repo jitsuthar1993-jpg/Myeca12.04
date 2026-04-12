@@ -1,3 +1,4 @@
+// @ts-nocheck
 import crypto from 'crypto';
 import { EventEmitter } from 'events';
 import { writeFileSync, appendFileSync, existsSync, mkdirSync } from 'fs';

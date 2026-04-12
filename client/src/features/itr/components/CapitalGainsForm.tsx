@@ -48,10 +48,6 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
     }
   });
 
-  const { fields, append, remove } = useForm({
-    name: "gains"
-  });
-
   const addGain = () => {
     const currentGains = form.getValues('gains');
     const newGains = [...currentGains, {
@@ -192,7 +188,7 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                           <Select onValueChange={(value) => {
                             field.onChange(value);
                             const gains = form.getValues('gains');
-                            gains[index].gainType = value;
+                            gains[index].gainType = value as 'STCG' | 'LTCG';
                             handleFormChange(gains);
                           }}>
                             <SelectTrigger>

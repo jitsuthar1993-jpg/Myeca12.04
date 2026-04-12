@@ -159,10 +159,8 @@ export const useContentTracking = () => {
   };
 
   const trackContentEngagement = (data: { content_type: string; content_id: string; content_title: string }) => {
-    trackEvent('Content', 'Engagement', data.content_type, undefined, {
-      content_id: data.content_id,
-      content_title: data.content_title
-    });
+    trackEvent('Content', 'Engagement', data.content_type);
+    trackUserBehavior('content_engagement', data);
   };
 
   const trackContentView = (data: { content_type: string; content_id: string }) => {

@@ -311,12 +311,12 @@ export function normalizeStringArray(values: Array<string | null | undefined> | 
 
 export function normalizeFaqItems(values: Array<Partial<BlogFaqItem> | null | undefined> | null | undefined): BlogFaqItem[] {
   return (values ?? [])
-    .map((value) => {
+    .map((value): BlogFaqItem | null => {
       const question = (value?.question ?? "").trim();
       const answer = (value?.answer ?? "").trim();
       return question && answer ? { question, answer } : null;
     })
-    .filter((item): item is BlogFaqItem => Boolean(item));
+    .filter((item): item is BlogFaqItem => item !== null);
 }
 
 export function normalizeBlogCta(ctaLabel?: string | null, ctaHref?: string | null) {

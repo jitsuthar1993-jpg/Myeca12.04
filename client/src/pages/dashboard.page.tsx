@@ -33,13 +33,13 @@ export default function DashboardPage() {
   const userId = user?.id;
   
   // Fetch user services
-  const { data: userServices = [], isLoading: servicesLoading } = useQuery({
+  const { data: userServices = [], isLoading: servicesLoading } = useQuery<any[]>({
     queryKey: ['/api/user-services'],
     enabled: !!userId
   });
 
   // Fetch notifications
-  const { data: notificationsData } = useQuery({
+  const { data: notificationsData } = useQuery<any[]>({
     queryKey: ['/api/notifications'],
     queryFn: async () => {
       // Assuming apiRequest handles base URL
@@ -53,7 +53,7 @@ export default function DashboardPage() {
   });
 
   // Fetch activity
-  const { data: activityData } = useQuery({
+  const { data: activityData } = useQuery<any[]>({
     queryKey: ['/api/user/activity'],
     queryFn: async () => {
       const res = await fetch('/api/user/activity', {
@@ -67,7 +67,7 @@ export default function DashboardPage() {
   
   // Mock data for dashboard
   const profiles = [
-    { id: 1, name: "Primary Profile", isActive: true, relation: "Self" }
+    { id: 1, name: "Primary Profile", isActive: true, relation: "Self", pan: "" }
   ];
   const activeProfile = profiles[0];
   

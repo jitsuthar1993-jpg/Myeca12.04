@@ -1,6 +1,6 @@
 // Admin API Client - Simple and Clean
 
-import type { ApiResponse, DashboardStats, User } from './types';
+import type { AnalyticsOverview, ApiResponse, AuditLog, DashboardStats, FilterParams, User } from './types';
 
 const API_BASE = '/api/admin';
 
@@ -52,6 +52,25 @@ class AdminApi {
     
     return this.request<{ users: User[]; pagination: { total: number; page: number; limit: number; totalPages: number } }>(
       `/users${query.toString() ? `?${query}` : ''}`
+    );
+  }
+
+  async getAnalyticsOverview(): Promise<ApiResponse<AnalyticsOverview>> {
+    return this.request<AnalyticsOverview>('/analytics/overview');
+  }
+
+  async getAuditLogs(params?: FilterParams): Promise<ApiResponse<{ logs: AuditLog[]; pagination?: { total: number; page: number; limit: number; totalPages?: number } }>> {
+    const query = new URLSearchParams();
+    if (params?.page) query.append('page', params.page.toString());
+    if (params?.limit) query.append('limit', params.limit.toString());
+    if (params?.search) query.append('search', params.search);
+    if (params?.status) query.append('status', params.status);
+    if (params?.role) query.append('role', params.role);
+    if (params?.date_from) query.append('date_from', params.date_from);
+    if (params?.date_to) query.append('date_to', params.date_to);
+
+    return this.request<{ logs: AuditLog[]; pagination?: { total: number; page: number; limit: number; totalPages?: number } }>(
+      `/audit-logs${query.toString() ? `?${query}` : ''}`
     );
   }
 }

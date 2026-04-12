@@ -143,7 +143,7 @@ export default function AdminDashboard() {
           <StatCard
             title="Total Ecosystem"
             value={formatNumber(stats.users.total)}
-            description={`${stats.users.regular_count || 0} Users • ${stats.users.ca_count || 0} CAs`}
+            description={`${stats.users.regularCount || 0} Users • ${stats.users.caCount || 0} CAs`}
             icon={<Users className="h-5 w-5" />}
           />
           <StatCard
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
           <StatCard
             title="Lifetime Revenue"
             value={formatCurrency(stats.revenue.total)}
-            change={stats.revenue.growth_percent}
+            change={stats.revenue.growthPercent}
             icon={<Coins className="h-5 w-5 text-amber-500" />}
           />
         </div>
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {(stats.work_list || []).map((work: any) => (
+                      {(stats.workList || []).map((work: any) => (
                         <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors">
                           <td className="px-10 py-5">
                             <span className="font-bold text-slate-900 block truncate max-w-[200px]">{work.title}</span>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
                           </td>
                         </tr>
                       ))}
-                      {(!stats.work_list || stats.work_list.length === 0) && (
+                      {(!stats.workList || stats.workList.length === 0) && (
                         <tr>
                           <td colSpan={5} className="p-20 text-center text-slate-300">
                              <Briefcase className="h-10 w-10 mx-auto mb-4 opacity-20" />
@@ -323,7 +323,7 @@ export default function AdminDashboard() {
                   <Chart
                     title=""
                     type="area"
-                    data={stats.recent_calculations?.map((item) => ({
+                    data={stats.recentCalculations?.map((item) => ({
                       name: new Date(item.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
                       value: (item.count || 0) * 1250,
                     })) || []}
@@ -344,7 +344,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-2">
-                  {stats.recent_activity.slice(0, 8).map((activity, i) => (
+                  {stats.recentActivity.slice(0, 8).map((activity, i) => (
                     <m.div 
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -363,7 +363,7 @@ export default function AdminDashboard() {
                       </div>
                     </m.div>
                   ))}
-                  {stats.recent_activity.length === 0 && (
+                  {stats.recentActivity.length === 0 && (
                     <div className="py-20 text-center opacity-20">
                        <Activity className="h-12 w-12 mx-auto mb-4 text-slate-900" />
                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">No active pulses</span>

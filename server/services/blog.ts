@@ -1,4 +1,5 @@
 import { adminDb, type NeonAdminDb } from "../neon-admin";
+import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content";
 import {
   type BlogCategory,
   type BlogFaqItem,
@@ -82,14 +83,12 @@ async function getUserSnapshot(userId: string | null | undefined) {
 }
 
 export async function getCategoryLookup(db: NeonAdminDb = adminDb): Promise<CategoryLookup> {
-  const snapshot = await db.collection("categories").orderBy("name").get();
   const byId = new Map<string, BlogCategory>();
   const aliases = new Map<string, BlogCategory>();
 
-  snapshot.docs.forEach((doc) => {
-    const data = doc.data();
+  const addCategory = (docId: string, data: Record<string, unknown>) => {
     const category: BlogCategory = {
-      id: doc.id,
+      id: docId,
       name: typeof data.name === "string" && data.name.trim() ? data.name.trim() : "General",
       slug:
         typeof data.slug === "string" && data.slug.trim()
@@ -106,7 +105,16 @@ export async function getCategoryLookup(db: NeonAdminDb = adminDb): Promise<Cate
     if (data.id !== undefined && data.id !== null) {
       aliases.set(String(data.id).toLowerCase(), category);
     }
-  });
+  };
+
+  defaultBlogCategories.forEach((category) => addCategory(category.id, category));
+
+  try {
+    const snapshot = await db.collection("categories").orderBy("name").get();
+    snapshot.docs.forEach((doc) => addCategory(doc.id, doc.data() as Record<string, unknown>));
+  } catch (error) {
+    console.warn("Falling back to default blog categories:", error);
+  }
 
   return { byId, aliases };
 }
@@ -179,21 +187,36 @@ export function normalizeStoredBlogPostRecord(
 }
 
 export async function listAllBlogPosts(db: NeonAdminDb = adminDb): Promise<StoredBlogPost[]> {
-  const [lookup, snapshot] = await Promise.all([
-    getCategoryLookup(db),
-    db.collection("blog_posts").get(),
-  ]);
+  const lookup = await getCategoryLookup(db);
+  let storedPosts: StoredBlogPost[] = [];
 
-  return snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
+  try {
+    const snapshot = await db.collection("blog_posts").get();
+    storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
+  } catch (error) {
+    console.warn("Falling back to default blog posts:", error);
+  }
+
+  const storedSlugs = new Set(storedPosts.map((post) => post.slug));
+  const fallbackPosts = defaultBlogPosts
+    .filter((post) => !storedSlugs.has(post.slug))
+    .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
+
+  return [...storedPosts, ...fallbackPosts];
 }
 
 export async function getBlogPostById(id: string, db: NeonAdminDb = adminDb): Promise<StoredBlogPost | null> {
-  const [lookup, doc] = await Promise.all([
-    getCategoryLookup(db),
-    db.collection("blog_posts").doc(id).get(),
-  ]);
-  if (!doc.exists) return null;
-  return normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
+  const lookup = await getCategoryLookup(db);
+
+  try {
+    const doc = await db.collection("blog_posts").doc(id).get();
+    if (doc.exists) return normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
+  } catch (error) {
+    console.warn(`Falling back while loading blog post '${id}':`, error);
+  }
+
+  const fallback = defaultBlogPosts.find((post) => post.id === id || post.slug === id);
+  return fallback ? normalizeStoredBlogPostRecord(fallback.id, fallback as unknown as Record<string, unknown>, lookup) : null;
 }
 
 export async function buildBlogPostWriteData(

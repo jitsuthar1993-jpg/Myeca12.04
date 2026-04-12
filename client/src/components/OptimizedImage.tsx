@@ -32,6 +32,7 @@ interface OptimizedImageProps {
   fallbackSrc?: string;
   onLoad?: () => void;
   onError?: () => void;
+  onClick?: React.MouseEventHandler<HTMLImageElement>;
   enableCDN?: boolean;
   blurDataURL?: string;
   objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
@@ -52,6 +53,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   fallbackSrc,
   onLoad,
   onError,
+  onClick,
   enableCDN = true,
   blurDataURL,
   objectFit = 'cover',
@@ -75,7 +77,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }
 
     // Determine best format based on browser support
-    let optimizedFormat = format;
+    let optimizedFormat: 'webp' | 'avif' | 'auto' | 'jpg' = format;
     if (format === 'auto') {
       if (supportsAVIF) {
         optimizedFormat = 'avif';
@@ -129,7 +131,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       link.rel = 'preload';
       link.as = 'image';
       link.href = imageSrc;
-      if (sizes) link.setAttribute('imagesrcset', generateSrcSet(imageSrc));
+      if (sizes) link.setAttribute('imagesrcset', generateSrcSet);
       if (sizes) link.setAttribute('imagesizes', sizes);
       document.head.appendChild(link);
       
@@ -231,6 +233,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         loading={loading}
         sizes={sizes}
         srcSet={generateSrcSet}
+        onClick={onClick}
         onLoad={handleImageLoad}
         onError={handleImageError}
         className={cn(

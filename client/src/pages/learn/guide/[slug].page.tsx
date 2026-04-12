@@ -31,7 +31,7 @@ const DIFFICULTY_COLORS = {
 };
 
 export default function GuidePage() {
-  const params = useParams();
+  const params = useParams() as { slug?: string };
   const slug = params.slug as string;
   const guide = getGuideBySlug(slug);
   
@@ -350,4 +350,3 @@ export default function GuidePage() {
     </div>
   );
 }
-

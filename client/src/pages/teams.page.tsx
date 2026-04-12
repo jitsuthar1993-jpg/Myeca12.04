@@ -86,28 +86,28 @@ export default function TeamsPage() {
   });
 
   // Fetch teams
-  const { data: teamsData, isLoading: teamsLoading } = useQuery({
+  const { data: teamsData, isLoading: teamsLoading } = useQuery<any>({
     queryKey: ["/api/teams"]
   });
 
   // Fetch selected team details
-  const { data: teamData, isLoading: teamLoading } = useQuery({
+  const { data: teamData, isLoading: teamLoading } = useQuery<any>({
     queryKey: ["/api/teams", selectedTeam],
-    queryFn: () => apiRequest(`/api/teams/${selectedTeam}`),
+    queryFn: async () => (await apiRequest(`/api/teams/${selectedTeam}`)).json(),
     enabled: !!selectedTeam
   });
 
   // Fetch team tasks
-  const { data: tasksData } = useQuery({
+  const { data: tasksData } = useQuery<any>({
     queryKey: ["/api/teams", selectedTeam, "tasks"],
-    queryFn: () => apiRequest(`/api/teams/${selectedTeam}/tasks`),
+    queryFn: async () => (await apiRequest(`/api/teams/${selectedTeam}/tasks`)).json(),
     enabled: !!selectedTeam
   });
 
   // Fetch team activity
-  const { data: activityData } = useQuery({
+  const { data: activityData } = useQuery<any>({
     queryKey: ["/api/teams", selectedTeam, "activity"],
-    queryFn: () => apiRequest(`/api/teams/${selectedTeam}/activity`),
+    queryFn: async () => (await apiRequest(`/api/teams/${selectedTeam}/activity`)).json(),
     enabled: !!selectedTeam
   });
 

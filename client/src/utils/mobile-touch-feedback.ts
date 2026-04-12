@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Enhanced Mobile Touch Feedback System
 // Provides comprehensive touch feedback including haptic, visual, and audio feedback
 

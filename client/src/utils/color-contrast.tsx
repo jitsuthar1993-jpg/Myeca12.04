@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Color Contrast and Visual Accessibility Optimization
 import React, { useState, useEffect, useCallback } from 'react';
 

@@ -351,7 +351,7 @@ export const MobileAccessibleRadio: React.FC<{
     position: 'relative' as const
   };
 
-  const labelStyles = {
+  const labelStyles: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     minHeight: '44px',
@@ -563,9 +563,9 @@ export const useMobileAccessibility = () => {
   const optimizeForTouch = (element: HTMLElement) => {
     // Add touch-friendly styles
     element.style.touchAction = 'manipulation';
-    element.style.WebkitTapHighlightColor = 'transparent';
+    element.style.setProperty('-webkit-tap-highlight-color', 'transparent');
     element.style.userSelect = 'none';
-    element.style.WebkitUserSelect = 'none';
+    element.style.webkitUserSelect = 'none';
     
     // Ensure minimum touch target size
     const rect = element.getBoundingClientRect();
@@ -622,7 +622,7 @@ export const mobileAccessibilityUtils = {
 
   // Enable touch feedback
   enableTouchFeedback: (element: HTMLElement): void => {
-    element.style.WebkitTapHighlightColor = 'rgba(0,0,0,0.1)';
+    element.style.setProperty('-webkit-tap-highlight-color', 'rgba(0,0,0,0.1)');
     element.style.touchAction = 'manipulation';
   },
 

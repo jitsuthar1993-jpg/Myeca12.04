@@ -70,12 +70,12 @@ export default function WorkflowsPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<WorkflowTemplate | null>(null);
 
   // Fetch workflows
-  const { data: workflowsData, isLoading } = useQuery({
+  const { data: workflowsData, isLoading } = useQuery<any>({
     queryKey: ["/api/workflows"]
   });
 
   // Fetch templates
-  const { data: templatesData } = useQuery({
+  const { data: templatesData } = useQuery<any>({
     queryKey: ["/api/workflows/templates"]
   });
 

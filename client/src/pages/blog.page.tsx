@@ -1,24 +1,210 @@
-import { m } from "framer-motion";
-import { Link } from "wouter";
-import { Calendar, User, ArrowRight, Search, Clock, Rocket, Sparkles, TrendingUp, ChevronRight, BookOpen, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { Link } from "wouter";
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  Clock3,
+  FileText,
+  Loader2,
+  Search,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
+import type { BlogCategory, PublicBlogSummary } from "@shared/blog";
+
+type BlogSummary = PublicBlogSummary & {
+  featuredImage?: string | null;
+  image?: string | null;
+  categoryName?: string | null;
+  createdAt?: string | null;
+  readTime?: string | null;
+  author?: {
+    firstName?: string | null;
+    lastName?: string | null;
+    name?: string | null;
+    role?: string | null;
+  } | null;
+};
+
+type BlogListResponse = {
+  posts: BlogSummary[];
+  total?: number;
+};
+
+type CategoryResponse = {
+  categories: Array<BlogCategory | { id?: string; name?: string; slug?: string; description?: string | null }>;
+};
+
+const DEFAULT_CATEGORIES = [
+  { id: "income-tax", name: "Income Tax", slug: "income-tax" },
+  { id: "gst", name: "GST", slug: "gst" },
+  { id: "itr-filing", name: "ITR Filing", slug: "itr-filing" },
+  { id: "business", name: "Business", slug: "business" },
+];
+
+function isImageUrl(value: string | null | undefined) {
+  return Boolean(value && /^(https?:\/\/|\/)/.test(value));
+}
+
+function normalizeKey(value: string | null | undefined) {
+  return (value ?? "").trim().toLowerCase();
+}
+
+function getCategory(post: BlogSummary): BlogCategory | null {
+  if (post.category && typeof post.category === "object") return post.category;
+  return post.categoryName
+    ? { id: post.categoryName, name: post.categoryName, slug: post.categoryName.toLowerCase().replace(/\s+/g, "-"), description: null }
+    : null;
+}
+
+function getCategoryName(post: BlogSummary) {
+  return getCategory(post)?.name ?? "Tax Guide";
+}
+
+function getCategoryTokens(post: BlogSummary) {
+  const category = getCategory(post);
+  return [
+    category?.id,
+    category?.name,
+    category?.slug,
+    post.categoryName,
+  ].map(normalizeKey).filter(Boolean);
+}
+
+function getAuthorName(post: BlogSummary) {
+  if (post.authorName) return post.authorName;
+  if (post.author?.name) return post.author.name;
+  return [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "MyeCA Editorial Team";
+}
+
+function getCoverImage(post: BlogSummary) {
+  return post.coverImage ?? post.featuredImage ?? post.image ?? null;
+}
+
+function getPublishedDate(post: BlogSummary) {
+  return post.publishedAt ?? post.createdAt ?? post.updatedAt ?? null;
+}
+
+function formatDate(value: string | null | undefined) {
+  if (!value) return "Recently updated";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently updated";
+  return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function getReadTime(post: BlogSummary) {
+  return post.readingTimeMinutes ? `${post.readingTimeMinutes} min read` : post.readTime ?? "5 min read";
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "ME";
+}
+
+function normalizeCategories(posts: BlogSummary[], apiCategories: CategoryResponse["categories"] | undefined) {
+  const seen = new Set<string>();
+  const categories: Array<Pick<BlogCategory, "id" | "name" | "slug">> = [];
+
+  const addCategory = (category: Partial<BlogCategory> | null | undefined) => {
+    const name = category?.name?.trim();
+    if (!name) return;
+    const slug = category?.slug?.trim() || name.toLowerCase().replace(/\s+/g, "-");
+    const id = category?.id?.trim() || slug;
+    const key = normalizeKey(id || slug || name);
+    if (seen.has(key)) return;
+    seen.add(key);
+    categories.push({ id, name, slug });
+  };
+
+  apiCategories?.forEach(addCategory);
+  posts.forEach((post) => addCategory(getCategory(post)));
+  DEFAULT_CATEGORIES.forEach(addCategory);
+
+  return categories;
+}
+
+function ArticleCard({ post, compact = false }: { post: BlogSummary; compact?: boolean }) {
+  const coverImage = getCoverImage(post);
+  const authorName = getAuthorName(post);
+
+  return (
+    <Link href={`/blog/${post.slug}`}>
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+        <div className={cn("relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50", compact ? "h-40" : "h-52")}>
+          {isImageUrl(coverImage) ? (
+            <img
+              src={coverImage ?? ""}
+              alt={post.title}
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <FileText className="h-14 w-14 text-blue-200" />
+            </div>
+          )}
+          <div className="absolute left-3 top-3 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur">
+            {getCategoryName(post)}
+          </div>
+        </div>
+
+        <div className={cn("flex flex-1 flex-col", compact ? "p-4" : "p-5")}>
+          <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500">
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays className="h-3.5 w-3.5 text-blue-400" />
+              {formatDate(getPublishedDate(post))}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Clock3 className="h-3.5 w-3.5 text-blue-400" />
+              {getReadTime(post)}
+            </span>
+          </div>
+
+          <h3 className={cn("font-bold leading-snug tracking-tight text-slate-950 transition group-hover:text-blue-700", compact ? "text-lg" : "text-xl")}>
+            {post.title}
+          </h3>
+
+          {post.excerpt && !compact && (
+            <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
+              {post.excerpt}
+            </p>
+          )}
+
+          <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                {getInitials(authorName)}
+              </div>
+              <p className="truncate text-xs font-semibold text-slate-700">{authorName}</p>
+            </div>
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 transition-all group-hover:gap-2">
+              Read <ArrowRight className="h-3.5 w-3.5" />
+            </span>
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const { data: postsData, isLoading: isLoadingPosts } = useQuery({
     queryKey: ["public-blogs"],
     queryFn: async () => {
-      const res = await fetch("/api/public/blogs");
+      const res = await fetch("/api/public/blogs?limit=50");
       if (!res.ok) throw new Error("Failed to fetch blogs");
-      return await res.json() as { posts: any[] };
+      return await res.json() as BlogListResponse;
     },
   });
 
@@ -27,287 +213,259 @@ export default function BlogPage() {
     queryFn: async () => {
       const res = await fetch("/api/public/categories");
       if (!res.ok) throw new Error("Failed to fetch categories");
-      return await res.json() as { categories: any[] };
+      return await res.json() as CategoryResponse;
     },
   });
 
-  const dbPosts = postsData?.posts || [];
-  const dbCategories = ["All", "Direct Tax", "GST", "New", "Updates", "Others"];
+  const posts = postsData?.posts ?? [];
+  const categories = useMemo(() => normalizeCategories(posts, categoriesData?.categories), [posts, categoriesData?.categories]);
 
   const filteredPosts = useMemo(() => {
-    return dbPosts.filter((post: any) => {
-      const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (post.excerpt || "").toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
+    const query = normalizeKey(searchQuery);
+    return posts.filter((post) => {
+      const searchable = [
+        post.title,
+        post.excerpt ?? "",
+        getAuthorName(post),
+        getCategoryName(post),
+        ...(post.tags ?? []),
+      ].join(" ").toLowerCase();
+      const matchesSearch = !query || searchable.includes(query);
+      const matchesCategory = selectedCategory === "all" || getCategoryTokens(post).includes(selectedCategory);
       return matchesSearch && matchesCategory;
     });
-  }, [dbPosts, searchQuery, selectedCategory]);
+  }, [posts, searchQuery, selectedCategory]);
 
-  const featuredPost = filteredPosts[0];
-  const regularPosts = filteredPosts.slice(1);
-
-  const formatDate = (dateObj: any) => {
-    try {
-      let date: Date;
-      if (dateObj?._seconds) date = new Date(dateObj._seconds * 1000);
-      else if (dateObj?.toDate) date = dateObj.toDate();
-      else date = new Date(dateObj);
-      return isNaN(date.getTime()) ? "Recent" : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    } catch { return "Recent"; }
-  };
+  const featuredPost = filteredPosts.find((post) => post.isFeatured) ?? filteredPosts[0];
+  const regularPosts = featuredPost ? filteredPosts.filter((post) => post.id !== featuredPost.id) : filteredPosts;
+  const popularTopics = categories.slice(0, 8);
 
   return (
-    <div className="min-h-screen bg-white pb-32">
+    <div className="min-h-screen bg-[#f7fbff] pb-20">
       <MetaSEO
-        title="Knowledge Hub | Expert Tax Guides & Finance Insights MyeCA.in"
-        description="Daily tax insights, compliance deep-dives, and financial growth hacks curated by India's top experts."
-        keywords={[
-          "tax blog India", "income tax updates", "ITR filing guide", "tax planning tips",
-          "GST news", "investment advice India"
-        ]}
+        title="Knowledge Hub | Expert Tax Guides & Finance Insights | MyeCA.in"
+        description="Read practical income tax, GST, ITR filing, and compliance guides written for Indian taxpayers and businesses by the MyeCA editorial team."
+        keywords={["tax blog India", "income tax updates", "ITR filing guide", "GST guides", "tax planning tips"]}
         breadcrumbs={[
           { name: "Home", url: "/" },
-          { name: "Knowledge Hub", url: "/blog" }
+          { name: "Knowledge Hub", url: "/blog" },
         ]}
       />
 
-      {/* Compact Split Banner */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #59A1FF 0%, #1572ED 100%)" }}
-      >
-        <div className="max-w-[1200px] mx-auto px-[30px] py-8 md:py-10 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            {/* Left — Title */}
-            <m.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="shrink-0"
-            >
-              <h1 className="text-[24px] md:text-[34px] font-bold text-white leading-[1.2] mb-1">
-                Expert Tax & Finance Knowledge Hub
-              </h1>
-              <p className="text-white/75 text-[14px] md:text-[16px] font-medium max-w-md">
-                Guides & compliance updates by India's top CAs.
-              </p>
-            </m.div>
+      <section className="relative overflow-hidden border-b border-blue-100 bg-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(21,114,237,0.16),transparent_28%),radial-gradient(circle_at_80%_0%,rgba(14,165,233,0.14),transparent_30%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500">
+            <Link href="/" className="font-medium text-blue-700 hover:text-blue-800">Home</Link>
+            <span>/</span>
+            <span>Knowledge Hub</span>
+          </nav>
 
-            {/* Right — Search + Stats */}
-            <m.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="flex flex-col gap-3 md:items-end"
-            >
-              <div className="flex items-center bg-white rounded px-4 h-[44px] w-full md:w-[360px]">
-                <Search className="w-[16px] h-[16px] text-[#929FB0] mr-3 shrink-0" />
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end">
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+                <Sparkles className="h-3.5 w-3.5" />
+                MyeCA Editorial
+              </div>
+              <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                Tax guides that read clearly and help you act faster.
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+                Practical explainers on ITR filing, GST, deductions, business compliance, and financial planning, written with CA-backed clarity for Indian taxpayers.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-blue-100 bg-white/90 p-4 shadow-xl shadow-blue-100/60 backdrop-blur">
+              <label htmlFor="blog-search" className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
+                Search the hub
+              </label>
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-300 focus-within:bg-white">
+                <Search className="h-5 w-5 shrink-0 text-blue-500" />
                 <input
-                  className="bg-transparent border-none outline-none text-[#314259] text-[14px] font-medium w-full placeholder:text-[#929FB0]"
-                  placeholder="Search articles, guides..."
+                  id="blog-search"
+                  className="w-full bg-transparent text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
+                  placeholder="Search tax, GST, ITR, deductions..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(event) => setSearchQuery(event.target.value)}
                 />
               </div>
-              <div className="flex items-center gap-5 text-white/70 text-[12px] font-semibold">
-                <span className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /> {dbPosts.length} Articles</span>
-                <span className="flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Updated Weekly</span>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-2xl bg-blue-50 p-3">
+                  <p className="text-xl font-black text-blue-700">{posts.length}</p>
+                  <p className="text-[11px] font-semibold text-slate-500">Articles</p>
+                </div>
+                <div className="rounded-2xl bg-cyan-50 p-3">
+                  <p className="text-xl font-black text-cyan-700">{categories.length}</p>
+                  <p className="text-[11px] font-semibold text-slate-500">Topics</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-xl font-black text-slate-800">CA</p>
+                  <p className="text-[11px] font-semibold text-slate-500">Reviewed</p>
+                </div>
               </div>
-            </m.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Breadcrumbs */}
-      <div className="max-w-[1200px] mx-auto px-[30px] py-3 border-b border-[#E5E5E5]">
-        <nav className="flex items-center gap-1.5 text-[14px]">
-          <Link href="/" className="text-[#1678FB] hover:underline font-medium">Home</Link>
-          <span className="text-[#929FB0] mx-1">&gt;</span>
-          <span className="text-[#314259] font-medium">Knowledge Hub</span>
-        </nav>
-      </div>
-
-      <div id="blog-content" className="max-w-[1200px] mx-auto px-[30px] py-8">
-        {/* Section Title & Category Filters */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 pb-6 border-b border-[#E5E5E5]">
-          <div>
-            <h2 className="text-[24px] font-bold text-[#314259] mb-1">Latest Articles</h2>
-            <p className="text-[#929FB0] text-[14px] font-medium">Expert insights on tax planning, compliance, and financial growth.</p>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {dbCategories.map((category) => (
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+        <div className="mb-8 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("all")}
+            className={cn(
+              "shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition",
+              selectedCategory === "all"
+                ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200"
+                : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700",
+            )}
+          >
+            All guides
+          </button>
+          {categories.map((category) => {
+            const key = normalizeKey(category.id || category.slug || category.name);
+            return (
               <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
+                key={key}
+                type="button"
+                onClick={() => setSelectedCategory(key)}
                 className={cn(
-                  "px-4 py-[8px] rounded text-[14px] font-semibold transition-all border whitespace-nowrap",
-                  selectedCategory === category
-                    ? "bg-[#1572ED] text-white border-[#1572ED]"
-                    : "bg-white text-[#314259] border-[#D5D5D5] hover:border-[#1572ED] hover:text-[#1572ED]"
+                  "shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition",
+                  selectedCategory === key
+                    ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700",
                 )}
               >
-                {category}
+                {category.name}
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
         {isLoadingPosts ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-[#1572ED] animate-spin mb-3" />
-            <p className="text-[#929FB0] text-[14px] font-medium">Loading articles...</p>
+          <div className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-blue-100 bg-white">
+            <Loader2 className="mb-4 h-8 w-8 animate-spin text-blue-600" />
+            <p className="text-sm font-semibold text-slate-500">Loading expert guides...</p>
           </div>
         ) : filteredPosts.length === 0 ? (
-          <div className="text-center py-20 bg-[#F3F8FF] rounded-[5px] border border-[#DFDFDF82]">
-            <Search className="w-10 h-10 text-[#B7D5FE] mx-auto mb-4" />
-            <h3 className="text-[20px] font-bold text-[#314259] mb-2">No Articles Found</h3>
-            <p className="text-[#929FB0] text-[16px] mb-5">Try adjusting your search or filters.</p>
+          <div className="rounded-3xl border border-dashed border-blue-200 bg-white p-10 text-center">
+            <Search className="mx-auto mb-4 h-10 w-10 text-blue-300" />
+            <h2 className="text-2xl font-bold text-slate-950">No guides found</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+              Try a broader search term or reset the selected topic to browse all MyeCA articles.
+            </p>
             <button
-              onClick={() => { setSearchQuery(""); setSelectedCategory("All"); }}
-              className="bg-[#1678FB] hover:bg-[#0F5BB5] text-white rounded h-[40px] px-6 font-bold text-[14px] transition-all"
+              type="button"
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("all");
+              }}
+              className="mt-6 rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
             >
-              Reset Filters
+              Reset filters
             </button>
           </div>
         ) : (
-          <>
-            {/* Featured Post — ClearTax grey-block style */}
-            {featuredPost && (
-              <m.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="min-w-0 space-y-8">
+              {featuredPost && (
                 <Link href={`/blog/${featuredPost.slug}`}>
-                  <div className="group cursor-pointer rounded-[5px] border border-[#DFDFDF82] overflow-hidden hover:shadow-md transition-shadow duration-300">
-                    <div className="grid md:grid-cols-5 gap-0">
-                      <div className="md:col-span-2 h-[200px] md:h-auto relative overflow-hidden" style={{ backgroundColor: "#D0E4FE" }}>
-                        <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-40 group-hover:scale-105 transition-transform duration-500">
-                          {featuredPost.featuredImage || featuredPost.image || "📄"}
+                  <article className="group grid overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-xl shadow-blue-100/70 transition duration-300 hover:-translate-y-1 hover:border-blue-200 lg:grid-cols-[0.95fr_1.05fr]">
+                    <div className="relative min-h-[280px] overflow-hidden bg-gradient-to-br from-blue-100 via-white to-cyan-100">
+                      {isImageUrl(getCoverImage(featuredPost)) ? (
+                        <img
+                          src={getCoverImage(featuredPost) ?? ""}
+                          alt={featuredPost.title}
+                          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full min-h-[280px] items-center justify-center">
+                          <BookOpen className="h-20 w-20 text-blue-200" />
                         </div>
+                      )}
+                      <div className="absolute left-5 top-5 rounded-full bg-blue-600 px-4 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg">
+                        Featured guide
                       </div>
-                      <div className="md:col-span-3 p-[30px] flex flex-col justify-center bg-white">
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-[#1678FB] text-[14px] font-semibold">{featuredPost.category}</span>
-                          <span className="text-[#929FB0] text-[14px]">·</span>
-                          <span className="text-[#929FB0] text-[14px] flex items-center gap-1">
-                            <Clock className="w-[14px] h-[14px]" /> {featuredPost.readTime || "5 min read"}
-                          </span>
-                        </div>
-                        <h3 className="text-[24px] md:text-[28px] font-bold text-[#314259] mb-3 leading-[1.3] group-hover:text-[#1678FB] transition-colors">
-                          {featuredPost.title}
-                        </h3>
-                        <p className="text-[#314259] text-[16px] font-medium leading-relaxed mb-5 line-clamp-3 opacity-80">
+                    </div>
+                    <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+                      <p className="mb-4 text-sm font-bold text-blue-700">{getCategoryName(featuredPost)}</p>
+                      <h2 className="text-3xl font-black leading-tight tracking-tight text-slate-950 transition group-hover:text-blue-700 lg:text-4xl">
+                        {featuredPost.title}
+                      </h2>
+                      {featuredPost.excerpt && (
+                        <p className="mt-4 text-base leading-8 text-slate-600">
                           {featuredPost.excerpt}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-[36px] h-[36px] rounded-full bg-[#1572ED] flex items-center justify-center text-white font-bold text-[14px]">
-                              {featuredPost.author?.firstName?.charAt(0) || "A"}
-                            </div>
-                            <div>
-                              <p className="text-[14px] font-semibold text-[#314259]">{featuredPost.author?.firstName || "Admin"}</p>
-                              <p className="text-[12px] text-[#929FB0]">{formatDate(featuredPost.createdAt)}</p>
-                            </div>
-                          </div>
-                          <span className="text-[#1678FB] font-semibold text-[14px] flex items-center gap-1 group-hover:gap-2 transition-all">
-                            Read More <ArrowRight className="w-[16px] h-[16px]" />
-                          </span>
-                        </div>
+                      )}
+                      <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-500">
+                        <span className="inline-flex items-center gap-2">
+                          <Users className="h-4 w-4 text-blue-400" />
+                          {getAuthorName(featuredPost)}
+                        </span>
+                        <span className="inline-flex items-center gap-2">
+                          <Clock3 className="h-4 w-4 text-blue-400" />
+                          {getReadTime(featuredPost)}
+                        </span>
+                        <span className="ml-auto inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 transition group-hover:bg-blue-600 group-hover:text-white">
+                          Read full guide <ArrowRight className="h-4 w-4" />
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 </Link>
-              </m.div>
-            )}
+              )}
 
-            {/* Article Grid — 3 columns */}
-            <div className="grid gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-              {regularPosts.map((post: any) => (
-                <m.div
-                  key={post.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="group"
-                >
-                  <Link href={`/blog/${post.slug}`}>
-                    <div className="h-full bg-white border border-[#DFDFDF82] rounded-[5px] overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col">
-                      <div className="h-[180px] relative overflow-hidden" style={{ backgroundColor: "#F3F8FF" }}>
-                        <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30 group-hover:scale-105 transition-transform duration-500">
-                          {post.featuredImage || post.image || "📄"}
-                        </div>
-                        <div className="absolute top-[10px] left-[10px]">
-                          <span className="bg-white text-[#1678FB] text-[12px] font-semibold px-[10px] py-[4px] rounded-[3px] border border-[#DFDFDF82]">
-                            {post.category}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-[20px] flex-grow flex flex-col">
-                        <div className="flex items-center gap-4 text-[13px] text-[#929FB0] mb-3 font-medium">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-[13px] h-[13px]" />
-                            {formatDate(post.createdAt)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-[13px] h-[13px]" />
-                            {post.readTime || "5 min"}
-                          </span>
-                        </div>
-
-                        <h3 className="text-[18px] font-bold text-[#314259] mb-2 leading-[1.4] group-hover:text-[#1678FB] transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-
-                        <p className="text-[14px] text-[#314259] opacity-70 font-medium leading-[1.6] mb-4 line-clamp-2 flex-grow">
-                          {post.excerpt}
-                        </p>
-
-                        <div className="pt-3 border-t border-[#E5E5E5] flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-[28px] h-[28px] rounded-full bg-[#EBF4FF] flex items-center justify-center text-[#1572ED] font-bold text-[11px]">
-                              {post.author?.firstName?.charAt(0) || "A"}
-                            </div>
-                            <span className="text-[13px] font-medium text-[#314259]">{post.author?.firstName || "Admin"}</span>
-                          </div>
-                          <ArrowRight className="w-[16px] h-[16px] text-[#929FB0] group-hover:text-[#1678FB] group-hover:translate-x-1 transition-all" />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </m.div>
-              ))}
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {regularPosts.map((post) => (
+                  <ArticleCard key={post.id} post={post} />
+                ))}
+              </div>
             </div>
-          </>
-        )}
-      </div>
 
-      {/* Newsletter CTA — ClearTax grey-block style */}
-      <div className="max-w-[1200px] mx-auto px-[30px] mt-12">
-        <div className="p-[30px] md:p-[50px] rounded-[5px] text-center" style={{ backgroundColor: "#D0E4FE" }}>
-          <h2 className="text-[24px] md:text-[28px] font-bold text-[#314259] mb-3 leading-[1.3]">
-            Get Expert Tax Tips in Your Inbox
-          </h2>
-          <p className="text-[#314259] opacity-70 text-[16px] font-medium mb-8 max-w-lg mx-auto leading-relaxed">
-            Join 50,000+ taxpayers who receive weekly tax-saving strategies and compliance updates from our senior CAs.
-          </p>
+            <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                  <h2 className="text-base font-black text-slate-950">Browse by topics</h2>
+                </div>
+                <div className="space-y-2">
+                  {popularTopics.map((topic) => (
+                    <button
+                      key={topic.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(normalizeKey(topic.id || topic.slug || topic.name))}
+                      className="flex w-full items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {topic.name}
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-            <input
-              className="flex-1 bg-white border border-[#DFDFDF82] rounded h-[48px] px-[16px] text-[16px] text-[#314259] font-medium outline-none focus:border-[#1572ED] placeholder:text-[#929FB0] transition-colors"
-              placeholder="Enter your email address"
-            />
-            <button className="bg-[#1678FB] hover:bg-[#0F5BB5] text-white rounded h-[48px] px-8 font-bold text-[16px] transition-all hover:scale-[1.02] whitespace-nowrap">
-              Subscribe
-            </button>
+              <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 to-cyan-600 p-6 text-white shadow-xl shadow-blue-200">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-100">Need certainty?</p>
+                <h2 className="mt-3 text-2xl font-black leading-tight">Talk to a CA before you file.</h2>
+                <p className="mt-3 text-sm leading-6 text-blue-100">
+                  Get MyeCA experts to review your tax position, deductions, GST compliance, or business filing path.
+                </p>
+                <Link href="/expert-consultation">
+                  <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-blue-700 transition hover:bg-blue-50">
+                    Book consultation <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+              </div>
+
+              <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-500">Reading tip</p>
+                <p className="mt-2 text-sm leading-6 text-slate-700">
+                  Start with a guide, then use the article CTAs when you want a CA to apply it to your exact filing or compliance case.
+                </p>
+              </div>
+            </aside>
           </div>
-          <p className="mt-5 text-[12px] text-[#314259] opacity-50 font-medium">
-            No spam, ever. Unsubscribe anytime.
-          </p>
-        </div>
-      </div>
+        )}
+      </main>
     </div>
   );
 }

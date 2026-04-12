@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,7 +79,7 @@ export default function AdminAnalyticsPage() {
   }, [currentUser, authLoading]);
 
   // Fetch analytics data
-  const { data: analyticsData, isLoading, error, refetch } = useQuery({
+  const { data: analyticsData, isLoading, error, refetch } = useQuery<AnalyticsData>({
     queryKey: ["/api/admin/analytics", timeRange],
     enabled: !!currentUser && currentUser.role === 'admin',
   });
@@ -134,7 +134,7 @@ export default function AdminAnalyticsPage() {
     ]
   };
 
-  const data = analyticsData || mockAnalyticsData;
+  const data: AnalyticsData = analyticsData || mockAnalyticsData;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {

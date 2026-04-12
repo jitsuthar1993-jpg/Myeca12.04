@@ -15,7 +15,7 @@ import {
   Coins,
   Clock,
   Archive,
-  MarkAsUnread
+  Mail
 } from "lucide-react";
 import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 

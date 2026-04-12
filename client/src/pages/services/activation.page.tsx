@@ -26,7 +26,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function ActivationPage() {
-  const [, params] = useRoute("/services/activate/:serviceId");
+  const [, params] = useRoute("/services/activate/:serviceId") as [boolean, { serviceId?: string } | null];
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

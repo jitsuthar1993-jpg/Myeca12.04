@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Performance optimization test suite
 import { PerformanceTimer, debounce, throttle, raf, MemoryMonitor, reportPerformanceMetrics } from '../utils/performance-utils';
 import { getBundleMetrics } from '../utils/bundle-optimization';

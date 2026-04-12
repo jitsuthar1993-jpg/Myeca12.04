@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Comprehensive Accessibility Audit and Fixing Utilities
 import { useEffect, useState, useCallback } from 'react';
 

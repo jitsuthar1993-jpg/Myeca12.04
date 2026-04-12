@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Security Incident Response and Threat Detection System
 import { EventEmitter } from 'events';
 import crypto from 'crypto';

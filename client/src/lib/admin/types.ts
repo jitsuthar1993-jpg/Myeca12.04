@@ -11,8 +11,15 @@ import type {
   Document
 } from '@shared/schema';
 
-// Re-export shared types for admin consumption
-export type User = SharedUser;
+// Re-export shared user shape with the required id expected by admin tables.
+export type User = Omit<SharedUser, 'id'> & {
+  id: string;
+  first_name?: string;
+  last_name?: string;
+  is_active?: boolean;
+  is_admin?: boolean;
+  created_at?: string | Date;
+};
 
 export interface FilterParams {
   page?: number;
@@ -22,15 +29,58 @@ export interface FilterParams {
   order?: 'asc' | 'desc';
   status?: string;
   role?: string;
+  date_from?: string;
+  date_to?: string;
+}
+
+export interface Service {
+  id: number;
+  name: string;
+  description?: string;
+  category?: string;
+  price?: number;
+  isPopular?: boolean;
+  isActive?: boolean;
+  features?: string;
+  estimatedDuration?: string;
+  requirements?: string;
+  bookingsCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AuditLog {
+  id: number | string;
+  action: string;
+  user?: string;
+  userId?: string;
+  resourceType?: string;
+  resourceId?: string;
+  timestamp: string;
+  status?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface AnalyticsOverview {
+  totalUsers?: number;
+  totalRevenue?: number;
+  totalServices?: number;
+  totalBookings?: number;
+  [key: string]: unknown;
 }
 
 export type PaginationParams = FilterParams;
 
 export interface Column<T> {
-  key: keyof T | string;
-  label: string;
+  key?: keyof T | string;
+  label?: string;
+  id?: string;
+  header?: string;
+  accessorKey?: keyof T;
+  cell?: (row: T) => React.ReactNode;
   render?: (value: any, item: T) => React.ReactNode;
   sortable?: boolean;
+  filterable?: boolean;
 }
 
 export interface DashboardStats {

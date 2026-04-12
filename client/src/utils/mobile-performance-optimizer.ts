@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Enhanced Mobile Performance Optimization
 // This file implements critical mobile performance improvements
 

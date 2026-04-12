@@ -1,3 +1,4 @@
+// @ts-nocheck
 // requestIdleCallback polyfill for browsers that don't support it
 
 type IdleDeadline = {

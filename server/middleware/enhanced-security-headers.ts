@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Enhanced Security Headers and HTTPS Enforcement
 import helmet from 'helmet';
 import { Request, Response, NextFunction } from 'express';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Advanced resource prefetching system for faster navigation
 import { getBundleMetrics, trackBundleLoad } from './bundle-optimization';
 

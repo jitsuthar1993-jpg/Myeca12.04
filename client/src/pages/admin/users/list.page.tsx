@@ -7,7 +7,8 @@ import { DataTable } from '@/components/admin/data/DataTable';
 import { DataFilters } from '@/components/admin/data/DataFilters';
 import { DataExport } from '@/components/admin/data/DataExport';
 import { useUsers } from '@/hooks/admin/useUsers';
-import type { User, Column, FilterParams } from '@/lib/admin/types';
+import type { User, FilterParams } from '@/lib/admin/types';
+import type { Column } from '@/components/admin/data/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,8 +23,8 @@ export default function UserListPage() {
   });
 
   const { data: usersResponse, isLoading } = useUsers(filters);
-  const users = usersResponse?.data?.users || [];
-  const pagination = usersResponse?.data?.pagination;
+  const users = usersResponse?.users || [];
+  const pagination = usersResponse?.pagination;
 
   const handleRowClick = useCallback((user: User) => {
     // Navigate to user details page
@@ -60,10 +61,10 @@ export default function UserListPage() {
       cell: (row) => (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
-            {row.username.charAt(0).toUpperCase()}
+            {(row.username || row.email || 'U').charAt(0).toUpperCase()}
           </div>
           <div>
-            <div className="font-medium text-gray-900">{row.username}</div>
+            <div className="font-medium text-gray-900">{row.username || 'System User'}</div>
             <div className="text-xs text-gray-500">{row.email}</div>
           </div>
         </div>
@@ -76,7 +77,7 @@ export default function UserListPage() {
       sortable: true,
       cell: (row) => (
         <div>
-          {row.first_name} {row.last_name}
+          {row.firstName || row.first_name} {row.lastName || row.last_name}
         </div>
       ),
     },
@@ -98,8 +99,8 @@ export default function UserListPage() {
       accessorKey: 'is_active',
       sortable: true,
       cell: (row) => (
-        <Badge className={row.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>
-          {row.is_active ? 'Active' : 'Inactive'}
+        <Badge className={(row.is_active ?? row.status === 'active') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>
+          {(row.is_active ?? row.status === 'active') ? 'Active' : 'Inactive'}
         </Badge>
       ),
     },
@@ -110,7 +111,7 @@ export default function UserListPage() {
       sortable: true,
       cell: (row) => (
         <Badge variant="outline">
-          {row.is_admin ? 'Admin' : 'User'}
+          {row.is_admin || row.role === 'admin' ? 'Admin' : 'User'}
         </Badge>
       ),
     },
@@ -121,7 +122,7 @@ export default function UserListPage() {
       sortable: true,
       cell: (row) => (
         <div className="text-sm text-gray-500">
-          {formatTimeAgo(row.created_at)}
+          {formatTimeAgo(row.createdAt || row.created_at)}
         </div>
       ),
     },
@@ -218,7 +219,7 @@ export default function UserListPage() {
                 <div>
                   <p className="text-sm text-gray-600">Active Users</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {users.filter((u) => u.is_active).length}
+                    {users.filter((u) => u.is_active ?? u.status === 'active').length}
                   </p>
                 </div>
                 <Badge className="bg-green-100 text-green-700">Active</Badge>
@@ -254,4 +255,3 @@ export default function UserListPage() {
     </AdminLayout>
   );
 }
-

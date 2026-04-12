@@ -23,9 +23,9 @@ export function LazyImage({
   const [imgSrc, setImgSrc] = useState(placeholder);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [ref, isIntersecting] = useIntersectionObserver<HTMLImageElement>({
+  const [ref, isIntersecting] = useIntersectionObserver({
     threshold: 0.1,
-    triggerOnce: true
+    freezeOnceVisible: true
   });
 
   useEffect(() => {
@@ -50,9 +50,8 @@ export function LazyImage({
   }, [isIntersecting, src, onLoad, onError]);
 
   return (
-    <div className={cn('relative overflow-hidden', className)}>
+    <div ref={ref} className={cn('relative overflow-hidden', className)}>
       <img
-        ref={ref}
         src={imgSrc}
         alt={alt}
         className={cn(

@@ -112,7 +112,7 @@ export default function ServicesManagementPage() {
   });
 
   // Fetch services
-  const { data: services = [], isLoading, error } = useQuery({
+  const { data: services = [], isLoading, error } = useQuery<Service[]>({
     queryKey: ["/api/admin/services"],
     enabled: !!currentUser && currentUser.role === 'admin',
   });

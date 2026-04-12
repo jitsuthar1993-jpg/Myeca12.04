@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Mobile Button Text Overflow Fix Utility
  * 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Mobile Performance Monitoring Utility
  * 

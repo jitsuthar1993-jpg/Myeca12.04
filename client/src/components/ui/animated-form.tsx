@@ -4,6 +4,9 @@ import { CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+const MotionDiv = m.div as any
+const MotionForm = m.form as any
+
 interface AnimatedFormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string
   error?: string
@@ -21,7 +24,7 @@ const AnimatedFormField = React.forwardRef<HTMLDivElement, AnimatedFormFieldProp
     const handleBlur = () => setIsFocused(false)
 
     return (
-      <m.div
+      <MotionDiv
         ref={ref}
         className={cn("space-y-2", className)}
         initial={{ opacity: 0, y: 10 }}
@@ -142,7 +145,7 @@ const AnimatedFormField = React.forwardRef<HTMLDivElement, AnimatedFormFieldProp
             </m.div>
           )}
         </AnimatePresence>
-      </m.div>
+      </MotionDiv>
     )
   }
 )
@@ -155,7 +158,7 @@ interface AnimatedFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 const AnimatedForm = React.forwardRef<HTMLFormElement, AnimatedFormProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <m.form
+      <MotionForm
         ref={ref}
         className={cn("space-y-6", className)}
         initial={{ opacity: 0 }}
@@ -164,7 +167,7 @@ const AnimatedForm = React.forwardRef<HTMLFormElement, AnimatedFormProps>(
         {...props}
       >
         {children}
-      </m.form>
+      </MotionForm>
     )
   }
 )

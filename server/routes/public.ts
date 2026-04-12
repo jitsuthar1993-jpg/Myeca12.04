@@ -1,162 +1,190 @@
 import { Router } from "express";
-import { adminDb } from "../neon-admin";
 import memoize from "memoizee";
+import { defaultBlogCategories } from "../data/default-blog-content";
+import { adminDb } from "../neon-admin";
+import {
+  buildPublicBlogDetail,
+  listAllBlogPosts,
+  sortPublishedPosts,
+  toPublicBlogSummary,
+} from "../services/blog";
+import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/blog";
 
 const router = Router();
 
-// Cache headers for public blog content
 const CACHE_HEADER = "public, max-age=300, stale-while-revalidate=600";
 
-// --- Helper: resolve author/category from denormalized or legacy data ---
-async function resolveAuthorAndCategory(data: Record<string, any>) {
-  // Use denormalized fields if available (written at save time by CMS)
-  let author = data.authorName
-    ? { firstName: data.authorName.split(" ")[0] || "Team", lastName: data.authorName.split(" ").slice(1).join(" ") || "MyeCA" }
-    : { firstName: "Team", lastName: "MyeCA" };
-  let category = data.categoryName || "General";
+type PublicBlogSummaryCompat = PublicBlogSummary & {
+  featuredImage: string | null;
+  image: string | null;
+  categoryName: string;
+  categoryId: string | null;
+  createdAt: string | null;
+  readTime: string;
+  author: {
+    firstName: string;
+    lastName: string;
+    name: string;
+    role: string | null;
+  };
+};
 
-  // Fallback: fetch from related collections for legacy posts without denormalized fields
-  if (!data.authorName && data.authorId) {
-    const authorDoc = await adminDb.collection("users").doc(data.authorId).get();
-    if (authorDoc.exists) {
-      const authorData = authorDoc.data()!;
-      author = {
-        firstName: authorData.firstName || "Team",
-        lastName: authorData.lastName || "MyeCA",
-      };
-    }
-  }
-  if (!data.categoryName && data.categoryId) {
-    const catSnapshot = await adminDb.collection("categories")
-      .where("id", "==", data.categoryId)
-      .limit(1)
-      .get();
-    if (!catSnapshot.empty) {
-      category = catSnapshot.docs[0]?.data()?.name || category;
-    }
-  }
+type PublicBlogDetailCompat = Omit<PublicBlogDetail, "relatedPosts"> &
+  PublicBlogSummaryCompat & {
+    relatedPosts: PublicBlogSummaryCompat[];
+  };
 
-  return { author, category };
+function normalizeKey(value: string | null | undefined) {
+  return (value ?? "").trim().toLowerCase();
 }
 
-// --- Memoized Data Fetchers ---
-// Caches results for 5 minutes (300,000 ms) to reduce DB load
+function splitAuthorName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  return {
+    firstName: parts[0] || "Team",
+    lastName: parts.slice(1).join(" ") || "MyeCA",
+  };
+}
+
+function categoryName(category: BlogCategory | null | undefined) {
+  return category?.name?.trim() || "General";
+}
+
+function categoryTokens(category: BlogCategory | null | undefined) {
+  return [category?.id, category?.slug, category?.name].map(normalizeKey).filter(Boolean);
+}
+
+function withSummaryCompat(post: PublicBlogSummary): PublicBlogSummaryCompat {
+  const authorParts = splitAuthorName(post.authorName || "MyeCA Editorial Team");
+  const createdAt = post.publishedAt ?? post.updatedAt ?? null;
+
+  return {
+    ...post,
+    featuredImage: post.coverImage,
+    image: post.coverImage,
+    categoryName: categoryName(post.category),
+    categoryId: post.category?.id ?? null,
+    createdAt,
+    readTime: `${post.readingTimeMinutes} min read`,
+    author: {
+      ...authorParts,
+      name: post.authorName || "MyeCA Editorial Team",
+      role: post.authorRole,
+    },
+  };
+}
+
+function withDetailCompat(post: PublicBlogDetail): PublicBlogDetailCompat {
+  return {
+    ...post,
+    ...withSummaryCompat(post),
+    relatedPosts: post.relatedPosts.map(withSummaryCompat),
+  };
+}
+
+function matchesCategory(post: PublicBlogSummary, categoryFilter: string | undefined) {
+  const filter = normalizeKey(categoryFilter);
+  if (!filter || filter === "all") return true;
+  return categoryTokens(post.category).includes(filter);
+}
+
+function matchesSearch(post: PublicBlogSummary, search: string | undefined) {
+  const query = normalizeKey(search);
+  if (!query) return true;
+  const haystack = [
+    post.title,
+    post.excerpt ?? "",
+    post.authorName,
+    categoryName(post.category),
+    ...post.tags,
+  ].join(" ").toLowerCase();
+  return haystack.includes(query);
+}
+
 const getCachedActiveUpdates = memoize(
   async () => {
     const snapshot = await adminDb.collection("daily_updates")
       .where("isActive", "==", true)
       .orderBy("createdAt", "desc")
       .get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   },
-  { promise: true, maxAge: 300000 }
+  { promise: true, maxAge: 300000 },
 );
 
 const getCachedBlogs = memoize(
   async (options: { page?: number; limit?: number; category?: string; search?: string } = {}) => {
     const { page = 1, limit = 12, category, search } = options;
+    const publishedPosts = sortPublishedPosts(await listAllBlogPosts());
+    const summaries = publishedPosts.map(toPublicBlogSummary);
 
-    // Query only published posts directly from the content repository.
-    let query = adminDb.collection("blog_posts")
-      .where("status", "==", "published")
-      .orderBy("createdAt", "desc");
-
-    // Fetch with a generous buffer for client-side filtering (category/search)
-    // If no filters, fetch only what's needed for the page
-    const fetchLimit = (category || search) ? 200 : limit * page + 1;
-    query = query.limit(fetchLimit);
-
-    const snapshot = await query.get();
-
-    // Batch resolve author/category (uses denormalized fields when available)
-    const allPosts = await Promise.all(snapshot.docs.map(async (doc) => {
-      const data = doc.data();
-      if (!data) return null;
-      const { author, category: cat } = await resolveAuthorAndCategory(data);
-
-      return {
-        id: doc.id,
-        title: data.title,
-        slug: data.slug,
-        excerpt: data.excerpt,
-        tags: data.tags,
-        featuredImage: data.featuredImage,
-        createdAt: data.createdAt,
-        author,
-        category: cat,
-      };
-    }));
-    const posts = allPosts.filter((post): post is NonNullable<typeof post> => Boolean(post));
-
-    // Apply optional filters
-    let filtered = posts;
-    if (category && category !== "All") {
-      filtered = filtered.filter(p => p.category === category);
-    }
-    if (search) {
-      const q = search.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        (p.excerpt || "").toLowerCase().includes(q)
-      );
-    }
-
-    // Paginate
+    const filtered = summaries.filter((post) => matchesCategory(post, category) && matchesSearch(post, search));
     const total = filtered.length;
     const start = (page - 1) * limit;
-    const paginatedPosts = filtered.slice(start, start + limit);
-    const hasMore = start + limit < total;
+    const paginatedPosts = filtered.slice(start, start + limit).map(withSummaryCompat);
 
-    return { posts: paginatedPosts, total, page, hasMore };
+    return {
+      posts: paginatedPosts,
+      total,
+      page,
+      hasMore: start + limit < total,
+    };
   },
   {
     promise: true,
     maxAge: 300000,
-    normalizer: (args: any[]) => JSON.stringify(args[0] || {}),
-  }
+    normalizer: (args: Array<{ page?: number; limit?: number; category?: string; search?: string } | undefined>) =>
+      JSON.stringify(args[0] ?? {}),
+  },
 );
 
 const getCachedBlogBySlug = memoize(
   async (slug: string) => {
-    const snapshot = await adminDb.collection("blog_posts")
-      .where("slug", "==", slug)
-      .where("status", "==", "published")
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) return null;
-    const doc = snapshot.docs[0];
-    const data = doc.data();
-    if (!data) return null;
-    const { author, category } = await resolveAuthorAndCategory(data);
-
-    return {
-      id: doc.id,
-      title: data.title,
-      slug: data.slug,
-      content: data.content,
-      excerpt: data.excerpt,
-      tags: data.tags,
-      featuredImage: data.featuredImage,
-      createdAt: data.createdAt,
-      categoryId: data.categoryId,
-      author,
-      category,
-    };
+    const publishedPosts = sortPublishedPosts(await listAllBlogPosts());
+    const post = publishedPosts.find((candidate) => candidate.slug === slug);
+    if (!post) return null;
+    return withDetailCompat(buildPublicBlogDetail(post, publishedPosts));
   },
-  { promise: true, maxAge: 300000 }
+  { promise: true, maxAge: 300000 },
 );
 
 const getCachedCategories = memoize(
   async () => {
-    const snapshot = await adminDb.collection("categories").orderBy("name").get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let categories: Array<{ id: string; name: string; slug: string; description: string | null }> = [];
+
+    try {
+      const snapshot = await adminDb.collection("categories").orderBy("name").get();
+      categories = snapshot.docs.map((doc) => {
+        const data = doc.data() as Record<string, unknown>;
+        const name = typeof data.name === "string" && data.name.trim() ? data.name.trim() : "General";
+        const slug = typeof data.slug === "string" && data.slug.trim()
+          ? data.slug.trim()
+          : name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+        return {
+          id: doc.id,
+          name,
+          slug,
+          description: typeof data.description === "string" ? data.description : null,
+        };
+      });
+    } catch (error) {
+      console.warn("Falling back to default public categories:", error);
+    }
+
+    const seen = new Set(categories.map((category) => category.id.toLowerCase()));
+    defaultBlogCategories.forEach((category) => {
+      if (seen.has(category.id.toLowerCase())) return;
+      categories.push(category);
+      seen.add(category.id.toLowerCase());
+    });
+
+    return categories.sort((left, right) => left.name.localeCompare(right.name));
   },
-  { promise: true, maxAge: 300000 }
+  { promise: true, maxAge: 300000 },
 );
 
-// Get active daily updates
-router.get("/updates/active", async (req, res) => {
+router.get("/updates/active", async (_req, res) => {
   try {
     const activeUpdates = await getCachedActiveUpdates();
     res.json({ success: true, updates: activeUpdates });
@@ -166,13 +194,12 @@ router.get("/updates/active", async (req, res) => {
   }
 });
 
-// Get published blogs with pagination and optional filters
 router.get("/blogs", async (req, res) => {
   try {
-    const page = Math.max(1, parseInt(req.query.page as string) || 1);
-    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 12));
-    const category = req.query.category as string | undefined;
-    const search = req.query.search as string | undefined;
+    const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string, 10) || 12));
+    const category = typeof req.query.category === "string" ? req.query.category : undefined;
+    const search = typeof req.query.search === "string" ? req.query.search : undefined;
 
     const result = await getCachedBlogs({ page, limit, category, search });
     res.set("Cache-Control", CACHE_HEADER);
@@ -183,49 +210,45 @@ router.get("/blogs", async (req, res) => {
   }
 });
 
-// Get a single published blog by slug
 router.get("/blogs/:slug", async (req, res) => {
   try {
-    const slug = req.params.slug;
-    const post = await getCachedBlogBySlug(slug);
-
+    const post = await getCachedBlogBySlug(req.params.slug);
     if (!post) return res.status(404).json({ error: "Blog post not found" });
 
     res.set("Cache-Control", CACHE_HEADER);
-    res.json({ success: true, post });
+    return res.json({ success: true, post });
   } catch (error) {
     console.error("Public fetch single blog error:", error);
-    res.status(500).json({ error: "Failed to fetch blog post" });
+    return res.status(500).json({ error: "Failed to fetch blog post" });
   }
 });
 
-// Get related posts for a blog (by same category, excluding current)
 router.get("/blogs/:slug/related", async (req, res) => {
   try {
-    const slug = req.params.slug;
-    const post = await getCachedBlogBySlug(slug);
+    const post = await getCachedBlogBySlug(req.params.slug);
     if (!post) return res.status(404).json({ error: "Blog post not found" });
 
-    // Fetch a small set of published posts to find related ones
-    const result = await getCachedBlogs({ page: 1, limit: 20 });
-    const related = result.posts
-      .filter((p: any) => p.slug !== slug && p.category === post.category)
-      .slice(0, 3);
+    const relatedFromDetail = post.relatedPosts ?? [];
+    const related = relatedFromDetail.length > 0
+      ? relatedFromDetail
+      : (await getCachedBlogs({ page: 1, limit: 20 })).posts
+          .filter((candidate) => candidate.slug !== post.slug)
+          .filter((candidate) => categoryTokens(candidate.category).some((token) => categoryTokens(post.category).includes(token)))
+          .slice(0, 3);
 
     res.set("Cache-Control", CACHE_HEADER);
-    res.json({ success: true, posts: related });
+    return res.json({ success: true, posts: related });
   } catch (error) {
     console.error("Public fetch related blogs error:", error);
-    res.status(500).json({ error: "Failed to fetch related posts" });
+    return res.status(500).json({ error: "Failed to fetch related posts" });
   }
 });
 
-// Get all categories
-router.get("/categories", async (req, res) => {
+router.get("/categories", async (_req, res) => {
   try {
-    const allCategories = await getCachedCategories();
+    const categories = await getCachedCategories();
     res.set("Cache-Control", CACHE_HEADER);
-    res.json({ success: true, categories: allCategories });
+    res.json({ success: true, categories });
   } catch (error) {
     console.error("Public fetch categories error:", error);
     res.status(500).json({ error: "Failed to fetch categories" });

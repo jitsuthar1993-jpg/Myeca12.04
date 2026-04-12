@@ -184,7 +184,7 @@ interface AriaLiveRegionProps {
   children: React.ReactNode;
   politeness?: 'polite' | 'assertive' | 'off';
   atomic?: boolean;
-  relevant?: 'additions' | 'removals' | 'text' | 'all';
+  relevant?: React.AriaAttributes['aria-relevant'];
   id?: string;
   className?: string;
 }

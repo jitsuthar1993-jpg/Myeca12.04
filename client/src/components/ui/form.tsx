@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 
 const Form = FormProvider
+const MotionP = m.p as any
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -157,8 +158,8 @@ const FormMessage = React.forwardRef<
 
   return (
     <AnimatePresence mode="wait">
-      <m.p
-        key={body}
+      <MotionP
+        key={typeof body === "string" || typeof body === "number" ? body : "form-message"}
         ref={ref}
         id={formMessageId}
         className={cn(
@@ -178,7 +179,7 @@ const FormMessage = React.forwardRef<
           <CheckCircle className="h-4 w-4 flex-shrink-0" />
         )}
         <span>{body}</span>
-      </m.p>
+      </MotionP>
     </AnimatePresence>
   )
 })

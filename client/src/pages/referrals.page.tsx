@@ -88,32 +88,32 @@ export default function ReferralsPage() {
   });
 
   // Fetch referral program overview
-  const { data: overviewData } = useQuery({
+  const { data: overviewData } = useQuery<any>({
     queryKey: ["/api/referrals/overview"]
   });
 
   // Fetch user referral stats
-  const { data: statsData, isLoading: statsLoading } = useQuery({
+  const { data: statsData, isLoading: statsLoading } = useQuery<any>({
     queryKey: ["/api/referrals/stats"]
   });
 
   // Fetch user referrals
-  const { data: referralsData, isLoading: referralsLoading } = useQuery({
+  const { data: referralsData, isLoading: referralsLoading } = useQuery<any>({
     queryKey: ["/api/referrals"]
   });
 
   // Fetch user rewards
-  const { data: rewardsData } = useQuery({
+  const { data: rewardsData } = useQuery<any>({
     queryKey: ["/api/referrals/rewards"]
   });
 
   // Fetch leaderboard
-  const { data: leaderboardData } = useQuery({
+  const { data: leaderboardData } = useQuery<any>({
     queryKey: ["/api/referrals/leaderboard"]
   });
 
   // Fetch analytics
-  const { data: analyticsData } = useQuery({
+  const { data: analyticsData } = useQuery<any>({
     queryKey: ["/api/referrals/analytics"]
   });
 

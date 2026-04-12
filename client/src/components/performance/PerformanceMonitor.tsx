@@ -165,7 +165,7 @@ export default function PerformanceMonitor() {
       const ttfb = navigationEntry.responseStart - navigationEntry.requestStart;
       const domContentLoaded = navigationEntry.domContentLoadedEventEnd - navigationEntry.fetchStart;
       const loadComplete = navigationEntry.loadEventEnd - navigationEntry.fetchStart;
-      const pageLoadTime = navigationEntry.loadEventEnd - navigationEntry.navigationStart;
+      const pageLoadTime = navigationEntry.loadEventEnd - navigationEntry.startTime;
       
       setMetrics(prev => ({ 
         ...prev, 
@@ -217,7 +217,7 @@ export default function PerformanceMonitor() {
       }
       
       // Send comprehensive performance report
-      trackEvent('performance', 'Complete', {
+      trackEvent('performance', 'Complete', JSON.stringify({
         FCP: metrics.FCP,
         LCP: metrics.LCP,
         FID: metrics.FID,
@@ -227,7 +227,7 @@ export default function PerformanceMonitor() {
         memoryUsage: metrics.memoryUsage,
         connectionType: metrics.connectionType,
         effectiveType: metrics.effectiveType
-      });
+      }));
     };
 
     document.addEventListener('visibilitychange', () => {

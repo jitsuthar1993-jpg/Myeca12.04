@@ -15,8 +15,18 @@ interface TwoFactorSetupResponse {
   backupCodes: string[];
 }
 
-export default function TwoFactorAuth() {
-  const [isEnabled, setIsEnabled] = useState(false);
+interface TwoFactorStatusResponse {
+  enabled: boolean;
+}
+
+interface TwoFactorAuthProps {
+  userId?: number | string;
+  userEmail?: string;
+  isEnabled?: boolean;
+}
+
+export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: TwoFactorAuthProps = {}) {
+  const [isEnabled, setIsEnabled] = useState(initialEnabled);
   const [showSetup, setShowSetup] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [setupData, setSetupData] = useState<TwoFactorSetupResponse | null>(null);
@@ -28,8 +38,9 @@ export default function TwoFactorAuth() {
     queryKey: ["/api/2fa/status"],
     queryFn: async () => {
       const response = await apiRequest("/api/2fa/status");
-      setIsEnabled(response.enabled);
-      return response;
+      const data = await response.json() as TwoFactorStatusResponse;
+      setIsEnabled(data.enabled);
+      return data;
     }
   });
 
@@ -38,7 +49,7 @@ export default function TwoFactorAuth() {
     mutationFn: async () => {
       return await apiRequest("/api/2fa/enable", {
         method: "POST"
-      });
+      }).then((response) => response.json() as Promise<TwoFactorSetupResponse>);
     },
     onSuccess: (data) => {
       setSetupData(data);
@@ -58,7 +69,7 @@ export default function TwoFactorAuth() {
     mutationFn: async (code: string) => {
       return await apiRequest("/api/2fa/verify", {
         method: "POST",
-        body: { code }
+        body: JSON.stringify({ code })
       });
     },
     onSuccess: () => {

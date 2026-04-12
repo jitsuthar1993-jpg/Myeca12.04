@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content";
 import { adminDb } from "../neon-admin";
 
 async function upsertById(collection: string, id: string, data: Record<string, any>) {
@@ -33,9 +34,23 @@ async function seed() {
       appUrl: process.env.APP_URL || "http://localhost:5000",
       createdAt: now,
     }),
+    ...defaultBlogCategories.map((category) =>
+      upsertById("categories", category.id, {
+        ...category,
+        createdAt: now,
+      }),
+    ),
+    ...defaultBlogPosts.map((post) =>
+      upsertById("blog_posts", post.id, {
+        ...post,
+        createdAt: new Date(post.createdAt),
+        updatedAt: new Date(post.updatedAt),
+        publishedAt: new Date(post.publishedAt),
+      }),
+    ),
   ]);
 
-  console.log("Seeded Neon defaults.");
+  console.log(`Seeded Neon defaults and ${defaultBlogPosts.length} in-depth blog posts.`);
 }
 
 seed().catch((error) => {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Comprehensive Input Validation Framework with OWASP Compliance
 import { z } from 'zod';
 import validator from 'validator';

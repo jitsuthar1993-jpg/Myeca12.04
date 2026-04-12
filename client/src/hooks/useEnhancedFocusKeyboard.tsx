@@ -178,7 +178,7 @@ const DEFAULT_SHORTCUTS: KeyboardShortcut[] = [
   },
   {
     key: 'h',
-    modifiers: ['shift', '?'],
+    modifiers: ['shift'],
     description: 'Show keyboard shortcuts help',
     action: () => showHelp(),
     category: 'help',

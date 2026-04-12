@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Users, Eye, Clock, MousePointerClick } from 'lucide-react';
 
 export default function AnalyticsOverviewPage() {
-  const [dateRange, setDateRange] = useState(DATE_RANGES.LAST_30_DAYS);
+  const [dateRange, setDateRange] = useState<string>(DATE_RANGES.LAST_30_DAYS);
   const { data: analyticsData, isLoading, error, refetch } = useAnalytics({ date_from: dateRange });
 
   const handleRefresh = useCallback(() => {
@@ -129,4 +129,3 @@ export default function AnalyticsOverviewPage() {
     </AdminLayout>
   );
 }
-
