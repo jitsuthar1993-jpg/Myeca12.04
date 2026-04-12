@@ -7,7 +7,7 @@ export function validateEnv() {
   const errors: string[] = [];
 
   if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
-    errors.push("DATABASE_URL or POSTGRES_URL must be set for Neon Postgres");
+    warnings.push("DATABASE_URL or POSTGRES_URL not set — DB-backed features will fail until Neon Postgres is connected");
   }
 
   if (!process.env.CLERK_SECRET_KEY) {
