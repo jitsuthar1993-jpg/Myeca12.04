@@ -1,6 +1,6 @@
 # Blog Writing Skill
 
-Write a comprehensive, SEO-optimized blog post for the MyeCA.in tax platform and seed it into Firestore.
+Write a comprehensive, SEO-optimized blog post for the MyeCA.in tax platform and seed it into Neon.
 
 ## Input
 The user provides a topic (e.g., "income tax slabs 2025", "how to file GST returns", "section 80C guide").
@@ -38,13 +38,12 @@ Create a comprehensive blog post with this structure:
 - Use Indian Rupee symbol (₹) for amounts
 - Reference specific sections of the Income Tax Act where applicable
 
-### Step 3: Seed into Firestore
+### Step 3: Seed into Neon
 Create/update the file `server/scripts/seed-blog-temp.ts` with this template:
 
 ```typescript
 import "dotenv/config";
-import { adminDb } from "../firebase-admin.js";
-import admin from "firebase-admin";
+import { adminDb } from "../neon-admin.js";
 
 async function seed() {
   const slug = "YOUR_SLUG";
@@ -59,7 +58,7 @@ async function seed() {
       excerpt: "YOUR_EXCERPT",
       tags: JSON.stringify(["tag1", "tag2"]),
       readTime: "X min read",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: new Date(),
     });
     console.log("Updated!");
   } else {
@@ -82,8 +81,8 @@ async function seed() {
       tags: JSON.stringify(["tag1", "tag2"]),
       featuredImage: "EMOJI",
       readTime: "X min read",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      publishedAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: new Date(),
+      publishedAt: new Date(),
     });
     console.log("Inserted!");
   }
@@ -102,6 +101,6 @@ Navigate to `/blog` in the preview and confirm the new post appears. Click into 
 ## Important Notes
 - The blog detail page at `client/src/pages/blog/[slug].page.tsx` has a custom `formatContent()` parser that handles: `## `, `### `, `> ` blockquotes (grouped), `| ` tables, `- ` and `* ` bullet lists, numbered lists (`1. `), and `**bold**` inline formatting
 - The API caches blog data for 5 minutes (`maxAge: 300000` in `server/routes/public.ts`), so new posts may take a few minutes to appear
-- Blog posts are stored in the Firestore `blog_posts` collection
+- Blog posts are stored in the Neon-backed `blog_posts` collection
 - Categories are in the `categories` collection and referenced by `categoryId`
 - Authors are in the `users` collection and referenced by `authorId`

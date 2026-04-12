@@ -167,4 +167,30 @@ server/coverage/
 
 # Optional: Keep some logs for debugging
 # !logs/important.log
-.vercel
+.vercel/
+
+# IDE and tool configs
+.trae/
+.cursor/
+.gsd/
+.claude/agents/
+.claude/commands/gsd/
+.claude/get-shit-done/
+.claude/launch.json
+.claude/package.json
+
+# Gradle cache
+android/.gradle/
+
+# Dev/server logs
+dev_error.txt
+dev_log.txt
+dev_log_new.txt
+server_log.txt
+server_log2.txt
+
+# Temp files
+button-component-docs.md
+check_logos.js
+proxy.ts
+my site.md
