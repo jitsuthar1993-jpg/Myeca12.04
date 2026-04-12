@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import "./utils/safe-dom";
 import "./index.css";
@@ -63,11 +64,13 @@ if (root) {
       >
         <App />
         <Analytics />
+        <SpeedInsights />
       </ClerkProvider>
     ) : (
       <>
         <MissingClerkConfig />
         <Analytics />
+        <SpeedInsights />
       </>
     ),
   );
