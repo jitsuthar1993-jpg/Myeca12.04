@@ -243,3 +243,49 @@ export function useAuth() {
   }
   return context;
 }
+
+const FALLBACK_AUTH_VALUE: AuthContextType = {
+  user: null,
+  authUser: null,
+  isLoading: false,
+  isAuthenticated: false,
+  login: async () => { throw new Error("Auth service unavailable"); },
+  register: async () => { throw new Error("Auth service unavailable"); },
+  loginWithGoogle: async () => { throw new Error("Auth service unavailable"); },
+  logout: async () => {},
+  sendPasswordReset: async () => { throw new Error("Auth service unavailable"); },
+  sendEmailVerification: async () => {},
+  deleteAccount: async () => {},
+  role: "user",
+};
+
+class AuthErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error) {
+    console.error("AuthProvider crashed:", error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <AuthContext.Provider value={FALLBACK_AUTH_VALUE}>
+          {this.props.children}
+        </AuthContext.Provider>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthErrorBoundary>
+      <AuthProvider>{children}</AuthProvider>
+    </AuthErrorBoundary>
+  );
+}

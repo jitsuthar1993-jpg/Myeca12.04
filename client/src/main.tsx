@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./utils/safe-dom";
 import "./index.css";
 
@@ -55,24 +56,26 @@ function MissingClerkConfig() {
 
 if (root) {
   createRoot(root).render(
-    clerkPublishableKey ? (
-      <ClerkProvider
-        publishableKey={clerkPublishableKey}
-        signInUrl="/auth/login"
-        signUpUrl="/auth/register"
-        afterSignOutUrl="/"
-      >
-        <App />
-        <Analytics />
-        <SpeedInsights />
-      </ClerkProvider>
-    ) : (
-      <>
-        <MissingClerkConfig />
-        <Analytics />
-        <SpeedInsights />
-      </>
-    ),
+    <ErrorBoundary>
+      {clerkPublishableKey ? (
+        <ClerkProvider
+          publishableKey={clerkPublishableKey}
+          signInUrl="/auth/login"
+          signUpUrl="/auth/register"
+          afterSignOutUrl="/"
+        >
+          <App />
+          <Analytics />
+          <SpeedInsights />
+        </ClerkProvider>
+      ) : (
+        <>
+          <MissingClerkConfig />
+          <Analytics />
+          <SpeedInsights />
+        </>
+      )}
+    </ErrorBoundary>,
   );
 } else {
   const fallback = document.createElement('div');

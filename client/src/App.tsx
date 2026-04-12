@@ -14,7 +14,7 @@ import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { AuthProvider, useAuth } from "@/components/AuthProvider";
+import { SafeAuthProvider, useAuth } from "@/components/AuthProvider";
 import Routes from "./Routes";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import { SessionWarningModal } from "@/components/auth/SessionWarningModal";
@@ -146,7 +146,9 @@ function AppContent() {
   return (
     <LazyMotion features={domAnimation} strict={false}>
       <Toaster />
-      <Router />
+      <ErrorBoundary>
+        <Router />
+      </ErrorBoundary>
       {import.meta.env.PROD && (
         <Suspense fallback={null}>
           <ProdOnlyComponents />
@@ -197,11 +199,11 @@ function App() {
       <LanguageProvider>
         <AccessibilityProvider>
           <QueryClientProvider client={queryClient}>
-            <AuthProvider>
+            <SafeAuthProvider>
               <TooltipProvider>
                 <AppContent />
               </TooltipProvider>
-            </AuthProvider>
+            </SafeAuthProvider>
           </QueryClientProvider>
         </AccessibilityProvider>
       </LanguageProvider>

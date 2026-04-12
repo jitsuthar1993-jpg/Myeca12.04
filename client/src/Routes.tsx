@@ -103,9 +103,9 @@ const ServerErrorPage = lazyWithRetry(() => import("@/pages/server-error.page"))
 const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/index.page"));
 const ForbiddenPage = lazyWithRetry(() => import("@/pages/forbidden.page"));
 const ClerkCallback = lazyWithRetry(() => import("@/components/auth/ClerkCallback"));
-const RequireAdmin = lazyWithRetry(() => import("@/components/auth/RequireAdmin").then(m => ({ default: m.RequireAdmin })));
-const RequireRole = lazyWithRetry(() => import("@/components/auth/RequireRole").then(m => ({ default: m.RequireRole })));
-const RequireAuth = lazyWithRetry(() => import("@/components/auth/RequireAuth").then(m => ({ default: m.RequireAuth })));
+import { RequireAdmin } from '@/components/auth/RequireAdmin';
+import { RequireRole } from '@/components/auth/RequireRole';
+import { RequireAuth } from '@/components/auth/RequireAuth';
 const CADashboard = lazyWithRetry(() => import("@/pages/ca/dashboard.page"));
 const AdminServices = lazyWithRetry(() => import("@/pages/admin/services.page"));
 const AdminBlog = lazyWithRetry(() => import("@/pages/admin/blog.page"));
