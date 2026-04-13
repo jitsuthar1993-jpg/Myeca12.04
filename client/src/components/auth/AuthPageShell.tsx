@@ -78,6 +78,42 @@ export const clerkAuthAppearance = {
   },
 };
 
+export function AuthFormSkeleton() {
+  return (
+    <div
+      className="min-h-[360px] animate-pulse space-y-5"
+      aria-busy="true"
+      aria-label="Preparing secure authentication"
+    >
+      <div className="space-y-2">
+        <div className="h-4 w-28 rounded-lg bg-slate-200" />
+        <div className="h-3 w-48 rounded-lg bg-slate-100" />
+      </div>
+
+      <div className="h-11 rounded-lg border border-slate-200 bg-slate-50" />
+
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-slate-200" />
+        <div className="h-3 w-16 rounded-lg bg-slate-100" />
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <div className="space-y-2">
+        <div className="h-3 w-20 rounded-lg bg-slate-200" />
+        <div className="h-11 rounded-lg border border-slate-200 bg-white" />
+      </div>
+
+      <div className="space-y-2">
+        <div className="h-3 w-24 rounded-lg bg-slate-200" />
+        <div className="h-11 rounded-lg border border-slate-200 bg-white" />
+      </div>
+
+      <div className="h-11 rounded-lg bg-[#003087]/15" />
+      <div className="h-10 rounded-lg bg-slate-50" />
+    </div>
+  );
+}
+
 export function AuthPageShell({
   eyebrow,
   title,

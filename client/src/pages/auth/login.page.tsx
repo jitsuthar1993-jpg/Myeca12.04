@@ -1,6 +1,10 @@
-import { SignIn } from "@clerk/clerk-react";
+import { ClerkLoaded, ClerkLoading, SignIn } from "@clerk/clerk-react";
 import { CalendarCheck2, FileCheck2, ShieldCheck } from "lucide-react";
-import { AuthPageShell, clerkAuthAppearance } from "@/components/auth/AuthPageShell";
+import {
+  AuthFormSkeleton,
+  AuthPageShell,
+  clerkAuthAppearance,
+} from "@/components/auth/AuthPageShell";
 
 const reasonCopy: Record<string, { title: string; message: string }> = {
   timeout: {
@@ -61,13 +65,18 @@ export default function LoginPage() {
       }}
       steps={loginSteps}
     >
-      <SignIn
-        path="/auth/login"
-        routing="path"
-        signUpUrl={signUpUrl}
-        fallbackRedirectUrl={redirectUrl}
-        appearance={clerkAuthAppearance}
-      />
+      <ClerkLoading>
+        <AuthFormSkeleton />
+      </ClerkLoading>
+      <ClerkLoaded>
+        <SignIn
+          path="/auth/login"
+          routing="path"
+          signUpUrl={signUpUrl}
+          fallbackRedirectUrl={redirectUrl}
+          appearance={clerkAuthAppearance}
+        />
+      </ClerkLoaded>
     </AuthPageShell>
   );
 }

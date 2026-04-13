@@ -1,6 +1,10 @@
-import { SignUp } from "@clerk/clerk-react";
+import { ClerkLoaded, ClerkLoading, SignUp } from "@clerk/clerk-react";
 import { BadgeCheck, Fingerprint, UserRoundCheck } from "lucide-react";
-import { AuthPageShell, clerkAuthAppearance } from "@/components/auth/AuthPageShell";
+import {
+  AuthFormSkeleton,
+  AuthPageShell,
+  clerkAuthAppearance,
+} from "@/components/auth/AuthPageShell";
 
 const registerSteps = [
   {
@@ -38,13 +42,18 @@ export default function RegisterPage() {
       }}
       steps={registerSteps}
     >
-      <SignUp
-        path="/auth/register"
-        routing="path"
-        signInUrl={signInUrl}
-        fallbackRedirectUrl={redirectUrl}
-        appearance={clerkAuthAppearance}
-      />
+      <ClerkLoading>
+        <AuthFormSkeleton />
+      </ClerkLoading>
+      <ClerkLoaded>
+        <SignUp
+          path="/auth/register"
+          routing="path"
+          signInUrl={signInUrl}
+          fallbackRedirectUrl={redirectUrl}
+          appearance={clerkAuthAppearance}
+        />
+      </ClerkLoaded>
     </AuthPageShell>
   );
 }
