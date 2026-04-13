@@ -2,10 +2,10 @@ import { Switch, Route } from "wouter";
 import { Suspense, lazy } from 'react';
 import { lazyWithRetry } from '@/utils/bundle-optimization';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
+import HomePage from "@/pages/home.page";
 
 // Route components loaded lazily to reduce initial bundle size
 const NotFound = lazyWithRetry(() => import("@/pages/not-found"));
-const HomePage = lazyWithRetry(() => import("@/pages/home.page"));
 const IncomeTaxCalculator = lazyWithRetry(() => import("@/features/calculators/pages/income-tax.page"));
 const TaxRegimeCalculator = lazyWithRetry(() => import("@/features/calculators/pages/tax-regime.page"));
 const HRACalculator = lazyWithRetry(() => import("@/features/calculators/pages/hra.page"));

@@ -60,7 +60,6 @@ const HomePage = () => {
     }
   }, [isAuthenticated, isLoading, setLocation]);
 
-  if (isLoading) return null;
   if (isAuthenticated) return null;
 
   return (
