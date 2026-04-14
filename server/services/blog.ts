@@ -3,12 +3,15 @@ import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-co
 import {
   type BlogCategory,
   type BlogFaqItem,
+  type BlogAudience,
+  type BlogSourceLink,
   type BlogPostEditorInput,
   DEFAULT_BLOG_CTA,
   estimateReadingTimeMinutes,
   normalizeBlogContent,
   normalizeBlogCta,
   normalizeFaqItems,
+  normalizeSourceLinks,
   normalizeStringArray,
   serializeTags,
   slugifyHeading,
@@ -42,6 +45,13 @@ export interface StoredBlogPost {
   createdAt: string | null;
   updatedAt: string | null;
   tags: string[];
+  audience: BlogAudience;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  sourceLinks: BlogSourceLink[];
+  serviceSlug: string | null;
+  calculatorSlug: string | null;
+  canonicalUrl: string | null;
 }
 
 type CategoryLookup = {
@@ -66,6 +76,10 @@ function parseNumeric(value: unknown): number | null {
     return Number.isFinite(parsed) ? parsed : null;
   }
   return null;
+}
+
+function normalizeAudience(value: unknown): BlogAudience {
+  return value === "individuals" || value === "businesses" || value === "both" ? value : "both";
 }
 
 async function getUserSnapshot(userId: string | null | undefined) {
@@ -155,6 +169,7 @@ export function normalizeStoredBlogPostRecord(
   const faqItems = normalizeFaqItems(data.faqItems as Array<Partial<BlogFaqItem> | null | undefined> | null | undefined);
   const relatedPostIds = normalizeStringArray(data.relatedPostIds as Array<string | null | undefined> | null | undefined);
   const tags = serializeTags(data.tags as string[] | string | null | undefined);
+  const sourceLinks = normalizeSourceLinks(data.sourceLinks as Array<Partial<BlogSourceLink> | null | undefined> | null | undefined);
 
   return {
     id: docId,
@@ -187,6 +202,13 @@ export function normalizeStoredBlogPostRecord(
     createdAt: toIsoDate(data.createdAt) ?? null,
     updatedAt: toIsoDate(data.updatedAt) ?? null,
     tags,
+    audience: normalizeAudience(data.audience),
+    reviewedBy: trimNullable(data.reviewedBy),
+    reviewedAt: toIsoDate(data.reviewedAt) ?? null,
+    sourceLinks,
+    serviceSlug: trimNullable(data.serviceSlug),
+    calculatorSlug: trimNullable(data.calculatorSlug),
+    canonicalUrl: trimNullable(data.canonicalUrl),
   };
 }
 
@@ -293,6 +315,13 @@ export async function buildBlogPostWriteData(
     createdAt: existing?.createdAt ? new Date(existing.createdAt) : now,
     updatedAt: now,
     tags: normalizeStringArray(input.tags),
+    audience: normalizeAudience(input.audience),
+    reviewedBy: trimNullable(input.reviewedBy),
+    reviewedAt: input.reviewedAt ? new Date(input.reviewedAt) : null,
+    sourceLinks: normalizeSourceLinks(input.sourceLinks),
+    serviceSlug: trimNullable(input.serviceSlug),
+    calculatorSlug: trimNullable(input.calculatorSlug),
+    canonicalUrl: trimNullable(input.canonicalUrl),
   };
 }
 
@@ -331,6 +360,12 @@ export function toPublicBlogSummary(post: StoredBlogPost) {
     publishedAt: post.publishedAt,
     updatedAt: post.updatedAt,
     tags: post.tags,
+    audience: post.audience,
+    reviewedBy: post.reviewedBy,
+    reviewedAt: post.reviewedAt,
+    serviceSlug: post.serviceSlug,
+    calculatorSlug: post.calculatorSlug,
+    canonicalUrl: post.canonicalUrl,
   };
 }
 
@@ -368,6 +403,7 @@ export function buildPublicBlogDetail(post: StoredBlogPost, allPublishedPosts: S
     toc: normalized.toc,
     ctaLabel: cta.ctaLabel,
     ctaHref: cta.ctaHref,
+    sourceLinks: post.sourceLinks,
   };
 }
 

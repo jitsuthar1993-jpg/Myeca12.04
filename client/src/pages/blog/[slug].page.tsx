@@ -10,10 +10,13 @@ import {
   ChevronRight,
   Clock3,
   FileText,
+  ExternalLink,
   Loader2,
   MessageSquare,
   Printer,
   Sparkles,
+  ShieldCheck,
+  Calculator,
   UserRound,
 } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
@@ -104,6 +107,20 @@ function getReadTime(post: BlogDetail | BlogSummary) {
   return post.readingTimeMinutes ? `${post.readingTimeMinutes} min read` : post.readTime ?? "5 min read";
 }
 
+function getAudienceLabel(value: string | null | undefined) {
+  if (value === "individuals") return "For taxpayers";
+  if (value === "businesses") return "For businesses";
+  return "For taxpayers and businesses";
+}
+
+function serviceHref(slug: string | null | undefined) {
+  return slug ? `/services/${slug.replace(/^\//, "")}` : "/expert-consultation";
+}
+
+function calculatorHref(slug: string | null | undefined) {
+  return slug ? `/calculators/${slug.replace(/^\//, "")}` : "/calculators";
+}
+
 function getInitials(name: string) {
   return name
     .split(" ")
@@ -148,31 +165,34 @@ function ActionLink({ href, children, className }: { href: string; children: Rea
   );
 }
 
-function TocPanel({ toc, activeId, mobile = false }: { toc: BlogTocItem[]; activeId: string; mobile?: boolean }) {
+function TocPanel({ toc, activeId }: { toc: BlogTocItem[]; activeId: string }) {
   if (toc.length === 0) return null;
 
   return (
     <nav
       aria-label="Article index"
-      className={cn(
-        "rounded-2xl border border-blue-100 bg-white shadow-sm",
-        mobile ? "mb-8 p-4" : "p-4",
-      )}
+      className="rounded-lg border border-blue-100 bg-white p-4 shadow-sm"
     >
-      <div className="mb-3 flex items-center gap-2">
-        <BookOpen className="h-4 w-4 text-blue-600" />
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">Index</p>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-blue-600" />
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">Index</p>
+        </div>
+        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+          {toc.length} sections
+        </span>
       </div>
-      <div className={cn("space-y-1", !mobile && "max-h-[calc(100vh-180px)] overflow-y-auto pr-1 [scrollbar-width:thin]")}>
+      <div className="max-h-[calc(100vh-180px)] space-y-1 overflow-y-auto pr-1 [scrollbar-width:thin]">
         {toc.map((item) => {
           const isActive = activeId === item.id;
           return (
             <button
               key={item.id}
               type="button"
+              aria-current={isActive ? "location" : undefined}
               onClick={() => scrollToHeading(item.id)}
               className={cn(
-                "block w-full rounded-xl border-l-2 px-3 py-2 text-left text-sm leading-snug transition",
+                "block min-h-10 w-full rounded-lg border-l-2 px-3 py-2 text-left text-sm leading-snug transition",
                 item.level === 3 && "pl-6 text-[13px]",
                 isActive
                   ? "border-blue-600 bg-blue-50 font-bold text-blue-700"
@@ -313,6 +333,7 @@ export default function BlogPostPage() {
 
   const coverImage = getCoverImage(post);
   const faqItems: BlogFaqItem[] = post.faqItems ?? [];
+  const seoFaqItems = faqItems.filter((faq): faq is { question: string; answer: string } => Boolean(faq.question && faq.answer));
   const highlights = post.keyHighlights ?? [];
   const ctaLabel = post.ctaLabel || "Talk to a CA";
   const ctaHref = post.ctaHref || "/expert-consultation";
@@ -324,13 +345,31 @@ export default function BlogPostPage() {
         description={post.seoDescription || post.excerpt || `Read ${post.title} on MyeCA.in.`}
         keywords={tags}
         type="article"
+        canonicalUrl={post.canonicalUrl || undefined}
+        ogImage={isImageUrl(coverImage) ? coverImage ?? undefined : undefined}
+        faqPageData={seoFaqItems}
         breadcrumbs={[
           { name: "Home", url: "/" },
           { name: "Knowledge Hub", url: "/blog" },
           { name: post.title, url: `/blog/${post.slug}` },
         ]}
+        jsonLd={{
+          datePublished: getPublishedDate(post) ?? undefined,
+          dateModified: post.updatedAt ?? getPublishedDate(post) ?? undefined,
+          author: {
+            "@type": "Person",
+            name: authorName,
+            jobTitle: getAuthorRole(post),
+          },
+          reviewedBy: post.reviewedBy
+            ? {
+                "@type": "Person",
+                name: post.reviewedBy,
+              }
+            : undefined,
+          about: [getCategoryName(post), ...tags].filter(Boolean),
+        }}
       />
-
       <div className="border-b border-blue-100 bg-[#f7fbff]">
         <div className="mx-auto max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8">
           <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
@@ -343,9 +382,9 @@ export default function BlogPostPage() {
         </div>
       </div>
 
-      <main className="mx-auto grid max-w-[1440px] gap-8 px-4 py-8 sm:px-6 lg:px-8 xl:grid-cols-[230px_minmax(0,820px)_300px] xl:items-start">
+      <main className="mx-auto grid max-w-[1680px] gap-8 px-4 py-8 sm:px-6 lg:px-8 xl:grid-cols-[230px_minmax(0,1fr)_300px] 2xl:grid-cols-[260px_minmax(0,1fr)_340px]">
         <aside className="hidden xl:block">
-          <div className="sticky top-24">
+          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-1 [scrollbar-width:thin]">
             <TocPanel toc={toc} activeId={activeTocId} />
           </div>
         </aside>
@@ -356,6 +395,15 @@ export default function BlogPostPage() {
               <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-white">
                 {getCategoryName(post)}
               </span>
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                {getAudienceLabel(post.audience)}
+              </span>
+              {(post.reviewedBy || post.reviewedAt) && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-bold text-blue-700">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Expert reviewed
+                </span>
+              )}
               {tags.slice(0, 4).map((tag) => (
                 <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                   {tag}
@@ -392,6 +440,12 @@ export default function BlogPostPage() {
                 <Clock3 className="h-4 w-4 text-blue-500" />
                 {getReadTime(post)}
               </span>
+              {post.reviewedBy && (
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                  Reviewed by {post.reviewedBy}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={() => window.print()}
@@ -413,8 +467,8 @@ export default function BlogPostPage() {
             </div>
           )}
 
-          <div className="xl:hidden">
-            <TocPanel toc={toc} activeId={activeTocId} mobile />
+          <div className="mt-8 xl:hidden">
+            <TocPanel toc={toc} activeId={activeTocId} />
           </div>
 
           {highlights.length > 0 && (
@@ -454,6 +508,32 @@ export default function BlogPostPage() {
             )}
             dangerouslySetInnerHTML={{ __html: normalizedContent.html }}
           />
+
+          <section className="mt-10 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-7 text-slate-700">
+            <h2 className="text-base font-black text-slate-950">Please note</h2>
+            <p className="mt-2">
+              This guide is for general awareness and may not cover every fact pattern, exception, deadline, or notification. Use professional advice before acting on tax, GST, notice, investment, or compliance decisions.
+            </p>
+            {post.sourceLinks?.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.18em] text-amber-700">Sources</p>
+                <div className="flex flex-wrap gap-2">
+                  {post.sourceLinks.map((source) => (
+                    <a
+                      key={`${source.label}-${source.url}`}
+                      href={source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-white px-3 py-1 text-xs font-bold text-amber-800 hover:border-amber-300"
+                    >
+                      {source.label}
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
 
           <section className="mt-12 overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-600 p-6 text-white shadow-xl shadow-blue-200 sm:p-8">
             <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -547,7 +627,7 @@ export default function BlogPostPage() {
         </article>
 
         <aside className="hidden xl:block">
-          <div className="sticky top-24 space-y-5">
+          <div className="space-y-5">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="border-b border-blue-100 pb-3 text-base font-black text-slate-950">Browse by topics</h2>
               <div className="mt-3 max-h-[360px] space-y-1 overflow-y-auto pr-1 [scrollbar-width:thin]">
@@ -570,6 +650,37 @@ export default function BlogPostPage() {
                 <p><span className="font-bold text-slate-900">Author:</span> {authorName}</p>
                 <p><span className="font-bold text-slate-900">Updated:</span> {formatDate(getPublishedDate(post))}</p>
                 <p><span className="font-bold text-slate-900">Read time:</span> {getReadTime(post)}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="mb-4 text-base font-black text-slate-950">Useful next steps</h2>
+              <div className="space-y-3">
+                <Link href={serviceHref(post.serviceSlug)}>
+                  <span className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span className="inline-flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      Related service
+                    </span>
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+                <Link href={calculatorHref(post.calculatorSlug)}>
+                  <span className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span className="inline-flex items-center gap-2">
+                      <Calculator className="h-4 w-4 text-blue-600" />
+                      Related calculator
+                    </span>
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+                <ActionLink
+                  href={ctaHref}
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700"
+                >
+                  {ctaLabel}
+                  <ArrowRight className="h-4 w-4" />
+                </ActionLink>
               </div>
             </div>
 

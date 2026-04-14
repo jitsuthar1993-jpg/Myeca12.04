@@ -7,6 +7,13 @@ export const blogFaqItemSchema = z.object({
   answer: z.string().trim().min(1),
 });
 
+export const blogAudienceSchema = z.enum(["individuals", "businesses", "both"]);
+
+export const blogSourceLinkSchema = z.object({
+  label: z.string().trim().min(1),
+  url: z.string().trim().min(1),
+});
+
 export const blogTocItemSchema = z.object({
   id: z.string(),
   text: z.string(),
@@ -43,6 +50,13 @@ export const blogPostEditorSchema = z.object({
   readingTimeMinutes: z.number().int().positive().optional().nullable(),
   publishedAt: z.string().trim().optional().nullable(),
   tags: z.array(z.string().trim()).optional().default([]),
+  audience: blogAudienceSchema.optional().nullable(),
+  reviewedBy: z.string().trim().optional().nullable(),
+  reviewedAt: z.string().trim().optional().nullable(),
+  sourceLinks: z.array(blogSourceLinkSchema).optional().default([]),
+  serviceSlug: z.string().trim().optional().nullable(),
+  calculatorSlug: z.string().trim().optional().nullable(),
+  canonicalUrl: z.string().trim().optional().nullable(),
 });
 
 export const blogPostUpdateSchema = blogPostEditorSchema.partial();
@@ -61,6 +75,12 @@ export const publicBlogSummarySchema = z.object({
   publishedAt: z.string().nullable(),
   updatedAt: z.string().nullable(),
   tags: z.array(z.string()),
+  audience: blogAudienceSchema.optional().nullable(),
+  reviewedBy: z.string().optional().nullable(),
+  reviewedAt: z.string().optional().nullable(),
+  serviceSlug: z.string().optional().nullable(),
+  calculatorSlug: z.string().optional().nullable(),
+  canonicalUrl: z.string().optional().nullable(),
 });
 
 export const publicBlogDetailSchema = publicBlogSummarySchema.extend({
@@ -74,9 +94,12 @@ export const publicBlogDetailSchema = publicBlogSummarySchema.extend({
   toc: z.array(blogTocItemSchema),
   ctaLabel: z.string(),
   ctaHref: z.string(),
+  sourceLinks: z.array(blogSourceLinkSchema).optional().default([]),
 });
 
 export type BlogFaqItem = z.infer<typeof blogFaqItemSchema>;
+export type BlogAudience = z.infer<typeof blogAudienceSchema>;
+export type BlogSourceLink = z.infer<typeof blogSourceLinkSchema>;
 export type BlogTocItem = z.infer<typeof blogTocItemSchema>;
 export type BlogCategory = z.infer<typeof blogCategorySchema>;
 export type BlogPostEditorInput = z.infer<typeof blogPostEditorSchema>;
@@ -317,6 +340,16 @@ export function normalizeFaqItems(values: Array<Partial<BlogFaqItem> | null | un
       return question && answer ? { question, answer } : null;
     })
     .filter((item): item is BlogFaqItem => item !== null);
+}
+
+export function normalizeSourceLinks(values: Array<Partial<BlogSourceLink> | null | undefined> | null | undefined): BlogSourceLink[] {
+  return (values ?? [])
+    .map((value): BlogSourceLink | null => {
+      const label = (value?.label ?? "").trim();
+      const url = (value?.url ?? "").trim();
+      return label && url ? { label, url } : null;
+    })
+    .filter((item): item is BlogSourceLink => item !== null);
 }
 
 export function normalizeBlogCta(ctaLabel?: string | null, ctaHref?: string | null) {

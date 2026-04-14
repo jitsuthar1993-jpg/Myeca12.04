@@ -89,6 +89,13 @@ function matchesCategory(post: PublicBlogSummary, categoryFilter: string | undef
   return categoryTokens(post.category).includes(filter);
 }
 
+function matchesAudience(post: PublicBlogSummary, audienceFilter: string | undefined) {
+  const filter = normalizeKey(audienceFilter);
+  if (!filter || filter === "all") return true;
+  if (post.audience === "both") return true;
+  return post.audience === filter;
+}
+
 function matchesSearch(post: PublicBlogSummary, search: string | undefined) {
   const query = normalizeKey(search);
   if (!query) return true;
@@ -114,12 +121,12 @@ const getCachedActiveUpdates = memoize(
 );
 
 const getCachedBlogs = memoize(
-  async (options: { page?: number; limit?: number; category?: string; search?: string } = {}) => {
-    const { page = 1, limit = 12, category, search } = options;
+  async (options: { page?: number; limit?: number; category?: string; search?: string; audience?: string } = {}) => {
+    const { page = 1, limit = 12, category, search, audience } = options;
     const publishedPosts = sortPublishedPosts(await listPublishedBlogPosts());
     const summaries = publishedPosts.map(toPublicBlogSummary);
 
-    const filtered = summaries.filter((post) => matchesCategory(post, category) && matchesSearch(post, search));
+    const filtered = summaries.filter((post) => matchesCategory(post, category) && matchesAudience(post, audience) && matchesSearch(post, search));
     const total = filtered.length;
     const start = (page - 1) * limit;
     const paginatedPosts = filtered.slice(start, start + limit).map(withSummaryCompat);
@@ -207,8 +214,9 @@ router.get("/blogs", async (req, res) => {
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string, 10) || 12));
     const category = typeof req.query.category === "string" ? req.query.category : undefined;
     const search = typeof req.query.search === "string" ? req.query.search : undefined;
+    const audience = typeof req.query.audience === "string" ? req.query.audience : undefined;
 
-    const result = await getCachedBlogs({ page, limit, category, search });
+    const result = await getCachedBlogs({ page, limit, category, search, audience });
     res.set("Cache-Control", CACHE_HEADER);
     res.json({ success: true, ...result });
   } catch (error) {

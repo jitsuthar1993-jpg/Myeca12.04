@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import {
@@ -12,6 +12,7 @@ import {
   Sparkles,
   TrendingUp,
   Users,
+  Building2,
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,8 @@ type BlogSummary = PublicBlogSummary & {
 type BlogListResponse = {
   posts: BlogSummary[];
   total?: number;
+  page?: number;
+  hasMore?: boolean;
 };
 
 type CategoryResponse = {
@@ -45,6 +48,27 @@ const DEFAULT_CATEGORIES = [
   { id: "gst", name: "GST", slug: "gst" },
   { id: "itr-filing", name: "ITR Filing", slug: "itr-filing" },
   { id: "business", name: "Business", slug: "business" },
+];
+
+const AUDIENCE_FILTERS = [
+  { key: "all", label: "All readers", description: "Tax, GST, filing, and compliance guides" },
+  { key: "individuals", label: "Individuals", description: "ITR, refunds, deductions, Form 16, AIS" },
+  { key: "businesses", label: "Businesses", description: "GST, startup, MSME, notices, registrations" },
+];
+
+const HUB_FAQS = [
+  {
+    question: "What should I read first before filing ITR?",
+    answer: "Start with Form 16, AIS/Form 26AS reconciliation, ITR form selection, and old vs new tax regime guides.",
+  },
+  {
+    question: "Can businesses use these guides?",
+    answer: "Yes. The hub includes GST, business registration, MSME, startup, notices, and recurring compliance explainers.",
+  },
+  {
+    question: "When should I talk to a CA?",
+    answer: "Use CA help for capital gains, business income, GST notices, AIS mismatches, foreign assets, large refunds, or missed filings.",
+  },
 ];
 
 function isImageUrl(value: string | null | undefined) {
@@ -198,11 +222,21 @@ function ArticleCard({ post, compact = false }: { post: BlogSummary; compact?: b
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedAudience, setSelectedAudience] = useState("all");
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, selectedCategory, selectedAudience]);
 
   const { data: postsData, isLoading: isLoadingPosts } = useQuery({
-    queryKey: ["public-blogs"],
+    queryKey: ["public-blogs", searchQuery, selectedCategory, selectedAudience, page],
     queryFn: async () => {
-      const res = await fetch("/api/public/blogs?limit=50");
+      const params = new URLSearchParams({ page: String(page), limit: "13" });
+      if (searchQuery.trim()) params.set("search", searchQuery.trim());
+      if (selectedCategory !== "all") params.set("category", selectedCategory);
+      if (selectedAudience !== "all") params.set("audience", selectedAudience);
+      const res = await fetch(`/api/public/blogs?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch blogs");
       return await res.json() as BlogListResponse;
     },
@@ -218,26 +252,10 @@ export default function BlogPage() {
   });
 
   const posts = postsData?.posts ?? [];
+  const totalPosts = postsData?.total ?? posts.length;
   const categories = useMemo(() => normalizeCategories(posts, categoriesData?.categories), [posts, categoriesData?.categories]);
-
-  const filteredPosts = useMemo(() => {
-    const query = normalizeKey(searchQuery);
-    return posts.filter((post) => {
-      const searchable = [
-        post.title,
-        post.excerpt ?? "",
-        getAuthorName(post),
-        getCategoryName(post),
-        ...(post.tags ?? []),
-      ].join(" ").toLowerCase();
-      const matchesSearch = !query || searchable.includes(query);
-      const matchesCategory = selectedCategory === "all" || getCategoryTokens(post).includes(selectedCategory);
-      return matchesSearch && matchesCategory;
-    });
-  }, [posts, searchQuery, selectedCategory]);
-
-  const featuredPost = filteredPosts.find((post) => post.isFeatured) ?? filteredPosts[0];
-  const regularPosts = featuredPost ? filteredPosts.filter((post) => post.id !== featuredPost.id) : filteredPosts;
+  const featuredPost = posts.find((post) => post.isFeatured) ?? posts[0];
+  const regularPosts = featuredPost ? posts.filter((post) => post.id !== featuredPost.id) : posts;
   const popularTopics = categories.slice(0, 8);
 
   return (
@@ -268,10 +286,10 @@ export default function BlogPage() {
                 MyeCA Editorial
               </div>
               <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Tax guides that read clearly and help you act faster.
+                CA-backed tax guides that help you decide, file, and stay compliant.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                Practical explainers on ITR filing, GST, deductions, business compliance, and financial planning, written with CA-backed clarity for Indian taxpayers.
+                Practical explainers on ITR filing, GST, deductions, notices, startup compliance, and business registrations for Indian taxpayers and MSMEs.
               </p>
             </div>
 
@@ -291,7 +309,7 @@ export default function BlogPage() {
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-2xl bg-blue-50 p-3">
-                  <p className="text-xl font-black text-blue-700">{posts.length}</p>
+                  <p className="text-xl font-black text-blue-700">{totalPosts}</p>
                   <p className="text-[11px] font-semibold text-slate-500">Articles</p>
                 </div>
                 <div className="rounded-2xl bg-cyan-50 p-3">
@@ -309,6 +327,31 @@ export default function BlogPage() {
       </section>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+        <div className="mb-6 grid gap-3 md:grid-cols-3">
+          {AUDIENCE_FILTERS.map((audience) => {
+            const active = selectedAudience === audience.key;
+            return (
+              <button
+                key={audience.key}
+                type="button"
+                onClick={() => setSelectedAudience(audience.key)}
+                className={cn(
+                  "rounded-2xl border p-4 text-left transition",
+                  active
+                    ? "border-blue-600 bg-white shadow-lg shadow-blue-100"
+                    : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-white",
+                )}
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  {audience.key === "businesses" ? <Building2 className="h-4 w-4 text-blue-600" /> : <Users className="h-4 w-4 text-blue-600" />}
+                  <span className="text-sm font-black text-slate-950">{audience.label}</span>
+                </div>
+                <p className="text-xs leading-5 text-slate-500">{audience.description}</p>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="mb-8 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button
             type="button"
@@ -347,7 +390,7 @@ export default function BlogPage() {
             <Loader2 className="mb-4 h-8 w-8 animate-spin text-blue-600" />
             <p className="text-sm font-semibold text-slate-500">Loading expert guides...</p>
           </div>
-        ) : filteredPosts.length === 0 ? (
+        ) : posts.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-blue-200 bg-white p-10 text-center">
             <Search className="mx-auto mb-4 h-10 w-10 text-blue-300" />
             <h2 className="text-2xl font-bold text-slate-950">No guides found</h2>
@@ -359,6 +402,7 @@ export default function BlogPage() {
               onClick={() => {
                 setSearchQuery("");
                 setSelectedCategory("all");
+                setSelectedAudience("all");
               }}
               className="mt-6 rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
             >
@@ -420,6 +464,30 @@ export default function BlogPage() {
                   <ArticleCard key={post.id} post={post} />
                 ))}
               </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-4">
+                <p className="text-sm font-semibold text-slate-500">
+                  Page {page} · {totalPosts} matching guides
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    disabled={page === 1}
+                    onClick={() => setPage((current) => Math.max(1, current - 1))}
+                    className="rounded-full border border-slate-200 px-5 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!postsData?.hasMore}
+                    onClick={() => setPage((current) => current + 1)}
+                    className="rounded-full bg-blue-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
 
             <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -465,6 +533,26 @@ export default function BlogPage() {
             </aside>
           </div>
         )}
+
+        <section className="mt-14 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">Quick answers</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">Frequently asked questions</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Use the hub for general education. Use a MyeCA expert when the facts, numbers, or notices are specific to your case.
+            </p>
+          </div>
+          <div className="divide-y divide-slate-100 overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            {HUB_FAQS.map((faq) => (
+              <details key={faq.question} className="group p-5 open:bg-blue-50/40">
+                <summary className="cursor-pointer list-none text-base font-bold text-slate-950 marker:hidden">
+                  {faq.question}
+                </summary>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );

@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import {
   type BlogCategory,
   type BlogFaqItem,
+  type BlogSourceLink,
   type BlogPostEditorInput,
   estimateReadingTimeMinutes,
   normalizeBlogContent,
@@ -55,6 +56,13 @@ type CmsPost = {
   updatedAt: string | null;
   createdAt?: string | null;
   tags: string[];
+  audience?: "individuals" | "businesses" | "both" | null;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  sourceLinks?: BlogSourceLink[];
+  serviceSlug?: string | null;
+  calculatorSlug?: string | null;
+  canonicalUrl?: string | null;
 };
 
 type EditorState = {
@@ -79,9 +87,17 @@ type EditorState = {
   readingTimeMinutes: string;
   publishedAt: string;
   tags: string[];
+  audience: "individuals" | "businesses" | "both";
+  reviewedBy: string;
+  reviewedAt: string;
+  sourceLinks: BlogSourceLink[];
+  serviceSlug: string;
+  calculatorSlug: string;
+  canonicalUrl: string;
 };
 
 const emptyFaq = (): BlogFaqItem => ({ question: "", answer: "" });
+const emptySource = (): BlogSourceLink => ({ label: "", url: "" });
 const toDateInput = (value?: string | null) => (value ? new Date(value).toISOString().slice(0, 10) : "");
 const formatDate = (value?: string | null) => {
   if (!value) return "Draft";
@@ -114,6 +130,13 @@ function makeState(post: Partial<CmsPost> | null, user: any): EditorState {
     readingTimeMinutes: post?.readingTimeMinutes ? String(post.readingTimeMinutes) : "",
     publishedAt: toDateInput(post?.publishedAt),
     tags: post?.tags?.length ? post.tags : [],
+    audience: post?.audience ?? "both",
+    reviewedBy: post?.reviewedBy ?? "",
+    reviewedAt: toDateInput(post?.reviewedAt),
+    sourceLinks: post?.sourceLinks?.length ? post.sourceLinks : [emptySource()],
+    serviceSlug: post?.serviceSlug ?? "",
+    calculatorSlug: post?.calculatorSlug ?? "",
+    canonicalUrl: post?.canonicalUrl ?? "",
   };
 }
 
@@ -140,6 +163,13 @@ function toPayload(state: EditorState): BlogPostEditorInput {
     readingTimeMinutes: state.readingTimeMinutes ? Number(state.readingTimeMinutes) : null,
     publishedAt: state.publishedAt || null,
     tags: normalizeStringArray(state.tags),
+    audience: state.audience,
+    reviewedBy: state.reviewedBy.trim() || null,
+    reviewedAt: state.reviewedAt || null,
+    sourceLinks: state.sourceLinks.map((source) => ({ label: source.label.trim(), url: source.url.trim() })).filter((source) => source.label && source.url),
+    serviceSlug: state.serviceSlug.trim() || null,
+    calculatorSlug: state.calculatorSlug.trim() || null,
+    canonicalUrl: state.canonicalUrl.trim() || null,
   };
 }
 
@@ -256,6 +286,31 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
                   <div className="space-y-3"><div className="flex gap-3"><Input value={tagInput} onChange={(e) => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); const next = tagInput.trim(); if (next && !state.tags.includes(next)) { setField("tags", [...state.tags, next]); setTagInput(""); } } }} /><Button variant="outline" className="rounded-full" onClick={() => { const next = tagInput.trim(); if (next && !state.tags.includes(next)) { setField("tags", [...state.tags, next]); setTagInput(""); } }}>Add</Button></div><div className="flex flex-wrap gap-2">{state.tags.map((tag) => <Badge key={tag} variant="secondary" className="cursor-pointer rounded-full px-3 py-1" onClick={() => setField("tags", state.tags.filter((item) => item !== tag))}>{tag}</Badge>)}</div></div>
                 </CardContent></Card>
 
+                <Card className="rounded-3xl border-slate-200"><CardHeader><CardTitle>Growth metadata</CardTitle></CardHeader><CardContent className="space-y-4">
+                  <Select value={state.audience} onValueChange={(value: "individuals" | "businesses" | "both") => setField("audience", value)}>
+                    <SelectTrigger><SelectValue placeholder="Audience" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="both">Taxpayers and businesses</SelectItem>
+                      <SelectItem value="individuals">Individual taxpayers</SelectItem>
+                      <SelectItem value="businesses">Businesses and MSMEs</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input value={state.reviewedBy} onChange={(e) => setField("reviewedBy", e.target.value)} placeholder="Reviewed by" />
+                    <Input type="date" value={state.reviewedAt} onChange={(e) => setField("reviewedAt", e.target.value)} />
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input value={state.serviceSlug} onChange={(e) => setField("serviceSlug", e.target.value)} placeholder="Related service slug" />
+                    <Input value={state.calculatorSlug} onChange={(e) => setField("calculatorSlug", e.target.value)} placeholder="Related calculator slug" />
+                  </div>
+                  <Input value={state.canonicalUrl} onChange={(e) => setField("canonicalUrl", e.target.value)} placeholder="Canonical URL, if different" />
+                  <Separator />
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between"><Label>Source links</Label><Button variant="outline" className="rounded-full" onClick={() => setField("sourceLinks", [...state.sourceLinks, emptySource()])}><Plus className="mr-2 h-4 w-4" />Add</Button></div>
+                    {state.sourceLinks.map((source, index) => <div key={`source-${index}`} className="space-y-3 rounded-2xl border border-slate-200 p-3"><Input value={source.label} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], label: e.target.value }; setField("sourceLinks", next); }} placeholder="Source label" /><Input value={source.url} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], url: e.target.value }; setField("sourceLinks", next); }} placeholder="https://..." /><Button variant="outline" className="rounded-full" onClick={() => setField("sourceLinks", state.sourceLinks.filter((_, i) => i !== index))}>Remove source</Button></div>)}
+                  </div>
+                </CardContent></Card>
+
                 <Card className="rounded-3xl border-slate-200"><CardHeader><CardTitle>Related posts and CTA</CardTitle></CardHeader><CardContent className="space-y-4">
                   <Input value={relatedQuery} onChange={(e) => setRelatedQuery(e.target.value)} placeholder="Search published articles" />
                   <div className="max-h-64 space-y-3 overflow-y-auto">{filteredRelated.map((item) => <label key={item.id} className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-3 transition hover:border-blue-200 hover:bg-blue-50/40"><Checkbox checked={state.relatedPostIds.includes(item.id)} onCheckedChange={() => setField("relatedPostIds", state.relatedPostIds.includes(item.id) ? state.relatedPostIds.filter((id) => id !== item.id) : [...state.relatedPostIds, item.id])} /><div><p className="font-medium text-slate-900">{item.title}</p><p className="text-sm text-slate-500">{item.category?.name || "Uncategorized"} · {item.authorName}</p></div></label>)}</div>
@@ -269,7 +324,7 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
         </TabsContent>
 
         <TabsContent value="preview" className="min-h-0 flex-1 overflow-auto bg-white data-[state=inactive]:hidden">
-          <BlogArticle post={{ title: state.title || "Untitled article", slug: state.slug || "preview", excerpt: state.excerpt || null, category: categories.find((category) => category.id === state.categoryId) ?? null, coverImage: state.coverImage || null, authorName: state.authorName || "MyeCA Editorial Team", authorRole: state.authorRole || null, authorBio: state.authorBio || null, publishedAt: state.publishedAt || null, readingTimeMinutes: readingTime, content: state.content, keyHighlights: normalizeStringArray(state.keyHighlights), faqItems: state.faqItems.filter((faq) => faq.question.trim() && faq.answer.trim()), relatedPosts: related, toc, ctaLabel: state.ctaLabel || undefined, ctaHref: state.ctaHref || undefined }} isPreview />
+          <BlogArticle post={{ title: state.title || "Untitled article", slug: state.slug || "preview", excerpt: state.excerpt || null, category: categories.find((category) => category.id === state.categoryId) ?? null, coverImage: state.coverImage || null, authorName: state.authorName || "MyeCA Editorial Team", authorRole: state.authorRole || null, authorBio: state.authorBio || null, publishedAt: state.publishedAt || null, readingTimeMinutes: readingTime, content: state.content, keyHighlights: normalizeStringArray(state.keyHighlights), faqItems: state.faqItems.filter((faq) => faq.question.trim() && faq.answer.trim()), relatedPosts: related, toc, ctaLabel: state.ctaLabel || undefined, ctaHref: state.ctaHref || undefined, audience: state.audience, reviewedBy: state.reviewedBy || null, reviewedAt: state.reviewedAt || null, sourceLinks: state.sourceLinks.filter((source) => source.label.trim() && source.url.trim()), serviceSlug: state.serviceSlug || null, calculatorSlug: state.calculatorSlug || null, canonicalUrl: state.canonicalUrl || null }} isPreview />
         </TabsContent>
       </Tabs>
     </div>

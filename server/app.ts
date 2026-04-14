@@ -25,10 +25,18 @@ app.use(compress());
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
 
-// Only attach Clerk middleware when the secret key is available;
-// without it, public routes still work — auth-protected routes will 401.
-if (process.env.CLERK_SECRET_KEY) {
-  app.use(clerkMiddleware());
+const clerkPublishableKey =
+  process.env.CLERK_PUBLISHABLE_KEY ||
+  process.env.VITE_CLERK_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+// Only attach Clerk middleware when the keys are available;
+// without them, public routes still work — auth-protected routes will 401.
+if (process.env.CLERK_SECRET_KEY && clerkPublishableKey) {
+  app.use(clerkMiddleware({
+    secretKey: process.env.CLERK_SECRET_KEY,
+    publishableKey: clerkPublishableKey,
+  }));
 }
 
 app.use(

@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import ShareButtons from "@/components/ShareButtons";
 import BlogCard from "@/components/blog/BlogCard";
 import { cn } from "@/lib/utils";
-import { type BlogTocItem, type PublicBlogDetail, type PublicBlogSummary, normalizeBlogContent } from "@shared/blog";
+import { type BlogSourceLink, type BlogTocItem, type PublicBlogDetail, type PublicBlogSummary, normalizeBlogContent } from "@shared/blog";
 
 export interface EditorialArticleData {
   id?: string;
@@ -32,6 +32,13 @@ export interface EditorialArticleData {
   relatedPosts?: PublicBlogSummary[];
   ctaLabel?: string;
   ctaHref?: string;
+  audience?: "individuals" | "businesses" | "both" | null;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  sourceLinks?: BlogSourceLink[];
+  serviceSlug?: string | null;
+  calculatorSlug?: string | null;
+  canonicalUrl?: string | null;
 }
 
 interface BlogArticleProps {
@@ -73,6 +80,12 @@ function ActionLink({ href, label, variant = "solid", size = "md" }: {
   return <a href={href} className={cls} rel="noreferrer" target="_blank">{label}</a>;
 }
 
+function scrollToTocTarget(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: "smooth" });
+}
+
 /* ──────────────────────────── Reading Progress Bar ──────────────────────────── */
 function ReadingProgressBar({ articleRef }: { articleRef: React.RefObject<HTMLElement | null> }) {
   const [progress, setProgress] = useState(0);
@@ -102,6 +115,66 @@ function ReadingProgressBar({ articleRef }: { articleRef: React.RefObject<HTMLEl
   );
 }
 
+function FixedMobileIndex({ toc, activeId }: { toc: BlogTocItem[]; activeId: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const activeItem = toc.find((item) => item.id === activeId) ?? toc[0];
+
+  if (toc.length === 0) return null;
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur lg:hidden">
+      <div className="mx-auto max-w-7xl px-4 py-3 pr-24 sm:px-6">
+        <button
+          type="button"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen((open) => !open)}
+          className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 text-left"
+        >
+          <span className="flex min-w-0 items-center gap-2">
+            <BookOpen className="h-4 w-4 shrink-0 text-blue-600" />
+            <span className="min-w-0">
+              <span className="block text-[10px] font-black uppercase tracking-[2px] text-slate-400">Index</span>
+              <span className="block truncate text-sm font-semibold text-slate-900">{activeItem?.text ?? "Sections"}</span>
+            </span>
+          </span>
+          <ChevronRight className={cn("h-4 w-4 shrink-0 text-slate-400 transition", isOpen ? "-rotate-90" : "rotate-90")} />
+        </button>
+
+        {isOpen && (
+          <nav aria-label="Article sections" className="mt-3 max-h-72 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+            <ul className="space-y-1">
+              {toc.map((item) => {
+                const isActive = activeId === item.id;
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      aria-current={isActive ? "location" : undefined}
+                      onClick={() => {
+                        scrollToTocTarget(item.id);
+                        setIsOpen(false);
+                      }}
+                      className={cn(
+                        "min-h-10 w-full rounded-lg px-3 py-2 text-left text-sm leading-snug transition",
+                        item.level === 3 ? "pl-6" : "",
+                        isActive
+                          ? "bg-blue-50 font-semibold text-blue-700"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+                      )}
+                    >
+                      {item.text}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ──────────────────────────── Right Sidebar ──────────────────────────── */
 function RightSidebar({
   post,
@@ -118,34 +191,34 @@ function RightSidebar({
   activeTab: "related" | "info";
   onTabChange: (tab: "related" | "info") => void;
 }) {
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: "smooth" });
-  };
-
   return (
     <div className="space-y-5">
       {/* ── "In this article" TOC — always visible ── */}
       {toc.length > 0 && (
-        <nav aria-label="Table of contents" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <BookOpen className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2px]">In this article</p>
+        <nav aria-label="Table of contents" className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-3.5 w-3.5 shrink-0 text-blue-500" />
+              <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Index</p>
+            </div>
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+              {toc.length} sections
+            </span>
           </div>
-          <ul className="space-y-0.5">
+          <ul className="max-h-[50vh] space-y-1 overflow-y-auto pr-1">
             {toc.map((item) => {
               const isActive = activeId === item.id;
               return (
                 <li key={item.id}>
                   <button
                     type="button"
-                    onClick={() => scrollTo(item.id)}
+                    aria-current={isActive ? "location" : undefined}
+                    onClick={() => scrollToTocTarget(item.id)}
                     className={cn(
-                      "w-full text-left py-1.5 px-3 text-[13px] rounded-lg transition-all duration-200 border-l-2 leading-snug",
+                      "min-h-9 w-full rounded-lg border-l-2 px-3 py-2 text-left text-[13px] leading-snug transition-all duration-200",
                       item.level === 3 ? "pl-5" : "",
                       isActive
-                        ? "border-blue-500 bg-blue-50 text-blue-700 font-semibold"
+                        ? "border-blue-500 bg-blue-50 font-semibold text-blue-700"
                         : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-200 hover:bg-slate-50",
                     )}
                   >
@@ -325,8 +398,9 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
   }, []);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen pb-24 lg:pb-0">
       <ReadingProgressBar articleRef={articleRef} />
+      <FixedMobileIndex toc={toc} activeId={activeId} />
 
       {/* Hero / Banner */}
       <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600">
@@ -459,32 +533,6 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
 
           {/* ── ARTICLE (full width left) ── */}
           <article ref={articleRef} className="min-w-0">
-
-            {/* Inline TOC for mobile/tablet (lg:hidden) */}
-            {toc.length > 0 && (
-              <div className="mb-8 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 lg:hidden">
-                <p className="text-[11px] font-black text-blue-400 uppercase tracking-[2px] mb-3">In this article</p>
-                <ul className="space-y-2">
-                  {toc.map((item) => (
-                    <li key={item.id}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const el = document.getElementById(item.id);
-                          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: "smooth" });
-                        }}
-                        className={cn(
-                          "text-sm text-left text-blue-700 hover:text-blue-900 hover:underline transition",
-                          item.level === 3 ? "pl-4" : "",
-                        )}
-                      >
-                        {item.text}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
             {/* Prose content */}
             <div
@@ -660,7 +708,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-blue-100 transition-all"
+          className="fixed bottom-24 right-6 z-50 w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-blue-100 transition-all lg:bottom-6"
           aria-label="Back to top"
         >
           <ArrowUp className="w-5 h-5" />
