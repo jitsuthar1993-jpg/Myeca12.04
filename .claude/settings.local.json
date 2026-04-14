@@ -33,7 +33,9 @@
       "Bash(vercel --prod --yes)",
       "Bash(grep -r '\"react\"' node_modules/*/package.json)",
       "Bash(git rm:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)"
     ]
   }
 }

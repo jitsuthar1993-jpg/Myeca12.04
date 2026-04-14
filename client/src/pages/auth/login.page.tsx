@@ -1,5 +1,4 @@
 import { ClerkLoaded, ClerkLoading, SignIn } from '@clerk/clerk-react';
-import { CalendarCheck2, FileCheck2, ShieldCheck } from 'lucide-react';
 import {
   AuthFormSkeleton,
   AuthPageShell,
@@ -25,24 +24,6 @@ const reasonCopy: Record<string, { title: string; message: string }> = {
   },
 };
 
-const loginSteps = [
-  {
-    title: 'Verify your identity',
-    description: 'Sign in securely before opening tax documents or saved returns.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Resume your ITR',
-    description: 'Continue Form 16, AIS, deductions, refund tracking, or CA review.',
-    icon: FileCheck2,
-  },
-  {
-    title: 'File with confidence',
-    description: 'Submit after checks for tax regime, deductions, and common errors.',
-    icon: CalendarCheck2,
-  },
-];
-
 export default function LoginPage() {
   const params = new URLSearchParams(window.location.search);
   const redirectUrl = params.get('redirect_url') || '/dashboard';
@@ -56,14 +37,13 @@ export default function LoginPage() {
       title="Welcome back"
       description="Continue your income tax return, refund estimate, documents, and CA review."
       notice={reasonState}
-      panelTitle="Your data, your return"
-      panelDescription="MyeCA keeps PAN, Form 16, AIS, deductions, and refund details protected while your return moves forward."
+      panelTitle="Keep these ready"
+      panelDescription="Use these details to continue ITR filing without delays."
       primaryLink={{
         href: signUpUrl,
         text: 'New to MyeCA?',
         label: 'Create an account',
       }}
-      steps={loginSteps}
     >
       <ClerkLoading>
         <AuthFormSkeleton />

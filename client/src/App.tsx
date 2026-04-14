@@ -1,41 +1,54 @@
-import { useLocation } from "wouter";
-import { useState, useEffect } from "react";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { useLocation } from 'wouter';
+import { useState, useEffect } from 'react';
+import { queryClient } from './lib/queryClient';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { HelmetProvider } from 'react-helmet-async';
 import { useAnalyticsInitialization, usePageTracking } from '@/hooks/use-analytics';
-import { LanguageProvider } from "@/contexts/LanguageContext";
-import { AccessibilityProvider } from "@/components/accessibility/AccessibilityProvider";
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider';
 import { Suspense, lazy } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import { SafeAuthProvider } from "@/components/AuthProvider";
-import Routes from "./Routes";
-import { LazyMotion, domAnimation } from "framer-motion";
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { SafeAuthProvider } from '@/components/AuthProvider';
+import Routes from './Routes';
+import { LazyMotion, domAnimation } from 'framer-motion';
 
-const UnifiedFAB = lazy(() => import("@/components/UnifiedFAB").then(m => ({ default: m.UnifiedFAB })));
-const GlobalSearch = lazy(() => import("@/components/search/GlobalSearch"));
-const KeyboardShortcutsModal = lazy(() => import("@/components/keyboard/KeyboardShortcutsModal"));
-const TaxChatbotWidget = lazy(() => import("@/components/chat/TaxChatbot").then(m => ({ default: m.TaxChatbot })));
-const ProdOnlyComponents = lazy(() => import("@/components/ProdOnlyComponents"));
+const UnifiedFAB = lazy(() =>
+  import('@/components/UnifiedFAB').then((m) => ({ default: m.UnifiedFAB }))
+);
+const GlobalSearch = lazy(() => import('@/components/search/GlobalSearch'));
+const KeyboardShortcutsModal = lazy(() => import('@/components/keyboard/KeyboardShortcutsModal'));
+const TaxChatbotWidget = lazy(() =>
+  import('@/components/chat/TaxChatbot').then((m) => ({ default: m.TaxChatbot }))
+);
+const ProdOnlyComponents = lazy(() => import('@/components/ProdOnlyComponents'));
 
 const AppLoading = () => <PageSkeleton />;
+const authLayoutRoutes = ['/login', '/register', '/forgot-password'];
+
+function isAuthLayoutPath(path: string) {
+  return path.startsWith('/auth/') || authLayoutRoutes.includes(path);
+}
 
 function ScrollToTop() {
   const [location] = useLocation();
-  
+
   useEffect(() => {
     // Scroll to top on location change, unless there's a hash (anchor link)
     if (!window.location.hash) {
       const scroll = () => {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
         // Fallback for document.documentElement just in case
-        document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+        document.documentElement.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'instant' as ScrollBehavior,
+        });
       };
 
       // Execute immediately and then after a small delay to handle content popping in
@@ -50,8 +63,8 @@ function ScrollToTop() {
 
 function Router() {
   const currentPath = window.location.pathname;
-  const showLayoutComponents = !currentPath.startsWith('/auth/') && !currentPath.startsWith('/admin');
-  
+  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !currentPath.startsWith('/admin');
+
   useRoutePreload();
 
   return (
@@ -68,9 +81,11 @@ function Router() {
 }
 
 function AppContent() {
+  const [location] = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const isAuthScreen = isAuthLayoutPath(location);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -146,22 +161,26 @@ function AppContent() {
           <ProdOnlyComponents />
         </Suspense>
       )}
-      <ErrorBoundary fallback={null}>
-        <Suspense fallback={null}>
-          <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-        </Suspense>
-      </ErrorBoundary>
+      {!isAuthScreen && (
+        <ErrorBoundary fallback={null}>
+          <Suspense fallback={null}>
+            <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+          </Suspense>
+        </ErrorBoundary>
+      )}
 
-      <ErrorBoundary fallback={null}>
-        <Suspense fallback={null}>
-          <UnifiedFAB
-            onChatbotOpen={() => setIsChatbotOpen(true)}
-            isChatbotOpen={isChatbotOpen}
-          />
-        </Suspense>
-      </ErrorBoundary>
+      {!isAuthScreen && (
+        <ErrorBoundary fallback={null}>
+          <Suspense fallback={null}>
+            <UnifiedFAB
+              onChatbotOpen={() => setIsChatbotOpen(true)}
+              isChatbotOpen={isChatbotOpen}
+            />
+          </Suspense>
+        </ErrorBoundary>
+      )}
 
-      {isChatbotOpen && (
+      {!isAuthScreen && isChatbotOpen && (
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
             <TaxChatbotWidget isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
@@ -171,7 +190,10 @@ function AppContent() {
 
       <ErrorBoundary fallback={null}>
         <Suspense fallback={null}>
-          <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
+          <KeyboardShortcutsModal
+            isOpen={isShortcutsOpen}
+            onClose={() => setIsShortcutsOpen(false)}
+          />
         </Suspense>
       </ErrorBoundary>
     </LazyMotion>
