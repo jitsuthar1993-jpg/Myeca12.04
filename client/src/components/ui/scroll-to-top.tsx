@@ -45,15 +45,12 @@ export const ScrollToTop: React.FC<ScrollToTopProps> = ({
           whileTap={{ scale: 0.95 }}
           onClick={scrollToTop}
           className={cn(
-            'fixed bottom-8 right-8 z-50 p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 backdrop-blur-sm border border-white/10',
+            'fixed bottom-8 right-8 z-50 p-3 bg-[#003087] text-white rounded-full shadow-lg hover:shadow-xl hover:bg-[#00236B] transition-all duration-300',
             className
           )}
           aria-label="Scroll to top"
         >
           <ArrowUp className="w-5 h-5" />
-          
-          {/* Pulse ring effect */}
-          <div className="absolute inset-0 rounded-full bg-indigo-400 animate-ping opacity-20"></div>
         </m.button>
       )}
     </AnimatePresence>

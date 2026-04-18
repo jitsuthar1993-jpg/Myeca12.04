@@ -7,11 +7,6 @@ import { Link } from "wouter";
 export default function HeroSection() {
   return (
     <section className="relative gradient-hero py-10 overflow-hidden">
-      {/* Background blurs — CSS-only for better perf, will-change for GPU compositing */}
-      <div className="absolute inset-0" aria-hidden="true">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-full blur-2xl will-change-transform animate-float"></div>
-        <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-indigo-600/15 to-blue-600/15 rounded-full blur-2xl will-change-transform animate-float" style={{ animationDelay: '2s' }}></div>
-      </div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* Left Content */}
@@ -22,7 +17,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              India's First <span className="text-gradient">AI-Powered Tax Assistant</span>
+              India's First <span className="text-[#003087]">AI-Powered Tax Assistant</span>
             </m.h1>
             
             <m.p
@@ -31,7 +26,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              File ITR in <span className="text-gradient font-bold">3 Minutes</span> with MyeCA.in
+              File ITR in <span className="text-[#003087] font-bold">3 Minutes</span> with MyeCA.in
             </m.p>
             
             <m.p
@@ -115,8 +110,8 @@ export default function HeroSection() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Step 1 */}
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 gradient-primary rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">1</span>
                   </div>
                 </div>
@@ -126,8 +121,8 @@ export default function HeroSection() {
 
               {/* Step 2 */}
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 gradient-primary rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">2</span>
                   </div>
                 </div>
@@ -137,8 +132,8 @@ export default function HeroSection() {
 
               {/* Step 3 */}
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-indigo-600/20 to-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 gradient-primary rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">3</span>
                   </div>
                 </div>
@@ -148,8 +143,8 @@ export default function HeroSection() {
 
               {/* Step 4 */}
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 gradient-primary rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">4</span>
                   </div>
                 </div>
@@ -161,15 +156,15 @@ export default function HeroSection() {
             {/* Additional Info */}
             <div className="flex justify-center items-center space-x-6 mt-6 pt-4 border-t border-gray-200">
               <div className="text-center">
-                <div className="text-lg font-bold bg-gradient-to-r from-brand-teal to-brand-orange bg-clip-text text-transparent">15 Min</div>
+                <div className="text-lg font-bold text-[#003087]">15 Min</div>
                 <div className="text-xs text-gray-600">Filing Time</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold bg-gradient-to-r from-brand-orange to-brand-teal bg-clip-text text-transparent">DIY</div>
+                <div className="text-lg font-bold text-[#003087]">DIY</div>
                 <div className="text-xs text-gray-600">Coming Soon</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold bg-gradient-to-r from-brand-teal to-brand-orange bg-clip-text text-transparent">100+</div>
+                <div className="text-lg font-bold text-[#003087]">100+</div>
                 <div className="text-xs text-gray-600">Companies</div>
               </div>
             </div>

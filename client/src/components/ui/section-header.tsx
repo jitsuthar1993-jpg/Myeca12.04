@@ -39,7 +39,7 @@ export function SectionHeader({
       >
         {title}
         {highlight ? (
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> {highlight}</span>
+          <span className="text-[#003087]"> {highlight}</span>
         ) : null}
       </h1>
 

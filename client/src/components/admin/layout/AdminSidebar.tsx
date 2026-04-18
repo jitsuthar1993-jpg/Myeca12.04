@@ -86,14 +86,14 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-xl transform transition-transform duration-300 z-50',
+          'fixed left-0 top-0 h-full w-64 bg-[#003087] text-white shadow-xl transform transition-transform duration-300 z-50',
           'lg:translate-x-0 lg:relative lg:z-auto',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo/Header */}
-          <div className="flex items-center justify-between p-6 border-b border-indigo-500/50">
+          <div className="flex items-center justify-between p-6 border-b border-white/20">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
                 <Shield className="h-6 w-6 text-white" />
