@@ -14,7 +14,12 @@ import { calculateEnhancedSIP, formatCurrency, CURRENT_RATES } from "@/lib/enhan
 import { SIPGrowthChart } from "@/components/ui/calculator-chart";
 import { CalculatorHeader } from "@/components/ui/calculator-header";
 
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import Breadcrumb from "@/components/Breadcrumb";
+
 export default function EnhancedSIPCalculator() {
+  const seo = getSEOConfig('/calculators/sip');
   const [monthlyAmount, setMonthlyAmount] = useState(5000);
   const [years, setYears] = useState(10);
   const [expectedReturn, setExpectedReturn] = useState(12);
@@ -58,8 +63,32 @@ export default function EnhancedSIPCalculator() {
   ];
 
   return (
-    <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
-      <div className="max-w-6xl mx-auto">
+    <>
+      <MetaSEO
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={[
+          {
+            question: "What is SIP and how does it work?",
+            answer: "SIP (Systematic Investment Plan) is a method of investing in mutual funds where you invest a fixed amount regularly. It helps in rupee cost averaging and benefits from the power of compounding."
+          },
+          {
+            question: "Is 12% return realistic for SIP in India?",
+            answer: "Historically, Indian equity mutual funds have delivered 12-15% CAGR over long periods (7+ years). However, returns are not guaranteed and depend on market performance."
+          },
+          {
+            question: "Can I stop my SIP anytime?",
+            answer: "Yes, most mutual fund SIPs are flexible. You can stop, pause, or increase/decrease the amount at any time without any penalty from the fund house."
+          }
+        ]}
+      />
+      <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "SIP Calculator" }]} />
+        <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
         <CalculatorHeader
           icon={TrendingUp}
@@ -286,5 +315,6 @@ colorTheme="blue"                     value={[expectedReturn]}
         </div>
       </div>
     </div>
+    </>
   );
 }

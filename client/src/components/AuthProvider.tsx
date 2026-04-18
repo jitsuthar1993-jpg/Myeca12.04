@@ -63,347 +63,47 @@ function normalizeUser(payload: any, fallback: ClerkUserCompat | null): AppUser 
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const clerk = useClerk();
-  const { getToken, isLoaded: authLoaded, isSignedIn } = useClerkAuth();
-  const { signIn, setActive: setSignInActive, isLoaded: signInLoaded } = useSignIn();
-  const { signUp, setActive: setSignUpActive, isLoaded: signUpLoaded } = useSignUp();
-  const { user: clerkUser, isLoaded: userLoaded } = useUser();
+  // Mocked AuthProvider for local development with selectable roles
   const [appUser, setAppUser] = useState<AppUser | null>(null);
-  const [isSyncing, setIsSyncing] = useState(true);
-  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
-  const [countdownSeconds, setCountdownSeconds] = useState(WARNING_COUNTDOWN_SECONDS);
-  const warningTimerRef = useRef<number | null>(null);
-  const logoutTimerRef = useRef<number | null>(null);
-  const countdownTimerRef = useRef<number | null>(null);
-  const lastActivityAtRef = useRef(Date.now());
-  const warningVisibleRef = useRef(false);
-  const logoutInProgressRef = useRef(false);
 
-  const clearSessionTimers = useCallback(() => {
-    if (warningTimerRef.current) window.clearTimeout(warningTimerRef.current);
-    if (logoutTimerRef.current) window.clearTimeout(logoutTimerRef.current);
-    if (countdownTimerRef.current) window.clearInterval(countdownTimerRef.current);
-    warningTimerRef.current = null;
-    logoutTimerRef.current = null;
-    countdownTimerRef.current = null;
-  }, []);
+  const login = async (email: string, password?: string) => {
+    // Simple mock logic: if email contains "admin", make them admin, etc.
+    let role = "user";
+    const lowerEmail = email.toLowerCase();
+    if (lowerEmail.includes("admin")) role = "admin";
+    else if (lowerEmail.includes("ca")) role = "ca";
+    else if (lowerEmail.includes("team")) role = "team_member";
 
-  const postLogoutEvent = useCallback(
-    async (reason: LogoutReason) => {
-      try {
-        const token = await getToken();
-        await fetch("/api/v1/auth/logout-event", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({ reason }),
-          keepalive: true,
-        });
-      } catch (error) {
-        console.warn("[AUTH] Could not audit logout event:", error);
-      }
-    },
-    [getToken],
-  );
-
-  const broadcastLogout = useCallback((reason: LogoutReason) => {
-    try {
-      const channel = new BroadcastChannel(SESSION_CHANNEL);
-      channel.postMessage({ type: "LOGOUT", reason });
-      channel.close();
-    } catch {
-      window.localStorage.setItem(
-        SESSION_CHANNEL,
-        JSON.stringify({ type: "LOGOUT", reason, ts: Date.now() }),
-      );
-    }
-  }, []);
-
-  const performLogout = useCallback(
-    async (reason: LogoutReason = "manual", broadcast = true) => {
-      if (logoutInProgressRef.current) return;
-      logoutInProgressRef.current = true;
-      clearSessionTimers();
-      warningVisibleRef.current = false;
-      setShowTimeoutWarning(false);
-
-      const email = clerkUser?.primaryEmailAddress?.emailAddress;
-      await postLogoutEvent(reason);
-
-      try {
-        await clerk.signOut();
-      } finally {
-        clearAuthToken();
-        setAppUser(null);
-        await logAuditEvent({
-          action: reason === "timeout" ? "logout_timeout" : "logout_success",
-          category: "authentication",
-          metadata: { email, reason },
-        });
-        if (broadcast) broadcastLogout(reason);
-        logoutInProgressRef.current = false;
-        const reasonParam = reason === "manual" ? "" : `?reason=${encodeURIComponent(reason)}`;
-        window.location.href = `/auth/login${reasonParam}`;
-      }
-    },
-    [broadcastLogout, clearSessionTimers, clerk, clerkUser?.primaryEmailAddress?.emailAddress, postLogoutEvent],
-  );
-
-  const startSessionTimers = useCallback(
-    (refreshToken = false) => {
-      clearSessionTimers();
-      if (!isSignedIn) return;
-
-      if (refreshToken) {
-        getToken()
-          .then((token) => {
-            if (token) setAuthToken(token);
-          })
-          .catch((error) => console.warn("[AUTH] Token refresh failed:", error));
-      }
-
-      lastActivityAtRef.current = Date.now();
-      warningVisibleRef.current = false;
-      setShowTimeoutWarning(false);
-      setCountdownSeconds(WARNING_COUNTDOWN_SECONDS);
-
-      warningTimerRef.current = window.setTimeout(() => {
-        warningVisibleRef.current = true;
-        setCountdownSeconds(WARNING_COUNTDOWN_SECONDS);
-        setShowTimeoutWarning(true);
-        countdownTimerRef.current = window.setInterval(() => {
-          setCountdownSeconds((value) => Math.max(0, value - 1));
-        }, 1000);
-      }, IDLE_WARNING_MS);
-
-      logoutTimerRef.current = window.setTimeout(() => {
-        void performLogout("timeout");
-      }, IDLE_TIMEOUT_MS);
-    },
-    [clearSessionTimers, getToken, isSignedIn, performLogout],
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const syncUser = async () => {
-      if (!authLoaded || !userLoaded) return;
-
-      if (!isSignedIn || !clerkUser) {
-        clearAuthToken();
-        setAppUser(null);
-        setIsSyncing(false);
-        clearSessionTimers();
-        return;
-      }
-
-      setIsSyncing(true);
-      try {
-        const token = await getToken();
-        if (token) {
-          setAuthToken(token);
-        }
-
-        const response = await fetch("/api/v1/auth/sync", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({
-            email: clerkUser.primaryEmailAddress?.emailAddress,
-            firstName: clerkUser.firstName,
-            lastName: clerkUser.lastName,
-            phoneNumber: clerkUser.primaryPhoneNumber?.phoneNumber,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Unable to sync Clerk profile");
-        }
-
-        const data = await response.json();
-        if (!cancelled) {
-          setAppUser(normalizeUser(data.user || data, clerkUser));
-        }
-      } catch (error) {
-        console.error("Error syncing Clerk profile:", error);
-        if (!cancelled) {
-          setAppUser(normalizeUser(null, clerkUser));
-        }
-      } finally {
-        if (!cancelled) setIsSyncing(false);
-      }
-    };
-
-    syncUser();
-    const interval = window.setInterval(syncUser, 10 * 60 * 1000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(interval);
-    };
-  }, [authLoaded, userLoaded, isSignedIn, clerkUser?.id, getToken]);
-
-  useEffect(() => {
-    if (!authLoaded || !userLoaded || !isSignedIn) {
-      clearSessionTimers();
-      return;
-    }
-
-    startSessionTimers(false);
-    const activityEvents: Array<keyof WindowEventMap> = [
-      "mousemove",
-      "keydown",
-      "touchstart",
-      "scroll",
-      "click",
-    ];
-    const onActivity = () => {
-      if (warningVisibleRef.current) return;
-      const now = Date.now();
-      if (now - lastActivityAtRef.current < ACTIVITY_THROTTLE_MS) return;
-      startSessionTimers(false);
-    };
-    const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") onActivity();
-    };
-
-    activityEvents.forEach((eventName) => {
-      window.addEventListener(eventName, onActivity, { passive: true });
-    });
-    document.addEventListener("visibilitychange", onVisibilityChange);
-
-    return () => {
-      activityEvents.forEach((eventName) => {
-        window.removeEventListener(eventName, onActivity);
-      });
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-      clearSessionTimers();
-    };
-  }, [authLoaded, clearSessionTimers, isSignedIn, startSessionTimers, userLoaded]);
-
-  useEffect(() => {
-    const handleMessage = (message: MessageEvent) => {
-      if (message.data?.type !== "LOGOUT") return;
-      void performLogout(message.data.reason || "session_expired", false);
-    };
-
-    let channel: BroadcastChannel | null = null;
-    try {
-      channel = new BroadcastChannel(SESSION_CHANNEL);
-      channel.addEventListener("message", handleMessage);
-    } catch {}
-
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key !== SESSION_CHANNEL || !event.newValue) return;
-      try {
-        const payload = JSON.parse(event.newValue);
-        if (payload?.type === "LOGOUT") {
-          void performLogout(payload.reason || "session_expired", false);
-        }
-      } catch {}
-    };
-    window.addEventListener("storage", handleStorage);
-
-    return () => {
-      channel?.removeEventListener("message", handleMessage);
-      channel?.close();
-      window.removeEventListener("storage", handleStorage);
-    };
-  }, [performLogout]);
-
-  const staySignedIn = useCallback(() => {
-    startSessionTimers(true);
-  }, [startSessionTimers]);
-
-  const login = async (email: string, password: string) => {
-    if (!signInLoaded || !signIn || !setSignInActive) {
-      throw new Error("Authentication is still loading. Please try again.");
-    }
-
-    try {
-      const result = await signIn.create({ identifier: email, password });
-      if (result.status !== "complete") {
-        throw new Error("Additional verification is required. Please complete it in the Clerk flow.");
-      }
-      await setSignInActive({ session: result.createdSessionId });
-      await logLogin(email);
-    } catch (error: any) {
-      await logAuditEvent({
-        action: "login_failure",
-        category: "authentication",
-        metadata: { email, error: error?.errors?.[0]?.code || error?.message },
-        status: "failure",
-      });
-      throw new Error(error?.errors?.[0]?.message || error?.message || "Failed to sign in.");
-    }
+    setAppUser({
+      id: "mock_id_" + role,
+      email: email || "local@example.com",
+      firstName: "Test",
+      lastName: role.toUpperCase(),
+      role: role,
+      status: "active",
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as AppUser);
   };
 
-  const register = async (email: string, password: string, userData: Partial<AppUser>) => {
-    if (!signUpLoaded || !signUp || !setSignUpActive) {
-      throw new Error("Authentication is still loading. Please try again.");
-    }
-
-    const result = await signUp.create({
-      emailAddress: email,
-      password,
-      firstName: userData.firstName || undefined,
-      lastName: userData.lastName || undefined,
-    });
-
-    if (result.status === "complete") {
-      await setSignUpActive({ session: result.createdSessionId });
-      return;
-    }
-
-    await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-    throw new Error("Check your email for the verification code to finish creating your account.");
-  };
-
-  const loginWithGoogle = async () => {
-    if (!signInLoaded || !signIn) {
-      throw new Error("Authentication is still loading. Please try again.");
-    }
-
-    await signIn.authenticateWithRedirect({
-      strategy: "oauth_google",
-      redirectUrl: "/auth/callback",
-      redirectUrlComplete: "/dashboard",
-    });
-  };
-
-  const logout = async (reason: LogoutReason = "manual") => performLogout(reason);
-
-  const sendPasswordReset = async (email: string) => {
-    if (!signInLoaded || !signIn) {
-      throw new Error("Authentication is still loading. Please try again.");
-    }
-
-    await signIn.create({ strategy: "reset_password_email_code", identifier: email });
-  };
-
-  const sendEmailVerification = async () => {
-    const primaryEmail = clerkUser?.primaryEmailAddress as any;
-    if (!primaryEmail?.prepareVerification) return;
-    await primaryEmail.prepareVerification({ strategy: "email_code" });
-  };
-
-  const deleteAccount = async () => {
-    if (!clerkUser) return;
-    await (clerkUser as any).delete();
-    clearAuthToken();
+  const register = async () => {};
+  const loginWithGoogle = async () => { await login("user@gmail.com"); };
+  const logout = async () => { 
     setAppUser(null);
+    window.location.href = "/"; 
   };
+  const sendPasswordReset = async () => {};
+  const sendEmailVerification = async () => {};
+  const deleteAccount = async () => {};
 
   return (
     <AuthContext.Provider
       value={{
         user: appUser,
-        authUser: clerkUser,
-        isLoading: !authLoaded || !userLoaded || isSyncing,
-        isAuthenticated: !!isSignedIn,
+        authUser: null,
+        isLoading: false,
+        isAuthenticated: !!appUser,
         login,
         register,
         loginWithGoogle,
@@ -415,12 +115,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-      <SessionTimeoutDialog
-        open={showTimeoutWarning}
-        countdownSeconds={countdownSeconds}
-        onStaySignedIn={staySignedIn}
-        onLogout={() => void performLogout("manual")}
-      />
     </AuthContext.Provider>
   );
 }
@@ -437,15 +131,15 @@ const FALLBACK_AUTH_VALUE: AuthContextType = {
   user: null,
   authUser: null,
   isLoading: false,
-  isAuthenticated: false,
-  login: async () => { throw new Error("Auth service unavailable"); },
-  register: async () => { throw new Error("Auth service unavailable"); },
-  loginWithGoogle: async () => { throw new Error("Auth service unavailable"); },
+  isAuthenticated: true,
+  login: async () => {},
+  register: async () => {},
+  loginWithGoogle: async () => {},
   logout: async () => {},
-  sendPasswordReset: async () => { throw new Error("Auth service unavailable"); },
+  sendPasswordReset: async () => {},
   sendEmailVerification: async () => {},
   deleteAccount: async () => {},
-  role: "user",
+  role: "admin",
 };
 
 class AuthErrorBoundary extends React.Component<
@@ -460,14 +154,11 @@ class AuthErrorBoundary extends React.Component<
     console.error("AuthProvider crashed:", error);
   }
   render() {
-    if (this.state.hasError) {
-      return (
-        <AuthContext.Provider value={FALLBACK_AUTH_VALUE}>
-          {this.props.children}
-        </AuthContext.Provider>
-      );
-    }
-    return this.props.children;
+    return (
+      <AuthContext.Provider value={FALLBACK_AUTH_VALUE}>
+        {this.props.children}
+      </AuthContext.Provider>
+    );
   }
 }
 

@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { FastITRFilingLogo, AccurateTaxCalculatorLogo, SmartDocumentScannerLogo, ExpertTaxReviewLogo } from "@/components/ui/home-feature-logos";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/components/AuthProvider";
+import { getSEOConfig } from "@/config/seo.config";
 
 
 const FeaturesSection = lazy(() => import("@/components/FeaturesSection"));
@@ -53,25 +54,23 @@ const SectionFallback = () => (
 const HomePage = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [, setLocation] = useLocation();
+  const seo = getSEOConfig('/');
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      setLocation("/dashboard");
-    }
+    // Removed auto-redirect so users can always access the homepage
+    // if (!isLoading && isAuthenticated) {
+    //   setLocation("/dashboard");
+    // }
   }, [isAuthenticated, isLoading, setLocation]);
 
-  if (isAuthenticated) return null;
+  // if (isAuthenticated) return null;
 
   return (
     <>
       <MetaSEO
-        title="Expert Income Tax Filing & ITR e-Filing Services India 2025-26"
-        description="File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!"
-        keywords={[
-          "ITR filing", "income tax return", "tax filing India", "e-filing", 
-          "AY 2025-26", "tax consultant", "CA services", "ITR-1", "ITR-2", 
-          "income tax refund", "GST registration", "company incorporation"
-        ]}
+        title={seo?.title || "Expert Income Tax Filing & ITR e-Filing Services India 2025-26"}
+        description={seo?.description || "File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!"}
+        keywords={seo?.keywords}
         localBusinessData={{
           "name": "MyeCA.in",
           "telephone": "+91-9876543210",
@@ -167,6 +166,37 @@ const HomePage = () => {
                   Pay Only After CA Review
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Login Portals Section */}
+        <section className="py-12 bg-white border-b border-slate-100">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-slate-900">Secure Access Portals</h2>
+              <p className="text-slate-500 mt-2">Select your role to access your personalized dashboard</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+              {[
+                { title: "User Portal", icon: Users, href: "/auth/login", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100", hover: "hover:border-blue-300" },
+                { title: "Admin Portal", icon: Shield, href: "/auth/admin-login?role=admin", color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-100", hover: "hover:border-indigo-300" },
+                { title: "CA Portal", icon: FileText, href: "/auth/admin-login?role=ca", color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-100", hover: "hover:border-emerald-300" },
+                { title: "Team Portal", icon: Building2, href: "/auth/admin-login?role=team", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100", hover: "hover:border-purple-300" },
+              ].map((portal) => (
+                <Link key={portal.title} href={portal.href}>
+                  <div className={cn(
+                    "flex flex-col items-center justify-center p-6 rounded-2xl border transition-all cursor-pointer group",
+                    portal.border, portal.hover, "hover:shadow-md bg-white"
+                  )}>
+                    <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", portal.bg)}>
+                      <portal.icon className={cn("w-6 h-6", portal.color)} />
+                    </div>
+                    <span className="font-semibold text-slate-900">{portal.title}</span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

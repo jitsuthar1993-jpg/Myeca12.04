@@ -38,8 +38,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function MSMEUdyamRegistrationPage() {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedBusinessType, setSelectedBusinessType] = useState<string>("");
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -537,7 +539,12 @@ export default function MSMEUdyamRegistrationPage() {
                   <Factory className="w-5 h-5 mr-2" />
                   Register Now - FREE
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-600 px-8">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-white text-white hover:bg-white hover:text-green-600 px-8"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <Phone className="w-5 h-5 mr-2" />
                   Expert Guidance {"₹"}499
                 </Button>
@@ -585,6 +592,16 @@ export default function MSMEUdyamRegistrationPage() {
           </div>
         </div>
       </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="msme-udyam-registration"
+          serviceTitle="Expert MSME Assistance"
+          category="Business Services"
+          priceAmount={499}
+        />
+      )}
     </div>
   );
 }

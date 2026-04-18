@@ -22,7 +22,7 @@ import {
   User,
   CreditCard,
   Globe,
-  Package,
+  Box,
   Truck,
   Store,
   Factory,
@@ -38,9 +38,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function GstRegistrationPage() {
+  const seo = getSEOConfig('/services/gst-registration');
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPrice, setCheckoutPrice] = useState(2999);
+  const [checkoutTitle, setCheckoutTitle] = useState("GST Registration");
   const [businessType, setBusinessType] = useState<string>("");
   const [annualTurnover, setAnnualTurnover] = useState<string>("");
 
@@ -275,25 +281,17 @@ export default function GstRegistrationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-emerald-50 service-page">
       <MetaSEO
-        title="GST Registration Online India | Fast & Accurate GST Application"
-        description="Get your GST registration online in India. Expert CA assistance, transparent pricing, and 100% success rate. GST registration starts at ₹2,999. Apply now!"
-        keywords={[
-          "GST registration", "apply for GST online India", "GST registration cost", 
-          "GST threshold", "GST registration documents", "business registration India",
-          "voluntary GST registration", "composition scheme", "input tax credit", "GSTIN search"
-        ]}
-        type="service"
+        title={seo?.title || "GST Registration Online India | MyeCA.in"}
+        description={seo?.description || "Get your GST registration online within 3-5 days."}
+        keywords={seo?.keywords}
+        type={seo?.type || "service"}
         serviceData={{
-          price: "2999",
-          rating: "4.9",
-          reviews: "50000",
+          price: seo?.serviceData?.price || "2999",
+          rating: seo?.serviceData?.rating || "4.9",
+          reviews: seo?.serviceData?.reviews || "50000",
           availability: "https://schema.org/InStock"
         }}
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Services", url: "/services" },
-          { name: "GST Registration", url: "/services/gst-registration" }
-        ]}
+        breadcrumbs={seo?.breadcrumbs}
         faqPageData={[
           {
             question: "What is the threshold for mandatory GST registration?",
@@ -326,7 +324,15 @@ export default function GstRegistrationPage() {
                 Complete registration with expert guidance and documentation support in 7–10 days.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 font-semibold">
+                <Button 
+                  size="sm" 
+                  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 font-semibold"
+                  onClick={() => {
+                    setCheckoutTitle("GST Registration - Standard");
+                    setCheckoutPrice(2999);
+                    setIsCheckoutOpen(true);
+                  }}
+                >
                   <Receipt className="w-4 h-4 mr-2" />
                   Register Now
                 </Button>
@@ -710,7 +716,15 @@ export default function GstRegistrationPage() {
               </div>
 
               <div className="flex gap-4">
-                <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                <Button 
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCheckoutTitle("GST Registration");
+                    setCheckoutPrice(2999);
+                    setIsCheckoutOpen(true);
+                  }}
+                >
                   <Receipt className="w-4 h-4 mr-2" />
                   Start Registration
                 </Button>
@@ -774,6 +788,11 @@ export default function GstRegistrationPage() {
                         ? 'bg-green-600 hover:bg-green-700' 
                         : 'bg-gray-600 hover:bg-gray-700'
                     }`}
+                    onClick={() => {
+                      setCheckoutTitle(plan.type);
+                      setCheckoutPrice(parseInt(plan.price.replace(/[^0-9]/g, '')));
+                      setIsCheckoutOpen(true);
+                    }}
                   >
                     Select Plan
                   </Button>
@@ -877,6 +896,17 @@ export default function GstRegistrationPage() {
           </div>
         </div>
       </div>
+
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="gst-registration"
+          serviceTitle={checkoutTitle}
+          category="Business Setup"
+          priceAmount={checkoutPrice}
+        />
+      )}
     </div>
   );
 }

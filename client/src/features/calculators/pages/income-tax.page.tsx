@@ -15,7 +15,9 @@ import {
 import { CalculatorExport } from "@/components/ui/calculator-export";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCalculatorTracking } from "@/hooks/use-analytics";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
+
 import TaxStepIndicator from "../components/TaxStepIndicator";
 import TaxStickySidebar from "../components/TaxStickySidebar";
 import { cn } from "@/lib/utils";
@@ -40,6 +42,8 @@ export default function IncomeTaxCalculator() {
   const [result, setResult] = useState<TaxCalculationResult | null>(null);
   const [otherResult, setOtherResult] = useState<TaxCalculationResult | null>(null);
   const [comparison, setComparison] = useState<{ recommended: 'old' | 'new', savings: number } | null>(null);
+  
+  const seo = getSEOConfig('/calculators/income-tax');
 
   // Real-time calculation
   useEffect(() => {
@@ -76,25 +80,12 @@ export default function IncomeTaxCalculator() {
   return (
     <>
       <MetaSEO
-        title="Income Tax Calculator 2025-26 | Professional Tax Hub"
-        description="Comprehensive income tax calculator with real-time comparison for AY 2025-26 and 2026-27. Maximize your tax savings with MyeCA.in expert recommendations."
-        keywords={[
-          "income tax calculator India", "AY 2025-26 income tax", "tax saving calculator", 
-          "old vs new tax regime", "income tax return AY 2026-27", "Section 80C calculator",
-          "income tax slabs 2025", "standard deduction 2025", "tax rebate 87A"
-        ]}
-        type="calculator"
-        calculatorData={{
-          type: "Income Tax Calculator",
-          features: ["Real-time calculation", "Old vs New Regime comparison", "Deduction optimization", "AY 2025-26 support"],
-          accuracy: "99.9%",
-          updates: "AY 2025-26 & 2026-27 compliance"
-        }}
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Calculators", url: "/calculators" },
-          { name: "Income Tax", url: "/calculators/income-tax" }
-        ]}
+        title={seo?.title || "Income Tax Calculator 2025-26 | Professional Tax Hub"}
+        description={seo?.description || "Comprehensive income tax calculator with real-time comparison for AY 2025-26 and 2026-27."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
         howToData={{
           name: "How to Calculate Income Tax AY 2025-26",
           description: "Follow these 4 simple steps to calculate your income tax liability for the Assessment Year 2025-26 using our professional tool.",
@@ -106,6 +97,7 @@ export default function IncomeTaxCalculator() {
           ]
         }}
       />
+
 
       <div className="min-h-screen bg-slate-50/50 py-12">
         <div className="max-w-7xl mx-auto px-4">

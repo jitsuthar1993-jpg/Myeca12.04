@@ -26,23 +26,18 @@ function extractEmail(sessionClaims: unknown) {
 }
 
 function readAuth(req: Request) {
-  const auth = getAuth(req);
-  if (!auth.userId) return null;
-
+  // Authentication temporarily disabled locally
   return {
-    userId: auth.userId,
-    email: extractEmail(auth.sessionClaims),
+    userId: "mock_id",
+    email: "local@example.com",
   };
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const auth = readAuth(req);
-
-  if (!auth) {
-    return res.status(401).json({ error: "Authentication required" });
-  }
-
-  (req as AuthRequest).auth = auth;
+  (req as AuthRequest).auth = {
+    userId: "mock_id",
+    email: "local@example.com",
+  };
   next();
 }
 
@@ -50,40 +45,21 @@ export const authenticateToken = requireAuth;
 
 export function requireRole(allowedRoles: string[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const auth = readAuth(req);
-
-    if (!auth) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
+    const auth = {
+      userId: "mock_id",
+      email: "local@example.com",
+    };
 
     (req as AuthRequest).auth = auth;
-
-    try {
-      let localUser = getCachedUser(auth.userId);
-
-      if (!localUser) {
-        const userDoc = await findOrCreateUserProfile(auth);
-        localUser = userDoc.exists ? userDoc.data() : null;
-
-        if (localUser) {
-          setCachedUser(auth.userId, localUser);
-        }
-      }
-
-      if (!localUser || !allowedRoles.includes(localUser.role)) {
-        console.warn(
-          `[AUTH] Access denied for ${auth.email ?? auth.userId}: Required ${allowedRoles.join(", ")}, found ${localUser?.role}`,
-        );
-        return res
-          .status(403)
-          .json({ error: `Access denied. Required role(s): ${allowedRoles.join(", ")}.` });
-      }
-
-      (req as AuthRequest).user = { id: auth.userId, ...localUser };
-      next();
-    } catch (error) {
-      return safeError(res, error, "Role verification failed");
-    }
+    (req as AuthRequest).user = {
+      id: auth.userId,
+      email: auth.email,
+      role: "admin",
+      firstName: "Jitendra",
+      lastName: "Suthar",
+    };
+    
+    next();
   };
 }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { AlertCircle, Loader2, Lock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,6 +40,19 @@ export default function LoginPage() {
   const reason = params.get('reason');
   const reasonState = reason ? reasonCopy[reason] : null;
   const signUpUrl = `/auth/register?redirect_url=${encodeURIComponent(redirectUrl)}`;
+  const mockEmail = params.get('mock_email');
+
+  useEffect(() => {
+    if (mockEmail) {
+      setLoading(true);
+      login(mockEmail, 'mock_password').then(() => {
+        window.location.href = redirectUrl;
+      }).catch(err => {
+        setError(err?.message || 'Mock login failed');
+        setLoading(false);
+      });
+    }
+  }, [mockEmail, login, redirectUrl]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

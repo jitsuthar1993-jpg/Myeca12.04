@@ -97,34 +97,10 @@ export const loanCalculators: CalculatorFeature[] = [
   },
   {
     id: "home-loan",
-    title: "Home Loan Calculator",
-    description: "Calculate home loan EMIs starting 7.90% with eligibility and tax benefits",
-    icon: "Home",
+    title: "Loan Calculator",
+    description: "Home, Car, Personal & Education loans with tax benefits and moratorium",
+    icon: "Briefcase",
     path: "/calculators/home-loan",
     color: "indigo"
-  },
-  {
-    id: "car-loan",
-    title: "Car Loan Calculator",
-    description: "Calculate car loan EMIs with rates from 8.25% to 11.5% for new/used cars",
-    icon: "Car",
-    path: "/calculators/car-loan",
-    color: "yellow"
-  },
-  {
-    id: "personal-loan",
-    title: "Personal Loan Calculator",
-    description: "Calculate personal loan EMIs with higher interest rates and shorter tenure",
-    icon: "Wallet",
-    path: "/calculators/personal-loan",
-    color: "orange"
-  },
-  {
-    id: "education-loan",
-    title: "Education Loan Calculator",
-    description: "Calculate education loan EMIs with 80E tax benefits and moratorium period",
-    icon: "GraduationCap",
-    path: "/calculators/education-loan",
-    color: "cyan"
   }
 ];

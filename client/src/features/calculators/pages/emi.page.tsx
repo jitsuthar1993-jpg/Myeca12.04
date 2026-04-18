@@ -9,11 +9,13 @@ import { CreditCard, Calculator, TrendingDown, Percent } from "lucide-react";
 import { CalculatorExport } from "@/components/ui/calculator-export";
 import { calculateEMI } from "@/lib/tax-calculations";
 import { EMIInputs } from "@/types/calculator";
-import EnhancedSEO from "@/components/EnhancedSEO";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
 import { getHowToSchema } from "@/utils/seo-defaults";
 import { CalculatorHeader } from "@/components/ui/calculator-header";
 
 export default function EMICalculator() {
+  const seo = getSEOConfig('/calculators/emi');
   const [inputs, setInputs] = useState<EMIInputs>({
     principal: 1000000,
     rate: 8.5,
@@ -53,22 +55,22 @@ export default function EMICalculator() {
 
   return (
     <>
-      <EnhancedSEO
-        title="EMI Calculator 2025 | Home Loan, Car Loan & Personal Loan EMI Calculator"
-        description="Calculate EMI for home loan, car loan, personal loan & more. Get detailed amortization schedule, total interest & monthly payment breakdown."
-        keywords={[
-          'EMI calculator',
-          'home loan EMI calculator',
-          'car loan EMI calculator',
-          'personal loan EMI',
-          'loan calculator',
-          'monthly EMI calculator',
-          'EMI calculation formula',
-          'loan repayment calculator'
-        ]}
-        url="https://myeca.in/calculators/emi"
-        type="website"
-        jsonLd={howToSchema}
+      <MetaSEO
+        title={seo?.title || "EMI Calculator 2025 | MyeCA.in"}
+        description={seo?.description || "Calculate EMI for home loan, car loan, personal loan & more."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        howToData={{
+          name: "How to Calculate EMI for Your Loan",
+          description: "Calculate your monthly EMI in 3 simple steps",
+          steps: [
+            { name: "Enter loan amount", text: "Input the principal amount you want to borrow" },
+            { name: "Enter interest rate", text: "Input the annual interest rate offered by your lender" },
+            { name: "Select loan tenure", text: "Choose the repayment period in years" }
+          ]
+        }}
       />
     <div className="calculator-page min-h-screen bg-gray-50 py-4 mobile-safe-bottom">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

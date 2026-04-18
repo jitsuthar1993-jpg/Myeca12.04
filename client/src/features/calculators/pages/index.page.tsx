@@ -74,10 +74,7 @@ const calculatorCategories = [
     border: "#fde68a",
     calculators: [
       { name: "EMI Calculator",          href: "/calculators/emi",             icon: Calculator, isPopular: true, description: "Monthly installment calculator" },
-      { name: "Home Loan Calculator",    href: "/calculators/home-loan",       icon: Home,                        description: "Housing loan EMI & eligibility" },
-      { name: "Car Loan Calculator",     href: "/calculators/car-loan",        icon: Car,                         description: "Vehicle loan calculations" },
-      { name: "Personal Loan Calc.",     href: "/calculators/personal-loan",   icon: Users,                       description: "Personal loan EMI" },
-      { name: "Education Loan Calc.",    href: "/calculators/education-loan",  icon: GraduationCap,               description: "Study loan planning" },
+      { name: "Loan Calculator",         href: "/calculators/home-loan",       icon: Briefcase,                   description: "Home, Car, Personal & Education" },
     ],
   },
 ];
@@ -222,7 +219,6 @@ export default function CalculatorsPage() {
       />
 
       <div className="min-h-screen bg-slate-50">
-        <Breadcrumb items={[{ name: "Calculators" }]} />
 
         {/* Hero Section - Split Layout */}
         <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-slate-100/30 border-b border-slate-200/60 transition-all duration-500">

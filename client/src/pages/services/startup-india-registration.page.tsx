@@ -36,8 +36,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function StartupIndiaRegistrationPage() {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedEntityType, setSelectedEntityType] = useState<string>("");
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -221,7 +223,11 @@ export default function StartupIndiaRegistrationPage() {
                 Get DPIIT recognition and unlock tax exemptions, funding, and compliance simplifications.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold">
+                <Button 
+                  size="sm" 
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <Rocket className="w-4 h-4 mr-2" />
                   Start Registration Now
                 </Button>
@@ -508,7 +514,11 @@ export default function StartupIndiaRegistrationPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50 px-8 shadow-lg">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-purple-600 hover:bg-purple-50 px-8 shadow-lg"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <Rocket className="w-5 h-5 mr-2" />
                   Start Registration {"₹"}2,999
                 </Button>
@@ -538,6 +548,16 @@ export default function StartupIndiaRegistrationPage() {
           </Card>
         </m.div>
       </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="startup-india"
+          serviceTitle="Startup India DPIIT Recognition"
+          category="Business Setup"
+          priceAmount={2999}
+        />
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { 
   ShoppingBag, Plus, Search, Edit, Trash2, Eye, Star, 
-  TrendingUp, Package, FileText, Calculator, Building,
+  TrendingUp, Box, FileText, Calculator, Building,
   Target, DollarSign, Clock, Users, BarChart3, MoreHorizontal
 } from "lucide-react";
 import { format } from "date-fns";
@@ -575,7 +575,7 @@ export default function ServicesManagementPage() {
                   <p className="text-sm font-medium text-gray-600">Active Services</p>
                   <p className="text-2xl font-bold text-green-600">{serviceStats.active}</p>
                 </div>
-                <Package className="h-8 w-8 text-green-600" />
+                <Box className="h-8 w-8 text-green-600" />
               </div>
             </CardContent>
           </Card>

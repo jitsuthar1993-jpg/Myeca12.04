@@ -37,10 +37,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import LeadMagnet from "@/components/seo/LeadMagnet";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function CompanyRegistrationPage() {
+  const seo = getSEOConfig('/services/company-registration');
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPrice, setCheckoutPrice] = useState(6999);
+  const [checkoutTitle, setCheckoutTitle] = useState("Private Limited Company Registration");
   const [companyType, setCompanyType] = useState<string>("");
   const [authorizedCapital, setAuthorizedCapital] = useState<string>("");
 
@@ -247,25 +253,17 @@ export default function CompanyRegistrationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-indigo-50">
       <MetaSEO
-        title="Company Registration Online | Pvt Ltd, OPC & LLP Incorporation India"
-        description="Incorporate your business in India with MyeCA.in. Expert CA assistance for Private Limited, OPC, and LLP registration. Fast approval, transparent pricing, and 100% success rate."
-        keywords={[
-          "company registration India", "Pvt Ltd incorporation online", "OPC registration", 
-          "LLP registration India", "start a business in India", "incorporation services",
-          "DPIIT recognition startup", "Startup India benefits", "MCA SPICe+ filing"
-        ]}
-        type="service"
+        title={seo?.title || "Company Registration Online | MyeCA.in"}
+        description={seo?.description || "Incorporate your business in India with MyeCA.in."}
+        keywords={seo?.keywords}
+        type={seo?.type || "service"}
         serviceData={{
-          price: "6999",
-          rating: "4.8",
-          reviews: "25000",
+          price: seo?.serviceData?.price || "6999",
+          rating: seo?.serviceData?.rating || "4.8",
+          reviews: seo?.serviceData?.reviews || "25000",
           availability: "https://schema.org/InStock"
         }}
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Services", url: "/services" },
-          { name: "Company Registration", url: "/services/company-registration" }
-        ]}
+        breadcrumbs={seo?.breadcrumbs}
         faqPageData={[
           {
             question: "How many people are needed to register a Private Limited Company?",
@@ -298,7 +296,15 @@ export default function CompanyRegistrationPage() {
                 Incorporate as Pvt Ltd, OPC, Public Ltd or LLP in 10–15 days with expert guidance.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold">
+                <Button 
+                  size="sm" 
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold"
+                  onClick={() => {
+                    setCheckoutPrice(6999);
+                    setCheckoutTitle("Company Registration");
+                    setIsCheckoutOpen(true);
+                  }}
+                >
                   <Building2 className="w-4 h-4 mr-2" />
                   Register Company
                 </Button>
@@ -423,7 +429,14 @@ export default function CompanyRegistrationPage() {
                     </ul>
                   </div>
 
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    onClick={() => {
+                      setCheckoutPrice(parseInt(company.registrationFee.replace(/[^0-9]/g, '')));
+                      setCheckoutTitle(company.title);
+                      setIsCheckoutOpen(true);
+                    }}
+                  >
                     Select This Structure
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -702,7 +715,14 @@ export default function CompanyRegistrationPage() {
               </div>
 
               <div className="flex gap-4">
-                <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  onClick={() => {
+                    setCheckoutPrice(6999);
+                    setCheckoutTitle("Company Registration (SpicE+)");
+                    setIsCheckoutOpen(true);
+                  }}
+                >
                   <Building2 className="w-4 h-4 mr-2" />
                   Start Registration
                 </Button>
@@ -761,7 +781,15 @@ export default function CompanyRegistrationPage() {
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-8">
+              <Button 
+                size="lg" 
+                className="bg-blue-600 hover:bg-blue-700 px-8"
+                onClick={() => {
+                  setCheckoutPrice(6999);
+                  setCheckoutTitle("Full Company Registration Bundle");
+                  setIsCheckoutOpen(true);
+                }}
+              >
                 <Building2 className="w-5 h-5 mr-2" />
                 Register Now
               </Button>
@@ -878,6 +906,16 @@ export default function CompanyRegistrationPage() {
             <LeadMagnet resourceName="Company Incorporation" />
           </m.div>
         </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="company-registration"
+          serviceTitle={checkoutTitle}
+          category="Business Services"
+          priceAmount={checkoutPrice}
+        />
+      )}
     </div>
   );
 }

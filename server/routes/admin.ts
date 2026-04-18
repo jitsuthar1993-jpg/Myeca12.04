@@ -275,13 +275,13 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
       ...pendingServices.map(s => ({
         id: s.id,
         type: 'service',
-        title: s.serviceName || 'Custom Service',
+        title: s.serviceTitle || s.serviceName || 'Custom Service',
         userId: s.userId,
         userName: userMap.get(s.userId)?.firstName || 'Unknown',
         assignedCaId: s.assignedCaId,
         assignedCaName: userMap.get(s.assignedCaId)?.firstName || 'Unassigned',
         status: s.status,
-        price: parseFloat(s.price) || 0,
+        price: parseFloat(s.price || s.paymentAmount) || 0,
         createdAt: s.createdAt?.toDate?.() || s.createdAt
       })),
       ...pendingTaxReturns.map(r => {

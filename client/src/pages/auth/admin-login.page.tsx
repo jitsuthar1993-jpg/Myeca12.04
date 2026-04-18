@@ -61,21 +61,60 @@ export default function AdminLoginPage() {
                 </p>
               </div>
               <div className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_30px_90px_-60px_rgba(0,48,135,0.65)]">
-                <SignIn
-                  path="/auth/admin-login"
-                  routing="path"
-                  signUpUrl="/auth/register?redirect_url=%2Fadmin%2Fdashboard"
-                  fallbackRedirectUrl={redirectUrl}
-                  appearance={{
-                    elements: {
-                      rootBox: "w-full",
-                      card: "shadow-none border-0 w-full",
-                      headerTitle: "text-slate-950",
-                      formButtonPrimary: "bg-[#003087] hover:bg-[#082a5c]",
-                      footerActionLink: "text-[#003087]",
-                    },
-                  }}
-                />
+                {import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+                  <SignIn
+                    path="/auth/admin-login"
+                    routing="path"
+                    signUpUrl="/auth/register?redirect_url=%2Fadmin%2Fdashboard"
+                    fallbackRedirectUrl={redirectUrl}
+                    appearance={{
+                      elements: {
+                        rootBox: "w-full",
+                        card: "shadow-none border-0 w-full",
+                        headerTitle: "text-slate-950",
+                        formButtonPrimary: "bg-[#003087] hover:bg-[#082a5c]",
+                        footerActionLink: "text-[#003087]",
+                      },
+                    }}
+                  />
+                ) : (
+                  <div className="p-6 text-center">
+                    <div className="mb-4 inline-flex items-center justify-center rounded-full bg-amber-100 p-3 text-amber-600">
+                      <KeyRound className="h-6 w-6" />
+                    </div>
+                    <h3 className="mb-2 font-bold text-slate-900">Local Development Mode</h3>
+                    <p className="mb-6 text-sm text-slate-500">
+                      Clerk keys are missing. Use these buttons to simulate signing in as different roles.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      <button 
+                        onClick={() => {
+                          // Our mocked AuthProvider uses the email to determine the role
+                          window.location.href = `/auth/login?mock_email=admin@myeca.in&redirect_url=${encodeURIComponent(redirectUrl)}`;
+                        }}
+                        className="rounded-xl bg-[#003087] px-4 py-3 text-sm font-bold text-white hover:bg-[#082a5c]"
+                      >
+                        Sign in as Admin
+                      </button>
+                      <button 
+                        onClick={() => {
+                          window.location.href = `/auth/login?mock_email=ca@myeca.in&redirect_url=${encodeURIComponent("/ca/dashboard")}`;
+                        }}
+                        className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700"
+                      >
+                        Sign in as CA
+                      </button>
+                      <button 
+                        onClick={() => {
+                          window.location.href = `/auth/login?mock_email=team@myeca.in&redirect_url=${encodeURIComponent("/admin/dashboard")}`;
+                        }}
+                        className="rounded-xl bg-purple-600 px-4 py-3 text-sm font-bold text-white hover:bg-purple-700"
+                      >
+                        Sign in as Team Member
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </section>

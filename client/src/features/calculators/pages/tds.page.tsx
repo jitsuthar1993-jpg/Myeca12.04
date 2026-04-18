@@ -1,35 +1,56 @@
-import { useState } from "react";
-import { m } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { useState, useMemo, useEffect } from "react";
+import { m, AnimatePresence } from "framer-motion";
+import { 
+  Receipt, 
+  AlertCircle, 
+  Coins, 
+  Percent, 
+  FileText, 
+  CheckCircle, 
+  Info, 
+  Calculator, 
+  IndianRupee, 
+  FileCheck, 
+  Calendar,
+  Download,
+  ShieldCheck,
+  Zap,
+  ChevronRight,
+  PieChart,
+  ArrowRight,
+  Banknote,
+  History,
+  AlertTriangle,
+  UserCheck,
+  FileBadge
+} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { calculateTDS } from "@/lib/tax-calculations";
-import { Receipt, AlertCircle, Coins, Percent, FileText, CheckCircle, Info, Calculator, IndianRupee, FileCheck, Calendar } from "lucide-react";
-import { CalculatorExport } from "@/components/ui/calculator-export";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import EnhancedSEO from "@/components/EnhancedSEO";
-import { getHowToSchema } from "@/utils/seo-defaults";
-import { CalculatorHeader } from "@/components/ui/calculator-header";
 import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
+import { calculateTDS } from "@/lib/tax-calculations";
 import { assessmentYears } from "@/data/tds-rules";
-import { CalculatorGuide } from "@/components/ui/calculator-guide";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import Breadcrumb from "@/components/Breadcrumb";
+import { cn } from "@/lib/utils";
 
 export default function TDSCalculatorPage() {
   const [income, setIncome] = useState<number>(0);
-  const [incomeType, setIncomeType] = useState<string>('');
-  const [result, setResult] = useState<any>(null);
+  const [incomeType, setIncomeType] = useState<string>('professional_fees');
   const [selectedYear, setSelectedYear] = useState<string>("2025-26");
   const [panProvided, setPanProvided] = useState<boolean>(true);
   const [isSeniorCitizen, setIsSeniorCitizen] = useState<boolean>(false);
   const [form15G15HSubmitted, setForm15G15HSubmitted] = useState<boolean>(false);
 
-  const handleCalculate = () => {
+  const result = useMemo(() => {
     if (income > 0 && incomeType) {
-      const tdsResult = calculateTDS({
+      return calculateTDS({
         income,
         incomeType,
         assessmentYear: selectedYear,
@@ -37,525 +58,345 @@ export default function TDSCalculatorPage() {
         isSeniorCitizen,
         form15G15HSubmitted,
       });
-      setResult(tdsResult);
     }
-  };
+    return null;
+  }, [income, incomeType, selectedYear, panProvided, isSeniorCitizen, form15G15HSubmitted]);
+
+  const seo = getSEOConfig('/calculators/tds');
 
   const incomeTypes = [
-    { value: 'salary', label: 'Salary (No TDS)', section: 'N/A' },
-    { value: 'interest', label: 'Interest on Deposits', section: '194A' },
-    { value: 'dividend', label: 'Dividend Income', section: '194' },
-    { value: 'rent', label: 'Rent Income', section: '194I' },
-    { value: 'commission', label: 'Commission', section: '194H' },
-    { value: 'professional_fees', label: 'Professional Fees', section: '194J' },
-    { value: 'contractor_payment', label: 'Contractor Payment', section: '194C' }
+    { value: 'professional_fees', label: 'Professional Fees', section: '194J', rate: '10%' },
+    { value: 'interest', label: 'Interest on Deposits', section: '194A', rate: '10%' },
+    { value: 'rent', label: 'Rent Income', section: '194I', rate: '10%' },
+    { value: 'commission', label: 'Commission', section: '194H', rate: '5%' },
+    { value: 'contractor_payment', label: 'Contractor Payment', section: '194C', rate: '1/2%' },
+    { value: 'dividend', label: 'Dividend Income', section: '194', rate: '10%' }
   ];
 
   const selectedIncomeType = incomeTypes.find(type => type.value === incomeType);
 
-  const howToSchema = getHowToSchema({
-    name: "How to Calculate TDS on Various Income",
-    description: "Calculate Tax Deducted at Source in 3 simple steps",
-    totalTime: "PT3M",
-    steps: [
-      {
-        name: "Select income type",
-        text: "Choose the type of income (Interest, Rent, Professional Fees, etc.)"
-      },
-      {
-        name: "Enter income amount",
-        text: "Input the total income amount on which TDS is applicable"
-      },
-      {
-        name: "View TDS calculation",
-        text: "See the TDS amount, applicable section, and net amount receivable"
-      }
-    ]
-  });
-
   return (
     <>
-      <EnhancedSEO
-        title="TDS Calculator 2025 | Tax Deducted at Source Calculator"
-        description={`Calculate TDS across income types. AY ${selectedYear} rates, sections & threshold limits.`}
-        keywords={[
-          'TDS calculator',
-          'tax deducted at source',
-          'TDS on salary',
-          'TDS on rent',
-          'TDS rates 2025',
-          'section 194A',
-          'section 194J',
-          'TDS calculation online'
-        ]}
-        url="https://myeca.in/calculators/tds"
-        type="website"
-        jsonLd={howToSchema}
+      <MetaSEO
+        title={seo?.title || "TDS Calculator 2025 | Rates & Sections | MyeCA.in"}
+        description={seo?.description || "Calculate TDS across income types with current rates for AY 2025-26. Professional tax planning with PAN and threshold insights."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
       />
-    <TooltipProvider>
-      <div className="calculator-page min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-4 transition-colors duration-200">
-        <div className="max-w-6xl mx-auto">
-          {/* Compact Header */}
-          <CalculatorHeader
-            icon={Receipt}
-            title="TDS Calculator"
-            subtitle={`Calculate TDS across income types and view applicable rates for AY ${selectedYear}.`}
-            color="purple"
-            align="center"
-          />
 
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* Input Section */}
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <Card className="h-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
-                <CardHeader>
+      <div className="min-h-screen bg-[#F8FAFC] font-sans pb-20">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "TDS Calculator" }]} />
+
+        {/* --- HERO --- */}
+        <section className="pt-8 pb-10 text-center px-4">
+          <m.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-100"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Standard Financial Tool 2025
+          </m.div>
+          <m.h1 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3"
+          >
+            TDS <span className="text-purple-600">Calculator</span>
+          </m.h1>
+          <p className="text-slate-500 font-medium max-w-xl mx-auto text-sm md:text-base">
+            Professional Tax Deducted at Source planning with real-time rate analysis and threshold insights.
+          </p>
+        </section>
+
+        {/* --- MAIN CONTENT --- */}
+        <main className="max-w-7xl mx-auto px-4 relative z-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            {/* LEFT: INPUTS */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
+                <div className="p-6 md:p-8 space-y-8">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                      Income Details
-                    </CardTitle>
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                      <Coins className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                  </div>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Enter your income details to calculate TDS
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Calendar className="h-4 w-4 text-purple-600" />
-                      <Label htmlFor="assessment-year" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Assessment Year
-                      </Label>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-purple-50 rounded-xl">
+                        <Receipt className="w-6 h-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-slate-900">Payment Details</h2>
+                        <p className="text-xs text-slate-500 font-medium">Configure income type and amounts</p>
+                      </div>
                     </div>
                     <Select value={selectedYear} onValueChange={setSelectedYear}>
-                      <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
-                        <SelectValue placeholder="Select assessment year" />
+                      <SelectTrigger className="w-32 h-10 rounded-xl border-slate-200 font-bold text-xs">
+                        <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                        {assessmentYears.map((year) => (
-                          <SelectItem key={year.value} value={year.value} className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                            {year.label}
-                          </SelectItem>
+                      <SelectContent className="rounded-xl font-bold">
+                        {assessmentYears.map((y) => (
+                          <SelectItem key={y.value} value={y.value}>{y.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label htmlFor="income" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Income Amount
-                      </Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-gray-400 dark:text-gray-500 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Enter the gross income amount before any deductions</p>
-                        </TooltipContent>
-                      </Tooltip>
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-[11px] font-bold uppercase tracking-widest text-slate-400">Income Type</Label>
+                      <Select value={incomeType} onValueChange={setIncomeType}>
+                        <SelectTrigger className="h-12 rounded-xl border-slate-200 font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl font-bold">
+                          {incomeTypes.map((t) => (
+                            <SelectItem key={t.value} value={t.value}>
+                              <div className="flex items-center gap-2">
+                                <span>{t.label}</span>
+                                <Badge variant="secondary" className="text-[9px] h-4 bg-slate-100 text-slate-500">{t.section}</Badge>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IndianRupee className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+
+                    <div className="space-y-2">
+                      <Label className="text-[11px] font-bold uppercase tracking-widest text-slate-400">Payment Amount</Label>
+                      <div className="relative">
+                        <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Input 
+                          type="number" 
+                          value={income || ''} 
+                          onChange={(e) => setIncome(Number(e.target.value))}
+                          placeholder="0"
+                          className="h-12 pl-10 rounded-xl border-slate-200 font-bold text-lg focus:ring-2 focus:ring-purple-100"
+                        />
                       </div>
-                      <Input
-                        id="income"
-                        type="number"
-                        value={income || ''}
-                        onChange={(e) => setIncome(Number(e.target.value))}
-                        placeholder="0"
-                        className="pl-10 text-lg bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      />
                     </div>
                   </div>
 
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label htmlFor="income-type" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Income Type
-                      </Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-gray-400 dark:text-gray-500 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Select the type of income to apply correct TDS rate</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <Select value={incomeType} onValueChange={setIncomeType}>
-                      <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
-                        <SelectValue placeholder="Select income type" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                        {incomeTypes.map((type) => (
-                          <SelectItem 
-                            key={type.value} 
-                            value={type.value}
-                            className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span>{type.label}</span>
-                              <Badge 
-                                variant="secondary" 
-                                className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300"
-                              >
-                                {type.section}
-                              </Badge>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
+                  {/* Options */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50 dark:bg-gray-900">
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">PAN Provided</p>
-                        <p className="text-xs text-gray-500">Apply Section 206AA (20%) if off</p>
+                    <div className={cn(
+                      "p-4 rounded-2xl border transition-all flex items-center justify-between",
+                      panProvided ? "bg-white border-slate-200" : "bg-red-50 border-red-100"
+                    )}>
+                      <div className="flex items-center gap-3">
+                        <div className={cn("p-2 rounded-lg", panProvided ? "bg-purple-50 text-purple-600" : "bg-red-100 text-red-600")}>
+                          <UserCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-900 uppercase leading-none">PAN Provided</p>
+                          <p className="text-[9px] font-medium text-slate-400 mt-1">{panProvided ? 'Standard Rates' : '20% Flat Rate'}</p>
+                        </div>
                       </div>
                       <Switch checked={panProvided} onCheckedChange={setPanProvided} />
                     </div>
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50 dark:bg-gray-900">
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Senior Citizen</p>
-                        <p className="text-xs text-gray-500">Interest threshold ₹50,000</p>
+
+                    <div className="p-4 rounded-2xl border border-slate-200 bg-white transition-all flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+                          <History className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-900 uppercase leading-none">Sr. Citizen</p>
+                          <p className="text-[9px] font-medium text-slate-400 mt-1">Higher Limits</p>
+                        </div>
                       </div>
                       <Switch checked={isSeniorCitizen} onCheckedChange={setIsSeniorCitizen} />
                     </div>
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50 dark:bg-gray-900">
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Form 15G/15H</p>
-                        <p className="text-xs text-gray-500">No TDS on interest if eligible</p>
+
+                    <div className="p-4 rounded-2xl border border-slate-200 bg-white transition-all flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
+                          <FileBadge className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-900 uppercase leading-none">15G/15H</p>
+                          <p className="text-[9px] font-medium text-slate-400 mt-1">Zero TDS Claim</p>
+                        </div>
                       </div>
                       <Switch checked={form15G15HSubmitted} onCheckedChange={setForm15G15HSubmitted} />
                     </div>
                   </div>
 
-                  <Button 
-                    onClick={handleCalculate} 
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    disabled={!income || !incomeType}
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    Calculate TDS
-                  </Button>
-                </CardContent>
-              </Card>
-            </m.div>
-
-            {/* Results Section */}
-            <m.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <Card className="h-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                      TDS Calculation Results
-                    </CardTitle>
-                    <div className="flex items-center gap-2">
-                      {result && (
-                        <CalculatorExport 
-                          title="TDS Calculation"
-                          data={{
-                            "Income Type": selectedIncomeType?.label || incomeType,
-                            "Gross Income": income,
-                            "Assessment Year": selectedYear,
-                            "TDS Rate": `${result.tdsRate}%`,
-                            "Threshold": result.threshold,
-                            "TDS Deducted": result.tdsAmount,
-                            "Net Income": result.netIncome
-                          }}
-                        />
-                      )}
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                        <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      </div>
+                  <div className="pt-6 border-t border-slate-100">
+                    <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400">
+                      <div className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-purple-500" /> IT Act Compliant</div>
+                      <div className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-amber-500" /> Instant Calculation</div>
+                      <div className="flex items-center gap-1.5"><Banknote className="w-3.5 h-3.5 text-blue-500" /> FY 2025-26 Rules</div>
                     </div>
                   </div>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Your TDS calculation breakdown
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {result ? (
-                    <div className="space-y-6">
-                      {/* Key Metrics */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <m.div
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 0.2 }}
-                          className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700"
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <Percent className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            <span className="text-sm font-medium text-purple-700 dark:text-purple-300">TDS Rate</span>
-                          </div>
-                          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{result.tdsRate}%</p>
-                        </m.div>
-                        
-                        <m.div
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 0.3 }}
-                          className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl border border-green-200 dark:border-green-700"
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <FileCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
-                            <span className="text-sm font-medium text-green-700 dark:text-green-300">Threshold</span>
-                          </div>
-                          <p className="text-2xl font-bold text-green-900 dark:text-green-100">₹{result.threshold.toLocaleString()}</p>
-                        </m.div>
-                      </div>
+                </div>
+              </div>
 
-                      <Separator className="dark:border-gray-700" />
+              {/* Rules Grid */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="bg-white p-5 rounded-[2rem] border border-slate-200 shadow-sm">
+                   <h4 className="text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3 flex items-center gap-2">
+                    <Info className="w-3.5 h-3.5 text-purple-500" /> Threshold Limit
+                   </h4>
+                   <p className="text-xs font-medium text-slate-600 leading-relaxed">
+                    TDS is only applicable if the total payment to a single person exceeds <span className="text-slate-900 font-bold">₹{selectedIncomeType?.value === 'professional_fees' ? '30,000' : '40,000'}</span> in a financial year.
+                   </p>
+                </div>
+                <div className="bg-white p-5 rounded-[2rem] border border-slate-200 shadow-sm">
+                   <h4 className="text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3 flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> Flat 20% Rule
+                   </h4>
+                   <p className="text-xs font-medium text-slate-600 leading-relaxed">
+                    Under <span className="text-slate-900 font-bold">Section 206AA</span>, if the payee does not provide a valid PAN, TDS must be deducted at 20% or the applicable rate, whichever is higher.
+                   </p>
+                </div>
+              </div>
+            </div>
 
-                      {/* Calculation Breakdown */}
-                      <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="space-y-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4"
-                      >
-                        <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
-                          <Calculator className="w-5 h-5 mr-2 text-gray-600 dark:text-gray-400" />
-                          Amount Breakdown
-                        </h4>
-                        
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center py-2">
-                            <span className="text-gray-600 dark:text-gray-400">Gross Income</span>
-                            <span className="font-semibold text-gray-900 dark:text-white">₹{income.toLocaleString()}</span>
-                          </div>
-                          
-                          <div className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-                            <span className="text-gray-600 dark:text-gray-400">TDS Deducted</span>
-                            <span className="font-semibold text-red-600 dark:text-red-400">-₹{result.tdsAmount.toLocaleString()}</span>
-                          </div>
-                          
-                          <div className="flex justify-between items-center py-2 border-t-2 border-gray-300 dark:border-gray-600">
-                            <span className="font-medium text-gray-900 dark:text-white">Net Income</span>
-                            <span className="font-bold text-lg text-green-600 dark:text-green-400">₹{result.netIncome.toLocaleString()}</span>
-                          </div>
-                        </div>
-                      </m.div>
-
-                      {/* Status Alert */}
-                      <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 }}
-                        className={`p-4 rounded-xl flex items-center gap-3 ${
-                          result.applicable 
-                            ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700' 
-                            : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'
-                        }`}
-                      >
-                        {result.applicable ? (
-                          <>
-                            <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                            <div>
-                              <p className="font-medium text-orange-900 dark:text-orange-100">TDS is applicable</p>
-                              <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
-                                Income exceeds the threshold limit of ₹{result.threshold.toLocaleString()}
-                              </p>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                            <div>
-                              <p className="font-medium text-green-900 dark:text-green-100">No TDS applicable</p>
-                              <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                                Income is below the threshold limit of ₹{result.threshold.toLocaleString()}
-                              </p>
-                            </div>
-                          </>
-                        )}
-                      </m.div>
-
-                      {/* Income Type Details */}
-                      {selectedIncomeType && (
-                        <m.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.6 }}
-                          className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl"
-                        >
-                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">Income Type Details</h5>
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              <span className="font-medium">Section:</span> {selectedIncomeType.section}
-                            </p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              <span className="font-medium">Income Type:</span> {selectedIncomeType.label}
-                            </p>
-                          </div>
-                        </m.div>
-                      )}
+            {/* RIGHT: RESULTS (Sticky) */}
+            <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+              <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-600/10 rounded-full blur-3xl" />
+                
+                <div className="relative z-10 space-y-8 text-center">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 block mb-2">TDS to be Deducted</span>
+                    <div className={cn("text-5xl font-black tracking-tighter", result?.tdsAmount ? "text-red-400" : "text-emerald-400")}>
+                      {result ? `₹${result.tdsAmount.toLocaleString()}` : "₹0"}
                     </div>
-                  ) : (
-                    <div className="text-center py-16">
-                      <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full inline-block mb-4">
-                        <Receipt className="w-12 h-12 text-gray-400 dark:text-gray-500" />
-                      </div>
-                      <p className="text-gray-500 dark:text-gray-400 text-lg">
-                        Enter income details to calculate TDS
-                      </p>
-                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-                        Select income type and amount to see deduction
-                      </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 pt-8 border-t border-white/10">
+                    <div className="text-left">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500 block mb-1">Applicable Rate</span>
+                      <span className="text-lg font-bold text-white">
+                        {result ? `${result.tdsRate}%` : "0%"}
+                      </span>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </m.div>
+                    <div className="text-left">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500 block mb-1">Net Payable</span>
+                      <span className="text-lg font-bold text-white">
+                        {result ? `₹${result.netIncome.toLocaleString()}` : "₹0"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 pt-4">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="uppercase tracking-widest text-slate-500 text-left">Calculation Status</span>
+                      <span className={result?.applicable ? "text-amber-400" : "text-emerald-400"}>
+                        {result?.applicable ? "LIMIT EXCEEDED" : "BELOW THRESHOLD"}
+                      </span>
+                    </div>
+                    <Progress 
+                      value={result?.applicable ? 100 : 40} 
+                      className="h-2 bg-white/5" 
+                      indicatorClassName={result?.applicable ? "bg-amber-500" : "bg-emerald-500"}
+                    />
+                  </div>
+
+                  <Button 
+                    className="w-full h-14 rounded-2xl bg-white text-slate-900 hover:bg-purple-50 border-none font-bold text-base transition-all shadow-xl"
+                  >
+                    Download Summary <Download className="ml-2 w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Composition */}
+              <div className="bg-white rounded-[2rem] border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-5 flex items-center gap-2">
+                  <PieChart className="w-4 h-4 text-purple-500" />
+                  Payment Split
+                </h3>
+                <div className="flex items-center gap-0 h-3 rounded-full bg-slate-100 overflow-hidden mb-6">
+                  <div 
+                    className="h-full bg-slate-200" 
+                    style={{ width: `${result ? Math.round((result.netIncome / income) * 100) : 100}%` }} 
+                  />
+                  <div 
+                    className="h-full bg-red-400" 
+                    style={{ width: `${result ? Math.round((result.tdsAmount / income) * 100) : 0}%` }} 
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-slate-300" />
+                    <span className="text-[11px] font-bold text-slate-500 uppercase">Payee Gets</span>
+                   </div>
+                   <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-red-400" />
+                    <span className="text-[11px] font-bold text-slate-500 uppercase">TDS (Govt)</span>
+                   </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </main>
 
-          {/* TDS Information Cards */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {/* TDS Guidelines Card */}
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-6 transition-colors duration-200">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <Info className="w-6 h-6 mr-2 text-purple-600 dark:text-purple-400" />
-                TDS Guidelines
-              </h3>
-              <div className="space-y-3">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <p className="flex items-start mb-2">
-                    <span className="text-purple-500 mr-2">•</span>
-                    <span>TDS is deducted at source when payments exceed threshold limits</span>
+        {/* --- RATES GRID --- */}
+        <section className="max-w-7xl mx-auto px-4 mt-16">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">TDS Rates & Thresholds 2025</h2>
+            <p className="text-slate-500 text-sm font-medium">Standard rates for Indian Residents as per Income Tax Act</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {incomeTypes.map((t, i) => (
+              <m.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-white p-5 rounded-[2rem] border border-slate-100 text-center flex flex-col items-center gap-2 hover:shadow-md transition-all"
+              >
+                <Badge variant="secondary" className="text-[8px] h-4 bg-purple-50 text-purple-600 mb-1">{t.section}</Badge>
+                <h4 className="text-[10px] font-black uppercase text-slate-900 leading-tight mb-1">{t.label}</h4>
+                <div className="text-sm font-black text-purple-600">{t.rate}</div>
+              </m.div>
+            ))}
+          </div>
+        </section>
+
+        {/* --- GUIDE SECTION --- */}
+        <section className="max-w-7xl mx-auto px-4 mt-20">
+          <div className="bg-white rounded-[2.5rem] border border-slate-200 p-8 md:p-12">
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
+                  Understanding TDS <br /><span className="text-purple-600">Compliance in 2025</span>
+                </h2>
+                <div className="text-slate-600 font-medium space-y-6 text-sm md:text-base leading-relaxed">
+                  <p>
+                    Tax Deducted at Source (TDS) is a system introduced by the Income Tax Department where tax is collected at the very source of income. 
                   </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-purple-500 mr-2">•</span>
-                    <span>Different income types have different TDS rates and thresholds</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-purple-500 mr-2">•</span>
-                    <span>PAN is mandatory for TDS deduction at correct rates</span>
-                  </p>
-                  <p className="flex items-start">
-                    <span className="text-purple-500 mr-2">•</span>
-                    <span>Form 26AS shows all TDS deducted against your PAN</span>
+                  <p>
+                    For instance, if a company makes a payment of <span className="text-slate-900 font-bold">Professional Fees</span> exceeding ₹30,000 to an individual, it is required to deduct 10% as TDS and deposit it with the government.
                   </p>
                 </div>
               </div>
-            </Card>
 
-            {/* Important Notes Card */}
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-6 transition-colors duration-200">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <FileText className="w-6 h-6 mr-2 text-blue-600 dark:text-blue-400" />
-                Important Notes
-              </h3>
-              <div className="space-y-3">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <p className="flex items-start mb-2">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>No TDS on salary for individuals earning below ₹2.5 lakh</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>Higher TDS rate (20%) if PAN not provided</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>TDS credit can be claimed while filing ITR</span>
-                  </p>
-                  <p className="flex items-start">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>Form 15G/15H can be submitted to avoid TDS</span>
-                  </p>
+              <div className="space-y-6">
+                <div className="p-8 rounded-[2rem] bg-slate-900 text-white shadow-2xl">
+                  <h4 className="text-xl font-bold mb-4">Important Compliance</h4>
+                  <div className="space-y-4">
+                    {[
+                      "TDS must be deposited by 7th of next month",
+                      "Quarterly TDS returns are mandatory",
+                      "Form 16/16A must be issued to the payee",
+                      "TDS credit can be checked in Form 26AS"
+                    ].map((t, i) => (
+                      <div key={i} className="flex gap-3 items-center">
+                        <CheckCircle className="w-4 h-4 text-purple-400" />
+                        <span className="text-sm font-medium opacity-90">{t}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </Card>
-          </m.div>
-
-          {/* TDS Rates Table */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-8"
-          >
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
--                    TDS Rates & Thresholds (FY 2024-25)
-+                    TDS Rates & Thresholds (AY {selectedYear})
-                  </CardTitle>
-                  <Badge className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
-                    Current Rates
-                  </Badge>
-                </div>
-                <CardDescription className="text-gray-600 dark:text-gray-400">
-                  Current TDS rates and applicability thresholds as per Income Tax Act
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {incomeTypes.map((type) => (
-                    <m.div
-                      key={type.value}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.1 }}
-                      className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md dark:hover:shadow-gray-700 transition-all duration-300 bg-gray-50 dark:bg-gray-700/50"
-                    >
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">{type.label}</h3>
-                        <Badge variant="outline" className="text-xs dark:border-gray-600 dark:text-gray-300">
-                          {type.section}
-                        </Badge>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Rate:</span>
-                          <span className="font-medium text-gray-900 dark:text-white">
-                            {type.value === 'salary' ? '0%' : 
-                             type.value === 'commission' ? '5%' :
-                             type.value === 'contractor_payment' ? '1%' : '10%'}
-                          </span>
-                        </p>
-                        <p className="text-sm flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Threshold:</span>
-                          <span className="font-medium text-gray-900 dark:text-white">
-                            ₹{type.value === 'salary' ? '0' :
-                              type.value === 'dividend' ? '5,000' :
-                              type.value === 'commission' ? '15,000' :
-                              type.value === 'professional_fees' ? '30,000' :
-                              type.value === 'contractor_payment' ? '30,000' :
-                              type.value === 'rent' ? '2,40,000' : '40,000'}
-                          </span>
-                        </p>
-                      </div>
-                    </m.div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </m.div>
-        </div>
+            </div>
+          </div>
+        </section>
       </div>
-    </TooltipProvider>
     </>
   );
 }

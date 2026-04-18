@@ -18,10 +18,8 @@ const EnhancedFDCalculatorPage = lazyWithRetry(() => import("@/features/calculat
 const PPFCalculator = lazyWithRetry(() => import("@/features/calculators/pages/ppf.page"));
 const WithdrawalPlannerPage = lazyWithRetry(() => import("@/features/calculators/pages/withdrawal-planner.page"));
 const CapitalGainsCalculator = lazyWithRetry(() => import("@/features/calculators/pages/capital-gains.page"));
-const HomeLoanCalculator = lazyWithRetry(() => import("@/features/calculators/pages/home-loan.page"));
-const CarLoanCalculator = lazyWithRetry(() => import("@/features/calculators/pages/car-loan.page"));
-const PersonalLoanCalculator = lazyWithRetry(() => import("@/features/calculators/pages/personal-loan.page"));
-const EducationLoanCalculator = lazyWithRetry(() => import("@/features/calculators/pages/education-loan.page"));
+const LoanCalculator = lazyWithRetry(() => import("@/features/calculators/pages/loan-calculator.page"));
+
 const CalculatorsPage = lazyWithRetry(() => import("@/features/calculators/pages/index.page"));
 const TaxOptimizerPage = lazyWithRetry(() => import("@/pages/tax-optimizer.page"));
 const RegimeComparatorPage = lazyWithRetry(() => import("@/features/calculators/pages/regime-comparator.page"));
@@ -118,6 +116,7 @@ const AdminSettings = lazyWithRetry(() => import("@/pages/admin/settings.page"))
 const CategoriesManagementPage = lazyWithRetry(() => import("@/pages/admin/categories-management.page"));
 const UpdatesManagementPage = lazyWithRetry(() => import("@/pages/admin/updates-management.page"));
 const MediaManagementPage = lazyWithRetry(() => import("@/pages/admin/media-management.page"));
+const TeamDashboard = lazyWithRetry(() => import("@/pages/team/dashboard.page"));
 const ITRFilingPage = lazyWithRetry(() => import("@/features/itr/pages/filing.page"));
 const ITRFormSelectorPage = lazyWithRetry(() => import("@/features/itr/pages/form-selector.page"));
 const ITRFormRecommenderPage = lazyWithRetry(() => import("@/features/itr/pages/form-recommender.page"));
@@ -166,10 +165,10 @@ export default function Routes() {
         <Route path="/calculators/ppf" component={PPFCalculator} />
         <Route path="/calculators/withdrawal-planner" component={WithdrawalPlannerPage} />
         <Route path="/calculators/capital-gains" component={CapitalGainsCalculator} />
-        <Route path="/calculators/home-loan" component={HomeLoanCalculator} />
-        <Route path="/calculators/car-loan" component={CarLoanCalculator} />
-        <Route path="/calculators/personal-loan" component={PersonalLoanCalculator} />
-        <Route path="/calculators/education-loan" component={EducationLoanCalculator} />
+        <Route path="/calculators/home-loan" component={LoanCalculator} />
+        <Route path="/calculators/car-loan" component={LoanCalculator} />
+        <Route path="/calculators/personal-loan" component={LoanCalculator} />
+        <Route path="/calculators/education-loan" component={LoanCalculator} />
         <Route path="/calculators" component={CalculatorsPage} />
         <Route path="/calculators/regime-comparator" component={RegimeComparatorPage} />
         <Route path="/calculators/advance-tax" component={AdvanceTaxCalculatorPage} />
@@ -245,6 +244,12 @@ export default function Routes() {
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/auth/callback" component={ClerkCallback} />
         <Route path="/dashboard" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
+        <Route path="/user" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
+        <Route path="/team/dashboard" component={() => (
+          <RequireRole roles={['admin', 'team_member']}>
+            <TeamDashboard />
+          </RequireRole>
+        )} />
         <Route path="/profile" component={() => <RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="/settings/account" component={() => <RequireAuth><AccountSettingsPage /></RequireAuth>} />
         <Route path="/experts" component={ExpertsIndexPage} />

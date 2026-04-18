@@ -12,7 +12,12 @@ import { AlertCircle, PiggyBank, TrendingUp, IndianRupee } from "lucide-react";
 import { calculateWithdrawalPlan, WithdrawalFrequency } from "@/lib/withdrawal-planner";
 import { formatCurrency } from "@/lib/enhanced-calculator-utils";
 
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import Breadcrumb from "@/components/Breadcrumb";
+
 export default function WithdrawalPlannerPage() {
+  const seo = getSEOConfig('/calculators/withdrawal-planner');
   const [principal, setPrincipal] = useState<number>(1000000);
   const [annualRate, setAnnualRate] = useState<number>(7.0);
   const [withdrawalAmount, setWithdrawalAmount] = useState<number>(10000);
@@ -36,8 +41,32 @@ export default function WithdrawalPlannerPage() {
   }));
 
   return (
-    <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
-      <div className="max-w-6xl mx-auto">
+    <>
+      <MetaSEO
+        title={seo?.title || "Withdrawal Planner - MyeCA"}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={[
+          {
+            question: "How does the withdrawal planner work?",
+            answer: "It calculates how long your money will last based on your starting principal, expected interest rate, and periodic withdrawal amount."
+          },
+          {
+            question: "Can I use this for SWP (Systematic Withdrawal Plan)?",
+            answer: "Yes, this tool is perfect for planning SWP from mutual funds or fixed income investments to ensure your capital lasts as long as needed."
+          },
+          {
+            question: "What is a sustainable withdrawal rate?",
+            answer: "A sustainable withdrawal rate is typically 4-5% of your initial portfolio value adjusted for inflation, which ensures your principal is not depleted too quickly."
+          }
+        ]}
+      />
+      <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "Withdrawal Planner" }]} />
+        <div className="max-w-6xl mx-auto">
         <CalculatorHeader
           icon={PiggyBank}
           title="Fixed Income Withdrawal Planner"
@@ -255,5 +284,6 @@ export default function WithdrawalPlannerPage() {
         </div>
       </div>
     </div>
+    </>
   );
-}
+}

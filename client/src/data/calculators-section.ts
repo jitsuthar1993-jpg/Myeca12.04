@@ -97,38 +97,11 @@ export const calculators: CalculatorItem[] = [
   },
   {
     id: "home-loan",
-    title: "Home Loan Calculator",
-    description: "Calculate home loan EMI with eligibility analysis, LTV ratio, and tax benefits for property purchases.",
-    icon: "Home",
+    title: "Loan Calculator",
+    description: "Calculate Home, Car, Personal & Education loan EMIs with eligibility and tax benefits.",
+    icon: "Briefcase",
     color: "blue",
     href: "/calculators/home-loan",
-    category: "loan"
-  },
-  {
-    id: "car-loan",
-    title: "Car Loan Calculator",
-    description: "Calculate car loan EMI for new and used vehicles with down payment analysis and rate comparisons.",
-    icon: "Car",
-    color: "orange",
-    href: "/calculators/car-loan",
-    category: "loan"
-  },
-  {
-    id: "personal-loan",
-    title: "Personal Loan Calculator",
-    description: "Calculate personal loan EMI with risk analysis and eligibility assessment for various purposes.",
-    icon: "Wallet",
-    color: "purple",
-    href: "/calculators/personal-loan",
-    category: "loan"
-  },
-  {
-    id: "education-loan",
-    title: "Education Loan Calculator",
-    description: "Calculate education loan EMI with moratorium period and Section 80E tax benefits for students.",
-    icon: "GraduationCap",
-    color: "teal",
-    href: "/calculators/education-loan",
     category: "loan"
   }
 ];

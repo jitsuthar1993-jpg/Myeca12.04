@@ -1,835 +1,354 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Link } from "wouter";
-import {
-  Calculator,
-  PiggyBank,
-  TrendingUp,
-  Shield,
-  Info,
-  Download,
-  ArrowRight,
-  CheckCircle,
-  Wallet,
-  Calendar,
-  Target,
-  Building2,
-  Users,
-  Percent,
-  IndianRupee,
-  Clock,
-  Gift,
-  ShieldCheck
-} from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { m } from "framer-motion";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
+import Breadcrumb from "@/components/Breadcrumb";
 import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  PiggyBank, TrendingUp, Shield, IndianRupee, Target,
+  Calendar, Percent, Info, ShieldCheck, Sparkles, ArrowRight
+} from "lucide-react";
+import {
+  AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
-import {
-  calculateNPSTaxBenefits,
-  projectNPSCorpus,
-  compareInvestments,
-  NPS_LIMITS,
-  NPS_ASSET_CLASSES,
-  NPS_FUND_MANAGERS,
-  NPS_TIERS,
-} from "@/lib/nps-calculations";
 
-const COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6'];
+const fmt = (n: number) =>
+  n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
+
+function calcNPS(monthly: number, years: number, rate: number, annuity: number, age: number) {
+  const r = rate / 100 / 12;
+  const n = years * 12;
+  const corpus = monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+  const lumpSum = corpus * (1 - annuity / 100);
+  const annuityCorpus = corpus * (annuity / 100);
+  const monthlyPension = (annuityCorpus * 0.065) / 12;
+  const taxSaved80C = Math.min(monthly * 12, 150000) * 0.3;
+  const taxSaved80CCD = Math.min(monthly * 12, 50000) * 0.3;
+  const chartData: { year: number; corpus: number; invested: number }[] = [];
+  for (let y = 1; y <= years; y++) {
+    const invested = monthly * 12 * y;
+    const c = monthly * ((Math.pow(1 + r, y * 12) - 1) / r) * (1 + r);
+    chartData.push({ year: age + y, corpus: Math.round(c), invested: Math.round(invested) });
+  }
+  return { corpus, lumpSum, annuityCorpus, monthlyPension, taxSaved80C, taxSaved80CCD, chartData };
+}
+
+const PIE_COLORS = ["#6366f1", "#10b981"];
 
 export default function NPSCalculatorPage() {
-  // Basic inputs
-  const [annualIncome, setAnnualIncome] = useState(1200000);
-  const [currentAge, setCurrentAge] = useState(30);
-  const [retirementAge, setRetirementAge] = useState(60);
-  const [monthlyContribution, setMonthlyContribution] = useState(10000);
-  const [currentCorpus, setCurrentCorpus] = useState(0);
-  
-  // Advanced inputs
-  const [isGovernmentEmployee, setIsGovernmentEmployee] = useState(false);
-  const [employerContribution, setEmployerContribution] = useState(0);
-  const [existing80CDeductions, setExisting80CDeductions] = useState(100000);
-  const [expectedReturn, setExpectedReturn] = useState(10);
-  const [annuityPercentage, setAnnuityPercentage] = useState(40);
-  const [annuityReturn, setAnnuityReturn] = useState(6);
-  
-  // Asset allocation
-  const [equityAllocation, setEquityAllocation] = useState(50);
-  const [corporateBondAllocation, setCorporateBondAllocation] = useState(30);
-  const [govtSecAllocation, setGovtSecAllocation] = useState(20);
+  const seo = getSEOConfig("/calculators/nps");
+  const [age, setAge] = useState(30);
+  const [monthly, setMonthly] = useState(5000);
+  const [rate, setRate] = useState(10);
+  const [annuity, setAnnuity] = useState(40);
 
-  // Calculate tax benefits
-  const taxBenefits = useMemo(() => {
-    const yearlyContribution = monthlyContribution * 12;
-    return calculateNPSTaxBenefits(
-      {
-        employeeContribution: yearlyContribution,
-        employerContribution: employerContribution * 12,
-        additionalContribution: Math.min(yearlyContribution, 50000),
-      },
-      annualIncome,
-      isGovernmentEmployee,
-      existing80CDeductions
-    );
-  }, [monthlyContribution, employerContribution, annualIncome, isGovernmentEmployee, existing80CDeductions]);
+  const retireAge = 60;
+  const years = retireAge - age;
+  const result = useMemo(
+    () => calcNPS(monthly, years, rate, annuity, age),
+    [monthly, years, rate, annuity, age]
+  );
 
-  // Project corpus
-  const projection = useMemo(() => {
-    return projectNPSCorpus({
-      currentAge,
-      retirementAge,
-      currentCorpus,
-      monthlyContribution,
-      expectedReturn,
-      annuityPercentage,
-      annuityReturn,
-    });
-  }, [currentAge, retirementAge, currentCorpus, monthlyContribution, expectedReturn, annuityPercentage, annuityReturn]);
+  const pieData = [
+    { name: "Lump Sum (Tax-Free)", value: Math.round(result.lumpSum) },
+    { name: "Annuity Corpus", value: Math.round(result.annuityCorpus) },
+  ];
 
-  // Compare with other investments
-  const comparison = useMemo(() => {
-    return compareInvestments(monthlyContribution, retirementAge - currentAge, annualIncome);
-  }, [monthlyContribution, currentAge, retirementAge, annualIncome]);
-
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    if (amount >= 10000000) {
-      return `₹${(amount / 10000000).toFixed(2)} Cr`;
-    } else if (amount >= 100000) {
-      return `₹${(amount / 100000).toFixed(2)} L`;
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload?.length) {
+      return (
+        <div className="bg-white border border-slate-100 rounded-xl p-3 shadow-lg text-sm">
+          <p className="text-slate-500 mb-1 font-bold">Age {payload[0]?.payload?.year}</p>
+          <p className="text-indigo-600 font-black">{fmt(payload[0]?.value ?? 0)}</p>
+          {payload[1] && <p className="text-slate-400 font-bold">{fmt(payload[1]?.value ?? 0)}</p>}
+        </div>
+      );
     }
-    return `₹${amount.toLocaleString('en-IN')}`;
+    return null;
   };
-
-  // Chart data for projection
-  const projectionChartData = projection.yearWiseProjection.filter((_, i) => i % 5 === 0 || i === projection.yearWiseProjection.length - 1);
-
-  // Comparison chart data
-  const comparisonChartData = [
-    { name: 'NPS', corpus: comparison.nps.corpus, taxBenefit: comparison.nps.taxBenefit },
-    { name: 'PPF', corpus: comparison.ppf.corpus, taxBenefit: comparison.ppf.taxBenefit },
-    { name: 'ELSS', corpus: comparison.elss.corpus, taxBenefit: comparison.elss.taxBenefit },
-  ];
-
-  // Asset allocation chart data
-  const assetAllocationData = [
-    { name: 'Equity (E)', value: equityAllocation, color: '#3b82f6' },
-    { name: 'Corporate Bonds (C)', value: corporateBondAllocation, color: '#22c55e' },
-    { name: 'Govt Securities (G)', value: govtSecAllocation, color: '#f59e0b' },
-  ];
 
   return (
     <>
       <MetaSEO
-        title="NPS Calculator 2025 | National Pension System Tax Benefits"
-        description="Calculate your NPS retirement corpus and tax savings under Section 80CCD(1B). Professional NPS investment planner with Tier I and Tier II comparison."
-        keywords={[
-          "NPS calculator India", "80CCD tax benefit", "National Pension System", 
-          "retirement planning calculator", "NPS Tier 1 vs Tier 2", "pension calculator"
-        ]}
-        type="calculator"
-        calculatorData={{
-          type: "NPS Calculator",
-          features: ["Tax benefit analysis", "Corpus projection", "Annuity vs Lump sum calculation", "Comparison with PPF/ELSS"],
-          accuracy: "99.9%",
-          updates: "Current PFRDA guidelines"
-        }}
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Calculators", url: "/calculators" },
-          { name: "NPS Calculator", url: "/calculators/nps" }
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={[
+          { question: "What is NPS?", answer: "National Pension System (NPS) is a government-sponsored retirement savings scheme. Contributions are invested in equity, corporate bonds, and government securities." },
+          { question: "How much tax can I save with NPS?", answer: "You can save tax under Section 80CCD(1) up to ₹1.5L and an additional ₹50,000 under 80CCD(1B), totaling ₹2 lakhs of deductions." },
+          { question: "When can I withdraw from NPS?", answer: "At age 60, you can withdraw 60% as a lump sum (tax-free) and must invest 40% in an annuity plan for monthly pension." },
         ]}
       />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="text-indigo-200 hover:text-white">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-indigo-300" />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/calculators" className="text-indigo-200 hover:text-white">Calculators</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-indigo-300" />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-white">NPS Calculator</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-              <Shield className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">NPS Tax Benefit Calculator</h1>
-              <p className="text-indigo-200 mt-1">
-                Calculate your NPS tax savings under 80CCD and plan your retirement corpus
-              </p>
-            </div>
+      <div className="min-h-screen bg-slate-50/50 calculator-gradient-bg pb-24">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "NPS Calculator" }]} />
+
+        {/* Hero */}
+        <section className="relative pt-12 pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <m.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/50 text-indigo-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5" /> Retirement Planning · Tax Saving
+            </m.div>
+            <m.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+              NPS <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Pension</span> Calculator
+            </m.h1>
+            <m.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+              className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+              Plan your retirement corpus, visualize growth, and discover your tax savings under Section 80CCD.
+            </m.p>
           </div>
+        </section>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-indigo-200">Total Tax Benefit</p>
-              <p className="text-2xl font-bold">{formatCurrency(taxBenefits.totalDeduction)}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-indigo-200">Tax Saved</p>
-              <p className="text-2xl font-bold">{formatCurrency(taxBenefits.taxSaved)}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-indigo-200">Retirement Corpus</p>
-              <p className="text-2xl font-bold">{formatCurrency(projection.corpusAtRetirement)}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-indigo-200">Monthly Pension</p>
-              <p className="text-2xl font-bold">{formatCurrency(projection.monthlyPension)}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        <main className="max-w-7xl mx-auto px-4 -mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Input Section */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5 text-indigo-600" />
-                  Basic Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="income">Annual Income</Label>
-                  <div className="relative mt-1">
-                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="income"
-                      type="number"
-                      value={annualIncome}
-                      onChange={(e) => setAnnualIncome(Number(e.target.value))}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="currentAge">Current Age</Label>
-                    <Input
-                      id="currentAge"
-                      type="number"
-                      value={currentAge}
-                      onChange={(e) => setCurrentAge(Number(e.target.value))}
-                      min={18}
-                      max={65}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="retirementAge">Retirement Age</Label>
-                    <Input
-                      id="retirementAge"
-                      type="number"
-                      value={retirementAge}
-                      onChange={(e) => setRetirementAge(Number(e.target.value))}
-                      min={currentAge + 1}
-                      max={75}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="monthlyContribution">Monthly Contribution</Label>
-                  <div className="relative mt-1">
-                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="monthlyContribution"
-                      type="number"
-                      value={monthlyContribution}
-                      onChange={(e) => setMonthlyContribution(Number(e.target.value))}
-                      className="pl-10"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Yearly: {formatCurrency(monthlyContribution * 12)}
-                  </p>
-                </div>
-
-                <div>
-                  <Label htmlFor="currentCorpus">Existing NPS Corpus</Label>
-                  <div className="relative mt-1">
-                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="currentCorpus"
-                      type="number"
-                      value={currentCorpus}
-                      onChange={(e) => setCurrentCorpus(Number(e.target.value))}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-2">
-                  <Label htmlFor="govtEmployee" className="cursor-pointer">Government Employee</Label>
-                  <Switch
-                    id="govtEmployee"
-                    checked={isGovernmentEmployee}
-                    onCheckedChange={setIsGovernmentEmployee}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                  Advanced Settings
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between">
-                    <Label>Expected Return (%)</Label>
-                    <span className="text-sm font-medium">{expectedReturn}%</span>
-                  </div>
-                  <Slider
-colorTheme="purple"                     value={[expectedReturn]}
-                    onValueChange={(v) => setExpectedReturn(v[0])}
-                    min={6}
-                    max={14}
-                    step={0.5}
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between">
-                    <Label>Annuity Percentage (%)</Label>
-                    <span className="text-sm font-medium">{annuityPercentage}%</span>
-                  </div>
-                  <Slider
-colorTheme="purple"                     value={[annuityPercentage]}
-                    onValueChange={(v) => setAnnuityPercentage(v[0])}
-                    min={40}
-                    max={100}
-                    step={5}
-                    className="mt-2"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Minimum 40% must be invested in annuity</p>
-                </div>
-
-                <div>
-                  <Label htmlFor="existing80C">Existing 80C Deductions</Label>
-                  <div className="relative mt-1">
-                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="existing80C"
-                      type="number"
-                      value={existing80CDeductions}
-                      onChange={(e) => setExisting80CDeductions(Number(e.target.value))}
-                      className="pl-10"
-                      max={150000}
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">EPF, PPF, LIC, etc. (max ₹1.5L)</p>
-                </div>
-
-                {isGovernmentEmployee && (
-                  <div>
-                    <Label htmlFor="employerContribution">Employer Monthly Contribution</Label>
-                    <div className="relative mt-1">
-                      <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="employerContribution"
-                        type="number"
-                        value={employerContribution}
-                        onChange={(e) => setEmployerContribution(Number(e.target.value))}
-                        className="pl-10"
-                      />
+            {/* ─── Input Panel ─── */}
+            <div className="lg:col-span-4 space-y-5">
+              <m.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+                className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
+                <div className="p-8 border-b border-slate-100 bg-gradient-to-br from-slate-50/50 to-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                      <PiggyBank className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Your NPS Details</h2>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Configure your plan</p>
                     </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Results Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <Tabs defaultValue="benefits" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="benefits">Tax Benefits</TabsTrigger>
-                <TabsTrigger value="projection">Projection</TabsTrigger>
-                <TabsTrigger value="compare">Compare</TabsTrigger>
-                <TabsTrigger value="info">NPS Info</TabsTrigger>
-              </TabsList>
-
-              {/* Tax Benefits Tab */}
-              <TabsContent value="benefits" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm opacity-80">Section 80CCD(1)</p>
-                          <p className="text-2xl font-bold">{formatCurrency(taxBenefits.section80CCD1)}</p>
-                          <p className="text-xs opacity-70 mt-1">Within 80C limit (₹1.5L)</p>
-                        </div>
-                        <Shield className="h-10 w-10 opacity-80" />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm opacity-80">Section 80CCD(1B)</p>
-                          <p className="text-2xl font-bold">{formatCurrency(taxBenefits.section80CCD1B)}</p>
-                          <p className="text-xs opacity-70 mt-1">Additional ₹50,000</p>
-                        </div>
-                        <Gift className="h-10 w-10 opacity-80" />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {isGovernmentEmployee && (
-                    <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm opacity-80">Section 80CCD(2)</p>
-                            <p className="text-2xl font-bold">{formatCurrency(taxBenefits.section80CCD2)}</p>
-                            <p className="text-xs opacity-70 mt-1">Employer contribution (14%)</p>
-                          </div>
-                          <Building2 className="h-10 w-10 opacity-80" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm opacity-80">Total Tax Saved</p>
-                          <p className="text-2xl font-bold">{formatCurrency(taxBenefits.taxSaved)}</p>
-                          <p className="text-xs opacity-70 mt-1">Effective return: {taxBenefits.effectiveReturn}%</p>
-                        </div>
-                        <Wallet className="h-10 w-10 opacity-80" />
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
 
-                {/* Tax Benefit Breakdown */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Tax Benefit Breakdown</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center py-3 border-b">
-                        <div>
-                          <p className="font-medium">Your Annual Contribution</p>
-                          <p className="text-sm text-gray-500">Monthly × 12</p>
-                        </div>
-                        <p className="text-lg font-semibold">{formatCurrency(monthlyContribution * 12)}</p>
-                      </div>
-                      
-                      <div className="flex justify-between items-center py-3 border-b">
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-blue-100 text-blue-700">80CCD(1)</Badge>
-                          <p className="text-sm">Within 80C limit</p>
-                        </div>
-                        <p className="font-medium text-blue-600">{formatCurrency(taxBenefits.section80CCD1)}</p>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3 border-b">
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-green-100 text-green-700">80CCD(1B)</Badge>
-                          <p className="text-sm">Additional deduction</p>
-                        </div>
-                        <p className="font-medium text-green-600">{formatCurrency(taxBenefits.section80CCD1B)}</p>
-                      </div>
-
-                      {taxBenefits.section80CCD2 > 0 && (
-                        <div className="flex justify-between items-center py-3 border-b">
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-purple-100 text-purple-700">80CCD(2)</Badge>
-                            <p className="text-sm">Employer contribution</p>
-                          </div>
-                          <p className="font-medium text-purple-600">{formatCurrency(taxBenefits.section80CCD2)}</p>
-                        </div>
-                      )}
-
-                      <div className="flex justify-between items-center py-3 bg-indigo-50 rounded-lg px-4">
-                        <p className="font-bold">Total Deduction</p>
-                        <p className="text-xl font-bold text-indigo-600">{formatCurrency(taxBenefits.totalDeduction)}</p>
-                      </div>
+                <div className="p-8 space-y-8">
+                  {/* Current Age */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" /> Current Age
+                      </label>
+                      <span className="text-indigo-600 font-black text-xl">{age} yrs</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <Slider colorTheme="blue" value={[age]} onValueChange={([v]) => setAge(v)} min={18} max={55} step={1} className="w-full" />
+                    <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold">
+                      <span>18 yrs</span><span>55 yrs</span>
+                    </div>
+                  </div>
 
-                <Alert className="bg-green-50 border-green-200">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <AlertTitle className="text-green-800">NPS Unique Advantage</AlertTitle>
-                  <AlertDescription className="text-green-700">
-                    NPS offers an <strong>additional ₹50,000</strong> deduction under 80CCD(1B) over and above the ₹1.5 lakh limit of Section 80C. 
-                    This is exclusive to NPS and not available with PPF, ELSS, or other 80C investments.
-                  </AlertDescription>
-                </Alert>
-              </TabsContent>
+                  {/* Monthly Contribution */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <IndianRupee className="w-3.5 h-3.5" /> Monthly Contribution
+                      </label>
+                      <span className="text-indigo-600 font-black text-xl">{fmt(monthly)}</span>
+                    </div>
+                    <Slider colorTheme="blue" value={[monthly]} onValueChange={([v]) => setMonthly(v)} min={500} max={100000} step={500} className="w-full" />
+                    <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold">
+                      <span>₹500</span><span>₹1 Lakh</span>
+                    </div>
+                  </div>
 
-              {/* Projection Tab */}
-              <TabsContent value="projection" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardContent className="p-6 text-center">
-                      <Target className="h-8 w-8 mx-auto text-indigo-600 mb-2" />
-                      <p className="text-sm text-gray-500">Corpus at Retirement</p>
-                      <p className="text-2xl font-bold text-indigo-600">{formatCurrency(projection.corpusAtRetirement)}</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-6 text-center">
-                      <Wallet className="h-8 w-8 mx-auto text-green-600 mb-2" />
-                      <p className="text-sm text-gray-500">Lump Sum (Tax-Free)</p>
-                      <p className="text-2xl font-bold text-green-600">{formatCurrency(projection.lumpSumWithdrawal)}</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-6 text-center">
-                      <Calendar className="h-8 w-8 mx-auto text-purple-600 mb-2" />
-                      <p className="text-sm text-gray-500">Monthly Pension</p>
-                      <p className="text-2xl font-bold text-purple-600">{formatCurrency(projection.monthlyPension)}</p>
-                    </CardContent>
-                  </Card>
+                  {/* Expected Return */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <Percent className="w-3.5 h-3.5" /> Expected Annual Return
+                      </label>
+                      <span className="text-emerald-600 font-black text-xl">{rate}%</span>
+                    </div>
+                    <Slider colorTheme="blue" value={[rate]} onValueChange={([v]) => setRate(v)} min={6} max={15} step={0.5} className="w-full" />
+                    <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold">
+                      <span>6%</span><span>15%</span>
+                    </div>
+                  </div>
+
+                  {/* Annuity % */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <TrendingUp className="w-3.5 h-3.5" /> Annuity Allocation
+                      </label>
+                      <span className="text-violet-600 font-black text-xl">{annuity}%</span>
+                    </div>
+                    <Slider colorTheme="blue" value={[annuity]} onValueChange={([v]) => setAnnuity(v)} min={40} max={100} step={5} className="w-full" />
+                    <p className="text-[10px] text-slate-400 font-bold mt-1.5">Min 40% required by PFRDA</p>
+                  </div>
+                </div>
+              </m.div>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Retire at", val: "60 yrs", icon: Calendar, c: "text-indigo-600", bg: "bg-indigo-50" },
+                  { label: "Years left", val: `${years} yrs`, icon: Target, c: "text-emerald-600", bg: "bg-emerald-50" },
+                  { label: "Total invested", val: fmt(monthly * 12 * years), icon: IndianRupee, c: "text-violet-600", bg: "bg-violet-50" },
+                  { label: "Tax saved/yr", val: fmt(result.taxSaved80C + result.taxSaved80CCD), icon: Shield, c: "text-rose-600", bg: "bg-rose-50" },
+                ].map(({ label, val, icon: Icon, c, bg }) => (
+                  <div key={label} className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+                    <div className={`w-8 h-8 rounded-xl ${bg} flex items-center justify-center mb-2`}>
+                      <Icon className={`w-4 h-4 ${c}`} />
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{label}</p>
+                    <p className="text-slate-900 font-black text-sm mt-0.5">{val}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tax Benefits Card */}
+              <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200/50">
+                <div className="flex items-center gap-2 mb-4">
+                  <ShieldCheck className="w-5 h-5 text-indigo-200" />
+                  <h3 className="font-black text-sm tracking-tight">Annual Tax Benefits</h3>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-indigo-200 text-sm font-medium">80CCD(1) — via 80C</span>
+                    <span className="font-black text-white">{fmt(result.taxSaved80C)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-indigo-200 text-sm font-medium">80CCD(1B) — Extra ₹50k</span>
+                    <span className="font-black text-white">{fmt(result.taxSaved80CCD)}</span>
+                  </div>
+                  <div className="border-t border-indigo-500/50 pt-3 flex justify-between items-center">
+                    <span className="font-black text-sm">Total Saved/yr</span>
+                    <span className="font-black text-2xl">{fmt(result.taxSaved80C + result.taxSaved80CCD)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ─── Results Panel ─── */}
+            <div className="lg:col-span-8 space-y-6">
+              <m.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+
+                {/* Key Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  {[
+                    { label: "Total Corpus", val: fmt(result.corpus), icon: Target, accent: "from-indigo-500 to-violet-600", text: "text-indigo-600" },
+                    { label: "Lump Sum", val: fmt(result.lumpSum), icon: IndianRupee, accent: "from-emerald-500 to-teal-600", text: "text-emerald-600" },
+                    { label: "Annuity Fund", val: fmt(result.annuityCorpus), icon: TrendingUp, accent: "from-amber-500 to-orange-500", text: "text-amber-600" },
+                    { label: "Monthly Pension", val: fmt(result.monthlyPension), icon: PiggyBank, accent: "from-rose-500 to-pink-600", text: "text-rose-600" },
+                  ].map(({ label, val, icon: Icon, accent, text }) => (
+                    <m.div key={label} whileHover={{ y: -2 }}
+                      className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-5 overflow-hidden relative">
+                      <div className={`absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br ${accent} opacity-10 rounded-full blur-xl`} />
+                      <Icon className={`w-5 h-5 ${text} mb-3`} />
+                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{label}</p>
+                      <p className="text-slate-900 font-black text-lg leading-none">{val}</p>
+                    </m.div>
+                  ))}
                 </div>
 
-                {/* Corpus Growth Chart */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Corpus Growth Projection</CardTitle>
-                    <CardDescription>
-                      {retirementAge - currentAge} years until retirement
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[350px]">
+                {/* Growth Chart */}
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-7 mb-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-slate-900 font-black tracking-tight">Corpus Growth Over Time</h3>
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-0.5">Age {age} → Retirement at 60</p>
+                    </div>
+                    <Badge className="bg-indigo-50 text-indigo-600 border-0 text-xs font-black hover:bg-indigo-50">{rate}% p.a.</Badge>
+                  </div>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={result.chartData} margin={{ top: 5, right: 5, bottom: 0, left: 5 }}>
+                        <defs>
+                          <linearGradient id="corpusGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="investedGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                        <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 700 }} tickLine={false} />
+                        <YAxis stroke="#94a3b8" tick={{ fontSize: 11, fill: "#94a3b8" }} tickLine={false} tickFormatter={(v) => `₹${(v / 1e5).toFixed(0)}L`} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend wrapperStyle={{ paddingTop: "12px", fontSize: "11px", fontWeight: 700, color: "#64748b" }} />
+                        <Area type="monotone" dataKey="invested" name="Invested" stroke="#10b981" fill="url(#investedGrad)" strokeWidth={2} dot={false} />
+                        <Area type="monotone" dataKey="corpus" name="Corpus" stroke="#6366f1" fill="url(#corpusGrad)" strokeWidth={2.5} dot={false} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Pie + Summary */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-7">
+                    <h3 className="text-slate-900 font-black tracking-tight mb-4">Corpus Split at Retirement</h3>
+                    <div className="h-48">
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={projectionChartData}>
-                          <defs>
-                            <linearGradient id="colorCorpus" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
-                              <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
-                            </linearGradient>
-                            <linearGradient id="colorContribution" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
-                              <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom' }} />
-                          <YAxis tickFormatter={(v) => `₹${(v/100000).toFixed(0)}L`} />
-                          <Tooltip 
-                            formatter={(value: number) => formatCurrency(value)}
-                            labelFormatter={(label) => `Age: ${label}`}
-                          />
-                          <Legend />
-                          <Area type="monotone" dataKey="corpus" stroke="#6366f1" fillOpacity={1} fill="url(#colorCorpus)" name="Total Corpus" />
-                          <Area type="monotone" dataKey="contribution" stroke="#22c55e" fillOpacity={1} fill="url(#colorContribution)" name="Your Contribution" />
-                        </AreaChart>
+                        <PieChart>
+                          <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value">
+                            {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
+                          </Pie>
+                          <Tooltip formatter={(v: number) => fmt(v)}
+                            contentStyle={{ background: "#fff", border: "1px solid #f1f5f9", borderRadius: "12px", fontSize: "12px", fontWeight: 700 }} />
+                          <Legend wrapperStyle={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }} />
+                        </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
 
-                {/* Summary */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Retirement Summary</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-500">Total Contribution</p>
-                        <p className="text-xl font-bold">{formatCurrency(projection.totalContribution)}</p>
-                      </div>
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-500">Total Gains</p>
-                        <p className="text-xl font-bold text-green-600">{formatCurrency(projection.totalGains)}</p>
-                      </div>
-                      <div className="p-4 bg-green-50 rounded-lg">
-                        <p className="text-sm text-green-700">Tax-Free Withdrawal (60%)</p>
-                        <p className="text-xl font-bold text-green-700">{formatCurrency(projection.lumpSumWithdrawal)}</p>
-                      </div>
-                      <div className="p-4 bg-purple-50 rounded-lg">
-                        <p className="text-sm text-purple-700">Annuity Corpus (40%)</p>
-                        <p className="text-xl font-bold text-purple-700">{formatCurrency(projection.annuityCorpus)}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Compare Tab */}
-              <TabsContent value="compare" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>NPS vs PPF vs ELSS Comparison</CardTitle>
-                    <CardDescription>
-                      Based on {formatCurrency(monthlyContribution)}/month for {retirementAge - currentAge} years
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={comparisonChartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis tickFormatter={(v) => `₹${(v/100000).toFixed(0)}L`} />
-                          <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                          <Legend />
-                          <Bar dataKey="corpus" fill="#6366f1" name="Corpus" radius={[4, 4, 0, 0]} />
-                          <Bar dataKey="taxBenefit" fill="#22c55e" name="Tax Benefit" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Comparison Table */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="border-2 border-indigo-200">
-                    <CardHeader className="bg-indigo-50">
-                      <CardTitle className="text-lg text-indigo-800">NPS</CardTitle>
-                      <CardDescription>Expected Return: ~10%</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-4 space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Corpus</span>
-                        <span className="font-bold">{formatCurrency(comparison.nps.corpus)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tax Benefit</span>
-                        <span className="font-bold text-green-600">{formatCurrency(comparison.nps.taxBenefit)}</span>
-                      </div>
-                      <div className="flex justify-between border-t pt-2">
-                        <span className="font-medium">Net Return</span>
-                        <span className="font-bold text-indigo-600">{formatCurrency(comparison.nps.netReturn)}</span>
-                      </div>
-                      <Badge className="w-full justify-center bg-indigo-100 text-indigo-700">Extra ₹50K deduction</Badge>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="bg-green-50">
-                      <CardTitle className="text-lg text-green-800">PPF</CardTitle>
-                      <CardDescription>Guaranteed Return: 7.1%</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-4 space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Corpus</span>
-                        <span className="font-bold">{formatCurrency(comparison.ppf.corpus)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tax Benefit</span>
-                        <span className="font-bold text-green-600">{formatCurrency(comparison.ppf.taxBenefit)}</span>
-                      </div>
-                      <div className="flex justify-between border-t pt-2">
-                        <span className="font-medium">Net Return</span>
-                        <span className="font-bold text-green-600">{formatCurrency(comparison.ppf.netReturn)}</span>
-                      </div>
-                      <Badge className="w-full justify-center bg-green-100 text-green-700">100% Tax-Free</Badge>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="bg-orange-50">
-                      <CardTitle className="text-lg text-orange-800">ELSS</CardTitle>
-                      <CardDescription>Expected Return: ~12%</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-4 space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Corpus (after LTCG)</span>
-                        <span className="font-bold">{formatCurrency(comparison.elss.corpus)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tax Benefit</span>
-                        <span className="font-bold text-green-600">{formatCurrency(comparison.elss.taxBenefit)}</span>
-                      </div>
-                      <div className="flex justify-between border-t pt-2">
-                        <span className="font-medium">Net Return</span>
-                        <span className="font-bold text-orange-600">{formatCurrency(comparison.elss.netReturn)}</span>
-                      </div>
-                      <Badge className="w-full justify-center bg-orange-100 text-orange-700">3-Year Lock-in</Badge>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <Alert className="bg-blue-50 border-blue-200">
-                  <Info className="h-4 w-4 text-blue-600" />
-                  <AlertDescription className="text-blue-800">
-                    <strong>Pro Tip:</strong> Consider investing in both NPS (for additional ₹50K deduction) and ELSS (for liquidity after 3 years) 
-                    to maximize tax benefits and returns.
-                  </AlertDescription>
-                </Alert>
-              </TabsContent>
-
-              {/* Info Tab */}
-              <TabsContent value="info" className="space-y-6">
-                {/* Tier Comparison */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>NPS Tier-I vs Tier-II</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 border rounded-lg">
-                        <h4 className="font-bold text-lg mb-3 text-indigo-700">Tier-I (Main Account)</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Min. Contribution</span>
-                            <span>₹500/year</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Lock-in</span>
-                            <span>Till 60 years</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Tax Benefit</span>
-                            <span className="text-green-600 font-medium">Yes (80CCD)</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Withdrawal</span>
-                            <span>60% tax-free</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-4 border rounded-lg">
-                        <h4 className="font-bold text-lg mb-3 text-purple-700">Tier-II (Voluntary)</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Min. Contribution</span>
-                            <span>₹250</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Lock-in</span>
-                            <span>None*</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Tax Benefit</span>
-                            <span className="text-gray-500">Only for Govt.</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Withdrawal</span>
-                            <span>Taxable</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Fund Managers */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>NPS Fund Managers</CardTitle>
-                    <CardDescription>You can choose any one fund manager for all your investments</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {NPS_FUND_MANAGERS.map((fm) => (
-                        <div key={fm.id} className="p-3 border rounded-lg text-center">
-                          <p className="font-medium text-sm">{fm.name}</p>
-                          <p className="text-xs text-gray-500">AUM: {fm.aum}</p>
+                  <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-7">
+                    <h3 className="text-slate-900 font-black tracking-tight mb-4">Summary</h3>
+                    <div className="space-y-3">
+                      {[
+                        { label: "Investment Duration", val: `${years} years` },
+                        { label: "Total Invested", val: fmt(monthly * 12 * years) },
+                        { label: "Net Gains", val: fmt(result.corpus - monthly * 12 * years) },
+                        { label: "Wealth Multiplier", val: `${(result.corpus / Math.max(1, monthly * 12 * years)).toFixed(1)}x` },
+                        { label: "Annuity Rate (est.)", val: "6.5% p.a." },
+                      ].map(({ label, val }) => (
+                        <div key={label} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
+                          <span className="text-slate-500 text-sm font-medium">{label}</span>
+                          <span className="text-slate-900 font-black text-sm">{val}</span>
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Asset Classes */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Asset Allocation Options</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {Object.entries(NPS_ASSET_CLASSES).map(([key, value]) => (
-                        <div key={key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <Badge variant="outline" className="font-bold">{key}</Badge>
-                            <span className="font-medium">{value.name}</span>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm">Max: {value.maxAllocation}%</p>
-                            <p className="text-xs text-gray-500">Expected: ~{value.expectedReturn}%</p>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="mt-4 flex items-start gap-2 bg-amber-50 rounded-2xl p-4 border border-amber-100">
+                      <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                      <p className="text-amber-700 text-xs font-medium leading-relaxed">
+                        Returns are estimates. Actual NPS returns vary based on asset class (E/C/G) allocation.
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Key Benefits */}
-                <Alert className="bg-indigo-50 border-indigo-200">
-                  <Shield className="h-4 w-4 text-indigo-600" />
-                  <AlertTitle className="text-indigo-800">Why Choose NPS?</AlertTitle>
-                  <AlertDescription className="text-indigo-700">
-                    <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li>Additional ₹50,000 tax deduction under 80CCD(1B)</li>
-                      <li>Low expense ratio (0.01% fund management)</li>
-                      <li>Regulated by PFRDA - Government backed</li>
-                      <li>Flexible asset allocation</li>
-                      <li>Portable across jobs and locations</li>
-                      <li>60% corpus is tax-free at maturity</li>
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              </TabsContent>
-            </Tabs>
+                  </div>
+                </div>
+              </m.div>
+            </div>
           </div>
-        </div>
+        </main>
+
+        {/* FAQ */}
+        <section className="max-w-7xl mx-auto px-4 mt-24">
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-8 flex items-center gap-2">
+              <Info className="w-6 h-6 text-indigo-500" /> Frequently Asked Questions
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { q: "Who can open an NPS account?", a: "Any Indian citizen aged 18–70 years (residents and NRIs) can open an NPS account." },
+                { q: "Is NPS return guaranteed?", a: "No. NPS returns depend on market performance across Equity (E), Corporate Bonds (C), and Government Securities (G) asset classes." },
+                { q: "What happens to NPS if I die before 60?", a: "The entire corpus is paid to the nominee. No mandatory annuity purchase is required in this case." },
+                { q: "Can I withdraw before 60?", a: "Partial withdrawal (up to 25%) is allowed after 3 years for education, marriage, or medical emergency." },
+              ].map(({ q, a }, i) => (
+                <div key={i} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                  <h4 className="font-black text-slate-900 mb-2">{q}</h4>
+                  <p className="text-sm font-medium text-slate-600">{a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
     </>
   );
 }
-

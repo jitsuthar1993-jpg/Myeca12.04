@@ -1,8 +1,40 @@
 import { Link } from "wouter";
 import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin, Shield, Award, Clock, Globe, Instagram, Youtube } from "lucide-react";
 import Logo from "@/components/ui/logo";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function Footer() {
+  const { isAuthenticated } = useAuth();
+
+  // For authenticated users (dashboard view), show a compact footer
+  if (isAuthenticated) {
+    return (
+      <footer className="w-full bg-slate-50 text-slate-600 border-t border-slate-200 mt-auto py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Logo size="sm" />
+              <span className="text-sm font-medium">&copy; 2025 MyeCA.in</span>
+              <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 border-l border-slate-300 pl-4">
+                 <span>🇮🇳 Made in India</span>
+                 <span className="mx-2">•</span>
+                 <span>Secure ISO 27001</span>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-medium">
+              <Link href="/legal/privacy-policy" className="hover:text-blue-600 transition-colors">Privacy</Link>
+              <Link href="/legal/terms-of-service" className="hover:text-blue-600 transition-colors">Terms</Link>
+              <Link href="/contact" className="hover:text-blue-600 transition-colors">Support</Link>
+              <Link href="/all-services" className="hover:text-blue-600 transition-colors">Services</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
+  // Full marketing footer for public pages
   return (
     <footer className="w-full bg-white text-slate-800 border-t border-gray-200 mt-auto">
       {/* Trust Banner - Compact */}

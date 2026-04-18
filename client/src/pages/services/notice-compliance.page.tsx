@@ -24,8 +24,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function NoticeCompliancePage() {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedNoticeType, setSelectedNoticeType] = useState<string>("");
   const [urgencyLevel, setUrgencyLevel] = useState<string>("");
 
@@ -167,7 +169,10 @@ export default function NoticeCompliancePage() {
                 Expert handling of Income Tax notices with 24-hour analysis and guaranteed professional response.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button className="bg-red-600 hover:bg-red-700 text-white font-semibold">
+                <Button 
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <Phone className="w-4 h-4 mr-2" />
                   Talk to Expert
                 </Button>
@@ -484,6 +489,16 @@ export default function NoticeCompliancePage() {
           </div>
         </div>
       </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="notice-compliance"
+          serviceTitle="Notice Compliance Service"
+          category="Legal & Compliance"
+          priceAmount={1499}
+        />
+      )}
     </div>
   );
 }

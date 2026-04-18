@@ -13,8 +13,10 @@ import { CalculatorExport } from "@/components/ui/calculator-export";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { CalculatorHeader } from "@/components/ui/calculator-header";
+import { getSEOConfig } from "@/config/seo.config";
 
 export default function HRACalculator() {
+  const seo = getSEOConfig('/calculators/hra');
   const [inputs, setInputs] = useState<HRAInputs>({
     salary: 0,
     hra: 0,
@@ -54,18 +56,12 @@ export default function HRACalculator() {
   return (
     <>
       <MetaSEO
-        title="HRA Calculator 2025 | House Rent Allowance Tax Exemption Calculator"
-        description="Free HRA calculator to calculate tax exemption on house rent allowance. Calculate HRA exemption u/s 10(13A) for metro & non-metro cities. Save tax on rent paid."
-        keywords={[
-          'HRA calculator', 'house rent allowance', 'HRA exemption', 'section 10(13A)', 
-          'rent tax benefit', 'HRA calculation formula India'
-        ]}
-        type="calculator"
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Calculators", url: "/calculators" },
-          { name: "HRA Calculator", url: "/calculators/hra" }
-        ]}
+        title={seo?.title || "HRA Calculator 2025 | MyeCA.in"}
+        description={seo?.description || "Free HRA calculator to calculate tax exemption on house rent allowance."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
         howToData={{
           name: "How to Calculate HRA Tax Exemption",
           description: "Follow these steps to find your eligible HRA exemption under Section 10(13A).",

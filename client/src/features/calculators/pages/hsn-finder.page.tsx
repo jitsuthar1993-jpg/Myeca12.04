@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { getSEOConfig } from "@/config/seo.config";
 import { m, AnimatePresence } from "framer-motion";
 import { 
   Search, 
   Info, 
   Tag, 
-  Package, 
+  Box, 
   Briefcase, 
   ChevronRight,
   TrendingDown,
@@ -36,6 +37,7 @@ const SAC_DATA = [
 ];
 
 export default function HSNFinderPage() {
+  const seo = getSEOConfig('/calculators/hsn-finder');
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("hsn");
 
@@ -52,14 +54,25 @@ export default function HSNFinderPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <MetaSEO
-        title="GST HSN & SAC Code Finder 2025 | Search GST Rates MyeCA.in"
-        description="Free HSN/SAC code search tool. Find current GST rates for 5000+ goods and services in India. Stay compliant with accurate GSTIN billing."
-        keywords={["hsn code finder", "sac code list", "gst rates 2025", "search hsn code online"]}
-        type="calculator"
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Calculators", url: "/calculators" },
-          { name: "HSN Code Finder", url: "/calculators/hsn-finder" }
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={[
+          {
+            question: "What is HSN and SAC code?",
+            answer: "HSN (Harmonized System of Nomenclature) is used for classifying goods, while SAC (Services Accounting Code) is used for classifying services under GST."
+          },
+          {
+            question: "How many digits of HSN code are required?",
+            answer: "Businesses with turnover up to ₹5 crore need 4-digit HSN codes, while those above ₹5 crore require 6-digit codes for B2B invoices."
+          },
+          {
+            question: "Where can I find the latest GST rates for HSN codes?",
+            answer: "You can use MyeCA's HSN finder tool to search by product name or code to see the latest applicable GST rates."
+          }
         ]}
       />
 
@@ -103,7 +116,7 @@ export default function HSNFinderPage() {
           <Tabs defaultValue="hsn" onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto mb-12 bg-slate-200/50 p-1.5 rounded-2xl h-14">
               <TabsTrigger value="hsn" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md font-bold text-lg">
-                <Package className="w-5 h-5 mr-2" />
+                <Box className="w-5 h-5 mr-2" />
                 HSN (Goods)
               </TabsTrigger>
               <TabsTrigger value="sac" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md font-bold text-lg">
@@ -231,5 +244,6 @@ export default function HSNFinderPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

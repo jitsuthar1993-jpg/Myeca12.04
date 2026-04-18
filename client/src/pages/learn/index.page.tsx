@@ -54,19 +54,6 @@ export default function LearnPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-          <Breadcrumb className="mb-8 opacity-80 hover:opacity-100 transition-opacity">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="text-indigo-200 hover:text-white transition-colors">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-indigo-400" />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-white font-medium">Learn</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <m.div

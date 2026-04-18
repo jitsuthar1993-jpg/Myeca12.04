@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Users,
   Building2,
+  ChevronRight,
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
@@ -270,56 +271,57 @@ export default function BlogPage() {
         ]}
       />
 
-      <section className="relative overflow-hidden border-b border-blue-100 bg-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(21,114,237,0.16),transparent_28%),radial-gradient(circle_at_80%_0%,rgba(14,165,233,0.14),transparent_30%)]" />
-        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-          <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="font-medium text-blue-700 hover:text-blue-800">Home</Link>
-            <span>/</span>
-            <span>Knowledge Hub</span>
-          </nav>
+      <section className="relative overflow-hidden border-b border-blue-50 bg-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(37,99,235,0.08),transparent_25%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_25%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
 
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end">
+          <div className="grid gap-12 lg:grid-cols-[1fr_400px] lg:items-center">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+              <div className="mb-6 inline-flex items-center gap-2.5 rounded-full bg-blue-600 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-200">
                 <Sparkles className="h-3.5 w-3.5" />
-                MyeCA Editorial
+                Expert Tax Repository
               </div>
-              <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                CA-backed tax guides that help you decide, file, and stay compliant.
+              <h1 className="max-w-4xl text-5xl font-black leading-[1.05] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
+                Master your taxes with CA-backed guides.
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                Practical explainers on ITR filing, GST, deductions, notices, startup compliance, and business registrations for Indian taxpayers and MSMEs.
+              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+                Clear, practical, and expert-reviewed explainers on ITR filing, GST compliance, startup registrations, and financial strategy for Indian taxpayers.
               </p>
             </div>
 
-            <div className="rounded-3xl border border-blue-100 bg-white/90 p-4 shadow-xl shadow-blue-100/60 backdrop-blur">
-              <label htmlFor="blog-search" className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                Search the hub
-              </label>
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-300 focus-within:bg-white">
-                <Search className="h-5 w-5 shrink-0 text-blue-500" />
-                <input
-                  id="blog-search"
-                  className="w-full bg-transparent text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
-                  placeholder="Search tax, GST, ITR, deductions..."
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                />
+            <div className="rounded-[2.5rem] border border-slate-200 bg-white/80 p-6 shadow-2xl shadow-blue-100/50 backdrop-blur-xl">
+              <div className="mb-6">
+                <label htmlFor="blog-search" className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Search the hub
+                </label>
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/50 px-5 py-4 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-50">
+                  <Search className="h-5 w-5 shrink-0 text-blue-500" />
+                  <input
+                    id="blog-search"
+                    className="w-full bg-transparent text-[15px] font-bold text-slate-950 outline-none placeholder:text-slate-400"
+                    placeholder="Search tax, GST, ITR, deductions..."
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                  />
+                </div>
               </div>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-2xl bg-blue-50 p-3">
-                  <p className="text-xl font-black text-blue-700">{totalPosts}</p>
-                  <p className="text-[11px] font-semibold text-slate-500">Articles</p>
-                </div>
-                <div className="rounded-2xl bg-cyan-50 p-3">
-                  <p className="text-xl font-black text-cyan-700">{categories.length}</p>
-                  <p className="text-[11px] font-semibold text-slate-500">Topics</p>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-3">
-                  <p className="text-xl font-black text-slate-800">CA</p>
-                  <p className="text-[11px] font-semibold text-slate-500">Reviewed</p>
-                </div>
+              
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: "Guides", value: totalPosts, color: "blue" },
+                  { label: "Topics", value: categories.length, color: "indigo" },
+                  { label: "Reviewed", value: "CA", color: "emerald" }
+                ].map((stat) => (
+                  <div key={stat.label} className={cn(
+                    "rounded-2xl p-4 text-center transition-transform hover:scale-105",
+                    stat.color === "blue" ? "bg-blue-50 text-blue-700" :
+                    stat.color === "indigo" ? "bg-indigo-50 text-indigo-700" :
+                    "bg-emerald-50 text-emerald-700"
+                  )}>
+                    <p className="text-2xl font-black leading-none">{stat.value}</p>
+                    <p className="mt-2 text-[10px] font-black uppercase tracking-wider opacity-70">{stat.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

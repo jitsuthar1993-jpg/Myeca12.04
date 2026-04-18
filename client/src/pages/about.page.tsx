@@ -1,17 +1,18 @@
 import React from "react";
 import { Shield, Award, Users, FileCheck, CheckCircle2 } from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 
 export default function AboutPage() {
+  const seo = getSEOConfig('/about');
   return (
     <div className="bg-white min-h-screen">
       <MetaSEO 
-        title="About MyeCA.in - Our Story, Mission & Expert CA Team"
-        description="Learn about MyeCA.in, India's most trusted tax filing platform. Founded by CA Ankit S., our mission is to make tax filing simple, accurate, and expert-led for every Indian."
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "About Us", url: "/about" }
-        ]}
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        breadcrumbs={seo?.breadcrumbs}
       />
 
       {/* Hero Section */}

@@ -11,8 +11,8 @@ interface BreadcrumbItem {
 export function Breadcrumbs() {
   const [location] = useLocation();
   
-  // Don't show on home page
-  if (location === '/') return null;
+  // Disabled globally per user request
+  return null;
 
   // Generate breadcrumbs from path
   const generateBreadcrumbs = (): BreadcrumbItem[] => {

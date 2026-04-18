@@ -9,11 +9,13 @@ import { Separator } from "@/components/ui/separator";
 import { calculateFD } from "@/lib/tax-calculations";
 import { PiggyBank, Coins, Percent, TrendingUp, Calendar, Target } from "lucide-react";
 import { CalculatorExport } from "@/components/ui/calculator-export";
-import EnhancedSEO from "@/components/EnhancedSEO";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
 import { getHowToSchema } from "@/utils/seo-defaults";
 import { CalculatorHeader } from "@/components/ui/calculator-header";
 
 export default function FDCalculatorPage() {
+  const seo = getSEOConfig('/calculators/fd');
   const [principal, setPrincipal] = useState<number>(0);
   const [rate, setRate] = useState<number>(0);
   const [tenure, setTenure] = useState<number>(0);
@@ -69,22 +71,23 @@ export default function FDCalculatorPage() {
 
   return (
     <>
-      <EnhancedSEO
-        title="FD Calculator 2025 | Fixed Deposit Interest & Maturity Calculator"
-        description="Calculate fixed deposit maturity amount & interest earned. Compare FD rates from top banks. Plan your FD investment with compound interest calculations."
-        keywords={[
-          'FD calculator',
-          'fixed deposit calculator',
-          'FD interest calculator',
-          'FD maturity calculator',
-          'compound interest calculator',
-          'bank FD rates',
-          'FD returns calculator',
-          'fixed deposit interest rates'
-        ]}
-        url="https://myeca.in/calculators/fd"
-        type="website"
-        jsonLd={howToSchema}
+      <MetaSEO
+        title={seo?.title || "FD Calculator 2025 | MyeCA.in"}
+        description={seo?.description || "Calculate fixed deposit maturity amount & interest earned."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        howToData={{
+          name: "How to Calculate Fixed Deposit Returns",
+          description: "Calculate your FD maturity amount in 4 simple steps",
+          steps: [
+            { name: "Enter principal amount", text: "Input the amount you want to invest in fixed deposit" },
+            { name: "Enter interest rate", text: "Input the annual interest rate offered by your bank" },
+            { name: "Select tenure", text: "Choose the duration of your fixed deposit in years" },
+            { name: "Select compounding frequency", text: "Choose how often interest is compounded (quarterly, monthly, etc.)" }
+          ]
+        }}
       />
     <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
       <div className="max-w-4xl mx-auto">

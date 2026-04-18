@@ -1,30 +1,23 @@
 import React, { useState, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Calculator, 
-  Calendar, 
-  IndianRupee, 
-  AlertTriangle,
-  Clock,
-  CheckCircle,
-  Info,
-  Bell,
-  Download,
-  TrendingUp,
-  Wallet,
-  FileText
+  Calculator, Calendar, IndianRupee, AlertTriangle, CheckCircle,
+  Info, Bell, FileText, Wallet, Sparkles, TrendingUp, ArrowRight,
+  ShieldCheck, PieChart, Zap
 } from "lucide-react";
-import { m } from "framer-motion";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
+import { m, AnimatePresence } from "framer-motion";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { CalculatorExport } from "@/components/ui/calculator-export";
-import EnhancedSEO from "@/components/EnhancedSEO";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import Breadcrumb from "@/components/Breadcrumb";
+import { cn } from "@/lib/utils";
+import { Link } from "wouter";
 
 // Advance Tax Due Dates for FY 2024-25
 const ADVANCE_TAX_SCHEDULE = [
@@ -51,6 +44,7 @@ interface TaxInputs {
 }
 
 export default function AdvanceTaxCalculatorPage() {
+  const seo = getSEOConfig('/calculators/advance-tax');
   const [inputs, setInputs] = useState<TaxInputs>({
     estimatedIncome: 2000000,
     tdsDeducted: 150000,
@@ -172,8 +166,6 @@ export default function AdvanceTaxCalculatorPage() {
     });
     
     // Calculate interest under Section 234B and 234C
-    // 234B: Interest on default in payment of advance tax
-    // 234C: Interest on deferment of advance tax
     const today = new Date();
     let interest234C = 0;
     
@@ -222,7 +214,6 @@ export default function AdvanceTaxCalculatorPage() {
     }));
   };
 
-  // Determine current quarter
   const getCurrentQuarter = () => {
     const month = new Date().getMonth();
     if (month < 3) return 4; // Jan-Mar = Q4
@@ -235,373 +226,467 @@ export default function AdvanceTaxCalculatorPage() {
 
   return (
     <>
-      <EnhancedSEO
-        title="Advance Tax Calculator - Calculate Quarterly Tax Payments | MyeCA"
-        description="Calculate your advance tax liability for FY 2024-25. Know quarterly payment schedule, due dates, and interest on delayed payments under Section 234B & 234C."
-        keywords={["advance tax calculator", "quarterly tax payment", "234B interest", "234C interest", "advance tax due dates", "income tax installment"]}
+      <MetaSEO
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={[
+          {
+            question: "Who is required to pay advance tax?",
+            answer: "Any taxpayer whose estimated tax liability for the year (after TDS/TCS) is ₹10,000 or more is required to pay advance tax."
+          },
+          {
+            question: "What are the advance tax due dates for individual taxpayers?",
+            answer: "Advance tax is paid in 4 installments: June 15 (15%), Sep 15 (45%), Dec 15 (75%), and March 15 (100%)."
+          },
+          {
+            question: "What happens if I don't pay advance tax on time?",
+            answer: "Failure to pay advance tax or short payment attracts interest under sections 234B and 234C at the rate of 1% per month."
+          }
+        ]}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 rounded-full mb-4">
-              <Calendar className="h-4 w-4 text-orange-600" />
-              <span className="text-sm font-medium text-orange-700">FY 2024-25</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              Advance Tax Calculator
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Calculate your advance tax liability and quarterly payment schedule. Avoid interest under Section 234B & 234C.
-            </p>
-          </div>
+      <div className="min-h-screen bg-slate-50/50 calculator-gradient-bg pb-24">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "Advance Tax Calculator" }]} />
 
-          {/* Due Date Alert */}
+        {/* --- HERO SECTION --- */}
+        <section className="relative pt-12 pb-20 overflow-hidden">
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <m.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              FY 2024-25 Assessment Ready
+            </m.div>
+            <m.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6"
+            >
+              Master Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Advance Tax</span>
+            </m.h1>
+            <m.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg text-slate-500 max-w-2xl mx-auto font-medium"
+            >
+              Calculate quarterly payments, avoid Section 234B & 234C interest penalties, and track your compliance in real-time.
+            </m.p>
+          </div>
+        </section>
+
+        {/* --- MAIN INTERFACE --- */}
+        <main className="max-w-7xl mx-auto px-4 -mt-12">
           {calculations.advanceTaxRequired && (
-            <Alert className="mb-6 border-orange-200 bg-orange-50">
-              <Bell className="h-4 w-4 text-orange-600" />
-              <AlertTitle className="text-orange-800">Next Due Date</AlertTitle>
-              <AlertDescription className="text-orange-700">
-                {ADVANCE_TAX_SCHEDULE[currentQuarter - 1]?.label}: {ADVANCE_TAX_SCHEDULE[currentQuarter - 1]?.dueDate} - 
-                Pay {ADVANCE_TAX_SCHEDULE[currentQuarter - 1]?.cumulativePercent}% of your estimated tax liability
-              </AlertDescription>
-            </Alert>
+            <m.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8"
+            >
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-2xl flex items-start md:items-center gap-4 shadow-sm">
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                  <Bell className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-black text-amber-900 mb-1">Next Due Date: {ADVANCE_TAX_SCHEDULE[currentQuarter - 1]?.label}</h4>
+                  <p className="text-sm font-medium text-amber-700">
+                    Pay {ADVANCE_TAX_SCHEDULE[currentQuarter - 1]?.cumulativePercent}% of your estimated tax liability by <span className="font-black">{ADVANCE_TAX_SCHEDULE[currentQuarter - 1]?.dueDate}</span> to avoid penalties.
+                  </p>
+                </div>
+              </div>
+            </m.div>
           )}
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Input Section */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5 text-blue-600" />
-                    Income & Tax Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left: Input Panel */}
+            <div className="lg:col-span-7 space-y-6">
+              <m.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden"
+              >
+                <div className="p-8 border-b border-slate-100 bg-gradient-to-br from-slate-50/50 to-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                      <Calculator className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Income & Tax Details</h2>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Configure your financials</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-8 space-y-8">
                   {/* Regime Selection */}
-                  <div className="space-y-2">
-                    <Label>Tax Regime</Label>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant={regime === 'new' ? 'default' : 'outline'}
-                        onClick={() => setRegime('new')}
-                        className="justify-start"
-                      >
-                        <CheckCircle className={`h-4 w-4 mr-2 ${regime === 'new' ? 'text-white' : 'text-gray-400'}`} />
-                        New Regime
-                      </Button>
-                      <Button
-                        variant={regime === 'old' ? 'default' : 'outline'}
-                        onClick={() => setRegime('old')}
-                        className="justify-start"
-                      >
-                        <CheckCircle className={`h-4 w-4 mr-2 ${regime === 'old' ? 'text-white' : 'text-gray-400'}`} />
-                        Old Regime
-                      </Button>
+                  <div className="space-y-3">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block mb-2">Tax Regime</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { id: 'new', label: 'New Regime' },
+                        { id: 'old', label: 'Old Regime' }
+                      ].map(r => (
+                        <div 
+                          key={r.id}
+                          onClick={() => setRegime(r.id as any)}
+                          className={cn(
+                            "relative group p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 flex items-center gap-3",
+                            regime === r.id
+                              ? "bg-blue-600 border-blue-600 shadow-lg shadow-blue-100 text-white"
+                              : "bg-white border-slate-100 hover:border-slate-300 text-slate-900"
+                          )}
+                        >
+                          <div className={cn(
+                            "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0",
+                            regime === r.id ? "border-white" : "border-slate-300"
+                          )}>
+                            {regime === r.id && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
+                          </div>
+                          <span className="font-black">{r.label}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Estimated Annual Income</Label>
-                      <div className="relative">
-                        <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                        Estimated Annual Income
+                      </Label>
+                      <div className="relative group">
+                        <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-600" />
                         <Input
                           type="number"
-                          value={inputs.estimatedIncome}
+                          value={inputs.estimatedIncome || ''}
                           onChange={(e) => handleInputChange('estimatedIncome', e.target.value)}
-                          className="pl-10"
+                          className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-blue-100"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label>TDS Already Deducted</Label>
-                      <div className="relative">
-                        <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <div className="space-y-3">
+                      <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                        TDS/TCS Already Deducted
+                      </Label>
+                      <div className="relative group">
+                        <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600" />
                         <Input
                           type="number"
-                          value={inputs.tdsDeducted}
+                          value={inputs.tdsDeducted || ''}
                           onChange={(e) => handleInputChange('tdsDeducted', e.target.value)}
-                          className="pl-10"
+                          className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-emerald-100"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Tax Summary */}
-                  <div className="p-4 bg-gray-50 rounded-lg space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Estimated Total Tax</span>
-                      <span className="font-semibold">{formatCurrency(calculations.totalTax)}</span>
+                  <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4">
+                    <div className="flex justify-between items-center text-sm font-bold text-slate-500">
+                      <span>Estimated Total Tax</span>
+                      <span>{formatCurrency(calculations.totalTax)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Less: TDS/TCS</span>
-                      <span className="font-semibold text-green-600">- {formatCurrency(calculations.totalTdsAndTcs)}</span>
+                    <div className="flex justify-between items-center text-sm font-bold text-emerald-600">
+                      <span>Less: TDS/TCS</span>
+                      <span>- {formatCurrency(calculations.totalTdsAndTcs)}</span>
                     </div>
-                    <hr />
-                    <div className="flex justify-between">
-                      <span className="font-medium">Net Tax Liability</span>
-                      <span className="font-bold text-lg">{formatCurrency(calculations.netTaxLiability)}</span>
+                    <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-400">Net Tax Liability</span>
+                      <span className="text-2xl font-black text-slate-900 tracking-tight">{formatCurrency(calculations.netTaxLiability)}</span>
                     </div>
                   </div>
 
                   {!calculations.advanceTaxRequired && (
-                    <Alert className="border-green-200 bg-green-50">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <AlertTitle className="text-green-800">No Advance Tax Required</AlertTitle>
-                      <AlertDescription className="text-green-700">
-                        Your tax liability is below ₹10,000, so you don't need to pay advance tax.
-                      </AlertDescription>
-                    </Alert>
+                    <div className="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-2xl flex items-start gap-4 shadow-sm">
+                      <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="text-lg font-black text-emerald-900 mb-1">No Advance Tax Required</h4>
+                        <p className="text-sm font-medium text-emerald-700">
+                          Your estimated tax liability is below ₹10,000, which means you are exempt from paying advance tax installments.
+                        </p>
+                      </div>
+                    </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </m.div>
 
-              {/* Advance Tax Payment Tracker */}
+              {/* Advance Tax Paid Inputs */}
               {calculations.advanceTaxRequired && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Wallet className="h-5 w-5 text-green-600" />
-                      Advance Tax Paid
-                    </CardTitle>
-                    <CardDescription>Enter the advance tax you've already paid</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {(['q1', 'q2', 'q3', 'q4'] as const).map((quarter, index) => (
-                        <div key={quarter} className="space-y-2">
-                          <Label className="text-xs">
-                            {ADVANCE_TAX_SCHEDULE[index].label}
-                            <span className="block text-gray-500">Due: {ADVANCE_TAX_SCHEDULE[index].dueDate.split(',')[0]}</span>
-                          </Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={inputs.advanceTaxPaid[quarter]}
-                              onChange={(e) => handleAdvanceTaxChange(quarter, e.target.value)}
-                              className="pl-7 text-sm"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Payment Schedule Chart */}
-              {calculations.advanceTaxRequired && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Payment Progress</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={chartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis tickFormatter={(v) => `₹${(v/100000).toFixed(1)}L`} />
-                          <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                          <Legend />
-                          <Bar dataKey="Required" fill="#f97316" name="Required Amount" />
-                          <Bar dataKey="Paid" fill="#22c55e" name="Amount Paid" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Results Section */}
-            <div className="space-y-6">
-              {/* Quick Stats */}
-              <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white border-0">
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <p className="text-blue-100 text-sm">Total Advance Tax Required</p>
-                    <p className="text-3xl font-bold mt-1">
-                      {formatCurrency(calculations.netTaxLiability)}
-                    </p>
-                  </div>
-                  <hr className="my-4 border-blue-400/30" />
-                  <div className="grid grid-cols-2 gap-4 text-center">
-                    <div>
-                      <p className="text-blue-100 text-xs">Paid</p>
-                      <p className="text-lg font-semibold">
-                        {formatCurrency(calculations.totalAdvanceTaxPaid)}
-                      </p>
+                <m.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 p-8"
+                >
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
+                      <Wallet className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-blue-100 text-xs">Balance</p>
-                      <p className="text-lg font-semibold">
-                        {formatCurrency(calculations.balanceTax)}
-                      </p>
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Advance Tax Paid</h2>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Record your payments to date</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Quarterly Breakdown */}
-              {calculations.advanceTaxRequired && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Quarterly Schedule</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {calculations.quarterlyAnalysis.map((q, index) => (
-                      <div 
-                        key={q.quarter}
-                        className={`p-3 rounded-lg border ${
-                          index + 1 === currentQuarter 
-                            ? 'border-orange-300 bg-orange-50' 
-                            : 'border-gray-200'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{q.quarter}</span>
-                            {index + 1 === currentQuarter && (
-                              <Badge className="bg-orange-500 text-xs">Current</Badge>
-                            )}
-                          </div>
-                          <span className="text-xs text-gray-500">{q.dueDate}</span>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {(['q1', 'q2', 'q3', 'q4'] as const).map((quarter, index) => (
+                      <div key={quarter} className="space-y-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block h-8 leading-tight">
+                          {ADVANCE_TAX_SCHEDULE[index].label.replace(' Installment', '')}
+                        </Label>
+                        <div className="relative group">
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            value={inputs.advanceTaxPaid[quarter] || ''}
+                            onChange={(e) => handleAdvanceTaxChange(quarter, e.target.value)}
+                            className="h-12 text-center rounded-xl border-slate-100 bg-slate-50/50 text-base font-black focus:bg-white transition-all focus:ring-2 focus:ring-indigo-100"
+                          />
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Required ({q.cumulativePercent}%)</span>
-                          <span className="font-medium">{formatCurrency(q.cumulativeAmount)}</span>
-                        </div>
-                        <Progress 
-                          value={Math.min(100, (q.paidTillQuarter / q.cumulativeAmount) * 100)} 
-                          className="h-2 mt-2"
-                        />
-                        {q.shortfall > 0 && (
-                          <p className="text-xs text-red-600 mt-1">
-                            Shortfall: {formatCurrency(q.shortfall)}
-                          </p>
-                        )}
                       </div>
                     ))}
-                  </CardContent>
-                </Card>
+                  </div>
+                </m.div>
               )}
+            </div>
 
-              {/* Interest Warning */}
-              {calculations.interest234C > 0 && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Interest Liability</AlertTitle>
-                  <AlertDescription>
-                    You may have to pay ~{formatCurrency(calculations.interest234C)} as interest under Section 234C for delayed advance tax payment.
-                  </AlertDescription>
-                </Alert>
-              )}
+            {/* Right: Results Panel */}
+            <div className="lg:col-span-5 space-y-6">
+              <AnimatePresence mode="wait">
+                <m.div
+                  key="results"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="space-y-6"
+                >
+                  {/* --- MAIN SUMMARY CARD --- */}
+                  <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.05] scale-150">
+                      <PieChart className="w-32 h-32" />
+                    </div>
+                    <div className="relative z-10 space-y-6">
+                      <div className="flex justify-between items-start">
+                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase tracking-widest">
+                            Overview
+                         </div>
+                         <CalculatorExport 
+                            title="Advance Tax Report"
+                            data={{
+                              "Estimated Income": inputs.estimatedIncome,
+                              "Total Tax Liability": calculations.totalTax,
+                              "Net Advance Tax": calculations.netTaxLiability,
+                              "Paid Till Date": calculations.totalAdvanceTaxPaid,
+                              "Balance Payable": calculations.balanceTax,
+                            }}
+                         />
+                      </div>
 
-              {/* How to Pay */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    How to Pay
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">1</span>
-                    <p className="text-sm text-gray-600">Visit income tax e-filing portal</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">2</span>
-                    <p className="text-sm text-gray-600">Select "e-Pay Tax" and choose Challan 280</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">3</span>
-                    <p className="text-sm text-gray-600">Select "(100) Advance Tax" as type of payment</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">4</span>
-                    <p className="text-sm text-gray-600">Enter amount and pay via net banking/UPI</p>
-                  </div>
-                  <Button className="w-full mt-4" variant="outline" asChild>
-                    <a href="https://eportal.incometax.gov.in/iec/foloigin" target="_blank" rel="noopener noreferrer">
-                      Go to e-Filing Portal
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
+                      <div>
+                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Advance Tax Required</span>
+                        <div className="text-4xl md:text-5xl font-black tracking-tighter">
+                          {formatCurrency(calculations.netTaxLiability)}
+                        </div>
+                      </div>
 
-              {/* Export */}
-              <Card>
-                <CardContent className="pt-6">
-                  <CalculatorExport
-                    title="Advance Tax Calculation"
-                    data={{
-                      "Estimated Income": inputs.estimatedIncome,
-                      "Total Tax Liability": calculations.totalTax,
-                      "TDS Deducted": inputs.tdsDeducted,
-                      "Net Advance Tax": calculations.netTaxLiability,
-                      "Paid Till Date": calculations.totalAdvanceTaxPaid,
-                      "Balance Payable": calculations.balanceTax,
-                    }}
-                  />
-                </CardContent>
-              </Card>
+                      <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-800">
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1">Paid</span>
+                          <span className="text-xl font-black text-emerald-400">{formatCurrency(calculations.totalAdvanceTaxPaid)}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1">Balance</span>
+                          <span className="text-xl font-black text-amber-400">{formatCurrency(calculations.balanceTax)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {calculations.advanceTaxRequired && calculations.interest234C > 0 && (
+                    <div className="bg-red-50 border border-red-100 rounded-2xl p-6 flex gap-4">
+                       <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />
+                       <div>
+                          <h4 className="text-base font-black text-red-900 mb-1">Interest Liability (Sec 234C)</h4>
+                          <p className="text-sm font-medium text-red-700 leading-relaxed">
+                            You may be liable for ~<span className="font-black">{formatCurrency(calculations.interest234C)}</span> in interest due to delayed or short payments of advance tax installments.
+                          </p>
+                       </div>
+                    </div>
+                  )}
+
+                  {/* Quarterly Breakdown */}
+                  {calculations.advanceTaxRequired && (
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
+                      <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-indigo-500" />
+                        Quarterly Schedule
+                      </h3>
+                      <div className="space-y-4">
+                        {calculations.quarterlyAnalysis.map((q, index) => {
+                          const isCurrent = index + 1 === currentQuarter;
+                          return (
+                            <div 
+                              key={q.quarter}
+                              className={cn(
+                                "p-5 rounded-2xl border transition-all",
+                                isCurrent ? "border-amber-200 bg-amber-50" : "border-slate-100 bg-slate-50/50"
+                              )}
+                            >
+                              <div className="flex justify-between items-center mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-black text-slate-900">{q.quarter}</span>
+                                  {isCurrent && <Badge className="bg-amber-500 text-xs font-bold px-2 py-0">Current</Badge>}
+                                </div>
+                                <span className="text-xs font-bold text-slate-400">{q.dueDate}</span>
+                              </div>
+                              <div className="flex justify-between text-sm mb-2">
+                                <span className="font-bold text-slate-500">Required ({q.cumulativePercent}%)</span>
+                                <span className="font-black text-slate-900">{formatCurrency(q.cumulativeAmount)}</span>
+                              </div>
+                              <Progress 
+                                value={Math.min(100, (q.paidTillQuarter / q.cumulativeAmount) * 100)} 
+                                className={cn("h-2", isCurrent ? "bg-amber-200" : "bg-slate-200")}
+                                indicatorClassName={cn(isCurrent ? "bg-amber-500" : "bg-blue-600")}
+                              />
+                              {q.shortfall > 0 && (
+                                <p className="text-[11px] font-black uppercase tracking-widest text-red-500 mt-3">
+                                  Shortfall: {formatCurrency(q.shortfall)}
+                                </p>
+                              )}
+                              {q.excess > 0 && (
+                                <p className="text-[11px] font-black uppercase tracking-widest text-emerald-500 mt-3">
+                                  Excess Paid: {formatCurrency(q.excess)}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Chart */}
+                  {calculations.advanceTaxRequired && (
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
+                      <h3 className="text-lg font-black text-slate-900 mb-6">Payment Progress</h3>
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 'bold', fill: '#64748b' }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 'bold', fill: '#64748b' }} tickFormatter={(v) => `₹${(v/100000).toFixed(1)}L`} />
+                            <Tooltip 
+                               formatter={(value: number) => formatCurrency(value)}
+                               contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '12px', fontWeight: 'bold' }} />
+                            <Bar dataKey="Required" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="Paid" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* How to Pay */}
+                  <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[2.5rem] p-8 text-white relative overflow-hidden group">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:scale-150 transition-transform duration-700" />
+                     <h4 className="text-xl font-black mb-6 flex items-center gap-2">
+                       <FileText className="w-5 h-5" /> How to Pay Online
+                     </h4>
+                     <ul className="space-y-4 mb-8">
+                       {[
+                         "Visit Income Tax e-filing portal",
+                         "Select 'e-Pay Tax' and choose Challan 280",
+                         "Select '(100) Advance Tax' as type",
+                         "Pay via Net Banking or UPI"
+                       ].map((step, idx) => (
+                         <li key={idx} className="flex gap-3 text-sm font-medium text-white/90">
+                           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 text-[10px] font-black">{idx + 1}</span>
+                           {step}
+                         </li>
+                       ))}
+                     </ul>
+                     <Button className="w-full bg-white text-indigo-600 rounded-xl font-black hover:bg-slate-50 transition-all h-14" asChild>
+                       <a href="https://eportal.incometax.gov.in/iec/foloigin" target="_blank" rel="noopener noreferrer">
+                         Go to e-Filing Portal <ArrowRight className="w-4 h-4 ml-2" />
+                       </a>
+                     </Button>
+                  </div>
+
+                </m.div>
+              </AnimatePresence>
             </div>
           </div>
+        </main>
 
-          {/* Info Section */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Info className="h-5 w-5 text-blue-600" />
-                About Advance Tax
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-2">Who Should Pay?</h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      Tax liability exceeds ₹10,000 in a financial year
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      Salaried employees with additional income
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      Freelancers, consultants, business owners
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      Capital gains from stocks, property, etc.
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Interest on Late Payment</h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                      <span><strong>234B:</strong> 1% per month if total advance tax paid is less than 90%</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                      <span><strong>234C:</strong> 1% per month for deferment of individual installments</span>
-                    </li>
-                  </ul>
-                </div>
+        {/* --- SEO & EXPLAINER SECTION --- */}
+        <section className="max-w-7xl mx-auto px-4 mt-24">
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-6">
+                Understanding Advance Tax in India (FY 2024-25)
+              </h2>
+              <div className="space-y-6 text-slate-600 font-medium leading-relaxed">
+                <p>
+                  Advance tax refers to paying a part of your taxes before the end of the financial year. Also known as "pay-as-you-earn" tax, it is required if your total estimated tax liability for the year exceeds ₹10,000.
+                </p>
+                
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Who Needs to Pay Advance Tax?
+                </h3>
+                <p>
+                  Any individual—whether salaried, self-employed, or a freelancer—whose tax liability in a financial year is greater than ₹10,000 must pay advance tax. However, senior citizens (aged 60 or above) who do not have any income from a business or profession are exempt from paying advance tax.
+                </p>
+
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Due Dates and Installments
+                </h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong className="text-slate-900 font-bold">15th June:</strong> Pay 15% of total advance tax liability.</li>
+                  <li><strong className="text-slate-900 font-bold">15th September:</strong> Pay 45% of total advance tax liability.</li>
+                  <li><strong className="text-slate-900 font-bold">15th December:</strong> Pay 75% of total advance tax liability.</li>
+                  <li><strong className="text-slate-900 font-bold">15th March:</strong> Pay 100% of total advance tax liability.</li>
+                </ul>
+
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Penalties for Delay (Section 234B & 234C)
+                </h3>
+                <p>
+                  If you fail to pay advance tax or pay less than 90% of the assessed tax, you will be liable to pay interest under Section 234B at 1% per month. Furthermore, a delay in the payment of specific installments incurs interest under Section 234C.
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+
+            <hr className="my-12 border-slate-100" />
+
+            {/* FAQs */}
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-8 flex items-center gap-2">
+                <Info className="w-6 h-6 text-indigo-500" />
+                Frequently Asked Questions
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {[
+                  { q: "Is a salaried person required to pay advance tax?", a: "Generally, employers deduct TDS on salaries, so advance tax isn't required unless the employee has significant other income (e.g., from interest, capital gains, or rent) where TDS wasn't deducted." },
+                  { q: "What happens if I miss the 15th March deadline?", a: "You can still pay tax before 31st March, and it will be treated as advance tax. However, interest under Section 234B and 234C will apply on the delayed amount." },
+                  { q: "Do freelancers have to pay advance tax?", a: "Yes. Freelancers and professionals whose total tax liability for the year exceeds ₹10,000 must pay advance tax in four installments." },
+                  { q: "How is it calculated under the Presumptive Taxation Scheme?", a: "Taxpayers opting for presumptive taxation under sections 44AD or 44ADA can pay their entire advance tax in a single installment on or before 15th March." }
+                ].map((faq, idx) => (
+                  <div key={idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                    <h4 className="font-black text-slate-900 mb-2">{faq.q}</h4>
+                    <p className="text-sm font-medium text-slate-600">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );

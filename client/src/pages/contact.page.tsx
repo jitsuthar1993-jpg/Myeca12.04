@@ -5,16 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import Breadcrumb from "@/components/Breadcrumb";
 
 export default function ContactPage() {
+  const seo = getSEOConfig('/contact');
   return (
     <>
       <MetaSEO 
-        title="Contact Us - MyeCA.in | Expert Tax Support"
-        description="Get in touch with MyeCA's expert CA team. 24/7 support for tax filing, business registration, and financial queries. Call or email us today."
-        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Contact Us", url: "/contact" }]}
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        breadcrumbs={seo?.breadcrumbs}
       />
       <div className="min-h-screen bg-white">
         <Breadcrumb items={[{ name: 'Contact Us' }]} />

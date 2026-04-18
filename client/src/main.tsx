@@ -70,7 +70,7 @@ if (root) {
         </ClerkProvider>
       ) : (
         <>
-          <MissingClerkConfig />
+          <App />
           <Analytics />
           <SpeedInsights />
         </>

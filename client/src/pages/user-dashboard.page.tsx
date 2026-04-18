@@ -1,318 +1,220 @@
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Layout } from '@/components/admin/Layout';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  FileText, 
+  Clock, 
+  CheckCircle2, 
+  AlertCircle, 
+  ArrowRight, 
+  Plus, 
+  ShieldCheck, 
+  History,
+  FileCheck,
+  TrendingUp,
+  Target
+} from 'lucide-react';
+import { m } from 'framer-motion';
+import { useAuth } from '@/components/AuthProvider';
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Link } from "wouter";
-import { track } from "@vercel/analytics";
-import {
-  AlertTriangle,
-  ArrowRight,
-  Bot,
-  CalendarDays,
-  CheckCircle2,
-  FileText,
-  IndianRupee,
-  PiggyBank,
-  ReceiptText,
-  Upload,
-  Users,
-} from "lucide-react";
-import { useAuth } from "@/components/AuthProvider";
-import { Button } from "@/components/ui/button";
-import {
-  ComplianceShell,
-  MetricCard,
-  MyeCard,
-  ProgressTimeline,
-  SectionHeading,
-  StatusBadge,
-  complianceDeadlines,
-  dashboardInsights,
-  formatInr,
-  serviceStatuses,
-} from "@/components/platform/compliance-ui";
-
-interface DashboardData {
-  stats?: {
-    totalReturns?: number;
-    documentsUploaded?: number;
-    pendingTasks?: number;
-    savedAmount?: number;
-  };
-  recentActivity?: Array<{ id: string; description: string; date: string; type?: string }>;
-  activeServices?: Array<{ id: string; name: string; status: string }>;
-}
-
-const recommendedActions = [
-  {
-    title: "File AY 2026-27 ITR",
-    description: "Start with Form 16, then reconcile AIS before CA review.",
-    href: "/itr/filing?ay=2026-27&form=ITR-1",
-    icon: FileText,
-  },
-  {
-    title: "Upload Form 16 + AIS",
-    description: "Use OCR verification to avoid manual data entry errors.",
-    href: "/documents",
-    icon: Upload,
-  },
-  {
-    title: "Ask AI for deductions",
-    description: "Get source-backed guidance and open the right module instantly.",
-    href: "/tax-assistant",
-    icon: Bot,
-  },
-];
-
-const activeServiceCards = [
-  {
-    title: "Salary ITR + CA Review",
-    status: "ca_review" as const,
-    owner: "Assigned CA: Priya Sharma",
-    cta: "Open filing",
-    href: "/itr/filing",
-  },
-  {
-    title: "GST Registration",
-    status: "action_required" as const,
-    owner: "Missing address proof",
-    cta: "Upload document",
-    href: "/documents",
-  },
-  {
-    title: "Refund Tracking",
-    status: "refund_processed" as const,
-    owner: "Expected credit: 7-10 working days",
-    cta: "Track refund",
-    href: "/tds-refund-tracker",
-  },
-];
 
 export default function UserDashboard() {
-  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && user?.role === "admin") {
-      window.location.href = "/admin/dashboard";
-    }
-  }, [user, authLoading, isAuthenticated]);
+  const activeServices = [
+    { id: 1, title: "Income Tax Return (ITR-1)", year: "AY 2025-26", status: "In Progress", progress: 65, color: "blue" },
+    { id: 2, title: "GST Registration", year: "FY 2024-25", status: "Review", progress: 90, color: "emerald" }
+  ];
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      window.location.href = "/";
-    }
-  }, [isAuthenticated, authLoading]);
-
-  const { data, isLoading, isError } = useQuery<DashboardData>({
-    queryKey: ["/api/user/dashboard"],
-    enabled: isAuthenticated,
-    retry: 0,
-  });
-
-  const stats = data?.stats || {};
-  const recentActivity = data?.recentActivity?.length
-    ? data.recentActivity
-    : [
-        { id: "1", description: "Form 16 upload queue is ready for OCR verification", date: "Today" },
-        { id: "2", description: "Old vs New Regime analyzer prepared for FY 2025-26", date: "Yesterday" },
-        { id: "3", description: "CA review SLA available once draft is submitted", date: "2 days ago" },
-      ];
+  const recentDocuments = [
+    { name: "PAN_Card.pdf", date: "2 days ago", size: "1.2 MB", category: "Identity" },
+    { name: "Form_16_FY24.pdf", date: "5 days ago", size: "2.4 MB", category: "Tax Forms" },
+    { name: "Bank_Statement_HDFC.pdf", date: "1 week ago", size: "3.8 MB", category: "Banking" }
+  ];
 
   return (
-    <ComplianceShell
-      active="/dashboard"
-      title={`Welcome back${user?.firstName ? `, ${user.firstName}` : ""}`}
-      subtitle="Your compliance command center brings ITR filing, document vault, deadlines, AI insights, and CA support into one calm workspace."
-      actions={
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Link href="/itr/filing">
-            <Button
-              className="bg-white text-[#003087] hover:bg-blue-50"
-              onClick={() => track("dashboard_start_itr")}
-            >
-              <FileText className="h-4 w-4" />
-              Start Filing
-            </Button>
-          </Link>
-          <Link href="/documents">
-            <Button
-              variant="outline"
-              className="border-white/30 bg-white/10 text-white hover:bg-white/20"
-              onClick={() => track("dashboard_upload_document")}
-            >
-              <Upload className="h-4 w-4" />
-              Upload Documents
-            </Button>
-          </Link>
+    <Layout title="My Dashboard">
+      <m.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-10 pb-20"
+      >
+        {/* Welcome Section */}
+        <div className="relative group">
+           <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[40px] blur opacity-5 group-hover:opacity-10 transition duration-1000"></div>
+           <div className="relative bg-white/60 backdrop-blur-3xl border border-white p-10 rounded-[32px] flex flex-col md:flex-row md:items-center justify-between gap-8">
+              <div>
+                <Badge className="bg-blue-100 text-blue-700 border-0 font-black px-4 py-1 mb-4 rounded-full uppercase tracking-widest text-[10px]">
+                  User Account
+                </Badge>
+                <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">
+                    Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{user?.firstName || 'User'}</span>
+                </h2>
+                <p className="text-[15px] text-slate-500 font-medium max-w-xl">
+                  Manage your tax filings, documents, and expert consultations from your central command center.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                  <Link href="/services">
+                    <Button className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black h-14 px-8 shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1 active:scale-95">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Start New Filing
+                    </Button>
+                  </Link>
+              </div>
+           </div>
         </div>
-      }
-    >
-      {isError && (
-        <MyeCard className="mb-6 border-amber-200 bg-amber-50">
-          <div className="flex gap-3 text-amber-950">
-            <AlertTriangle className="mt-1 h-5 w-5 shrink-0" />
-            <div>
-              <p className="font-black">Live dashboard data is temporarily unavailable.</p>
-              <p className="mt-1 text-sm">
-                The cockpit is still usable with safe fallback states. Protected API data will sync
-                automatically once the session or database is available.
-              </p>
-            </div>
-          </div>
-        </MyeCard>
-      )}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="Tax saved this year"
-          value={formatInr(stats.savedAmount || 12400)}
-          helper="Estimated from declared deductions"
-          icon={PiggyBank}
-          tone="green"
-        />
-        <MetricCard
-          label="Pending actions"
-          value={String(stats.pendingTasks || 3)}
-          helper="Documents, confirmations, CA questions"
-          icon={AlertTriangle}
-          tone="amber"
-        />
-        <MetricCard
-          label="Documents uploaded"
-          value={String(stats.documentsUploaded || 8)}
-          helper="Stored in your private vault"
-          icon={ReceiptText}
-          tone="blue"
-        />
-        <MetricCard
-          label="Returns filed"
-          value={String(stats.totalReturns || 2)}
-          helper="Across linked family profiles"
-          icon={CheckCircle2}
-          tone="slate"
-        />
-      </div>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+           {[
+             { title: "Active Services", value: "02", icon: Target, color: "blue", desc: "Currently processing" },
+             { title: "Documents", value: "14", icon: FileText, color: "indigo", desc: "Securely vaulted" },
+             { title: "Calculations", value: "08", icon: TrendingUp, color: "emerald", desc: "Saved simulations" },
+             { title: "Experts", value: "01", icon: ShieldCheck, color: "purple", desc: "Assigned CA" }
+           ].map((stat, i) => (
+             <Card key={i} className="bg-white border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[2rem] overflow-hidden hover:shadow-xl transition-all duration-500">
+               <CardContent className="p-6">
+                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-opacity-10", `bg-${stat.color}-500 text-${stat.color}-600`)}>
+                    <stat.icon className="w-6 h-6" />
+                  </div>
+                  <div className="text-3xl font-black text-slate-900 mb-1">{stat.value}</div>
+                  <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">{stat.title}</div>
+                  <div className="text-[10px] font-medium text-slate-400 mt-2">{stat.desc}</div>
+               </CardContent>
+             </Card>
+           ))}
+        </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[1.5fr_0.9fr]">
-        <MyeCard>
-          <SectionHeading
-            eyebrow="Active services"
-            title="Track every filing like a workflow"
-            description="Statuses use one shared compliance vocabulary across ITR, GST, notices, incorporation, and document flows."
-            action={
-              <Link href="/services">
-                <Button variant="outline">Browse Services</Button>
-              </Link>
-            }
-          />
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {activeServiceCards.map((service) => (
-              <div key={service.title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <StatusBadge status={service.status} />
-                <h3 className="mt-4 text-lg font-black text-slate-950">{service.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{service.owner}</p>
-                <ProgressTimeline items={serviceStatuses} />
-                <Link href={service.href}>
-                  <Button
-                    className="mt-5 w-full bg-[#003087] text-white hover:bg-[#082a5c]"
-                    onClick={() => track("dashboard_active_service_open", { service: service.title })}
-                  >
-                    {service.cta}
-                    <ArrowRight className="h-4 w-4" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Active Services Hub */}
+          <div className="lg:col-span-2 space-y-10">
+            <Card className="bg-white border-0 shadow-[0_32px_80px_rgba(0,0,0,0.03)] rounded-[32px] overflow-hidden">
+              <CardHeader className="p-10 pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Active Work</CardTitle>
+                    <CardDescription className="text-slate-500 font-medium">Tracking your ongoing applications and filings</CardDescription>
+                  </div>
+                  <div className="h-12 w-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                    <Clock className="h-6 w-6" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0 px-10 pb-10">
+                <div className="space-y-6">
+                  {activeServices.map((service) => (
+                    <div key={service.id} className="p-6 rounded-[2rem] bg-slate-50 border border-transparent hover:bg-white hover:border-slate-100 hover:shadow-xl transition-all duration-500 group">
+                       <div className="flex items-center justify-between gap-6">
+                          <div className="flex items-center gap-5">
+                             <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center text-xl font-bold shadow-sm border border-white", `bg-${service.color}-50 text-${service.color}-600`)}>
+                                <FileCheck className="h-7 w-7" />
+                             </div>
+                             <div>
+                                <h4 className="font-black text-slate-900 leading-tight">{service.title}</h4>
+                                <div className="flex items-center gap-2 mt-1">
+                                   <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest bg-white">{service.year}</Badge>
+                                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Updated Today</span>
+                                </div>
+                             </div>
+                          </div>
+                          <div className="text-right">
+                             <div className="text-xs font-black text-slate-900 mb-2 uppercase tracking-widest">{service.progress}% Complete</div>
+                             <div className="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                <div className={cn("h-full transition-all duration-1000", `bg-${service.color}-500`)} style={{ width: `${service.progress}%` }} />
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <Card className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[32px] border-0 p-8 text-white relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:scale-110 transition-transform duration-1000"></div>
+                  <h3 className="text-2xl font-black tracking-tight mb-2">Need Help?</h3>
+                  <p className="text-indigo-100 text-sm font-medium mb-8 leading-relaxed">Connect with our tax experts for a 1-on-1 consultation session.</p>
+                  <Button className="w-full h-14 bg-white text-indigo-700 hover:bg-indigo-50 font-black rounded-2xl shadow-xl transition-all hover:-translate-y-1">
+                    Book Expert Now
                   </Button>
-                </Link>
-              </div>
-            ))}
+               </Card>
+
+               <Card className="bg-white border-0 shadow-[0_32px_80px_rgba(0,0,0,0.03)] rounded-[32px] p-8 flex flex-col justify-between">
+                  <div>
+                    <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
+                      <ShieldCheck className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 mb-2 tracking-tight">Tax Optimizer</h3>
+                    <p className="text-slate-500 text-sm font-medium">Analyze your investments and find potential tax savings.</p>
+                  </div>
+                  <Button variant="ghost" className="mt-8 justify-between p-0 font-black text-slate-900 hover:bg-transparent group">
+                    Optimize Now
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
+                  </Button>
+               </Card>
+            </div>
           </div>
-        </MyeCard>
 
-        <div className="space-y-6">
-          <MyeCard>
-            <SectionHeading eyebrow="AI insights" title="Proactive savings nudges" />
-            <div className="mt-5 space-y-3">
-              {dashboardInsights.map((insight, index) => (
-                <div key={insight} className="rounded-2xl bg-blue-50 p-4">
-                  <div className="flex items-start gap-3">
-                    <Bot className="mt-1 h-5 w-5 text-[#003087]" />
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-blue-700">
-                        {85 + index * 3}% confidence
-                      </p>
-                      <p className="mt-1 text-sm font-semibold text-slate-800">{insight}</p>
-                    </div>
+          {/* Sidebar - Recent Documents */}
+          <div className="space-y-10">
+            <Card className="bg-white border border-slate-100 shadow-[0_32px_80px_rgba(0,0,0,0.03)] rounded-[32px] overflow-hidden">
+               <CardHeader className="p-10 pb-6 border-b border-slate-50">
+                  <CardTitle className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <History className="h-5 w-5 text-blue-600" />
+                    Recent Vault
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-6">
+                  <div className="space-y-2">
+                     {recentDocuments.map((doc, i) => (
+                       <div key={i} className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-blue-100 hover:shadow-lg transition-all duration-300 group cursor-pointer">
+                          <div className="flex items-center gap-4">
+                             <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+                                <FileText className="h-5 w-5" />
+                             </div>
+                             <div className="flex-1 min-w-0">
+                                <p className="text-[14px] font-bold text-slate-900 leading-tight truncate">{doc.name}</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{doc.date} • {doc.size}</p>
+                             </div>
+                          </div>
+                       </div>
+                     ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          </MyeCard>
+               </CardContent>
+               <div className="p-8 pt-0">
+                  <Button variant="ghost" className="w-full rounded-2xl text-slate-400 font-bold hover:bg-slate-50 hover:text-blue-600 transition-all h-14">
+                    View Full Vault
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+               </div>
+            </Card>
 
-          <MyeCard>
-            <SectionHeading eyebrow="Deadlines" title="Compliance calendar" />
-            <div className="mt-5 space-y-3">
-              {complianceDeadlines.map((item) => (
-                <div key={item.label} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <CalendarDays className="h-5 w-5 text-[#003087]" />
-                    <div>
-                      <p className="font-bold text-slate-950">{item.label}</p>
-                      <p className="text-sm text-slate-500">Due {item.date}</p>
-                    </div>
+            <div className="p-8 bg-slate-900 rounded-[32px] text-white relative overflow-hidden">
+               <div className="absolute bottom-0 right-0 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl"></div>
+               <div className="relative z-10">
+                  <h4 className="text-lg font-black mb-2 tracking-tight">Security Status</h4>
+                  <div className="flex items-center gap-3 mb-6">
+                     <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                     <span className="text-xs font-bold text-slate-400">256-bit AES Encryption</span>
                   </div>
-                  <StatusBadge status={item.status} />
-                </div>
-              ))}
+                  <div className="space-y-4">
+                     <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                        <span>Vault Health</span>
+                        <span>100%</span>
+                     </div>
+                     <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-emerald-500 w-full"></div>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </MyeCard>
+          </div>
         </div>
-      </div>
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <MyeCard>
-          <SectionHeading eyebrow="Quick actions" title="Continue without hunting around" />
-          <div className="mt-5 grid gap-3">
-            {recommendedActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <Link
-                  key={action.title}
-                  href={action.href}
-                  className="group flex items-center justify-between rounded-2xl border border-slate-200 p-4 transition hover:border-[#003087] hover:bg-blue-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-[#003087] p-3 text-white">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="font-black text-slate-950">{action.title}</p>
-                      <p className="text-sm text-slate-600">{action.description}</p>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-[#003087]" />
-                </Link>
-              );
-            })}
-          </div>
-        </MyeCard>
-
-        <MyeCard>
-          <SectionHeading
-            eyebrow="Recent activity"
-            title="A clean audit trail for every action"
-            description="Every upload, AI extraction, CA note, and filing step should be traceable."
-          />
-          <div className="mt-5 space-y-4">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex gap-4 rounded-2xl bg-slate-50 p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#003087] ring-1 ring-slate-200">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-800">{activity.description}</p>
-                  <p className="mt-1 text-sm text-slate-500">{activity.date}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </MyeCard>
-      </div>
-    </ComplianceShell>
+      </m.div>
+    </Layout>
   );
 }

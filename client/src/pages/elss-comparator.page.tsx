@@ -1,829 +1,353 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { m, AnimatePresence } from "framer-motion";
+import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Link } from "wouter";
+import Breadcrumb from "@/components/Breadcrumb";
 import {
-  TrendingUp,
-  TrendingDown,
-  Star,
-  Info,
-  ArrowUpDown,
-  Filter,
-  Download,
-  IndianRupee,
-  Calculator,
-  PiggyBank,
-  Clock,
-  Shield,
-  Target,
-  BarChart3,
-  CheckCircle,
-  AlertTriangle,
-  Percent
+  TrendingUp, IndianRupee, Shield, Star, CheckCircle,
+  Lock, Info, Sparkles, ShieldCheck, ArrowRight
 } from "lucide-react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Legend
 } from "recharts";
-import { ELSS_FUNDS, ELSSFund, FUND_CATEGORIES, getTopFundsByReturns } from "@/data/elss-funds";
-import { calculateSIPReturns, calculateTaxSavings, compareWith80COptions } from "@/lib/elss-calculations";
 
-const COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6', '#ef4444'];
+const fmt = (n: number) =>
+  n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
 
-export default function ELSSComparatorPage() {
-  // Filters
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<'returns3Y' | 'rating' | 'expense' | 'aum'>('returns3Y');
-  const [selectedFunds, setSelectedFunds] = useState<string[]>([]);
-  
-  // Calculator inputs
-  const [monthlyInvestment, setMonthlyInvestment] = useState(12500); // ₹1.5L/year
-  const [investmentYears, setInvestmentYears] = useState(10);
-  const [annualIncome, setAnnualIncome] = useState(1200000);
+function calcSIP(monthly: number, years: number, rate: number) {
+  const r = rate / 100 / 12;
+  const n = years * 12;
+  const corpus = monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+  const invested = monthly * n;
+  const gains = corpus - invested;
+  const ltcgExempt = 125000;
+  const ltcgTaxable = Math.max(0, gains - ltcgExempt);
+  const ltcgTax = ltcgTaxable * 0.125;
+  const taxSaved80CPerYear = Math.min(monthly * 12, 150000) * 0.3;
+  return { corpus, invested, gains, ltcgTax, netCorpus: corpus - ltcgTax, taxSavedTotal: taxSaved80CPerYear * years };
+}
 
-  // Filter and sort funds
-  const filteredFunds = useMemo(() => {
-    let funds = [...ELSS_FUNDS];
-    
-    // Search filter
-    if (searchTerm) {
-      funds = funds.filter(f => 
-        f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        f.amc.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    // Category filter
-    if (selectedCategory !== 'all') {
-      funds = funds.filter(f => f.category === selectedCategory);
-    }
-    
-    // Sort
-    funds.sort((a, b) => {
-      switch (sortBy) {
-        case 'returns3Y':
-          return b.returns.threeYear - a.returns.threeYear;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'expense':
-          return a.expenseRatio - b.expenseRatio;
-        case 'aum':
-          return b.aum - a.aum;
-        default:
-          return 0;
-      }
-    });
-    
-    return funds;
-  }, [searchTerm, selectedCategory, sortBy]);
+interface FundData {
+  id: string; name: string; amc: string; category: string;
+  returns: { "1Y": number; "3Y": number; "5Y": number; "10Y": number };
+  expense: number; rating: number; minSIP: number; aum: string;
+  tag?: string; tagColor?: string;
+}
 
-  // Get selected fund objects
-  const selectedFundObjects = useMemo(() => {
-    return ELSS_FUNDS.filter(f => selectedFunds.includes(f.id));
-  }, [selectedFunds]);
+const FUNDS: FundData[] = [
+  { id: "mirae", name: "Mirae Asset ELSS Tax Saver", amc: "Mirae Asset", category: "Flexi Cap", returns: { "1Y": 22.4, "3Y": 18.1, "5Y": 19.2, "10Y": 20.1 }, expense: 0.55, rating: 5, minSIP: 500, aum: "₹24,300 Cr", tag: "Top Rated", tagColor: "bg-indigo-50 text-indigo-600 border-indigo-100" },
+  { id: "quant", name: "Quant ELSS Tax Saver", amc: "Quant MF", category: "Flexi Cap", returns: { "1Y": 31.2, "3Y": 28.4, "5Y": 31.1, "10Y": 21.3 }, expense: 0.57, rating: 5, minSIP: 500, aum: "₹10,200 Cr", tag: "High Return", tagColor: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+  { id: "axis", name: "Axis Long Term Equity", amc: "Axis MF", category: "Multi Cap", returns: { "1Y": 14.8, "3Y": 10.2, "5Y": 14.1, "10Y": 18.2 }, expense: 0.78, rating: 3, minSIP: 500, aum: "₹33,100 Cr" },
+  { id: "sbi", name: "SBI Long Term Equity", amc: "SBI MF", category: "Flexi Cap", returns: { "1Y": 19.3, "3Y": 15.6, "5Y": 17.4, "10Y": 15.8 }, expense: 1.12, rating: 4, minSIP: 500, aum: "₹26,500 Cr", tag: "Popular", tagColor: "bg-violet-50 text-violet-600 border-violet-100" },
+  { id: "hdfc", name: "HDFC ELSS Tax Saver", amc: "HDFC MF", category: "Large & Mid Cap", returns: { "1Y": 25.1, "3Y": 19.8, "5Y": 20.3, "10Y": 18.9 }, expense: 0.79, rating: 4, minSIP: 500, aum: "₹15,800 Cr" },
+  { id: "dsp", name: "DSP Tax Saver", amc: "DSP MF", category: "Flexi Cap", returns: { "1Y": 18.7, "3Y": 16.3, "5Y": 18.1, "10Y": 16.4 }, expense: 0.88, rating: 4, minSIP: 500, aum: "₹14,200 Cr" },
+];
 
-  // Calculate SIP projections for selected funds
-  const sipProjections = useMemo(() => {
-    return selectedFundObjects.map(fund => ({
-      fund,
-      projection: calculateSIPReturns(
-        monthlyInvestment,
-        fund.returns.threeYear, // Use 3Y return as expected return
-        investmentYears,
-        annualIncome
-      ),
-    }));
-  }, [selectedFundObjects, monthlyInvestment, investmentYears, annualIncome]);
+const PERIOD_KEYS = ["1Y", "3Y", "5Y", "10Y"] as const;
+const CHART_COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444"];
 
-  // Tax savings calculation
-  const taxSavings = useMemo(() => {
-    return calculateTaxSavings(monthlyInvestment * 12, annualIncome);
-  }, [monthlyInvestment, annualIncome]);
+export default function ELSSCalculatorPage() {
+  const seo = getSEOConfig("/calculators/sip");
+  const [monthly, setMonthly] = useState(12500);
+  const [years, setYears] = useState(10);
+  const [period, setPeriod] = useState<typeof PERIOD_KEYS[number]>("3Y");
+  const [selectedIds, setSelectedIds] = useState<string[]>(["mirae", "quant"]);
 
-  // 80C comparison
-  const comparison80C = useMemo(() => {
-    const avgReturn = selectedFundObjects.length > 0
-      ? selectedFundObjects.reduce((sum, f) => sum + f.returns.threeYear, 0) / selectedFundObjects.length
-      : 12;
-    return compareWith80COptions(monthlyInvestment * 12, investmentYears, avgReturn);
-  }, [selectedFundObjects, monthlyInvestment, investmentYears]);
-
-  // Toggle fund selection
-  const toggleFundSelection = (fundId: string) => {
-    setSelectedFunds(prev => 
-      prev.includes(fundId)
-        ? prev.filter(id => id !== fundId)
-        : prev.length < 5 ? [...prev, fundId] : prev
+  const toggleFund = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : prev.length < 4 ? [...prev, id] : prev
     );
   };
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    if (amount >= 10000000) {
-      return `₹${(amount / 10000000).toFixed(2)} Cr`;
-    } else if (amount >= 100000) {
-      return `₹${(amount / 100000).toFixed(2)} L`;
-    }
-    return `₹${amount.toLocaleString('en-IN')}`;
-  };
+  const taxSavedPerYear = useMemo(() => Math.min(monthly * 12, 150000) * 0.3, [monthly]);
+  const selectedFunds = useMemo(() => FUNDS.filter(f => selectedIds.includes(f.id)), [selectedIds]);
 
-  // Render stars
-  const renderStars = (rating: number) => {
+  const chartData = useMemo(() =>
+    PERIOD_KEYS.map(p => ({
+      period: p,
+      ...Object.fromEntries(selectedFunds.map(f => [f.name.split(" ").slice(0, 2).join(" "), f.returns[p]]))
+    })),
+    [selectedFunds]
+  );
+
+  const projections = useMemo(() =>
+    selectedFunds.map(f => ({
+      fund: f,
+      ...calcSIP(monthly, years, f.returns[period])
+    })),
+    [selectedFunds, monthly, years, period]
+  );
+
+  const CompTooltip = ({ active, payload, label }: any) => {
+    if (!active || !payload?.length) return null;
     return (
-      <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            className={`h-4 w-4 ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-          />
+      <div className="bg-white border border-slate-100 rounded-xl p-3 shadow-lg text-sm">
+        <p className="text-slate-500 font-bold mb-1">{label}</p>
+        {payload.map((p: any, i: number) => (
+          <p key={i} style={{ color: p.fill }} className="font-black">{p.name}: {p.value}%</p>
         ))}
       </div>
     );
   };
 
-  // Chart data for comparison
-  const comparisonChartData = sipProjections.map(({ fund, projection }) => ({
-    name: fund.name.split(' ').slice(0, 2).join(' '),
-    invested: projection.totalInvested,
-    value: projection.expectedValue,
-    gains: projection.gains,
-  }));
-
-  // Radar chart data
-  const radarData = selectedFundObjects.length > 0 ? [
-    { metric: '1Y Returns', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.returns.oneYear])) },
-    { metric: '3Y Returns', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.returns.threeYear])) },
-    { metric: '5Y Returns', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.returns.fiveYear])) },
-    { metric: 'Rating', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.rating * 10])) },
-    { metric: 'Low Expense', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, (2 - f.expenseRatio) * 25])) },
-  ] : [];
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="text-green-200 hover:text-white">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-green-300" />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/calculators" className="text-green-200 hover:text-white">Calculators</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-green-300" />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-white">ELSS Comparator</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <>
+      <MetaSEO
+        title="ELSS Tax Saver Fund Comparator 2025 | Section 80C | MyeCA.in"
+        description="Compare best ELSS mutual funds for Section 80C tax saving. Calculate SIP returns, tax savings, and find your ideal fund."
+        keywords={["ELSS calculator", "best ELSS funds 2025", "tax saver mutual fund", "80C investment", "ELSS SIP returns"]}
+        type="calculator"
+        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Calculators", url: "/calculators" }, { name: "ELSS Comparator", url: "/elss-comparator" }]}
+        faqPageData={[
+          { question: "What is ELSS?", answer: "ELSS (Equity Linked Savings Scheme) is a mutual fund qualifying for tax deduction under Section 80C up to ₹1.5 lakh with only 3 years lock-in." },
+          { question: "How much tax can I save with ELSS?", answer: "Investing ₹1.5L/year saves ₹46,800 tax (30% bracket + cess). Your effective investment cost becomes just ₹1,03,200." },
+          { question: "ELSS vs PPF — which is better?", answer: "ELSS offers higher potential returns (~15-18%) vs PPF (7.1%) with shorter lock-in (3 vs 15 years). ELSS is market-linked while PPF is risk-free." },
+        ]}
+      />
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-              <TrendingUp className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">ELSS Fund Comparator</h1>
-              <p className="text-green-200 mt-1">
-                Compare tax-saving mutual funds and maximize your 80C benefits
-              </p>
-            </div>
-          </div>
+      <div className="min-h-screen bg-slate-50/50 calculator-gradient-bg pb-24">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "ELSS Comparator" }]} />
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-green-200">Tax Benefit (80C)</p>
-              <p className="text-2xl font-bold">₹1.5 Lakh</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-green-200">Lock-in Period</p>
-              <p className="text-2xl font-bold">3 Years</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-green-200">Your Tax Saved</p>
-              <p className="text-2xl font-bold">{formatCurrency(taxSavings.taxSaved)}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-green-200">Funds Selected</p>
-              <p className="text-2xl font-bold">{selectedFunds.length}/5</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Hero */}
+        <section className="relative pt-12 pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <m.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5" /> Section 80C · 3 Year Lock-in
+            </m.div>
+            <m.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+              ELSS Fund <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Comparator</span>
+            </m.h1>
+            <m.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+              className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+              Compare top ELSS funds, calculate real SIP returns after LTCG tax, and find your ideal tax-saving investment.
+            </m.p>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs defaultValue="compare" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-lg">
-            <TabsTrigger value="compare">Compare</TabsTrigger>
-            <TabsTrigger value="all-funds">All Funds</TabsTrigger>
-            <TabsTrigger value="calculator">Calculator</TabsTrigger>
-            <TabsTrigger value="vs-80c">vs Other 80C</TabsTrigger>
-          </TabsList>
-
-          {/* Compare Tab */}
-          <TabsContent value="compare" className="space-y-6">
-            {selectedFunds.length === 0 ? (
-              <Card className="p-12 text-center">
-                <BarChart3 className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No Funds Selected</h3>
-                <p className="text-gray-500 mb-4">
-                  Select up to 5 funds from the "All Funds" tab to compare them
-                </p>
-                <Button onClick={() => document.querySelector('[value="all-funds"]')?.dispatchEvent(new Event('click'))}>
-                  Browse Funds
-                </Button>
-              </Card>
-            ) : (
-              <>
-                {/* Comparison Table */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Fund Comparison</CardTitle>
-                    <CardDescription>{selectedFunds.length} funds selected</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ScrollArea className="w-full">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="min-w-[200px]">Fund</TableHead>
-                            <TableHead className="text-right">1Y Return</TableHead>
-                            <TableHead className="text-right">3Y Return</TableHead>
-                            <TableHead className="text-right">5Y Return</TableHead>
-                            <TableHead className="text-right">Expense</TableHead>
-                            <TableHead className="text-right">Rating</TableHead>
-                            <TableHead className="text-right">AUM</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {selectedFundObjects.map((fund, index) => (
-                            <TableRow key={fund.id}>
-                              <TableCell>
-                                <div className="flex items-center gap-2">
-                                  <div 
-                                    className="w-3 h-3 rounded-full" 
-                                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                                  />
-                                  <div>
-                                    <p className="font-medium text-sm">{fund.name}</p>
-                                    <p className="text-xs text-gray-500">{fund.category}</p>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <span className={fund.returns.oneYear >= 0 ? 'text-green-600' : 'text-red-600'}>
-                                  {fund.returns.oneYear}%
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <span className={fund.returns.threeYear >= 0 ? 'text-green-600' : 'text-red-600'}>
-                                  {fund.returns.threeYear}%
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <span className={fund.returns.fiveYear >= 0 ? 'text-green-600' : 'text-red-600'}>
-                                  {fund.returns.fiveYear}%
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-right">{fund.expenseRatio}%</TableCell>
-                              <TableCell className="text-right">{renderStars(fund.rating)}</TableCell>
-                              <TableCell className="text-right">{formatCurrency(fund.aum * 10000000)}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </ScrollArea>
-                  </CardContent>
-                </Card>
-
-                {/* Returns Comparison Chart */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Returns Comparison</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={[
-                            { period: '1 Year', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.returns.oneYear])) },
-                            { period: '3 Years', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.returns.threeYear])) },
-                            { period: '5 Years', ...Object.fromEntries(selectedFundObjects.map(f => [f.id, f.returns.fiveYear])) },
-                          ]}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="period" />
-                            <YAxis tickFormatter={(v) => `${v}%`} />
-                            <Tooltip formatter={(value: number) => `${value}%`} />
-                            <Legend />
-                            {selectedFundObjects.map((fund, index) => (
-                              <Bar 
-                                key={fund.id} 
-                                dataKey={fund.id} 
-                                fill={COLORS[index % COLORS.length]} 
-                                name={fund.name.split(' ').slice(0, 2).join(' ')}
-                                radius={[4, 4, 0, 0]}
-                              />
-                            ))}
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Fund Characteristics</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <RadarChart data={radarData}>
-                            <PolarGrid />
-                            <PolarAngleAxis dataKey="metric" />
-                            <PolarRadiusAxis angle={30} domain={[0, 50]} />
-                            {selectedFundObjects.map((fund, index) => (
-                              <Radar
-                                key={fund.id}
-                                name={fund.name.split(' ').slice(0, 2).join(' ')}
-                                dataKey={fund.id}
-                                stroke={COLORS[index % COLORS.length]}
-                                fill={COLORS[index % COLORS.length]}
-                                fillOpacity={0.2}
-                              />
-                            ))}
-                            <Legend />
-                          </RadarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* SIP Projection */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>SIP Projection ({investmentYears} Years)</CardTitle>
-                    <CardDescription>Based on {formatCurrency(monthlyInvestment)}/month investment</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={comparisonChartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis tickFormatter={(v) => `₹${(v/100000).toFixed(0)}L`} />
-                          <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                          <Legend />
-                          <Bar dataKey="invested" fill="#94a3b8" name="Invested" stackId="a" />
-                          <Bar dataKey="gains" fill="#22c55e" name="Gains" stackId="a" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
-          </TabsContent>
-
-          {/* All Funds Tab */}
-          <TabsContent value="all-funds" className="space-y-6">
-            {/* Filters */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-wrap gap-4">
-                  <div className="flex-1 min-w-[200px]">
-                    <Input
-                      placeholder="Search funds..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            {/* Quick Stats */}
+            <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+              className="mt-8 flex flex-wrap justify-center gap-3">
+              {[
+                { icon: Shield, label: "80C Deduction", val: "Up to ₹1.5L/yr", c: "text-indigo-600", bg: "bg-indigo-50 border-indigo-100" },
+                { icon: Lock, label: "Lock-in Period", val: "Just 3 Years", c: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
+                { icon: TrendingUp, label: "Avg 10Y CAGR", val: "~16-18%", c: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
+                { icon: ShieldCheck, label: "Tax Saved/yr", val: fmt(taxSavedPerYear), c: "text-rose-600", bg: "bg-rose-50 border-rose-100" },
+              ].map(({ icon: Icon, label, val, c, bg }) => (
+                <div key={label} className={`flex items-center gap-2.5 ${bg} border rounded-2xl px-5 py-3`}>
+                  <Icon className={`w-4 h-4 ${c}`} />
+                  <div className="text-left">
+                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{label}</p>
+                    <p className="text-slate-900 font-black text-sm">{val}</p>
                   </div>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {FUND_CATEGORIES.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                </div>
+              ))}
+            </m.div>
+          </div>
+        </section>
+
+        <main className="max-w-7xl mx-auto px-4 -mt-8 space-y-8">
+
+          {/* SIP Calculator Controls */}
+          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 p-8">
+            <h2 className="text-xl font-black text-slate-900 tracking-tight mb-6 flex items-center gap-2">
+              <IndianRupee className="w-5 h-5 text-emerald-600" /> SIP Calculator
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Monthly SIP</label>
+                  <span className="text-emerald-600 font-black text-xl">{fmt(monthly)}</span>
+                </div>
+                <Slider colorTheme="blue" value={[monthly]} onValueChange={([v]) => setMonthly(v)} min={500} max={50000} step={500} />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold"><span>₹500</span><span>₹50,000</span></div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Investment Period</label>
+                  <span className="text-indigo-600 font-black text-xl">{years} yrs</span>
+                </div>
+                <Slider colorTheme="blue" value={[years]} onValueChange={([v]) => setYears(v)} min={3} max={25} step={1} />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold"><span>3 yrs</span><span>25 yrs</span></div>
+              </div>
+            </div>
+            <div className="mt-6 flex items-center gap-3 flex-wrap">
+              <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Compare using:</span>
+              {PERIOD_KEYS.map(p => (
+                <button key={p} onClick={() => setPeriod(p)}
+                  className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all border ${period === p ? "bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-200/50" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"}`}>
+                  {p} Returns
+                </button>
+              ))}
+            </div>
+          </m.div>
+
+          {/* Fund Cards */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Select Funds to Compare</h2>
+              <span className="text-sm font-bold text-slate-400">{selectedIds.length}/4 selected</span>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {FUNDS.map((fund) => {
+                const selected = selectedIds.includes(fund.id);
+                return (
+                  <m.div key={fund.id} whileHover={{ y: -2 }} whileTap={{ scale: 0.99 }}
+                    onClick={() => toggleFund(fund.id)}
+                    className={`relative cursor-pointer rounded-[2rem] border-2 p-5 transition-all ${selected ? "bg-indigo-50/50 border-indigo-300 shadow-lg shadow-indigo-100/50" : "bg-white border-slate-100 hover:border-slate-200 shadow-sm"}`}>
+
+                    {selected && (
+                      <div className="absolute top-4 right-4">
+                        <CheckCircle className="w-5 h-5 text-indigo-600" />
+                      </div>
+                    )}
+                    {fund.tag && !selected && (
+                      <div className="absolute top-4 right-4">
+                        <Badge className={`${fund.tagColor} border text-[10px] font-black`}>{fund.tag}</Badge>
+                      </div>
+                    )}
+
+                    <h4 className="text-slate-900 font-black text-sm leading-tight pr-16 mb-1">{fund.name}</h4>
+                    <p className="text-slate-400 text-xs font-bold mb-4">{fund.amc} · {fund.category}</p>
+
+                    <div className="grid grid-cols-4 gap-1.5 mb-4">
+                      {PERIOD_KEYS.map(p => (
+                        <div key={p} className={`rounded-xl p-2 text-center ${p === period ? "bg-emerald-50 border border-emerald-100" : "bg-slate-50"}`}>
+                          <p className="text-[9px] text-slate-400 font-black uppercase">{p}</p>
+                          <p className={`text-xs font-black mt-0.5 ${fund.returns[p] >= 20 ? "text-emerald-600" : fund.returns[p] >= 15 ? "text-indigo-600" : "text-slate-600"}`}>
+                            {fund.returns[p]}%
+                          </p>
+                        </div>
                       ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="returns3Y">3Y Returns</SelectItem>
-                      <SelectItem value="rating">Rating</SelectItem>
-                      <SelectItem value="expense">Expense Ratio</SelectItem>
-                      <SelectItem value="aum">AUM</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Fund List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>ELSS Funds ({filteredFunds.length})</CardTitle>
-                <CardDescription>Select up to 5 funds to compare</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[600px]">
-                  <div className="space-y-4">
-                    {filteredFunds.map((fund) => (
-                      <div 
-                        key={fund.id}
-                        className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                          selectedFunds.includes(fund.id) 
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
-                            : 'hover:border-gray-400'
-                        }`}
-                        onClick={() => toggleFundSelection(fund.id)}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3">
-                            <Checkbox 
-                              checked={selectedFunds.includes(fund.id)}
-                              onCheckedChange={() => toggleFundSelection(fund.id)}
-                            />
-                            <div>
-                              <h4 className="font-semibold">{fund.name}</h4>
-                              <p className="text-sm text-gray-500">{fund.amc}</p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Badge variant="outline">{fund.category}</Badge>
-                                <Badge variant="outline" className="text-xs">
-                                  Min SIP: ₹{fund.minSIP}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            {renderStars(fund.rating)}
-                            <p className="text-sm text-gray-500 mt-1">AUM: {formatCurrency(fund.aum * 10000000)}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-4 gap-4 mt-4 pt-4 border-t">
-                          <div>
-                            <p className="text-xs text-gray-500">1Y Return</p>
-                            <p className={`font-semibold ${fund.returns.oneYear >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {fund.returns.oneYear}%
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500">3Y Return</p>
-                            <p className={`font-semibold ${fund.returns.threeYear >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {fund.returns.threeYear}%
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500">5Y Return</p>
-                            <p className={`font-semibold ${fund.returns.fiveYear >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {fund.returns.fiveYear}%
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500">Expense Ratio</p>
-                            <p className="font-semibold">{fund.expenseRatio}%</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Calculator Tab */}
-          <TabsContent value="calculator" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Inputs */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5 text-green-600" />
-                    Investment Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="monthly">Monthly SIP Amount</Label>
-                    <div className="relative mt-1">
-                      <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="monthly"
-                        type="number"
-                        value={monthlyInvestment}
-                        onChange={(e) => setMonthlyInvestment(Number(e.target.value))}
-                        className="pl-10"
-                      />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Yearly: {formatCurrency(monthlyInvestment * 12)}
-                    </p>
-                  </div>
 
-                  <div>
-                    <Label htmlFor="years">Investment Period (Years)</Label>
-                    <Input
-                      id="years"
-                      type="number"
-                      value={investmentYears}
-                      onChange={(e) => setInvestmentYears(Number(e.target.value))}
-                      min={3}
-                      max={30}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="income">Annual Income</Label>
-                    <div className="relative mt-1">
-                      <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="income"
-                        type="number"
-                        value={annualIncome}
-                        onChange={(e) => setAnnualIncome(Number(e.target.value))}
-                        className="pl-10"
-                      />
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                      <span className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map(s => (
+                          <Star key={s} className={`w-3 h-3 ${s <= fund.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`} />
+                        ))}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-400">Exp: {fund.expense}% · AUM: {fund.aum}</span>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Tax Savings */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <PiggyBank className="h-5 w-5 text-purple-600" />
-                    Tax Savings Breakdown
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="p-4 bg-blue-50 rounded-lg text-center">
-                      <p className="text-sm text-blue-700">Investment</p>
-                      <p className="text-xl font-bold text-blue-800">{formatCurrency(taxSavings.investment)}</p>
-                    </div>
-                    <div className="p-4 bg-green-50 rounded-lg text-center">
-                      <p className="text-sm text-green-700">Deduction (80C)</p>
-                      <p className="text-xl font-bold text-green-800">{formatCurrency(taxSavings.deductionClaimed)}</p>
-                    </div>
-                    <div className="p-4 bg-purple-50 rounded-lg text-center">
-                      <p className="text-sm text-purple-700">Tax Saved</p>
-                      <p className="text-xl font-bold text-purple-800">{formatCurrency(taxSavings.taxSaved)}</p>
-                    </div>
-                    <div className="p-4 bg-orange-50 rounded-lg text-center">
-                      <p className="text-sm text-orange-700">Effective Cost</p>
-                      <p className="text-xl font-bold text-orange-800">{formatCurrency(taxSavings.effectiveCost)}</p>
-                    </div>
-                  </div>
-
-                  <Alert className="mt-4 bg-green-50 border-green-200">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
-                      Your effective investment cost is just <strong>{formatCurrency(taxSavings.effectiveCost)}</strong> after 
-                      considering tax savings. That's a <strong>{((1 - taxSavings.effectiveCost / taxSavings.investment) * 100).toFixed(0)}% discount</strong> on your investment!
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
+                  </m.div>
+                );
+              })}
             </div>
+          </div>
 
-            {/* SIP Projections for selected funds */}
+          {/* Comparison Results */}
+          <AnimatePresence>
             {selectedFunds.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>SIP Projections for Selected Funds</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {sipProjections.map(({ fund, projection }) => (
-                      <div key={fund.id} className="p-4 border rounded-lg">
-                        <h4 className="font-semibold text-sm mb-3">{fund.name}</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Total Invested</span>
-                            <span>{formatCurrency(projection.totalInvested)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Expected Value</span>
-                            <span className="text-green-600 font-medium">{formatCurrency(projection.expectedValue)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Gains</span>
-                            <span className="text-green-600">{formatCurrency(projection.gains)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">LTCG Tax</span>
-                            <span className="text-red-600">-{formatCurrency(projection.ltcgTax)}</span>
-                          </div>
-                          <div className="flex justify-between border-t pt-2">
-                            <span className="font-medium">Net Value</span>
-                            <span className="font-bold">{formatCurrency(projection.netValue)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Tax Saved (80C)</span>
-                            <span className="text-purple-600">+{formatCurrency(projection.taxSaved)}</span>
-                          </div>
+              <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                className="grid md:grid-cols-2 gap-6">
+
+                {/* Returns Chart */}
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-7">
+                  <h3 className="text-slate-900 font-black tracking-tight mb-5">Returns Comparison</h3>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} barSize={14}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                        <XAxis dataKey="period" stroke="#94a3b8" tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 700 }} tickLine={false} />
+                        <YAxis stroke="#94a3b8" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} tickFormatter={v => `${v}%`} />
+                        <Tooltip content={<CompTooltip />} />
+                        <Legend wrapperStyle={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }} />
+                        {selectedFunds.map((f, i) => (
+                          <Bar key={f.id} dataKey={f.name.split(" ").slice(0, 2).join(" ")} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[4, 4, 0, 0]} />
+                        ))}
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* SIP Projections */}
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-7">
+                  <h3 className="text-slate-900 font-black tracking-tight mb-2">
+                    SIP Projections
+                  </h3>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-5">
+                    {fmt(monthly)}/mo · {years} yrs · Based on {period} returns
+                  </p>
+                  <div className="space-y-4">
+                    {projections.map(({ fund, corpus, invested, netCorpus, taxSavedTotal }, i) => (
+                      <div key={fund.id} className="rounded-2xl border border-slate-100 p-4 bg-slate-50/50">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                          <p className="text-slate-900 font-black text-sm truncate">{fund.name}</p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          {[
+                            { label: "Invested", val: fmt(invested), c: "text-slate-600" },
+                            { label: "Corpus", val: fmt(corpus), c: "text-emerald-600" },
+                            { label: "Tax Saved", val: fmt(taxSavedTotal), c: "text-indigo-600" },
+                          ].map(({ label, val, c }) => (
+                            <div key={label} className="bg-white rounded-xl p-2 border border-slate-100">
+                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                              <p className={`text-xs font-black mt-0.5 ${c}`}>{val}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-2 bg-emerald-50 rounded-xl p-2 text-center border border-emerald-100">
+                          <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Net After LTCG Tax</p>
+                          <p className="text-emerald-700 font-black text-sm">{fmt(netCorpus)}</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* vs 80C Tab */}
-          <TabsContent value="vs-80c" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>ELSS vs Other 80C Options</CardTitle>
-                <CardDescription>
-                  Compare ELSS with PPF, Tax-Saver FD, and NSC over {investmentYears} years
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[350px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={[
-                      { name: 'ELSS', value: comparison80C.elss.value, taxBenefit: comparison80C.elss.taxBenefit },
-                      { name: 'PPF', value: comparison80C.ppf.value, taxBenefit: comparison80C.ppf.taxBenefit },
-                      { name: 'Tax-Saver FD', value: comparison80C.fd.value, taxBenefit: comparison80C.fd.taxBenefit },
-                      { name: 'NSC', value: comparison80C.nsc.value, taxBenefit: comparison80C.nsc.taxBenefit },
-                    ]}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis tickFormatter={(v) => `₹${(v/100000).toFixed(0)}L`} />
-                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                      <Legend />
-                      <Bar dataKey="value" fill="#22c55e" name="Corpus Value" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="taxBenefit" fill="#8b5cf6" name="Tax Benefit" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
                 </div>
-              </CardContent>
-            </Card>
+              </m.div>
+            )}
+          </AnimatePresence>
 
-            {/* Comparison Table */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="border-2 border-green-200">
-                <CardHeader className="bg-green-50">
-                  <CardTitle className="text-lg text-green-800">ELSS</CardTitle>
-                  <CardDescription>Expected ~12% returns</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Corpus</span>
-                    <span className="font-bold">{formatCurrency(comparison80C.elss.value)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Tax Benefit</span>
-                    <span className="font-bold text-purple-600">{formatCurrency(comparison80C.elss.taxBenefit)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span className="font-medium">Total</span>
-                    <span className="font-bold text-green-600">{formatCurrency(comparison80C.elss.value + comparison80C.elss.taxBenefit)}</span>
-                  </div>
-                  <Badge className="w-full justify-center bg-green-100 text-green-700">
-                    3 Year Lock-in
-                  </Badge>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="bg-blue-50">
-                  <CardTitle className="text-lg text-blue-800">PPF</CardTitle>
-                  <CardDescription>Guaranteed 7.1%</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Corpus</span>
-                    <span className="font-bold">{formatCurrency(comparison80C.ppf.value)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Tax Benefit</span>
-                    <span className="font-bold text-purple-600">{formatCurrency(comparison80C.ppf.taxBenefit)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span className="font-medium">Total</span>
-                    <span className="font-bold text-blue-600">{formatCurrency(comparison80C.ppf.value + comparison80C.ppf.taxBenefit)}</span>
-                  </div>
-                  <Badge className="w-full justify-center bg-blue-100 text-blue-700">
-                    15 Year Lock-in
-                  </Badge>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="bg-orange-50">
-                  <CardTitle className="text-lg text-orange-800">Tax-Saver FD</CardTitle>
-                  <CardDescription>~6.5% returns</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Corpus (post-tax)</span>
-                    <span className="font-bold">{formatCurrency(comparison80C.fd.value)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Tax Benefit</span>
-                    <span className="font-bold text-purple-600">{formatCurrency(comparison80C.fd.taxBenefit)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span className="font-medium">Total</span>
-                    <span className="font-bold text-orange-600">{formatCurrency(comparison80C.fd.value + comparison80C.fd.taxBenefit)}</span>
-                  </div>
-                  <Badge className="w-full justify-center bg-orange-100 text-orange-700">
-                    5 Year Lock-in
-                  </Badge>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="bg-purple-50">
-                  <CardTitle className="text-lg text-purple-800">NSC</CardTitle>
-                  <CardDescription>7.7% returns</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Corpus (post-tax)</span>
-                    <span className="font-bold">{formatCurrency(comparison80C.nsc.value)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Tax Benefit</span>
-                    <span className="font-bold text-purple-600">{formatCurrency(comparison80C.nsc.taxBenefit)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span className="font-medium">Total</span>
-                    <span className="font-bold text-purple-600">{formatCurrency(comparison80C.nsc.value + comparison80C.nsc.taxBenefit)}</span>
-                  </div>
-                  <Badge className="w-full justify-center bg-purple-100 text-purple-700">
-                    5 Year Lock-in
-                  </Badge>
-                </CardContent>
-              </Card>
+          {/* ELSS vs Others */}
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">ELSS vs Other 80C Options</h3>
+            <p className="text-slate-500 text-sm font-medium mb-8">Projected corpus on ₹1.5L/year over 15 years</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: "ELSS", ret: "~15% avg", corpus: "₹81.4 L", lockin: "3 yrs", best: true, c: "from-emerald-50 to-teal-50 border-emerald-200" },
+                { name: "PPF", ret: "7.1% guaranteed", corpus: "₹40.6 L", lockin: "15 yrs", best: false, c: "from-blue-50 to-indigo-50 border-blue-200" },
+                { name: "Tax-Saver FD", ret: "~6.5% avg", corpus: "₹37.0 L", lockin: "5 yrs", best: false, c: "from-amber-50 to-orange-50 border-amber-200" },
+                { name: "NSC", ret: "7.7% avg", corpus: "₹43.2 L", lockin: "5 yrs", best: false, c: "from-violet-50 to-purple-50 border-violet-200" },
+              ].map(({ name, ret, corpus, lockin, best, c }) => (
+                <div key={name} className={`rounded-2xl bg-gradient-to-br ${c} border p-5`}>
+                  {best && <Badge className="bg-emerald-100 text-emerald-700 border-0 text-[10px] font-black mb-3 hover:bg-emerald-100">Best Returns</Badge>}
+                  <p className="text-slate-900 font-black text-xl">{name}</p>
+                  <p className="text-slate-500 text-xs font-bold mt-1">{ret}</p>
+                  <p className={`font-black text-2xl mt-3 ${best ? "text-emerald-700" : "text-slate-700"}`}>{corpus}</p>
+                  <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">{lockin} lock-in</p>
+                </div>
+              ))}
             </div>
+          </div>
 
-            <Alert className="bg-blue-50 border-blue-200">
-              <Info className="h-4 w-4 text-blue-600" />
-              <AlertTitle className="text-blue-800">Key Differences</AlertTitle>
-              <AlertDescription className="text-blue-700">
-                <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li><strong>ELSS:</strong> Shortest lock-in (3 years), market-linked returns, LTCG tax applicable</li>
-                  <li><strong>PPF:</strong> Tax-free returns, longest lock-in (15 years), government-backed</li>
-                  <li><strong>FD:</strong> Guaranteed returns, interest fully taxable, 5 year lock-in</li>
-                  <li><strong>NSC:</strong> Government-backed, interest taxable, good for conservative investors</li>
-                </ul>
-              </AlertDescription>
-            </Alert>
-          </TabsContent>
-        </Tabs>
+          {/* FAQ */}
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-8 flex items-center gap-2">
+              <Info className="w-6 h-6 text-emerald-500" /> Frequently Asked Questions
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { q: "What is the minimum SIP for ELSS?", a: "Most ELSS funds allow SIP from ₹500/month. Tax benefit is capped at ₹1.5L/year under 80C." },
+                { q: "Are ELSS gains taxable?", a: "Yes. Gains above ₹1.25 lakh/year are taxed at 12.5% LTCG. Below ₹1.25L, gains are completely exempt." },
+                { q: "Which is better: ELSS Lump Sum or SIP?", a: "SIP is generally better — it averages cost via rupee-cost averaging, reducing risk in volatile markets." },
+                { q: "Can I stop my ELSS SIP before 3 years?", a: "You can stop future installments, but each SIP installment has its own 3-year lock-in from its investment date." },
+              ].map(({ q, a }, i) => (
+                <div key={i} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                  <h4 className="font-black text-slate-900 mb-2">{q}</h4>
+                  <p className="text-sm font-medium text-slate-600">{a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 }
-

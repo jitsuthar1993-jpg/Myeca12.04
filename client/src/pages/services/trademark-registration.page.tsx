@@ -45,8 +45,12 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CollapsibleFAQ } from "@/components/ui/collapsible-faq";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function TrademarkRegistrationPage() {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPrice, setCheckoutPrice] = useState(12999);
+  const [checkoutTitle, setCheckoutTitle] = useState("Trademark Registration");
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -375,7 +379,11 @@ export default function TrademarkRegistrationPage() {
                 Complete registration from search to certificate with 10-year protection. Updated 2025 fee structure.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold">
+                <Button 
+                  size="sm" 
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <Shield className="w-4 h-4 mr-2" />
                   Start Registration
                 </Button>
@@ -832,7 +840,11 @@ export default function TrademarkRegistrationPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50 px-8">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-purple-600 hover:bg-purple-50 px-8"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <Shield className="w-5 h-5 mr-2" />
                   Register Trademark ₹12,999
                 </Button>
@@ -884,6 +896,16 @@ export default function TrademarkRegistrationPage() {
           </div>
         </div>
       </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="trademark-registration"
+          serviceTitle={checkoutTitle}
+          category="Business Services"
+          priceAmount={checkoutPrice}
+        />
+      )}
     </div>
   );
 }

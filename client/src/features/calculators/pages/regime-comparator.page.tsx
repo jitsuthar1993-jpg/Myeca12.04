@@ -1,13 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Accordion,
   AccordionContent,
@@ -15,30 +13,27 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { 
+  Info, 
   Calculator, 
   TrendingUp, 
-  TrendingDown, 
   IndianRupee, 
   Check, 
   X, 
-  Info,
   Lightbulb,
-  Download,
   Scale,
   PiggyBank,
-  Building2,
-  GraduationCap,
   Heart,
   Home,
   Wallet,
-  ArrowRight,
-  ChevronRight,
   Sparkles
 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { CalculatorExport } from "@/components/ui/calculator-export";
-import EnhancedSEO from "@/components/EnhancedSEO";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import Breadcrumb from "@/components/Breadcrumb";
+import { cn } from "@/lib/utils";
 
 // Tax calculation constants for FY 2024-25
 const OLD_REGIME_SLABS = [
@@ -116,6 +111,7 @@ const formatLakhs = (amount: number) => {
 };
 
 export default function RegimeComparatorPage() {
+  const seo = getSEOConfig('/calculators/tax-regime');
   const [activeTab, setActiveTab] = useState("income");
   
   const [income, setIncome] = useState<IncomeInputs>({
@@ -144,11 +140,9 @@ export default function RegimeComparatorPage() {
   });
 
   const calculations = useMemo(() => {
-    // Calculate gross income
     const grossSalary = income.basicSalary + income.hra + income.lta + income.specialAllowance;
     const grossIncome = grossSalary + income.otherIncome + income.rentalIncome + income.interestIncome + income.businessIncome;
 
-    // OLD REGIME CALCULATION
     const oldRegimeDeductions = 
       Math.min(deductions.section80C, DEDUCTION_LIMITS.section80C) +
       Math.min(deductions.section80CCD1B, DEDUCTION_LIMITS.section80CCD1B) +
@@ -173,28 +167,18 @@ export default function RegimeComparatorPage() {
       }
     }
 
-    // Apply rebate under 87A for old regime
-    if (oldTaxableIncome <= 500000) {
-      oldTax = Math.max(0, oldTax - 12500);
-    }
+    if (oldTaxableIncome <= 500000) { oldTax = 0; }
 
-    // Add surcharge and cess
     let oldSurcharge = 0;
-    if (oldTaxableIncome > 5000000) {
-      oldSurcharge = oldTax * 0.37;
-    } else if (oldTaxableIncome > 2000000) {
-      oldSurcharge = oldTax * 0.25;
-    } else if (oldTaxableIncome > 1000000) {
-      oldSurcharge = oldTax * 0.15;
-    } else if (oldTaxableIncome > 5000000) {
-      oldSurcharge = oldTax * 0.10;
-    }
+    if (oldTaxableIncome > 5000000) { oldSurcharge = oldTax * 0.37; } 
+    else if (oldTaxableIncome > 2000000) { oldSurcharge = oldTax * 0.25; } 
+    else if (oldTaxableIncome > 1000000) { oldSurcharge = oldTax * 0.15; } 
+    else if (oldTaxableIncome > 5000000) { oldSurcharge = oldTax * 0.10; }
     
     const oldCess = (oldTax + oldSurcharge) * 0.04;
     const oldTotalTax = oldTax + oldSurcharge + oldCess;
 
-    // NEW REGIME CALCULATION
-    const newRegimeDeductions = DEDUCTION_LIMITS.standardDeduction; // Only standard deduction in new regime
+    const newRegimeDeductions = DEDUCTION_LIMITS.standardDeduction;
     const newTaxableIncome = Math.max(0, grossIncome - newRegimeDeductions);
     
     let newTax = 0;
@@ -205,35 +189,23 @@ export default function RegimeComparatorPage() {
       }
     }
 
-    // Apply rebate under 87A for new regime (up to 7 lakhs)
-    if (newTaxableIncome <= 700000) {
-      newTax = Math.max(0, newTax - 25000);
-    }
+    if (newTaxableIncome <= 700000) { newTax = 0; }
 
-    // Add surcharge and cess for new regime
     let newSurcharge = 0;
-    if (newTaxableIncome > 5000000) {
-      newSurcharge = newTax * 0.25; // Max 25% in new regime
-    } else if (newTaxableIncome > 2000000) {
-      newSurcharge = newTax * 0.25;
-    } else if (newTaxableIncome > 1000000) {
-      newSurcharge = newTax * 0.15;
-    } else if (newTaxableIncome > 5000000) {
-      newSurcharge = newTax * 0.10;
-    }
+    if (newTaxableIncome > 5000000) { newSurcharge = newTax * 0.25; } 
+    else if (newTaxableIncome > 2000000) { newSurcharge = newTax * 0.25; } 
+    else if (newTaxableIncome > 1000000) { newSurcharge = newTax * 0.15; } 
+    else if (newTaxableIncome > 5000000) { newSurcharge = newTax * 0.10; }
     
     const newCess = (newTax + newSurcharge) * 0.04;
     const newTotalTax = newTax + newSurcharge + newCess;
 
-    // Calculate savings
     const savings = oldTotalTax - newTotalTax;
     const betterRegime = savings > 0 ? 'new' : savings < 0 ? 'old' : 'same';
     const absoluteSavings = Math.abs(savings);
 
-    // Calculate breakeven deductions
-    const breakevenDeductions = grossIncome - (newTaxableIncome + (newTotalTax / 0.3)); // Approximate
+    const breakevenDeductions = grossIncome - (newTaxableIncome + (newTotalTax / 0.3));
 
-    // Effective tax rates
     const oldEffectiveRate = grossIncome > 0 ? (oldTotalTax / grossIncome) * 100 : 0;
     const newEffectiveRate = grossIncome > 0 ? (newTotalTax / grossIncome) * 100 : 0;
 
@@ -279,11 +251,6 @@ export default function RegimeComparatorPage() {
       'Taxable Income': calculations.newRegime.taxableIncome,
       'Tax Payable': calculations.newRegime.totalTax,
     },
-  ];
-
-  const taxBreakdownData = [
-    { name: 'Old Regime Tax', value: calculations.oldRegime.totalTax, color: '#ef4444' },
-    { name: 'New Regime Tax', value: calculations.newRegime.totalTax, color: '#22c55e' },
   ];
 
   const handleIncomeChange = (field: keyof IncomeInputs, value: string) => {
@@ -334,333 +301,265 @@ export default function RegimeComparatorPage() {
 
   return (
     <>
-      <EnhancedSEO
-        title="Tax Regime Comparator - Old vs New Regime Calculator | MyeCA"
-        description="Compare Old and New Tax Regime for FY 2024-25. Get personalized recommendations on which regime saves more tax based on your income and deductions."
-        keywords={["tax regime comparison", "old vs new regime", "tax calculator india", "which tax regime is better", "section 80c", "income tax 2024"]}
+      <MetaSEO
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={[
+          {
+            question: "Which tax regime is better for AY 2025-26?",
+            answer: "For most people with income up to ₹7 lakh, the New Regime is better as it offers zero tax. For higher income, it depends on your deductions like HRA, 80C, and Home Loan interest."
+          },
+          {
+            question: "What is the new standard deduction in Budget 2024?",
+            answer: "The standard deduction has been increased to ₹75,000 for the New Tax Regime, while it remains ₹50,000 for the Old Tax Regime."
+          },
+          {
+            question: "Can I switch between Old and New tax regimes every year?",
+            answer: "Salaried individuals can choose between regimes every year. However, individuals with business income can only switch back to the Old Regime once in their lifetime."
+          }
+        ]}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-4">
-              <Scale className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-700">FY 2024-25 (AY 2025-26)</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              Tax Regime Comparator
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Compare Old vs New Tax Regime and find out which one saves you more tax based on your income and deductions
-            </p>
-          </div>
+      <div className="min-h-screen bg-slate-50/50 calculator-gradient-bg pb-24">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "Regime Comparator" }]} />
 
+        {/* --- HERO SECTION --- */}
+        <section className="relative pt-12 pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <m.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm"
+            >
+              <Scale className="w-3.5 h-3.5" />
+              Advanced Comparison
+            </m.div>
+            <m.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6"
+            >
+              Regime <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Comparator</span>
+            </m.h1>
+            <m.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg text-slate-500 max-w-2xl mx-auto font-medium"
+            >
+              Detailed breakdown of your tax savings under both regimes, comparing every deduction and exemption side-by-side.
+            </m.p>
+          </div>
+        </section>
+
+        <main className="max-w-7xl mx-auto px-4 -mt-8">
           {/* Quick Result Banner */}
           <m.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <Card className={`border-2 ${
-              calculations.betterRegime === 'new' 
-                ? 'border-green-500 bg-green-50' 
-                : calculations.betterRegime === 'old'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-300 bg-gray-50'
-            }`}>
-              <CardContent className="py-6">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-xl ${
-                      calculations.betterRegime === 'new' 
-                        ? 'bg-green-500' 
-                        : calculations.betterRegime === 'old'
-                          ? 'bg-blue-500'
-                          : 'bg-gray-500'
-                    } text-white`}>
-                      <Sparkles className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Recommended Regime</p>
-                      <p className="text-2xl font-bold text-gray-900">{recommendation.regime}</p>
-                    </div>
+            <div className={cn(
+              "rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl transition-all",
+              calculations.betterRegime === 'new' ? "bg-gradient-to-br from-emerald-500 to-teal-700 shadow-emerald-500/20" : 
+              calculations.betterRegime === 'old' ? "bg-gradient-to-br from-indigo-500 to-blue-700 shadow-blue-500/20" :
+              "bg-gradient-to-br from-slate-600 to-slate-800 shadow-slate-500/20"
+            )}>
+              <div className="absolute top-0 right-0 p-8 opacity-10 scale-150">
+                <Sparkles className="w-32 h-32" />
+              </div>
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-6">
+                  <div className="hidden sm:flex p-4 rounded-2xl bg-white/20 backdrop-blur-sm">
+                    <Scale className="h-10 w-10 text-white" />
                   </div>
-                  <div className="text-center md:text-right">
-                    <p className="text-sm text-gray-600">You Save</p>
-                    <p className={`text-3xl font-bold ${
-                      calculations.betterRegime === 'new' ? 'text-green-600' : 'text-blue-600'
-                    }`}>
-                      {formatCurrency(calculations.savings)}
-                    </p>
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-[10px] font-black uppercase tracking-widest mb-2">
+                       Recommendation
+                    </div>
+                    <p className="text-3xl md:text-4xl font-black tracking-tight">{recommendation.regime}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                {calculations.savings > 0 && (
+                  <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 text-center min-w-[200px] border border-white/20">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white/70 block mb-1">You Save</span>
+                    <span className="text-4xl font-black tracking-tighter">{formatCurrency(calculations.savings)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </m.div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* Input Section */}
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5 text-blue-600" />
-                    Enter Your Details
-                  </CardTitle>
-                  <CardDescription>
-                    Provide your income and deduction details for accurate comparison
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                      <TabsTrigger value="income" className="flex items-center gap-2">
-                        <IndianRupee className="h-4 w-4" />
-                        Income
+            <div className="lg:col-span-5 space-y-6">
+              <Card className="rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
+                <div className="p-8 border-b border-slate-100 bg-gradient-to-br from-slate-50/50 to-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                      <Calculator className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Your Profile</h2>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Detailed Data Entry</p>
+                    </div>
+                  </div>
+                </div>
+
+                <CardContent className="p-0">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="w-full grid grid-cols-2 bg-slate-50/50 p-2 rounded-none border-b border-slate-100">
+                      <TabsTrigger value="income" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm font-bold tracking-tight">
+                        <IndianRupee className="h-4 w-4 mr-2" /> Income
                       </TabsTrigger>
-                      <TabsTrigger value="deductions" className="flex items-center gap-2">
-                        <PiggyBank className="h-4 w-4" />
-                        Deductions
+                      <TabsTrigger value="deductions" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm font-bold tracking-tight">
+                        <PiggyBank className="h-4 w-4 mr-2" /> Deductions
                       </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="income" className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Basic Salary (Annual)</Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={income.basicSalary}
-                              onChange={(e) => handleIncomeChange('basicSalary', e.target.value)}
-                              className="pl-10"
-                            />
+                    <TabsContent value="income" className="p-8 space-y-6 mt-0">
+                      <div className="space-y-4">
+                        {[
+                          { label: 'Basic Salary (Annual)', key: 'basicSalary' },
+                          { label: 'HRA Received', key: 'hra' },
+                          { label: 'LTA Received', key: 'lta' },
+                          { label: 'Special Allowance', key: 'specialAllowance' },
+                          { label: 'Interest Income', key: 'interestIncome' },
+                          { label: 'Other Income', key: 'otherIncome' },
+                        ].map(({ label, key }) => (
+                          <div key={key} className="space-y-1.5">
+                            <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400">{label}</Label>
+                            <div className="relative group">
+                              <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                              <Input
+                                type="number"
+                                value={income[key as keyof IncomeInputs]}
+                                onChange={(e) => handleIncomeChange(key as keyof IncomeInputs, e.target.value)}
+                                className="h-12 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-base font-black focus:bg-white transition-all focus:ring-4 focus:ring-blue-100"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>HRA Received</Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={income.hra}
-                              onChange={(e) => handleIncomeChange('hra', e.target.value)}
-                              className="pl-10"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>LTA Received</Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={income.lta}
-                              onChange={(e) => handleIncomeChange('lta', e.target.value)}
-                              className="pl-10"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Special Allowance</Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={income.specialAllowance}
-                              onChange={(e) => handleIncomeChange('specialAllowance', e.target.value)}
-                              className="pl-10"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Interest Income</Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={income.interestIncome}
-                              onChange={(e) => handleIncomeChange('interestIncome', e.target.value)}
-                              className="pl-10"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Other Income</Label>
-                          <div className="relative">
-                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                            <Input
-                              type="number"
-                              value={income.otherIncome}
-                              onChange={(e) => handleIncomeChange('otherIncome', e.target.value)}
-                              className="pl-10"
-                            />
-                          </div>
-                        </div>
+                        ))}
                       </div>
 
-                      <div className="p-4 bg-blue-50 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-gray-700">Total Gross Income</span>
-                          <span className="text-xl font-bold text-blue-600">
-                            {formatCurrency(calculations.grossIncome)}
-                          </span>
-                        </div>
+                      <div className="p-6 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex items-center justify-between mt-6">
+                        <span className="text-[11px] font-black uppercase tracking-widest text-blue-600">Total Gross Income</span>
+                        <span className="text-2xl font-black text-blue-900 tracking-tighter">
+                          {formatCurrency(calculations.grossIncome)}
+                        </span>
                       </div>
                     </TabsContent>
 
-                    <TabsContent value="deductions" className="space-y-6">
-                      <Accordion type="multiple" defaultValue={["80c", "80d", "housing"]}>
-                        <AccordionItem value="80c">
-                          <AccordionTrigger className="hover:no-underline">
-                            <div className="flex items-center gap-2">
-                              <PiggyBank className="h-4 w-4 text-green-600" />
-                              <span>Section 80C & 80CCD (Max ₹2L)</span>
+                    <TabsContent value="deductions" className="p-8 space-y-6 mt-0">
+                      <Accordion type="multiple" defaultValue={["80c"]} className="space-y-4">
+                        <AccordionItem value="80c" className="border border-slate-100 rounded-2xl overflow-hidden bg-white px-1">
+                          <AccordionTrigger className="hover:no-underline px-4 py-4 data-[state=open]:border-b border-slate-50">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                                <PiggyBank className="h-4 w-4 text-green-600" />
+                              </div>
+                              <span className="font-bold text-slate-800 tracking-tight text-sm">Sec 80C & 80CCD</span>
                             </div>
                           </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="grid md:grid-cols-2 gap-4 pt-4">
-                              <div className="space-y-2">
-                                <Label>80C (PPF, ELSS, LIC, etc.) - Max ₹1.5L</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section80C}
-                                  onChange={(e) => handleDeductionChange('section80C', e.target.value)}
-                                  max={150000}
-                                />
-                                <Progress value={(deductions.section80C / 150000) * 100} className="h-2" />
+                          <AccordionContent className="p-4 space-y-5">
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-end mb-1">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">80C (Max ₹1.5L)</Label>
+                                <span className="text-xs font-bold text-slate-400">{Math.round((deductions.section80C / 150000) * 100)}% filled</span>
                               </div>
-                              <div className="space-y-2">
-                                <Label>80CCD(1B) - NPS (Additional ₹50K)</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section80CCD1B}
-                                  onChange={(e) => handleDeductionChange('section80CCD1B', e.target.value)}
-                                  max={50000}
-                                />
-                                <Progress value={(deductions.section80CCD1B / 50000) * 100} className="h-2" />
-                              </div>
+                              <Input type="number" value={deductions.section80C} onChange={(e) => handleDeductionChange('section80C', e.target.value)} className="h-10 rounded-xl border-slate-100 font-bold" />
+                              <Progress value={(deductions.section80C / 150000) * 100} className="h-1.5" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">80CCD(1B) NPS (Max ₹50K)</Label>
+                              <Input type="number" value={deductions.section80CCD1B} onChange={(e) => handleDeductionChange('section80CCD1B', e.target.value)} className="h-10 rounded-xl border-slate-100 font-bold" />
+                              <Progress value={(deductions.section80CCD1B / 50000) * 100} className="h-1.5" />
                             </div>
                           </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="80d">
-                          <AccordionTrigger className="hover:no-underline">
-                            <div className="flex items-center gap-2">
-                              <Heart className="h-4 w-4 text-red-600" />
-                              <span>Section 80D - Health Insurance</span>
+                        <AccordionItem value="80d" className="border border-slate-100 rounded-2xl overflow-hidden bg-white px-1">
+                          <AccordionTrigger className="hover:no-underline px-4 py-4 data-[state=open]:border-b border-slate-50">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+                                <Heart className="h-4 w-4 text-red-600" />
+                              </div>
+                              <span className="font-bold text-slate-800 tracking-tight text-sm">Health (80D)</span>
                             </div>
                           </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="grid md:grid-cols-2 gap-4 pt-4">
-                              <div className="space-y-2">
-                                <Label>Self & Family (Max ₹25K / ₹50K for seniors)</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section80D_self}
-                                  onChange={(e) => handleDeductionChange('section80D_self', e.target.value)}
-                                  max={50000}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Parents (Max ₹50K)</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section80D_parents}
-                                  onChange={(e) => handleDeductionChange('section80D_parents', e.target.value)}
-                                  max={50000}
-                                />
-                              </div>
+                          <AccordionContent className="p-4 space-y-4">
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Self & Family</Label>
+                              <Input type="number" value={deductions.section80D_self} onChange={(e) => handleDeductionChange('section80D_self', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Parents</Label>
+                              <Input type="number" value={deductions.section80D_parents} onChange={(e) => handleDeductionChange('section80D_parents', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
                             </div>
                           </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="housing">
-                          <AccordionTrigger className="hover:no-underline">
-                            <div className="flex items-center gap-2">
-                              <Home className="h-4 w-4 text-blue-600" />
-                              <span>Housing Benefits (HRA, Home Loan)</span>
+                        <AccordionItem value="housing" className="border border-slate-100 rounded-2xl overflow-hidden bg-white px-1">
+                          <AccordionTrigger className="hover:no-underline px-4 py-4 data-[state=open]:border-b border-slate-50">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                                <Home className="h-4 w-4 text-blue-600" />
+                              </div>
+                              <span className="font-bold text-slate-800 tracking-tight text-sm">Housing Benefits</span>
                             </div>
                           </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="grid md:grid-cols-2 gap-4 pt-4">
-                              <div className="space-y-2">
-                                <Label>HRA Exemption</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.hraExemption}
-                                  onChange={(e) => handleDeductionChange('hraExemption', e.target.value)}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Home Loan Interest - 24(b) (Max ₹2L)</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section24b}
-                                  onChange={(e) => handleDeductionChange('section24b', e.target.value)}
-                                  max={200000}
-                                />
-                              </div>
+                          <AccordionContent className="p-4 space-y-4">
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">HRA Exemption</Label>
+                              <Input type="number" value={deductions.hraExemption} onChange={(e) => handleDeductionChange('hraExemption', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Home Loan Int. (24b)</Label>
+                              <Input type="number" value={deductions.section24b} onChange={(e) => handleDeductionChange('section24b', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
                             </div>
                           </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="other">
-                          <AccordionTrigger className="hover:no-underline">
-                            <div className="flex items-center gap-2">
-                              <Wallet className="h-4 w-4 text-purple-600" />
-                              <span>Other Deductions</span>
+                        <AccordionItem value="other" className="border border-slate-100 rounded-2xl overflow-hidden bg-white px-1">
+                          <AccordionTrigger className="hover:no-underline px-4 py-4 data-[state=open]:border-b border-slate-50">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                                <Wallet className="h-4 w-4 text-purple-600" />
+                              </div>
+                              <span className="font-bold text-slate-800 tracking-tight text-sm">Other Deductions</span>
                             </div>
                           </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="grid md:grid-cols-2 gap-4 pt-4">
-                              <div className="space-y-2">
-                                <Label>80E - Education Loan Interest</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section80E}
-                                  onChange={(e) => handleDeductionChange('section80E', e.target.value)}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>80TTA - Savings Interest (Max ₹10K)</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.section80TTA}
-                                  onChange={(e) => handleDeductionChange('section80TTA', e.target.value)}
-                                  max={10000}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>LTA Exemption</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.ltaExemption}
-                                  onChange={(e) => handleDeductionChange('ltaExemption', e.target.value)}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Professional Tax</Label>
-                                <Input
-                                  type="number"
-                                  value={deductions.professionalTax}
-                                  onChange={(e) => handleDeductionChange('professionalTax', e.target.value)}
-                                />
-                              </div>
+                          <AccordionContent className="p-4 grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">80E Edu Loan</Label>
+                              <Input type="number" value={deductions.section80E} onChange={(e) => handleDeductionChange('section80E', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">80TTA Interest</Label>
+                              <Input type="number" value={deductions.section80TTA} onChange={(e) => handleDeductionChange('section80TTA', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">LTA Exemption</Label>
+                              <Input type="number" value={deductions.ltaExemption} onChange={(e) => handleDeductionChange('ltaExemption', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Prof. Tax</Label>
+                              <Input type="number" value={deductions.professionalTax} onChange={(e) => handleDeductionChange('professionalTax', e.target.value)} className="h-10 rounded-xl font-bold border-slate-100" />
                             </div>
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>
 
-                      <div className="p-4 bg-green-50 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-gray-700">Total Deductions (Old Regime)</span>
-                          <span className="text-xl font-bold text-green-600">
-                            {formatCurrency(calculations.oldRegime.deductions)}
-                          </span>
-                        </div>
+                      <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 flex items-center justify-between mt-6">
+                        <span className="text-[11px] font-black uppercase tracking-widest text-emerald-600">Total Deductions (Old)</span>
+                        <span className="text-2xl font-black text-emerald-900 tracking-tighter">
+                          {formatCurrency(calculations.oldRegime.deductions)}
+                        </span>
                       </div>
                     </TabsContent>
                   </Tabs>
@@ -669,211 +568,213 @@ export default function RegimeComparatorPage() {
             </div>
 
             {/* Results Section */}
-            <div className="space-y-6">
-              {/* Comparison Cards */}
-              <div className="grid grid-cols-2 gap-4">
-                <Card className={`${calculations.betterRegime === 'old' ? 'ring-2 ring-blue-500' : ''}`}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center justify-between">
-                      Old Regime
-                      {calculations.betterRegime === 'old' && (
-                        <Badge className="bg-blue-500">Better</Badge>
-                      )}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {formatLakhs(calculations.oldRegime.totalTax)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {calculations.oldRegime.effectiveRate.toFixed(1)}% effective rate
-                    </p>
-                  </CardContent>
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Detailed Comparison Cards */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card className={cn("rounded-[2.5rem] border-2 shadow-sm overflow-hidden flex flex-col", calculations.betterRegime === 'old' ? 'border-indigo-400 bg-indigo-50/10' : 'border-indigo-50 bg-white')}>
+                  <div className="p-6 bg-indigo-50/50 border-b border-indigo-50 text-center relative">
+                    {calculations.betterRegime === 'old' && <div className="absolute top-4 right-4 bg-indigo-500 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">Winner</div>}
+                    <h4 className="font-black text-indigo-900 tracking-tight text-lg mb-1">Old Regime</h4>
+                  </div>
+                  <div className="p-6 space-y-6 flex-1">
+                    <div className="text-center">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Tax</span>
+                      <div className="text-4xl font-black tracking-tighter text-slate-900">
+                        {formatCurrency(calculations.oldRegime.totalTax)}
+                      </div>
+                      <Badge className="mt-2 bg-slate-100 text-slate-600 hover:bg-slate-200 border-0 text-[10px] uppercase tracking-widest">{calculations.oldRegime.effectiveRate.toFixed(1)}% Effective</Badge>
+                    </div>
+                  </div>
                 </Card>
 
-                <Card className={`${calculations.betterRegime === 'new' ? 'ring-2 ring-green-500' : ''}`}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center justify-between">
-                      New Regime
-                      {calculations.betterRegime === 'new' && (
-                        <Badge className="bg-green-500">Better</Badge>
-                      )}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {formatLakhs(calculations.newRegime.totalTax)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {calculations.newRegime.effectiveRate.toFixed(1)}% effective rate
-                    </p>
-                  </CardContent>
+                <Card className={cn("rounded-[2.5rem] border-2 shadow-sm overflow-hidden flex flex-col", calculations.betterRegime === 'new' ? 'border-emerald-400 bg-emerald-50/10' : 'border-emerald-50 bg-white')}>
+                  <div className="p-6 bg-emerald-50/50 border-b border-emerald-50 text-center relative">
+                    {calculations.betterRegime === 'new' && <div className="absolute top-4 right-4 bg-emerald-500 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full">Winner</div>}
+                    <h4 className="font-black text-emerald-900 tracking-tight text-lg mb-1">New Regime</h4>
+                  </div>
+                  <div className="p-6 space-y-6 flex-1">
+                    <div className="text-center">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Tax</span>
+                      <div className="text-4xl font-black tracking-tighter text-slate-900">
+                        {formatCurrency(calculations.newRegime.totalTax)}
+                      </div>
+                      <Badge className="mt-2 bg-slate-100 text-slate-600 hover:bg-slate-200 border-0 text-[10px] uppercase tracking-widest">{calculations.newRegime.effectiveRate.toFixed(1)}% Effective</Badge>
+                    </div>
+                  </div>
                 </Card>
               </div>
 
-              {/* Recommendation */}
-              <Card className="bg-gradient-to-br from-indigo-50 to-purple-50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-yellow-500" />
-                    Our Recommendation
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-700">{recommendation.reason}</p>
-                  <div className="space-y-2">
-                    {recommendation.tips.map((tip, index) => (
-                      <div key={index} className="flex items-start gap-2 text-sm">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-600">{tip}</span>
+              {/* Insights */}
+              <Card className="rounded-[2.5rem] border border-slate-100 shadow-sm bg-gradient-to-br from-amber-50 to-orange-50/30">
+                <CardContent className="p-8">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+                      <Lightbulb className="h-6 w-6 text-amber-500" />
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                         <h3 className="text-lg font-black text-amber-900 tracking-tight mb-1">Our Analysis</h3>
+                         <p className="text-sm font-medium text-amber-800/80 leading-relaxed">{recommendation.reason}</p>
                       </div>
-                    ))}
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {recommendation.tips.map((tip, index) => (
+                          <div key={index} className="flex items-start gap-2 text-sm bg-white/60 p-3 rounded-xl border border-amber-100/50">
+                            <Check className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                            <span className="text-amber-900/80 font-medium leading-tight">{tip}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Visual Comparison Chart */}
+              <Card className="rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <div className="p-6 border-b border-slate-100">
+                   <h3 className="text-lg font-black text-slate-900 tracking-tight">Visual Breakdown</h3>
+                </div>
+                <CardContent className="p-6">
+                  <div className="h-80 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={comparisonChartData} layout="vertical" margin={{ left: 20, right: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                        <XAxis type="number" tickFormatter={(v) => formatLakhs(v)} tick={{ fontSize: 12, fontWeight: 600, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                        <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12, fontWeight: 700, fill: '#0f172a' }} axisLine={false} tickLine={false} />
+                        <Tooltip 
+                           formatter={(value: number) => formatCurrency(value)}
+                           contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        />
+                        <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 600, paddingTop: '10px' }} iconType="circle" />
+                        <Bar dataKey="Taxable Income" fill="#94a3b8" radius={[0, 4, 4, 0]} barSize={24} />
+                        <Bar dataKey="Tax Payable" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={24} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Deductions Availability Table */}
+              <Card className="rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                  <h3 className="text-lg font-black text-slate-900 tracking-tight">Deductions Availability</h3>
+                </div>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                      <thead>
+                        <tr className="border-b border-slate-100 bg-white">
+                          <th className="py-4 px-6 font-bold text-slate-400 uppercase tracking-widest text-[10px]">Deduction Type</th>
+                          <th className="py-4 px-6 text-center font-bold text-indigo-400 uppercase tracking-widest text-[10px]">Old Regime</th>
+                          <th className="py-4 px-6 text-center font-bold text-emerald-400 uppercase tracking-widest text-[10px]">New Regime</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {[
+                          { name: "Standard Deduction", old: "₹50,000", new: "₹75,000" },
+                          { name: "Sec 80C (PPF, ELSS, etc.)", old: "₹1.5L", new: false },
+                          { name: "Sec 80CCD(1B) - NPS", old: "₹50,000", new: false },
+                          { name: "Sec 80D - Health Insurance", old: "Up to ₹1L", new: false },
+                          { name: "HRA Exemption", old: true, new: false },
+                          { name: "Home Loan Interest (24b)", old: "₹2L", new: false },
+                          { name: "Sec 80E - Education Loan", old: "No limit", new: false },
+                        ].map((item, index) => (
+                          <tr key={index} className="hover:bg-slate-50/50 transition-colors bg-white">
+                            <td className="py-4 px-6 font-medium text-slate-700">{item.name}</td>
+                            <td className="py-4 px-6 text-center">
+                              {typeof item.old === 'boolean' 
+                                ? (item.old ? <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-50"><Check className="h-3 w-3 text-emerald-600" /></div> : <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-50"><X className="h-3 w-3 text-red-600" /></div>)
+                                : <span className="text-xs font-black text-indigo-600">{item.old}</span>
+                              }
+                            </td>
+                            <td className="py-4 px-6 text-center">
+                              {typeof item.new === 'boolean' 
+                                ? (item.new ? <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-50"><Check className="h-3 w-3 text-emerald-600" /></div> : <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-50"><X className="h-3 w-3 text-red-600" /></div>)
+                                : <span className="text-xs font-black text-emerald-600">{item.new}</span>
+                              }
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Export */}
-              <Card>
-                <CardContent className="pt-6">
-                  <CalculatorExport
-                    title="Tax Regime Comparison"
-                    data={{
-                      "Gross Income": calculations.grossIncome,
-                      "Old Regime Tax": calculations.oldRegime.totalTax,
-                      "New Regime Tax": calculations.newRegime.totalTax,
-                      "Recommended Regime": recommendation.regime,
-                      "Tax Savings": calculations.savings,
-                    }}
-                  />
-                </CardContent>
-              </Card>
+              <div className="flex justify-end">
+                <CalculatorExport
+                  title="Tax Regime Comparison Detailed"
+                  data={{
+                    "Gross Income": calculations.grossIncome,
+                    "Old Regime Tax": calculations.oldRegime.totalTax,
+                    "New Regime Tax": calculations.newRegime.totalTax,
+                    "Recommended Regime": recommendation.regime,
+                    "Tax Savings": calculations.savings,
+                  }}
+                />
+              </div>
+
             </div>
           </div>
+        </main>
 
-          {/* Detailed Comparison Chart */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Visual Comparison</CardTitle>
-              <CardDescription>Side-by-side breakdown of both tax regimes</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={comparisonChartData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" tickFormatter={(v) => formatLakhs(v)} />
-                    <YAxis type="category" dataKey="name" width={100} />
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                    <Legend />
-                    <Bar dataKey="Taxable Income" fill="#3b82f6" />
-                    <Bar dataKey="Tax Payable" fill="#ef4444" />
-                  </BarChart>
-                </ResponsiveContainer>
+        {/* --- SEO & EXPLAINER SECTION --- */}
+        <section className="max-w-7xl mx-auto px-4 mt-24">
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-6">
+                Regime Comparator: Detailed Breakdown (FY 2024-25)
+              </h2>
+              <div className="space-y-6 text-slate-600 font-medium leading-relaxed">
+                <p>
+                  The Regime Comparator is an advanced tool designed to give you a side-by-side microscopic view of how the Old and New Tax Regimes treat your specific income components and deductions. Unlike a simple calculator, this tool breaks down exactly which exemptions are saving you money and where you are losing out.
+                </p>
+                
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Why Compare Both Regimes?
+                </h3>
+                <p>
+                  A single financial decision (like taking an education loan or buying health insurance) can flip the math. The New Regime is highly efficient for those with zero or minimal investments. However, if you are actively investing in PPF, ELSS, NPS, or paying EMIs for a home loan, the Old Regime might still offer a significantly lower effective tax rate. Comparing them side-by-side ensures you don't leave money on the table.
+                </p>
+
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Crucial Exemptions You Lose in the New Regime
+                </h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong className="text-slate-900 font-bold">House Rent Allowance (HRA):</strong> A major component for salaried individuals living in rented accommodations.</li>
+                  <li><strong className="text-slate-900 font-bold">Section 80C & 80D:</strong> The combined ₹2.5L+ deduction window for investments and health insurance is gone.</li>
+                  <li><strong className="text-slate-900 font-bold">Home Loan Interest:</strong> The ₹2L deduction under Section 24(b) for self-occupied properties is not available.</li>
+                </ul>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Tax Slab Comparison Table */}
-          <div className="grid md:grid-cols-2 gap-6 mt-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Old Regime Tax Slabs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {OLD_REGIME_SLABS.map((slab, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                      <span className="text-sm">
-                        {slab.max === Infinity 
-                          ? `Above ${formatLakhs(slab.min)}`
-                          : `${formatLakhs(slab.min)} - ${formatLakhs(slab.max)}`
-                        }
-                      </span>
-                      <Badge variant="outline">{slab.rate}%</Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <hr className="my-12 border-slate-100" />
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">New Regime Tax Slabs (FY 24-25)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {NEW_REGIME_SLABS.map((slab, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                      <span className="text-sm">
-                        {slab.max === Infinity 
-                          ? `Above ${formatLakhs(slab.min)}`
-                          : `${formatLakhs(slab.min)} - ${formatLakhs(slab.max)}`
-                        }
-                      </span>
-                      <Badge variant="outline">{slab.rate}%</Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* FAQs */}
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-8 flex items-center gap-2">
+                <Info className="w-6 h-6 text-indigo-500" />
+                Frequently Asked Questions
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {[
+                  { q: "Is the New Tax Regime better for everyone?", a: "No. While it is the default and simpler, it is generally only better for individuals earning up to ₹7-7.5 Lakhs (who pay zero tax) or those who do not make tax-saving investments." },
+                  { q: "What is the break-even point?", a: "The break-even point is the exact amount of total deductions at which your tax liability under both regimes is identical. If your actual deductions exceed this point, the Old Regime is better." },
+                  { q: "Do I get standard deduction in both?", a: "Yes. For FY 2024-25, you get a ₹50,000 standard deduction in the Old Regime and an enhanced ₹75,000 standard deduction in the New Regime." },
+                  { q: "What if I forget to declare my choice to my employer?", a: "By default, your employer will compute your TDS based on the New Tax Regime. However, you can change your choice while filing your final Income Tax Return (ITR)." }
+                ].map((faq, idx) => (
+                  <div key={idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                    <h4 className="font-black text-slate-900 mb-2">{faq.q}</h4>
+                    <p className="text-sm font-medium text-slate-600">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-
-          {/* Deductions Comparison */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Deductions Availability</CardTitle>
-              <CardDescription>Which deductions are available in each regime</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-3 px-4">Deduction</th>
-                      <th className="text-center py-3 px-4">Old Regime</th>
-                      <th className="text-center py-3 px-4">New Regime</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { name: "Standard Deduction", old: "₹50,000", new: "₹75,000" },
-                      { name: "Section 80C (PPF, ELSS, etc.)", old: "₹1.5L", new: false },
-                      { name: "Section 80CCD(1B) - NPS", old: "₹50,000", new: false },
-                      { name: "Section 80D - Health Insurance", old: "Up to ₹1L", new: false },
-                      { name: "HRA Exemption", old: true, new: false },
-                      { name: "LTA Exemption", old: true, new: false },
-                      { name: "Home Loan Interest (24b)", old: "₹2L", new: false },
-                      { name: "Section 80E - Education Loan", old: "No limit", new: false },
-                      { name: "Professional Tax", old: true, new: false },
-                    ].map((item, index) => (
-                      <tr key={index} className="border-b hover:bg-gray-50">
-                        <td className="py-3 px-4">{item.name}</td>
-                        <td className="text-center py-3 px-4">
-                          {typeof item.old === 'boolean' 
-                            ? item.old 
-                              ? <Check className="h-5 w-5 text-green-500 mx-auto" />
-                              : <X className="h-5 w-5 text-red-500 mx-auto" />
-                            : <span className="text-green-600 font-medium">{item.old}</span>
-                          }
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          {typeof item.new === 'boolean' 
-                            ? item.new 
-                              ? <Check className="h-5 w-5 text-green-500 mx-auto" />
-                              : <X className="h-5 w-5 text-red-500 mx-auto" />
-                            : <span className="text-green-600 font-medium">{item.new}</span>
-                          }
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        </section>
       </div>
     </>
   );
 }
-

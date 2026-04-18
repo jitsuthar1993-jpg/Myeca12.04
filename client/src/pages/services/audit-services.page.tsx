@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
 import SEO from "@/components/SEO";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 const AuditServicesPage = () => {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("statutory");
 
   const auditServices = {
@@ -149,7 +151,11 @@ const AuditServicesPage = () => {
                 Build investor confidence and ensure compliance with comprehensive audits.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold">
+                <Button 
+                  size="sm" 
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <ArrowRight className="w-4 h-4 mr-2" />
                   Book Audit Consultation
                 </Button>
@@ -408,6 +414,16 @@ const AuditServicesPage = () => {
           </Card>
         </section>
       </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="audit-services"
+          serviceTitle="Audit & Assurance Services"
+          category="Legal & Compliance"
+          priceAmount={4999}
+        />
+      )}
     </div>
   );
 };

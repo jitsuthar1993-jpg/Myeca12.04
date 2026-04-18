@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Menu, X, Home, Users, BarChart3, FileText, Settings, LogOut, Image as ImageIcon } from 'lucide-react';
+import { Menu, X, Home, Users, BarChart3, FileText, Settings, LogOut, Image as ImageIcon, Briefcase, User, FolderOpen, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -14,14 +14,24 @@ interface LayoutProps {
 }
 
 const menuItems = [
-  { icon: Home, label: 'Dashboard', href: '/admin', roles: ['admin'] },
-  { icon: Users, label: 'Users', href: '/admin/users', roles: ['admin'] },
-  { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['admin'] },
-  { icon: FileText, label: 'Blog Posts', href: '/admin/blog-management', roles: ['admin', 'team_member'] },
-  { icon: FileText, label: 'Categories', href: '/admin/categories-management', roles: ['admin', 'team_member'] },
-  { icon: FileText, label: 'Daily Updates', href: '/admin/updates-management', roles: ['admin', 'team_member'] },
-  { icon: ImageIcon, label: 'Media Library', href: '/admin/media-management', roles: ['admin', 'team_member'] },
-  { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['admin'] },
+  // Admin & Team Member Shared
+  { icon: Home, label: 'Admin Hub', href: '/admin', roles: ['admin'] },
+  { icon: Briefcase, label: 'Team Portal', href: '/team/dashboard', roles: ['admin', 'team_member'] },
+  
+  // Admin Only
+  { icon: Users, label: 'Manage Users', href: '/admin/users', roles: ['admin'] },
+  { icon: BarChart3, label: 'System Analytics', href: '/admin/analytics', roles: ['admin'] },
+  { icon: Settings, label: 'Global Settings', href: '/admin/settings', roles: ['admin'] },
+  
+  // Content Management (Shared)
+  { icon: FileText, label: 'Blog Management', href: '/admin/blog-management', roles: ['admin', 'team_member'] },
+  { icon: ImageIcon, label: 'Media Assets', href: '/admin/media-management', roles: ['admin', 'team_member'] },
+  
+  // User Only
+  { icon: Home, label: 'My Dashboard', href: '/dashboard', roles: ['user'] },
+  { icon: User, label: 'My Profile', href: '/profile', roles: ['user'] },
+  { icon: FolderOpen, label: 'My Documents', href: '/documents', roles: ['user'] },
+  { icon: Heart, label: 'My Experts', href: '/experts', roles: ['user'] },
 ];
 
 export function Layout({ children, title = 'Admin Panel' }: LayoutProps) {

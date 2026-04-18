@@ -22,7 +22,7 @@ export const allServices: Service[] = [
     category: "Tax & Filing Services",
     section: "Services",
     icon: "FileText",
-    path: "/services/itr-filing",
+    path: "/itr/filing",
     price: "₹499 - ₹2,999",
     popular: true
   },
@@ -53,7 +53,7 @@ export const allServices: Service[] = [
     category: "Tax & Filing Services",
     section: "Services",
     icon: "Shield",
-    path: "/services/tax-audit",
+    path: "/services/audit-services",
     price: "₹4,999"
   },
   {
@@ -63,7 +63,7 @@ export const allServices: Service[] = [
     category: "Tax & Filing Services",
     section: "Services",
     icon: "CreditCard",
-    path: "/services/advance-tax",
+    path: "/calculators/advance-tax",
     price: "₹299"
   },
   {
@@ -107,7 +107,7 @@ export const allServices: Service[] = [
     category: "Business Services",
     section: "Services",
     icon: "Award",
-    path: "/services/msme-registration",
+    path: "/services/msme-udyam-registration",
     price: "₹999"
   },
   {
@@ -117,7 +117,7 @@ export const allServices: Service[] = [
     category: "Business Services",
     section: "Services",
     icon: "FileText",
-    path: "/services/partnership-deed",
+    path: "/services/activate/partnership-deed",
     price: "₹2,999"
   },
   {
@@ -127,7 +127,7 @@ export const allServices: Service[] = [
     category: "Business Services",
     section: "Services", 
     icon: "Shield",
-    path: "/services/annual-compliance",
+    path: "/services/compliance-management",
     price: "₹8,999"
   },
 
@@ -254,7 +254,7 @@ export const allServices: Service[] = [
     category: "Business Setup",
     section: "Startup",
     icon: "Building2", 
-    path: "/startup/company-registration",
+    path: "/services/company-registration",
     price: "₹6,999",
     popular: true
   },
@@ -265,7 +265,7 @@ export const allServices: Service[] = [
     category: "Business Setup",
     section: "Startup",
     icon: "FileText",
-    path: "/startup/legal-docs",
+    path: "/services/activate/legal-documentation",
     price: "₹2,999"
   },
   {
@@ -275,7 +275,7 @@ export const allServices: Service[] = [
     category: "Business Setup",
     section: "Startup",
     icon: "Shield",
-    path: "/startup/compliance",
+    path: "/services/compliance-management",
     price: "₹4,999"
   },
 
@@ -297,7 +297,7 @@ export const allServices: Service[] = [
     category: "Financial Services",
     section: "Startup", 
     icon: "CreditCard",
-    path: "/startup/banking",
+    path: "/services/activate/banking-solutions",
     price: "₹1,999"
   },
   {
@@ -307,7 +307,7 @@ export const allServices: Service[] = [
     category: "Financial Services",
     section: "Startup",
     icon: "TrendingUp",
-    path: "/startup/investment",
+    path: "/services/activate/investment-guidance",
     price: "₹5,999"
   },
 
@@ -319,7 +319,7 @@ export const allServices: Service[] = [
     category: "Support & Growth",
     section: "Startup",
     icon: "MessageCircle",
-    path: "/startup/consultation",
+    path: "/expert-consultation",
     price: "₹2,999"
   },
   {

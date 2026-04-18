@@ -34,8 +34,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 export default function TdsFilingPage() {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPrice, setCheckoutPrice] = useState(799);
+  const [checkoutTitle, setCheckoutTitle] = useState("TDS Return Filing");
   const [selectedForm, setSelectedForm] = useState<string>("");
   const [deductorType, setDeductorType] = useState<string>("");
 
@@ -257,7 +261,15 @@ export default function TdsFilingPage() {
                 Complete compliance solution with quarterly return filing, certificate generation, and expert CA assistance.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 font-semibold">
+                <Button 
+                  size="sm" 
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 font-semibold"
+                  onClick={() => {
+                    setCheckoutPrice(799);
+                    setCheckoutTitle("TDS Return Filing");
+                    setIsCheckoutOpen(true);
+                  }}
+                >
                   <Calendar className="w-4 h-4 mr-2" />
                   File TDS Now
                 </Button>
@@ -794,7 +806,6 @@ export default function TdsFilingPage() {
           </div>
         </m.div>
 
-        {/* Quick Filing Form */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -887,7 +898,10 @@ export default function TdsFilingPage() {
               </div>
 
               <div className="flex gap-4">
-                <Button className="flex-1 bg-indigo-600 hover:bg-indigo-700">
+                <Button 
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
                   <FileText className="w-4 h-4 mr-2" />
                   Start TDS Filing
                 </Button>
@@ -938,7 +952,11 @@ export default function TdsFilingPage() {
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 px-8">
+              <Button 
+                size="lg" 
+                className="bg-indigo-600 hover:bg-indigo-700 px-8"
+                onClick={() => setIsCheckoutOpen(true)}
+              >
                 <FileText className="w-5 h-5 mr-2" />
                 File TDS Return Now
               </Button>
@@ -953,7 +971,18 @@ export default function TdsFilingPage() {
             </p>
           </Card>
         </m.div>
+
       </div>
+      {isCheckoutOpen && (
+        <ServiceCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          serviceId="tds-filing"
+          serviceTitle={checkoutTitle}
+          category="Tax & Filing Services"
+          priceAmount={checkoutPrice}
+        />
+      )}
     </div>
   );
 }

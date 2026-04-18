@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { ArrowRight, BadgeCheck, Bot, Building2, CheckCircle2, FileText, ShieldCheck } from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
@@ -39,12 +40,15 @@ const comparisonRows = [
 ];
 
 export default function PricingPage() {
+  const seo = getSEOConfig('/pricing');
   return (
     <main className="min-h-screen bg-[#f6f9fd]">
       <MetaSEO
-        title="MyeCA Pricing | DIY, CA Assisted and vCFO Plans"
-        description="Compare MyeCA pricing for DIY ITR filing, expert CA-assisted filing, and Premium vCFO compliance support."
-        keywords={["ITR pricing", "CA assisted filing", "vCFO pricing", "tax filing plans"]}
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        breadcrumbs={seo?.breadcrumbs}
       />
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

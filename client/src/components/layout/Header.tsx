@@ -617,11 +617,11 @@ export default function Header() {
                               </div>
                              <ul className="space-y-4">
                                {[
-                                 { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "New vs Old Regime Analysis", color: "emerald" },
+                                 { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "AY 2025-26 Tax Analysis", color: "emerald" },
+                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" },
                                  { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
                                  { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction on salary & more", color: "orange" },
-                                 { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" },
-                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" }
+                                 { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" }
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
@@ -665,10 +665,10 @@ export default function Header() {
                              <ul className="space-y-4">
                                {[
                                  { href: "/calculators/sip", icon: Coins, title: "SIP Calculator", desc: "Plan mutual fund returns", color: "orange" },
+                                 { href: "/elss-comparator", icon: LineChart, title: "ELSS Comparator", desc: "Compare tax saving funds", color: "orange" },
                                  { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
                                  { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public Provident Fund growth", color: "emerald" },
                                  { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit returns", color: "blue" },
-                                 { href: "/elss-comparator", icon: LineChart, title: "ELSS Comparator", desc: "Compare tax saving funds", color: "orange" }
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
@@ -712,10 +712,7 @@ export default function Header() {
                              <ul className="space-y-4">
                                {[
                                  { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
-                                 { href: "/calculators/home-loan", icon: Home, title: "Home Loan EMI", desc: "Housing loan planning", color: "blue" },
-                                 { href: "/calculators/car-loan", icon: Wallet, title: "Car Loan EMI", desc: "Vehicle finance planner", color: "indigo" },
-                                 { href: "/calculators/personal-loan", icon: Banknote, title: "Personal Loan", desc: "Unsecured loan EMI", color: "emerald" },
-                                 { href: "/calculators/education-loan", icon: FileText, title: "Education Loan", desc: "Study loan repayment", color: "orange" }
+                                 { href: "/calculators/home-loan", icon: Landmark, title: "Loan EMI Calculator", desc: "Home, Car & Personal Loans", color: "blue" },
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
@@ -1000,17 +997,18 @@ export default function Header() {
                                  Calculators
                               </AccordionTrigger>
                               <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tax</p>
-                                 <div className="grid grid-cols-1 gap-1 mb-3">
-                                    <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax Calculator</Link>
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</p>
+                                 <div className="grid grid-cols-1 gap-1 mb-4">
+                                    <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax (New vs Old)</Link>
+                                    <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
                                     <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Exemption</Link>
                                     <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
                                     <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
-                                    <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
                                  </div>
-                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Investment</p>
-                                 <div className="grid grid-cols-1 gap-1 mb-3">
+                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Wealth & Savings</p>
+                                 <div className="grid grid-cols-1 gap-1 mb-4">
                                     <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
+                                    <Link href="/elss-comparator" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">ELSS Comparator</Link>
                                     <Link href="/calculators/nps" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">NPS Calculator</Link>
                                     <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
                                     <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
@@ -1018,9 +1016,7 @@ export default function Header() {
                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
                                  <div className="grid grid-cols-1 gap-1">
                                     <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
-                                    <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Home Loan EMI</Link>
-                                    <Link href="/calculators/car-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Car Loan EMI</Link>
-                                    <Link href="/calculators/personal-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Personal Loan</Link>
+                                    <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Loan EMI Calculator</Link>
                                  </div>
                               </AccordionContent>
                            </AccordionItem>

@@ -1,51 +1,32 @@
-import { useState } from "react";
-import { m } from "framer-motion";
+import React, { useState, useMemo } from "react";
+import { m, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import { calculateCapitalGains } from "@/lib/tax-calculations";
-import { TrendingUp, Coins, Calendar, Target, AlertCircle, Clock, Info, Calculator, IndianRupee, Receipt } from "lucide-react";
 import { CalculatorExport } from "@/components/ui/calculator-export";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import EnhancedSEO from "@/components/EnhancedSEO";
-import { getHowToSchema, getFAQSchema } from "@/utils/seo-defaults";
-import { CalculatorHeader } from "@/components/ui/calculator-header";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import Breadcrumb from "@/components/Breadcrumb";
+import { cn } from "@/lib/utils";
+import { 
+  TrendingUp, Coins, Calendar, Target, AlertCircle, Clock, Info, 
+  Calculator, IndianRupee, Receipt, ChevronRight, ChevronLeft,
+  Building2, LineChart, Sparkles, AlertTriangle, ArrowRight
+} from "lucide-react";
 
 export default function CapitalGainsCalculatorPage() {
+  const seo = getSEOConfig('/calculators/capital-gains');
+  const [step, setStep] = useState(1);
   const [purchasePrice, setPurchasePrice] = useState<number>(0);
   const [salePrice, setSalePrice] = useState<number>(0);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [saleDate, setSaleDate] = useState<string>('');
   const [assetType, setAssetType] = useState<string>('');
-  const [result, setResult] = useState<any>(null);
 
-  const handleCalculate = () => {
-    if (purchasePrice > 0 && salePrice > 0 && purchaseDate && saleDate && assetType) {
-      const cgResult = calculateCapitalGains(
-        purchasePrice,
-        salePrice,
-        new Date(purchaseDate),
-        new Date(saleDate),
-        assetType as 'equity' | 'property' | 'gold' | 'bonds'
-      );
-      setResult(cgResult);
-    }
-  };
-
-  const assetTypes = [
-    { value: 'equity', label: 'Equity Shares/Mutual Funds', ltcg: '1 year', stcgRate: '20%', ltcgRate: '12.5%' },
-    { value: 'property', label: 'Real Estate/Property', ltcg: '2 years', stcgRate: '20%', ltcgRate: '12.5%' },
-    { value: 'gold', label: 'Gold/Precious Metals', ltcg: '2 years', stcgRate: '20%', ltcgRate: '12.5%' },
-    { value: 'bonds', label: 'Bonds/Debentures', ltcg: '2 years', stcgRate: '20%', ltcgRate: '12.5%' }
-  ];
-
-  const selectedAssetType = assetTypes.find(type => type.value === assetType);
-
-  const faqSchema = getFAQSchema([
+  const faqData = [
     {
       question: "What is the difference between STCG and LTCG?",
       answer: "Short-term capital gains (STCG) apply when assets are held for less than the specified period (1 year for equity, 2 years for property). Long-term capital gains (LTCG) apply for longer holding periods."
@@ -58,528 +39,474 @@ export default function CapitalGainsCalculatorPage() {
       question: "Is there any exemption on capital gains?",
       answer: "Yes, LTCG up to ₹1.25 lakh per year is exempt. You can also claim exemptions under sections 54, 54F, 54EC by reinvesting gains."
     }
-  ]);
+  ];
+
+  const assetTypes = [
+    { value: 'equity', label: 'Equity / Mutual Funds', icon: LineChart, ltcg: '> 1 yr', ltcgRate: '12.5%', stcgRate: '20%' },
+    { value: 'property', label: 'Real Estate / Property', icon: Building2, ltcg: '> 2 yrs', ltcgRate: '12.5%', stcgRate: 'Slab' },
+    { value: 'gold', label: 'Gold / Precious Metals', icon: Coins, ltcg: '> 2 yrs', ltcgRate: '12.5%', stcgRate: 'Slab' },
+    { value: 'bonds', label: 'Bonds / Debentures', icon: Receipt, ltcg: '> 2 yrs', ltcgRate: '12.5%', stcgRate: 'Slab' }
+  ];
+
+  const selectedAssetType = assetTypes.find(type => type.value === assetType);
+
+  const result = useMemo(() => {
+    if (purchasePrice > 0 && salePrice > 0 && purchaseDate && saleDate && assetType) {
+      return calculateCapitalGains(
+        purchasePrice,
+        salePrice,
+        new Date(purchaseDate),
+        new Date(saleDate),
+        assetType as 'equity' | 'property' | 'gold' | 'bonds'
+      );
+    }
+    return null;
+  }, [purchasePrice, salePrice, purchaseDate, saleDate, assetType]);
+
+  const handleNext = () => setStep((s) => Math.min(3, s + 1));
+  const handleBack = () => setStep((s) => Math.max(1, s - 1));
 
   return (
     <>
-      <EnhancedSEO
-        title="Capital Gains Tax Calculator 2025 | STCG & LTCG Calculator"
-        description="Calculate capital gains tax on stocks, mutual funds, property & gold. Updated with Budget 2024 rates. Know STCG & LTCG tax rates, exemptions & holding periods."
-        keywords={[
-          'capital gains calculator',
-          'LTCG calculator',
-          'STCG calculator',
-          'capital gains tax 2025',
-          'property capital gains',
-          'equity capital gains',
-          'section 54 exemption',
-          'capital gains tax rates'
-        ]}
-        url="https://myeca.in/calculators/capital-gains"
-        type="website"
-        jsonLd={faqSchema}
+      <MetaSEO
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
+        faqPageData={faqData}
       />
-    <TooltipProvider>
-      <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Section */}
-          <CalculatorHeader
-            icon={TrendingUp}
-            title="Capital Gains Calculator"
-            subtitle="Calculate Short-Term and Long-Term Capital Gains tax on your investments. Updated with latest FY 2024-25 tax rates."
-            color="green"
-            align="center"
-          />
 
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* Input Section */}
+      <div className="min-h-screen bg-slate-50/50 calculator-gradient-bg pb-24">
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "Capital Gains Calculator" }]} />
+
+        {/* --- HERO SECTION --- */}
+        <section className="relative pt-12 pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
+          <div className="max-w-7xl mx-auto px-4 text-center">
             <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm"
             >
-              <Card className="h-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                      Investment Details
-                    </CardTitle>
-                    <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                      <Coins className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                  </div>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Enter your investment transaction details
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label htmlFor="asset-type" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Asset Type
-                      </Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-gray-400 dark:text-gray-500 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Select the type of asset you sold</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <Select value={assetType} onValueChange={setAssetType}>
-                      <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
-                        <SelectValue placeholder="Select asset type" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                        {assetTypes.map((type) => (
-                          <SelectItem 
-                            key={type.value} 
-                            value={type.value}
-                            className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                          >
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label htmlFor="purchase-price" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Purchase Price
-                      </Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-gray-400 dark:text-gray-500 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Enter the price at which you bought the asset</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IndianRupee className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-                      </div>
-                      <Input
-                        id="purchase-price"
-                        type="number"
-                        value={purchasePrice || ''}
-                        onChange={(e) => setPurchasePrice(Number(e.target.value))}
-                        placeholder="0"
-                        className="pl-10 text-lg bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label htmlFor="sale-price" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Sale Price
-                      </Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-4 h-4 text-gray-400 dark:text-gray-500 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Enter the price at which you sold the asset</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IndianRupee className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-                      </div>
-                      <Input
-                        id="sale-price"
-                        type="number"
-                        value={salePrice || ''}
-                        onChange={(e) => setSalePrice(Number(e.target.value))}
-                        placeholder="0"
-                        className="pl-10 text-lg bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="purchase-date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Purchase Date
-                      </Label>
-                      <Input
-                        id="purchase-date"
-                        type="date"
-                        value={purchaseDate}
-                        onChange={(e) => setPurchaseDate(e.target.value)}
-                        className="mt-1 text-lg bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="sale-date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Sale Date
-                      </Label>
-                      <Input
-                        id="sale-date"
-                        type="date"
-                        value={saleDate}
-                        onChange={(e) => setSaleDate(e.target.value)}
-                        className="mt-1 text-lg bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <Button 
-                    onClick={handleCalculate} 
-                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    disabled={!purchasePrice || !salePrice || !purchaseDate || !saleDate || !assetType}
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    Calculate Capital Gains
-                  </Button>
-                </CardContent>
-              </Card>
+              <TrendingUp className="w-3.5 h-3.5" />
+              FY 2024-25 Budget Updated
             </m.div>
-
-            {/* Results Section */}
-            <m.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+            <m.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6"
             >
-              <Card className="h-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                      Capital Gains Results
-                    </CardTitle>
-                    <div className="flex items-center gap-2">
-                      {result && (
-                        <CalculatorExport 
-                          title="Capital Gains Calculation"
-                          data={{
-                            "Asset Type": selectedAssetType?.label || assetType,
-                            "Purchase Price": purchasePrice,
-                            "Sale Price": salePrice,
-                            "Holding Period": `${result.holdingPeriod} years`,
-                            "Capital Gain": result.capitalGain,
-                            "Gain Type": result.gainType,
-                            "Tax Rate": `${result.taxRate}%`,
-                            "Tax Payable": result.taxPayable,
-                            "Net Gain": result.netGain
-                          }}
-                        />
-                      )}
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                        <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      </div>
+              Calculate <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Capital Gains</span>
+            </m.h1>
+            <m.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg text-slate-500 max-w-2xl mx-auto font-medium"
+            >
+              Determine STCG and LTCG tax liabilities for equity, property, and gold with the latest tax rules.
+            </m.p>
+          </div>
+        </section>
+
+        {/* --- WIZARD INTERFACE --- */}
+        <main className="max-w-7xl mx-auto px-4 -mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left: Input Panel (Wizard) */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Progress Steps */}
+              <div className="flex items-center justify-between px-2 mb-8">
+                {[1, 2, 3].map((s) => (
+                  <div key={s} className="flex flex-col items-center gap-2 flex-1 relative">
+                    <div className={cn(
+                      "w-10 h-10 rounded-full flex items-center justify-center font-black text-sm z-10 transition-colors duration-300",
+                      step >= s ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200" : "bg-white text-slate-400 border border-slate-200"
+                    )}>
+                      {step > s ? <Clock className="w-5 h-5" /> : s}
+                    </div>
+                    <span className={cn(
+                      "text-[10px] font-black uppercase tracking-widest text-center",
+                      step >= s ? "text-emerald-700" : "text-slate-400"
+                    )}>
+                      {s === 1 ? 'Asset' : s === 2 ? 'Values' : 'Dates'}
+                    </span>
+                    {s < 3 && (
+                      <div className={cn(
+                        "absolute top-5 left-1/2 w-full h-[2px] -translate-y-1/2 -z-0",
+                        step > s ? "bg-emerald-600" : "bg-slate-200"
+                      )} />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <m.div
+                key={`step-${step}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden"
+              >
+                <div className="p-8 border-b border-slate-100 bg-gradient-to-br from-slate-50/50 to-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                      {step === 1 && <Building2 className="w-6 h-6" />}
+                      {step === 2 && <IndianRupee className="w-6 h-6" />}
+                      {step === 3 && <Calendar className="w-6 h-6" />}
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                        {step === 1 && "Select Asset Type"}
+                        {step === 2 && "Transaction Values"}
+                        {step === 3 && "Transaction Dates"}
+                      </h2>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        {step === 1 && "What did you sell?"}
+                        {step === 2 && "How much was it?"}
+                        {step === 3 && "When did it happen?"}
+                      </p>
                     </div>
                   </div>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Your capital gains calculation breakdown
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {result ? (
+                </div>
+
+                <div className="p-8 space-y-8">
+                  {step === 1 && (
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {assetTypes.map((type) => {
+                        const Icon = type.icon;
+                        const isSelected = assetType === type.value;
+                        return (
+                          <div 
+                            key={type.value}
+                            onClick={() => setAssetType(type.value)}
+                            className={cn(
+                              "relative p-5 border-2 rounded-2xl cursor-pointer transition-all duration-300",
+                              isSelected
+                                ? "bg-emerald-50 border-emerald-500 shadow-lg shadow-emerald-100/50"
+                                : "bg-white border-slate-100 hover:border-slate-300"
+                            )}
+                          >
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className={cn(
+                                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
+                                isSelected ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-500"
+                              )}>
+                                <Icon className="w-5 h-5" />
+                              </div>
+                              <span className={cn(
+                                "font-black leading-tight",
+                                isSelected ? "text-emerald-900" : "text-slate-900"
+                              )}>
+                                {type.label}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                              <div className="bg-slate-50 rounded-lg p-2 text-center">LTCG: {type.ltcgRate}</div>
+                              <div className="bg-slate-50 rounded-lg p-2 text-center">STCG: {type.stcgRate}</div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+
+                  {step === 2 && (
                     <div className="space-y-6">
-                      {/* Key Metrics */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <m.div
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 0.2 }}
-                          className={`p-4 rounded-xl border ${
-                            result.capitalGain >= 0 
-                              ? 'bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-700' 
-                              : 'bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-700'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <TrendingUp className={`w-5 h-5 ${result.capitalGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`} />
-                            <span className={`text-sm font-medium ${result.capitalGain >= 0 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                              Capital Gain
-                            </span>
-                          </div>
-                          <p className={`text-2xl font-bold ${result.capitalGain >= 0 ? 'text-green-900 dark:text-green-100' : 'text-red-900 dark:text-red-100'}`}>
-                            {result.capitalGain >= 0 ? '+' : ''}₹{result.capitalGain.toLocaleString()}
-                          </p>
-                        </m.div>
-                        
-                        <m.div
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 0.3 }}
-                          className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Holding Period</span>
-                          </div>
-                          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{result.holdingPeriod} years</p>
-                        </m.div>
+                      <div className="space-y-3">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                          Purchase Price
+                        </Label>
+                        <div className="relative group">
+                          <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600" />
+                          <Input
+                            type="number"
+                            value={purchasePrice || ''}
+                            onChange={(e) => setPurchasePrice(Number(e.target.value))}
+                            placeholder="0"
+                            className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-emerald-100"
+                          />
+                        </div>
                       </div>
+                      <div className="space-y-3">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                          Sale Price
+                        </Label>
+                        <div className="relative group">
+                          <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600" />
+                          <Input
+                            type="number"
+                            value={salePrice || ''}
+                            onChange={(e) => setSalePrice(Number(e.target.value))}
+                            placeholder="0"
+                            className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-emerald-100"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-                      {/* Gain Type Badge */}
-                      <m.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="flex justify-center"
-                      >
-                        <Badge className={`text-lg px-6 py-2 ${
-                          result.gainType === 'LTCG' 
-                            ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' 
-                            : 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200'
-                        }`}>
-                          {result.gainType} - {result.taxRate}% Tax
-                        </Badge>
-                      </m.div>
+                  {step === 3 && (
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                          Purchase Date
+                        </Label>
+                        <div className="relative group">
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600" />
+                          <Input
+                            type="date"
+                            value={purchaseDate}
+                            onChange={(e) => setPurchaseDate(e.target.value)}
+                            className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-emerald-100"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                          Sale Date
+                        </Label>
+                        <div className="relative group">
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600" />
+                          <Input
+                            type="date"
+                            value={saleDate}
+                            onChange={(e) => setSaleDate(e.target.value)}
+                            className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-emerald-100"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-                      <Separator className="dark:border-gray-700" />
+                  <div className="flex justify-between items-center pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      disabled={step === 1}
+                      className="rounded-xl h-12 px-6 font-black text-slate-600 border-slate-200 hover:bg-slate-50"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-2" /> Back
+                    </Button>
+                    <Button
+                      onClick={handleNext}
+                      disabled={
+                        (step === 1 && !assetType) || 
+                        (step === 2 && (!purchasePrice || !salePrice)) ||
+                        (step === 3 && (!purchaseDate || !saleDate))
+                      }
+                      className="rounded-xl h-12 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-lg shadow-emerald-200 hover:-translate-y-0.5 transition-all"
+                    >
+                      {step === 3 ? "Calculate" : "Next"} <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
 
-                      {/* Calculation Breakdown */}
-                      <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 }}
-                        className="space-y-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4"
-                      >
-                        <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
-                          <Calculator className="w-5 h-5 mr-2 text-gray-600 dark:text-gray-400" />
-                          Transaction Breakdown
-                        </h4>
-                        
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center py-2">
-                            <span className="text-gray-600 dark:text-gray-400">Purchase Price</span>
-                            <span className="font-semibold text-gray-900 dark:text-white">₹{purchasePrice.toLocaleString()}</span>
+                </div>
+              </m.div>
+
+              {/* Informational Cards */}
+              <div className="grid sm:grid-cols-2 gap-6 mt-6">
+                 <div className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm">
+                    <h3 className="text-sm font-black text-slate-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                       <Receipt className="w-4 h-4 text-emerald-500" />
+                       FY 24-25 Tax Rates
+                    </h3>
+                    <ul className="space-y-2 text-xs font-medium text-slate-500">
+                       <li>• <strong className="text-slate-900">Equity LTCG:</strong> 12.5%</li>
+                       <li>• <strong className="text-slate-900">Equity STCG:</strong> 20%</li>
+                       <li>• <strong className="text-slate-900">Property LTCG:</strong> 12.5%</li>
+                    </ul>
+                 </div>
+                 <div className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm">
+                    <h3 className="text-sm font-black text-slate-900 mb-3 uppercase tracking-wider flex items-center gap-2">
+                       <AlertTriangle className="w-4 h-4 text-amber-500" />
+                       Key Notes
+                    </h3>
+                    <ul className="space-y-2 text-xs font-medium text-slate-500">
+                       <li>• ₹1.25L exemption on equity LTCG</li>
+                       <li>• Indexation removed from July 2024</li>
+                       <li>• 4% Health & Education cess applies</li>
+                    </ul>
+                 </div>
+              </div>
+
+            </div>
+
+            {/* Right: Results Panel */}
+            <div className="lg:col-span-5 space-y-6">
+              <AnimatePresence mode="wait">
+                {result ? (
+                  <m.div
+                    key="results"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="space-y-6"
+                  >
+                    {/* Main Summary Card */}
+                    <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20">
+                      <div className="absolute top-0 right-0 p-8 opacity-[0.05] scale-150">
+                        <TrendingUp className="w-32 h-32" />
+                      </div>
+                      <div className="relative z-10 space-y-6">
+                        <div className="flex justify-between items-start">
+                           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase tracking-widest">
+                              {result.gainType} @ {result.taxRate}%
+                           </div>
+                           <CalculatorExport 
+                              title="Capital Gains Calculation"
+                              data={{
+                                "Asset Type": selectedAssetType?.label || assetType,
+                                "Purchase Price": purchasePrice,
+                                "Sale Price": salePrice,
+                                "Holding Period": `${result.holdingPeriod} years`,
+                                "Capital Gain": result.capitalGain,
+                                "Gain Type": result.gainType,
+                                "Tax Rate": `${result.taxRate}%`,
+                                "Tax Payable": result.taxPayable,
+                                "Net Gain": result.netGain
+                              }}
+                           />
+                        </div>
+
+                        <div>
+                          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Net Tax Payable</span>
+                          <div className="text-4xl md:text-5xl font-black tracking-tighter">
+                            ₹{result.taxPayable.toLocaleString()}
                           </div>
-                          
-                          <div className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-                            <span className="text-gray-600 dark:text-gray-400">Sale Price</span>
-                            <span className="font-semibold text-gray-900 dark:text-white">₹{salePrice.toLocaleString()}</span>
-                          </div>
-                          
-                          <div className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-                            <span className="text-gray-600 dark:text-gray-400">Capital Gain</span>
-                            <span className={`font-semibold ${result.capitalGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-800">
+                          <div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1">Capital Gain</span>
+                            <span className={cn("text-xl font-black", result.capitalGain >= 0 ? "text-emerald-400" : "text-red-400")}>
                               {result.capitalGain >= 0 ? '+' : ''}₹{result.capitalGain.toLocaleString()}
                             </span>
                           </div>
-                          
-                          {/* LTCG Exemption - show only for equity with positive gains */}
-                          {result.ltcgExemption > 0 && (
-                            <div className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-                              <span className="text-gray-600 dark:text-gray-400">LTCG Exemption (u/s 112A)</span>
-                              <span className="font-semibold text-green-600 dark:text-green-400">-₹{result.ltcgExemption.toLocaleString()}</span>
-                            </div>
-                          )}
-                          
-                          {/* Taxable Gain after exemption */}
-                          {result.ltcgExemption > 0 && (
-                            <div className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-                              <span className="text-gray-600 dark:text-gray-400">Taxable Gain</span>
-                              <span className="font-semibold text-gray-900 dark:text-white">₹{result.taxableGain.toLocaleString()}</span>
-                            </div>
-                          )}
-                          
-                          <div className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-                            <span className="text-gray-600 dark:text-gray-400">Tax Payable (incl. 4% cess)</span>
-                            <span className="font-semibold text-red-600 dark:text-red-400">-₹{result.taxPayable.toLocaleString()}</span>
-                          </div>
-                          
-                          <div className="flex justify-between items-center py-2 border-t-2 border-gray-300 dark:border-gray-600">
-                            <span className="font-medium text-gray-900 dark:text-white">Net Gain After Tax</span>
-                            <span className={`font-bold text-lg ${result.netGain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          <div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1">Net In Hand</span>
+                            <span className={cn("text-xl font-black", result.netGain >= 0 ? "text-blue-400" : "text-red-400")}>
                               {result.netGain >= 0 ? '+' : ''}₹{result.netGain.toLocaleString()}
                             </span>
                           </div>
                         </div>
-                      </m.div>
-
-                      {/* Tax Information Alert */}
-                      <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                        className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-700"
-                      >
-                        <div className="flex items-start gap-3">
-                          <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-                          <div className="space-y-2">
-                            <h5 className="font-medium text-blue-900 dark:text-blue-100">Tax Details</h5>
-                            <div className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                              <p><strong>Type:</strong> {result.gainType === 'LTCG' ? 'Long-Term Capital Gains' : 'Short-Term Capital Gains'}</p>
-                              <p><strong>Tax Rate:</strong> {result.taxRate}% + 4% Cess = {(result.taxRate * 1.04).toFixed(2)}% effective</p>
-                              <p><strong>Holding Period:</strong> {result.holdingPeriodDays} days ({result.holdingPeriod} year{result.holdingPeriod !== 1 ? 's' : ''})</p>
-                              {result.ltcgExemption > 0 && (
-                                <p><strong>LTCG Exemption:</strong> ₹{result.ltcgExemption.toLocaleString()} (Section 112A)</p>
-                              )}
-                              {selectedAssetType && (
-                                <p><strong>Asset Class:</strong> {selectedAssetType.label}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </m.div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-16">
-                      <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full inline-block mb-4">
-                        <TrendingUp className="w-12 h-12 text-gray-400 dark:text-gray-500" />
                       </div>
-                      <p className="text-gray-500 dark:text-gray-400 text-lg">
-                        Enter investment details to calculate capital gains
-                      </p>
-                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-                        Select asset type, prices, and dates to see tax calculation
-                      </p>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </m.div>
+
+                    {/* Breakdown Details */}
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm space-y-4">
+                      <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
+                        <Calculator className="w-5 h-5 text-emerald-500" />
+                        Breakdown
+                      </h3>
+                      
+                      <div className="flex justify-between items-center py-2 text-sm">
+                        <span className="font-bold text-slate-500">Holding Period</span>
+                        <span className="font-black text-slate-900">{result.holdingPeriodDays} Days ({result.holdingPeriod} Yrs)</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 text-sm border-t border-slate-100">
+                        <span className="font-bold text-slate-500">Purchase Price</span>
+                        <span className="font-black text-slate-900">₹{purchasePrice.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 text-sm border-t border-slate-100">
+                        <span className="font-bold text-slate-500">Sale Price</span>
+                        <span className="font-black text-slate-900">₹{salePrice.toLocaleString()}</span>
+                      </div>
+                      
+                      {result.ltcgExemption > 0 && (
+                        <div className="flex justify-between items-center py-2 text-sm border-t border-slate-100">
+                          <span className="font-bold text-slate-500">LTCG Exemption (Sec 112A)</span>
+                          <span className="font-black text-emerald-600">-₹{result.ltcgExemption.toLocaleString()}</span>
+                        </div>
+                      )}
+
+                      {result.ltcgExemption > 0 && (
+                        <div className="flex justify-between items-center py-2 text-sm border-t border-slate-100">
+                          <span className="font-bold text-slate-500">Taxable Gain</span>
+                          <span className="font-black text-slate-900">₹{result.taxableGain.toLocaleString()}</span>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between items-center py-2 text-sm border-t border-slate-100">
+                        <span className="font-bold text-slate-500">Effective Tax Rate</span>
+                        <span className="font-black text-slate-900">{(result.taxRate * 1.04).toFixed(2)}% (inc. cess)</span>
+                      </div>
+                    </div>
+                  </m.div>
+                ) : (
+                  <m.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-100 border-dashed rounded-[2.5rem]"
+                  >
+                    <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6">
+                      <Target className="w-10 h-10 text-slate-300" />
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2">Complete the steps</h3>
+                    <p className="text-slate-500 font-medium">Select your asset, enter transaction values, and set dates to instantly see your tax liability.</p>
+                  </m.div>
+                )}
+              </AnimatePresence>
+            </div>
+
           </div>
+        </main>
 
-          {/* Capital Gains Information Cards */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {/* Tax Rates Card */}
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-6 transition-colors duration-200">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <Receipt className="w-6 h-6 mr-2 text-green-600 dark:text-green-400" />
-                Tax Rates FY 2024-25
-              </h3>
-              <div className="space-y-3">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <p className="flex items-start mb-2">
-                    <span className="text-green-500 mr-2">•</span>
-                    <span><strong>Equity LTCG:</strong> 12.5% (holding &gt; 1 year)</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-green-500 mr-2">•</span>
-                    <span><strong>Equity STCG:</strong> 20% (holding ≤ 1 year)</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-green-500 mr-2">•</span>
-                    <span><strong>Property/Gold LTCG:</strong> 12.5% (holding &gt; 2 years)</span>
-                  </p>
-                  <p className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    <span><strong>Property/Gold STCG:</strong> As per income slab (holding ≤ 2 years)</span>
-                  </p>
-                </div>
+        {/* --- SEO & EXPLAINER SECTION --- */}
+        <section className="max-w-7xl mx-auto px-4 mt-24">
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-6">
+                Understanding Capital Gains Tax in India (FY 2024-25)
+              </h2>
+              <div className="space-y-6 text-slate-600 font-medium leading-relaxed">
+                <p>
+                  Capital gains tax is the tax levied on the profit made from the sale of a non-inventory asset that was purchased for a lower price. In India, the tax rates and rules vary significantly depending on the type of asset (equity, property, gold, bonds) and the holding period.
+                </p>
+                
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Short-Term vs. Long-Term Capital Gains
+                </h3>
+                <p>
+                  The classification of capital gains into short-term (STCG) and long-term (LTCG) is crucial because it dictates the tax rate applied. 
+                </p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong className="text-slate-900 font-bold">Equity & Mutual Funds:</strong> Held for more than 1 year is considered Long-Term.</li>
+                  <li><strong className="text-slate-900 font-bold">Real Estate & Property:</strong> Held for more than 2 years is considered Long-Term.</li>
+                  <li><strong className="text-slate-900 font-bold">Gold & Debt Funds:</strong> Historically 3 years, but recent budgets have updated holding periods and tax treatments. Always verify current fiscal rules.</li>
+                </ul>
+
+                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                  Recent Changes (Budget 2024)
+                </h3>
+                <p>
+                  The Union Budget 2024 introduced significant changes to the capital gains tax structure. The LTCG tax rate across all asset classes was standardized to <strong className="text-emerald-600 font-black">12.5%</strong> without the benefit of indexation. Meanwhile, STCG on equity was revised to <strong className="text-emerald-600 font-black">20%</strong>. Additionally, the exemption limit for LTCG on listed equities and equity-oriented mutual funds was increased to ₹1.25 lakh per financial year.
+                </p>
               </div>
-            </Card>
+            </div>
 
-            {/* Important Notes Card */}
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-6 transition-colors duration-200">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <Info className="w-6 h-6 mr-2 text-blue-600 dark:text-blue-400" />
-                Important Notes
-              </h3>
-              <div className="space-y-3">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <p className="flex items-start mb-2">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>₹1.25 lakh exemption on LTCG for equity</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>Indexation benefit removed from July 2024</span>
-                  </p>
-                  <p className="flex items-start mb-2">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>Set-off of losses allowed within same category</span>
-                  </p>
-                  <p className="flex items-start">
-                    <span className="text-blue-500 mr-2">📌</span>
-                    <span>Securities Transaction Tax applicable on equity</span>
-                  </p>
-                </div>
+            <hr className="my-12 border-slate-100" />
+
+            {/* FAQs */}
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-8 flex items-center gap-2">
+                <Info className="w-6 h-6 text-emerald-500" />
+                Frequently Asked Questions
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {faqData.map((faq, idx) => (
+                  <div key={idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                    <h4 className="font-black text-slate-900 mb-2">{faq.question}</h4>
+                    <p className="text-sm font-medium text-slate-600">{faq.answer}</p>
+                  </div>
+                ))}
               </div>
-            </Card>
-          </m.div>
-
-          {/* Detailed Tax Rates Table */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-8"
-          >
-            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Capital Gains Tax Rates (FY 2024-25)
-                  </CardTitle>
-                  <Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                    Latest Rates
-                  </Badge>
-                </div>
-                <CardDescription className="text-gray-600 dark:text-gray-400">
-                  Current tax rates and holding periods for different asset classes
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">Asset Type</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">LTCG Period</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">STCG Rate</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">LTCG Rate</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {assetTypes.map((type, index) => (
-                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{type.label}</td>
-                          <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{type.ltcg}</td>
-                          <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 font-medium">{type.stcgRate}</td>
-                          <td className="px-4 py-3 text-sm text-green-600 dark:text-green-400 font-medium">{type.ltcgRate}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="mt-6 space-y-3">
-                  <m.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1 }}
-                    className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700"
-                  >
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>Budget 2024 Update:</strong> LTCG rates reduced from 20% to 12.5% for most assets. 
-                      STCG rates increased from 15% to 20% for equity shares.
-                    </p>
-                  </m.div>
-                  <m.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.1 }}
-                    className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-700"
-                  >
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
-                      <strong>Important:</strong> Additional 4% Health & Education Cess applies on capital gains tax. 
-                      Indexation benefit has been removed for most asset classes from July 2024.
-                    </p>
-                  </m.div>
-                </div>
-              </CardContent>
-            </Card>
-          </m.div>
-        </div>
+            </div>
+          </div>
+        </section>
       </div>
-    </TooltipProvider>
     </>
   );
-}
+}

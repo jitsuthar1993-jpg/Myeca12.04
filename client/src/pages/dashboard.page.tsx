@@ -14,7 +14,7 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  Package,
+  Box,
   ArrowRight,
   Phone,
   MessageSquare,
@@ -28,7 +28,11 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+
 export default function DashboardPage() {
+  const seo = getSEOConfig('/dashboard');
   const { user } = useAuth();
   const userId = user?.id;
   
@@ -97,6 +101,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <MetaSEO
+        title={seo?.title}
+        description={seo?.description}
+        keywords={seo?.keywords}
+        type={seo?.type}
+        breadcrumbs={seo?.breadcrumbs}
+      />
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -277,7 +288,7 @@ export default function DashboardPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
+                    <Box className="h-5 w-5" />
                     My Services
                   </CardTitle>
                   <CardDescription>Track the status of your purchased services</CardDescription>
@@ -308,7 +319,7 @@ export default function DashboardPage() {
                 </div>
               ) : userServices.length === 0 ? (
                 <div className="text-center py-8">
-                  <Package className="mx-auto h-12 w-12 text-gray-400" />
+                  <Box className="mx-auto h-12 w-12 text-gray-400" />
                   <h3 className="mt-2 text-sm font-medium text-gray-900">No services yet</h3>
                   <p className="mt-1 text-sm text-gray-500">Start by purchasing a service from our catalog.</p>
                   <div className="mt-6">
@@ -326,7 +337,7 @@ export default function DashboardPage() {
                     <div key={userService.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                       <div className="flex items-start space-x-4">
                         <div className="p-2 bg-blue-100 rounded-lg">
-                          <Package className="h-5 w-5 text-blue-600" />
+                          <Box className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">

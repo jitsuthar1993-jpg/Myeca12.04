@@ -1,477 +1,544 @@
-import { useState } from "react";
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Link } from "wouter";
 import { calculateEnhancedSIP, formatCurrency } from "@/lib/enhanced-calculator-utils";
-import EnhancedSEO from "@/components/EnhancedSEO";
-import { ArrowRight, MoreHorizontal } from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { 
+  ArrowRight, 
+  TrendingUp, 
+  PieChart as PieChartIcon, 
+  Zap, 
+  ShieldCheck, 
+  Info, 
+  Plus, 
+  Minus,
+  IndianRupee,
+  Calendar,
+  Percent,
+  ChevronDown,
+  HelpCircle,
+  BarChart3,
+  Calculator
+} from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default function SIPCalculator() {
+  const seo = getSEOConfig('/calculators/sip');
   const [monthlyAmount, setMonthlyAmount] = useState<number>(5000);
   const [years, setYears] = useState<number>(10);
   const [expectedReturn, setExpectedReturn] = useState<number>(12);
-  const [viewMode, setViewMode] = useState<"predicted" | "method" | "adjust">("predicted");
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   const result = calculateEnhancedSIP(monthlyAmount || 0, years || 0, expectedReturn || 0);
   
-  // Format data for Recharts
   const chartData = result.yearlyBreakdown.map((d) => ({
     year: d.year,
-    Investment: d.investment,
-    Total: d.value,
-    Returns: d.interestEarned
+    investment: d.investment,
+    returns: d.interestEarned,
+    total: d.value,
   }));
 
-  const investedPercent = result.maturityValue > 0 ? (result.totalInvestment / result.maturityValue) * 100 : 0;
-  const wealthPercent = result.maturityValue > 0 ? (result.wealthGain / result.maturityValue) * 100 : 0;
-
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/,/g, '');
-    if (!isNaN(Number(val)) && Number(val) > 0) {
-      setMonthlyAmount(Number(val));
-    } else if (val === '') {
-      setMonthlyAmount(0);
+    const val = e.target.value.replace(/[^0-9]/g, '');
+    const numVal = Number(val);
+    if (numVal <= 1000000) {
+      setMonthlyAmount(numVal);
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100 }
     }
   };
 
   return (
     <>
-      <EnhancedSEO
-        title="SIP Calculator | Modern Mutual Fund Returns Calculator"
-        description="Beautiful, modern SIP calculator to calculate mutual fund returns."
-        keywords={['SIP calculator', 'mutual fund returns calculator', 'Wealth builder', 'SIP vs Lumpsum', 'compounding calculator', 'ELSS tax saving']}
-        url="https://myeca.in/calculators/sip"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "HowTo",
-          "name": "How to Calculate SIP Returns",
-          "description": "Calculate your mutual fund wealth in 3 easy steps using our modern SIP calculator.",
-          "step": [
-            {
-              "@type": "HowToStep",
-              "position": 1,
-              "name": "Enter Monthly Amount",
-              "text": "Start by entering the amount you plan to invest every month in your mutual fund SIP."
-            },
-            {
-              "@type": "HowToStep",
-              "position": 2,
-              "name": "Set Investment Duration",
-              "text": "Choose the number of years you want to stay invested. The longer you stay, the more you benefit from compounding."
-            },
-            {
-              "@type": "HowToStep",
-              "position": 3,
-              "name": "Estimate Return Rate",
-              "text": "Enter the expected annual rate of return. Equity mutual funds typically range from 12% to 15%."
-            }
-          ]
-        }}
+      <MetaSEO
+        title={seo?.title || "SIP Calculator | Calculate Mutual Fund Returns | MyeCA.in"}
+        description={seo?.description || "Plan your wealth with our premium SIP calculator. Interactive visualizations for mutual fund returns and compounding growth."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
       />
 
-      <div className="min-h-screen bg-gradient-hero pt-[var(--space-6)] pb-[var(--space-20)] px-[var(--space-4)] md:px-[var(--space-8)] lg:px-[var(--space-12)] font-sans overflow-x-hidden text-[var(--color-primary-900)] border-none">
-        <div className="max-w-6xl mx-auto space-y-[var(--space-10)]">
-          
-          {/* Top Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start pt-[var(--space-8)] pb-[var(--space-4)] relative">
+      <div className="min-h-screen bg-[#f8faff] text-slate-900 selection:bg-blue-600/10 selection:text-blue-700 font-sans antialiased overflow-x-hidden">
+        {/* Background Ambient Effects */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/5 blur-[120px] rounded-full" />
+        </div>
 
-
-            <div className="space-y-[var(--space-4)] max-w-lg pt-[var(--space-12)]">
-              <h1 className="text-6xl md:text-7xl font-bold tracking-tight text-[var(--color-primary-900)] -ml-1">What if?</h1>
-              <p className="text-xl md:text-2xl text-[var(--color-primary-800)] tracking-wide">Mutual Fund SIP Calculator</p>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          {/* Hero Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12"
+          >
+            <div className="space-y-4 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-600/20 text-blue-700 text-[11px] font-black tracking-widest uppercase">
+                <TrendingUp className="w-3.5 h-3.5" />
+                Wealth Creation
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 leading-[1.1]">
+                Plan your <span className="text-blue-600">Wealth Journey</span>
+              </h1>
+              <p className="text-lg text-slate-600 max-w-xl leading-relaxed">
+                Visualize the power of compounding. Our professional SIP calculator helps you project your mutual fund returns and build long-term wealth.
+              </p>
             </div>
-
-            {/* Right side mini-card */}
-            <div className="mt-12 md:mt-24 w-full md:w-[320px] bg-white/50 backdrop-blur-3xl rounded-[var(--radius-3xl)] p-[var(--space-6)] shadow-sm border border-white/80 relative transition-transform hover:-translate-y-1 duration-500">
-               <div className="flex justify-between items-start mb-2">
-                 <h3 className="font-semibold text-slate-900">Maturity Value Preview</h3>
-                 <MoreHorizontal className="text-slate-500 w-5 h-5 cursor-pointer hover:text-slate-900" />
-               </div>
-               <p className="text-sm font-medium text-slate-600 tracking-wide">Year {years || 0}</p>
-               <p className="text-2xl font-bold text-slate-900">{formatCurrency(result.maturityValue)}</p>
-               
-               {/* Mini CSS chart for visual flair */}
-               <div className="mt-6 flex flex-col justify-end gap-2 h-20 w-full relative">
-                 <svg className="absolute inset-0 w-[110%] h-[120%] -top-6 -left-2 text-[#7c92ba]" preserveAspectRatio="none" viewBox="0 0 100 100">
-                   <path d="M5,90 Q30,60 50,45 T95,15" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-                   <path d="M85,25 L95,15 L80,10" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                 </svg>
-
-                 <div className="flex items-end justify-between gap-1 w-full h-[80%] absolute bottom-0 px-2 opacity-60">
-                   <div className="w-[15%] bg-[#a5b4cc] rounded-tl-[4px] rounded-tr-[4px] h-[20%]"></div>
-                   <div className="w-[15%] bg-[#a5b4cc] rounded-tl-[4px] rounded-tr-[4px] h-[35%]"></div>
-                   <div className="w-[15%] bg-[#a5b4cc] rounded-tl-[4px] rounded-tr-[4px] h-[50%]"></div>
-                   <div className="w-[15%] bg-[#a5b4cc] rounded-tl-[4px] rounded-tr-[4px] h-[70%]"></div>
-                   <div className="w-[15%] bg-[#a5b4cc] rounded-tl-[4px] rounded-tr-[4px] h-[95%]"></div>
-                   <div className="w-[15%] bg-[#a5b4cc] rounded-tl-[4px] rounded-tr-[4px] h-[100%]"></div>
-                 </div>
-               </div>
-               
-               <div className="flex justify-between text-[11px] font-semibold text-slate-500 mt-4 px-3 tabular-nums">
-                 <span>{Math.floor((years||1)/6)}</span>
-                 <span>{Math.floor((years||1)/6)*2}</span>
-                 <span>{Math.floor((years||1)/6)*3}</span>
-                 <span>{Math.floor((years||1)/6)*4}</span>
-                 <span>{Math.floor((years||1)/6)*5}</span>
-                 <span>{years || 1}</span>
-               </div>
-            </div>
-          </div>
-
-          {/* Three Input Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            {/* Monthly Investment */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-[var(--radius-3xl)] p-[var(--space-6)] shadow-sm shadow-[var(--color-primary-900)]/5 border border-white hover:shadow-md transition-shadow">
-               <h3 className="text-lg font-bold text-[var(--color-primary-800)] mb-[var(--space-6)] tracking-wide">Monthly Investment</h3>
-               
-               <p className="text-xs font-semibold text-[var(--color-primary-500)] mb-[var(--space-2)] tracking-wide uppercase">Amount</p>
-               <div className="flex items-center border border-[var(--color-primary-200)] rounded-[var(--radius-xl)] px-[var(--space-4)] py-[var(--space-1)] mb-[var(--space-6)] bg-white overflow-hidden focus-within:ring-2 focus-within:ring-[var(--color-primary-800)] focus-within:border-transparent transition-all">
-                 <span className="text-[var(--color-primary-800)] font-bold mr-1">₹</span>
-                 <Input 
-                   type="text" 
-                   value={monthlyAmount > 0 ? monthlyAmount.toLocaleString('en-IN') : ''} 
-                   onChange={handleAmountChange}
-                   className="border-0 bg-transparent p-0 py-2 h-auto text-lg font-bold text-[var(--color-primary-900)] focus-visible:ring-0 shadow-none w-full tabular-nums"
-                 />
-               </div>
-               
-               <div className="flex flex-col mt-[var(--space-4)]">
-                 <div className="flex justify-between mb-[var(--space-2)]">
-                   <span className="text-xs font-semibold text-[var(--color-primary-500)] tracking-wide uppercase">Adjust</span>
-                   <span className="text-xs font-bold text-[var(--color-primary-800)]">₹1L Max</span>
-                 </div>
-                 <Slider colorTheme="blue" value={[monthlyAmount]} onValueChange={(v) => setMonthlyAmount(v[0])} max={100000} min={500} step={500} className="w-full cursor-pointer" />
-               </div>
+            <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+               <button className="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-600/20">SIP Calculator</button>
+               <Link href="/calculators/lumpsum">
+                 <button className="px-6 py-2.5 rounded-xl text-slate-600 font-bold text-sm transition-all hover:text-blue-600 hover:bg-blue-50">Lumpsum</button>
+               </Link>
             </div>
+          </motion.div>
 
-            {/* Investment Period */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-[var(--radius-3xl)] p-[var(--space-6)] shadow-sm shadow-[var(--color-primary-900)]/5 border border-white hover:shadow-md transition-shadow">
-               <h3 className="text-lg font-bold text-[var(--color-primary-800)] mb-[var(--space-6)] tracking-wide">Investment Period</h3>
-               
-               <p className="text-xs font-semibold text-[var(--color-primary-500)] mb-[var(--space-2)] tracking-wide uppercase">Duration</p>
-               <div className="flex items-center border border-[var(--color-primary-200)] rounded-[var(--radius-xl)] px-[var(--space-4)] py-[var(--space-1)] mb-[var(--space-6)] bg-white overflow-hidden focus-within:ring-2 focus-within:ring-[var(--color-primary-800)] focus-within:border-transparent transition-all">
-                 <Input 
-                   type="number" 
-                   value={years || ''} 
-                   onChange={(e) => setYears(Number(e.target.value))}
-                   className="border-0 bg-transparent p-0 py-2 h-auto text-lg font-bold text-[var(--color-primary-900)] focus-visible:ring-0 shadow-none w-full tabular-nums"
-                 />
-                 <span className="text-[var(--color-primary-500)] font-bold ml-1 pl-1">Years</span>
-               </div>
-               
-               <div className="flex flex-col mt-[var(--space-4)]">
-                 <div className="flex justify-between mb-[var(--space-2)]">
-                   <span className="text-xs font-semibold text-[var(--color-primary-500)] tracking-wide uppercase">Adjust</span>
-                   <span className="text-xs font-bold text-[var(--color-primary-800)]">30Y Max</span>
-                 </div>
-                 <Slider colorTheme="blue" value={[years]} onValueChange={(v) => setYears(v[0])} max={30} min={1} step={1} className="w-full cursor-pointer" />
-               </div>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            {/* Left Column: Inputs */}
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="lg:col-span-5 space-y-6"
+            >
+              {/* Input Card: Monthly Amount */}
+              <motion.div variants={itemVariants} className="group p-8 rounded-[2rem] bg-white border border-slate-200 shadow-xl shadow-blue-900/5 transition-all relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/[0.02] blur-3xl group-hover:bg-blue-500/[0.05] transition-colors pointer-events-none" />
+                
+                <div className="flex justify-between items-center mb-8">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2.5">
+                    <IndianRupee className="w-4 h-4 text-blue-600" />
+                    Monthly Investment
+                  </label>
+                  <div className="relative group/input">
+                    <div className="flex items-center bg-slate-50 rounded-xl px-4 py-2 border border-slate-200 group-focus-within/input:border-blue-500 group-focus-within/input:bg-white transition-all">
+                      <span className="text-blue-600 font-black mr-1.5 text-lg">₹</span>
+                      <input 
+                        type="text"
+                        value={monthlyAmount.toLocaleString('en-IN')}
+                        onChange={handleAmountChange}
+                        className="bg-transparent border-none text-right font-black text-2xl text-slate-900 w-28 focus:outline-none focus:ring-0 p-0 tabular-nums"
+                      />
+                    </div>
+                  </div>
+                </div>
 
-            {/* Expected Return Rate */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-[var(--radius-3xl)] p-[var(--space-6)] shadow-sm shadow-[var(--color-primary-900)]/5 border border-white hover:shadow-md transition-shadow">
-               <h3 className="text-lg font-bold text-[var(--color-primary-800)] mb-[var(--space-6)] tracking-wide">Expected Return Rate</h3>
-               
-               <p className="text-xs font-semibold text-[var(--color-primary-500)] mb-[var(--space-2)] tracking-wide uppercase">Selection</p>
-               <div className="flex items-center border border-[var(--color-primary-200)] rounded-[var(--radius-xl)] px-[var(--space-4)] py-[var(--space-1)] mb-[var(--space-6)] bg-white overflow-hidden focus-within:ring-2 focus-within:ring-[var(--color-primary-800)] focus-within:border-transparent transition-all">
-                 <Input 
-                   type="number" 
-                   value={expectedReturn || ''} 
-                   onChange={(e) => setExpectedReturn(Number(e.target.value))}
-                   className="border-0 bg-transparent p-0 py-2 h-auto text-lg font-bold text-[var(--color-primary-900)] focus-visible:ring-0 shadow-none w-full tabular-nums"
-                 />
-                 <span className="text-[var(--color-primary-500)] font-bold ml-1 pl-1">%</span>
-               </div>
-               
-               <div className="flex flex-col mt-[var(--space-4)]">
-                 <div className="flex justify-between mb-[var(--space-2)]">
-                   <span className="text-xs font-semibold text-[var(--color-primary-500)] tracking-wide uppercase">Adjust</span>
-                   <span className="text-xs font-bold text-[var(--color-primary-800)]">25% Max</span>
-                 </div>
-                 <Slider colorTheme="blue" value={[expectedReturn]} onValueChange={(v) => setExpectedReturn(v[0])} max={25} min={1} step={0.5} className="w-full cursor-pointer" />
-               </div>
-            </div>
+                <div className="space-y-8">
+                  <Slider 
+                    value={[monthlyAmount]} 
+                    onValueChange={(v) => setMonthlyAmount(v[0])} 
+                    max={100000} 
+                    min={500} 
+                    step={500} 
+                    className="cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] font-black text-slate-400 tracking-[0.1em] uppercase">
+                    <span>Min ₹500</span>
+                    <span className="bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">Step ₹500</span>
+                    <span>Max ₹1L</span>
+                  </div>
+                </div>
 
-          </div>
+                <div className="mt-8 flex flex-wrap gap-2">
+                  {[2000, 5000, 10000, 25000].map(amt => (
+                    <button 
+                      key={amt}
+                      onClick={() => setMonthlyAmount(amt)}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all border ${monthlyAmount === amt ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600'}`}
+                    >
+                      ₹{amt.toLocaleString()}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
 
-          {/* Large Chart Area Card */}
-          <div className="bg-white/70 backdrop-blur-xl rounded-[32px] p-6 md:p-10 shadow-sm shadow-blue-900/5 border border-white/60">
-            <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-wide -mt-2">Investment Highlights</h3>
-              
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 w-full">
-              
-              <div className="flex bg-white/60 p-1.5 rounded-full border border-slate-200/60 shadow-sm w-full md:w-auto overflow-x-auto hide-scrollbar">
-                <button 
-                  onClick={() => setViewMode('predicted')} 
-                  className={`px-6 py-2 text-[13px] font-bold tracking-wide rounded-full shadow-sm whitespace-nowrap transition-colors ${viewMode === 'predicted' ? 'bg-[var(--color-primary-900)] text-white' : 'text-[var(--color-primary-600)] hover:text-[var(--color-primary-900)] hover:bg-white/50 bg-transparent'}`}
-                >
-                  Predicted
-                </button>
-                <button 
-                  onClick={() => setViewMode('method')} 
-                  className={`px-6 py-2 text-[13px] font-bold tracking-wide rounded-full shadow-sm whitespace-nowrap transition-colors ${viewMode === 'method' ? 'bg-[var(--color-primary-900)] text-white' : 'text-[var(--color-primary-600)] hover:text-[var(--color-primary-900)] hover:bg-white/50 bg-transparent'}`}
-                >
-                  Breakdown
-                </button>
-                <button 
-                  onClick={() => setViewMode('adjust')} 
-                  className={`px-6 py-2 text-[13px] font-bold tracking-wide rounded-full shadow-sm whitespace-nowrap transition-colors ${viewMode === 'adjust' ? 'bg-[var(--color-primary-900)] text-white' : 'text-[var(--color-primary-600)] hover:text-[var(--color-primary-900)] hover:bg-white/50 bg-transparent'}`}
-                >
-                  Adjust Goals
+              {/* Input Card: Time Period */}
+              <motion.div variants={itemVariants} className="group p-8 rounded-[2rem] bg-white border border-slate-200 shadow-xl shadow-blue-900/5 transition-all relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/[0.02] blur-3xl group-hover:bg-indigo-500/[0.05] transition-colors pointer-events-none" />
+                
+                <div className="flex justify-between items-center mb-8">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2.5">
+                    <Calendar className="w-4 h-4 text-indigo-600" />
+                    Time Period
+                  </label>
+                  <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-2 border border-slate-200 transition-all">
+                    <input 
+                      type="number"
+                      value={years}
+                      onChange={(e) => setYears(Math.min(40, Math.max(1, Number(e.target.value))))}
+                      className="bg-transparent border-none text-right font-black text-2xl text-slate-900 w-12 focus:outline-none focus:ring-0 p-0 tabular-nums"
+                    />
+                    <span className="text-indigo-600 font-black text-lg">Yrs</span>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <Slider 
+                    value={[years]} 
+                    onValueChange={(v) => setYears(v[0])} 
+                    max={40} 
+                    min={1} 
+                    step={1} 
+                    className="cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] font-black text-slate-400 tracking-[0.1em] uppercase">
+                    <span>1 Year</span>
+                    <span className="bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">Long Term Focus</span>
+                    <span>40 Years</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Input Card: Return Rate */}
+              <motion.div variants={itemVariants} className="group p-8 rounded-[2rem] bg-white border border-slate-200 shadow-xl shadow-blue-900/5 transition-all relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.02] blur-3xl group-hover:bg-emerald-500/[0.05] transition-colors pointer-events-none" />
+                
+                <div className="flex justify-between items-center mb-8">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2.5">
+                    <Percent className="w-4 h-4 text-emerald-600" />
+                    Expected Return
+                  </label>
+                  <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-2 border border-slate-200 transition-all">
+                    <input 
+                      type="number"
+                      value={expectedReturn}
+                      onChange={(e) => setExpectedReturn(Math.min(30, Math.max(1, Number(e.target.value))))}
+                      className="bg-transparent border-none text-right font-black text-2xl text-slate-900 w-12 focus:outline-none focus:ring-0 p-0 tabular-nums"
+                    />
+                    <span className="text-emerald-600 font-black text-lg">%</span>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <Slider 
+                    value={[expectedReturn]} 
+                    onValueChange={(v) => setExpectedReturn(v[0])} 
+                    max={30} 
+                    min={1} 
+                    step={0.5} 
+                    className="cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] font-black text-slate-400 tracking-[0.1em] uppercase">
+                    <span>1% Min</span>
+                    <span className="bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">Equity Avg 12-15%</span>
+                    <span>30% Max</span>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Column: Visualization & Results */}
+            <div className="lg:col-span-7 space-y-8">
+              {/* Main Result Card */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-1 rounded-[3rem] bg-white border border-slate-200 shadow-2xl shadow-blue-900/10 overflow-hidden"
+              >
+                <div className="bg-white rounded-[2.9rem] p-6 sm:p-10 relative">
+                  {/* Top Stats */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Estimated Maturity</p>
+                      <AnimatePresence mode="wait">
+                        <motion.p 
+                          key={result.maturityValue}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-4xl font-black text-slate-950 tracking-tighter tabular-nums"
+                        >
+                          {formatCurrency(result.maturityValue)}
+                        </motion.p>
+                      </AnimatePresence>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Gains</p>
+                      <AnimatePresence mode="wait">
+                        <motion.p 
+                          key={result.wealthGain}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-3xl font-black text-blue-600 tracking-tighter tabular-nums"
+                        >
+                          +{formatCurrency(result.wealthGain)}
+                        </motion.p>
+                      </AnimatePresence>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Principal Amount</p>
+                      <AnimatePresence mode="wait">
+                        <motion.p 
+                          key={result.totalInvestment}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-3xl font-black text-slate-900/60 tracking-tighter tabular-nums"
+                        >
+                          {formatCurrency(result.totalInvestment)}
+                        </motion.p>
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
+                  {/* Chart */}
+                  <div className="h-[400px] w-full -ml-4 pr-2">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.15}/>
+                            <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                          </linearGradient>
+                          <linearGradient id="colorInvest" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#64748b" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#64748b" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                        <XAxis 
+                          dataKey="year" 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 900 }}
+                          tickFormatter={(val) => `YEAR ${val}`}
+                          dy={15}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 900 }}
+                          tickFormatter={(val) => {
+                            if (val >= 10000000) return `${(val / 10000000).toFixed(1)}Cr`;
+                            if (val >= 100000) return `${(val / 100000).toFixed(0)}L`;
+                            return `${val / 1000}k`;
+                          }}
+                          width={60}
+                        />
+                        <Tooltip 
+                          content={({ active, payload, label }) => {
+                            if (active && payload && payload.length) {
+                              return (
+                                <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-2xl">
+                                  <p className="text-[10px] font-black text-slate-400 mb-3 uppercase tracking-widest">Year {label} Forecast</p>
+                                  <div className="space-y-2">
+                                    <p className="text-sm font-black text-slate-900 flex justify-between gap-10">
+                                      Total Value: <span className="text-blue-600">{formatCurrency(payload[0].value as number)}</span>
+                                    </p>
+                                    <p className="text-sm font-black text-slate-900 flex justify-between gap-10">
+                                      Investment: <span className="text-slate-500">{formatCurrency(payload[1].value as number)}</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="total" 
+                          stroke="#2563eb" 
+                          strokeWidth={4} 
+                          fillOpacity={1} 
+                          fill="url(#colorTotal)" 
+                          animationDuration={1500}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="investment" 
+                          stroke="#64748b" 
+                          strokeWidth={3} 
+                          fillOpacity={1} 
+                          fill="url(#colorInvest)" 
+                          animationDuration={1500}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  <div className="mt-10 flex justify-center gap-10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-3.5 h-3.5 rounded-full bg-blue-600 shadow-lg shadow-blue-600/30" />
+                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Total Wealth</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-3.5 h-3.5 rounded-full bg-slate-400 shadow-lg shadow-slate-400/30" />
+                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Principal</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-5">
+                <Link href="/auth/register" className="flex-1">
+                  <button className="w-full group relative px-8 py-5 rounded-[2rem] bg-slate-950 text-white font-black text-lg transition-all hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-slate-950/10">
+                    <span className="relative z-10 flex items-center justify-center gap-3">
+                      Start My SIP Now
+                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </button>
+                </Link>
+                <button className="flex-1 px-8 py-5 rounded-[2rem] bg-white border border-slate-200 text-slate-950 font-black text-lg transition-all hover:bg-slate-50 hover:border-blue-200 flex items-center justify-center gap-3 shadow-sm">
+                  <ShieldCheck className="w-6 h-6 text-blue-600" />
+                  Expert CA Help
                 </button>
               </div>
-                 
-              {viewMode !== 'adjust' && (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 w-full md:w-auto px-2">
-                   <div className="flex-1 w-full min-w-[150px]">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-[11px] font-bold text-slate-700 tracking-wide uppercase">Total Invested</span>
-                        <span className="text-[11px] font-bold text-slate-900">{formatCurrency(result.totalInvestment)}</span>
-                      </div>
-                       <div className="h-1.5 bg-[var(--color-primary-200)] rounded-full w-full relative overflow-hidden">
-                           <div className="absolute top-0 left-0 h-full bg-[var(--color-primary-800)] rounded-full transition-all duration-700 ease-in-out" style={{ width: `${investedPercent}%` }}></div>
-                       </div>
-                   </div>
-
-                   <div className="flex-1 w-full min-w-[150px]">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-[11px] font-bold text-slate-700 tracking-wide uppercase">Expected Wealth</span>
-                        <span className="text-[11px] font-bold text-slate-900">{formatCurrency(result.wealthGain)}</span>
-                      </div>
-                       <div className="h-1.5 bg-[var(--color-primary-200)] rounded-full w-full relative overflow-hidden">
-                           <div className="absolute top-0 left-0 h-full bg-[var(--color-primary-800)] rounded-full transition-all duration-700 ease-in-out" style={{ width: `${wealthPercent}%` }}></div>
-                       </div>
-                   </div>
-                </div>
-              )}
-            </div>
-
-            <div className="h-[320px] w-full mt-4 -ml-4 pr-4 transition-all duration-300">
-              {viewMode === 'predicted' && (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="var(--color-accent-400)" stopOpacity={0.8}/>
-                        <stop offset="100%" stopColor="var(--color-accent-400)" stopOpacity={0.05}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="0 0" vertical={true} horizontal={false} stroke="#cbd5e1" strokeOpacity={0.4} />
-                    <XAxis 
-                      dataKey="year" 
-                      axisLine={{ stroke: '#cbd5e1', strokeWidth: 1 }}
-                      tickLine={false}
-                      tickFormatter={(val) => `Y${val}`}
-                      tick={{ fill: '#475569', fontSize: 11, fontWeight: 500 }}
-                      dy={12}
-                      minTickGap={20}
-                    />
-                    <YAxis 
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(val) => {
-                        if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
-                        if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-                        if (val >= 1000) return `₹${(val / 1000).toFixed(0)}k`;
-                        return `₹${val}`;
-                      }}
-                      tick={{ fill: 'var(--color-primary-600)', fontSize: 11, fontWeight: 500 }}
-                      dx={-10}
-                      width={55}
-                    />
-                    <Tooltip 
-                      formatter={(value: number, name: string) => [formatCurrency(value), name === 'Total' ? 'Maturity Value' : name]}
-                      labelFormatter={(label) => `Year ${label}`}
-                      contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', fontWeight: 600, color: '#0f172a' }}
-                      itemStyle={{ fontWeight: 700 }}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="Total" 
-                      stroke="var(--color-accent-600)" 
-                      strokeWidth={3} 
-                      fillOpacity={1} 
-                      fill="url(#colorTotal)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              )}
-
-              {viewMode === 'method' && (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="0 0" vertical={false} horizontal={true} stroke="#cbd5e1" strokeOpacity={0.4} />
-                    <XAxis 
-                      dataKey="year" 
-                      axisLine={{ stroke: '#cbd5e1', strokeWidth: 1 }}
-                      tickLine={false}
-                      tickFormatter={(val) => `Y${val}`}
-                      tick={{ fill: '#475569', fontSize: 11, fontWeight: 500 }}
-                      dy={12}
-                      minTickGap={20}
-                    />
-                    <YAxis 
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(val) => {
-                        if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
-                        if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-                        if (val >= 1000) return `₹${(val / 1000).toFixed(0)}k`;
-                        return `₹${val}`;
-                      }}
-                      tick={{ fill: '#475569', fontSize: 11, fontWeight: 500 }}
-                      dx={-10}
-                      width={55}
-                    />
-                    <Tooltip 
-                      formatter={(value: number, name: string) => [formatCurrency(value), name]}
-                      labelFormatter={(label) => `Year ${label}`}
-                      contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', fontWeight: 600, color: '#0f172a' }}
-                      itemStyle={{ fontWeight: 700 }}
-                    />
-                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                    <Bar dataKey="Investment" stackId="a" fill="var(--color-primary-800)" radius={[0, 0, 4, 4]} />
-                    <Bar dataKey="Returns" stackId="a" fill="var(--color-accent-400)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-
-              {viewMode === 'adjust' && (
-                <div className="w-full h-full bg-slate-50 rounded-2xl border border-slate-200 p-8 overflow-y-auto pl-8 flex flex-col items-center justify-center text-center">
-                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Want to change your target?</h3>
-                    <p className="text-slate-600 mb-8 max-w-sm">Use the sliders above to fine-tune your monthly investment or duration to hit your financial goals.</p>
-                    
-                    <div className="grid grid-cols-2 gap-4 w-full max-w-lg text-left">
-                       <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                          <p className="text-xs font-semibold text-slate-500 uppercase">You Invest</p>
-                          <p className="text-lg font-bold text-slate-900 mt-1">{formatCurrency(result.totalInvestment)}</p>
-                       </div>
-                       <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                          <p className="text-xs font-semibold text-slate-500 uppercase">You Gain</p>
-                          <p className="text-lg font-bold text-[#10b981] mt-1">+{formatCurrency(result.wealthGain)}</p>
-                       </div>
-                    </div>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Information Cards (Benefits & Tips) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="bg-white/70 backdrop-blur-xl rounded-[32px] p-8 shadow-sm shadow-blue-900/5 border border-white/60">
-               <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-wide">Benefits of SIP</h3>
-               <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0"></div>
-                    <p className="text-slate-700 text-[15px] leading-relaxed"><span className="font-semibold text-slate-900">Power of Compounding:</span> Start early to maximize returns</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0"></div>
-                    <p className="text-slate-700 text-[15px] leading-relaxed"><span className="font-semibold text-slate-900">Rupee Cost Averaging:</span> Reduces market timing risk</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0"></div>
-                    <p className="text-slate-700 text-[15px] leading-relaxed"><span className="font-semibold text-slate-900">Financial Discipline:</span> Regular investing habit</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0"></div>
-                    <p className="text-slate-700 text-[15px] leading-relaxed"><span className="font-semibold text-slate-900">Flexibility:</span> Start with as low as ₹500</p>
-                  </div>
-               </div>
+          {/* Deep Dive Section */}
+          <div className="mt-32 space-y-24">
+            
+            {/* Features/Benefits Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+               {[
+                 {
+                   icon: <Zap className="w-6 h-6 text-blue-600" />,
+                   title: "Power of Compounding",
+                   desc: "SIP allows you to reinvest your returns, leading to exponential growth. Small steps today lead to big wealth tomorrow."
+                 },
+                 {
+                   icon: <PieChartIcon className="w-6 h-6 text-indigo-600" />,
+                   title: "Cost Averaging",
+                   desc: "Invest fixed amounts to buy more units when prices are low, effectively lowering your average cost over time."
+                 },
+                 {
+                   icon: <ShieldCheck className="w-6 h-6 text-emerald-600" />,
+                   title: "Disciplined Strategy",
+                   desc: "Automate your investments and stay consistent regardless of market volatility to reach your goals faster."
+                 }
+               ].map((feature, i) => (
+                 <motion.div 
+                   key={i}
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                   transition={{ delay: i * 0.1 }}
+                   className="p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-xl shadow-slate-900/[0.03] transition-transform hover:-translate-y-1"
+                 >
+                   <div className="mb-8 p-4 rounded-2xl bg-slate-50 w-fit">{feature.icon}</div>
+                   <h3 className="text-2xl font-black text-slate-950 mb-4 tracking-tight">{feature.title}</h3>
+                   <p className="text-slate-600 leading-relaxed text-[15px] font-medium">{feature.desc}</p>
+                 </motion.div>
+               ))}
             </div>
 
-            <div className="bg-white/70 backdrop-blur-xl rounded-[32px] p-8 shadow-sm shadow-blue-900/5 border border-white/60">
-               <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-wide">Smart SIP Tips</h3>
-               <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <span className="text-lg">📈</span>
-                    <p className="text-slate-700 text-[15px] leading-relaxed mt-0.5">Increase SIP amount with salary hikes</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-lg">📊</span>
-                    <p className="text-slate-700 text-[15px] leading-relaxed mt-0.5">Diversify across fund categories</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-lg">🎯</span>
-                    <p className="text-slate-700 text-[15px] leading-relaxed mt-0.5">Link SIPs to specific financial goals</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-lg">📆</span>
-                    <p className="text-slate-700 text-[15px] leading-relaxed mt-0.5">Review portfolio performance annually</p>
-                  </div>
-               </div>
-            </div>
-          </div>
-
-          {/* Bottom CTA Card */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-[28px] p-6 lg:py-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm border border-white mt-12 mb-12">
-             <div className="space-y-1 text-center md:text-left">
-                <h4 className="font-bold text-xl text-slate-800 tracking-wide">Start Your Financial Journey Today</h4>
-                <p className="text-[13px] text-slate-600 font-medium flex flex-col justify-center md:justify-start gap-0.5">
-                   <i>Calculations subject to market risks.</i>
-                   <i>Results may vary over time.</i>
+            {/* The Math Section */}
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <h2 className="text-4xl font-black text-slate-950 tracking-tight leading-tight">
+                  The Science of <br /><span className="text-blue-600">Wealth Generation</span>
+                </h2>
+                <p className="text-lg text-slate-600 leading-relaxed font-medium">
+                  SIP returns are calculated using the Future Value of an Annuity formula. Unlike simple interest, every installment earns interest on the previous period's total value.
                 </p>
-             </div>
-             
-             <Link href="/auth/register">
-               <button className="bg-[#0f172a] hover:bg-[#1e293b] text-white shadow-xl shadow-slate-900/10 px-10 py-4 pt-[18px] rounded-[16px] font-bold tracking-wide transition-all transform hover:scale-[1.02] w-full md:w-auto -mt-2">
-                 Start SIP Now
-               </button>
-             </Link>
-             
-             <div className="hidden md:flex text-slate-900 font-bold tracking-wide cursor-pointer hover:text-slate-600 items-center justify-end gap-1 group">
-                <Link href="/services">
-                   <div className="flex items-center">
-                     Learn More <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
-                   </div>
-                </Link>
-             </div>
-          </div>
-
-          {/* New SEO Depth Section: The Math & FAQ */}
-          <div className="mt-24 space-y-16 max-w-5xl mx-auto">
-             <div className="grid md:grid-cols-2 gap-12 items-start">
-                <div className="space-y-8">
-                   <h2 className="text-3xl font-black text-slate-900 italic tracking-tight underline decoration-blue-500/20 decoration-8 underline-offset-[-2px]">
-                      The Math: How is SIP Calculated?
-                   </h2>
-                   <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 font-mono text-sm">
-                      <p className="text-blue-600 font-bold mb-4">Formula:</p>
-                      <p className="text-slate-800 text-lg mb-6">M = P \u00D7 ({'{[(1 + i)^n] \u2013 1} / i'}) \u00D7 (1 + i)</p>
-                      <div className="space-y-2 text-slate-500 text-xs">
-                         <p><span className="font-bold text-slate-700">M:</span> Maturity Value</p>
-                         <p><span className="font-bold text-slate-700">P:</span> Monthly Investment Amount</p>
-                         <p><span className="font-bold text-slate-700">i:</span> Monthly Rate of Interest (r/100/12)</p>
-                         <p><span className="font-bold text-slate-700">n:</span> Number of installments (Years \u00D7 12)</p>
-                      </div>
-                   </div>
-                   <p className="text-sm text-slate-600 leading-relaxed italic">
-                      Unlike simple interest, SIP calculates interest on interest. This "snowball effect" is why even a small ₹2,000 SIP can grow into ₹1 Crore over 30 years.
-                   </p>
+                <div className="bg-slate-950 rounded-[2.5rem] p-10 border border-slate-800 font-mono text-sm relative overflow-hidden group shadow-2xl shadow-blue-900/20">
+                  <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Calculator className="w-16 h-16 text-white" />
+                  </div>
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <div className="w-3 h-3 rounded-full bg-amber-500" />
+                      <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                    </div>
+                    <div className="pt-4 text-white font-bold text-lg sm:text-xl">FV = P × ([(1 + r)ⁿ - 1] / r) × (1 + r)</div>
+                    <div className="grid grid-cols-2 gap-x-10 gap-y-4 text-slate-500 text-[13px] mt-6 border-t border-slate-800 pt-6">
+                      <div><span className="text-blue-400 font-black mr-2">P:</span> Monthly Amount</div>
+                      <div><span className="text-blue-400 font-black mr-2">r:</span> Monthly Rate</div>
+                      <div><span className="text-blue-400 font-black mr-2">n:</span> Total Months</div>
+                      <div><span className="text-blue-400 font-black mr-2">FV:</span> Maturity Value</div>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <div className="space-y-8 bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                   <h2 className="text-2xl font-black text-slate-900 italic tracking-tight">Compounding FAQ</h2>
-                   <div className="space-y-6">
-                      {[
-                        { q: "What is the best date for a SIP?", a: "Statistically, the date doesn't matter as much as consistency. However, setting it near your salary credit date ensures the money is invested before you spend it." },
-                        { q: "Is there an exit load for mutual funds?", a: "Most equity funds charge 1% if you withdraw within 1 year. This is to discourage short-term trading and encourage the long-term SIP philosophy." },
-                        { q: "Can I stop my SIP anytime?", a: "Yes, SIPs are flexible. You can pause, stop, or increase the amount anytime without any penalties from the fund house." },
-                        { q: "Can I invest in SIP for 6 months?", a: "While possible, debt or liquid funds are better for short durations. Equity SIPs should ideally be held for at least 5-7 years for best results." }
-                      ].map((faq, idx) => (
-                        <div key={idx} className="space-y-2 border-b border-slate-50 pb-6 last:border-0 last:pb-0">
-                           <h4 className="font-bold text-slate-900 flex gap-2">
-                              <span className="text-blue-600 italic font-black">Q.</span> {faq.q}
-                           </h4>
-                           <p className="text-sm text-slate-500 pl-6 leading-relaxed">{faq.a}</p>
-                        </div>
-                      ))}
-                   </div>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-black text-slate-950 flex items-center gap-3 mb-4">
+                  <HelpCircle className="w-7 h-7 text-blue-600" />
+                  Expert Insights
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    { q: "Is SIP better than Lumpsum?", a: "SIP is generally safer for volatile markets as it uses rupee cost averaging. Lumpsum can be better if you have a large surplus and the market is at a low point." },
+                    { q: "Can I increase my SIP amount?", a: "Yes, many funds offer a 'Step-up SIP' option where you can increase your investment amount annually as your income grows." },
+                    { q: "What is a realistic return rate?", a: "For equity funds in India, 12-15% is a historically reasonable long-term expectation, though it can vary significantly in the short term." }
+                  ].map((faq, i) => (
+                    <div key={i} className="p-8 rounded-3xl bg-white border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all cursor-default shadow-sm">
+                      <h4 className="font-black text-slate-950 mb-3 text-lg tracking-tight">{faq.q}</h4>
+                      <p className="text-[15px] font-medium text-slate-600 leading-relaxed">{faq.a}</p>
+                    </div>
+                  ))}
                 </div>
-             </div>
+              </div>
+            </div>
+
+            {/* Bottom CTA */}
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="relative p-12 sm:p-20 rounded-[4rem] bg-blue-600 overflow-hidden text-center shadow-2xl shadow-blue-600/30"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_40%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,0,0,0.1),transparent_40%)]" />
+              <div className="relative z-10 max-w-3xl mx-auto space-y-10">
+                <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.05]">
+                  Your future self will <br />thank you for <span className="underline decoration-white/30 underline-offset-8">starting today</span>.
+                </h2>
+                <p className="text-xl text-blue-50 font-medium max-w-2xl mx-auto leading-relaxed">
+                  Join thousands of smart investors who use MyeCA to build wealth and secure their financial freedom.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-6">
+                  <Link href="/auth/register">
+                    <button className="px-12 py-5 rounded-[2rem] bg-white text-blue-600 font-black text-xl transition-all hover:bg-blue-50 hover:scale-105 active:scale-95 shadow-2xl">
+                      Get Started Now
+                    </button>
+                  </Link>
+                  <Link href="/services">
+                    <button className="px-12 py-5 rounded-[2rem] bg-blue-700 text-white font-black text-xl transition-all hover:bg-blue-800">
+                      View Our Services
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
           </div>
+        </div>
+
+        {/* Footer Info */}
+        <div className="border-t border-slate-200 bg-white py-16 px-4 text-center">
+           <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] max-w-4xl mx-auto leading-loose">
+             Disclaimer: Mutual Fund investments are subject to market risks. Please read all scheme related documents carefully before investing. Past performance is not an indicator of future returns. MyeCA.in provides tools for educational purposes only.
+           </p>
         </div>
       </div>
     </>
