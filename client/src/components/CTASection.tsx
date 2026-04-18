@@ -3,14 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CTASection() {
   return (
-    <section className="relative py-12 bg-gradient-to-br from-teal-600 via-teal-700 to-orange-600 text-white overflow-hidden">
-      {/* Enhanced gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-600/90 to-orange-600/90"></div>
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-10 right-20 w-64 h-64 bg-white/10 rounded-full filter blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-white/5 rounded-full filter blur-3xl animate-float"></div>
-      </div>
+    <section className="relative py-12 bg-[#003087] text-white overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
         <m.h2
           className="text-3xl md:text-4xl font-bold text-white mb-4"

@@ -22,11 +22,11 @@ function StatCard({ title, value, subtitle, change, icon: Icon, iconBg = 'bg-blu
   const ChangeIcon = isPositive ? ArrowUp : ArrowDown;
   
   return (
-    <Card className="h-full bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-indigo-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
+    <Card className="h-full bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className={cn('p-3 rounded-lg', iconBg)}>
-            <Icon className={cn('h-6 w-6', iconBg.includes('blue') ? 'text-blue-600' : iconBg.includes('green') ? 'text-green-600' : 'text-indigo-600')} />
+            <Icon className={cn('h-6 w-6', iconBg.includes('blue') ? 'text-[#003087]' : iconBg.includes('green') ? 'text-green-600' : 'text-[#003087]')} />
           </div>
           {change !== undefined && (
             <Badge className={cn(
@@ -40,7 +40,7 @@ function StatCard({ title, value, subtitle, change, icon: Icon, iconBg = 'bg-blu
         </div>
         <div>
           <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent mb-1">
+          <p className="text-3xl font-bold text-[#003087] mb-1">
             {value}
           </p>
           {subtitle && (

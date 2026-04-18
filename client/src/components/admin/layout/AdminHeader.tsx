@@ -31,7 +31,7 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
     .toUpperCase();
 
   return (
-    <header className="bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 fixed top-0 left-0 right-0 z-30 lg:left-64 shadow-lg">
+    <header className="bg-[#003087] fixed top-0 left-0 right-0 z-30 lg:left-64 shadow-lg">
       <div className="flex items-center justify-between px-4 py-4 lg:px-8">
         <div className="flex items-center gap-4">
           <Button
@@ -45,7 +45,7 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
           <div>
             <h1 className="text-2xl font-bold text-white">{title}</h1>
             {description && (
-              <p className="text-sm text-blue-100 hidden sm:block">{description}</p>
+              <p className="text-sm text-white/75 hidden sm:block">{description}</p>
             )}
           </div>
         </div>

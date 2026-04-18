@@ -45,7 +45,7 @@ const quickActions = [
     icon: Upload,
     href: "/documents",
     color: "bg-purple-500",
-    gradient: "from-purple-500 to-purple-600",
+    gradient: "from-[#475569] to-[#334155]",
     priority: "medium",
     estimatedTime: "5 min"
   },
@@ -66,8 +66,8 @@ const quickActions = [
     description: "View detailed tax insights",
     icon: TrendingUp,
     href: "/analytics",
-    color: "bg-indigo-500",
-    gradient: "from-indigo-500 to-indigo-600",
+    color: "bg-[#003087]",
+    gradient: "from-[#003087] to-[#00236B]",
     priority: "medium",
     estimatedTime: "3 min"
   }
@@ -78,7 +78,7 @@ const getPriorityBadge = (priority: string) => {
     case "high":
       return <Badge variant="destructive" className="text-xs">Urgent</Badge>;
     case "new":
-      return <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-xs">✨ New</Badge>;
+      return <Badge className="bg-amber-400 text-white text-xs">New</Badge>;
     case "medium":
       return <Badge variant="secondary" className="text-xs">Important</Badge>;
     default:
@@ -157,7 +157,7 @@ export default function QuickActions() {
               Based on your profile, you could save ₹15,600 by optimizing deductions under Section 80C and 80D.
             </p>
             <Link href="/calculators/tax-regime">
-              <Button size="sm" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+              <Button size="sm" className="bg-[#003087] hover:bg-[#00236B]">
                 Optimize Tax →
               </Button>
             </Link>

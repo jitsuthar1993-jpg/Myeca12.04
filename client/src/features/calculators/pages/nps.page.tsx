@@ -35,7 +35,7 @@ function calcNPS(monthly: number, years: number, rate: number, annuity: number, 
   return { corpus, lumpSum, annuityCorpus, monthlyPension, taxSaved80C, taxSaved80CCD, chartData };
 }
 
-const PIE_COLORS = ["#6366f1", "#10b981"];
+const PIE_COLORS = ["#003087", "#10b981"];
 
 export default function NPSCalculatorPage() {
   const seo = getSEOConfig("/calculators/nps");
@@ -260,8 +260,8 @@ export default function NPSCalculatorPage() {
                       <AreaChart data={result.chartData} margin={{ top: 5, right: 5, bottom: 0, left: 5 }}>
                         <defs>
                           <linearGradient id="corpusGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15} />
-                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#003087" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#003087" stopOpacity={0} />
                           </linearGradient>
                           <linearGradient id="investedGrad" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
@@ -274,7 +274,7 @@ export default function NPSCalculatorPage() {
                         <Tooltip content={<CustomTooltip />} />
                         <Legend wrapperStyle={{ paddingTop: "12px", fontSize: "11px", fontWeight: 700, color: "#64748b" }} />
                         <Area type="monotone" dataKey="invested" name="Invested" stroke="#10b981" fill="url(#investedGrad)" strokeWidth={2} dot={false} />
-                        <Area type="monotone" dataKey="corpus" name="Corpus" stroke="#6366f1" fill="url(#corpusGrad)" strokeWidth={2.5} dot={false} />
+                        <Area type="monotone" dataKey="corpus" name="Corpus" stroke="#003087" fill="url(#corpusGrad)" strokeWidth={2.5} dot={false} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>

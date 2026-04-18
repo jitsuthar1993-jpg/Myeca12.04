@@ -143,18 +143,13 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  /* Custom HRA Calculator Styles */
+  /* Calculator Styles */
   .calculator-gradient-bg {
-    background: radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    background: #f8fafc;
   }
 
   .hra-input-focus {
-    @apply transition-all duration-300 focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500;
-  }
-
-  .result-glow {
-    box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.2);
+    @apply transition-all duration-300 focus-within:ring-4 focus-within:ring-primary/10 focus-within:border-primary;
   }
 
   .premium-blur {
@@ -189,7 +184,7 @@
     left: 50%;
     bottom: 16px;
     transform: translateX(-50%);
-    background-color: #2E86DE;
+    background-color: #003087;
     color: #ffffff;
     padding: 12px 24px;
     border-radius: 0.75rem;
@@ -201,7 +196,7 @@
   }
 
   .btn-explore:hover {
-    background-color: #2878C5;
+    background-color: #00236B;
     transform: translateX(-50%) translateY(-2px) scale(1.02);
     box-shadow: 0 4px 8px rgba(0,0,0,0.12);
   }
@@ -233,9 +228,9 @@
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }
 
-  /* Premium Gradients v2.0 - Indigo based */
+  /* Brand Utilities — all aligned to #003087 navy */
   .gradient-primary {
-    background: #6366F1;
+    background: #003087;
   }
 
   .gradient-secondary {
@@ -243,30 +238,29 @@
   }
 
   .gradient-hero {
-    background: #ffffff;
+    background: #EEF4FF;
   }
 
   .gradient-success {
-    background: #10B981;
+    background: #047857;
   }
 
   .gradient-accent {
-    background: #6366F1;
+    background: #003087;
   }
 
-  /* Professional text gradient */
-  /* Professional text gradient */
+  /* Brand text — solid navy, no shimmer */
   .text-gradient {
-    color: #334155;
+    color: #003087;
   }
 
-  /* Theme Color Utilities v2.0 - Indigo based */
+  /* Theme Color Utilities — aligned to brand navy */
   .text-theme-primary {
-    color: #6366F1;
+    color: #003087;
   }
 
   .text-theme-accent {
-    color: #10B981;
+    color: #0F766E;
   }
 
   .text-theme-gray {
@@ -274,11 +268,11 @@
   }
 
   .bg-theme-primary {
-    background-color: #6366F1;
+    background-color: #003087;
   }
 
   .bg-theme-primary-light {
-    background-color: #EEF2FF;
+    background-color: #EEF4FF;
   }
 
   .bg-theme-secondary {
@@ -289,51 +283,19 @@
     background-color: #ffffff;
   }
 
-  /* Premium Animations */
+  /* Subtle float — kept only for functional use (not decorative blobs) */
   @keyframes float {
-
-    0%,
-    100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-
-    33% {
-      transform: translateY(-10px) rotate(1deg);
-    }
-
-    66% {
-      transform: translateY(5px) rotate(-1deg);
-    }
-  }
-
-  @keyframes pulse-glow {
-
-    0%,
-    100% {
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-    }
-
-    50% {
-      box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
-    }
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
   }
 
   @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-
-    100% {
-      background-position: 200% 0;
-    }
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 
   .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
   }
 
   .animate-shimmer {
@@ -468,15 +430,13 @@ textarea::placeholder {
   /* text-gray-500 */
 }
 
-/* Focus states for all form elements - Updated to Indigo */
+/* Focus states for all form elements — brand navy */
 input:focus,
 textarea:focus,
 select:focus {
   outline: none !important;
-  border-color: #6366F1 !important;
-  /* border-indigo-500 */
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
-  /* ring-indigo-500/15 */
+  border-color: #003087 !important;
+  box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.15) !important;
 }
 
 /* Respect user prefers-reduced-motion to improve accessibility and performance */
@@ -572,17 +532,17 @@ img {
 .quill-editor-container .ql-snow.ql-toolbar button:hover,
 .quill-editor-container .ql-snow.ql-toolbar button:focus,
 .quill-editor-container .ql-snow.ql-toolbar button.ql-active {
-  color: #6366F1;
+  color: #003087;
 }
 
 .quill-editor-container .ql-snow.ql-toolbar button:hover .ql-stroke,
 .quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-stroke {
-  stroke: #6366F1;
+  stroke: #003087;
 }
 
 .quill-editor-container .ql-snow.ql-toolbar button:hover .ql-fill,
 .quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-fill {
-  fill: #6366F1;
+  fill: #003087;
 }
 
 .quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-label::before {
