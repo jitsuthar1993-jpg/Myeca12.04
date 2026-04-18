@@ -144,7 +144,11 @@ const ExpertConsultationPage = lazyWithRetry(() => import("@/pages/expert-consul
 const HelpCenterPage = lazyWithRetry(() => import("@/pages/help/help-center.page"));
 const FAQPage = lazyWithRetry(() => import("@/pages/help/faq.page"));
 const UserGuidePage = lazyWithRetry(() => import("@/pages/help/user-guide.page"));
+const DashboardServicesPage = lazyWithRetry(() => import("@/pages/dashboard/services.page"));
+const UnifiedAccountPage = lazyWithRetry(() => import("@/pages/dashboard/account.page"));
 const KnowledgeBasePage = lazyWithRetry(() => import("@/pages/help/knowledge-base.page"));
+
+
 
 const AppLoading = () => <PageSkeleton />;
 
@@ -243,15 +247,20 @@ export default function Routes() {
         <Route path="/register" component={RegisterPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/auth/callback" component={ClerkCallback} />
+        <Route path="/dashboard/services" component={() => <RequireAuth><DashboardServicesPage /></RequireAuth>} />
         <Route path="/dashboard" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
+
         <Route path="/user" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
+        <Route path="/account" component={() => <RequireAuth><UnifiedAccountPage /></RequireAuth>} />
+        <Route path="/profile" component={() => <RequireAuth><UnifiedAccountPage /></RequireAuth>} />
+        <Route path="/settings" component={() => <RequireAuth><UnifiedAccountPage /></RequireAuth>} />
+        <Route path="/settings/account" component={() => <RequireAuth><UnifiedAccountPage /></RequireAuth>} />
+
         <Route path="/team/dashboard" component={() => (
           <RequireRole roles={['admin', 'team_member']}>
             <TeamDashboard />
           </RequireRole>
         )} />
-        <Route path="/profile" component={() => <RequireAuth><ProfilePage /></RequireAuth>} />
-        <Route path="/settings/account" component={() => <RequireAuth><AccountSettingsPage /></RequireAuth>} />
         <Route path="/experts" component={ExpertsIndexPage} />
         <Route path="/experts/:id" component={ExpertProfilePage} />
         <Route path="/profiles" component={ProfilesPage} />

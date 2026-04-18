@@ -3,7 +3,7 @@ import { m } from "framer-motion";
 import { 
   Plug, Check, X, ArrowRight, Zap, Shield, 
   Globe, Database, Mail, Phone, CreditCard, FileText,
-  TrendingUp, Users, Calendar, BarChart3, Settings
+  TrendingUp, Users, Calendar, BarChart3, Settings, Search, ChevronRight, Activity, Cloud, RefreshCw, Smartphone
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,120 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import OptimizedImage from "@/components/OptimizedImage";
+import { Layout } from "@/components/admin/Layout";
+import { cn } from "@/lib/utils";
 
-// Integration categories
-const integrationCategories = {
-  accounting: {
-    name: "Accounting Software",
-    icon: FileText,
-    integrations: [
-      {
-        id: "tally",
-        name: "Tally",
-        description: "Sync ITR data with Tally ERP",
-        logo: "/api/placeholder/48/48",
-        features: ["Auto-sync transactions", "GST reconciliation", "Balance sheet import"],
-        status: "connected",
-        popular: true
-      },
-      {
-        id: "quickbooks",
-        name: "QuickBooks",
-        description: "Import/export financial data",
-        logo: "/api/placeholder/48/48",
-        features: ["Invoice sync", "Expense tracking", "Tax reports"],
-        status: "available"
-      },
-      {
-        id: "zohobooks",
-        name: "Zoho Books",
-        description: "Complete accounting integration",
-        logo: "/api/placeholder/48/48",
-        features: ["Multi-currency", "Project tracking", "Automated workflows"],
-        status: "available"
-      }
-    ]
-  },
-  banking: {
-    name: "Banking",
-    icon: CreditCard,
-    integrations: [
-      {
-        id: "icici",
-        name: "ICICI Bank",
-        description: "Direct bank statement import",
-        logo: "/api/placeholder/48/48",
-        features: ["Statement download", "Transaction categorization", "Balance check"],
-        status: "connected",
-        popular: true
-      },
-      {
-        id: "hdfc",
-        name: "HDFC Bank",
-        description: "Automated transaction sync",
-        logo: "/api/placeholder/48/48",
-        features: ["Real-time sync", "Multi-account support", "Export to Excel"],
-        status: "available"
-      },
-      {
-        id: "sbi",
-        name: "State Bank of India",
-        description: "SBI account integration",
-        logo: "/api/placeholder/48/48",
-        features: ["YONO integration", "Statement analysis", "Tax calculations"],
-        status: "coming_soon"
-      }
-    ]
-  },
-  communication: {
-    name: "Communication",
-    icon: Mail,
-    integrations: [
-      {
-        id: "whatsapp",
-        name: "WhatsApp Business",
-        description: "Send automated tax reminders",
-        logo: "/api/placeholder/48/48",
-        features: ["Bulk messaging", "Document sharing", "Status updates"],
-        status: "connected"
-      },
-      {
-        id: "sms",
-        name: "SMS Gateway",
-        description: "SMS notifications and OTP",
-        logo: "/api/placeholder/48/48",
-        features: ["Transaction alerts", "Due date reminders", "2FA support"],
-        status: "connected"
-      },
-      {
-        id: "email",
-        name: "Email Services",
-        description: "Advanced email automation",
-        logo: "/api/placeholder/48/48",
-        features: ["Custom templates", "Bulk campaigns", "Analytics"],
-        status: "connected"
-      }
-    ]
-  },
-  analytics: {
-    name: "Analytics & BI",
-    icon: BarChart3,
-    integrations: [
-      {
-        id: "powerbi",
-        name: "Power BI",
-        description: "Advanced tax analytics",
-        logo: "/api/placeholder/48/48",
-        features: ["Custom dashboards", "Real-time data", "Predictive analytics"],
-        status: "available"
-      },
-      {
-        id: "tableau",
-        name: "Tableau",
         description: "Visual tax insights",
         logo: "/api/placeholder/48/48",
         features: ["Interactive reports", "Trend analysis", "Client segmentation"],
@@ -226,226 +118,215 @@ export default function IntegrationsPage() {
     .filter(int => int.status === "connected").length;
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6 pb-12">
+    <Layout>
       <SEO
-        title="Integration Hub - Connect Your Tools | MyeCA.in"
+        title="Integration Hub - Tool Connectivity | MyeCA.in"
         description="Connect MyeCA with your favorite accounting, banking, and productivity tools. Seamless integrations for efficient tax management."
         keywords="integrations, API connections, third-party tools, accounting integration, banking integration"
       />
 
-      {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <m.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Plug className="h-8 w-8 text-purple-600" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Integration Hub</h1>
-                <p className="text-gray-600">Connect your favorite tools and services</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              <Settings className="h-4 w-4 mr-2" />
-              API Settings
-            </Button>
-          </div>
+      <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
+        {/* Sticky Left Sidebar */}
+        <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
+          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
+             <div className="h-28 bg-gradient-to-br from-purple-500 to-fuchsia-500 relative">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+             </div>
+             <CardContent className="relative px-6 pb-8">
+                <div className="flex flex-col items-center -mt-14">
+                   <div className="w-28 h-28 rounded-[40px] bg-white p-2 shadow-2xl">
+                      <div className="w-full h-full rounded-[32px] bg-gradient-to-br from-purple-50 to-fuchsia-50 flex items-center justify-center text-4xl font-black text-purple-600 border border-purple-100">
+                         <Plug className="h-10 w-10" />
+                      </div>
+                   </div>
+                   <div className="mt-5 text-center">
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">System Connect</h2>
+                      <Badge variant="outline" className="mt-2 bg-purple-50 text-purple-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                         {connectedCount} Active Nodes
+                      </Badge>
+                   </div>
+                </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Connected</p>
-                    <p className="text-2xl font-bold">{connectedCount}</p>
-                  </div>
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Available</p>
-                    <p className="text-2xl font-bold">15+</p>
-                  </div>
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Plug className="h-5 w-5 text-blue-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">API Calls Today</p>
-                    <p className="text-2xl font-bold">2,847</p>
-                  </div>
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Zap className="h-5 w-5 text-purple-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Success Rate</p>
-                    <p className="text-2xl font-bold">99.8%</p>
-                  </div>
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-orange-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </m.div>
-      </div>
+                <div className="mt-10 space-y-6">
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Toolbox Filter</Label>
+                      <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                         <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-none text-[10px] font-black uppercase tracking-widest">
+                            <SelectValue placeholder="Category" />
+                         </SelectTrigger>
+                         <SelectContent>
+                            <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest">All Modules</SelectItem>
+                            {Object.entries(integrationCategories).map(([key, cat]) => (
+                               <SelectItem key={key} value={key} className="text-[10px] font-black uppercase tracking-widest">{cat.name}</SelectItem>
+                            ))}
+                         </SelectContent>
+                      </Select>
+                   </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="flex-1">
-            <Input
-              placeholder="Search integrations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
-            />
+                   <div className="pt-4 grid grid-cols-2 gap-3">
+                      {[
+                        { label: "Uptime", value: "99.9%", color: "emerald" },
+                        { label: "Latency", value: "48ms", color: "blue" },
+                        { label: "API Rate", value: "2.8k", color: "purple" },
+                        { label: "Success", value: "99.8%", color: "indigo" }
+                      ].map((stat, i) => (
+                        <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
+                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
+                           <span className={cn("text-sm font-black leading-none", `text-${stat.color}-600`)}>{stat.value}</span>
+                        </div>
+                      ))}
+                   </div>
+                </div>
+             </CardContent>
+          </Card>
+
+          <div className="p-8 rounded-[40px] bg-gradient-to-br from-slate-900 to-slate-800 border-none relative overflow-hidden group cursor-pointer shadow-xl shadow-slate-200">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2" />
+             <Settings className="h-8 w-8 text-purple-400 mb-6" />
+             <h3 className="font-black text-xl leading-tight mb-3 text-white">API Credentials</h3>
+             <p className="text-slate-400 text-[10px] font-medium leading-relaxed mb-6">Manage your secret keys and endpoint configurations securely.</p>
+             <Button className="w-full bg-white text-slate-900 hover:bg-slate-100 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl border-none">Control Center</Button>
           </div>
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full md:w-auto">
-            <TabsList className="grid grid-cols-6 w-full md:w-auto">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="accounting">Accounting</TabsTrigger>
-              <TabsTrigger value="banking">Banking</TabsTrigger>
-              <TabsTrigger value="communication">Comm</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="productivity">Productivity</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </div>
 
-        {/* Integration Categories */}
-        <div className="space-y-8">
-          {Object.entries(filteredIntegrations).map(([category, data]) => {
-            const CategoryIcon = data.icon;
-            return (
-              <div key={category}>
-                <div className="flex items-center gap-2 mb-4">
-                  <CategoryIcon className="h-5 w-5 text-gray-600" />
-                  <h2 className="text-xl font-semibold text-gray-900">{data.name}</h2>
-                </div>
-                
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {data.integrations.map((integration) => (
-                    <Card key={integration.id} className="hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
-                            <OptimizedImage 
-                              src={integration.logo} 
-                              alt={integration.name}
-                              width={48}
-                              height={48}
-                              className="rounded-lg bg-gray-100"
-                              objectFit="contain"
-                            />
-                            <div>
-                              <CardTitle className="text-lg flex items-center gap-2">
+        {/* Main Content Area - Full Page Scroll */}
+        <div className="flex-1 min-w-0 w-full lg:max-w-7xl space-y-10 pb-20">
+          <div className="bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 mb-2">
+                 <div className="h-2 w-2 rounded-full bg-purple-600 animate-pulse" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600">Ecosystem Hub</span>
+              </div>
+              <h1 className="text-4xl font-black tracking-tight text-slate-900">Module Integrations</h1>
+              <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
+                Connect your professional stack. Synchronize fiscal data across accounting, banking, and productivity tools in real-time.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+             <div className="relative group max-w-xl">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-purple-600 transition-colors" />
+                <Input 
+                   placeholder="Search connected tools..." 
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
+                   className="h-16 pl-14 pr-8 rounded-[24px] bg-white border-none shadow-sm text-sm font-black uppercase tracking-widest placeholder:text-slate-200"
+                />
+             </div>
+          </div>
+
+          <div className="space-y-12">
+            {Object.entries(filteredIntegrations).map(([category, data]) => {
+              const CategoryIcon = data.icon;
+              return (
+                <div key={category} className="space-y-6">
+                  <div className="flex items-center gap-3 ml-2">
+                    <div className="w-1.5 h-6 bg-purple-600 rounded-full" />
+                    <h2 className="text-lg font-black text-slate-900 uppercase tracking-tighter">{data.name}</h2>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {data.integrations.map((integration) => (
+                      <Card key={integration.id} className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white group hover:shadow-xl transition-all border border-slate-100/50">
+                        <CardContent className="p-8">
+                           <div className="flex items-start justify-between mb-8">
+                              <div className="w-16 h-16 bg-slate-50 rounded-[24px] flex items-center justify-center border border-slate-100 p-3 group-hover:bg-purple-50 group-hover:border-purple-100 transition-colors">
+                                 <OptimizedImage 
+                                   src={integration.logo} 
+                                   alt={integration.name}
+                                   width={40}
+                                   height={40}
+                                   className="rounded-lg grayscale group-hover:grayscale-0 transition-all"
+                                   objectFit="contain"
+                                 />
+                              </div>
+                              {getStatusBadge(integration.status)}
+                           </div>
+
+                           <div className="space-y-2 mb-8">
+                              <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                                 {integration.name}
                                 {'popular' in integration && integration.popular && (
-                                  <Badge variant="outline" className="text-xs">Popular</Badge>
+                                  <Badge className="bg-amber-100 text-amber-700 border-none text-[8px] font-black uppercase tracking-widest h-4 px-2">Essential</Badge>
                                 )}
-                              </CardTitle>
-                              <CardDescription className="text-sm">
+                              </h3>
+                              <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
                                 {integration.description}
-                              </CardDescription>
-                            </div>
-                          </div>
-                          {getStatusBadge(integration.status)}
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          <div>
-                            <p className="text-sm font-medium mb-2">Features</p>
-                            <ul className="space-y-1">
-                              {integration.features.map((feature, idx) => (
-                                <li key={idx} className="text-sm text-gray-600 flex items-center gap-1">
-                                  <Check className="h-3 w-3 text-green-500" />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          
-                          <div className="pt-3">
-                            {integration.status === "connected" ? (
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                                  <span className="text-sm text-green-700">Active</span>
-                                </div>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleDisconnect(integration.name)}
-                                >
-                                  Disconnect
-                                </Button>
-                              </div>
-                            ) : integration.status === "available" ? (
-                              <Button 
-                                className="w-full"
-                                onClick={() => handleConnect(integration.name)}
-                              >
-                                Connect
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                              </Button>
-                            ) : (
-                              <Button variant="outline" className="w-full" disabled>
-                                Coming Soon
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                              </p>
+                           </div>
 
-        {/* Custom Integration */}
-        <Card className="mt-12">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Need a Custom Integration?</CardTitle>
-            <CardDescription>
-              We can build custom integrations for your specific needs
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Button size="lg">
-              Request Custom Integration
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
+                           <div className="space-y-4 mb-8">
+                             <div className="flex items-center justify-between">
+                                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Core Capabilities</span>
+                                <div className="h-px flex-1 mx-4 bg-slate-50" />
+                             </div>
+                             <ul className="grid grid-cols-1 gap-2">
+                               {integration.features.map((feature, idx) => (
+                                 <li key={idx} className="text-[10px] font-black text-slate-600 flex items-center gap-3 uppercase tracking-tight">
+                                   <div className="w-1.5 h-1.5 rounded-full bg-purple-200 group-hover:bg-purple-600 transition-colors" />
+                                   {feature}
+                                 </li>
+                               ))}
+                             </ul>
+                           </div>
+                           
+                           <div className="pt-4 border-t border-slate-50">
+                             {integration.status === "connected" ? (
+                               <div className="flex items-center justify-between">
+                                 <div className="flex items-center gap-2">
+                                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                                   <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Node Online</span>
+                                 </div>
+                                 <Button 
+                                   variant="ghost" 
+                                   size="sm"
+                                   onClick={() => handleDisconnect(integration.name)}
+                                   className="h-10 px-4 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 font-black text-[9px] uppercase tracking-widest"
+                                 >
+                                   Terminate
+                                 </Button>
+                               </div>
+                             ) : integration.status === "available" ? (
+                               <Button 
+                                 className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest border-none hover:bg-purple-600 transition-all shadow-lg shadow-slate-100"
+                                 onClick={() => handleConnect(integration.name)}
+                               >
+                                 Connect Pipeline
+                               </Button>
+                             ) : (
+                               <Button variant="outline" className="w-full h-14 rounded-2xl border-slate-100 text-slate-300 font-black text-[10px] uppercase tracking-widest" disabled>
+                                 Reserved Entry
+                               </Button>
+                             )}
+                           </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <Card className="border-none shadow-2xl shadow-purple-100 rounded-[56px] bg-purple-600 p-16 relative overflow-hidden text-center">
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+             <div className="relative z-10 space-y-8">
+                <div className="w-20 h-20 bg-white/20 rounded-[32px] flex items-center justify-center mx-auto backdrop-blur-xl">
+                   <ArrowRight className="h-10 w-10 text-white" />
+                </div>
+                <div className="space-y-2">
+                   <h3 className="text-4xl font-black text-white tracking-tighter uppercase">Request Bespoke Module</h3>
+                   <p className="text-purple-100 text-sm font-medium max-w-lg mx-auto leading-relaxed">
+                      Our engineering team can architect custom data bridges for your proprietary internal systems or niche third-party software.
+                   </p>
+                </div>
+                <Button size="lg" className="h-16 px-12 rounded-3xl bg-white text-purple-600 hover:bg-purple-50 font-black text-xs uppercase tracking-widest border-none shadow-2xl shadow-purple-900/20">
+                   Initiate Architect Request
+                </Button>
+             </div>
+          </Card>
+        </div>
       </div>
     </div>
   );

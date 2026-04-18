@@ -5,10 +5,9 @@ import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, Lock, User, Shield } from "lucide-react";
+import { Loader2, Save, Lock, User, Shield, CreditCard, Bell } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,11 +15,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { MfaEnrollment } from "@/components/auth/MfaEnrollment";
 import { Separator } from "@/components/ui/separator";
 import { logAuditEvent } from "@/lib/audit";
+import { Layout } from "@/components/admin/Layout";
 
 const profileSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.string().email("Invalid email address").optional(), // Read-only mostly
+  email: z.string().email("Invalid email address").optional(),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
 });
 
@@ -38,7 +38,6 @@ export default function AccountSettingsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Profile Form
   const profileForm = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -49,7 +48,6 @@ export default function AccountSettingsPage() {
     },
   });
 
-  // Password Form
   const passwordForm = useForm({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -59,7 +57,6 @@ export default function AccountSettingsPage() {
     },
   });
 
-  // Fetch Profile Data
   const { data: profileData, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["/api/profile"],
     queryFn: async () => {
@@ -69,7 +66,6 @@ export default function AccountSettingsPage() {
     },
   });
 
-  // Update form when data loads
   useEffect(() => {
     if (profileData) {
       profileForm.reset({
@@ -79,7 +75,6 @@ export default function AccountSettingsPage() {
         phone: profileData.phone || "",
       });
     } else if (user) {
-      // Fallback to auth user data if profile endpoint not ready
       const names = (user.username || "").split(" ");
       profileForm.reset({
         first_name: names[0] || "",
@@ -90,7 +85,6 @@ export default function AccountSettingsPage() {
     }
   }, [profileData, user, profileForm]);
 
-  // Update Profile Mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("/api/profile", {
@@ -100,10 +94,7 @@ export default function AccountSettingsPage() {
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Profile updated successfully" });
-      logAuditEvent({
-        action: 'profile_update_success',
-        category: 'authentication'
-      });
+      logAuditEvent({ action: 'profile_update_success', category: 'authentication' });
       queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
     },
     onError: (error: any) => {
@@ -111,7 +102,6 @@ export default function AccountSettingsPage() {
     },
   });
 
-  // Change Password Mutation
   const changePasswordMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("/api/change-password", {
@@ -121,10 +111,7 @@ export default function AccountSettingsPage() {
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Password updated successfully" });
-      logAuditEvent({
-        action: 'password_change_success',
-        category: 'security'
-      });
+      logAuditEvent({ action: 'password_change_success', category: 'security' });
       passwordForm.reset();
     },
     onError: (error: any) => {
@@ -141,186 +128,210 @@ export default function AccountSettingsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold text-slate-900 mb-2">Account Settings</h1>
-      <p className="text-slate-600 mb-8">Manage your profile information and security settings</p>
+    <Layout>
+      <div className="space-y-8">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Account Configurations</h1>
+          <p className="text-slate-500 max-w-2xl">
+            Fine-tune your personal information, security protocols, and account preferences.
+          </p>
+        </div>
 
-      <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="bg-slate-50 p-1 rounded-xl h-12 inline-flex border border-slate-100/50">
+            <TabsTrigger value="profile" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Profile</TabsTrigger>
+            <TabsTrigger value="security" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Security</TabsTrigger>
+            <TabsTrigger value="billing" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Billing</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="profile">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5 text-blue-600" />
-                Personal Information
-              </CardTitle>
-              <CardDescription>Update your personal details</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoadingProfile ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                </div>
-              ) : (
-                <Form {...profileForm}>
-                  <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TabsContent value="profile" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-slate-50">
+                <CardTitle className="flex items-center gap-3 text-lg font-bold">
+                  <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
+                    <User className="w-5 h-5" />
+                  </div>
+                  Personal Information
+                </CardTitle>
+                <CardDescription className="text-xs font-medium text-slate-500">Update your details as they appear on official filings.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                {isLoadingProfile ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                  </div>
+                ) : (
+                  <Form {...profileForm}>
+                    <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={profileForm.control}
+                          name="first_name"
+                          render={({ field }) => (
+                            <FormItem className="space-y-2">
+                              <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">First Name</FormLabel>
+                              <FormControl>
+                                <Input {...field} className="h-11 rounded-xl bg-slate-50 border-slate-100 focus-visible:ring-blue-500 text-sm font-semibold" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={profileForm.control}
+                          name="last_name"
+                          render={({ field }) => (
+                            <FormItem className="space-y-2">
+                              <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Last Name</FormLabel>
+                              <FormControl>
+                                <Input {...field} className="h-11 rounded-xl bg-slate-50 border-slate-100 focus-visible:ring-blue-500 text-sm font-semibold" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
                       <FormField
                         control={profileForm.control}
-                        name="first_name"
+                        name="email"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
+                          <FormItem className="space-y-2">
+                            <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} disabled className="h-11 rounded-xl bg-slate-100 border-slate-100 text-slate-500 text-sm font-semibold cursor-not-allowed" />
+                            </FormControl>
+                            <p className="text-[10px] text-slate-400 font-medium">Authentication email cannot be changed directly.</p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={profileForm.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Phone Number</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="+91 9876543210" className="h-11 rounded-xl bg-slate-50 border-slate-100 focus-visible:ring-blue-500 text-sm font-semibold" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={profileForm.control}
-                        name="last_name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
 
+                      <div className="pt-4 flex justify-end">
+                        <Button type="submit" disabled={updateProfileMutation.isPending} className="rounded-xl bg-slate-900 hover:bg-black px-8 h-11 font-bold text-sm shadow-sm transition-all">
+                          {updateProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                          <Save className="mr-2 h-4 w-4" />
+                          Save Changes
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="security" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-slate-50">
+                <CardTitle className="flex items-center gap-3 text-lg font-bold">
+                  <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                    <Shield className="w-5 h-5" />
+                  </div>
+                  Security Protocols
+                </CardTitle>
+                <CardDescription className="text-xs font-medium text-slate-500">Manage your access credentials and multi-factor settings.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <Form {...passwordForm}>
+                  <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-6 max-w-md">
                     <FormField
-                      control={profileForm.control}
-                      name="email"
+                      control={passwordForm.control}
+                      name="current_password"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
+                        <FormItem className="space-y-2">
+                          <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Current Password</FormLabel>
                           <FormControl>
-                            <Input {...field} disabled className="bg-slate-50" />
+                            <div className="relative">
+                               <Input type="password" {...field} className="h-11 rounded-xl bg-slate-50 border-slate-100 focus-visible:ring-blue-500 text-sm font-semibold pr-10" />
+                               <Lock className="absolute right-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                            </div>
                           </FormControl>
-                          <p className="text-xs text-slate-500">Email cannot be changed directly.</p>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
                     <FormField
-                      control={profileForm.control}
-                      name="phone"
+                      control={passwordForm.control}
+                      name="new_password"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                        <FormItem className="space-y-2">
+                          <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">New Password</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="+91 9876543210" />
+                            <Input type="password" {...field} className="h-11 rounded-xl bg-slate-50 border-slate-100 focus-visible:ring-blue-500 text-sm font-semibold" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    <div className="pt-4 flex justify-end">
-                      <Button type="submit" disabled={updateProfileMutation.isPending}>
-                        {updateProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Changes
+                    <FormField
+                      control={passwordForm.control}
+                      name="confirm_password"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} className="h-11 rounded-xl bg-slate-50 border-slate-100 focus-visible:ring-blue-500 text-sm font-semibold" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="pt-2">
+                      <Button type="submit" variant="destructive" disabled={changePasswordMutation.isPending} className="rounded-xl px-8 h-11 font-bold text-sm shadow-sm hover:shadow-red-100 transition-all">
+                        {changePasswordMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Update Password
                       </Button>
                     </div>
                   </form>
                 </Form>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="security">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-green-600" />
-                Security Settings
-              </CardTitle>
-              <CardDescription>Manage your password and account security</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...passwordForm}>
-                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 max-w-md">
-                  <FormField
-                    control={passwordForm.control}
-                    name="current_password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Current Password</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                             <Input type="password" {...field} />
-                             <Lock className="absolute right-3 top-2.5 h-4 w-4 text-slate-400" />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={passwordForm.control}
-                    name="new_password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>New Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={passwordForm.control}
-                    name="confirm_password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm New Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="pt-4">
-                    <Button type="submit" variant="destructive" disabled={changePasswordMutation.isPending}>
-                      {changePasswordMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Change Password
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-
-              <div className="my-8">
-                <Separator />
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Multi-Factor Authentication</h3>
-                  <p className="text-sm text-slate-500">Protect your account with an extra layer of verification.</p>
+                <div className="my-10">
+                  <Separator className="bg-slate-50" />
                 </div>
-                <MfaEnrollment />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">Multi-Factor Authentication</h3>
+                    <p className="text-xs font-medium text-slate-500 mt-1">Fortify your account with an extra layer of verification via authenticator apps.</p>
+                  </div>
+                  <MfaEnrollment />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="billing" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+             <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white p-12 text-center">
+                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                   <CreditCard className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Billing & Subscription</h3>
+                <p className="text-slate-500 max-w-sm mx-auto mt-2 text-sm font-medium">You are currently on the <span className="text-blue-600 font-bold">Standard Professional</span> plan. Managed billing is coming soon to your portal.</p>
+                <Button variant="outline" className="mt-8 rounded-xl px-10 h-11 font-bold text-xs uppercase tracking-widest border-slate-100 hover:bg-slate-50">View Transactions</Button>
+             </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </Layout>
+  );
+}
   );
 }

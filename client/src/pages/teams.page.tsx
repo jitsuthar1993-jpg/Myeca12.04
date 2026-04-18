@@ -16,9 +16,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Users, Plus, UserPlus, CheckSquare, FileText, Activity,
   Calendar, AlertCircle, Clock, Star, MoreVertical,
-  Send, Shield, Eye, Edit3, Trash2, Loader2
+  Send, Shield, Eye, Edit3, Trash2, Loader2, ChevronRight
 } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Layout } from "@/components/admin/Layout";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface Team {
   id: number;
@@ -167,305 +170,302 @@ export default function TeamsPage() {
   const activities = activityData?.activities || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6 pb-12">
+    <Layout>
       <SEO
         title="Team Collaboration | MyeCA.in"
         description="Collaborate with your team on tax filing and compliance"
         keywords="team collaboration, tax team, compliance team"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <m.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-between mb-8"
-        >
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Team Collaboration</h1>
-            <p className="text-xl text-gray-600">Work together on client accounts and tax filing</p>
-          </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Team
-          </Button>
-        </m.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Teams List */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Teams</CardTitle>
-                <CardDescription>Select a team to view details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {teamsLoading ? (
-                  <div className="flex justify-center py-4">
-                    <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                  </div>
-                ) : teams.length === 0 ? (
-                  <p className="text-center text-gray-500 py-4">No teams yet</p>
-                ) : (
-                  teams.map((team: Team) => (
-                    <m.div
-                      key={team.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Card 
-                        className={`cursor-pointer transition-all ${
-                          selectedTeam === team.id ? "ring-2 ring-blue-600" : ""
-                        }`}
-                        onClick={() => setSelectedTeam(team.id)}
-                      >
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="font-medium">{team.name}</h4>
-                              <p className="text-sm text-gray-500">{team.memberCount} members</p>
-                            </div>
-                            <Badge variant={team.userRole === "admin" ? "default" : "secondary"}>
-                              {team.userRole}
-                            </Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </m.div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Team Details */}
-          <div className="lg:col-span-3">
-            {!selectedTeam ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center h-96">
-                  <Users className="h-12 w-12 text-gray-300 mb-4" />
-                  <p className="text-gray-500">Select a team to view details</p>
-                </CardContent>
-              </Card>
-            ) : teamLoading ? (
-              <div className="flex justify-center h-96">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-              </div>
-            ) : (
-              <Tabs defaultValue="overview" className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <TabsList>
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="tasks">Tasks</TabsTrigger>
-                    <TabsTrigger value="members">Members</TabsTrigger>
-                    <TabsTrigger value="activity">Activity</TabsTrigger>
-                  </TabsList>
-                  
-                  {team?.userRole === "admin" && (
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={() => setIsInviteDialogOpen(true)}>
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Invite
-                      </Button>
-                      <Button size="sm" onClick={() => setIsTaskDialogOpen(true)}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Task
-                      </Button>
-                    </div>
-                  )}
+      <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
+        {/* Sticky Left Summary Section */}
+        <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
+          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
+             <div className="h-28 bg-gradient-to-br from-indigo-500 to-blue-600 relative">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+             </div>
+             <CardContent className="relative px-6 pb-8">
+                <div className="flex flex-col items-center -mt-14">
+                   <div className="w-28 h-28 rounded-[40px] bg-white p-2 shadow-2xl">
+                      <div className="w-full h-full rounded-[32px] bg-gradient-to-br from-indigo-50 to-blue-50 flex items-center justify-center text-4xl font-black text-indigo-600 border border-indigo-100">
+                         <Users className="h-10 w-10" />
+                      </div>
+                   </div>
+                   <div className="mt-5 text-center">
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Collaboration Hub</h2>
+                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                         {teams.length} Active Teams
+                      </Badge>
+                   </div>
                 </div>
 
-                <TabsContent value="overview">
-                  <div className="grid gap-6">
-                    {/* Team Info */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>{team?.name}</CardTitle>
-                        <CardDescription>{team?.description || "No description"}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          <div>
-                            <p className="text-sm text-gray-500">Type</p>
-                            <p className="font-medium capitalize">{team?.type.replace("_", " ")}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Members</p>
-                            <p className="font-medium">{team?.memberCount}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Active Tasks</p>
-                            <p className="font-medium">{team?.stats.activeTasks}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Total Notes</p>
-                            <p className="font-medium">{team?.stats.totalNotes}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-gray-600">Tasks This Week</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex items-center gap-2">
-                            <CheckSquare className="h-8 w-8 text-green-600" />
-                            <span className="text-2xl font-bold">12</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-gray-600">Pending Reviews</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-8 w-8 text-orange-600" />
-                            <span className="text-2xl font-bold">5</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-gray-600">Team Activity</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex items-center gap-2">
-                            <Activity className="h-8 w-8 text-blue-600" />
-                            <span className="text-2xl font-bold">High</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="tasks">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Team Tasks</CardTitle>
-                      <CardDescription>Track and manage team assignments</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {tasks.length === 0 ? (
-                        <p className="text-center text-gray-500 py-8">No tasks assigned yet</p>
-                      ) : (
-                        <div className="space-y-4">
-                          {tasks.map((task: Task) => (
-                            <div key={task.id} className="flex items-start justify-between p-4 border rounded-lg">
-                              <div className="flex items-start gap-3">
-                                <CheckSquare className="h-5 w-5 text-gray-400 mt-0.5" />
-                                <div>
-                                  <h4 className="font-medium">{task.title}</h4>
-                                  {task.description && (
-                                    <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                                  )}
-                                  <div className="flex items-center gap-4 mt-2">
-                                    <Badge 
-                                      variant="secondary" 
-                                      className={`bg-${priorityColors[task.priority]}-100 text-${priorityColors[task.priority]}-700`}
-                                    >
-                                      {task.priority}
-                                    </Badge>
-                                    {task.dueDate && (
-                                      <span className="text-sm text-gray-500 flex items-center gap-1">
-                                        <Calendar className="h-3 w-3" />
-                                        {new Date(task.dueDate).toLocaleDateString()}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
+                <div className="mt-10 space-y-3">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Team Directory</p>
+                   {teamsLoading ? (
+                      <div className="flex justify-center py-10">
+                         <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                      </div>
+                   ) : teams.length === 0 ? (
+                      <div className="p-10 text-center bg-slate-50 rounded-[32px]">
+                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No Teams Found</p>
+                      </div>
+                   ) : (
+                      teams.map((t: Team) => (
+                        <div 
+                           key={t.id}
+                           onClick={() => setSelectedTeam(t.id)}
+                           className={cn(
+                              "flex items-center justify-between p-5 rounded-[32px] border transition-all cursor-pointer group shadow-sm",
+                              selectedTeam === t.id ? "bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-100" : "bg-white border-slate-100 hover:border-indigo-200"
+                           )}
+                        >
+                           <div className="flex items-center gap-4">
+                              <div className={cn(
+                                 "h-10 w-10 rounded-2xl flex items-center justify-center transition-colors",
+                                 selectedTeam === t.id ? "bg-white/20 text-white" : "bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600"
+                              )}>
+                                 <Users className="h-5 w-5" />
                               </div>
-                              <Badge variant={task.status === "completed" ? "default" : "outline"}>
-                                {task.status}
-                              </Badge>
-                            </div>
-                          ))}
+                              <div>
+                                 <p className={cn("text-sm font-black leading-none mb-1", selectedTeam === t.id ? "text-white" : "text-slate-900")}>{t.name}</p>
+                                 <p className={cn("text-[10px] font-black uppercase tracking-widest", selectedTeam === t.id ? "text-indigo-100" : "text-slate-400")}>{t.memberCount} Members</p>
+                              </div>
+                           </div>
+                           <ChevronRight className={cn("h-4 w-4", selectedTeam === t.id ? "text-white" : "text-slate-200")} />
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+                      ))
+                   )}
+                </div>
+             </CardContent>
+          </Card>
 
-                <TabsContent value="members">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Team Members</CardTitle>
-                      <CardDescription>Manage team members and permissions</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
+          <Button 
+             onClick={() => setIsCreateDialogOpen(true)}
+             className="w-full h-16 rounded-[32px] bg-white border border-slate-100 text-slate-900 hover:bg-slate-50 font-black text-xs uppercase tracking-widest shadow-sm transition-all hover:-translate-y-1"
+          >
+             <Plus className="h-5 w-5 mr-3 text-indigo-600" />
+             Establish New Team
+          </Button>
+        </div>
+
+        {/* Main Content Area - Full Page Scroll */}
+        <div className="flex-1 min-w-0 w-full lg:max-w-7xl space-y-10 pb-20">
+          {!selectedTeam ? (
+             <div className="h-full flex flex-col items-center justify-center py-40 bg-white rounded-[48px] border border-slate-100/50 shadow-sm text-center px-10">
+                <div className="h-32 w-32 rounded-[48px] bg-slate-50 flex items-center justify-center mb-10 border border-slate-100">
+                   <Users className="h-14 w-14 text-slate-200" />
+                </div>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-4">No Workspace Selected</h2>
+                <p className="text-slate-500 max-w-md text-base font-medium leading-relaxed">
+                   Select a collaboration unit from the directory or create a new team to begin shared compliance management.
+                </p>
+             </div>
+          ) : teamLoading ? (
+             <div className="h-full flex flex-col items-center justify-center py-40">
+                <Loader2 className="h-16 w-16 animate-spin text-indigo-600" />
+                <p className="mt-6 text-sm font-black text-slate-400 uppercase tracking-widest">Synchronizing Team Workspace...</p>
+             </div>
+          ) : (
+             <div className="space-y-10">
+                {/* Team Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3 mb-2">
+                       <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">{team?.type.replace('_', ' ')} Unit</span>
+                    </div>
+                    <h1 className="text-4xl font-black tracking-tight text-slate-900">{team?.name}</h1>
+                    <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
+                       {team?.description || "A dedicated workspace for high-performance tax and compliance collaboration."}
+                    </p>
+                  </div>
+                  <div className="flex gap-4">
+                     {team?.userRole === "admin" && (
+                        <>
+                           <Button 
+                              onClick={() => setIsInviteDialogOpen(true)}
+                              className="h-16 px-10 rounded-3xl bg-slate-50 text-slate-900 hover:bg-slate-100 font-black text-xs uppercase tracking-widest border border-slate-100 transition-all shadow-sm"
+                           >
+                              <UserPlus className="h-5 w-5 mr-3" />
+                              Invite Member
+                           </Button>
+                           <Button 
+                              onClick={() => setIsTaskDialogOpen(true)}
+                              className="h-16 px-10 rounded-3xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100 transition-all hover:-translate-y-1"
+                           >
+                              <Plus className="h-5 w-5 mr-3" />
+                              New Task
+                           </Button>
+                        </>
+                     )}
+                  </div>
+                </div>
+
+                <Tabs defaultValue="overview" className="space-y-10">
+                   <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50">
+                     <TabsTrigger value="overview" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Strategic Overview</TabsTrigger>
+                     <TabsTrigger value="tasks" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Operational Tasks</TabsTrigger>
+                     <TabsTrigger value="members" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Unit Members</TabsTrigger>
+                     <TabsTrigger value="activity" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Audit Trail</TabsTrigger>
+                   </TabsList>
+
+                   <TabsContent value="overview" className="space-y-10 outline-none">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                         {[
+                           { label: "Tasks Cleared", value: "12", icon: CheckSquare, color: "emerald", trend: "+12%" },
+                           { label: "Pending Reviews", value: "05", icon: Clock, color: "amber", trend: "-2%" },
+                           { label: "Unit Activity", value: "High", icon: Activity, color: "indigo", trend: "Steady" }
+                         ].map((s, i) => (
+                           <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-8">
+                              <div className="flex items-center justify-between mb-6">
+                                 <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center", `bg-${s.color}-50 text-${s.color}-600`)}>
+                                    <s.icon className="h-7 w-7" />
+                                 </div>
+                                 <Badge className={cn("border-none font-black text-[8px] uppercase px-2 py-0.5 rounded-full", s.trend.startsWith('+') ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600")}>
+                                    {s.trend}
+                                 </Badge>
+                              </div>
+                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
+                              <p className="text-3xl font-black text-slate-900 tracking-tight">{s.value}</p>
+                           </Card>
+                         ))}
+                      </div>
+
+                      <Card className="border-none shadow-sm rounded-[48px] overflow-hidden bg-white border border-slate-100/50 p-12">
+                         <CardHeader className="px-0 pt-0 pb-10">
+                           <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Unit Metadata</CardTitle>
+                           <CardDescription className="text-base font-medium text-slate-500">Core operational parameters for this team.</CardDescription>
+                         </CardHeader>
+                         <CardContent className="px-0">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+                               <div>
+                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Domain</p>
+                                 <p className="text-lg font-black text-slate-900 leading-none capitalize">{team?.type.replace("_", " ")}</p>
+                               </div>
+                               <div>
+                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Force Strength</p>
+                                 <p className="text-lg font-black text-slate-900 leading-none">{team?.memberCount} Experts</p>
+                               </div>
+                               <div>
+                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Operational Queue</p>
+                                 <p className="text-lg font-black text-slate-900 leading-none">{team?.stats.activeTasks} Assignments</p>
+                               </div>
+                               <div>
+                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Ledger Entries</p>
+                                 <p className="text-lg font-black text-slate-900 leading-none">{team?.stats.totalNotes} Records</p>
+                               </div>
+                            </div>
+                         </CardContent>
+                      </Card>
+                   </TabsContent>
+
+                   <TabsContent value="tasks" className="outline-none">
+                      <Card className="border-none shadow-sm rounded-[48px] overflow-hidden bg-white border border-slate-100/50">
+                        <CardHeader className="p-12 border-b border-slate-50">
+                          <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Assignment Queue</CardTitle>
+                          <CardDescription className="text-base font-medium text-slate-500">Track and coordinate operational targets.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                          {tasks.length === 0 ? (
+                            <div className="py-32 text-center bg-slate-50/20">
+                               <CheckSquare className="h-16 w-16 text-slate-100 mx-auto mb-6" />
+                               <p className="text-base font-black text-slate-400 uppercase tracking-widest">No active assignments</p>
+                            </div>
+                          ) : (
+                            <div className="divide-y divide-slate-50">
+                              {tasks.map((task: Task) => (
+                                <div key={task.id} className="p-10 flex items-center justify-between hover:bg-blue-50/20 transition-colors group">
+                                  <div className="flex items-start gap-6">
+                                    <div className="h-14 w-14 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+                                      <CheckSquare className="h-7 w-7" />
+                                    </div>
+                                    <div>
+                                      <h4 className="text-lg font-black text-slate-900 leading-none mb-3">{task.title}</h4>
+                                      <div className="flex items-center gap-6">
+                                         <Badge className={cn("border-none font-black text-[8px] uppercase px-3 py-1 rounded-full", `bg-${priorityColors[task.priority]}-50 text-${priorityColors[task.priority]}-600`)}>
+                                            {task.priority} Priority
+                                         </Badge>
+                                         {task.dueDate && (
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                              <Calendar className="h-3 w-3" />
+                                              Due {format(new Date(task.dueDate), "MMM dd")}
+                                            </span>
+                                         )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black text-[10px] uppercase tracking-widest">
+                                    {task.status}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                   </TabsContent>
+
+                   <TabsContent value="members" className="outline-none">
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                         {team?.members.map((member: TeamMember) => {
                           const RoleIcon = roleIcons[member.role] || Users;
                           
                           return (
-                            <div key={member.userId} className="flex items-center justify-between p-4 border rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <Avatar>
-                                  <AvatarImage src={member.user.avatar} />
-                                  <AvatarFallback>{member.user.name[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <h4 className="font-medium">{member.user.name}</h4>
-                                  <p className="text-sm text-gray-500">{member.user.email}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="gap-1">
-                                  <RoleIcon className="h-3 w-3" />
-                                  {member.role}
-                                </Badge>
-                                {team.userRole === "admin" && member.userId !== 1 && (
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
+                            <Card key={member.userId} className="border-none shadow-sm rounded-[40px] bg-white p-8 group hover:shadow-xl transition-all border border-slate-100/50">
+                               <div className="flex items-center justify-between mb-8">
+                                  <Avatar className="h-16 w-16 rounded-[24px] border-4 border-slate-50">
+                                    <AvatarImage src={member.user.avatar} />
+                                    <AvatarFallback className="font-black text-xl bg-indigo-50 text-indigo-600">{member.user.name[0]}</AvatarFallback>
+                                  </Avatar>
+                                  <div className="h-12 w-12 rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                     <RoleIcon className="h-6 w-6" />
+                                  </div>
+                               </div>
+                               <div>
+                                  <h4 className="text-xl font-black text-slate-900 leading-none mb-2">{member.user.name}</h4>
+                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">{member.user.email}</p>
+                                  <Badge variant="outline" className="h-8 px-4 rounded-xl border-slate-100 font-black text-[9px] uppercase tracking-widest group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                                    {member.role} Status
+                                  </Badge>
+                               </div>
+                            </Card>
                           );
                         })}
                       </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+                   </TabsContent>
 
-                <TabsContent value="activity">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Activity</CardTitle>
-                      <CardDescription>Track team actions and updates</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {activities.map((activity: any) => (
-                          <div key={activity.id} className="flex items-start gap-3">
-                            <div className="bg-gray-100 p-2 rounded-full">
-                              <Activity className="h-4 w-4 text-gray-600" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm">
-                                <span className="font-medium">{activity.userName}</span> {activity.action}
-                                {activity.target && <span className="font-medium"> "{activity.target}"</span>}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {new Date(activity.timestamp).toLocaleString()}
-                              </p>
-                            </div>
+                   <TabsContent value="activity" className="outline-none">
+                      <Card className="border-none shadow-sm rounded-[48px] overflow-hidden bg-white border border-slate-100/50 p-12">
+                        <CardHeader className="px-0 pt-0 pb-10">
+                          <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Operational Log</CardTitle>
+                          <CardDescription className="text-base font-medium text-slate-500">Verifiable history of unit interactions.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="px-0">
+                          <div className="space-y-8 relative before:absolute before:left-7 before:top-2 before:bottom-2 before:w-px before:bg-slate-50">
+                            {activities.map((activity: any) => (
+                              <div key={activity.id} className="flex items-start gap-8 relative z-10">
+                                <div className="h-14 w-14 bg-white border-4 border-slate-50 rounded-2xl flex items-center justify-center shadow-sm">
+                                  <Activity className="h-6 w-6 text-slate-400" />
+                                </div>
+                                <div className="flex-1 pt-1">
+                                  <p className="text-lg leading-none mb-2">
+                                    <span className="font-black text-slate-900">{activity.userName}</span> 
+                                    <span className="text-slate-500 font-medium mx-2">{activity.action}</span>
+                                    {activity.target && <span className="font-black text-indigo-600"> "{activity.target}"</span>}
+                                  </p>
+                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    {format(new Date(activity.timestamp), "MMM dd, yyyy • hh:mm a")}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            )}
-          </div>
+                        </CardContent>
+                      </Card>
+                   </TabsContent>
+                </Tabs>
+             </div>
+          )}
         </div>
       </div>
 
@@ -677,6 +677,6 @@ export default function TeamsPage() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </Layout>
   );
 }

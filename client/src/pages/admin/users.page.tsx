@@ -14,11 +14,12 @@ import { toast } from "@/hooks/use-toast";
 import { 
   Users, Search, Filter, MoreVertical, Check, X, Clock, 
   UserCheck, UserX, Shield, Eye, Ban, UserPlus, Edit,
-  Mail, Phone, Calendar, MapPin, Trash2
+  Mail, Phone, Calendar, MapPin, Trash2, Zap, ArrowUpRight, ArrowRight
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
+import { Layout } from "@/components/admin/Layout";
 
 const formatDate = (date: any, includeTime: boolean = false) => {
   if (!date) return "N/A";
@@ -51,11 +52,6 @@ interface User {
   updatedAt: string;
 }
 
-interface UserActionProps {
-  user: User;
-  action: "approve" | "reject" | "suspend";
-}
-
 export default function UsersManagementPage() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,13 +62,6 @@ export default function UsersManagementPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   
   const queryClient = useQueryClient();
-
-  // Redirect if not admin
-  useEffect(() => {
-    if (!authLoading && (!currentUser || currentUser.role !== 'admin')) {
-      window.location.href = '/auth/login';
-    }
-  }, [currentUser, authLoading]);
 
   // Fetch all users
   const { data: response, isLoading, error } = useQuery<{
@@ -131,8 +120,6 @@ export default function UsersManagementPage() {
   // Get list of CAs for assignment dropdown
   const caUsers = users.filter((u: User) => u.role === 'ca');
 
-
-  // Filter users based on search and filters
   const filteredUsers = users.filter((user: User) => {
     const matchesSearch = 
       user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,28 +132,6 @@ export default function UsersManagementPage() {
     return matchesSearch && matchesStatus && matchesRole;
   });
 
-  // Get status badge color
-  const getStatusBadge = (status: string) => {
-    const colors = {
-      active: "bg-green-100 text-green-800 border-green-200",
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-200", 
-      suspended: "bg-red-100 text-red-800 border-red-200",
-      rejected: "bg-gray-100 text-gray-800 border-gray-200"
-    };
-    return colors[status as keyof typeof colors] || colors.pending;
-  };
-
-  // Get role badge color
-  const getRoleBadge = (role: string) => {
-    const colors = {
-      admin: "bg-red-100 text-red-800 border-red-200",
-      team_member: "bg-blue-100 text-blue-800 border-blue-200",
-      ca: "bg-emerald-100 text-emerald-800 border-emerald-200",
-      user: "bg-gray-100 text-gray-800 border-gray-200"
-    };
-    return colors[role as keyof typeof colors] || colors.user;
-  };
-
   const getRoleLabel = (role: string) => {
     const labels: Record<string, string> = {
       admin: 'Admin',
@@ -177,302 +142,256 @@ export default function UsersManagementPage() {
     return labels[role] || role;
   };
 
-  // Count users by status and role
   const userCounts = {
     total: response?.data?.pagination?.total || 0,
-    active: users.filter((u: User) => u.status === 'active').length, // This is still limited to the current page in the simple counts, but usually stats come from a separate endpoint or full fetch. For now, let's keep it simple or use the total if available.
+    active: users.filter((u: User) => u.status === 'active').length,
     pending: users.filter((u: User) => u.status === 'pending').length,
-    suspended: users.filter((u: User) => u.status === 'suspended').length,
-    admin: users.filter((u: User) => u.role === 'admin').length,
-    team_member: users.filter((u: User) => u.role === 'team_member').length,
     ca: users.filter((u: User) => u.role === 'ca').length,
-    user: users.filter((u: User) => u.role === 'user').length,
   };
 
   if (authLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-        <div className="ml-4 text-gray-600">Loading users...</div>
-      </div>
-    );
-  }
-
-  if (!currentUser || currentUser.role !== 'admin') {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Access Denied</h2>
-          <p className="text-gray-600">You need admin privileges to access this page.</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
+          <p className="mt-4 text-slate-500 font-medium">Synchronizing User Directory...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <Layout>
+      <div className="space-y-8 pb-12">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-            <p className="text-gray-600 mt-1">Manage user accounts, roles, and permissions</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+             <div className="flex items-center gap-2 text-blue-600 font-bold text-[10px] uppercase tracking-[0.2em]">
+                <Zap className="w-3 h-3 fill-current" />
+                Access Control
+             </div>
+             <h1 className="text-3xl font-bold tracking-tight text-slate-900">User Management</h1>
+             <p className="text-slate-500 max-w-2xl text-sm font-medium">
+               Manage identities, provision roles, and oversee platform permissions.
+             </p>
           </div>
-          <Button>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add User
-          </Button>
+          <div className="flex items-center gap-3">
+             <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-widest shadow-sm">
+               <UserPlus className="h-4 w-4 mr-2" />
+               New Account
+             </Button>
+          </div>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-2xl font-bold text-gray-900">{userCounts.total}</p>
-                </div>
-                <Users className="h-8 w-8 text-blue-600" />
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                <Users className="h-5 w-5" />
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Active Users</p>
-                  <p className="text-2xl font-bold text-green-600">{userCounts.active}</p>
-                </div>
-                <UserCheck className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+            </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Identities</p>
+            <p className="text-2xl font-bold text-slate-900">{userCounts.total}</p>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-yellow-600">{userCounts.pending}</p>
-                </div>
-                <Clock className="h-8 w-8 text-yellow-600" />
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                <UserCheck className="h-5 w-5" />
               </div>
-            </CardContent>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-500" />
+            </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Profiles</p>
+            <p className="text-2xl font-bold text-slate-900">{userCounts.active}</p>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">CA Experts</p>
-                  <p className="text-2xl font-bold text-blue-600">{userCounts.ca}</p>
-                </div>
-                <Shield className="h-8 w-8 text-blue-600" />
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+                <Clock className="h-5 w-5" />
               </div>
-            </CardContent>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-amber-500" />
+            </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Approval</p>
+            <p className="text-2xl font-bold text-slate-900">{userCounts.pending}</p>
+          </Card>
+
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+                <Shield className="h-5 w-5" />
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500" />
+            </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Expert Network</p>
+            <p className="text-2xl font-bold text-slate-900">{userCounts.ca}</p>
           </Card>
         </div>
 
-        {/* Filters and Search */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search users by name or email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+        {/* Action Bar & Table */}
+        <div className="space-y-6">
+           <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                 <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-900">User Directory</h2>
               </div>
-              
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full lg:w-48">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex flex-wrap items-center gap-2">
+                 <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
+                    <Input 
+                      placeholder="Search users..." 
+                      className="h-9 w-60 rounded-xl bg-white border-slate-100 pl-9 text-xs font-medium shadow-sm"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                 </div>
+                 
+                 <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="h-9 w-32 rounded-xl bg-white border-slate-100 text-[10px] font-bold uppercase tracking-widest">
+                       <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+                       <SelectItem value="all">All Status</SelectItem>
+                       <SelectItem value="active">Active</SelectItem>
+                       <SelectItem value="pending">Pending</SelectItem>
+                       <SelectItem value="suspended">Suspended</SelectItem>
+                    </SelectContent>
+                 </Select>
 
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-full lg:w-48">
-                  <SelectValue placeholder="Filter by role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="team_member">Team Member</SelectItem>
-                  <SelectItem value="ca">CA Expert</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+                 <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger className="h-9 w-32 rounded-xl bg-white border-slate-100 text-[10px] font-bold uppercase tracking-widest">
+                       <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+                       <SelectItem value="all">All Roles</SelectItem>
+                       <SelectItem value="admin">Admin</SelectItem>
+                       <SelectItem value="team_member">Team</SelectItem>
+                       <SelectItem value="ca">Expert</SelectItem>
+                       <SelectItem value="user">User</SelectItem>
+                    </SelectContent>
+                 </Select>
+              </div>
+           </div>
 
-        {/* Users Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Users ({filteredUsers.length})</CardTitle>
-            <CardDescription>
-              Manage user accounts and their access permissions
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Joined</TableHead>
-                    <TableHead>Last Updated</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.map((user: User) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium text-blue-600">
-                              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              {user.firstName} {user.lastName}
-                            </p>
-                            <p className="text-sm text-gray-500">{user.email}</p>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getRoleBadge(user.role)}>
-                          {getRoleLabel(user.role)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusBadge(user.status)}>
-                          {user.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {formatDate(user.createdAt)}
-                      </TableCell>
-                      <TableCell>
-                        {formatDate(user.updatedAt, true)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Select
-                            defaultValue={user.role}
-                            onValueChange={(newRole) => {
-                              updateRoleMutation.mutate({ userId: user.id, role: newRole });
-                            }}
-                            disabled={updateRoleMutation.isPending}
-                          >
-                            <SelectTrigger className="w-[110px] h-8 text-xs">
-                              <SelectValue placeholder="Role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="user">User</SelectItem>
-                              <SelectItem value="team_member">Team Member</SelectItem>
-                              <SelectItem value="ca">CA Expert</SelectItem>
-                              <SelectItem value="admin">Admin</SelectItem>
-                            </SelectContent>
-                          </Select>
+           <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+             <CardContent className="p-0">
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left border-collapse">
+                   <thead>
+                     <tr className="border-b border-slate-50">
+                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Identity Profile</th>
+                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Access Role</th>
+                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Lifecycle</th>
+                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Provisions</th>
+                     </tr>
+                   </thead>
+                   <tbody className="divide-y divide-slate-50">
+                     {filteredUsers.map((user: User) => (
+                       <tr key={user.id} className="group hover:bg-slate-50/50 transition-colors">
+                         <td className="px-8 py-5">
+                           <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                 {user.firstName?.[0]}{user.lastName?.[0]}
+                              </div>
+                              <div>
+                                 <p className="text-sm font-bold text-slate-900 leading-tight mb-0.5">{user.firstName} {user.lastName}</p>
+                                 <p className="text-[10px] font-medium text-slate-400 truncate max-w-[200px]">{user.email}</p>
+                              </div>
+                           </div>
+                         </td>
+                         <td className="px-8 py-5">
+                            <Badge className={cn(
+                              "rounded-full px-2.5 py-1 text-[9px] font-bold border-none shadow-sm",
+                              user.role === 'admin' ? "bg-red-50 text-red-600" :
+                              user.role === 'ca' ? "bg-emerald-50 text-emerald-600" :
+                              user.role === 'team_member' ? "bg-blue-50 text-blue-600" :
+                              "bg-slate-100 text-slate-500"
+                            )}>
+                              {getRoleLabel(user.role).toUpperCase()}
+                            </Badge>
+                         </td>
+                         <td className="px-8 py-5">
+                            <Badge className={cn(
+                              "rounded-full px-2.5 py-1 text-[9px] font-bold border-none",
+                              user.status === 'active' ? "bg-emerald-50 text-emerald-600" :
+                              user.status === 'pending' ? "bg-amber-50 text-amber-600" :
+                              "bg-red-50 text-red-600"
+                            )}>
+                              {user.status.toUpperCase()}
+                            </Badge>
+                         </td>
+                         <td className="px-8 py-5">
+                            <div>
+                               <p className="text-[11px] font-bold text-slate-900">{formatDate(user.createdAt)}</p>
+                               <p className="text-[9px] font-medium text-slate-400 uppercase tracking-tight">Joined Date</p>
+                            </div>
+                         </td>
+                         <td className="px-8 py-5 text-right">
+                           <div className="flex items-center justify-end gap-2">
+                             <Select
+                               defaultValue={user.role}
+                               onValueChange={(newRole) => {
+                                 updateRoleMutation.mutate({ userId: user.id, role: newRole });
+                               }}
+                             >
+                               <SelectTrigger className="w-[100px] h-8 text-[9px] font-bold uppercase tracking-widest rounded-lg border-slate-100">
+                                 <SelectValue placeholder="Role" />
+                               </SelectTrigger>
+                               <SelectContent className="rounded-lg shadow-xl border-slate-100">
+                                 <SelectItem value="user">User</SelectItem>
+                                 <SelectItem value="team_member">Team</SelectItem>
+                                 <SelectItem value="ca">Expert</SelectItem>
+                                 <SelectItem value="admin">Admin</SelectItem>
+                               </SelectContent>
+                             </Select>
 
-                          {user.role === 'user' && (
-                            <Select
-                              defaultValue={(user as any).assignedCaId || 'none'}
-                              onValueChange={(caId) => {
-                                assignCaMutation.mutate({ 
-                                  userId: user.id, 
-                                  caId: caId === 'none' ? null : caId 
-                                });
-                              }}
-                              disabled={assignCaMutation.isPending}
-                            >
-                              <SelectTrigger className="w-[120px] h-8 text-xs">
-                                <SelectValue placeholder="Assign CA" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">No CA</SelectItem>
-                                {caUsers.map((ca: User) => (
-                                  <SelectItem key={ca.id} value={ca.id}>
-                                    {ca.firstName} {ca.lastName}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
+                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50">
+                               <Eye className="h-4 w-4" />
+                             </Button>
+                           </div>
+                         </td>
+                       </tr>
+                     ))}
+                   </tbody>
+                 </table>
+                 
+                 {filteredUsers.length === 0 && (
+                   <div className="py-24 text-center">
+                     <Users className="h-12 w-12 text-slate-200 mx-auto mb-4" />
+                     <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No users found</p>
+                   </div>
+                 )}
+               </div>
 
-                          <Button 
-                            size="sm" 
-                            variant="ghost"
-                            onClick={() => setSelectedUser(user)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              
-              {filteredUsers.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No users found matching your criteria.
-                </div>
-              )}
-
-              {/* Pagination Controls */}
-              {response?.data?.pagination && response.data.pagination.pages > 1 && (
-                <div className="flex items-center justify-between mt-6 px-2">
-                  <p className="text-sm text-gray-600">
-                    Showing {Math.min((page - 1) * limit + 1, userCounts.total)} to {Math.min(page * limit, userCounts.total)} of {userCounts.total} users
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                    >
-                      Previous
-                    </Button>
-                    <div className="flex items-center px-4 text-sm font-medium">
-                      Page {page} of {response.data.pagination.pages}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage(p => Math.min(response.data.pagination.pages, p + 1))}
-                      disabled={page === response.data.pagination.pages}
-                    >
-                      Next
-                    </Button>
+               <div className="p-6 bg-slate-50/50 flex items-center justify-between">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Platform Pool: {userCounts.total}</p>
+                  <div className="flex items-center gap-2">
+                     <Button 
+                       variant="ghost" 
+                       className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900"
+                       onClick={() => setPage(p => Math.max(1, p - 1))}
+                       disabled={page === 1}
+                     >
+                        Previous
+                     </Button>
+                     <Button 
+                       className="h-8 px-5 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50"
+                       onClick={() => setPage(p => p + 1)}
+                       disabled={!response?.data?.pagination || page >= response.data.pagination.pages}
+                     >
+                        Next Page
+                     </Button>
                   </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+               </div>
+             </CardContent>
+           </Card>
+        </div>
       </div>
-    </div>
+    </Layout>
+  );
+}
   );
 }

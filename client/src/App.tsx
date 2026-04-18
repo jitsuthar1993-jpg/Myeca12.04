@@ -63,7 +63,31 @@ function ScrollToTop() {
 
 function Router() {
   const currentPath = window.location.pathname;
-  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !currentPath.startsWith('/admin');
+  
+  // Define paths that should NOT show the global site header and footer
+  // These are typically dashboard, admin, and account-related pages
+  const dashboardPaths = [
+    '/admin',
+    '/dashboard',
+    '/user',
+    '/team',
+    '/ca',
+    '/profile',
+    '/settings',
+    '/documents',
+    '/reports',
+    '/workflows',
+    '/teams',
+    '/referrals',
+    '/experts',
+    '/export'
+  ];
+
+  const isDashboardPath = dashboardPaths.some(path => 
+    currentPath === path || currentPath.startsWith(`${path}/`)
+  );
+
+  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath;
 
   useRoutePreload();
 

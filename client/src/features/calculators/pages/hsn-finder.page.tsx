@@ -244,6 +244,5 @@ export default function HSNFinderPage() {
         </div>
       </section>
     </div>
-    </>
   );
 }

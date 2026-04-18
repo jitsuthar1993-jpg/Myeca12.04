@@ -870,20 +870,11 @@ export default function Header() {
                         </DropdownMenuItem>
                         
                         <DropdownMenuItem className="p-3 rounded-xl cursor-pointer group" asChild>
-                          <Link href="/profile" className="flex items-center gap-3 w-full">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
-                              <User className="w-4 h-4" />
-                            </div>
-                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">My Profile</span>
-                          </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="p-3 rounded-xl cursor-pointer group" asChild>
                           <Link href="/settings" className="flex items-center gap-3 w-full">
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
                               <Settings className="w-4 h-4" />
                             </div>
-                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Settings</span>
+                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Account Settings</span>
                           </Link>
                         </DropdownMenuItem>
 

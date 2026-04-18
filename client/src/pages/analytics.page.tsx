@@ -6,9 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, Coins, Target, FileText, Download, Calendar, Users } from "lucide-react";
+import { BarChart3, TrendingUp, Coins, Target, FileText, Download, Calendar, Users, Filter, ChevronRight, Activity } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { Layout } from "@/components/admin/Layout";
 import TaxSummaryDashboard from "@/features/itr/components/TaxSummaryDashboard";
+import SEO from "@/components/SEO";
+import { cn } from "@/lib/utils";
+import { m } from "framer-motion";
 
 interface Profile {
   id: number;
@@ -125,270 +129,228 @@ export default function AnalyticsPage() {
     const maxDeductions = 150000; // Section 80C limit
     const utilizationRate = (analytics.totalDeductions / maxDeductions) * 100;
     
-    if (utilizationRate >= 80) return { score: 90, label: 'Excellent', color: 'text-green-600' };
-    if (utilizationRate >= 60) return { score: 70, label: 'Good', color: 'text-blue-600' };
-    if (utilizationRate >= 40) return { score: 50, label: 'Average', color: 'text-yellow-600' };
-    return { score: 30, label: 'Needs Improvement', color: 'text-red-600' };
+    if (utilizationRate >= 80) return { score: 90, label: 'Excellent', color: 'emerald' };
+    if (utilizationRate >= 60) return { score: 70, label: 'Good', color: 'blue' };
+    if (utilizationRate >= 40) return { score: 50, label: 'Average', color: 'amber' };
+    return { score: 30, label: 'Needs Improvement', color: 'red' };
   };
 
   const optimizationScore = getTaxOptimizationScore();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tax Analytics Dashboard</h1>
-          <p className="text-gray-600">Comprehensive insights into your tax filing and optimization opportunities</p>
-        </div>
+    <Layout>
+      <SEO
+        title="Tax Analytics | MyeCA.in"
+        description="Comprehensive insights into your tax filing and optimization opportunities"
+      />
 
-        {/* Filters */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Assessment Year</label>
-                <Select value={selectedYear} onValueChange={setSelectedYear}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {years.map(year => (
-                      <SelectItem key={year} value={year}>
-                        {year === 'all' ? 'All Years' : `AY ${year}`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Profile</label>
-                <Select value={selectedProfile} onValueChange={setSelectedProfile}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select profile" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Profiles</SelectItem>
-                    {profiles.map((profile: any) => (
-                      <SelectItem key={profile.id} value={profile.id.toString()}>
-                        {profile.firstName} {profile.lastName} ({profile.relation})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-end">
-                <Button className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Report
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Income</p>
-                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(analytics.totalIncome)}</p>
-                  <p className="text-xs text-green-600 mt-1">+12% from last year</p>
-                </div>
-                <Coins className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Tax Liability</p>
-                  <p className="text-2xl font-bold text-red-600">{formatCurrency(analytics.totalTax)}</p>
-                  <p className="text-xs text-red-600 mt-1">
-                    {((analytics.totalTax / analytics.totalIncome) * 100).toFixed(1)}% of income
-                  </p>
-                </div>
-                <Target className="h-8 w-8 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Deductions</p>
-                  <p className="text-2xl font-bold text-green-600">{formatCurrency(analytics.totalDeductions)}</p>
-                  <p className="text-xs text-green-600 mt-1">
-                    {analytics.taxEfficiency.toFixed(1)}% efficiency
-                  </p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Filed Returns</p>
-                  <p className="text-2xl font-bold text-blue-600">{analytics.filedReturns}</p>
-                  <p className="text-xs text-gray-600 mt-1">{analytics.draftReturns} drafts pending</p>
-                </div>
-                <FileText className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tax Optimization Score */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <BarChart3 className="h-5 w-5 mr-2" />
-              Tax Optimization Score
-            </CardTitle>
-            <CardDescription>Based on your deduction utilization and tax planning strategies</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center">
-              <div className={`text-6xl font-bold ${optimizationScore.color} mb-2`}>
-                {optimizationScore.score}
-              </div>
-              <div className="text-lg font-semibold text-gray-700">{optimizationScore.label}</div>
-              <Progress value={optimizationScore.score} className="mt-4 h-3" />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-900">
-                  {((analytics.totalDeductions / 150000) * 100).toFixed(0)}%
-                </div>
-                <div className="text-sm text-blue-600">Deduction Utilization</div>
-              </div>
-              
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-900">
-                  {formatCurrency(analytics.totalDeductions * 0.3)}
-                </div>
-                <div className="text-sm text-green-600">Tax Saved</div>
-              </div>
-              
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-900">
-                  {formatCurrency((150000 - analytics.totalDeductions) * 0.3)}
-                </div>
-                <div className="text-sm text-purple-600">Potential Savings</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Filing History */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Calendar className="h-5 w-5 mr-2" />
-              Filing History
-            </CardTitle>
-            <CardDescription>Your tax return filing activity over time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {filteredReturns.length === 0 ? (
-              <div className="text-center py-8">
-                <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No tax returns found</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Start filing your tax returns to see analytics here.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredReturns.map((return_: any) => (
-                  <div key={return_.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <FileText className="h-5 w-5 text-blue-600" />
+      <div className="flex flex-col lg:flex-row gap-12 items-start h-[calc(100vh-200px)] lg:h-[calc(100vh-240px)] overflow-hidden bg-slate-50/50 rounded-[48px] p-2">
+        {/* Fixed Left Summary Section */}
+        <div className="lg:w-96 h-full overflow-y-auto pr-2 shrink-0 w-full scrollbar-none pb-10 space-y-6">
+          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
+             <div className="h-28 bg-gradient-to-br from-blue-500 to-indigo-600 relative">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+             </div>
+             <CardContent className="relative px-6 pb-8">
+                <div className="flex flex-col items-center -mt-14">
+                   <div className="w-28 h-28 rounded-[40px] bg-white p-2 shadow-2xl">
+                      <div className="w-full h-full rounded-[32px] bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-4xl font-black text-blue-600 border border-blue-100">
+                         <BarChart3 className="h-10 w-10" />
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {return_.itrType} - {return_.assessmentYear}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Created {new Date(return_.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Badge variant={return_.status === 'filed' ? 'default' : 'secondary'}>
-                        {return_.status}
+                   </div>
+                   <div className="mt-5 text-center">
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Analytics Hub</h2>
+                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                         {optimizationScore.label} Efficiency
                       </Badge>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
+                   </div>
+                </div>
+
+                <div className="mt-10 space-y-4">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Context</p>
+                   <div className="p-6 rounded-[32px] bg-slate-50 border border-slate-100/50 space-y-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Assessment Year</label>
+                        <Select value={selectedYear} onValueChange={setSelectedYear}>
+                          <SelectTrigger className="rounded-2xl border-none shadow-sm bg-white font-black text-xs h-12">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-none shadow-2xl">
+                            {years.map(year => (
+                              <SelectItem key={year} value={year} className="rounded-xl font-bold">
+                                {year === 'all' ? 'All Years' : `AY ${year}`}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Target Profile</label>
+                        <Select value={selectedProfile} onValueChange={setSelectedProfile}>
+                          <SelectTrigger className="rounded-2xl border-none shadow-sm bg-white font-black text-xs h-12">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-none shadow-2xl">
+                            <SelectItem value="all" className="rounded-xl font-bold">All Profiles</SelectItem>
+                            {profiles.map((profile: any) => (
+                              <SelectItem key={profile.id} value={profile.id.toString()} className="rounded-xl font-bold">
+                                {profile.firstName} {profile.lastName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="mt-8 space-y-4">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Health Score</p>
+                    <div className="p-6 rounded-[32px] bg-slate-50 border border-slate-100/50">
+                        <div className="flex items-center justify-between mb-4">
+                            <span className="text-3xl font-black text-slate-900 tracking-tight">{optimizationScore.score}</span>
+                            <Badge className={cn("border-none font-black text-[9px] uppercase px-2 py-0.5 rounded-full", `bg-${optimizationScore.color}-50 text-${optimizationScore.color}-600`)}>
+                                {optimizationScore.label}
+                            </Badge>
+                        </div>
+                        <Progress value={optimizationScore.score} className="h-2 bg-slate-200" indicatorClassName={cn(`bg-${optimizationScore.color}-600`)} />
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-3 leading-relaxed">
+                            Based on your deduction utilization vs the maximum allowable ₹1.5L cap.
+                        </p>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                </div>
+             </CardContent>
+          </Card>
 
-        {/* Enhanced Tax Summary */}
-        {filteredReturns.length > 0 && (
-          <TaxSummaryDashboard formData={filteredReturns[0]?.formData || {}} />
-        )}
+          <Button 
+             className="w-full h-16 rounded-[32px] bg-white border border-slate-100 text-slate-900 hover:bg-slate-50 font-black text-xs uppercase tracking-widest shadow-sm transition-all hover:-translate-y-1"
+          >
+             <Download className="h-5 w-5 mr-3 text-blue-600" />
+             Export Tax Report
+          </Button>
+        </div>
 
-        {/* Action Items */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recommended Actions</CardTitle>
-            <CardDescription>Steps to optimize your tax planning for next year</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Investment Planning</h4>
-                <p className="text-sm text-gray-600 mb-3">
-                  Maximize your Section 80C investments before the financial year ends.
-                </p>
-                <Button size="sm" variant="outline">Learn More</Button>
+        {/* Main Content Area - Independently Scrollable */}
+        <div className="flex-1 min-w-0 w-full lg:max-w-7xl h-full overflow-y-auto pr-4 pb-20 scroll-smooth custom-scrollbar space-y-10">
+          {/* Page Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 mb-2">
+                 <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Statistical Analysis</span>
               </div>
-              
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Health Insurance</h4>
-                <p className="text-sm text-gray-600 mb-3">
-                  Consider increasing health insurance coverage for additional Section 80D benefits.
-                </p>
-                <Button size="sm" variant="outline">Explore Options</Button>
-              </div>
-              
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">House Property</h4>
-                <p className="text-sm text-gray-600 mb-3">
-                  Review home loan interest deductions and rental income declarations.
-                </p>
-                <Button size="sm" variant="outline">Review Setup</Button>
-              </div>
-              
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Business Expenses</h4>
-                <p className="text-sm text-gray-600 mb-3">
-                  Ensure all legitimate business expenses are properly documented and claimed.
-                </p>
-                <Button size="sm" variant="outline">Expense Tracker</Button>
-              </div>
+              <h1 className="text-4xl font-black tracking-tight text-slate-900">Tax Analytics</h1>
+              <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
+                Comprehensive visualization of your income distribution, tax liability, and optimization yields.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex gap-4">
+               <div className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Tax Saved</p>
+                    <p className="text-sm font-black text-slate-900 leading-none">{formatCurrency(analytics.totalDeductions * 0.3)}</p>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          {/* Key Metrics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { label: "Total Income", value: formatCurrency(analytics.totalIncome), icon: Coins, color: "blue", trend: "+12%" },
+              { label: "Tax Liability", value: formatCurrency(analytics.totalTax), icon: Target, color: "red", trend: `${((analytics.totalTax / analytics.totalIncome) * 100).toFixed(1)}%` },
+              { label: "Total Deductions", value: formatCurrency(analytics.totalDeductions), icon: TrendingUp, color: "emerald", trend: `${analytics.taxEfficiency.toFixed(1)}% eff.` },
+              { label: "Returns Filed", value: analytics.filedReturns, icon: FileText, color: "indigo", trend: `${analytics.draftReturns} drafts` }
+            ].map((stat, i) => (
+              <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-8 group hover:shadow-xl transition-all">
+                <div className="flex items-center justify-between mb-6">
+                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-colors", `bg-${stat.color}-50 text-${stat.color}-600 group-hover:bg-${stat.color}-600 group-hover:text-white`)}>
+                    <stat.icon className="h-7 w-7" />
+                  </div>
+                  <Badge variant="outline" className="border-slate-100 font-black text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-full text-slate-400 group-hover:text-slate-600">
+                    {stat.trend}
+                  </Badge>
+                </div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-3xl font-black text-slate-900 tracking-tight">{stat.value}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* Tax Summary Dashboard */}
+          {filteredReturns.length > 0 ? (
+            <div className="space-y-10">
+               <TaxSummaryDashboard formData={filteredReturns[0]?.formData || {}} />
+               
+               {/* Filing History */}
+               <Card className="border-none shadow-sm rounded-[48px] overflow-hidden bg-white border border-slate-100/50">
+                  <CardHeader className="p-12 border-b border-slate-50">
+                     <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Filing Ledger</CardTitle>
+                     <CardDescription className="text-base font-medium text-slate-500">Historical audit of your tax return submissions.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                     <div className="divide-y divide-slate-50">
+                        {filteredReturns.map((return_) => (
+                           <div key={return_.id} className="p-10 flex items-center justify-between hover:bg-slate-50/50 transition-colors group">
+                              <div className="flex items-center gap-6">
+                                 <div className="h-16 w-16 rounded-[24px] bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-all">
+                                    <FileText className="h-7 w-7 text-slate-400 group-hover:text-blue-600" />
+                                 </div>
+                                 <div>
+                                    <h4 className="text-lg font-black text-slate-900 mb-1">{return_.itrType} — {return_.assessmentYear}</h4>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Submitted on {new Date(return_.createdAt).toLocaleDateString()}</p>
+                                 </div>
+                              </div>
+                              <div className="flex items-center gap-6">
+                                 <Badge className={cn("border-none font-black text-[10px] uppercase px-4 py-1.5 rounded-xl", return_.status === "filed" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
+                                    {return_.status}
+                                 </Badge>
+                                 <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-300 hover:text-blue-600 hover:bg-blue-50">
+                                    <ChevronRight className="h-5 w-5" />
+                                 </Button>
+                              </div>
+                           </div>
+                        ))}
+                     </div>
+                  </CardContent>
+               </Card>
+
+               {/* Recommended Actions */}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {[
+                    { title: "Investment Strategy", desc: "Maximize your Section 80C units before the current fiscal deadline.", icon: Activity },
+                    { title: "Health Coverage", desc: "Evaluate Section 80D limits for enhanced medical insurance premiums.", icon: Shield },
+                    { title: "Asset Planning", desc: "Audit home loan interest units for maximum capital preservation.", icon: Target },
+                    { title: "Expense Audit", desc: "Verify all deductible operational expenditures for compliance yield.", icon: BarChart3 }
+                  ].map((action, i) => (
+                    <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-10 flex items-start gap-6 hover:shadow-xl transition-all border border-slate-100/50">
+                       <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <action.icon className="h-7 w-7" />
+                       </div>
+                       <div>
+                          <h4 className="text-xl font-black text-slate-900 mb-2">{action.title}</h4>
+                          <p className="text-slate-500 font-medium mb-6 leading-relaxed">{action.desc}</p>
+                          <Button variant="link" className="p-0 h-auto font-black text-[10px] uppercase tracking-widest text-blue-600 hover:no-underline">Execute Strategy →</Button>
+                       </div>
+                    </Card>
+                  ))}
+               </div>
+            </div>
+          ) : (
+            <div className="py-40 text-center bg-white rounded-[48px] border border-slate-100 shadow-sm px-10">
+               <div className="h-32 w-32 rounded-[48px] bg-slate-50 flex items-center justify-center mx-auto mb-10 border border-slate-100">
+                  <Activity className="h-14 w-14 text-slate-200" />
+               </div>
+               <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-4">No Data in Context</h3>
+               <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Initiate your first tax return filing to begin generating statistical insights and optimization strategies.</p>
+               <Button className="rounded-2xl px-12 h-14 bg-blue-600 font-black text-xs uppercase tracking-widest">Start Filing</Button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Layout>
   );
-}
+}

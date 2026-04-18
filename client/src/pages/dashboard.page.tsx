@@ -19,7 +19,10 @@ import {
   Phone,
   MessageSquare,
   Bell,
-  Activity
+  Activity,
+  ArrowUpRight,
+  ShieldCheck,
+  Zap
 } from "lucide-react";
 import { Link } from "wouter";
 import QuickActions from "@/components/ui/quick-actions";
@@ -27,26 +30,24 @@ import { useAuth } from "@/components/AuthProvider";
 import { StatusChip } from "@/components/ui/status-chip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { Layout } from "@/components/admin/Layout";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const seo = getSEOConfig('/dashboard');
   const { user } = useAuth();
   const userId = user?.id;
   
-  // Fetch user services
   const { data: userServices = [], isLoading: servicesLoading } = useQuery<any[]>({
     queryKey: ['/api/user-services'],
     enabled: !!userId
   });
 
-  // Fetch notifications
   const { data: notificationsData } = useQuery<any[]>({
     queryKey: ['/api/notifications'],
     queryFn: async () => {
-      // Assuming apiRequest handles base URL
       const res = await fetch('/api/notifications', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
@@ -56,7 +57,6 @@ export default function DashboardPage() {
     enabled: !!userId
   });
 
-  // Fetch activity
   const { data: activityData } = useQuery<any[]>({
     queryKey: ['/api/user/activity'],
     queryFn: async () => {
@@ -69,7 +69,6 @@ export default function DashboardPage() {
     enabled: !!userId
   });
   
-  // Mock data for dashboard
   const profiles = [
     { id: 1, name: "Primary Profile", isActive: true, relation: "Self", pan: "" }
   ];
@@ -85,22 +84,8 @@ export default function DashboardPage() {
     { id: 2, name: "Bank Statement", category: "Banking", uploadDate: "2024-01-20" }
   ];
 
-  // StatusChip handles status colors centrally.
-
-  // StatusChip handles status icons centrally.
-  
-  const getServiceStatusText = (status: string) => {
-    switch (status) {
-      case 'pending': return 'Payment Pending';
-      case 'in_progress': return 'In Progress';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      default: return status;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout>
       <MetaSEO
         title={seo?.title}
         description={seo?.description}
@@ -108,161 +93,201 @@ export default function DashboardPage() {
         type={seo?.type}
         breadcrumbs={seo?.breadcrumbs}
       />
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600">
-                Welcome back, <span className="font-semibold text-blue-600">{user?.username || user?.email || 'User'}</span>!
-              </p>
+
+      <div className="space-y-8 pb-12">
+        {/* Welcome Header */}
+        <div className="flex flex-col gap-2">
+           <div className="flex items-center gap-2 text-blue-600 font-bold text-[10px] uppercase tracking-[0.2em]">
+              <Zap className="w-3 h-3 fill-current" />
+              Live Dashboard
+           </div>
+           <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+             Welcome back, {user?.username || 'Partner'}
+           </h1>
+           <p className="text-slate-500 max-w-2xl font-medium">
+             Your compliance status is currently <span className="text-emerald-600 font-bold">Optimal</span>. You have 2 pending documents for the 2024-25 Assessment Year.
+           </p>
+        </div>
+
+        {/* High-Level Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                <FileText className="h-5 w-5" />
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
             </div>
-            <div className="flex items-center space-x-4">
-               <Link href="/settings/account">
-                  <Button variant="ghost" size="icon" className="relative">
-                    <User className="h-5 w-5 text-gray-500" />
-                  </Button>
-               </Link>
-               <Button variant="ghost" size="icon" className="relative">
-                 <Bell className="h-5 w-5 text-gray-500" />
-                 {notificationsData?.filter((n: any) => !n.read).length > 0 && (
-                   <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                 )}
-               </Button>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tax Returns</p>
+            <p className="text-2xl font-bold text-slate-900">{taxReturns.length}</p>
+          </Card>
+
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                <Upload className="h-5 w-5" />
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FileText className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Tax Returns</p>
-                  <p className="text-2xl font-bold text-gray-900">{taxReturns.length}</p>
-                </div>
-              </div>
-            </CardContent>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Documents</p>
+            <p className="text-2xl font-bold text-slate-900">{documents.length}</p>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Upload className="h-6 w-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Documents</p>
-                  <p className="text-2xl font-bold text-gray-900">{documents.length}</p>
-                </div>
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+                <User className="h-5 w-5" />
               </div>
-            </CardContent>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+            </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Profiles</p>
+            <p className="text-2xl font-bold text-slate-900">{profiles.length}</p>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <User className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Profiles</p>
-                  <p className="text-2xl font-bold text-gray-900">{profiles.length}</p>
-                </div>
+          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+                <ShieldCheck className="h-5 w-5" />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-yellow-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">This Year</p>
-                  <p className="text-2xl font-bold text-gray-900">2024-25</p>
-                </div>
-              </div>
-            </CardContent>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-amber-500 transition-colors" />
+            </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Assessment Yr</p>
+            <p className="text-2xl font-bold text-slate-900">2024-25</p>
           </Card>
         </div>
 
-        {/* Enhanced Quick Actions */}
-        <div className="mb-8">
-          <QuickActions />
-        </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+           {/* Left/Middle Columns: Actions & Services */}
+           <div className="lg:col-span-2 space-y-8">
+              {/* Quick Actions Component Integrated */}
+              <div className="bg-slate-50 p-6 rounded-[32px] border border-slate-100">
+                <div className="flex items-center gap-2 mb-6">
+                   <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                   <h2 className="text-sm font-bold uppercase tracking-widest text-slate-900">Priority Operations</h2>
+                </div>
+                <QuickActions />
+              </div>
 
-        {/* Notifications & Activity Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-           {/* Notifications */}
-           <div className="lg:col-span-2">
-              <Card className="h-full">
-                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                       <Bell className="w-5 h-5 text-blue-600" />
-                       Recent Notifications
+              {/* Active Subscriptions/Services */}
+              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+                <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg font-bold">Managed Services</CardTitle>
+                    <CardDescription className="text-xs font-medium text-slate-500">Real-time status of your compliance engagements.</CardDescription>
+                  </div>
+                  <Link href="/services">
+                    <Button variant="ghost" className="text-blue-600 font-bold text-xs uppercase tracking-widest hover:bg-blue-50">
+                      Marketplace <ArrowRight className="ml-2 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {servicesLoading ? (
+                    <div className="p-8 space-y-4">
+                      {[1, 2].map((i) => <Skeleton key={i} className="h-20 w-full rounded-2xl" />)}
+                    </div>
+                  ) : userServices.length === 0 ? (
+                    <div className="p-12 text-center">
+                      <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                         <Box className="h-8 w-8 text-slate-300" />
+                      </div>
+                      <h3 className="text-sm font-bold text-slate-900">No active services</h3>
+                      <p className="text-xs text-slate-500 mt-1 max-w-[200px] mx-auto">Explore our range of professional tax and business services.</p>
+                      <Link href="/services">
+                        <Button className="mt-6 rounded-xl bg-slate-900 font-bold text-xs uppercase tracking-widest px-8">Explore Now</Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-slate-50">
+                      {userServices.map((userService: any) => (
+                        <div key={userService.id} className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors group">
+                          <div className="flex items-center gap-4">
+                            <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform">
+                              <Box className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">{userService.service?.name || 'Service Package'}</p>
+                              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">
+                                ID: {userService.id.slice(0,8)} · {new Date(userService.purchaseDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            <StatusChip status={userService.status} size="sm" />
+                            <div className="flex items-center gap-1">
+                               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600">
+                                 <MessageSquare className="h-4 w-4" />
+                               </Button>
+                               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600">
+                                 <ArrowRight className="h-4 w-4" />
+                               </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+           </div>
+
+           {/* Right Column: Notifications & Activity */}
+           <div className="space-y-8">
+              {/* Notifications Card */}
+              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+                 <CardHeader className="p-6 border-b border-slate-50">
+                    <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                       <Bell className="w-4 h-4 text-blue-600" />
+                       Alerts
                     </CardTitle>
-                    <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100">
-                       {notificationsData?.filter((n: any) => !n.read).length || 0} New
-                    </Badge>
                  </CardHeader>
-                 <CardContent>
-                    <ScrollArea className="h-[250px] pr-4">
+                 <CardContent className="p-0">
+                    <ScrollArea className="h-[350px]">
                        {notificationsData && notificationsData.length > 0 ? (
-                          <div className="space-y-4">
+                          <div className="divide-y divide-slate-50">
                              {notificationsData.map((notification: any) => (
-                                <div key={notification.id} className={`p-3 rounded-lg border ${notification.read ? 'bg-white border-slate-100' : 'bg-blue-50/50 border-blue-100'}`}>
+                                <div key={notification.id} className={cn("p-5 transition-colors", notification.read ? 'bg-white' : 'bg-blue-50/30')}>
                                    <div className="flex justify-between items-start mb-1">
-                                      <h4 className={`text-sm font-semibold ${notification.read ? 'text-slate-700' : 'text-slate-900'}`}>
-                                         {notification.title}
-                                      </h4>
-                                      <span className="text-xs text-slate-400 whitespace-nowrap ml-2">
-                                         {new Date(notification.createdAt).toLocaleDateString()}
-                                      </span>
+                                      <h4 className="text-xs font-bold text-slate-900 line-clamp-1">{notification.title}</h4>
+                                      {!notification.read && <span className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-1" />}
                                    </div>
-                                   <p className="text-xs text-slate-600 line-clamp-2">{notification.message}</p>
+                                   <p className="text-[10px] text-slate-500 font-medium line-clamp-2 leading-relaxed mb-2">{notification.message}</p>
+                                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">
+                                      {new Date(notification.createdAt).toLocaleDateString()}
+                                   </span>
                                 </div>
                              ))}
                           </div>
                        ) : (
-                          <div className="flex flex-col items-center justify-center h-full text-slate-400 text-sm">
-                             <Bell className="w-8 h-8 mb-2 opacity-20" />
-                             No new notifications
+                          <div className="flex flex-col items-center justify-center h-[350px] text-slate-300">
+                             <Bell className="w-8 h-8 mb-3 opacity-20" />
+                             <p className="text-[10px] font-bold uppercase tracking-widest">No Alerts</p>
                           </div>
                        )}
                     </ScrollArea>
                  </CardContent>
               </Card>
-           </div>
 
-           {/* Activity Timeline */}
-           <div>
-              <Card className="h-full">
-                 <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                       <Activity className="w-5 h-5 text-green-600" />
-                       Recent Activity
+              {/* Activity Timeline Card */}
+              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-slate-900 text-white">
+                 <CardHeader className="p-6 border-b border-white/5">
+                    <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                       <Activity className="w-4 h-4 text-emerald-400" />
+                       Audit Log
                     </CardTitle>
                  </CardHeader>
-                 <CardContent>
-                    <ScrollArea className="h-[250px] pr-4">
+                 <CardContent className="p-0">
+                    <ScrollArea className="h-[350px]">
                        {activityData && activityData.length > 0 ? (
-                          <div className="relative border-l border-slate-200 ml-2 space-y-6 py-2">
-                             {activityData.map((activity: any, index: number) => (
-                                <div key={activity.id} className="ml-6 relative">
-                                   <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-white bg-green-500 shadow-sm" />
+                          <div className="p-6 space-y-6">
+                             {activityData.map((activity: any) => (
+                                <div key={activity.id} className="relative pl-6 border-l border-white/10 group">
+                                   <span className="absolute -left-[4.5px] top-1 h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-transform group-hover:scale-150" />
                                    <div className="flex flex-col">
-                                      <span className="text-sm font-medium text-slate-900">{activity.action}</span>
-                                      <span className="text-xs text-slate-500 mb-0.5">{activity.description}</span>
-                                      <span className="text-[10px] text-slate-400">
+                                      <span className="text-xs font-bold text-white mb-0.5">{activity.action}</span>
+                                      <span className="text-[10px] text-slate-400 mb-1 leading-relaxed">{activity.description}</span>
+                                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
                                          {new Date(activity.timestamp).toLocaleDateString()} • {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                       </span>
                                    </div>
@@ -270,9 +295,9 @@ export default function DashboardPage() {
                              ))}
                           </div>
                        ) : (
-                          <div className="flex flex-col items-center justify-center h-full text-slate-400 text-sm">
-                             <Activity className="w-8 h-8 mb-2 opacity-20" />
-                             No recent activity
+                          <div className="flex flex-col items-center justify-center h-[350px] text-slate-600">
+                             <Activity className="w-8 h-8 mb-3 opacity-20" />
+                             <p className="text-[10px] font-bold uppercase tracking-widest">No Activity Recorded</p>
                           </div>
                        )}
                     </ScrollArea>
@@ -280,177 +305,9 @@ export default function DashboardPage() {
               </Card>
            </div>
         </div>
-
-        {/* My Services Section - New! */}
-        <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Box className="h-5 w-5" />
-                    My Services
-                  </CardTitle>
-                  <CardDescription>Track the status of your purchased services</CardDescription>
-                </div>
-                <Link href="/services">
-                  <Button variant="outline" size="sm">
-                    Browse Services
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {servicesLoading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-start space-x-4">
-                        <Skeleton className="h-10 w-10 rounded-lg" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-40" />
-                          <Skeleton className="h-4 w-64" />
-                        </div>
-                      </div>
-                      <Skeleton className="h-6 w-24" />
-                    </div>
-                  ))}
-                </div>
-              ) : userServices.length === 0 ? (
-                <div className="text-center py-8">
-                  <Box className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No services yet</h3>
-                  <p className="mt-1 text-sm text-gray-500">Start by purchasing a service from our catalog.</p>
-                  <div className="mt-6">
-                    <Link href="/services">
-                      <Button>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Browse Services
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {userServices.map((userService: any) => (
-                    <div key={userService.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                      <div className="flex items-start space-x-4">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                          <Box className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {userService.service?.name || 'Service'}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Purchased on {new Date(userService.purchaseDate).toLocaleDateString()}
-                          </p>
-                          {userService.assignedTo && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              Assigned to: {userService.assignedTo}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <StatusChip status={userService.status} size="sm" />
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">
-                            <MessageSquare className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Phone className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Tax Returns */}
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Tax Returns</CardTitle>
-                <CardDescription>Your recent tax filings</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {taxReturns.length === 0 ? (
-                  <div className="text-center py-8">
-                    <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No tax returns yet</h3>
-                    <p className="mt-1 text-sm text-gray-500">Get started by creating your first tax return.</p>
-                    <div className="mt-6">
-                      <Button>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Create Tax Return
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {taxReturns.map((taxReturn: any) => (
-                      <div key={taxReturn.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <FileText className="h-5 w-5 text-blue-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              {taxReturn.itrType} - {taxReturn.assessmentYear}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Created {new Date(taxReturn.createdAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <StatusChip status={taxReturn.status} />
-                          <Button variant="outline" size="sm">
-                            View
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Profile Information */}
-        {activeProfile && (
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Active Profile</CardTitle>
-              <CardDescription>Currently working on</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-blue-100 rounded-full">
-                  <User className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{activeProfile.name}</h3>
-                  <p className="text-sm text-gray-600 capitalize">
-                    {activeProfile.relation === 'self' ? 'Your Profile' : `${activeProfile.relation}'s Profile`}
-                  </p>
-                  {activeProfile.pan && (
-                    <p className="text-sm text-gray-500">PAN: {activeProfile.pan}</p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
-    </div>
+    </Layout>
+  );
+}
   );
 }

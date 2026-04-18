@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -7,16 +7,17 @@ import { Progress } from "@/components/ui/progress";
 import { 
   AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, 
   Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from "recharts";
 import { 
   TrendingUp, TrendingDown, Users, FileText, IndianRupee, 
-  Calendar, Award, Target, Activity, Download, Filter,
-  RefreshCw, Eye, Clock, Zap
+  Calendar, Award, Target, Activity, Download, RefreshCw, Eye, Zap, 
+  ChevronRight, ArrowRight, BarChart3, Clock, MapPin
 } from "lucide-react";
 import { useAccessibility } from "@/components/accessibility/AccessibilityProvider";
 import SEO from "@/components/SEO";
+import { Layout } from "@/components/admin/Layout";
 import { m } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 // Sample data - In production, this would come from API
 const revenueData = [
@@ -77,506 +78,297 @@ export default function AnalyticsDashboardPage() {
     setTimeout(() => setIsLoading(false), 1500);
   };
 
-  const MetricCard = ({ title, value, change, icon: Icon, trend }: any) => (
-    <Card className="p-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-gray-600">{title}</p>
-          <h3 className="text-2xl font-bold mt-1">{value}</h3>
-          <div className={`flex items-center gap-1 mt-2 text-sm ${
-            trend === "up" ? "text-green-600" : "text-red-600"
-          }`}>
-            {trend === "up" ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-            <span>{change}%</span>
-          </div>
-        </div>
-        <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-          <Icon className="h-6 w-6 text-blue-600" />
-        </div>
-      </div>
-    </Card>
-  );
-
   const PerformanceMetric = ({ metric, value, target, unit }: any) => {
     const percentage = (value / target) * 100;
     const isExceeding = value >= target;
     
     return (
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
+      <div className="space-y-3">
+        <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400">
           <span>{metric}</span>
-          <span className={isExceeding ? "text-green-600" : "text-orange-600"}>
+          <span className={cn("font-black", isExceeding ? "text-emerald-600" : "text-amber-600")}>
             {value}{unit}
           </span>
         </div>
-        <Progress value={Math.min(percentage, 100)} className="h-2" />
-        <p className="text-xs text-gray-500">Target: {target}{unit}</p>
+        <Progress value={Math.min(percentage, 100)} className="h-2 bg-slate-100" indicatorClassName={isExceeding ? "bg-emerald-500" : "bg-amber-500"} />
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout>
       <SEO 
-        title="Analytics Dashboard - MyeCA.in"
-        description="Comprehensive analytics and insights for MyeCA.in platform performance, user metrics, and tax filing statistics"
-        keywords="analytics, dashboard, metrics, insights, tax filing statistics"
+        title="Performance Analytics | MyeCA.in"
+        description="Comprehensive analytics and insights for platform performance, user metrics, and tax filing statistics."
       />
 
-      {/* Header */}
-      <div className="bg-white border-b px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
-            <p className="text-sm text-gray-600 mt-1">Real-time insights and performance metrics</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="24h">Last 24h</SelectItem>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
-                <SelectItem value="1y">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="icon" onClick={handleRefresh} disabled={isLoading}>
-              <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-            </Button>
-            <Button>
-              <Download className="h-4 w-4 mr-2" />
-              Export Report
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard 
-            title="Total Revenue"
-            value="₹82.5L"
-            change={15.2}
-            icon={IndianRupee}
-            trend="up"
-          />
-          <MetricCard 
-            title="Active Users"
-            value="15,234"
-            change={8.7}
-            icon={Users}
-            trend="up"
-          />
-          <MetricCard 
-            title="ITR Filings"
-            value="12,856"
-            change={12.3}
-            icon={FileText}
-            trend="up"
-          />
-          <MetricCard 
-            title="Success Rate"
-            value="99.8%"
-            change={0.2}
-            icon={Award}
-            trend="up"
-          />
-        </div>
-
-        {/* Charts Tabs */}
-        <Tabs defaultValue="revenue" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="revenue">Revenue & Growth</TabsTrigger>
-            <TabsTrigger value="services">Service Analytics</TabsTrigger>
-            <TabsTrigger value="users">User Insights</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
-            <TabsTrigger value="geographic">Geographic</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="revenue" className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Revenue & User Growth</h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <AreaChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip />
-                  <Legend />
-                  <Area 
-                    yAxisId="left"
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="#3b82f6" 
-                    fill="#3b82f6" 
-                    fillOpacity={0.6}
-                    name="Revenue (₹)"
-                  />
-                  <Line 
-                    yAxisId="right"
-                    type="monotone" 
-                    dataKey="users" 
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    name="Users"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Card>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Monthly Filing Trends</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="filings" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Revenue Breakdown</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">ITR Filing Services</span>
-                    <span className="font-semibold">₹37.12L (45%)</span>
-                  </div>
-                  <Progress value={45} className="h-2" />
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">GST Returns</span>
-                    <span className="font-semibold">₹16.50L (20%)</span>
-                  </div>
-                  <Progress value={20} className="h-2" />
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Company Registration</span>
-                    <span className="font-semibold">₹12.37L (15%)</span>
-                  </div>
-                  <Progress value={15} className="h-2" />
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Other Services</span>
-                    <span className="font-semibold">₹16.50L (20%)</span>
-                  </div>
-                  <Progress value={20} className="h-2" />
+      <div className="flex flex-col lg:flex-row gap-12 items-start h-[calc(100vh-200px)] lg:h-[calc(100vh-240px)] overflow-hidden bg-slate-50/50 rounded-[48px] p-2">
+        {/* Fixed Left Summary Section */}
+        <div className="lg:w-96 h-full overflow-y-auto pr-2 shrink-0 w-full scrollbar-none pb-10 space-y-6">
+          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
+             <div className="h-32 bg-gradient-to-br from-slate-900 to-slate-800 relative">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+                <div className="absolute top-6 left-6 flex items-center gap-3">
+                   <div className="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                      <BarChart3 className="h-6 w-6 text-white" />
+                   </div>
+                   <h2 className="text-white font-black tracking-tight">System Intel</h2>
                 </div>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="services" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Service Distribution</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={serviceDistribution}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}%`}
-                    >
-                      {serviceDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Service Performance</h3>
-                <div className="space-y-4">
-                  {serviceDistribution.map((service) => (
-                    <div key={service.name} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">{service.name}</span>
-                        <span className="text-sm text-gray-600">{service.value}%</span>
+             </div>
+             
+             <CardContent className="px-6 pb-8 relative">
+                <div className="space-y-8 -mt-8">
+                   <div className="p-6 rounded-[32px] bg-white shadow-2xl border border-slate-100 space-y-4">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Observability Window</p>
+                      <div className="flex items-center gap-3">
+                        <Select value={timeRange} onValueChange={setTimeRange}>
+                          <SelectTrigger className="flex-1 rounded-2xl border-none shadow-sm bg-slate-50 font-black text-xs h-12">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-none shadow-2xl">
+                            <SelectItem value="24h" className="rounded-xl font-bold">Last 24 Hours</SelectItem>
+                            <SelectItem value="7d" className="rounded-xl font-bold">Last 7 Days</SelectItem>
+                            <SelectItem value="30d" className="rounded-xl font-bold">Last 30 Days</SelectItem>
+                            <SelectItem value="90d" className="rounded-xl font-bold">Last quarter</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-slate-50 hover:bg-slate-100" onClick={handleRefresh}>
+                           <RefreshCw className={cn("h-5 w-5 text-slate-600", isLoading && "animate-spin")} />
+                        </Button>
                       </div>
-                      <div className="relative">
-                        <Progress value={service.value} className="h-2" />
-                        <div 
-                          className="absolute top-0 h-2 rounded-full"
-                          style={{ 
-                            backgroundColor: service.color, 
-                            width: `${service.value}%`,
-                            opacity: 0.8 
-                          }}
-                        />
+                   </div>
+
+                   <div className="space-y-4">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Core Health</p>
+                      <div className="grid grid-cols-2 gap-3">
+                         {[
+                           { label: "Rev Yield", value: "₹82.5L", trend: "+15%", color: "blue" },
+                           { label: "Active Nodes", value: "15.2K", trend: "+8.7%", color: "emerald" },
+                           { label: "Filings", value: "12.8K", trend: "+12%", color: "indigo" },
+                           { label: "Uptime", value: "99.9%", trend: "100%", color: "amber" }
+                         ].map((m, i) => (
+                           <div key={i} className="p-4 rounded-[24px] bg-slate-50 border border-slate-100">
+                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{m.label}</p>
+                              <p className="text-lg font-black text-slate-900 tracking-tight leading-none mb-1">{m.value}</p>
+                              <Badge className="bg-white text-[8px] font-black text-slate-400 border-none px-1.5 py-0 rounded-md">{m.trend}</Badge>
+                           </div>
+                         ))}
                       </div>
-                    </div>
-                  ))}
+                   </div>
+
+                   <div className="space-y-4">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Latency Profile</p>
+                      <div className="p-6 rounded-[32px] bg-slate-50 border border-slate-100 space-y-6">
+                         <PerformanceMetric metric="Avg Page Load" value={1.2} target={2.0} unit="s" />
+                         <PerformanceMetric metric="API Response" value={45} target={100} unit="ms" />
+                      </div>
+                   </div>
                 </div>
-              </Card>
+             </CardContent>
+          </Card>
+
+          <Button className="w-full h-16 rounded-[32px] bg-slate-900 text-white hover:bg-slate-800 font-black text-xs uppercase tracking-widest transition-all hover:-translate-y-1">
+             <Download className="h-5 w-5 mr-3 text-blue-400" />
+             Download Analytics
+          </Button>
+        </div>
+
+        {/* Main Content Area - Independently Scrollable */}
+        <div className="flex-1 min-w-0 w-full lg:max-w-7xl h-full overflow-y-auto pr-4 pb-20 scroll-smooth custom-scrollbar space-y-10">
+          {/* Header */}
+          <div className="bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50 flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div className="space-y-2">
+               <div className="flex items-center gap-3">
+                  <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Enterprise Dashboard</span>
+               </div>
+               <h1 className="text-4xl font-black text-slate-900 tracking-tight">System Observability</h1>
+               <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
+                  Real-time telemetry and deep-dive analytics into platform transactions, user behavior, and infrastructure performance.
+               </p>
             </div>
-
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Service Conversion Rates</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="h-24 w-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-blue-600">85%</span>
-                  </div>
-                  <p className="mt-2 text-sm font-medium">ITR Filing</p>
-                  <p className="text-xs text-gray-600">View to Purchase</p>
-                </div>
-                <div className="text-center">
-                  <div className="h-24 w-24 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-green-600">72%</span>
-                  </div>
-                  <p className="mt-2 text-sm font-medium">GST Services</p>
-                  <p className="text-xs text-gray-600">View to Purchase</p>
-                </div>
-                <div className="text-center">
-                  <div className="h-24 w-24 mx-auto bg-purple-100 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-purple-600">68%</span>
-                  </div>
-                  <p className="mt-2 text-sm font-medium">Company Registration</p>
-                  <p className="text-xs text-gray-600">View to Purchase</p>
-                </div>
-              </div>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="users" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">User Demographics</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={userDemographics}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="age" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="male" fill="#3b82f6" />
-                    <Bar dataKey="female" fill="#ec4899" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">User Engagement Metrics</h3>
-                <div className="space-y-6">
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Daily Active Users</span>
-                      <span className="text-2xl font-bold">8,234</span>
-                    </div>
-                    <Progress value={82} className="h-2" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Avg. Session Duration</span>
-                      <span className="text-2xl font-bold">12m 45s</span>
-                    </div>
-                    <Progress value={75} className="h-2" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Retention Rate (30 days)</span>
-                      <span className="text-2xl font-bold">78%</span>
-                    </div>
-                    <Progress value={78} className="h-2" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">NPS Score</span>
-                      <span className="text-2xl font-bold">72</span>
-                    </div>
-                    <Progress value={72} className="h-2" />
-                  </div>
-                </div>
-              </Card>
+            <div className="flex gap-4">
+               <Button variant="outline" className="rounded-2xl h-14 px-8 border-slate-100 bg-white font-black text-xs uppercase tracking-widest">
+                  Custom Query
+               </Button>
             </div>
+          </div>
 
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">User Journey Analytics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <m.div 
-                  className="bg-blue-50 p-4 rounded-lg text-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Eye className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="font-semibold">Homepage Visit</p>
-                  <p className="text-2xl font-bold mt-1">100%</p>
-                </m.div>
-                
-                <m.div 
-                  className="bg-green-50 p-4 rounded-lg text-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Target className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <p className="font-semibold">Service View</p>
-                  <p className="text-2xl font-bold mt-1">65%</p>
-                </m.div>
-                
-                <m.div 
-                  className="bg-purple-50 p-4 rounded-lg text-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Activity className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                  <p className="font-semibold">Sign Up</p>
-                  <p className="text-2xl font-bold mt-1">42%</p>
-                </m.div>
-                
-                <m.div 
-                  className="bg-orange-50 p-4 rounded-lg text-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Award className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-                  <p className="font-semibold">Purchase</p>
-                  <p className="text-2xl font-bold mt-1">28%</p>
-                </m.div>
-              </div>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="performance" className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Performance Metrics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {performanceMetrics.map((metric) => (
-                  <PerformanceMetric key={metric.metric} {...metric} />
+          <Tabs defaultValue="revenue" className="space-y-10">
+            <div className="flex items-center justify-between overflow-x-auto pb-2 scrollbar-none">
+              <TabsList className="bg-white p-2 rounded-[28px] border border-slate-100/50 h-auto shadow-sm">
+                {[
+                  { id: "revenue", label: "Financials", icon: IndianRupee },
+                  { id: "services", label: "Services", icon: Zap },
+                  { id: "users", label: "Demographics", icon: Users },
+                  { id: "performance", label: "Core Web Vitals", icon: Activity },
+                  { id: "geographic", label: "Markets", icon: MapPin }
+                ].map((t) => (
+                  <TabsTrigger 
+                    key={t.id} 
+                    value={t.id} 
+                    className="rounded-2xl px-6 py-3 font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all"
+                  >
+                    <t.icon className="h-4 w-4 mr-2" />
+                    {t.label}
+                  </TabsTrigger>
                 ))}
-              </div>
-            </Card>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">API Response Times</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={[
-                    { endpoint: "Auth", time: 45 },
-                    { endpoint: "ITR Submit", time: 120 },
-                    { endpoint: "Calculator", time: 30 },
-                    { endpoint: "Documents", time: 85 },
-                    { endpoint: "Dashboard", time: 60 },
-                  ]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="endpoint" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="time" stroke="#3b82f6" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Error Rate by Service</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">ITR Filing API</span>
-                    <span className="text-sm font-semibold text-green-600">0.02%</span>
-                  </div>
-                  <Progress value={2} className="h-2" />
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Payment Gateway</span>
-                    <span className="text-sm font-semibold text-green-600">0.05%</span>
-                  </div>
-                  <Progress value={5} className="h-2" />
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Document Upload</span>
-                    <span className="text-sm font-semibold text-yellow-600">0.12%</span>
-                  </div>
-                  <Progress value={12} className="h-2" />
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Email Service</span>
-                    <span className="text-sm font-semibold text-green-600">0.08%</span>
-                  </div>
-                  <Progress value={8} className="h-2" />
-                </div>
-              </Card>
+              </TabsList>
             </div>
-          </TabsContent>
 
-          <TabsContent value="geographic" className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Geographic Distribution</h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={geographicData} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="state" type="category" width={100} />
-                  <Tooltip />
-                  <Bar dataKey="users" fill="#3b82f6" radius={[0, 8, 8, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
+            <TabsContent value="revenue" className="space-y-10 m-0">
+               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <Card className="lg:col-span-2 border-none shadow-sm rounded-[48px] bg-white p-10">
+                    <div className="flex items-center justify-between mb-10">
+                       <h3 className="text-xl font-black text-slate-900 tracking-tight">Growth Velocity</h3>
+                       <Badge className="bg-blue-50 text-blue-600 border-none font-black text-[9px] uppercase tracking-widest px-3 py-1">Monthly Trend</Badge>
+                    </div>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <AreaChart data={revenueData}>
+                        <defs>
+                          <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} />
+                        <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} />
+                        <Tooltip contentStyle={{borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.1)'}} />
+                        <Area type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="p-6 text-center">
-                <h4 className="text-sm font-medium text-gray-600 mb-2">Top City</h4>
-                <p className="text-2xl font-bold">Mumbai</p>
-                <p className="text-sm text-gray-600 mt-1">12,345 users</p>
-              </Card>
-              
-              <Card className="p-6 text-center">
-                <h4 className="text-sm font-medium text-gray-600 mb-2">Fastest Growing</h4>
-                <p className="text-2xl font-bold">Pune</p>
-                <p className="text-sm text-green-600 mt-1">+45% this month</p>
-              </Card>
-              
-              <Card className="p-6 text-center">
-                <h4 className="text-sm font-medium text-gray-600 mb-2">New Market</h4>
-                <p className="text-2xl font-bold">Tier 2 Cities</p>
-                <p className="text-sm text-blue-600 mt-1">28% of new users</p>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+                  <Card className="border-none shadow-sm rounded-[48px] bg-white p-10">
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight mb-8">Yield Breakdown</h3>
+                    <div className="space-y-8">
+                      {[
+                        { name: "ITR Filing", val: 45, color: "blue" },
+                        { name: "GST Returns", val: 20, color: "emerald" },
+                        { name: "Company Reg", val: 15, color: "amber" },
+                        { name: "Other Ops", val: 20, color: "slate" }
+                      ].map((s, i) => (
+                        <div key={i} className="space-y-3">
+                           <div className="flex justify-between text-xs font-black uppercase tracking-widest">
+                              <span className="text-slate-400">{s.name}</span>
+                              <span className="text-slate-900">{s.val}%</span>
+                           </div>
+                           <Progress value={s.val} className="h-2 bg-slate-50" indicatorClassName={`bg-${s.color}-500`} />
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+               </div>
+            </TabsContent>
 
-        {/* Real-time Activity Feed */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Real-time Activity</h3>
-          <div className="space-y-3">
-            {[
-              { time: "2 min ago", action: "New ITR filing", user: "Mumbai, MH", icon: FileText, color: "blue" },
-              { time: "5 min ago", action: "GST return submitted", user: "Bangalore, KA", icon: Activity, color: "green" },
-              { time: "8 min ago", action: "New user registration", user: "Delhi, DL", icon: Users, color: "purple" },
-              { time: "12 min ago", action: "Payment received", user: "Chennai, TN", icon: IndianRupee, color: "orange" },
-              { time: "15 min ago", action: "CA consultation booked", user: "Pune, MH", icon: Calendar, color: "pink" },
-            ].map((activity, index) => (
-              <m.div 
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
-              >
-                <div className={`h-10 w-10 bg-${activity.color}-100 rounded-full flex items-center justify-center`}>
-                  <activity.icon className={`h-5 w-5 text-${activity.color}-600`} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{activity.action}</p>
-                  <p className="text-xs text-gray-600">{activity.user}</p>
-                </div>
-                <span className="text-xs text-gray-500">{activity.time}</span>
-              </m.div>
-            ))}
+            <TabsContent value="services" className="space-y-10 m-0">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {serviceDistribution.map((service, i) => (
+                    <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-10 group hover:shadow-xl transition-all">
+                       <div className="flex items-center justify-between mb-8">
+                          <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                             <Zap className="h-7 w-7" />
+                          </div>
+                          <p className="text-2xl font-black text-slate-900 tracking-tight">{service.value}%</p>
+                       </div>
+                       <h4 className="text-lg font-black text-slate-900 mb-1">{service.name}</h4>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Share</p>
+                    </Card>
+                  ))}
+               </div>
+            </TabsContent>
+
+            <TabsContent value="users" className="space-y-10 m-0">
+               <Card className="border-none shadow-sm rounded-[48px] bg-white p-12">
+                  <div className="flex items-center justify-between mb-12">
+                     <h3 className="text-2xl font-black text-slate-900 tracking-tight">User Demographics</h3>
+                  </div>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={userDemographics}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="age" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} />
+                      <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} />
+                      <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.1)'}} />
+                      <Legend iconType="circle" />
+                      <Bar dataKey="male" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="female" fill="#ec4899" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+               </Card>
+            </TabsContent>
+            
+            <TabsContent value="performance" className="space-y-10 m-0">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <Card className="border-none shadow-sm rounded-[48px] bg-white p-12">
+                     <h3 className="text-xl font-black text-slate-900 tracking-tight mb-10">Asset Latency (ms)</h3>
+                     <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={[
+                          { ep: "Auth", t: 45 },
+                          { ep: "Submit", t: 120 },
+                          { ep: "Calc", t: 30 },
+                          { ep: "Vault", t: 85 },
+                          { ep: "Home", t: 60 },
+                        ]}>
+                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                           <XAxis dataKey="ep" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} />
+                           <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} />
+                           <Tooltip contentStyle={{borderRadius: '24px', border: 'none'}} />
+                           <Line type="monotone" dataKey="t" stroke="#3b82f6" strokeWidth={4} dot={{r: 6, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff'}} />
+                        </LineChart>
+                     </ResponsiveContainer>
+                  </Card>
+                  
+                  <Card className="border-none shadow-sm rounded-[48px] bg-white p-12">
+                     <h3 className="text-xl font-black text-slate-900 tracking-tight mb-8">Node Reliability</h3>
+                     <div className="space-y-10 mt-10">
+                        {performanceMetrics.map((p, i) => (
+                           <PerformanceMetric key={i} metric={p.metric} value={p.value} target={p.target} unit={p.unit} />
+                        ))}
+                     </div>
+                  </Card>
+               </div>
+            </TabsContent>
+          </Tabs>
+
+          {/* Real-time Activity Feed */}
+          <div className="space-y-6">
+             <div className="flex items-center justify-between ml-4">
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">System Events</h3>
+                <Button variant="ghost" className="font-black text-[10px] uppercase tracking-widest text-blue-600">View History →</Button>
+             </div>
+             <div className="grid grid-cols-1 gap-4">
+                {[
+                  { time: "2m", action: "Transaction Executed", node: "Mumbai, MH", icon: Zap, color: "blue" },
+                  { time: "5m", action: "Submission Received", node: "Bangalore, KA", icon: FileText, color: "emerald" },
+                  { time: "8m", action: "Node Authorization", node: "Delhi, DL", icon: Users, color: "indigo" },
+                  { time: "12m", action: "Payment Pipeline", node: "Chennai, TN", icon: IndianRupee, color: "amber" }
+                ].map((act, i) => (
+                  <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100/50 shadow-sm flex items-center justify-between group hover:shadow-lg transition-all">
+                     <div className="flex items-center gap-6">
+                        <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-colors", `bg-${act.color}-50 text-${act.color}-600`)}>
+                           <act.icon className="h-6 w-6" />
+                        </div>
+                        <div>
+                           <h4 className="text-base font-black text-slate-900 leading-none mb-1.5">{act.action}</h4>
+                           <div className="flex items-center gap-2">
+                              <MapPin className="h-3 w-3 text-slate-400" />
+                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{act.node}</span>
+                           </div>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{act.time} ago</span>
+                        <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                           <ChevronRight className="h-4 w-4 text-slate-400" />
+                        </div>
+                     </div>
+                  </div>
+                ))}
+             </div>
           </div>
-        </Card>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
-}
+}

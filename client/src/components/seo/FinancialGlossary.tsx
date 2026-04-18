@@ -26,7 +26,47 @@ const glossaryTerms = [
   { term: "AIS", category: "Reports", definition: "Annual Information Statement provides a comprehensive view of a taxpayer's financial transactions.", href: "/ais-viewer" },
   { term: "LTCG", category: "Capital Gains", definition: "Profit from the sale of a capital asset held for more than a specified period (usually 1-3 years).", href: "/calculators/capital-gains" },
   { term: "Advance Tax", category: "Direct Tax", definition: "Pre-payment of income tax in installments during the financial year.", href: "/calculators/advance-tax" },
-  { term: "Standard Deduction", category: "Deductions", definition: "A flat deduction allowed from gross salary, providing tax relief without needing investment proofs.", href: "/calculators/income-tax" }
+  { term: "Standard Deduction", category: "Deductions", definition: "A flat deduction allowed from gross salary, providing tax relief without needing investment proofs.", href: "/calculators/income-tax" },
+  { term: "PAN Card", category: "Identity", definition: "Permanent Account Number is a 10-digit alphanumeric code that tracks all your financial transactions with the IT department.", href: "/services/pan-card" },
+  { term: "TAN", category: "Direct Tax", definition: "Tax Deduction and Collection Account Number is a 10-digit alphanumeric number required for all persons responsible for deducting or collecting tax.", href: "/services/tan-registration" },
+  { term: "DSC", category: "Digital", definition: "Digital Signature Certificate is a secure digital key used to sign documents electronically for filing and compliance.", href: "/services/dsc" },
+  { term: "MSME", category: "Business", definition: "Micro, Small and Medium Enterprises are businesses that can avail various benefits and subsidies from the government.", href: "/services/msme-registration" },
+  { term: "Startup India", category: "Business", definition: "A government initiative to foster innovation and provide tax exemptions and funding to new startups in India.", href: "/services/startup-india" },
+  { term: "DIN", category: "Corporate", definition: "Director Identification Number is a unique 8-digit identification number assigned to any individual who is a director of a company.", href: "/services/director-identification" },
+  { term: "TCS", category: "Direct Tax", definition: "Tax Collected at Source is the tax payable by a seller which he collects from the buyer at the time of sale.", href: "/calculators/tds" },
+  { term: "Professional Tax", category: "Compliance", definition: "A direct tax levied by state governments on individuals earning income from salary or professions.", href: "/services/professional-tax" },
+  { term: "VDA Tax", category: "Crypto", definition: "Tax on Virtual Digital Assets (Crypto) which is 30% on income and 1% TDS on transactions in India.", href: "/calculators/vda-tax" },
+  { term: "Gratuity", category: "Benefits", definition: "A monetary benefit given by an employer to an employee for services rendered to the organization for 5 or more years.", href: "/calculators/gratuity" },
+  { term: "Section 80D", category: "Deductions", definition: "Deduction for medical insurance premiums paid for self, family, and parents.", href: "/calculators/income-tax" },
+  { term: "GSTR-1", category: "GST", definition: "A monthly or quarterly return that summarizes all outward supplies (sales) of a registered taxpayer.", href: "/services/gst-return" },
+  { term: "GSTR-3B", category: "GST", definition: "A monthly self-declaration that summarizes outward supplies, input tax credit claimed, and tax paid.", href: "/services/gst-return" },
+  { term: "Section 54", category: "Capital Gains", definition: "Tax exemption on long-term capital gains from the sale of a residential house if reinvested in another house.", href: "/calculators/capital-gains" },
+  { term: "Input Tax Credit", category: "GST", definition: "The credit a business receives for the tax paid on its inputs, which can be used to reduce the tax on its outputs.", href: "/services/gst-registration" },
+  { term: "Assessment Year", category: "General", definition: "The year immediately following the financial year in which the income of the financial year is assessed.", href: "/calculators/income-tax" },
+  { term: "Financial Year", category: "General", definition: "The period from April 1 to March 31 of the following year during which you earn your income.", href: "/calculators/income-tax" },
+  { term: "EPF", category: "Payroll", definition: "Employee Provident Fund is a retirement benefit scheme for salaried employees.", href: "/calculators/epf" },
+  { term: "Form 10E", category: "Relief", definition: "A form required to claim tax relief under Section 89(1) on salary arrears or advance salary.", href: "/itr/filing" },
+  { term: "LUT", category: "GST", definition: "Letter of Undertaking for exporting goods or services without payment of integrated tax.", href: "/services/gst-registration" },
+  { term: "ROC Filing", category: "Corporate", definition: "Annual filing of financial statements and returns by companies with the Registrar of Companies.", href: "/services/company-registration" },
+  { term: "Section 80G", category: "Deductions", definition: "Tax deduction for donations made to specified charitable institutions and relief funds.", href: "/calculators/income-tax" },
+  { term: "STCG", category: "Capital Gains", definition: "Short Term Capital Gains are profits from the sale of assets held for a short period, taxed at different rates.", href: "/calculators/capital-gains" },
+  { term: "RCM", category: "GST", definition: "Reverse Charge Mechanism where the liability to pay tax is on the recipient of goods/services instead of the supplier.", href: "/services/gst-registration" },
+  { term: "Section 194J", category: "TDS", definition: "TDS on fees for professional or technical services at 10% or 2%.", href: "/calculators/tds" },
+  { term: "Tax Audit", category: "Audit", definition: "An examination of a taxpayer's accounts to ensure compliance with the provisions of the Income Tax Act.", href: "/services/audit" },
+  { term: "AOC-4", category: "Corporate", definition: "The form for filing financial statements with the Registrar of Companies (ROC) every year.", href: "/services/company-registration" },
+  { term: "MGT-7", category: "Corporate", definition: "The form for filing the annual return of a company with the Registrar of Companies.", href: "/services/company-registration" },
+  { term: "Section 234A", category: "Penalty", definition: "Interest charged for delay in filing the income tax return.", href: "/calculators/income-tax" },
+  { term: "Section 234B", category: "Penalty", definition: "Interest charged for default in payment of advance tax (less than 90% paid).", href: "/calculators/income-tax" },
+  { term: "ESI", category: "Payroll", definition: "Employee State Insurance is a self-financing social security and health insurance scheme for Indian workers.", href: "/services/esi-registration" },
+  { term: "DSC Token", category: "Digital", definition: "A physical USB device that stores the digital signature certificate securely.", href: "/services/dsc" },
+  { term: "DIN KYC", category: "Compliance", definition: "Annual KYC requirement for every individual who holds a Director Identification Number.", href: "/services/director-identification" },
+  { term: "Section 80E", category: "Deductions", definition: "Deduction for interest paid on an education loan for higher studies.", href: "/calculators/income-tax" },
+  { term: "HSN Code", category: "GST", definition: "Harmonized System of Nomenclature code used for classifying goods under GST.", href: "/calculators/hsn-finder" },
+  { term: "SAC Code", category: "GST", definition: "Services Accounting Code used for classifying services under GST.", href: "/calculators/hsn-finder" },
+  { term: "Form 15CA", category: "Foreign", definition: "A declaration by a person making a remittance to a non-resident or a foreign company.", href: "/services/foreign-remittance" },
+  { term: "Form 15CB", category: "Foreign", definition: "A certificate from a Chartered Accountant certifying the tax rates and payment details for foreign remittances.", href: "/services/foreign-remittance" },
+  { term: "Section 194C", category: "TDS", definition: "TDS on payments made to contractors or sub-contractors for carrying out any work.", href: "/calculators/tds" },
+  { term: "Authorized Capital", category: "Corporate", definition: "The maximum amount of share capital that a company is authorized by its constitutional documents to issue.", href: "/services/company-registration" }
 ];
 
 export default function FinancialGlossary() {
@@ -107,23 +147,23 @@ export default function FinancialGlossary() {
           {filteredTerms.length > 0 ? (
             filteredTerms.map((item, index) => (
               <Link key={index} href={item.href || "#"}>
-                <div className="group relative bg-white border border-slate-200/60 rounded-[32px] p-8 h-full transition-all duration-500 hover:shadow-[0_22px_60px_-15px_rgba(0,0,0,0.08)] hover:-translate-y-2 cursor-pointer flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
+                <div className="group relative bg-white border border-slate-200/60 rounded-[32px] p-6 h-full transition-all duration-500 hover:shadow-[0_22px_60px_-15px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 cursor-pointer flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-lg bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest">
                       {item.category}
                     </span>
                     <ArrowUpRight className="w-5 h-5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-slate-900 mb-2 tracking-tight group-hover:text-blue-600 transition-colors">
                     {item.term}
                   </h3>
                   
-                  <p className="text-[15px] text-slate-500 leading-relaxed font-medium mb-8">
+                  <p className="text-[13px] text-slate-500 leading-relaxed font-medium mb-6">
                     {item.definition}
                   </p>
                   
-                  <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
                      <span className="text-[11px] font-bold text-blue-600 uppercase tracking-widest">Explore Topic</span>
                      <div className="h-1.5 w-1.5 rounded-full bg-blue-100 group-hover:w-8 group-hover:bg-blue-600 transition-all duration-500"></div>
                   </div>

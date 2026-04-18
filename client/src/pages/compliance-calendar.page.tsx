@@ -1,19 +1,18 @@
 import { m } from "framer-motion";
-import { Calendar, FileText, Download, Bell, Filter, Search, ChevronRight, Clock, AlertCircle, CalendarDays, CheckCircle2, Info, AlertTriangle, IndianRupee, Users, Building2, Shield } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Calendar, FileText, Download, Bell, Filter, Search, ChevronRight, Clock, AlertCircle, CalendarDays, CheckCircle2, Info, AlertTriangle, IndianRupee, Users, Building2, Shield, Activity, ArrowRight, Globe } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import PenaltyCalculator from "@/components/PenaltyCalculator";
+import { Layout } from "@/components/admin/Layout";
+import SEO from "@/components/SEO";
+import { cn } from "@/lib/utils";
 
-// Compliance data based on the PDF
 const complianceData = {
   january: [
     { date: "05-Jan", reg: "SEZ", activity: "SEZ - MPR" },
@@ -97,10 +96,12 @@ const complianceData = {
     { date: "11-Aug", reg: "GST", activity: "GSTR – 1 (Jul)" },
     { date: "13-Aug", reg: "GST", activity: "QRMP IFF (Jul)" },
     { date: "20-Aug", reg: "GST", activity: "GSTR – 3B (Jul)" },
+    { date: "25-Aug", reg: "GST", activity: "PMT-06 (Jul)" },
     { date: "31-Aug", reg: "MCA", activity: "DIR-3 KYC" }
   ],
   september: [
     { date: "05-Sep", reg: "SEZ", activity: "SEZ - MPR" },
+    { date: "07-Sep", reg: "FEMA", activity: "ECB 2 Return" },
     { date: "07-Sep", reg: "IT", activity: "TDS/ TCS Deposit (Aug)" },
     { date: "10-Sep", reg: "GST", activity: "GSTR – 7 (TDS) & GSTR-8 (TCS)" },
     { date: "11-Sep", reg: "GST", activity: "GSTR – 1 (Aug)" },
@@ -225,146 +226,183 @@ export default function ComplianceCalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Compact Hero Section */}
-      <section className="relative bg-white pt-20 pb-12 border-b border-slate-100">
-        <div className="container mx-auto px-4 text-center max-w-5xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-6">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            Real-time Tracker
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tighter">
-            Smart <span className="text-blue-600">Compliance</span> Calendar
-          </h1>
-          <p className="text-base text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed mb-6">
-            Stay ahead of regulatory deadlines for FY 2025-26. 
-            Automated tracking for GST, IT, and MCA.
-          </p>
-          <div className="flex justify-center gap-3">
-            <Button size="sm" onClick={() => setShowReminderModal(true)} className="h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 font-bold shadow-lg shadow-blue-200">
-              <Bell className="w-4 h-4 mr-2" />
-              Set Alerts
-            </Button>
-            <Button size="sm" variant="outline" className="h-11 border-slate-200 rounded-xl px-6 font-bold text-slate-600">
-              <Download className="w-4 h-4 mr-2" />
-              Export PDF
-            </Button>
+    <Layout>
+      <SEO
+        title="Smart Compliance Calendar | MyeCA.in"
+        description="Stay ahead of regulatory deadlines for FY 2025-26. Automated tracking for GST, IT, and MCA."
+        keywords="compliance calendar, tax deadlines, GST due dates, ITR filing dates"
+      />
+
+      <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
+        {/* Sticky Left Summary Section */}
+        <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
+          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
+             <div className="h-28 bg-gradient-to-br from-blue-500 to-cyan-500 relative">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+             </div>
+             <CardContent className="relative px-6 pb-8">
+                <div className="flex flex-col items-center -mt-14">
+                   <div className="w-28 h-28 rounded-[40px] bg-white p-2 shadow-2xl">
+                      <div className="w-full h-full rounded-[32px] bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center text-4xl font-black text-blue-600 border border-blue-100">
+                         <Calendar className="h-10 w-10" />
+                      </div>
+                   </div>
+                   <div className="mt-5 text-center">
+                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Compliance Ops</h2>
+                      <Badge variant="outline" className="mt-2 bg-blue-50 text-blue-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                         {getUpcomingCount()} Upcoming Tasks
+                      </Badge>
+                   </div>
+                </div>
+
+                <div className="mt-10 space-y-6">
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Regulatory Filter</Label>
+                      <Select value={selectedRegulation} onValueChange={setSelectedRegulation}>
+                         <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-none text-xs font-black uppercase tracking-widest">
+                            <SelectValue placeholder="Regulation" />
+                         </SelectTrigger>
+                         <SelectContent>
+                            {regulatoryCategories.map(cat => (
+                               <SelectItem key={cat.value} value={cat.value} className="text-[10px] font-black uppercase tracking-widest">{cat.label}</SelectItem>
+                            ))}
+                         </SelectContent>
+                      </Select>
+                   </div>
+
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Context Search</Label>
+                      <div className="relative group">
+                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                         <Input 
+                            placeholder="Find activity..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="h-12 pl-11 rounded-2xl bg-slate-50 border-none text-xs font-black uppercase tracking-widest placeholder:text-slate-300"
+                         />
+                      </div>
+                   </div>
+
+                   <div className="pt-4 grid grid-cols-2 gap-3">
+                      {[
+                        { label: "GST Units", value: "08", color: "blue" },
+                        { label: "Income Tax", value: "04", color: "emerald" },
+                        { label: "MCA/ROC", value: "02", color: "purple" },
+                        { label: "Other Ops", value: "03", color: "orange" }
+                      ].map((stat, i) => (
+                        <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
+                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
+                           <span className={cn("text-sm font-black leading-none", `text-${stat.color}-600`)}>{stat.value}</span>
+                        </div>
+                      ))}
+                   </div>
+                </div>
+             </CardContent>
+          </Card>
+
+          <div className="p-8 rounded-[40px] bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100/50 relative overflow-hidden group cursor-pointer shadow-xl shadow-blue-50">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2" />
+             <Bell className="h-8 w-8 text-blue-500 mb-6" />
+             <h3 className="font-black text-xl leading-tight mb-3 text-slate-900">Alert Center</h3>
+             <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">Synchronize your local calendar with the central compliance engine.</p>
+             <Button onClick={() => setShowReminderModal(true)} className="w-full bg-blue-600 text-white hover:bg-blue-700 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-blue-100 border-none">Set Smart Reminders</Button>
           </div>
         </div>
-      </section>
 
-      {/* Integrated Filter Bar - More Compact */}
-      <section className="sticky top-16 lg:top-[56px] z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-              <Input 
-                placeholder="Find a deadline..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 h-10 rounded-xl bg-slate-50 border-slate-200 focus:bg-white text-sm"
-              />
-            </div>
-            <div className="flex w-full md:w-auto gap-2">
-              <Select value={selectedRegulation} onValueChange={setSelectedRegulation}>
-                <SelectTrigger className="flex-1 md:w-[150px] h-10 rounded-xl bg-slate-50 text-sm">
-                  <SelectValue placeholder="Regulation" />
-                </SelectTrigger>
-                <SelectContent>
-                  {regulatoryCategories.map(cat => (
-                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="hidden sm:flex items-center gap-2 px-3 bg-slate-50 border border-slate-200 rounded-xl h-10">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span className="text-[10px] font-black text-slate-600 uppercase">{filteredData.length} Active</span>
+        {/* Main Content Area - Full Page Scroll */}
+        <div className="flex-1 min-w-0 w-full lg:max-w-7xl space-y-10 pb-20">
+          {/* Page Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 mb-2">
+                 <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Regulatory Timeline</span>
               </div>
+              <h1 className="text-4xl font-black tracking-tight text-slate-900">Compliance Calendar</h1>
+              <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
+                Stay synchronized with the latest statutory deadlines for GST, Income Tax, MCA, and FEMA for the fiscal cycle 2025-26.
+              </p>
+            </div>
+            <div className="flex gap-4">
+               <Button variant="outline" className="h-16 px-8 rounded-3xl border-slate-100 font-black text-xs uppercase tracking-widest hover:bg-slate-50">
+                  <Download className="w-5 h-5 mr-3 text-blue-600" />
+                  Export PDF
+               </Button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Main Calendar Content - Grid Improvements */}
-      <section className="py-8 bg-slate-50/20 min-h-screen">
-        <div className="container mx-auto px-4">
-          <Tabs value={selectedMonth} onValueChange={setSelectedMonth} className="mb-8">
-            <TabsList className="w-full bg-white p-1 rounded-xl border border-slate-200 overflow-x-auto scrollbar-hide flex justify-start sm:justify-center h-12">
-              {monthKeys.map((key) => (
-                <TabsTrigger 
-                  key={key} 
-                  value={key} 
-                  className="flex-shrink-0 min-w-[70px] sm:flex-1 rounded-lg py-1.5 text-[10px] font-black uppercase tracking-wider data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all transition-duration-300"
-                >
-                  {key.charAt(0).toUpperCase() + key.slice(1, 3)}
-                </TabsTrigger>
-              ))}
+          <Tabs value={selectedMonth} onValueChange={setSelectedMonth} className="space-y-10">
+            <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-x-auto no-scrollbar justify-start sm:justify-center">
+               {monthKeys.map((key) => (
+                 <TabsTrigger 
+                   key={key} 
+                   value={key} 
+                   className="rounded-2xl px-6 h-full font-black text-[9px] uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all"
+                 >
+                   {key.slice(0, 3)}
+                 </TabsTrigger>
+               ))}
             </TabsList>
 
-            <TabsContent value={selectedMonth} className="mt-6">
+            <TabsContent value={selectedMonth} className="outline-none">
               {filteredData.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200">
-                  <Search className="w-10 h-10 text-slate-200 mx-auto mb-2" />
-                  <p className="text-sm font-bold text-slate-400">No matching deadlines.</p>
+                <div className="py-40 text-center bg-white rounded-[48px] border border-dashed border-slate-100">
+                  <Search className="w-16 h-16 text-slate-100 mx-auto mb-6" />
+                  <p className="text-lg font-black text-slate-300 uppercase tracking-widest">No matching activities found</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {Object.entries(groupedByDate).sort().map(([date, items]: any) => {
                     const status = getDateStatus(date);
                     const daysLeft = getDaysRemaining(date);
                     
                     return (
-                      <Card key={date} className={`border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all rounded-2xl overflow-hidden ${status === 'today' ? 'border-blue-500 ring-1 ring-blue-500' : ''}`}>
-                        <CardHeader className={`${status === 'today' ? 'bg-blue-50/50' : status === 'past' ? 'bg-slate-50' : 'bg-white'} py-4 px-4 border-b border-slate-100`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-black ${status === 'today' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-900 border border-slate-200'}`}>
-                                <span className="text-sm leading-none">{date.split('-')[0]}</span>
-                                <span className="text-[8px] uppercase">{date.split('-')[1]}</span>
+                      <Card key={date} className={cn("border-none shadow-sm rounded-[32px] overflow-hidden bg-white group transition-all hover:shadow-xl", status === 'today' ? 'ring-2 ring-blue-500' : 'border border-slate-100/50')}>
+                        <div className={cn("p-6 flex items-center justify-between", status === 'today' ? 'bg-blue-50/50' : status === 'past' ? 'bg-slate-50/50' : 'bg-white')}>
+                           <div className="flex items-center gap-4">
+                              <div className={cn("w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-black", status === 'today' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-900 border border-slate-100')}>
+                                 <span className="text-lg leading-none">{date.split('-')[0]}</span>
+                                 <span className="text-[9px] uppercase tracking-tighter">{date.split('-')[1]}</span>
                               </div>
                               <div>
-                                <CardTitle className="text-sm text-slate-900 font-bold">{date}</CardTitle>
-                                <div className="mt-0.5">
-                                  {status === 'today' ? (
-                                    <Badge className="bg-red-500 text-white font-black text-[8px] py-0 h-4 uppercase">Today</Badge>
-                                  ) : status === 'past' ? (
-                                    <Badge className="bg-slate-100 text-slate-400 font-bold text-[8px] py-0 h-4 uppercase border-0">Ended</Badge>
-                                  ) : (
-                                    <Badge className="bg-blue-50 text-blue-600 border-blue-100 font-bold text-[8px] py-0 h-4">{daysLeft}D Left</Badge>
-                                  )}
+                                 <h4 className="text-sm font-black text-slate-900 leading-none">{date}</h4>
+                                 <div className="mt-2">
+                                    {status === 'today' ? (
+                                      <Badge className="bg-red-500 text-white font-black text-[8px] py-0 h-4 uppercase border-none">Active Today</Badge>
+                                    ) : status === 'past' ? (
+                                      <Badge className="bg-slate-200 text-slate-500 font-black text-[8px] py-0 h-4 uppercase border-none">Historical</Badge>
+                                    ) : (
+                                      <Badge className="bg-blue-50 text-blue-600 border-none font-black text-[8px] py-0 h-4 uppercase">{daysLeft} Days to go</Badge>
+                                    )}
+                                 </div>
+                              </div>
+                           </div>
+                           <CalendarDays className={cn("w-6 h-6", status === 'today' ? 'text-blue-600' : 'text-slate-100')} />
+                        </div>
+                        <div className="divide-y divide-slate-50">
+                          {items.map((item: any, idx: number) => (
+                            <div key={idx} className="p-6 hover:bg-slate-50/50 transition-colors">
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <Badge className={cn("h-5 text-[8px] font-black px-2 tracking-widest border-none", getRegulationColor(item.reg))}>
+                                      {item.reg}
+                                    </Badge>
+                                    {item.activity.toLowerCase().includes('annual') && (
+                                      <Badge variant="outline" className="h-5 text-[8px] text-purple-600 border-purple-100 font-black tracking-widest bg-purple-50">ANNUAL</Badge>
+                                    )}
+                                  </div>
+                                  <h4 className="text-slate-700 font-black text-xs leading-relaxed uppercase tracking-tight">
+                                    {item.activity}
+                                  </h4>
                                 </div>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-200 hover:text-blue-600 hover:bg-blue-50">
+                                  <Bell className="w-4 h-4" />
+                                </Button>
                               </div>
                             </div>
-                            <CalendarDays className={`w-4 h-4 ${status === 'today' ? 'text-blue-600' : 'text-slate-300'}`} />
-                          </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                          <div className="divide-y divide-slate-100">
-                            {items.map((item: any, idx: number) => (
-                              <div key={idx} className="p-4 hover:bg-slate-50/50 transition-colors group">
-                                <div className="flex items-start justify-between gap-3">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-1.5 mb-1.5">
-                                      <Badge className={`${getRegulationColor(item.reg)} h-4 text-[8px] font-black px-1.5 tracking-tighter`}>
-                                        {item.reg}
-                                      </Badge>
-                                      {item.activity.toLowerCase().includes('annual') && (
-                                        <Badge variant="outline" className="h-4 text-[8px] text-purple-600 border-purple-200 font-black">ANNUAL</Badge>
-                                      )}
-                                    </div>
-                                    <h4 className="text-slate-700 font-bold text-xs leading-snug">
-                                      {item.activity}
-                                    </h4>
-                                  </div>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-300 hover:text-blue-600">
-                                    <Bell className="w-4 h-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
+                          ))}
+                        </div>
                       </Card>
                     );
                   })}
@@ -373,54 +411,53 @@ export default function ComplianceCalendarPage() {
             </TabsContent>
           </Tabs>
 
-          {/* New Penalty Section - More Compact & Light Tinted */}
-          <div className="mt-16 mb-20">
-            <PenaltyCalculator />
+          <div className="pt-10">
+             <PenaltyCalculator />
           </div>
 
-          <div className="mt-12 max-w-4xl mx-auto">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="bg-blue-50/50 border-blue-100 rounded-2xl p-6">
-                   <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                         <Info className="w-4 h-4 text-white" />
-                      </div>
-                      <h4 className="font-bold text-slate-900 text-sm">Filing Advisory</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             <div className="bg-white p-10 rounded-[48px] border border-slate-100/50 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/5 blur-3xl rounded-full" />
+                <div className="flex items-center gap-4 mb-8">
+                   <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
+                      <Info className="w-6 h-6 text-blue-600" />
                    </div>
-                   <ul className="space-y-3">
-                      <li className="flex gap-3 text-xs text-slate-600 font-medium leading-relaxed">
-                         <div className="w-4 h-4 bg-white border border-blue-200 rounded-full flex items-center justify-center shrink-0">1</div>
-                         Always verify the actual portal due dates as extensions are common.
-                      </li>
-                      <li className="flex gap-3 text-xs text-slate-600 font-medium leading-relaxed">
-                         <div className="w-4 h-4 bg-white border border-blue-200 rounded-full flex items-center justify-center shrink-0">2</div>
-                         Nil GST returns take 2 minutes - file them today to avoid any late fees.
-                      </li>
-                   </ul>
-                </Card>
+                   <h4 className="font-black text-slate-900 tracking-tight text-xl">Filing Advisory</h4>
+                </div>
+                <div className="space-y-6">
+                   <div className="flex gap-4">
+                      <div className="w-6 h-6 bg-slate-50 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black text-slate-400">01</div>
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed">Portal due dates can fluctuate; always cross-reference with the latest CBDT or GSTN notifications before final submission.</p>
+                   </div>
+                   <div className="flex gap-4">
+                      <div className="w-6 h-6 bg-slate-50 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black text-slate-400">02</div>
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed">Nil GST returns are high-impact and low-effort. File them immediately to maintain a perfect compliance score.</p>
+                   </div>
+                </div>
+             </div>
 
-                <Card className="bg-indigo-50/50 border-indigo-100 rounded-2xl p-6">
-                   <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                         <Shield className="w-4 h-4 text-white" />
-                      </div>
-                      <h4 className="font-bold text-slate-900 text-sm">Security Check</h4>
+             <div className="bg-white p-10 rounded-[48px] border border-slate-100/50 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-600/5 blur-3xl rounded-full" />
+                <div className="flex items-center gap-4 mb-8">
+                   <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100">
+                      <Shield className="w-6 h-6 text-indigo-600" />
                    </div>
-                   <ul className="space-y-3">
-                      <li className="flex gap-3 text-xs text-slate-600 font-medium leading-relaxed">
-                         <div className="w-4 h-4 bg-white border border-indigo-200 rounded-full flex items-center justify-center shrink-0">1</div>
-                         Plan filings 48 hours in advance to handle portal downtime/slowdowns.
-                      </li>
-                      <li className="flex gap-3 text-xs text-slate-600 font-medium leading-relaxed">
-                         <div className="w-4 h-4 bg-white border border-indigo-200 rounded-full flex items-center justify-center shrink-0">2</div>
-                         TDS interest is charged for the full month even for a 1-day delay.
-                      </li>
-                   </ul>
-                </Card>
+                   <h4 className="font-black text-slate-900 tracking-tight text-xl">Security Check</h4>
+                </div>
+                <div className="space-y-6">
+                   <div className="flex gap-4">
+                      <div className="w-6 h-6 bg-slate-50 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black text-slate-400">01</div>
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed">Initiate tax filings at least 48 hours before the deadline to accommodate potential government portal slowdowns or downtime.</p>
+                   </div>
+                   <div className="flex gap-4">
+                      <div className="w-6 h-6 bg-slate-50 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black text-slate-400">02</div>
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed">TDS interest calculation follows the full-month rule. Even a single day of delay can trigger interest for the entire period.</p>
+                   </div>
+                </div>
              </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Reminder Setting Mock Modal */}
       <Dialog open={showReminderModal} onOpenChange={setShowReminderModal}>
