@@ -35,7 +35,20 @@
       "Bash(git rm:*)",
       "Bash(git add:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":5000\\\\|:5173\")",
+      "PowerShell(netstat -ano)",
+      "mcp__Claude_in_Chrome__tabs_create_mcp",
+      "PowerShell(Start-Process \"chrome.exe\" \"http://localhost:5000\")",
+      "Bash(node -e ' *)",
+      "Bash(xxd)",
+      "Bash(find /c/Users/jitsu/OneDrive/Desktop/Websites/Myeca.in/Myeca12.04/client/src '\\(' -name '*.tsx' -o -name '*.ts' -o -name '*.css' '\\)' ! -name brand-lockup.tsx -exec sed -i 's/#003087/#315efb/g' '{}' +)",
+      "Bash(find /c/Users/jitsu/OneDrive/Desktop/Websites/Myeca.in/Myeca12.04/client/src '\\(' -name '*.tsx' -o -name '*.ts' -o -name '*.css' '\\)' ! -name brand-lockup.tsx -exec sed -i 's/#00236B/#2040d8/g; s/#00236b/#2040d8/g' '{}' +)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

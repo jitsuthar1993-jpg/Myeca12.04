@@ -272,8 +272,8 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -315,8 +315,8 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-indigo-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -358,8 +358,8 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -382,7 +382,7 @@ export default function Header() {
                                            </div>
                                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Optimized AI</span>
                                         </div>
-                                        <h6 className="text-xl font-black text-slate-900 leading-tight mb-2">Tax Optimizer AI</h6>
+                                        <h6 className="text-xl font-normal text-slate-900 leading-tight mb-2">Tax Optimizer AI</h6>
                                         <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Save up to {"₹"}50k in taxes with our smart algorithm.</p>
                                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-blue-200/50">
                                            Explore Tool <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -452,8 +452,8 @@ export default function Header() {
                                         <Icon className="w-5 h-5" />
                                       </div>
                                       <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -468,8 +468,8 @@ export default function Header() {
                                 <Stamp className="w-5 h-5" />
                               </div>
                               <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Licenses</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Compliance ready</p>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Licenses</h4>
+                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance ready</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -497,7 +497,7 @@ export default function Header() {
                                         <Icon className="w-5 h-5" />
                                       </div>
                                       <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
                                       </div>
                                     </Link>
@@ -513,8 +513,8 @@ export default function Header() {
                                 <TrendingUp className="w-5 h-5" />
                               </div>
                               <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Scale</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth engine</p>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Scale</h4>
+                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth engine</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -542,8 +542,8 @@ export default function Header() {
                                         <Icon className="w-5 h-5" />
                                       </div>
                                       <div>
-                                        <span className="block text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -563,7 +563,7 @@ export default function Header() {
                                     <Zap className="w-4 h-4 text-purple-600 fill-purple-600/20" />
                                     <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider">Startup India</span>
                                   </div>
-                                  <h6 className="font-black text-slate-900 text-lg mb-2">Recognition + tax benefits</h6>
+                                  <h6 className="font-normal text-slate-900 text-lg mb-2">Recognition + tax benefits</h6>
                                   <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Get DPIIT recognition, IP support, and founder-friendly compliance guidance.</p>
                                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
                                     Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -574,7 +574,7 @@ export default function Header() {
                           </div>
 
                           <div className="mt-8 pt-6 border-t border-slate-200/60">
-                            <Link href="/startup-services" className="inline-flex items-center gap-2 text-xs font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest group">
+                            <Link href="/startup-services" className="inline-flex items-center gap-2 text-xs font-normal text-purple-600 hover:text-purple-700 uppercase tracking-widest group">
                               Explore Startup Hub <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </Link>
                           </div>
@@ -638,8 +638,8 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-medium text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -685,8 +685,8 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -731,8 +731,8 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-medium text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
+                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
                                        </div>
                                      </Link>
                                    </li>
@@ -752,10 +752,10 @@ export default function Header() {
                                        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
                                           <Bot className="w-4 h-4" />
                                        </div>
-                                       <span className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
+                                       <span className="text-[10px] font-normal text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
                                     </div>
                                     <p className="text-[11px] text-slate-500 leading-relaxed mb-4">Get instant answers for ITR filing & tax savings.</p>
-                                    <span className="inline-flex items-center gap-2 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
+                                    <span className="inline-flex items-center gap-2 text-[10px] font-normal text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
                                  </div>
                               </Link>
 
@@ -776,7 +776,7 @@ export default function Header() {
                            </div>
 
                            <div className="mt-8 pt-6 border-t border-slate-200/60">
-                             <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="inline-flex items-center gap-2 text-xs font-bold text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
+                             <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="inline-flex items-center gap-2 text-xs font-normal text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
                                All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                              </Link>
                            </div>
