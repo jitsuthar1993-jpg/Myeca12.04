@@ -154,11 +154,11 @@ export default function Header() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         headerTop
       )}>
-        
+
         <div className={cn(
           "w-full transition-all duration-300 border-b",
-          isScrolled 
-            ? "bg-white/95 backdrop-blur-xl shadow-md border-slate-200/60 py-1" 
+          isScrolled
+            ? "bg-white/95 backdrop-blur-xl shadow-md border-slate-200/60 py-1"
             : "bg-white/80 backdrop-blur-lg border-slate-100 shadow-sm py-2"
         )}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -190,17 +190,17 @@ export default function Header() {
               {/* Desktop Navigation */}
               <NavigationMenu className="hidden lg:flex flex-1 justify-center max-w-[1000px]">
                 <NavigationMenuList className="gap-4">
-                  
+
 
                   {isAuthenticated && (
                     <NavigationMenuItem>
                       <Link href={
-                        user?.role === 'admin' ? "/admin/dashboard" : 
-                        user?.role === 'ca' ? "/ca/dashboard" : 
-                        user?.role === 'team_member' ? "/admin/blog-management" : 
-                        "/dashboard"
+                        user?.role === 'admin' ? "/admin/dashboard" :
+                          user?.role === 'ca' ? "/ca/dashboard" :
+                            user?.role === 'team_member' ? "/admin/blog-management" :
+                              "/dashboard"
                       }
-                      onMouseEnter={() => preloadOnHover(user?.role === 'admin' ? "/admin/dashboard" : "/dashboard")}
+                        onMouseEnter={() => preloadOnHover(user?.role === 'admin' ? "/admin/dashboard" : "/dashboard")}
                       >
                         <div className="relative group">
                           {(location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard') && (
@@ -210,10 +210,10 @@ export default function Header() {
                             "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
                             (location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                           )}>
-                             {user?.role === 'admin' ? "Admin" : 
-                             user?.role === 'ca' ? "CA" : 
-                             user?.role === 'team_member' ? "Staff" : 
-                             "Dashboard"}
+                            {user?.role === 'admin' ? "Admin" :
+                              user?.role === 'ca' ? "CA" :
+                                user?.role === 'team_member' ? "Staff" :
+                                  "Dashboard"}
                           </span>
                         </div>
                       </Link>
@@ -237,166 +237,166 @@ export default function Header() {
                       <div className="w-[1024px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
                         {/* Main Categories */}
                         <div className="flex-1 p-6 grid grid-cols-3 gap-8 bg-white">
-                            <div>
-                              <div className="flex items-center gap-4 mb-6 px-0.5">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
-                                  <FileText className="w-5 h-5" />
-                                </div>
-                                <div>
-                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax & Compliance</h4>
-                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Expert Guided</p>
-                                </div>
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
+                                <FileText className="w-5 h-5" />
                               </div>
-                             <ul className="space-y-4">
-                               {[
-                                 { href: "/services/tds-filing", icon: Receipt, title: "TDS Filing", desc: "Quarterly returns & certificates", color: "blue" },
-                                 { href: "/services/gst-returns", icon: Calculator, title: "GST Returns", desc: "GSTR-1, 3B & Annual filing", color: "emerald" },
-                                 { href: "/services/notice-compliance", icon: Shield, title: "Notice Management", desc: "Expert reply drafting", color: "orange" },
-                                 { href: "/services/reliable-storage", icon: Lock, title: "Secure Vault", desc: "Bank-grade storage", color: "indigo" }
-                               ].map((item, idx) => {
-                                 const Icon = item.icon as any;
-                                 return (
-                                   <li key={idx}>
-                                     <Link 
-                                       href={item.href} 
-                                       onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                     >
-                                       <div className={cn(
-                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
-                                       )}>
-                                         <Icon className="w-5 h-5" />
-                                       </div>
-                                       <div>
-                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
-                                       </div>
-                                     </Link>
-                                   </li>
-                                 );
-                               })}
-                             </ul>
-                           </div>
-                           
-                           <div>
-                              <div className="flex items-center gap-4 mb-6 px-0.5">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100/50">
-                                  <Building2 className="w-5 h-5" />
-                                </div>
-                                <div>
-                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Setup</h4>
-                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Focused</p>
-                                </div>
+                              <div>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax & Compliance</h4>
+                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Expert Guided</p>
                               </div>
-                             <ul className="space-y-4">
-                               {[
-                                 { href: "/services/company-registration", icon: Briefcase, title: "Company Registration", desc: "Pvt Ltd, LLP, OPC & more", color: "indigo" },
-                                 { href: "/services/trademark-registration", icon: Scale, title: "IPR Services", desc: "Trademark & Copyright", color: "purple" },
-                                 { href: "/documents/generator", icon: FileCheck, title: "Legal Documents", desc: "Agreements & Contracts", color: "blue" }
-                               ].map((item, idx) => {
-                                 const Icon = item.icon as any;
-                                 return (
-                                   <li key={idx}>
-                                     <Link 
-                                       href={item.href} 
-                                       onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                     >
-                                       <div className={cn(
-                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                         item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
-                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
-                                       )}>
-                                         <Icon className="w-5 h-5" />
-                                       </div>
-                                       <div>
-                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-indigo-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
-                                       </div>
-                                     </Link>
-                                   </li>
-                                 );
-                               })}
-                             </ul>
-                           </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/services/tds-filing", icon: Receipt, title: "TDS Filing", desc: "Quarterly returns & certificates", color: "blue" },
+                                { href: "/services/gst-returns", icon: Calculator, title: "GST Returns", desc: "GSTR-1, 3B & Annual filing", color: "emerald" },
+                                { href: "/services/notice-compliance", icon: Shield, title: "Notice Management", desc: "Expert reply drafting", color: "orange" },
+                                { href: "/services/reliable-storage", icon: Lock, title: "Secure Vault", desc: "Bank-grade storage", color: "indigo" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
 
-                           <div>
-                              <div className="flex items-center gap-4 mb-6 px-0.5">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
-                                  <BarChart3 className="w-5 h-5" />
-                                </div>
-                                <div>
-                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Intel</h4>
-                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Analytics</p>
-                                </div>
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100/50">
+                                <Building2 className="w-5 h-5" />
                               </div>
-                             <ul className="space-y-4">
-                               {[
-                                 { href: "/business/dashboard", icon: LayoutDashboard, title: "Business HQ", desc: "Compliance & deadines", color: "emerald" },
-                                 { href: "/business/virtual-cfo", icon: BarChart3, title: "Virtual CFO", desc: "P&L & Runway tracking", color: "blue" },
-                                 { href: "/services/tax-planning", icon: TrendingUp, title: "Tax Planning", desc: "Expert advisory", color: "orange" }
-                               ].map((item, idx) => {
-                                 const Icon = item.icon as any;
-                                 return (
-                                   <li key={idx}>
-                                     <Link 
-                                       href={item.href} 
-                                       onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                     >
-                                       <div className={cn(
-                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100"
-                                       )}>
-                                         <Icon className="w-5 h-5" />
-                                       </div>
-                                       <div>
-                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
-                                       </div>
-                                     </Link>
-                                   </li>
-                                 );
-                               })}
-                             </ul>
-                           </div>
+                              <div>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Setup</h4>
+                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Focused</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/services/company-registration", icon: Briefcase, title: "Company Registration", desc: "Pvt Ltd, LLP, OPC & more", color: "indigo" },
+                                { href: "/services/trademark-registration", icon: Scale, title: "IPR Services", desc: "Trademark & Copyright", color: "purple" },
+                                { href: "/documents/generator", icon: FileCheck, title: "Legal Documents", desc: "Agreements & Contracts", color: "blue" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                        item.color === "purple" && "bg-purple-50/50 text-purple-500 group-hover:border-purple-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-indigo-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
+                                <BarChart3 className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Intel</h4>
+                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Analytics</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/business/dashboard", icon: LayoutDashboard, title: "Business HQ", desc: "Compliance & deadines", color: "emerald" },
+                                { href: "/business/virtual-cfo", icon: BarChart3, title: "Virtual CFO", desc: "P&L & Runway tracking", color: "blue" },
+                                { href: "/services/tax-planning", icon: TrendingUp, title: "Tax Planning", desc: "Expert advisory", color: "orange" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
                         </div>
 
-                         {/* Sidebar */}
-                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
-                            <div className="flex-1">
-                               <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
-                               <Link href="/tax-loss-harvesting" className="block group relative">
-                                  <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-blue-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/50 backdrop-blur-sm">
-                                     <div className="relative z-10">
-                                        <div className="flex items-center gap-2 mb-4">
-                                           <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                                              <Sparkles className="w-4 h-4 fill-white/20" />
-                                           </div>
-                                           <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Optimized AI</span>
-                                        </div>
-                                        <h6 className="text-xl font-normal text-slate-900 leading-tight mb-2">Tax Optimizer AI</h6>
-                                        <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Save up to {"₹"}50k in taxes with our smart algorithm.</p>
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-blue-200/50">
-                                           Explore Tool <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                                        </div>
-                                     </div>
+                        {/* Sidebar */}
+                        <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
+                          <div className="flex-1">
+                            <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
+                            <Link href="/tax-loss-harvesting" className="block group relative">
+                              <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-blue-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/50 backdrop-blur-sm">
+                                <div className="relative z-10">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                                      <Sparkles className="w-4 h-4 fill-white/20" />
+                                    </div>
+                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Optimized AI</span>
                                   </div>
-                               </Link>
-                            </div>
-                           
-                           <div className="mt-8 pt-6 border-t border-slate-200/60">
-                             <Link href="/services/marketplace" className="inline-flex items-center gap-2 text-xs font-normal text-blue-600 hover:text-blue-700 uppercase tracking-widest group">
-                               Explore All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                             </Link>
-                           </div>
+                                  <h6 className="text-xl font-normal text-slate-900 leading-tight mb-2">Tax Optimizer AI</h6>
+                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Save up to {"₹"}50k in taxes with our smart algorithm.</p>
+                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-blue-200/50">
+                                    Explore Tool <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+
+                          <div className="mt-8 pt-6 border-t border-slate-200/60">
+                            <Link href="/services/marketplace" className="inline-flex items-center gap-2 text-xs font-normal text-blue-600 hover:text-blue-700 uppercase tracking-widest group">
+                              Explore All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </NavigationMenuContent>
@@ -601,185 +601,185 @@ export default function Header() {
                       <div className="w-[1024px] p-0 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-200/60 overflow-hidden flex">
                         {/* Main Categories — 3 columns */}
                         <div className="flex-1 p-6 grid grid-cols-3 gap-8 bg-white">
-                           {/* Column 1: Tax Calculators */}
-                           <div>
-                              <div className="flex items-center gap-4 mb-6 px-0.5">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
-                                  <Landmark className="w-5 h-5" />
-                                </div>
-                                <div>
-                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
-                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance Hub</p>
-                                </div>
+                          {/* Column 1: Tax Calculators */}
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
+                                <Landmark className="w-5 h-5" />
                               </div>
-                             <ul className="space-y-4">
-                               {[
-                                 { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "AY 2025-26 Tax Analysis", color: "emerald" },
-                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" },
-                                 { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
-                                 { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction on salary & more", color: "orange" },
-                                 { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" }
-                               ].map((item, idx) => {
-                                 const Icon = item.icon as any;
-                                 return (
-                                   <li key={idx}>
-                                     <Link
-                                       href={item.href}
-                                       onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                     >
-                                       <div className={cn(
-                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
-                                       )}>
-                                         <Icon className="w-5 h-5" />
-                                       </div>
-                                       <div>
-                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
-                                       </div>
-                                     </Link>
-                                   </li>
-                                 );
-                               })}
-                             </ul>
-                           </div>
+                              <div>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
+                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance Hub</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "AY 2025-26 Tax Analysis", color: "emerald" },
+                                { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" },
+                                { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
+                                { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction on salary & more", color: "orange" },
+                                { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
 
-                           {/* Column 2: Investment & Savings */}
-                           <div>
-                              <div className="flex items-center gap-4 mb-6 px-0.5">
-                                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
-                                    <PiggyBank className="w-5 h-5" />
-                                 </div>
-                                 <div>
-                                    <h4 className="font-normal text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
-                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
-                                 </div>
+                          {/* Column 2: Investment & Savings */}
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
+                                <PiggyBank className="w-5 h-5" />
                               </div>
-                             <ul className="space-y-4">
-                               {[
-                                 { href: "/calculators/sip", icon: Coins, title: "SIP Calculator", desc: "Plan mutual fund returns", color: "orange" },
-                                 { href: "/elss-comparator", icon: LineChart, title: "ELSS Comparator", desc: "Compare tax saving funds", color: "orange" },
-                                 { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
-                                 { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public Provident Fund growth", color: "emerald" },
-                                 { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit returns", color: "blue" },
-                               ].map((item, idx) => {
-                                 const Icon = item.icon as any;
-                                 return (
-                                   <li key={idx}>
-                                     <Link
-                                       href={item.href}
-                                       onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                     >
-                                       <div className={cn(
-                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
-                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
-                                       )}>
-                                         <Icon className="w-5 h-5" />
-                                       </div>
-                                       <div>
-                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
-                                       </div>
-                                     </Link>
-                                   </li>
-                                 );
-                               })}
-                             </ul>
-                           </div>
+                              <div>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/calculators/sip", icon: Coins, title: "SIP Calculator", desc: "Plan mutual fund returns", color: "orange" },
+                                { href: "/elss-comparator", icon: LineChart, title: "ELSS Comparator", desc: "Compare tax saving funds", color: "orange" },
+                                { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
+                                { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public Provident Fund growth", color: "emerald" },
+                                { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit returns", color: "blue" },
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
 
-                           {/* Column 3: Loan & EMI */}
-                           <div>
-                              <div className="flex items-center gap-4 mb-6 px-0.5">
-                                 <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100/50">
-                                    <Wallet className="w-5 h-5" />
-                                 </div>
-                                 <div>
-                                    <h4 className="font-normal text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
-                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
-                                 </div>
+                          {/* Column 3: Loan & EMI */}
+                          <div>
+                            <div className="flex items-center gap-4 mb-6 px-0.5">
+                              <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100/50">
+                                <Wallet className="w-5 h-5" />
                               </div>
-                             <ul className="space-y-4">
-                               {[
-                                 { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
-                                 { href: "/calculators/home-loan", icon: Landmark, title: "Loan EMI Calculator", desc: "Home, Car & Personal Loans", color: "blue" },
-                                 { href: "/compliance-calendar", icon: Calendar, title: "Compliance Calendar", desc: "GST & Tax Deadlines", color: "indigo" },
-                                 { href: "/calculators/penalty", icon: ShieldAlert, title: "Penalty Calculator", desc: "GST & Tax Delay Costs", color: "orange" }
-                               ].map((item, idx) => {
-                                 const Icon = item.icon as any;
-                                 return (
-                                   <li key={idx}>
-                                     <Link
-                                       href={item.href}
-                                       onMouseEnter={() => preloadOnHover(item.href)}
-                                       className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
-                                     >
-                                       <div className={cn(
-                                         "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
-                                         item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
-                                         item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
-                                         item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
-                                         item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100"
-                                       )}>
-                                         <Icon className="w-5 h-5" />
-                                       </div>
-                                       <div>
-                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
-                                         <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
-                                       </div>
-                                     </Link>
-                                   </li>
-                                 );
-                               })}
-                             </ul>
-                           </div>
+                              <div>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-4">
+                              {[
+                                { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
+                                { href: "/calculators/home-loan", icon: Landmark, title: "Loan EMI Calculator", desc: "Home, Car & Personal Loans", color: "blue" },
+                                { href: "/compliance-calendar", icon: Calendar, title: "Compliance Calendar", desc: "GST & Tax Deadlines", color: "indigo" },
+                                { href: "/calculators/penalty", icon: ShieldAlert, title: "Penalty Calculator", desc: "GST & Tax Delay Costs", color: "orange" }
+                              ].map((item, idx) => {
+                                const Icon = item.icon as any;
+                                return (
+                                  <li key={idx}>
+                                    <Link
+                                      href={item.href}
+                                      onMouseEnter={() => preloadOnHover(item.href)}
+                                      className="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all duration-300"
+                                    >
+                                      <div className={cn(
+                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm border border-transparent",
+                                        item.color === "orange" && "bg-orange-50/50 text-orange-500 group-hover:border-orange-100",
+                                        item.color === "blue" && "bg-blue-50/50 text-blue-500 group-hover:border-blue-100",
+                                        item.color === "indigo" && "bg-indigo-50/50 text-indigo-500 group-hover:border-indigo-100",
+                                        item.color === "emerald" && "bg-emerald-50/50 text-emerald-500 group-hover:border-emerald-100"
+                                      )}>
+                                        <Icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                        <span className="block text-sm font-normal text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
+                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                      </div>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
                         </div>
 
                         {/* Sidebar */}
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
-                           <div className="flex-1">
-                              <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
-                              <Link href="/tax-assistant" onMouseEnter={() => preloadOnHover("/tax-assistant")} className="block group">
-                                 <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-1">
-                                    <div className="flex items-center gap-3 mb-3">
-                                       <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                                          <Bot className="w-4 h-4" />
-                                       </div>
-                                       <span className="text-[10px] font-normal text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
-                                    </div>
-                                    <p className="text-[11px] text-slate-500 leading-relaxed mb-4">Get instant answers for ITR filing & tax savings.</p>
-                                    <span className="inline-flex items-center gap-2 text-[10px] font-normal text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
-                                 </div>
-                              </Link>
-
-                              <div className="mt-6 space-y-1">
-                                <Link href="/calculators/general" onMouseEnter={() => preloadOnHover("/calculators/general")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
-                                   <Grid className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
-                                   <span className="text-xs font-normal text-slate-600">General Calculator</span>
-                                </Link>
-                                <Link href="/calculators/hsn-finder" onMouseEnter={() => preloadOnHover("/calculators/hsn-finder")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
-                                   <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
-                                   <span className="text-xs font-normal text-slate-600">HSN/SAC Finder</span>
-                                </Link>
-                                <Link href="/form16-parser" onMouseEnter={() => preloadOnHover("/form16-parser")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
-                                   <FileText className="w-4 h-4 text-slate-400 group-hover:text-orange-600" />
-                                   <span className="text-xs font-normal text-slate-600">Form 16 Parser</span>
-                                </Link>
+                          <div className="flex-1">
+                            <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
+                            <Link href="/tax-assistant" onMouseEnter={() => preloadOnHover("/tax-assistant")} className="block group">
+                              <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-1">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                    <Bot className="w-4 h-4" />
+                                  </div>
+                                  <span className="text-[10px] font-normal text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
+                                </div>
+                                <p className="text-[11px] text-slate-500 leading-relaxed mb-4">Get instant answers for ITR filing & tax savings.</p>
+                                <span className="inline-flex items-center gap-2 text-[10px] font-normal text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
                               </div>
-                           </div>
+                            </Link>
 
-                           <div className="mt-8 pt-6 border-t border-slate-200/60">
-                             <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="inline-flex items-center gap-2 text-xs font-normal text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
-                               All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                             </Link>
-                           </div>
+                            <div className="mt-6 space-y-1">
+                              <Link href="/calculators/general" onMouseEnter={() => preloadOnHover("/calculators/general")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
+                                <Grid className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                                <span className="text-xs font-normal text-slate-600">General Calculator</span>
+                              </Link>
+                              <Link href="/calculators/hsn-finder" onMouseEnter={() => preloadOnHover("/calculators/hsn-finder")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
+                                <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
+                                <span className="text-xs font-normal text-slate-600">HSN/SAC Finder</span>
+                              </Link>
+                              <Link href="/form16-parser" onMouseEnter={() => preloadOnHover("/form16-parser")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
+                                <FileText className="w-4 h-4 text-slate-400 group-hover:text-orange-600" />
+                                <span className="text-xs font-normal text-slate-600">Form 16 Parser</span>
+                              </Link>
+                            </div>
+                          </div>
+
+                          <div className="mt-8 pt-6 border-t border-slate-200/60">
+                            <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="inline-flex items-center gap-2 text-xs font-normal text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
+                              All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </NavigationMenuContent>
@@ -807,7 +807,7 @@ export default function Header() {
 
                 </NavigationMenuList>
               </NavigationMenu>
-              
+
               {/* Right Side Actions - Pill Style */}
               <div className="flex items-center gap-3">
                 {/* Search - Desktop */}
@@ -836,7 +836,7 @@ export default function Header() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="text-sm font-black text-slate-900 truncate">
-                              {[user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || user?.email}
+                                {[user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || user?.email}
                               </span>
                               <span className="text-[10px] font-medium text-slate-500 truncate mt-0.5">
                                 {user?.email}
@@ -857,9 +857,9 @@ export default function Header() {
 
                         <DropdownMenuItem className="p-3 rounded-xl cursor-pointer group" asChild>
                           <Link href={
-                            user?.role === 'admin' ? "/admin/dashboard" : 
-                            user?.role === 'team_member' ? "/admin/blog-management" :
-                            "/dashboard"
+                            user?.role === 'admin' ? "/admin/dashboard" :
+                              user?.role === 'team_member' ? "/admin/blog-management" :
+                                "/dashboard"
                           } className="flex items-center gap-3 w-full">
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
                               <LayoutDashboard className="w-4 h-4" />
@@ -867,7 +867,7 @@ export default function Header() {
                             <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Dashboard</span>
                           </Link>
                         </DropdownMenuItem>
-                        
+
                         <DropdownMenuItem className="p-3 rounded-xl cursor-pointer group" asChild>
                           <Link href="/settings" className="flex items-center gap-3 w-full">
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
@@ -878,8 +878,8 @@ export default function Header() {
                         </DropdownMenuItem>
 
                         <DropdownMenuSeparator className="my-2 bg-slate-100" />
-                        
-                        <DropdownMenuItem 
+
+                        <DropdownMenuItem
                           className="p-3 rounded-xl cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 group"
                           onClick={() => logout()}
                         >
@@ -894,7 +894,7 @@ export default function Header() {
                     </DropdownMenu>
                   </div>
                 )}
-                
+
                 {!isLoading && !isAuthenticated && (
                   <div className="hidden lg:flex items-center">
                     <Link href="/login">
@@ -915,169 +915,169 @@ export default function Header() {
                   </SheetTrigger>
                   <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 overflow-y-auto flex flex-col">
                     <SheetHeader className="p-0 border-b bg-slate-50/50 text-left overflow-hidden">
-                       <a 
-                         href="https://myeca.in" 
-                         onClick={() => setMobileMenuOpen(false)}
-                         className="flex items-center gap-3 p-6 hover:bg-white transition-all cursor-pointer group"
-                       >
-                          <Logo size="md" className="group-hover:scale-105 transition-transform" />
-                          <div className="flex flex-col">
-                            <span className="font-bold text-xl text-[#315efb]">
-                               MyeCA.in
-                            </span>
-                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">FINANCIAL COCKPIT</span>
-                          </div>
-                       </a>
-                       <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                      <a
+                        href="https://myeca.in"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 p-6 hover:bg-white transition-all cursor-pointer group"
+                      >
+                        <Logo size="md" className="group-hover:scale-105 transition-transform" />
+                        <div className="flex flex-col">
+                          <span className="font-bold text-xl text-[#315efb]">
+                            MyeCA.in
+                          </span>
+                          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">FINANCIAL COCKPIT</span>
+                        </div>
+                      </a>
+                      <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     </SheetHeader>
-                    
+
                     <div className="flex-1 overflow-y-auto">
                       <div className="flex flex-col py-4">
                         {isAuthenticated && (
                           <Link href={
-                            user?.role === 'admin' ? "/admin/users" : 
-                            user?.role === 'ca' ? "/ca/dashboard" : 
-                            user?.role === 'team_member' ? "/admin/blog-management" : 
-                            "/dashboard"
+                            user?.role === 'admin' ? "/admin/users" :
+                              user?.role === 'ca' ? "/ca/dashboard" :
+                                user?.role === 'team_member' ? "/admin/blog-management" :
+                                  "/dashboard"
                           } className="px-6 py-3 text-sm font-bold text-blue-600 hover:bg-blue-50 transition-colors border-l-4 border-blue-600 bg-blue-50/30">
-                            {user?.role === 'admin' ? "Admin" : 
-                             user?.role === 'ca' ? "CA Dashboard" : 
-                             user?.role === 'team_member' ? "Staff Panel" : 
-                             "Dashboard"}
+                            {user?.role === 'admin' ? "Admin" :
+                              user?.role === 'ca' ? "CA Dashboard" :
+                                user?.role === 'team_member' ? "Staff Panel" :
+                                  "Dashboard"}
                           </Link>
                         )}
 
                         <Accordion type="single" collapsible className="w-full">
-                           <AccordionItem value="services" className="border-none">
-                              <AccordionTrigger className={cn(
-                                "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
-                                location.startsWith('/services') ? "font-bold" : "font-normal"
-                              )}>
-                                  Services
-                              </AccordionTrigger>
-                              <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                                 <div className="space-y-3">
-                                    <div className="space-y-1">
-                                       <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</h5>
-                                       <Link href="/services/tds-filing" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Filing</Link>
-                                       <Link href="/services/gst-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">GST Registration</Link>
-                                       <Link href="/services/document-vault" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Document Vault</Link>
-                                     </div>
-                                    <div className="space-y-1 pt-2">
-                                       <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Business</h5>
-                                       <Link href="/services/company-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Company Registration</Link>
-                                       <Link href="/services/trademark-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Trademark</Link>
-                                    </div>
-                                 </div>
-                              </AccordionContent>
-                           </AccordionItem>
+                          <AccordionItem value="services" className="border-none">
+                            <AccordionTrigger className={cn(
+                              "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
+                              location.startsWith('/services') ? "font-bold" : "font-normal"
+                            )}>
+                              Services
+                            </AccordionTrigger>
+                            <AccordionContent className="bg-slate-50/50 px-6 py-2">
+                              <div className="space-y-3">
+                                <div className="space-y-1">
+                                  <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</h5>
+                                  <Link href="/services/tds-filing" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Filing</Link>
+                                  <Link href="/services/gst-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">GST Registration</Link>
+                                  <Link href="/services/document-vault" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Document Vault</Link>
+                                </div>
+                                <div className="space-y-1 pt-2">
+                                  <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Business</h5>
+                                  <Link href="/services/company-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Company Registration</Link>
+                                  <Link href="/services/trademark-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Trademark</Link>
+                                </div>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
 
-                           <AccordionItem value="startup" className="border-none">
-                              <AccordionTrigger className={cn(
-                                "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-purple-600 transition-all",
-                                location.startsWith('/startup') ? "font-bold" : "font-normal"
-                              )}>
-                                 Startup Services
-                              </AccordionTrigger>
-                              <AccordionContent className="bg-purple-50/30 px-6 py-2">
-                                 <div className="grid grid-cols-1 gap-2">
-                                    <Link href="/startup-services" className="block py-1.5 text-sm text-purple-700 font-medium">Overview</Link>
-                                    <Link href="/startup/registration" className="block py-1.5 text-sm text-slate-600 hover:text-purple-600">Registration</Link>
-                                    <Link href="/startup/funding" className="block py-1.5 text-sm text-slate-600 hover:text-purple-600">Funding & Grants</Link>
-                                 </div>
-                              </AccordionContent>
-                           </AccordionItem>
+                          <AccordionItem value="startup" className="border-none">
+                            <AccordionTrigger className={cn(
+                              "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-purple-600 transition-all",
+                              location.startsWith('/startup') ? "font-bold" : "font-normal"
+                            )}>
+                              Startup Services
+                            </AccordionTrigger>
+                            <AccordionContent className="bg-purple-50/30 px-6 py-2">
+                              <div className="grid grid-cols-1 gap-2">
+                                <Link href="/startup-services" className="block py-1.5 text-sm text-purple-700 font-medium">Overview</Link>
+                                <Link href="/startup/registration" className="block py-1.5 text-sm text-slate-600 hover:text-purple-600">Registration</Link>
+                                <Link href="/startup/funding" className="block py-1.5 text-sm text-slate-600 hover:text-purple-600">Funding & Grants</Link>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
 
-                           <AccordionItem value="calculators" className="border-none">
-                              <AccordionTrigger className={cn(
-                                "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
-                                (location.startsWith('/calculators') || location === '/compliance-calendar' || location === '/elss-comparator') ? "font-bold" : "font-normal"
-                              )}>
-                                 Calculators
-                              </AccordionTrigger>
-                              <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                                 <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</p>
-                                 <div className="grid grid-cols-1 gap-1 mb-4">
-                                    <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax (New vs Old)</Link>
-                                    <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
-                                    <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Exemption</Link>
-                                    <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
-                                    <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
-                                 </div>
-                                 <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Wealth & Savings</p>
-                                 <div className="grid grid-cols-1 gap-1 mb-4">
-                                    <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
-                                    <Link href="/elss-comparator" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">ELSS Comparator</Link>
-                                    <Link href="/calculators/nps" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">NPS Calculator</Link>
-                                    <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
-                                    <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
-                                 </div>
-                                 <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
-                                 <div className="grid grid-cols-1 gap-1">
-                                    <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
-                                    <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Loan EMI Calculator</Link>
-                                    <Link href="/compliance-calendar" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Compliance Calendar</Link>
-                                    <Link href="/calculators/penalty" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Penalty Calculator</Link>
-                                 </div>
-                              </AccordionContent>
-                           </AccordionItem>
+                          <AccordionItem value="calculators" className="border-none">
+                            <AccordionTrigger className={cn(
+                              "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
+                              (location.startsWith('/calculators') || location === '/compliance-calendar' || location === '/elss-comparator') ? "font-bold" : "font-normal"
+                            )}>
+                              Calculators
+                            </AccordionTrigger>
+                            <AccordionContent className="bg-slate-50/50 px-6 py-2">
+                              <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</p>
+                              <div className="grid grid-cols-1 gap-1 mb-4">
+                                <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax (New vs Old)</Link>
+                                <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
+                                <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Exemption</Link>
+                                <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
+                                <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
+                              </div>
+                              <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Wealth & Savings</p>
+                              <div className="grid grid-cols-1 gap-1 mb-4">
+                                <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
+                                <Link href="/elss-comparator" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">ELSS Comparator</Link>
+                                <Link href="/calculators/nps" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">NPS Calculator</Link>
+                                <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
+                                <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
+                              </div>
+                              <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
+                              <div className="grid grid-cols-1 gap-1">
+                                <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
+                                <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Loan EMI Calculator</Link>
+                                <Link href="/compliance-calendar" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Compliance Calendar</Link>
+                                <Link href="/calculators/penalty" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Penalty Calculator</Link>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
                         </Accordion>
 
-                        <Link 
-                          href="/blog" 
+                        <Link
+                          href="/blog"
                           onTouchStart={() => preloadOnHover("/blog")}
                           className={cn(
-                          "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
-                          location.startsWith('/blog') ? "font-bold" : "font-normal"
-                        )}>
-                           Knowledge Hub (Blog)
+                            "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
+                            location.startsWith('/blog') ? "font-bold" : "font-normal"
+                          )}>
+                          Knowledge Hub (Blog)
                         </Link>
 
-                        <Link 
-                          href="/about" 
+                        <Link
+                          href="/about"
                           onTouchStart={() => preloadOnHover("/about")}
                           className={cn(
-                          "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
-                          location === '/about' ? "font-bold" : "font-normal"
-                        )}>
-                           About MyeCA.in
+                            "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
+                            location === '/about' ? "font-bold" : "font-normal"
+                          )}>
+                          About MyeCA.in
                         </Link>
-                        
-                        <Link 
-                          href="/contact" 
+
+                        <Link
+                          href="/contact"
                           onTouchStart={() => preloadOnHover("/contact")}
                           className={cn(
-                          "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
-                          location === '/contact' ? "font-bold" : "font-normal"
-                        )}>
-                           Contact Us
+                            "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
+                            location === '/contact' ? "font-bold" : "font-normal"
+                          )}>
+                          Contact Us
                         </Link>
                       </div>
                     </div>
 
                     <div className="p-6 border-t mt-auto bg-slate-50/50">
-                       {!isLoading && !isAuthenticated && (
-                          <div className="grid gap-3">
-                             <Link href="/login" onTouchStart={() => preloadOnHover("/login")} onClick={() => setMobileMenuOpen(false)}>
-                                <Button className="w-full justify-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl h-11 shadow-lg shadow-blue-200">
-                                   Join / Sign in
-                                </Button>
-                             </Link>
-                          </div>
-                       )}
-                       {!isLoading && isAuthenticated && (
-                          <Button 
-                             onClick={() => {
-                                logout();
-                                setMobileMenuOpen(false);
-                             }} 
-                             variant="outline" 
-                             className="w-full justify-center text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl h-11 border-red-100"
-                          >
-                             <LogOut className="w-4 h-4 mr-2" />
-                             Log Out
-                          </Button>
-                       )}
+                      {!isLoading && !isAuthenticated && (
+                        <div className="grid gap-3">
+                          <Link href="/login" onTouchStart={() => preloadOnHover("/login")} onClick={() => setMobileMenuOpen(false)}>
+                            <Button className="w-full justify-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl h-11 shadow-lg shadow-blue-200">
+                              Join / Sign in
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
+                      {!isLoading && isAuthenticated && (
+                        <Button
+                          onClick={() => {
+                            logout();
+                            setMobileMenuOpen(false);
+                          }}
+                          variant="outline"
+                          className="w-full justify-center text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl h-11 border-red-100"
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Log Out
+                        </Button>
+                      )}
                     </div>
                   </SheetContent>
                 </Sheet>

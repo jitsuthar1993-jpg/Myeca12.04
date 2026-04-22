@@ -462,9 +462,12 @@ export default function ComplianceCalendarPage() {
                   {upcomingItems.slice(0, 4).map((item, idx) => {
                     const s = REG_STYLES[item.reg] || REG_STYLES.GST;
                     return (
-                      <div 
-                        key={idx} 
+                      <div
+                        key={idx}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => setSelectedDate(item.date)}
+                        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelectedDate(item.date)}
                         className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-100 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-50/50 transition-all cursor-pointer group"
                       >
                         <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 shrink-0 group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-all duration-300">

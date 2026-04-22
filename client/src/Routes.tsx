@@ -111,9 +111,11 @@ import { RequireAuth } from '@/components/auth/RequireAuth';
 const CADashboard = lazyWithRetry(() => import("@/pages/ca/dashboard.page"));
 const AdminServices = lazyWithRetry(() => import("@/pages/admin/services.page"));
 const AdminBlog = lazyWithRetry(() => import("@/pages/admin/blog.page"));
-const AdminAnalytics = lazyWithRetry(() => import("@/pages/admin/analytics.page"));
+const AdminAnalyticsPage = lazyWithRetry(() => import("@/pages/admin/analytics/index.page"));
 const AdminUsers = lazyWithRetry(() => import("@/pages/admin/users.page"));
 const AdminUserManagement = lazyWithRetry(() => import("@/pages/admin/user-management.page"));
+const AuditLogsPage = lazyWithRetry(() => import("@/pages/admin/audit-logs.page"));
+const ServiceActivationPage = lazyWithRetry(() => import("@/pages/services/activation.page"));
 const AdminCreateAdmin = lazyWithRetry(() => import("@/pages/admin/create-admin.page"));
 const AdminFeedbackManagement = lazyWithRetry(() => import("@/pages/admin/feedback-management.page"));
 const AdminSettings = lazyWithRetry(() => import("@/pages/admin/settings.page"));
@@ -210,7 +212,7 @@ export default function Routes() {
 
         {/* Professional Services Platform */}
         <Route path="/services/selection" component={ServiceSelectionPage} />
-        <Route path="/services/activate/:serviceId" component={lazyWithRetry(() => import("@/pages/services/activation.page"))} />
+        <Route path="/services/activate/:serviceId" component={ServiceActivationPage} />
         <Route path="/services/marketplace" component={ServicesMarketplacePage} />
         <Route path="/documents/generator" component={DocumentGeneratorRegistry} />
         <Route path="/documents/generator_page" component={DocumentGeneratorRegistry} />
@@ -315,30 +317,21 @@ export default function Routes() {
             <AdminBlog />
           </RequireAdmin>
         )} />
-        <Route path="/admin/analytics" component={() => {
-          const AdminAnalytics = lazyWithRetry(() => import("@/pages/admin/analytics/index.page"))
-          return (
-            <RequireAdmin>
-              <AdminAnalytics />
-            </RequireAdmin>
-          )
-        }} />
-        <Route path="/admin/users" component={() => {
-          const AdminUsers = lazyWithRetry(() => import("@/pages/admin/users.page"))
-          return (
-            <RequireAdmin>
-              <AdminUsers />
-            </RequireAdmin>
-          )
-        }} />
-        <Route path="/admin/user-management" component={() => {
-          const AdminUsers = lazyWithRetry(() => import("@/pages/admin/users.page"))
-          return (
-            <RequireAdmin>
-              <AdminUsers />
-            </RequireAdmin>
-          )
-        }} />
+        <Route path="/admin/analytics" component={() => (
+          <RequireAdmin>
+            <AdminAnalyticsPage />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/users" component={() => (
+          <RequireAdmin>
+            <AdminUsers />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/user-management" component={() => (
+          <RequireAdmin>
+            <AdminUsers />
+          </RequireAdmin>
+        )} />
         <Route path="/admin/create-admin" component={() => (
           <RequireAdmin>
             <AdminCreateAdmin />
@@ -354,14 +347,11 @@ export default function Routes() {
             <AdminSettings />
           </RequireAdmin>
         )} />
-        <Route path="/admin/audit-logs" component={() => {
-          const AuditLogsPage = lazyWithRetry(() => import("@/pages/admin/audit-logs.page"));
-          return (
-            <RequireAdmin>
-              <AuditLogsPage />
-            </RequireAdmin>
-          )
-        }} />
+        <Route path="/admin/audit-logs" component={() => (
+          <RequireAdmin>
+            <AuditLogsPage />
+          </RequireAdmin>
+        )} />
         {/* CA Routes */}
         <Route path="/ca/dashboard" component={() => (
           <RequireRole roles={['admin', 'ca']}>
@@ -396,7 +386,6 @@ export default function Routes() {
         <Route path="/help/knowledge-base" component={KnowledgeBasePage} />
         <Route path="/advanced-features" component={AdvancedFeaturesPage} />
         <Route path="/analytics-dashboard" component={AnalyticsDashboardPage} />
-        <Route path="/settings" component={SettingsPage} />
         <Route path="/compare" component={ComparisonToolsPage} />
         <Route path="/api-docs" component={ApiDocsPage} />
         <Route path="/export" component={ExportCenterPage} />

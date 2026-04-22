@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /auth/
+Disallow: /settings/
+Disallow: /profile/
+Disallow: /team/
+Disallow: /ca/
+Disallow: /documents/
+Disallow: /reports/
+Disallow: /workflows/
+
+# Sitemap location
+Sitemap: https://myeca.in/sitemap.xml

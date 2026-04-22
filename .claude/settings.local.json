@@ -48,7 +48,10 @@
       "Bash(xxd)",
       "Bash(find /c/Users/jitsu/OneDrive/Desktop/Websites/Myeca.in/Myeca12.04/client/src '\\(' -name '*.tsx' -o -name '*.ts' -o -name '*.css' '\\)' ! -name brand-lockup.tsx -exec sed -i 's/#003087/#315efb/g' '{}' +)",
       "Bash(find /c/Users/jitsu/OneDrive/Desktop/Websites/Myeca.in/Myeca12.04/client/src '\\(' -name '*.tsx' -o -name '*.ts' -o -name '*.css' '\\)' ! -name brand-lockup.tsx -exec sed -i 's/#00236B/#2040d8/g; s/#00236b/#2040d8/g' '{}' +)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep -v \"\\\\.tsx:$\")",
+      "Bash(node generate-og-image.mjs)"
     ]
   }
 }

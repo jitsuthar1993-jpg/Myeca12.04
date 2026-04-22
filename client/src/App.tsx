@@ -62,7 +62,7 @@ function ScrollToTop() {
 }
 
 function Router() {
-  const currentPath = window.location.pathname;
+  const [currentPath] = useLocation();
   
   // Define paths that should NOT show the global site header and footer
   // These are typically dashboard, admin, and account-related pages
@@ -105,7 +105,7 @@ function Router() {
 }
 
 function AppContent() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -130,23 +130,23 @@ function AppContent() {
         switch (e.key.toLowerCase()) {
           case 'h':
             e.preventDefault();
-            window.location.href = '/';
+            navigate('/');
             break;
           case 's':
             e.preventDefault();
-            window.location.href = '/services';
+            navigate('/services');
             break;
           case 'c':
             e.preventDefault();
-            window.location.href = '/calculators';
+            navigate('/calculators');
             break;
           case 'a':
             e.preventDefault();
-            window.location.href = '/analytics-dashboard';
+            navigate('/analytics-dashboard');
             break;
           case 'p':
             e.preventDefault();
-            window.location.href = '/pricing';
+            navigate('/pricing');
             break;
         }
       }
