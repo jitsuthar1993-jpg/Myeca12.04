@@ -114,7 +114,7 @@ const CardPopular = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-card border-2 border-[#003087]/20 bg-white text-gray-900 shadow-xl shadow-[#003087]/10 transition-all duration-300 hover:shadow-2xl hover:shadow-[#003087]/15 hover:-translate-y-2 relative overflow-hidden",
+      "rounded-card border-2 border-[#315efb]/20 bg-white text-gray-900 shadow-xl shadow-[#315efb]/10 transition-all duration-300 hover:shadow-2xl hover:shadow-[#315efb]/15 hover:-translate-y-2 relative overflow-hidden",
       "before:absolute before:inset-0 before:bg-gradient-to-br before:from-[#EEF4FF]/40 before:to-white before:pointer-events-none",
       className
     )}

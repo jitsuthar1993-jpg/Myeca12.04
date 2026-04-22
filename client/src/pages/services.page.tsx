@@ -69,12 +69,12 @@ export default function ServicesPage() {
       />
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 font-black text-[#003087]">
+          <Link href="/" className="flex items-center gap-2 font-black text-[#315efb]">
             <Logo size="sm" />
             MyeCA.in
           </Link>
           <Link href="/auth/register">
-            <Button className="bg-[#003087] text-white hover:bg-[#082a5c]">Start now</Button>
+            <Button className="bg-[#315efb] text-white hover:bg-[#082a5c]">Start now</Button>
           </Link>
         </div>
       </header>
@@ -111,20 +111,20 @@ export default function ServicesPage() {
               <MyeCard key={category.title}>
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="max-w-sm">
-                    <Icon className="h-9 w-9 text-[#003087]" />
+                    <Icon className="h-9 w-9 text-[#315efb]" />
                     <h2 className="mt-4 text-2xl font-black text-slate-950">{category.title}</h2>
                     <p className="mt-2 text-slate-600">{category.audience}</p>
                     <StatusBadge status="ca_review" label="CA-assisted options" className="mt-4" />
                   </div>
                   <div className="grid flex-1 gap-4 md:grid-cols-3">
                     {category.services.map(([title, description, href, price]) => (
-                      <Link key={title} href={href} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-1 hover:border-[#003087] hover:bg-blue-50">
+                      <Link key={title} href={href} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-1 hover:border-[#315efb] hover:bg-blue-50">
                         <BadgeCheck className="h-6 w-6 text-emerald-800" />
                         <h3 className="mt-4 font-black text-slate-950">{title}</h3>
                         <p className="mt-2 text-sm text-slate-600">{description}</p>
                         <div className="mt-5 flex items-center justify-between">
-                          <span className="font-black text-[#003087]">{price}</span>
-                          <ArrowRight className="h-4 w-4 text-[#003087]" />
+                          <span className="font-black text-[#315efb]">{price}</span>
+                          <ArrowRight className="h-4 w-4 text-[#315efb]" />
                         </div>
                       </Link>
                     ))}
@@ -146,7 +146,7 @@ export default function ServicesPage() {
             const TypedIcon = Icon as typeof ShieldCheck;
             return (
               <MyeCard key={String(title)} className="p-7">
-                <TypedIcon className="h-8 w-8 text-[#003087]" />
+                <TypedIcon className="h-8 w-8 text-[#315efb]" />
                 <h3 className="mt-4 text-xl font-black">{String(title)}</h3>
                 <p className="mt-2 text-slate-600">{String(description)}</p>
               </MyeCard>

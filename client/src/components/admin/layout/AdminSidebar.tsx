@@ -86,7 +86,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 h-full w-64 bg-[#003087] text-white shadow-xl transform transition-transform duration-300 z-50',
+          'fixed left-0 top-0 h-full w-64 bg-[#315efb] text-white shadow-xl transform transition-transform duration-300 z-50',
           'lg:translate-x-0 lg:relative lg:z-auto',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}

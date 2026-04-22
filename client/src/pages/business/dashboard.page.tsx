@@ -79,7 +79,7 @@ export default function BusinessDashboardPage() {
             description="Dense, sortable table pattern for GST, TDS, ROC, payroll, and employee compliance."
             action={
               <Link href="/business/virtual-cfo">
-                <Button className="bg-[#003087] text-white hover:bg-[#082a5c]">
+                <Button className="bg-[#315efb] text-white hover:bg-[#082a5c]">
                   Open vCFO
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -133,11 +133,11 @@ export default function BusinessDashboardPage() {
         ].map(([title, Icon, description, href]) => {
           const TypedIcon = Icon as typeof CalendarDays;
           return (
-            <Link key={String(title)} href={String(href)} className="rounded-[28px] border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-[#003087]">
-              <TypedIcon className="h-8 w-8 text-[#003087]" />
+            <Link key={String(title)} href={String(href)} className="rounded-[28px] border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-[#315efb]">
+              <TypedIcon className="h-8 w-8 text-[#315efb]" />
               <h3 className="mt-4 text-xl font-black text-slate-950">{String(title)}</h3>
               <p className="mt-2 text-slate-600">{String(description)}</p>
-              <div className="mt-5 flex items-center gap-2 font-black text-[#003087]">
+              <div className="mt-5 flex items-center gap-2 font-black text-[#315efb]">
                 Open module
                 <ArrowRight className="h-4 w-4" />
               </div>

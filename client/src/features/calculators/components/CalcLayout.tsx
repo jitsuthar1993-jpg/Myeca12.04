@@ -27,7 +27,7 @@ export default function CalcLayout({
         <div className="max-w-7xl mx-auto px-4 pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Content Area */}
-            <div className="lg:col-span-7 space-y-12">
+            <div className={cn("space-y-12", sidebar ? "lg:col-span-7" : "lg:col-span-12")}>
               {children}
             </div>
 

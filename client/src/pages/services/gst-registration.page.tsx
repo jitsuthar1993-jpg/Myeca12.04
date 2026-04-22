@@ -516,7 +516,7 @@ export default function GstRegistrationPage() {
                 Required Documents for GST Registration
               </CardTitle>
               <CardDescription>
-                Complete checklist of documents needed for hassle-free GST registration
+                Complete checklist of documents required for GST registration
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -802,7 +802,7 @@ export default function GstRegistrationPage() {
           </div>
 
           <p className="text-sm text-gray-600 mt-8">
-            Trusted by 50,000+ businesses • 99.9% success rate • Expert CA team
+            Expert CA team · ERI-registered platform · End-to-end support
           </p>
         </m.div>
 

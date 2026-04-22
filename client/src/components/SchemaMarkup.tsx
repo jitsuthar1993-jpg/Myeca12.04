@@ -21,10 +21,8 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
         description: data.description || "India's trusted platform for expert income tax filing and business services",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "123 Business Park",
-          addressLocality: "Bangalore",
-          addressRegion: "Karnataka",
-          postalCode: "560001",
+          addressLocality: "Mumbai",
+          addressRegion: "Maharashtra",
           addressCountry: "IN"
         },
         contactPoint: {

@@ -273,14 +273,11 @@ const SEO: React.FC<SEOProps> = ({
             name: siteName,
             description: "Expert CA-assisted tax filing services in India. File ITR online with maximum refund guarantee.",
             url: "https://myeca.in",
-            telephone: "+91-9876543210",
             email: "support@myeca.in",
             address: {
               "@type": "PostalAddress",
-              streetAddress: "123 Business Park",
               addressLocality: "Mumbai",
               addressRegion: "Maharashtra",
-              postalCode: "400001",
               addressCountry: "IN"
             },
             openingHoursSpecification: {

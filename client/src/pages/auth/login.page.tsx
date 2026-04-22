@@ -108,7 +108,7 @@ export default function LoginPage() {
           variant="outline"
           onClick={handleGoogle}
           disabled={loading || googleLoading}
-          className="h-11 w-full rounded-lg border-slate-200 bg-white font-black text-slate-900 hover:border-[#003087] hover:bg-[#f4f8ff]"
+          className="h-11 w-full rounded-lg border-slate-200 bg-white font-black text-slate-900 hover:border-[#315efb] hover:bg-[#f4f8ff]"
         >
           {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Continue with Google
@@ -144,7 +144,7 @@ export default function LoginPage() {
             <Label htmlFor="password" className="text-sm font-black text-slate-800">
               Password
             </Label>
-            <Link href="/forgot-password" className="text-sm font-black text-[#003087] hover:text-[#06439f]">
+            <Link href="/forgot-password" className="text-sm font-black text-[#315efb] hover:text-[#06439f]">
               Forgot?
             </Link>
           </div>
@@ -166,7 +166,7 @@ export default function LoginPage() {
         <Button
           type="submit"
           disabled={loading || googleLoading}
-          className="h-11 w-full rounded-lg bg-[#003087] text-sm font-black text-white hover:bg-[#06439f]"
+          className="h-11 w-full rounded-lg bg-[#315efb] text-sm font-black text-white hover:bg-[#06439f]"
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Sign in

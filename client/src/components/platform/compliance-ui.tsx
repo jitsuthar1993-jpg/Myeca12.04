@@ -154,7 +154,7 @@ export function MetricCard({
   tone?: "blue" | "green" | "amber" | "slate";
 }) {
   const tones = {
-    blue: "bg-blue-50 text-[#003087]",
+    blue: "bg-blue-50 text-[#315efb]",
     green: "bg-emerald-50 text-emerald-800",
     amber: "bg-amber-50 text-amber-900",
     slate: "bg-slate-100 text-slate-800",
@@ -219,7 +219,7 @@ export function ProgressTimeline({
             <div
               className={cn(
                 "mb-3 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black",
-                complete ? "bg-emerald-700 text-white" : "bg-white text-[#003087] ring-1 ring-slate-200",
+                complete ? "bg-emerald-700 text-white" : "bg-white text-[#315efb] ring-1 ring-slate-200",
               )}
             >
               {index + 1}
@@ -270,7 +270,7 @@ export function ComplianceShell({
     <div className="min-h-screen bg-[#f6f9fd] text-slate-950">
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <Link href="/dashboard" className="flex items-center gap-2 font-black text-[#003087]">
+          <Link href="/dashboard" className="flex items-center gap-2 font-black text-[#315efb]">
             <Logo size="sm" />
             <span>MyeCA</span>
           </Link>
@@ -289,7 +289,7 @@ export function ComplianceShell({
             <Button variant="outline" size="icon" aria-label="Menu" className="lg:hidden">
               <Menu className="h-4 w-4" />
             </Button>
-            <UserCircle className="hidden h-9 w-9 text-[#003087] sm:block" />
+            <UserCircle className="hidden h-9 w-9 text-[#315efb] sm:block" />
           </div>
         </div>
       </header>
@@ -307,8 +307,8 @@ export function ComplianceShell({
                   className={cn(
                     "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition",
                     isActive
-                      ? "bg-[#003087] text-white shadow-lg shadow-blue-950/20"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-[#003087]",
+                      ? "bg-[#315efb] text-white shadow-lg shadow-blue-950/20"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-[#315efb]",
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -317,7 +317,7 @@ export function ComplianceShell({
               );
             })}
           </nav>
-          <div className="mt-6 rounded-[24px] bg-[#003087] p-5 text-white">
+          <div className="mt-6 rounded-[24px] bg-[#315efb] p-5 text-white">
             <Sparkles className="h-6 w-6 text-emerald-200" />
             <p className="mt-3 text-sm font-black">AI compliance nudge</p>
             <p className="mt-2 text-sm text-white/75">
@@ -327,7 +327,7 @@ export function ComplianceShell({
         </aside>
 
         <main className="min-w-0 px-4 pb-24 pt-6 sm:px-6 lg:px-8">
-          <div className="mb-6 flex flex-col gap-4 rounded-[32px] bg-gradient-to-br from-[#003087] via-[#0646b2] to-[#082a5c] p-6 text-white shadow-[0_30px_90px_-50px_rgba(0,48,135,0.75)] md:flex-row md:items-end md:justify-between">
+          <div className="mb-6 flex flex-col gap-4 rounded-[32px] bg-gradient-to-br from-[#315efb] via-[#0646b2] to-[#082a5c] p-6 text-white shadow-[0_30px_90px_-50px_rgba(0,48,135,0.75)] md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-100">
                 MyeCA compliance cockpit
@@ -351,7 +351,7 @@ export function ComplianceShell({
               href={item.href}
               className={cn(
                 "flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-bold",
-                isActive ? "bg-blue-50 text-[#003087]" : "text-slate-500",
+                isActive ? "bg-blue-50 text-[#315efb]" : "text-slate-500",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -375,9 +375,9 @@ export function UploadDropzone({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-blue-200 bg-blue-50/60 p-8 text-center transition hover:border-[#003087] hover:bg-blue-50"
+      className="group flex w-full flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-blue-200 bg-blue-50/60 p-8 text-center transition hover:border-[#315efb] hover:bg-blue-50"
     >
-      <div className="rounded-2xl bg-white p-4 text-[#003087] shadow-sm transition group-hover:-translate-y-1">
+      <div className="rounded-2xl bg-white p-4 text-[#315efb] shadow-sm transition group-hover:-translate-y-1">
         <Upload className="h-8 w-8" />
       </div>
       <p className="mt-4 text-lg font-black text-slate-950">{label}</p>

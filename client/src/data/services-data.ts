@@ -544,7 +544,7 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     name: "GreenTech Pvt Ltd",
     location: "Kolkata, West Bengal", 
     rating: 5,
-    comment: "Complete business setup service from company registration to GST registration. MyeCA.in is a one-stop solution for all business needs.",
+    comment: "Handled our company registration and GST setup together. The CA team knew exactly what documents we needed and kept us updated throughout.",
     serviceType: "company-services"
   },
   {

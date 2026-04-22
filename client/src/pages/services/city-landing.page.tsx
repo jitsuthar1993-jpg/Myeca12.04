@@ -183,7 +183,7 @@ export default function CityLandingPage() {
               Serving All Major Neighborhoods in {city.name}
             </h2>
             <p className="text-lg text-slate-600 italic">
-              "Connecting local businesses with world-class financial expertise."
+              "CA-reviewed compliance services for businesses across {city.name}."
             </p>
           </div>
           

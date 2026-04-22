@@ -31,7 +31,7 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
     .toUpperCase();
 
   return (
-    <header className="bg-[#003087] fixed top-0 left-0 right-0 z-30 lg:left-64 shadow-lg">
+    <header className="bg-[#315efb] fixed top-0 left-0 right-0 z-30 lg:left-64 shadow-lg">
       <div className="flex items-center justify-between px-4 py-4 lg:px-8">
         <div className="flex items-center gap-4">
           <Button

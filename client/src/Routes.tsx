@@ -77,6 +77,10 @@ const ComplianceManagementPage = lazyWithRetry(() => import("@/pages/services/co
 const AuditServicesPage = lazyWithRetry(() => import("@/pages/services/audit-services.page"));
 const DocumentVaultServicePage = lazyWithRetry(() => import("@/pages/services/document-vault.page"));
 const PricingPage = lazyWithRetry(() => import("@/pages/pricing.page"));
+const FastestITRFilingPage = lazyWithRetry(() => import("@/pages/features/fastest-itr-filing.page"));
+const TaxCalculatorFeaturePage = lazyWithRetry(() => import("@/pages/features/tax-calculator.page"));
+const DocumentScannerPage = lazyWithRetry(() => import("@/pages/features/document-scanner.page"));
+const ExpertTaxReviewPage = lazyWithRetry(() => import("@/pages/features/expert-tax-review.page"));
 const ContactPage = lazyWithRetry(() => import("@/pages/contact.page"));
 const AboutPage = lazyWithRetry(() => import("@/pages/about.page"));
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/login.page"));
@@ -239,6 +243,10 @@ export default function Routes() {
         <Route path="/services" component={ServicesPage} />
         <Route path="/all-services" component={AllServicesPage} />
         <Route path="/pricing" component={PricingPage} />
+        <Route path="/features/fastest-itr-filing" component={FastestITRFilingPage} />
+        <Route path="/features/tax-calculator" component={TaxCalculatorFeaturePage} />
+        <Route path="/features/document-scanner" component={DocumentScannerPage} />
+        <Route path="/features/expert-tax-review" component={ExpertTaxReviewPage} />
         <Route path="/contact" component={ContactPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/auth/login" component={LoginPage} />

@@ -39,7 +39,7 @@ export const clerkAuthAppearance = {
     main: 'w-full max-w-full min-w-0 overflow-visible gap-3',
     socialButtons: 'w-full max-w-full min-w-0',
     socialButtonsBlockButton:
-      'box-border h-10 w-full max-w-full rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-950 shadow-none transition hover:border-[#003087] hover:bg-[#f4f8ff]',
+      'box-border h-10 w-full max-w-full rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-950 shadow-none transition hover:border-[#315efb] hover:bg-[#f4f8ff]',
     socialButtonsBlockButtonText: 'font-bold',
     dividerLine: 'bg-slate-200',
     dividerText: 'text-xs font-bold uppercase text-slate-500',
@@ -47,9 +47,9 @@ export const clerkAuthAppearance = {
     formField: 'w-full max-w-full min-w-0',
     formFieldLabel: 'block overflow-visible text-sm font-bold leading-5 text-slate-800',
     formFieldInput:
-      'box-border h-10 w-full max-w-full rounded-lg border-slate-300 bg-white px-3 text-sm text-slate-950 shadow-none focus:border-[#003087] focus:ring-[#003087]/20',
+      'box-border h-10 w-full max-w-full rounded-lg border-slate-300 bg-white px-3 text-sm text-slate-950 shadow-none focus:border-[#315efb] focus:ring-[#315efb]/20',
     formButtonPrimary:
-      'box-border h-10 w-full rounded-lg bg-[#003087] text-sm font-black text-white shadow-none transition hover:bg-[#06439f] focus:ring-2 focus:ring-[#003087]/25',
+      'box-border h-10 w-full rounded-lg bg-[#315efb] text-sm font-black text-white shadow-none transition hover:bg-[#06439f] focus:ring-2 focus:ring-[#315efb]/25',
     footer: 'hidden',
     footerAction: 'hidden',
     footerActionText: 'hidden',
@@ -59,12 +59,12 @@ export const clerkAuthAppearance = {
     badge: 'hidden',
     badge__developmentMode: 'hidden',
     identityPreviewText: 'text-slate-700',
-    formFieldAction: 'font-bold text-[#003087]',
+    formFieldAction: 'font-bold text-[#315efb]',
     otpCodeFieldInput: 'rounded-lg border-slate-300',
     alert: 'rounded-lg border border-rose-200 bg-rose-50 text-rose-900',
   },
   variables: {
-    colorPrimary: '#003087',
+    colorPrimary: '#315efb',
     colorText: '#0f172a',
     colorTextSecondary: '#475569',
     colorBackground: '#ffffff',
@@ -100,7 +100,7 @@ export function AuthFormSkeleton() {
         <div className="h-11 rounded-lg border border-slate-200 bg-white" />
       </div>
 
-      <div className="h-11 rounded-lg bg-[#003087]/15" />
+      <div className="h-11 rounded-lg bg-[#315efb]/15" />
       <div className="h-10 rounded-lg border border-slate-200 bg-slate-50" />
     </div>
   );
@@ -127,7 +127,7 @@ export function AuthPageShell({
             <header className="mb-6 flex items-center justify-between gap-4">
               <Link
                 href="/"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#003087] hover:text-[#003087]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#315efb] hover:text-[#315efb]"
                 aria-label="Back to home"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -137,7 +137,7 @@ export function AuthPageShell({
                 {primaryLink.text}{' '}
                 <Link
                   href={primaryLink.href}
-                  className="font-black text-[#003087] hover:text-[#06439f]"
+                  className="font-black text-[#315efb] hover:text-[#06439f]"
                 >
                   {primaryLink.label}
                 </Link>
@@ -154,7 +154,7 @@ export function AuthPageShell({
             </div>
 
             <div className="mb-8">
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-[#003087]">
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-[#315efb]">
                 {eyebrow}
               </p>
               <h1 className="mt-1 text-2xl font-black leading-tight text-slate-950 sm:text-[34px]">
@@ -173,7 +173,7 @@ export function AuthPageShell({
             <div className="w-full min-w-0 overflow-visible">{children}</div>
 
             <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:hidden">
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-[#003087]">
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-[#315efb]">
                 {panelTitle}
               </p>
               <div className="mt-3 grid grid-cols-2 gap-3">
@@ -191,7 +191,7 @@ export function AuthPageShell({
           </div>
         </section>
 
-        <aside className="relative hidden min-h-screen overflow-hidden bg-[#003087] px-8 py-6 text-white sm:min-h-[calc(100vh-1rem)] lg:block lg:h-full lg:min-h-0">
+        <aside className="relative hidden min-h-screen overflow-hidden bg-[#315efb] px-8 py-6 text-white sm:min-h-[calc(100vh-1rem)] lg:block lg:h-full lg:min-h-0">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-x-0 top-0 h-48 -skew-y-12 bg-white" />
             <div className="absolute bottom-0 left-0 h-96 w-[150%] -rotate-12 bg-white" />

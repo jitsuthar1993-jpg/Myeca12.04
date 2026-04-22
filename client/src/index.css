@@ -77,7 +77,7 @@
 
   /* Primary - MyeCA Deep Blue */
   --primary: 219 100% 26%;
-  /* #003087 */
+  /* #315efb */
   --primary-foreground: 0 0% 100%;
 
   /* Secondary - Light Gray */
@@ -185,7 +185,7 @@
     left: 50%;
     bottom: 16px;
     transform: translateX(-50%);
-    background-color: #003087;
+    background-color: #315efb;
     color: #ffffff;
     padding: 12px 24px;
     border-radius: 0.75rem;
@@ -197,7 +197,7 @@
   }
 
   .btn-explore:hover {
-    background-color: #00236B;
+    background-color: #2040d8;
     transform: translateX(-50%) translateY(-2px) scale(1.02);
     box-shadow: 0 4px 8px rgba(0,0,0,0.12);
   }
@@ -229,9 +229,9 @@
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }
 
-  /* Brand Utilities — all aligned to #003087 navy */
+  /* Brand Utilities — all aligned to #315efb navy */
   .gradient-primary {
-    background: #003087;
+    background: #315efb;
   }
 
   .gradient-secondary {
@@ -247,17 +247,17 @@
   }
 
   .gradient-accent {
-    background: #003087;
+    background: #315efb;
   }
 
   /* Brand text — solid navy, no shimmer */
   .text-gradient {
-    color: #003087;
+    color: #315efb;
   }
 
   /* Theme Color Utilities — aligned to brand navy */
   .text-theme-primary {
-    color: #003087;
+    color: #315efb;
   }
 
   .text-theme-accent {
@@ -269,7 +269,7 @@
   }
 
   .bg-theme-primary {
-    background-color: #003087;
+    background-color: #315efb;
   }
 
   .bg-theme-primary-light {
@@ -397,10 +397,10 @@
     font-weight: 600;
     transition: all 200ms ease;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    background-color: #003087; /* bg-cta-primary */
+    background-color: #315efb; /* bg-cta-primary */
     color: white;
     &:hover {
-      background-color: #00236B; /* primary-hover */
+      background-color: #2040d8; /* primary-hover */
       box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
       transform: translateY(-0.125rem);
     }
@@ -415,7 +415,7 @@
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
     &:hover {
-      background-color: #00236B; /* primary-hover */
+      background-color: #2040d8; /* primary-hover */
       box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
       transform: translateY(-0.125rem);
     }
@@ -500,7 +500,7 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none !important;
-  border-color: #003087 !important;
+  border-color: #315efb !important;
   box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.15) !important;
 }
 
@@ -597,17 +597,17 @@ img {
 .quill-editor-container .ql-snow.ql-toolbar button:hover,
 .quill-editor-container .ql-snow.ql-toolbar button:focus,
 .quill-editor-container .ql-snow.ql-toolbar button.ql-active {
-  color: #003087;
+  color: #315efb;
 }
 
 .quill-editor-container .ql-snow.ql-toolbar button:hover .ql-stroke,
 .quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-stroke {
-  stroke: #003087;
+  stroke: #315efb;
 }
 
 .quill-editor-container .ql-snow.ql-toolbar button:hover .ql-fill,
 .quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-fill {
-  fill: #003087;
+  fill: #315efb;
 }
 
 .quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-label::before {

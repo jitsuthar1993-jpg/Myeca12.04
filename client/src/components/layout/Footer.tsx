@@ -93,13 +93,13 @@ export default function Footer() {
                   <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Award className="h-3 w-3 text-blue-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">100% Accuracy Guarantee</span>
+                  <span className="text-slate-600 font-medium">CA-Reviewed Returns</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center">
                     <Clock className="h-3 w-3 text-orange-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">File ITR in 15 Minutes</span>
+                  <span className="text-slate-600 font-medium">24-Hour Turnaround</span>
                 </div>
               </div>
               
@@ -193,7 +193,7 @@ export default function Footer() {
                     <div className="w-5 h-5 bg-green-100 rounded flex items-center justify-center">
                       <Phone className="h-2.5 w-2.5 text-green-600" />
                     </div>
-                    <span className="text-slate-600">+91 9876543210</span>
+                    <span className="text-slate-600">support@myeca.in</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
@@ -209,9 +209,7 @@ export default function Footer() {
           {/* CTA Section */}
           <div className="mt-8">
             <div className="bg-slate-50 rounded-2xl p-8 text-center border border-slate-200 shadow-sm overflow-hidden relative group">
-              {/* Subtle background accent */}
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-100 rounded-full blur-3xl opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
-              
+
               <h3 className="text-2xl font-bold text-slate-900 mb-2 relative z-10">Ready to File Your ITR?</h3>
               <p className="text-slate-500 mb-8 max-w-xl mx-auto text-base font-medium relative z-10">Start free. Your personal CA reviews every return before filing.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-10">

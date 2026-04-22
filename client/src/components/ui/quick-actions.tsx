@@ -66,8 +66,8 @@ const quickActions = [
     description: "View detailed tax insights",
     icon: TrendingUp,
     href: "/analytics",
-    color: "bg-[#003087]",
-    gradient: "from-[#003087] to-[#00236B]",
+    color: "bg-[#315efb]",
+    gradient: "from-[#315efb] to-[#2040d8]",
     priority: "medium",
     estimatedTime: "3 min"
   }
@@ -157,7 +157,7 @@ export default function QuickActions() {
               Based on your profile, you could save ₹15,600 by optimizing deductions under Section 80C and 80D.
             </p>
             <Link href="/calculators/tax-regime">
-              <Button size="sm" className="bg-[#003087] hover:bg-[#00236B]">
+              <Button size="sm" className="bg-[#315efb] hover:bg-[#2040d8]">
                 Optimize Tax →
               </Button>
             </Link>

@@ -1,5 +1,5 @@
 import { m } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
+import { Mail, Phone, Clock, Send, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -62,9 +62,9 @@ export default function ContactPage() {
                         <Phone className="w-6 h-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                        <p className="text-gray-600 mb-1">+91 98765 43210</p>
-                        <p className="text-sm text-gray-500">Mon-Sat: 9:00 AM - 8:00 PM</p>
+                        <h3 className="font-semibold text-gray-900 mb-1">Call or WhatsApp</h3>
+                        <p className="text-gray-600 mb-1">Available Mon–Sat, 9 AM – 7 PM</p>
+                        <p className="text-sm text-gray-500">Use the chat widget for fastest response</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -85,14 +85,12 @@ export default function ContactPage() {
                   <Card className="hover:shadow-md transition-shadow">
                     <CardContent className="p-6 flex items-start gap-4">
                       <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
-                        <MapPin className="w-6 h-6 text-purple-600" />
+                        <Clock className="w-6 h-6 text-purple-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">Visit Office</h3>
-                        <p className="text-gray-600">
-                          123, Business Park, Tech Hub,<br />
-                          Sector 5, Bangalore - 560001
-                        </p>
+                        <h3 className="font-semibold text-gray-900 mb-1">Response Time</h3>
+                        <p className="text-gray-600">Email queries answered within 4 business hours.</p>
+                        <p className="text-sm text-gray-500 mt-1">Complex CA reviews: 24–48 hours</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -145,7 +143,7 @@ export default function ContactPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" placeholder="+91 98765 43210" />
+                        <Input id="phone" placeholder="+91 XXXXX XXXXX" />
                       </div>
                     </div>
                     

@@ -28,16 +28,16 @@ export default function Logo({ className = "", size = 'md' }: LogoProps) {
       >
         {/* Main Body - Larger and more defined */}
         <rect x="4" y="6" width="32" height="30" rx="4" className="fill-none stroke-slate-900 stroke-[2.5]" />
-        
+
         {/* Screen - More detailed */}
         <rect x="8" y="10" width="24" height="8" rx="2" className="fill-slate-100/80 stroke-slate-900 stroke-[0.75]" />
         <line x1="10" y1="14" x2="20" y2="14" className="stroke-slate-900 stroke-[1.5] stroke-round opacity-40" />
-        
+
         {/* Keypad Grid - Better spacing and sizing */}
         <rect x="8" y="22" width="6" height="4" rx="1" className="fill-slate-900" />
         <rect x="17" y="22" width="6" height="4" rx="1" className="fill-slate-900" />
         <rect x="26" y="22" width="6" height="4" rx="1" className="fill-slate-900" />
-        
+
         <rect x="8" y="29" width="6" height="4" rx="1" className="fill-slate-900" />
         <rect x="17" y="29" width="6" height="4" rx="1" className="fill-slate-900" />
         <rect x="26" y="29" width="6" height="4" rx="1" className="fill-blue-600" />

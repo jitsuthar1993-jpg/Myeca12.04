@@ -24,7 +24,6 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           "foundingDate": "2023",
           "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "+91-9876543210",
             "contactType": "customer service",
             "email": "support@myeca.in",
             "areaServed": "IN",
@@ -38,17 +37,9 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           ],
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "123 Business Park",
             "addressLocality": "Mumbai",
             "addressRegion": "Maharashtra",
-            "postalCode": "400001",
             "addressCountry": "IN"
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "15000",
-            "bestRating": "5"
           }
         };
 

@@ -184,13 +184,13 @@ export default function ITRFilingPage() {
                 onClick={() => setCurrentStep(index)}
                 className={`flex w-full items-start gap-3 rounded-2xl p-3 text-left transition ${
                   index === currentStep
-                    ? "bg-[#003087] text-white"
+                    ? "bg-[#315efb] text-white"
                     : index < currentStep
                       ? "bg-emerald-50 text-emerald-900"
                       : "bg-slate-50 text-slate-600"
                 }`}
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/90 text-sm font-black text-[#003087]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/90 text-sm font-black text-[#315efb]">
                   {index < currentStep ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
                 </span>
                 <span>
@@ -253,7 +253,7 @@ export default function ITRFilingPage() {
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="rounded-[24px] border border-blue-200 bg-blue-50 p-6">
-                    <p className="font-black text-[#003087]">New Regime tax</p>
+                    <p className="font-black text-[#315efb]">New Regime tax</p>
                     <p className="mt-3 text-4xl font-black text-slate-950">{formatInr(regime.newTax)}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {newRegimeSlabs.map((slab) => (
@@ -271,7 +271,7 @@ export default function ITRFilingPage() {
                     </p>
                   </div>
                 </div>
-                <div className="rounded-[24px] bg-[#003087] p-6 text-white">
+                <div className="rounded-[24px] bg-[#315efb] p-6 text-white">
                   <BadgeCheck className="h-8 w-8 text-emerald-200" />
                   <p className="mt-3 text-2xl font-black">{regime.better} currently looks better</p>
                   <p className="mt-2 text-blue-50">
@@ -291,7 +291,7 @@ export default function ITRFilingPage() {
                     ["AIS statement", "Recommended for mismatch detection"],
                   ].map(([title, description]) => (
                     <div key={title} className="rounded-2xl border border-slate-200 p-4">
-                      <FileText className="h-5 w-5 text-[#003087]" />
+                      <FileText className="h-5 w-5 text-[#315efb]" />
                       <p className="mt-2 font-black text-slate-950">{title}</p>
                       <p className="text-sm text-slate-600">{description}</p>
                       <StatusBadge status="not_started" className="mt-3" />
@@ -323,7 +323,7 @@ export default function ITRFilingPage() {
                     "Revenue stamp prompt if cash payment exceeds ₹5,000",
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
-                      <ReceiptText className="h-5 w-5 text-[#003087]" />
+                      <ReceiptText className="h-5 w-5 text-[#315efb]" />
                       <span className="font-semibold text-slate-700">{item}</span>
                     </div>
                   ))}
@@ -335,7 +335,7 @@ export default function ITRFilingPage() {
                     Generate valid rent receipts from the filing flow and save them directly into the document vault.
                   </p>
                   <Link href="/documents/generator/rent-receipt">
-                    <Button className="mt-5 bg-[#003087] text-white hover:bg-[#082a5c]">
+                    <Button className="mt-5 bg-[#315efb] text-white hover:bg-[#082a5c]">
                       Open Generator
                       <ArrowRight className="h-4 w-4" />
                     </Button>
@@ -352,7 +352,7 @@ export default function ITRFilingPage() {
                   ["Advance tax", "Quarterly payments and challans can be added manually.", "not_started"],
                 ].map(([title, description, status]) => (
                   <div key={title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                    <CalendarCheck className="h-7 w-7 text-[#003087]" />
+                    <CalendarCheck className="h-7 w-7 text-[#315efb]" />
                     <p className="mt-4 text-lg font-black text-slate-950">{title}</p>
                     <p className="mt-2 text-sm text-slate-600">{description}</p>
                     <StatusBadge status={status as any} className="mt-4" />
@@ -375,14 +375,14 @@ export default function ITRFilingPage() {
                     <StatusBadge status="ai_validation" label="OCR/AIS checks retained" />
                   </div>
                 </div>
-                <div className="rounded-[28px] bg-[#003087] p-6 text-white">
+                <div className="rounded-[28px] bg-[#315efb] p-6 text-white">
                   <IndianRupee className="h-8 w-8 text-emerald-200" />
                   <p className="mt-4 text-sm font-black uppercase tracking-widest text-blue-100">
                     Expert-assisted filing
                   </p>
                   <p className="mt-2 text-4xl font-black">₹999</p>
                   <p className="mt-2 text-blue-50">Includes named CA review, correction loop, and e-filing handoff.</p>
-                  <Button onClick={submitForReview} className="mt-6 w-full bg-white text-[#003087] hover:bg-blue-50">
+                  <Button onClick={submitForReview} className="mt-6 w-full bg-white text-[#315efb] hover:bg-blue-50">
                     Pay & Submit for CA Review
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -397,7 +397,7 @@ export default function ITRFilingPage() {
               Previous
             </Button>
             {currentStep < steps.length - 1 ? (
-              <Button onClick={nextStep} className="bg-[#003087] text-white hover:bg-[#082a5c]">
+              <Button onClick={nextStep} className="bg-[#315efb] text-white hover:bg-[#082a5c]">
                 Continue
                 <ArrowRight className="h-4 w-4" />
               </Button>

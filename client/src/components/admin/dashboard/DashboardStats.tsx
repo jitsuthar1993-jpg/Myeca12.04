@@ -26,7 +26,7 @@ function StatCard({ title, value, subtitle, change, icon: Icon, iconBg = 'bg-blu
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className={cn('p-3 rounded-lg', iconBg)}>
-            <Icon className={cn('h-6 w-6', iconBg.includes('blue') ? 'text-[#003087]' : iconBg.includes('green') ? 'text-green-600' : 'text-[#003087]')} />
+            <Icon className={cn('h-6 w-6', iconBg.includes('blue') ? 'text-[#315efb]' : iconBg.includes('green') ? 'text-green-600' : 'text-[#315efb]')} />
           </div>
           {change !== undefined && (
             <Badge className={cn(
@@ -40,7 +40,7 @@ function StatCard({ title, value, subtitle, change, icon: Icon, iconBg = 'bg-blu
         </div>
         <div>
           <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-[#003087] mb-1">
+          <p className="text-3xl font-bold text-[#315efb] mb-1">
             {value}
           </p>
           {subtitle && (

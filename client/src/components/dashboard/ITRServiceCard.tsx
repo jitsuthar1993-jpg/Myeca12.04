@@ -27,7 +27,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
         {/* Animated Accent Background */}
         <div className={cn(
           "absolute top-0 left-0 w-full h-1.5 transition-all duration-500 group-hover:h-2",
-          isCompleted ? "bg-emerald-500" : "bg-[#003087]"
+          isCompleted ? "bg-emerald-500" : "bg-[#315efb]"
         )} />
         
         <CardHeader className="pt-8 pb-4">
@@ -35,7 +35,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
             <div className="flex gap-4">
               <div className={cn(
                 "p-3 rounded-2xl transition-all duration-500 group-hover:scale-110 shadow-sm",
-                isCompleted ? "bg-emerald-500/10 text-emerald-600" : "bg-[#EEF4FF] text-[#003087]"
+                isCompleted ? "bg-emerald-500/10 text-emerald-600" : "bg-[#EEF4FF] text-[#315efb]"
               )}>
                 <FileText className="h-6 w-6" />
               </div>
@@ -54,7 +54,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
               "rounded-full px-3 py-1 h-7 border-0 font-bold text-[10px] uppercase tracking-wider",
               isCompleted 
                 ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" 
-                : "bg-[#EEF4FF] text-[#003087]"
+                : "bg-[#EEF4FF] text-[#315efb]"
             )}>
               <Clock className="h-3 w-3 mr-1" />
               {status.replace('_', ' ')}
@@ -68,7 +68,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Filing Progress</span>
               <span className={cn(
                 "text-lg font-black tracking-tight",
-                isCompleted ? "text-emerald-600" : "text-[#003087]"
+                isCompleted ? "text-emerald-600" : "text-[#315efb]"
               )}>{progress}%</span>
             </div>
             
@@ -80,7 +80,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
                 transition={{ duration: 1.5, ease: "circOut" }}
                 className={cn(
                   "h-full rounded-full relative transition-all duration-500",
-                  isCompleted ? "bg-emerald-500" : "bg-[#003087]"
+                  isCompleted ? "bg-emerald-500" : "bg-[#315efb]"
                 )}
               >
                 {!isCompleted && (

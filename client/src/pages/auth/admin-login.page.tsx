@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
                 onClick={() => {
                   window.location.href = `/auth/login?mock_email=admin@myeca.in&redirect_url=${encodeURIComponent(redirectUrl)}`;
                 }}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#003087] px-4 py-3 text-sm font-black text-white hover:bg-[#082a5c] transition-all"
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#315efb] px-4 py-3 text-sm font-black text-white hover:bg-[#082a5c] transition-all"
               >
                 <Lock className="h-4 w-4" />
                 Sign in as Admin

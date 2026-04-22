@@ -39,7 +39,7 @@ export function SectionHeader({
       >
         {title}
         {highlight ? (
-          <span className="text-[#003087]"> {highlight}</span>
+          <span className="text-[#315efb]"> {highlight}</span>
         ) : null}
       </h1>
 

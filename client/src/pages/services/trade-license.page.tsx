@@ -626,7 +626,7 @@ export default function TradeLicensePage() {
               </h3>
               <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
                 Our municipal compliance experts handle complete documentation, application filing, 
-                and follow-up across all major cities. Get your trade license hassle-free.
+                and follow-up across all major cities. We handle the paperwork so you can focus on your business.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

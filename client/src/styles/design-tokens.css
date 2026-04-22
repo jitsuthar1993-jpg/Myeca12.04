@@ -10,7 +10,7 @@
 :root {
   /* === Color Palette === */
   /* MyeCA compliance brand */
-  --mye-blue: #003087;
+  --mye-blue: #315efb;
   --mye-blue-700: #0646b2;
   --mye-blue-50: #eef6ff;
   --mye-trust-green: #00a86b;
@@ -19,8 +19,8 @@
   --mye-surface: #f6f9fd;
 
   /* === Brand Tokens (single source of truth) === */
-  --color-brand-navy: #003087;
-  --color-brand-navy-dark: #00236B;
+  --color-brand-navy: #315efb;
+  --color-brand-navy-dark: #2040d8;
   --color-brand-navy-light: #EEF4FF;
   --color-accent-teal: #0F766E;
   --color-accent-teal-light: #F0FDFA;
@@ -274,7 +274,7 @@ body {
 .mye-brand-panel {
   background:
     radial-gradient(circle at top left, rgba(0, 168, 107, 0.28), transparent 34rem),
-    linear-gradient(135deg, #003087 0%, #0646b2 50%, #082a5c 100%);
+    linear-gradient(135deg, #315efb 0%, #0646b2 50%, #082a5c 100%);
 }
 
 .mye-readable-card {

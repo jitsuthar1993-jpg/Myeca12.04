@@ -57,7 +57,7 @@ export default function EverythingSection() {
             Everything You Need for Tax Filing
           </h2>
           <p className="text-lg md:text-[19px] text-[var(--color-primary-500)] max-w-2xl mx-auto font-medium leading-relaxed">
-            Comprehensive suite of tools and services to make your tax filing experience seamless and efficient.
+            Calculators, CA filing, GST services, and startup registration — built specifically for Indian tax compliance.
           </p>
         </m.div>
 

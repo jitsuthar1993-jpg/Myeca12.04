@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-slate-700 text-white font-semibold shadow-md hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
+        default: "bg-[#315efb] text-white font-semibold shadow-md hover:bg-[#2040d8] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
         destructive:
           "bg-red-600 text-white font-semibold shadow-md hover:bg-red-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
         outline:
@@ -20,7 +20,7 @@ const buttonVariants = cva(
         link: "text-brand-600 underline-offset-4 hover:underline hover:text-brand-700 shadow-none transition-colors duration-200",
         success: "bg-green-600 text-white font-semibold shadow-md hover:bg-green-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
         warning: "bg-orange-600 text-white font-semibold shadow-md hover:bg-orange-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
-        primary: "bg-slate-800 text-white font-semibold shadow-md hover:bg-slate-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
+        primary: "bg-[#315efb] text-white font-semibold shadow-md hover:bg-[#2040d8] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
         brand: "bg-brand-600 text-white font-semibold shadow-lg shadow-brand-500/25 hover:bg-brand-700 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-200",
         glass: "bg-white/90 backdrop-blur-sm text-slate-700 border border-gray-200 shadow-md hover:bg-white hover:-translate-y-0.5 transition-all duration-200",
       },

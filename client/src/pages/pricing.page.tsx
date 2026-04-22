@@ -52,7 +52,7 @@ export default function PricingPage() {
       />
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 font-black text-[#003087]">
+          <Link href="/" className="flex items-center gap-2 font-black text-[#315efb]">
             <Logo size="sm" />
             MyeCA.in
           </Link>
@@ -80,7 +80,7 @@ export default function PricingPage() {
           {plans.map((plan) => (
             <MyeCard
               key={plan.name}
-              className={plan.featured ? "border-[#003087] ring-4 ring-blue-100" : undefined}
+              className={plan.featured ? "border-[#315efb] ring-4 ring-blue-100" : undefined}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -88,7 +88,7 @@ export default function PricingPage() {
                   <h2 className="mt-5 text-2xl font-black text-slate-950">{plan.name}</h2>
                   <p className="mt-2 text-slate-600">{plan.audience}</p>
                 </div>
-                {plan.featured ? <BadgeCheck className="h-7 w-7 text-[#003087]" /> : null}
+                {plan.featured ? <BadgeCheck className="h-7 w-7 text-[#315efb]" /> : null}
               </div>
               <p className="mt-6 text-5xl font-black text-slate-950">{plan.price}</p>
               <ul className="mt-6 space-y-3">
@@ -100,7 +100,7 @@ export default function PricingPage() {
                 ))}
               </ul>
               <Link href="/auth/register">
-                <Button className="mt-8 w-full bg-[#003087] text-white hover:bg-[#082a5c]">
+                <Button className="mt-8 w-full bg-[#315efb] text-white hover:bg-[#082a5c]">
                   Get started
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -145,7 +145,7 @@ export default function PricingPage() {
             const TypedIcon = Icon as typeof FileText;
             return (
               <MyeCard key={String(label)} className="p-7">
-                <TypedIcon className="h-8 w-8 text-[#003087]" />
+                <TypedIcon className="h-8 w-8 text-[#315efb]" />
                 <p className="mt-4 text-xl font-black text-slate-950">{String(label)}</p>
               </MyeCard>
             );

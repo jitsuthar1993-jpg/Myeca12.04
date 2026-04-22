@@ -17,7 +17,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              India's First <span className="text-[#003087]">AI-Powered Tax Assistant</span>
+              India's First <span className="text-[#315efb]">AI-Powered Tax Assistant</span>
             </m.h1>
             
             <m.p
@@ -26,16 +26,16 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              File ITR in <span className="text-[#003087] font-bold">3 Minutes</span> with MyeCA.in
+              CA-Reviewed ITR Filing — Starting at <span className="text-[#315efb] font-bold">₹499</span>
             </m.p>
-            
+
             <m.p
               className="text-lg text-gray-600 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              India's smartest tax platform with AI-powered assistance. File accurate ITR returns with maximum refunds guaranteed. Our intelligent system auto-fills your tax data and ensures error-free filing in minutes.
+              Upload your documents, and a licensed Chartered Accountant reviews and files your return. Average turnaround: 24 hours.
             </m.p>
             
             {/* Rating */}
@@ -50,7 +50,7 @@ export default function HeroSection() {
                   <Star key={i} className="w-5 h-5 fill-current" />
                 ))}
               </div>
-              <span className="text-gray-600 font-medium">4.7 | 22,500+ Reviews</span>
+              <span className="text-gray-600 font-medium">4.7 — Client Rating</span>
             </m.div>
 
             {/* Assessment Year Selector */}
@@ -111,7 +111,7 @@ export default function HeroSection() {
               {/* Step 1 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">1</span>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ export default function HeroSection() {
               {/* Step 2 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">2</span>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export default function HeroSection() {
               {/* Step 3 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">3</span>
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function HeroSection() {
               {/* Step 4 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#003087] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">4</span>
                   </div>
                 </div>
@@ -156,16 +156,16 @@ export default function HeroSection() {
             {/* Additional Info */}
             <div className="flex justify-center items-center space-x-6 mt-6 pt-4 border-t border-gray-200">
               <div className="text-center">
-                <div className="text-lg font-bold text-[#003087]">15 Min</div>
-                <div className="text-xs text-gray-600">Filing Time</div>
+                <div className="text-lg font-bold text-[#315efb]">24 hrs</div>
+                <div className="text-xs text-gray-600">Avg. Turnaround</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-[#003087]">DIY</div>
-                <div className="text-xs text-gray-600">Coming Soon</div>
+                <div className="text-lg font-bold text-[#315efb]">100%</div>
+                <div className="text-xs text-gray-600">CA-Reviewed</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-[#003087]">100+</div>
-                <div className="text-xs text-gray-600">Companies</div>
+                <div className="text-lg font-bold text-[#315efb]">950+</div>
+                <div className="text-xs text-gray-600">Returns Filed</div>
               </div>
             </div>
           </m.div>

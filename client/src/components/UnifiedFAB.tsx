@@ -130,7 +130,7 @@ export function UnifiedFAB({ onChatbotOpen, isChatbotOpen = false }: UnifiedFABP
 
           {/* WhatsApp Button */}
           <a
-            href="https://wa.me/919876543210?text=Hi, I want to file my ITR"
+            href="mailto:support@myeca.in?subject=ITR Filing Enquiry"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(

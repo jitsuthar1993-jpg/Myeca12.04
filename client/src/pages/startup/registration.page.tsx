@@ -133,28 +133,7 @@ export default function StartupRegistrationPage() {
     );
   };
 
-  const renderProgress = () => {
-    const totalPct = estimate.estimatedMinutes > 0 ? Math.min(100, Math.round((snapshot.elapsedMs / (estimate.estimatedMinutes * 60_000)) * 100)) : 0;
-    const stepPct = currentStep?.estimatedMinutes ? Math.min(100, Math.round((snapshot.stepElapsedMs / (currentStep.estimatedMinutes * 60_000)) * 100)) : 0;
-    return (
-      <div className="space-y-3" aria-live="polite">
-        <div className="flex justify-between text-sm">
-          <span>Total Progress</span>
-          <span>{TimingService.formatMs(snapshot.elapsedMs)} / {TimingService.formatMs(estimate.estimatedMinutes * 60_000)}</span>
-        </div>
-        <div className="w-full h-2 bg-gray-200 rounded">
-          <div className="h-2 bg-blue-600 rounded" style={{ width: `${totalPct}%` }} />
-        </div>
-        <div className="flex justify-between text-sm">
-          <span>Step: {currentStep?.label}</span>
-          <span>{TimingService.formatMs(snapshot.stepElapsedMs)} / {TimingService.formatMs((currentStep?.estimatedMinutes || 0) * 60_000)}</span>
-        </div>
-        <div className="w-full h-2 bg-gray-200 rounded">
-          <div className="h-2 bg-green-600 rounded" style={{ width: `${stepPct}%` }} />
-        </div>
-      </div>
-    );
-  };
+
 
   if (completed) {
     return (
@@ -202,10 +181,7 @@ export default function StartupRegistrationPage() {
                     <h3 className="font-semibold text-gray-900 mb-2">Features & Benefits</h3>
                     {renderFeatureList()}
                   </div>
-                  <div className="mt-6">
-                    <h3 className="font-semibold text-gray-900 mb-2">Progress</h3>
-                    {renderProgress()}
-                  </div>
+
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Required Information</h3>

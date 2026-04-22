@@ -69,27 +69,19 @@ const HomePage = () => {
     <>
       <MetaSEO
         title={seo?.title || "Expert Income Tax Filing & ITR e-Filing Services India 2025-26"}
-        description={seo?.description || "File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!"}
+        description={seo?.description || "File ITR online with MyeCA.in. Every return reviewed by a licensed CA. ITR filing starts at ₹499. File AY 2025-26 returns now."}
         keywords={seo?.keywords}
         aiSummary="MyeCA.in is India's leading tax platform offering CA-assisted ITR filing, GST compliance, and startup registration. Key features include AY 2025-26 tax calculators, Form 16 parsing, and 24/7 expert support."
         localBusinessData={{
           "name": "MyeCA.in",
-          "telephone": "+91-9876543210",
           "email": "support@myeca.in",
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "123 Business Park",
             "addressLocality": "Mumbai",
             "addressRegion": "Maharashtra",
-            "postalCode": "400001",
             "addressCountry": "IN"
           },
-          "priceRange": "₹499-₹9999",
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "150000"
-          }
+          "priceRange": "₹499-₹9999"
         }}
         faqPageData={[
           {
@@ -171,36 +163,6 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Login Portals Section */}
-        <section className="py-12 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-slate-900">Secure Access Portals</h2>
-              <p className="text-slate-500 mt-2">Select your role to access your personalized dashboard</p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-              {[
-                { title: "User Portal", icon: Users, href: "/auth/login", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100", hover: "hover:border-blue-300" },
-                { title: "Admin Portal", icon: Shield, href: "/auth/admin-login?role=admin", color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-100", hover: "hover:border-indigo-300" },
-                { title: "CA Portal", icon: FileText, href: "/auth/admin-login?role=ca", color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-100", hover: "hover:border-emerald-300" },
-                { title: "Team Portal", icon: Building2, href: "/auth/admin-login?role=team", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100", hover: "hover:border-purple-300" },
-              ].map((portal) => (
-                <Link key={portal.title} href={portal.href}>
-                  <div className={cn(
-                    "flex flex-col items-center justify-center p-6 rounded-2xl border transition-all cursor-pointer group",
-                    portal.border, portal.hover, "hover:shadow-md bg-white"
-                  )}>
-                    <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", portal.bg)}>
-                      <portal.icon className={cn("w-6 h-6", portal.color)} />
-                    </div>
-                    <span className="font-semibold text-slate-900">{portal.title}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Core Features - Redesigned for Premium Look */}
         <section className="py-20 bg-white relative overflow-hidden">
@@ -215,7 +177,8 @@ const HomePage = () => {
                   bgColor: "bg-indigo-50",
                   textColor: "text-indigo-600",
                   borderColor: "border-indigo-100/50",
-                  shadowColor: "shadow-indigo-500/10"
+                  shadowColor: "shadow-indigo-500/10",
+                  href: "/features/fastest-itr-filing",
                 },
                 {
                   title: "Accurate Tax Calculator",
@@ -224,7 +187,8 @@ const HomePage = () => {
                   bgColor: "bg-emerald-50",
                   textColor: "text-emerald-600",
                   borderColor: "border-emerald-100/50",
-                  shadowColor: "shadow-emerald-500/10"
+                  shadowColor: "shadow-emerald-500/10",
+                  href: "/features/tax-calculator",
                 },
                 {
                   title: "Smart Document Scanner",
@@ -233,7 +197,8 @@ const HomePage = () => {
                   bgColor: "bg-purple-50",
                   textColor: "text-purple-600",
                   borderColor: "border-purple-100/50",
-                  shadowColor: "shadow-purple-500/10"
+                  shadowColor: "shadow-purple-500/10",
+                  href: "/features/document-scanner",
                 },
                 {
                   title: "Expert Tax Review",
@@ -242,13 +207,14 @@ const HomePage = () => {
                   bgColor: "bg-orange-50",
                   textColor: "text-orange-600",
                   borderColor: "border-orange-100/50",
-                  shadowColor: "shadow-orange-500/10"
+                  shadowColor: "shadow-orange-500/10",
+                  href: "/features/expert-tax-review",
                 }
               ].map((feature, idx) => (
-                <div 
-                  key={idx} 
+                <Link key={idx} href={feature.href}>
+                <div
                   className={cn(
-                    "relative p-8 rounded-card bg-white border h-full transition-all duration-500 group cursor-default",
+                    "relative p-8 rounded-card bg-white border h-full transition-all duration-500 group cursor-pointer",
                     "hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.12)] hover:-translate-y-2",
                     feature.borderColor
                   )}
@@ -262,27 +228,23 @@ const HomePage = () => {
                     )}>
                       <feature.icon className={cn("w-8 h-8", feature.textColor)} />
                     </div>
-                    
+
                     <h3 className="text-[22px] font-bold text-slate-900 tracking-tight leading-snug mb-4 transition-colors group-hover:text-[var(--color-primary-600)]">
                       {feature.title}
                     </h3>
-                    
+
                     <p className="text-[15px] text-slate-500 leading-relaxed font-medium">
                       {feature.description}
                     </p>
-                    
+
                     <div className="mt-auto pt-8 flex items-center text-sm font-bold text-slate-400 group-hover:text-[var(--color-primary-600)] transition-colors">
                       Learn More
                       <ArrowRight className="w-4 h-4 ml-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                     </div>
                   </div>
-                  
-                  {/* Subtle Background Accent */}
-                  <div className={cn(
-                    "absolute -bottom-2 -right-2 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none rounded-full",
-                    feature.bgColor
-                  )}></div>
+
                 </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -462,8 +424,6 @@ const HomePage = () => {
         <section className="py-16 bg-white border-t border-gray-100">
           <div className="container mx-auto px-4 text-center">
             <div className="max-w-4xl mx-auto p-12 md:p-16 rounded-card bg-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] border border-slate-200/60 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none"></div>
               
               <div className="relative z-10">
                 <div className="inline-flex items-center gap-2 bg-blue-50/50 px-5 py-2 rounded-full text-xs font-semibold text-brand-600 mb-8 border border-blue-100/50">

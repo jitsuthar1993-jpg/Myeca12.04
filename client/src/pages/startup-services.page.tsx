@@ -27,11 +27,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getGradientColorClass } from '@/utils/colorClasses';
-import { EngagementTooltip, useEngagementTooltips, startupTooltips } from '@/components/ui/engagement-tooltip';
 import { SectionHeader } from '@/components/ui/section-header';
 
 const StartupServicesPage = () => {
-  const { isCompleted, markCompleted, resetTooltips } = useEngagementTooltips();
 
   const renderPrice = (p: string) => {
     if (!p) return null;
@@ -641,26 +639,6 @@ const StartupServicesPage = () => {
           </Card>
         </div>
       </m.div>
-
-      {/* Dynamic Engagement Tooltips */}
-      {!isCompleted && (
-        <EngagementTooltip
-          tooltips={startupTooltips}
-          onComplete={markCompleted}
-        />
-      )}
-
-      {/* Debug button for testing */}
-      {import.meta.env.DEV && isCompleted && (
-        <div className="fixed bottom-4 right-4">
-          <Button 
-            onClick={resetTooltips}
-            className="bg-gray-800 text-white hover:bg-gray-700 text-xs px-3 py-2"
-          >
-            Reset Tooltips
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

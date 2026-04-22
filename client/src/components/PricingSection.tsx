@@ -95,7 +95,7 @@ export default function PricingSection() {
             {[
               { icon: Shield, text: "ISO 27001 Secure" },
               { icon: Award, text: "Money-Back Guarantee" },
-              { icon: Users, text: "1.5M+ Users" },
+              { icon: Users, text: "CA-Reviewed Returns" },
             ].map((badge, index) => (
               <div key={index} className="flex items-center text-sm font-medium text-slate-500 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
                 <badge.icon className="w-4 h-4 text-blue-500 mr-2" />

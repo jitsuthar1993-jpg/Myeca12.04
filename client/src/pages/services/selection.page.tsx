@@ -308,7 +308,7 @@ export default function ServiceSelectionPage() {
                 <ShieldCheck className="h-7 w-7 text-blue-600" />
               </div>
               <h3 className="text-xl font-black tracking-tight text-slate-900 mb-4">Enterprise Security</h3>
-              <p className="text-slate-500 font-medium text-sm leading-relaxed">Your data is secured with industrial grade 256-bit encryption and protected by world-class standards.</p>
+              <p className="text-slate-500 font-medium text-sm leading-relaxed">Your data is encrypted with AES-256 and stored on ISO 27001-certified infrastructure.</p>
             </div>
 
             <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 transition-all duration-300 hover:bg-amber-50 hover:border-amber-200 group">

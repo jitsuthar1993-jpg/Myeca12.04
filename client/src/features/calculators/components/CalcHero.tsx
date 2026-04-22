@@ -11,6 +11,7 @@ interface CalcHeroProps {
   icon?: React.ReactNode;
   variant?: "blue" | "emerald" | "indigo" | "violet" | "amber";
   breadcrumbItems?: { name: string; href?: string }[];
+  hideBreadcrumbs?: boolean;
 }
 
 const variantStyles = {
@@ -27,7 +28,8 @@ export default function CalcHero({
   category, 
   icon, 
   variant = "blue",
-  breadcrumbItems = []
+  breadcrumbItems = [],
+  hideBreadcrumbs = false
 }: CalcHeroProps) {
   return (
     <div className="relative pt-8 pb-12 overflow-hidden">
@@ -39,38 +41,40 @@ export default function CalcHero({
 
       <div className="max-w-7xl mx-auto px-4">
         {/* Breadcrumbs */}
-        <Breadcrumb className="mb-8">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" className="flex items-center gap-1">
-                  <Home className="h-3.5 w-3.5" />
-                  <span>Home</span>
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/calculators">Calculators</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            {breadcrumbItems.map((item, i) => (
-              <React.Fragment key={i}>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  {item.href ? (
-                    <BreadcrumbLink asChild>
-                      <Link href={item.href}>{item.name}</Link>
-                    </BreadcrumbLink>
-                  ) : (
-                    <BreadcrumbPage>{item.name}</BreadcrumbPage>
-                  )}
-                </BreadcrumbItem>
-              </React.Fragment>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
+        {!hideBreadcrumbs && (
+          <Breadcrumb className="mb-8">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" className="flex items-center gap-1">
+                    <Home className="h-3.5 w-3.5" />
+                    <span>Home</span>
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/calculators">Calculators</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {breadcrumbItems.map((item, i) => (
+                <React.Fragment key={i}>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    {item.href ? (
+                      <BreadcrumbLink asChild>
+                        <Link href={item.href}>{item.name}</Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage>{item.name}</BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                </React.Fragment>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+        )}
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-4">

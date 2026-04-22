@@ -6,6 +6,8 @@ export interface Testimonial {
   content: string;
   rating: number;
   avatar: string;
+  verified?: boolean;
+  platform?: string;
 }
 
 export const testimonials: Testimonial[] = [

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CTASection() {
   return (
-    <section className="relative py-12 bg-[#003087] text-white overflow-hidden">
+    <section className="relative py-12 bg-[#315efb] text-white overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
         <m.h2
           className="text-3xl md:text-4xl font-bold text-white mb-4"
@@ -22,7 +22,7 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Join 15L+ Indians who trust MyeCA.in for hassle-free tax filing
+          CA-reviewed ITR filing — accurate, on time, and handled start to finish.
         </m.p>
         
         <m.div

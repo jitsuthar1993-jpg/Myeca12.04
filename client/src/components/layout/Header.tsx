@@ -375,7 +375,6 @@ export default function Header() {
                                <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
                                <Link href="/tax-loss-harvesting" className="block group relative">
                                   <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-blue-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/50 backdrop-blur-sm">
-                                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
                                      <div className="relative z-10">
                                         <div className="flex items-center gap-2 mb-4">
                                            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
@@ -558,8 +557,7 @@ export default function Header() {
                           <div className="flex-1">
                             <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Founder spotlight</h5>
                             <Link href="/services/startup-india-registration" onMouseEnter={() => preloadOnHover("/services/startup-india-registration")} className="block">
-                              <div className="bg-gradient-to-br from-purple-50/80 via-white to-blue-50/70 rounded-2xl p-6 shadow-xl shadow-purple-100/50 relative overflow-hidden group border border-purple-100/50">
-                                <div className="absolute top-0 right-0 w-28 h-28 bg-purple-400/10 rounded-full -mr-8 -mt-8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                              <div className="bg-white rounded-2xl p-6 shadow-md border border-purple-100/50 group">
                                 <div className="relative z-10">
                                   <div className="flex items-center gap-2 mb-3">
                                     <Zap className="w-4 h-4 text-purple-600 fill-purple-600/20" />
@@ -924,7 +922,7 @@ export default function Header() {
                        >
                           <Logo size="md" className="group-hover:scale-105 transition-transform" />
                           <div className="flex flex-col">
-                            <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            <span className="font-bold text-xl text-[#315efb]">
                                MyeCA.in
                             </span>
                             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">FINANCIAL COCKPIT</span>

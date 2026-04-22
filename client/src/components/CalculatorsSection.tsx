@@ -70,14 +70,8 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
   const otherCalculators = filteredCalculators.filter(calc => calc.category === 'other');
 
   return (
-    <section className="relative py-12 bg-gray-50 overflow-hidden">
-      {/* Enhanced background decoration */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-100/50 to-blue-200/50 rounded-full filter blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-blue-200/50 to-blue-100/50 rounded-full filter blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+    <section className="py-12 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Show results count when searching */}
         {(searchTerm || selectedCategory !== "all") && (
           <m.div
@@ -122,12 +116,8 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                 const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
-                  <m.div
+                  <div
                     key={calculator.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <Card className="group bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 h-full cursor-pointer hover:border-blue-300">
                       <Link href={calculator.href}>
@@ -156,7 +146,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                         </div>
                       </Link>
                     </Card>
-                  </m.div>
+                  </div>
                 );
               })}
             </div>
@@ -190,12 +180,8 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                 const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
-                  <m.div
+                  <div
                     key={calculator.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                       <Card className="group bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 h-full cursor-pointer hover:border-green-300">
                         <Link href={calculator.href}>
@@ -258,12 +244,8 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                 const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
-                  <m.div
+                  <div
                     key={calculator.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <Card className="group bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 h-full cursor-pointer hover:border-orange-300">
                       <Link href={calculator.href}>
@@ -292,7 +274,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                         </div>
                       </Link>
                     </Card>
-                  </m.div>
+                  </div>
                 );
               })}
             </div>
@@ -326,12 +308,8 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                 const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
-                  <m.div
+                  <div
                     key={calculator.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <Card className="group bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 h-full cursor-pointer hover:border-indigo-300">
                       <Link href={calculator.href}>
@@ -360,7 +338,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                         </div>
                       </Link>
                     </Card>
-                  </m.div>
+                  </div>
                 );
               })}
             </div>

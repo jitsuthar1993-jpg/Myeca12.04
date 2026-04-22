@@ -21,7 +21,7 @@ export default function HeroWithOptimizedImages() {
     <>
       <SEO 
         title="Expert Income Tax Filing & ITR e-Filing Services India 2025-26"
-        description="File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!"
+        description="File ITR online with MyeCA.in. Every return reviewed by a licensed CA. ITR filing starts at ₹499. File AY 2025-26 returns now."
         keywords="ITR filing, income tax return, tax filing India, e-filing, AY 2025-26, tax consultant, CA services"
       />
       
@@ -82,11 +82,10 @@ export default function HeroWithOptimizedImages() {
               <div>
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
                   Expert Income Tax Filing <br />
-                  <span className="text-blue-600">Maximum Refund Guaranteed</span>
+                  <span className="text-[#315efb]">with a Licensed CA on Every Return</span>
                 </h1>
                 <p className="mt-4 text-base lg:text-lg text-gray-600">
-                  Join 15L+ Indians who trust MyeCA.in for hassle-free ITR filing. 
-                  Get expert CA assistance and file your returns in minutes.
+                  A real Chartered Accountant reviews your ITR before it's filed — not an algorithm, not a checklist.
                 </p>
               </div>
 
@@ -132,16 +131,16 @@ export default function HeroWithOptimizedImages() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 pt-4">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">15L+</div>
-                  <div className="text-sm text-gray-600">Happy Customers</div>
+                  <div className="text-2xl font-bold text-gray-900">950+</div>
+                  <div className="text-sm text-gray-600">Returns Filed</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">{"₹"}50Cr+</div>
-                  <div className="text-sm text-gray-600">Refunds Claimed</div>
+                  <div className="text-2xl font-bold text-gray-900">24 hrs</div>
+                  <div className="text-sm text-gray-600">Avg. Turnaround</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">99.8%</div>
-                  <div className="text-sm text-gray-600">Success Rate</div>
+                  <div className="text-2xl font-bold text-gray-900">100%</div>
+                  <div className="text-sm text-gray-600">CA-Reviewed</div>
                 </div>
               </div>
             </m.div>

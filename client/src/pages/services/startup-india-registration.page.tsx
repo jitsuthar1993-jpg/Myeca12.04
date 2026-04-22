@@ -537,7 +537,7 @@ export default function StartupIndiaRegistrationPage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>100% Success Rate</span>
+                  <span>CA-Guided Process</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

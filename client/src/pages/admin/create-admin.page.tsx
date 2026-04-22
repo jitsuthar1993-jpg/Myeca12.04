@@ -119,7 +119,7 @@ export default function CreateAdminPage() {
         <Card className="border-blue-100 shadow-[0_24px_80px_-60px_rgba(0,48,135,0.8)]">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#003087] text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#315efb] text-white">
                 <MailPlus className="h-5 w-5" />
               </div>
               <div>
@@ -194,7 +194,7 @@ export default function CreateAdminPage() {
               <Button
                 type="submit"
                 disabled={inviteMutation.isPending}
-                className="w-full bg-[#003087] font-bold hover:bg-[#082a5c]"
+                className="w-full bg-[#315efb] font-bold hover:bg-[#082a5c]"
               >
                 {inviteMutation.isPending ? (
                   "Provisioning Access..."
@@ -211,7 +211,7 @@ export default function CreateAdminPage() {
 
         <Card className="border-slate-200 bg-slate-50">
           <CardHeader>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#003087] shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315efb] shadow-sm">
               <Shield className="h-6 w-6" />
             </div>
             <CardTitle>What changed?</CardTitle>

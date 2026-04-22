@@ -68,13 +68,8 @@ const stats = [
 
 export default function TrustedBySection() {
   return (
-    <section id="trusted-by" className="py-20 bg-[#F8FAFC] relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/30 blur-[120px] rounded-full -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-100/30 blur-[120px] rounded-full translate-y-1/2" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="trusted-by" className="py-20 bg-[#F8FAFC] border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <m.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}

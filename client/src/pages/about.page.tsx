@@ -70,11 +70,10 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>100% Accuracy Guarantee</span>
+                    <span>CA-Reviewed Before Filing</span>
                   </li>
                 </ul>
               </div>
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
             </div>
           </div>
         </div>
@@ -113,14 +112,11 @@ export default function AboutPage() {
         </p>
         <div className="flex justify-center gap-4">
           <a
-            href="https://wa.me/919876543210?text=Hi, I want to discuss a complex tax case"
-            className="px-8 py-4 bg-emerald-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-1 transition-all"
+            href="mailto:support@myeca.in?subject=Business Inquiry"
+            className="px-8 py-4 bg-[#315efb] text-white font-bold rounded-2xl shadow-lg hover:-translate-y-1 transition-all"
           >
-            WhatsApp Direct
+            Email Us
           </a>
-          <button className="px-8 py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all">
-            Schedule a Call
-          </button>
         </div>
       </section>
     </div>
