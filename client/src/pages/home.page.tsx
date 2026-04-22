@@ -71,6 +71,7 @@ const HomePage = () => {
         title={seo?.title || "Expert Income Tax Filing & ITR e-Filing Services India 2025-26"}
         description={seo?.description || "File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!"}
         keywords={seo?.keywords}
+        aiSummary="MyeCA.in is India's leading tax platform offering CA-assisted ITR filing, GST compliance, and startup registration. Key features include AY 2025-26 tax calculators, Form 16 parsing, and 24/7 expert support."
         localBusinessData={{
           "name": "MyeCA.in",
           "telephone": "+91-9876543210",

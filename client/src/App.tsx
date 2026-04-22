@@ -111,15 +111,6 @@ function AppContent() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const isAuthScreen = isAuthLayoutPath(location);
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      const { addPerformanceHints } = await import('@/utils/performance-hints');
-      addPerformanceHints();
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   useAnalyticsInitialization();
   usePageTracking();
 

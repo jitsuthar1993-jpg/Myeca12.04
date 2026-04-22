@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { Link } from 'wouter';
 import { ArrowLeft, CheckCircle2, FileText } from 'lucide-react';
-import Logo from '@/components/ui/logo';
+import BrandLockup from '@/components/ui/brand-lockup';
 
 type AuthPageShellProps = {
   eyebrow: string;
@@ -14,6 +14,7 @@ type AuthPageShellProps = {
   } | null;
   panelTitle: string;
   panelDescription: string;
+  panelItems?: { label: string; icon?: any }[];
   primaryLink: {
     href: string;
     label: string;
@@ -21,7 +22,7 @@ type AuthPageShellProps = {
   };
 };
 
-const requiredDocuments = [
+const defaultRequiredDocuments = [
   'PAN card',
   'Aadhaar linked mobile',
   'Form 16',
@@ -113,14 +114,17 @@ export function AuthPageShell({
   notice,
   panelTitle,
   panelDescription,
+  panelItems,
   primaryLink,
 }: AuthPageShellProps) {
+  const items = panelItems || defaultRequiredDocuments.map(d => ({ label: d }));
+
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#dbe8ff] p-0 text-slate-950 sm:p-2 lg:h-screen">
-      <div className="mx-auto grid min-h-screen w-full min-w-0 max-w-[1080px] overflow-hidden bg-white shadow-[0_30px_90px_-70px_rgba(0,48,135,0.75)] sm:min-h-[calc(100vh-1rem)] sm:rounded-lg lg:h-full lg:min-h-0 lg:grid-cols-[minmax(360px,0.86fr)_minmax(0,0.9fr)]">
+      <div className="mx-auto grid min-h-screen w-full min-w-0 max-w-[1080px] overflow-hidden bg-white shadow-[0_30px_90px_-70px_rgba(0,48,135,0.75)] sm:min-h-[calc(100vh-1rem)] sm:rounded-lg lg:h-full lg:min-h-0 lg:grid-cols-[minmax(360px,1.1fr)_minmax(0,0.9fr)]">
         <section className="flex min-h-screen w-full min-w-0 items-start justify-center overflow-y-auto bg-white px-4 py-3 sm:min-h-[calc(100vh-1rem)] sm:px-6 lg:h-full lg:min-h-0 lg:px-10 xl:px-14">
-          <div className="w-full min-w-0 max-w-[365px] py-2">
-            <header className="mb-3 flex items-center justify-between gap-4">
+          <div className="w-full min-w-0 max-w-[420px] py-2">
+            <header className="mb-6 flex items-center justify-between gap-4">
               <Link
                 href="/"
                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#003087] hover:text-[#003087]"
@@ -140,26 +144,27 @@ export function AuthPageShell({
               </p>
             </header>
 
-            <div className="mb-3 flex items-center gap-3">
-              <Logo size="sm" />
-              <span className="font-black text-[#003087]">MyeCA.in</span>
-              <span className="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-black text-emerald-700">
-                ERI Ready
-              </span>
+            <div className="mb-6 flex items-center gap-3">
+              <BrandLockup
+                logoSize="sm"
+                wordmarkSize="sm"
+                badge="ERI Ready"
+                compact
+              />
             </div>
 
-            <div className="mb-3">
+            <div className="mb-8">
               <p className="text-xs font-black uppercase tracking-[0.12em] text-[#003087]">
                 {eyebrow}
               </p>
-              <h1 className="mt-1 text-2xl font-black leading-tight text-slate-950 sm:text-[30px]">
+              <h1 className="mt-1 text-2xl font-black leading-tight text-slate-950 sm:text-[34px]">
                 {title}
               </h1>
-              <p className="mt-1 text-sm leading-5 text-slate-600">{description}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
             </div>
 
             {notice && (
-              <div className="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-950">
+              <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-950">
                 <p className="font-black">{notice.title}</p>
                 <p className="mt-1 text-blue-800">{notice.message}</p>
               </div>
@@ -167,61 +172,60 @@ export function AuthPageShell({
 
             <div className="w-full min-w-0 overflow-visible">{children}</div>
 
-            <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 lg:hidden">
+            <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:hidden">
               <p className="text-xs font-black uppercase tracking-[0.12em] text-[#003087]">
-                Required documents
+                {panelTitle}
               </p>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {requiredDocuments.slice(0, 4).map((document) => (
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                {items.slice(0, 4).map((item) => (
                   <div
-                    key={document}
+                    key={item.label}
                     className="flex items-center gap-2 text-xs font-bold text-slate-700"
                   >
                     <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                    <span>{document}</span>
+                    <span>{item.label}</span>
                   </div>
                 ))}
               </div>
             </div>
-
-            <p className="sr-only">
-              {primaryLink.text} <Link href={primaryLink.href}>{primaryLink.label}</Link>
-            </p>
           </div>
         </section>
 
-        <aside className="relative hidden min-h-screen overflow-hidden bg-[#5267f6] px-8 py-6 text-white sm:min-h-[calc(100vh-1rem)] lg:block lg:h-full lg:min-h-0">
-          <div className="absolute inset-x-0 top-0 h-28 -skew-y-6 bg-[#25359f]" />
-          <div className="absolute bottom-0 left-0 h-72 w-[75%] translate-y-12 -skew-y-12 bg-[#58a2f6]/80" />
-          <div className="absolute bottom-0 right-0 h-[460px] w-[58%] translate-y-20 skew-y-12 bg-[#3c86ed]/75" />
-          <div className="absolute right-0 top-48 h-48 w-72 -skew-y-12 bg-[#62b7ff]/65" />
+        <aside className="relative hidden min-h-screen overflow-hidden bg-[#003087] px-8 py-6 text-white sm:min-h-[calc(100vh-1rem)] lg:block lg:h-full lg:min-h-0">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-x-0 top-0 h-48 -skew-y-12 bg-white" />
+            <div className="absolute bottom-0 left-0 h-96 w-[150%] -rotate-12 bg-white" />
+          </div>
 
           <div className="relative z-10 flex h-full min-h-0 flex-col justify-center">
             <div className="mx-auto w-full max-w-[420px]">
-              <div className="rounded-lg bg-white p-6 text-slate-950 shadow-[0_28px_80px_-50px_rgba(15,23,42,0.75)]">
+              <div className="rounded-2xl bg-white/10 p-8 text-white shadow-2xl backdrop-blur-xl border border-white/20">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#eef4ff] text-[#003087]">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
                     <FileText className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.12em] text-[#003087]">
-                      Required documents
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-blue-200">
+                      Information Panel
                     </p>
                     <h2 className="mt-2 text-2xl font-black leading-tight">{panelTitle}</h2>
-                    <p className="mt-2 text-sm leading-5 text-slate-500">{panelDescription}</p>
+                    <p className="mt-2 text-sm leading-6 text-blue-100/80">{panelDescription}</p>
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-2">
-                  {requiredDocuments.map((document) => (
-                    <div
-                      key={document}
-                      className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2"
-                    >
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-                      <span className="text-sm font-bold text-slate-800">{document}</span>
-                    </div>
-                  ))}
+                <div className="mt-8 grid gap-3">
+                  {items.map((item) => {
+                    const Icon = item.icon || CheckCircle2;
+                    return (
+                      <div
+                        key={item.label}
+                        className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 transition hover:bg-white/10"
+                      >
+                        <Icon className="h-5 w-5 shrink-0 text-emerald-400" />
+                        <span className="text-sm font-bold">{item.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

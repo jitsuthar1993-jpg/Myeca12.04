@@ -5,7 +5,7 @@ import { log, setupVite, serveStatic } from "./vite.js";
 const port = Number(process.env.PORT ?? 5000);
 
 void _routesReady.then(async () => {
-  const server = app.listen(port, "0.0.0.0", () => {
+  const server = app.listen(port, "127.0.0.1", () => {
     log(`serving on port ${port}`);
   });
 

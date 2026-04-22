@@ -1,23 +1,35 @@
-import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { CalculatorHeader } from "@/components/ui/calculator-header";
-import { CalculatorChart } from "@/components/ui/calculator-chart";
-import { AlertCircle, PiggyBank, TrendingUp, IndianRupee } from "lucide-react";
-import { calculateWithdrawalPlan, WithdrawalFrequency } from "@/lib/withdrawal-planner";
-import { formatCurrency } from "@/lib/enhanced-calculator-utils";
-
+import { 
+  PiggyBank, TrendingUp, IndianRupee, Clock, ArrowRight,
+  ShieldCheck, Zap, Sparkles, AlertCircle, BarChart3,
+  Calendar, PieChart, Info, CheckCircle
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import Breadcrumb from "@/components/Breadcrumb";
+import { calculateWithdrawalPlan, WithdrawalFrequency } from "@/lib/withdrawal-planner";
+import { cn } from "@/lib/utils";
+import { Link } from "wouter";
+
+// Atomic Components
+import CalcLayout from "@/features/calculators/components/CalcLayout";
+import CalcHero from "@/features/calculators/components/CalcHero";
+import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components/CalcInputCard";
+import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
+import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 
 export default function WithdrawalPlannerPage() {
-  const seo = getSEOConfig('/calculators/withdrawal-planner');
   const [principal, setPrincipal] = useState<number>(1000000);
   const [annualRate, setAnnualRate] = useState<number>(7.0);
   const [withdrawalAmount, setWithdrawalAmount] = useState<number>(10000);
@@ -28,262 +40,229 @@ export default function WithdrawalPlannerPage() {
     return calculateWithdrawalPlan(principal, annualRate, withdrawalAmount, frequency, years);
   }, [principal, annualRate, withdrawalAmount, frequency, years]);
 
-  const frequencyOptions: { value: WithdrawalFrequency; label: string }[] = [
-    { value: "monthly", label: "Monthly" },
-    { value: "quarterly", label: "Quarterly" },
-    { value: "yearly", label: "Yearly" },
-  ];
+  const seo = getSEOConfig('/calculators/withdrawal-planner');
 
-  const chartData = result.schedule.map((entry) => ({
-    year: `${entry.year}-${entry.period}`,
-    investment: Math.max(0, entry.withdrawal),
-    interestEarned: Math.max(0, entry.interestAccrued),
-  }));
+  const chartData = useMemo(() => {
+    // Show only 12 data points for clarity in the small sidebar chart
+    const step = Math.max(1, Math.floor(result.schedule.length / 12));
+    return result.schedule.filter((_, i) => i % step === 0).map((entry) => ({
+      name: `P${entry.period}`,
+      'Withdrawal': entry.withdrawal,
+      'Interest': entry.interestAccrued,
+    }));
+  }, [result.schedule]);
 
   return (
     <>
       <MetaSEO
-        title={seo?.title || "Withdrawal Planner - MyeCA"}
-        description={seo?.description}
+        title={seo?.title || "Fixed Income Withdrawal Planner | SWP Calculator | MyeCA.in"}
+        description={seo?.description || "Plan your systematic withdrawals from fixed income investments. Calculate how long your corpus will last with interest accrual."}
         keywords={seo?.keywords}
-        type={seo?.type}
+        type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
         breadcrumbs={seo?.breadcrumbs}
-        faqPageData={[
-          {
-            question: "How does the withdrawal planner work?",
-            answer: "It calculates how long your money will last based on your starting principal, expected interest rate, and periodic withdrawal amount."
-          },
-          {
-            question: "Can I use this for SWP (Systematic Withdrawal Plan)?",
-            answer: "Yes, this tool is perfect for planning SWP from mutual funds or fixed income investments to ensure your capital lasts as long as needed."
-          },
-          {
-            question: "What is a sustainable withdrawal rate?",
-            answer: "A sustainable withdrawal rate is typically 4-5% of your initial portfolio value adjusted for inflation, which ensures your principal is not depleted too quickly."
-          }
-        ]}
       />
-      <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
-        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "Withdrawal Planner" }]} />
-        <div className="max-w-6xl mx-auto">
-        <CalculatorHeader
-          icon={PiggyBank}
-          title="Fixed Income Withdrawal Planner"
-          subtitle="Plan periodic withdrawals from fixed income with interest accrual, frequency control, and detailed projections."
-          color="green"
-          align="center"
-        />
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Input Section */}
-          <Card className="bg-white rounded-2xl shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold text-gray-900">Planner Inputs</CardTitle>
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <PiggyBank className="w-6 h-6 text-green-600" />
+      <CalcHero 
+        title="Withdrawal Planner"
+        description="Strategize periodic withdrawals from your corpus while accounting for interest growth and depletion risks."
+        category="Retirement Planning"
+        icon={<PiggyBank className="w-6 h-6" />}
+        variant="indigo"
+        breadcrumbItems={[{ name: "Withdrawal Planner" }]}
+      />
+
+      <CalcLayout
+        variant="indigo"
+        complianceFacts={[
+          { title: "Sustainability", content: "A common rule is the 4% withdrawal rate, which typically helps a retirement corpus last for 30 years." },
+          { title: "Interest Impact", content: "Compounding interest on the remaining principal significantly extends the life of your corpus." },
+          { title: "Frequency", content: "More frequent withdrawals (e.g., monthly vs yearly) slightly reduce the total interest earned due to lower average principal." }
+        ]}
+        sidebar={
+          <CalcGlassSidebar title="Plan Summary">
+            <div className="space-y-1 pb-6 border-b border-white/20">
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Ending Balance</p>
+              <AnimatePresence mode="wait">
+                <motion.p 
+                  key={result.endingBalance} 
+                  initial={{ opacity: 0, y: 10 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  className={cn(
+                    "text-4xl font-bold tracking-tight tabular-nums",
+                    result.depleted ? "text-red-600" : "text-slate-900"
+                  )}
+                >
+                  {formatCurrency(result.endingBalance)}
+                </motion.p>
+              </AnimatePresence>
+              {result.depleted && (
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest border border-red-100">
+                  <AlertCircle className="w-3 h-3" />
+                  Corpus Depleted in Year {Math.floor(result.depletionPeriod / (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1))}
                 </div>
+              )}
+            </div>
+
+            <div className="space-y-4 pt-6">
+              <CalcResultRow label="Total Withdrawn" value={formatCurrency(result.totalWithdrawn)} variant="success" />
+              <CalcResultRow label="Total Interest Earned" value={formatCurrency(result.totalInterestAccrued)} />
+              
+              <div className="h-32 mt-6">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
+                    <Bar dataKey="Interest" fill="#818cf8" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Withdrawal" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              <CardDescription>Enter your principal, interest rate, withdrawal amount, frequency, and duration.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Principal */}
-              <div className="space-y-2">
-                <Label>Principal Amount (₹)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={principal}
-                  onChange={(e) => setPrincipal(Math.max(0, Number(e.target.value)))}
-                  className="text-lg"
-                />
-                <div className="grid grid-cols-3 gap-2">
-                  {[100000, 500000, 1000000, 2500000, 5000000, 10000000].map((amt) => (
-                    <Button key={amt} variant="outline" size="sm" onClick={() => setPrincipal(amt)} className="text-xs">
-                      ₹{(amt / 100000).toFixed(0)}L
-                    </Button>
+            </div>
+
+            <Link href="/services/investment-advisory">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+                <Sparkles className="w-4 h-4 text-yellow-400" />
+                Get Custom SWP Plan
+              </button>
+            </Link>
+          </CalcGlassSidebar>
+        }
+      >
+        <div className="space-y-8">
+          <CalcInputCard title="Corpus Details" icon={<IndianRupee className="w-5 h-5" />}>
+             <CalcInputGroup label="Starting Principal" badgeValue={formatCurrency(principal)}>
+                <div className="relative">
+                  <Input 
+                    type="number"
+                    value={principal}
+                    onChange={(e) => setPrincipal(Number(e.target.value))}
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                  />
+                  <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {[500000, 1000000, 2500000, 5000000].map((amt) => (
+                    <button 
+                      key={amt} 
+                      onClick={() => setPrincipal(amt)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold",
+                        principal === amt ? "border-indigo-600 bg-indigo-50 text-indigo-600" : "border-slate-100 bg-white text-slate-500 hover:border-indigo-200"
+                      )}
+                    >
+                      ₹{amt/100000}L
+                    </button>
                   ))}
                 </div>
-              </div>
+             </CalcInputGroup>
 
-              {/* Interest Rate */}
-              <div className="space-y-2">
-                <Label>Annual Interest Rate (%)</Label>
-                <Input
-                  type="number"
-                  step="0.1"
-                  min={0}
-                  value={annualRate}
-                  onChange={(e) => setAnnualRate(Math.max(0, Number(e.target.value)))}
-                  className="text-lg"
-                />
-              </div>
-
-              {/* Withdrawal Amount */}
-              <div className="space-y-2">
-                <Label>Withdrawal Amount per Period (₹)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={withdrawalAmount}
-                  onChange={(e) => setWithdrawalAmount(Math.max(0, Number(e.target.value)))}
-                  className="text-lg"
-                />
-              </div>
-
-              {/* Withdrawal Frequency */}
-              <div className="space-y-2">
-                <Label>Withdrawal Frequency</Label>
-                <Select value={frequency} onValueChange={(v) => setFrequency(v as WithdrawalFrequency)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {frequencyOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Duration */}
-              <div className="space-y-2">
-                <Label>Duration (Years)</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  max={40}
-                  value={years}
-                  onChange={(e) => setYears(Math.max(1, Number(e.target.value)))}
-                  className="text-lg"
-                />
-              </div>
-
-              <Alert className="bg-amber-50 border-amber-200">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertDescription className="text-amber-800">
-                  If withdrawals exceed interest, the principal reduces and can eventually deplete. This planner caps the final withdrawal to avoid negative balances and indicates the depletion period.
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-
-          {/* Results Section */}
-          <Card className="bg-white rounded-2xl shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-gray-900">Plan Summary</CardTitle>
-              <CardDescription>Overview of totals, remaining balance, and key metrics.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Summary Cards */}
-              <div className="grid grid-cols-1 gap-4">
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-600 text-sm font-medium">Starting Principal</p>
-                      <p className="text-2xl font-bold text-blue-900">{formatCurrency(Math.max(0, result.principal))}</p>
-                    </div>
-                    <IndianRupee className="w-8 h-8 text-blue-600" />
-                  </div>
+             <CalcInputGroup label="Annual Return (%)" badgeValue={`${annualRate}%`}>
+                <div className="relative">
+                  <Input 
+                    type="number"
+                    step="0.1"
+                    value={annualRate}
+                    onChange={(e) => setAnnualRate(Number(e.target.value))}
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                  />
+                  <TrendingUp className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
+             </CalcInputGroup>
+          </CalcInputCard>
 
-                <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-600 text-sm font-medium">Total Interest Accrued</p>
-                      <p className="text-2xl font-bold text-green-900">{formatCurrency(Math.max(0, result.totalInterestAccrued))}</p>
-                    </div>
-                    <TrendingUp className="w-8 h-8 text-green-600" />
-                  </div>
+          <CalcInputCard title="Withdrawal Strategy" icon={<Clock className="w-5 h-5" />}>
+             <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Frequency</label>
+                  <Select value={frequency} onValueChange={(v) => setFrequency(v as WithdrawalFrequency)}>
+                    <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50 font-bold text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="yearly">Yearly</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-
-                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-600 text-sm font-medium">Total Withdrawn</p>
-                      <p className="text-2xl font-bold text-purple-900">{formatCurrency(Math.max(0, result.totalWithdrawn))}</p>
-                    </div>
-                    <PiggyBank className="w-8 h-8 text-purple-600" />
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Duration (Years)</label>
+                  <Input 
+                    type="number"
+                    value={years}
+                    onChange={(e) => setYears(Number(e.target.value))}
+                    className="h-12 rounded-xl border-slate-100 bg-slate-50 font-bold text-sm focus:ring-2 focus:ring-indigo-100"
+                  />
                 </div>
+             </div>
 
-                <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-orange-600 text-sm font-medium">Ending Balance</p>
-                      <p className="text-2xl font-bold text-orange-900">{formatCurrency(Math.max(0, result.endingBalance))}</p>
-                    </div>
-                    <IndianRupee className="w-8 h-8 text-orange-600" />
-                  </div>
+             <CalcInputGroup label="Withdrawal per Period" badgeValue={formatCurrency(withdrawalAmount)}>
+                <div className="relative">
+                  <Input 
+                    type="number"
+                    value={withdrawalAmount}
+                    onChange={(e) => setWithdrawalAmount(Number(e.target.value))}
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                  />
+                  <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
-              </div>
+             </CalcInputGroup>
 
-              <Separator />
-
-              {/* Key Metrics */}
-              <div className="bg-gray-50 p-4 rounded-xl">
-                <h3 className="font-semibold mb-3">Key Metrics</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Withdrawal Frequency:</span>
-                    <span className="font-semibold ml-2">{frequency.charAt(0).toUpperCase() + frequency.slice(1)}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Periodic Rate:</span>
-                    <span className="font-semibold ml-2">{(result.periodicRate * 100).toFixed(2)}%</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Total Periods:</span>
-                    <span className="font-semibold ml-2">{result.totalPeriods}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Depletion Status:</span>
-                    <span className="font-semibold ml-2">{result.depleted ? `Depleted in period ${result.depletionPeriod}` : "Not Depleted"}</span>
-                  </div>
+             <div className="mt-8 p-5 rounded-2xl bg-amber-50 border border-amber-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="w-4 h-4 text-amber-600" />
+                  <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Sustainability Insight</p>
                 </div>
-              </div>
-
-              {/* Chart: Withdrawal vs Interest per Period */}
-              <div className="h-64">
-                <CalculatorChart
-                  data={chartData}
-                  type="bar"
-                  title="Withdrawal vs Interest per Period"
-                  height={240}
-                />
-              </div>
-
-              {/* Schedule Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-2">Period</th>
-                      <th className="text-right p-2">Beginning Balance</th>
-                      <th className="text-right p-2">Interest</th>
-                      <th className="text-right p-2">Withdrawal</th>
-                      <th className="text-right p-2">Ending Balance</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.schedule.map((row) => (
-                      <tr key={row.period} className="border-b hover:bg-gray-50">
-                        <td className="p-2">Y{row.year} / P{row.period}</td>
-                        <td className="text-right p-2">{formatCurrency(Math.max(0, row.beginningBalance))}</td>
-                        <td className="text-right p-2 text-green-600">{formatCurrency(Math.max(0, row.interestAccrued))}</td>
-                        <td className="text-right p-2 text-blue-600">{formatCurrency(Math.max(0, row.withdrawal))}</td>
-                        <td className="text-right p-2 font-semibold">{formatCurrency(Math.max(0, row.endingBalance))}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
+                <p className="text-[11px] text-amber-800 font-medium leading-relaxed">
+                  {withdrawalAmount * (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1) > principal * (annualRate/100) 
+                    ? "Your withdrawal rate exceeds the interest earned. Your principal will deplete over time." 
+                    : "Your withdrawal rate is lower than the interest earned. Your corpus is growing or stable!"}
+                </p>
+             </div>
+          </CalcInputCard>
         </div>
-      </div>
-    </div>
+
+        <CalculatorMiniBlog 
+          features={[
+            {
+              icon: <PiggyBank className="w-5 h-5" />,
+              iconBg: "bg-indigo-50 text-indigo-600",
+              title: "Systematic Withdrawal",
+              desc: "SWP allows you to withdraw a fixed amount from your investment, providing a steady stream of income while the rest stays invested."
+            },
+            {
+              icon: <Zap className="w-5 h-5" />,
+              iconBg: "bg-amber-50 text-amber-600",
+              title: "Tax Efficiency",
+              desc: "SWPs from mutual funds are often more tax-efficient than dividends or interest income due to capital gains treatment."
+            },
+            {
+              icon: <TrendingUp className="w-5 h-5" />,
+              iconBg: "bg-emerald-50 text-emerald-600",
+              title: "Corpus Longevity",
+              desc: "By keeping your withdrawal rate below your annual return, you can potentially maintain your corpus indefinitely."
+            }
+          ]}
+          howItWorks={{
+            title: "SWP Planning Guide",
+            description: "Planning your withdrawals requires balancing income needs with corpus preservation.",
+            steps: [
+              { title: "Define Income Needs", desc: "Calculate your monthly or annual requirements for living expenses and lifestyle." },
+              { title: "Estimate Returns", desc: "Use conservative return estimates (e.g., 6-8%) based on your asset allocation." },
+              { title: "Monitor Depletion", desc: "Regularly check if your withdrawals are eating into your principal faster than expected." }
+            ]
+          }}
+          faqs={[
+            { q: "Is SWP better than FD interest?", a: "SWPs from hybrid or debt funds can offer better post-tax returns than FDs due to indexation (on old investments) or LTCG rates." },
+            { q: "Can I stop my withdrawal plan?", a: "Yes, SWPs are completely flexible. You can stop, increase, or decrease the withdrawal amount at any time." },
+            { q: "What is the 'Safe Withdrawal Rate'?", a: "Globally, the 4% rule is popular, suggesting that withdrawing 4% of your initial corpus annually is sustainable for 30 years." }
+          ]}
+        />
+      </CalcLayout>
     </>
   );
-}
+}

@@ -18,7 +18,8 @@
     "db:seed:preview": "dotenv -e .env -e .vercel/.env.preview.local -- tsx server/scripts/seed.ts",
     "seed:blogs": "dotenv -e .env -- tsx server/scripts/seed-blogs.ts",
     "seed:tax-blogs": "dotenv -e .env -- tsx server/scripts/seed-tax-blogs.ts",
-    "vercel:build": "vercel build"
+    "vercel:build": "vercel build",
+    "generate:sitemap": "tsx server/scripts/generate-sitemap.ts"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.848.0",

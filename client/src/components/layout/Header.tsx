@@ -35,7 +35,7 @@ import {
   Search, ArrowRight, Shield, HelpCircle, Home, Grid, Bot, Sparkles, X, Menu,
   Phone, Mail, ChevronRight, Briefcase, FileCheck, Scale, Zap, Target, PieChart,
   Landmark, Receipt, Stamp, Umbrella, Rocket, Lock, LayoutDashboard,
-  LineChart, Wallet, Banknote, Gem, Newspaper, PiggyBank
+  LineChart, Wallet, Banknote, Gem, Newspaper, PiggyBank, Calendar, ShieldAlert
 } from "lucide-react";
 import Logo from "@/components/ui/logo";
 import { useAuth } from "@/components/AuthProvider";
@@ -127,7 +127,7 @@ export default function Header() {
       {!promoDismissed && (
         <div className="fixed top-0 left-0 right-0 z-[60] bg-[#FDE047] text-black h-[36px] flex items-center shadow-sm">
           <div className="max-w-7xl mx-auto px-4 w-full flex items-center justify-center relative">
-            <div className="text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-3">
+            <div className="text-[11px] font-normal uppercase tracking-wider flex items-center justify-center gap-3">
               <span className="flex items-center text-sm">⏰</span>
               <span className="hidden sm:inline">ITR DEADLINE: 31 JULY 2026</span>
               <span className="hidden sm:inline opacity-30">|</span>
@@ -135,7 +135,7 @@ export default function Header() {
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 2,847 PEOPLE FILED TODAY
               </span>
-              <Link href="/itr/filing" onMouseEnter={() => preloadOnHover('/itr/filing')} className="bg-black text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-black hover:bg-slate-800 transition-colors ml-2">
+              <Link href="/itr/filing" onMouseEnter={() => preloadOnHover('/itr/filing')} className="bg-black text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-slate-800 transition-colors ml-2">
                 FILE NOW →
               </Link>
             </div>
@@ -172,13 +172,13 @@ export default function Header() {
                   <Logo size={isScrolled ? "sm" : "md"} />
                   <div className="flex flex-col">
                     <span className={cn(
-                      "font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 leading-none tracking-tight",
+                      "font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 leading-none tracking-tight",
                       isScrolled ? "text-[1.25rem]" : "text-2xl"
                     )}>
                       MyeCA.in
                     </span>
                     <span className={cn(
-                      "text-[9.5px] text-slate-500 font-bold tracking-[0.15em] transition-all duration-500",
+                      "text-[9.5px] text-slate-500 font-normal tracking-[0.15em] transition-all duration-500",
                       isScrolled ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100 mt-1"
                     )}>
                       SMART TAX SOLUTIONS
@@ -207,9 +207,8 @@ export default function Header() {
                             <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                           )}
                           <span className={cn(
-                            "relative z-10 inline-flex items-center justify-center px-5 py-2.5 font-black transition-colors duration-300 cursor-pointer text-[17px]",
-                            (location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard')
-                              ? "text-blue-600" : "text-slate-600 hover:text-blue-600"
+                            "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
+                            (location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                           )}>
                              {user?.role === 'admin' ? "Admin" : 
                              user?.role === 'ca' ? "CA" : 
@@ -227,8 +226,8 @@ export default function Header() {
                         <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
-                        "relative z-10 bg-transparent font-black transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
-                        inServices ? "text-blue-600" : "text-slate-600 hover:text-blue-600",
+                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
+                        inServices ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600",
                         "data-[state=open]:bg-blue-600/10 data-[state=open]:text-blue-600 data-[state=open]:border-blue-600/20 border border-transparent"
                       )}>
                         <span>Services</span>
@@ -244,8 +243,8 @@ export default function Header() {
                                   <FileText className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Tax & Compliance</h4>
-                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Expert Guided</p>
+                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax & Compliance</h4>
+                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Expert Guided</p>
                                 </div>
                               </div>
                              <ul className="space-y-4">
@@ -289,8 +288,8 @@ export default function Header() {
                                   <Building2 className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Business Setup</h4>
-                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth Focused</p>
+                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Setup</h4>
+                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Focused</p>
                                 </div>
                               </div>
                              <ul className="space-y-4">
@@ -332,8 +331,8 @@ export default function Header() {
                                   <BarChart3 className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Business Intel</h4>
-                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Growth Analytics</p>
+                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Intel</h4>
+                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Analytics</p>
                                 </div>
                               </div>
                              <ul className="space-y-4">
@@ -373,7 +372,7 @@ export default function Header() {
                          {/* Sidebar */}
                          <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                             <div className="flex-1">
-                               <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
+                               <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
                                <Link href="/tax-loss-harvesting" className="block group relative">
                                   <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-blue-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/50 backdrop-blur-sm">
                                      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
@@ -395,7 +394,7 @@ export default function Header() {
                             </div>
                            
                            <div className="mt-8 pt-6 border-t border-slate-200/60">
-                             <Link href="/services/marketplace" className="inline-flex items-center gap-2 text-xs font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest group">
+                             <Link href="/services/marketplace" className="inline-flex items-center gap-2 text-xs font-normal text-blue-600 hover:text-blue-700 uppercase tracking-widest group">
                                Explore All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                              </Link>
                            </div>
@@ -411,8 +410,8 @@ export default function Header() {
                         <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
-                        "relative z-10 bg-transparent font-black transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
-                        inStartup ? "text-blue-600" : "text-slate-600 hover:text-blue-600",
+                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
+                        inStartup ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600",
                         "data-[state=open]:bg-blue-600/10 data-[state=open]:text-blue-600 data-[state=open]:border-blue-600/20 border border-transparent"
                       )}>
                         <span>Startup</span>
@@ -427,7 +426,7 @@ export default function Header() {
                                 <Rocket className="w-5 h-5" />
                               </div>
                               <div>
-                                <h4 className="font-black text-slate-900 tracking-tight text-sm">Launch</h4>
+                                <h4 className="font-normal text-slate-900 tracking-tight text-sm">Launch</h4>
                                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 setup</p>
                               </div>
                             </div>
@@ -593,8 +592,8 @@ export default function Header() {
                         <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
-                        "relative z-10 bg-transparent font-black transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
-                        inCalculators ? "text-blue-600" : "text-slate-600 hover:text-blue-600",
+                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
+                        inCalculators ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600",
                         "data-[state=open]:bg-blue-600/10 data-[state=open]:text-blue-600 data-[state=open]:border-blue-600/20 border border-transparent"
                       )}>
                         <span>Calculators</span>
@@ -611,8 +610,8 @@ export default function Header() {
                                   <Landmark className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-black text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
-                                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Compliance Hub</p>
+                                  <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
+                                  <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance Hub</p>
                                 </div>
                               </div>
                              <ul className="space-y-4">
@@ -641,7 +640,7 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
+                                         <span className="block text-sm font-medium text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
                                          <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
                                        </div>
                                      </Link>
@@ -658,7 +657,7 @@ export default function Header() {
                                     <PiggyBank className="w-5 h-5" />
                                  </div>
                                  <div>
-                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
+                                    <h4 className="font-normal text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
                                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
                                  </div>
                               </div>
@@ -688,7 +687,7 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
+                                         <span className="block text-sm font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
                                          <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
                                        </div>
                                      </Link>
@@ -705,7 +704,7 @@ export default function Header() {
                                     <Wallet className="w-5 h-5" />
                                  </div>
                                  <div>
-                                    <h4 className="font-black text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
+                                    <h4 className="font-normal text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
                                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
                                  </div>
                               </div>
@@ -713,6 +712,8 @@ export default function Header() {
                                {[
                                  { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
                                  { href: "/calculators/home-loan", icon: Landmark, title: "Loan EMI Calculator", desc: "Home, Car & Personal Loans", color: "blue" },
+                                 { href: "/compliance-calendar", icon: Calendar, title: "Compliance Calendar", desc: "GST & Tax Deadlines", color: "indigo" },
+                                 { href: "/calculators/penalty", icon: ShieldAlert, title: "Penalty Calculator", desc: "GST & Tax Delay Costs", color: "orange" }
                                ].map((item, idx) => {
                                  const Icon = item.icon as any;
                                  return (
@@ -732,7 +733,7 @@ export default function Header() {
                                          <Icon className="w-5 h-5" />
                                        </div>
                                        <div>
-                                         <span className="block text-sm font-bold text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
+                                         <span className="block text-sm font-medium text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
                                          <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
                                        </div>
                                      </Link>
@@ -746,38 +747,38 @@ export default function Header() {
                         {/* Sidebar */}
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                            <div className="flex-1">
-                              <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
-                              <Link href="/tax-assistant" className="block group">
+                              <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
+                              <Link href="/tax-assistant" onMouseEnter={() => preloadOnHover("/tax-assistant")} className="block group">
                                  <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-1">
                                     <div className="flex items-center gap-3 mb-3">
                                        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
                                           <Bot className="w-4 h-4" />
                                        </div>
-                                       <span className="text-[10px] font-black text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
+                                       <span className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
                                     </div>
                                     <p className="text-[11px] text-slate-500 leading-relaxed mb-4">Get instant answers for ITR filing & tax savings.</p>
-                                    <span className="inline-flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
+                                    <span className="inline-flex items-center gap-2 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
                                  </div>
                               </Link>
 
                               <div className="mt-6 space-y-1">
-                                <Link href="/calculators/general" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
+                                <Link href="/calculators/general" onMouseEnter={() => preloadOnHover("/calculators/general")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
                                    <Grid className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
-                                   <span className="text-xs font-bold text-slate-600">General Calculator</span>
+                                   <span className="text-xs font-normal text-slate-600">General Calculator</span>
                                 </Link>
-                                <Link href="/calculators/hsn-finder" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
+                                <Link href="/calculators/hsn-finder" onMouseEnter={() => preloadOnHover("/calculators/hsn-finder")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
                                    <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
-                                   <span className="text-xs font-bold text-slate-600">HSN/SAC Finder</span>
+                                   <span className="text-xs font-normal text-slate-600">HSN/SAC Finder</span>
                                 </Link>
-                                <Link href="/form16-parser" className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
+                                <Link href="/form16-parser" onMouseEnter={() => preloadOnHover("/form16-parser")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
                                    <FileText className="w-4 h-4 text-slate-400 group-hover:text-orange-600" />
-                                   <span className="text-xs font-bold text-slate-600">Form 16 Parser</span>
+                                   <span className="text-xs font-normal text-slate-600">Form 16 Parser</span>
                                 </Link>
                               </div>
                            </div>
 
                            <div className="mt-8 pt-6 border-t border-slate-200/60">
-                             <Link href="/calculators" className="inline-flex items-center gap-2 text-xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
+                             <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="inline-flex items-center gap-2 text-xs font-bold text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
                                All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                              </Link>
                            </div>
@@ -794,8 +795,8 @@ export default function Header() {
                           <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                         )}
                         <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 font-black transition-colors duration-300 cursor-pointer text-[17px]",
-                          location.startsWith('/blog') ? "text-blue-600" : "text-slate-600 hover:text-blue-600"
+                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
+                          location.startsWith('/blog') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                         )}>
                           Blog
                         </span>
@@ -821,7 +822,7 @@ export default function Header() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="flex items-center gap-2 px-2 h-10 rounded-full hover:bg-slate-100/50">
-                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[11px] font-black text-white shadow-sm ring-2 ring-white">
+                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[11px] font-normal text-white shadow-sm ring-2 ring-white">
                             {getInitials()}
                           </div>
                           <span className="hidden sm:inline text-xs font-bold text-slate-700">
@@ -832,7 +833,7 @@ export default function Header() {
                       <DropdownMenuContent className="w-64 p-2 rounded-2xl shadow-2xl border-slate-200/60" align="end">
                         <div className="px-3 py-4 mb-2 bg-slate-50/50 rounded-xl border border-slate-100/50">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-xs font-black text-white shadow-md ring-2 ring-white">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-xs font-normal text-white shadow-md ring-2 ring-white">
                               {getInitials()}
                             </div>
                             <div className="flex flex-col min-w-0">
@@ -950,19 +951,22 @@ export default function Header() {
 
                         <Accordion type="single" collapsible className="w-full">
                            <AccordionItem value="services" className="border-none">
-                              <AccordionTrigger className="px-6 py-3 text-sm font-medium text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600">
+                              <AccordionTrigger className={cn(
+                                "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
+                                location.startsWith('/services') ? "font-bold" : "font-normal"
+                              )}>
                                   Services
                               </AccordionTrigger>
                               <AccordionContent className="bg-slate-50/50 px-6 py-2">
                                  <div className="space-y-3">
                                     <div className="space-y-1">
-                                       <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</h5>
+                                       <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</h5>
                                        <Link href="/services/tds-filing" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Filing</Link>
                                        <Link href="/services/gst-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">GST Registration</Link>
                                        <Link href="/services/document-vault" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Document Vault</Link>
                                      </div>
                                     <div className="space-y-1 pt-2">
-                                       <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Business</h5>
+                                       <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Business</h5>
                                        <Link href="/services/company-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Company Registration</Link>
                                        <Link href="/services/trademark-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Trademark</Link>
                                     </div>
@@ -971,7 +975,10 @@ export default function Header() {
                            </AccordionItem>
 
                            <AccordionItem value="startup" className="border-none">
-                              <AccordionTrigger className="px-6 py-3 text-sm font-medium text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-purple-600">
+                              <AccordionTrigger className={cn(
+                                "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-purple-600 transition-all",
+                                location.startsWith('/startup') ? "font-bold" : "font-normal"
+                              )}>
                                  Startup Services
                               </AccordionTrigger>
                               <AccordionContent className="bg-purple-50/30 px-6 py-2">
@@ -984,11 +991,14 @@ export default function Header() {
                            </AccordionItem>
 
                            <AccordionItem value="calculators" className="border-none">
-                              <AccordionTrigger className="px-6 py-3 text-sm font-medium text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600">
+                              <AccordionTrigger className={cn(
+                                "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
+                                (location.startsWith('/calculators') || location === '/compliance-calendar' || location === '/elss-comparator') ? "font-bold" : "font-normal"
+                              )}>
                                  Calculators
                               </AccordionTrigger>
                               <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</p>
+                                 <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</p>
                                  <div className="grid grid-cols-1 gap-1 mb-4">
                                     <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax (New vs Old)</Link>
                                     <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
@@ -996,7 +1006,7 @@ export default function Header() {
                                     <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
                                     <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
                                  </div>
-                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Wealth & Savings</p>
+                                 <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Wealth & Savings</p>
                                  <div className="grid grid-cols-1 gap-1 mb-4">
                                     <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
                                     <Link href="/elss-comparator" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">ELSS Comparator</Link>
@@ -1004,24 +1014,44 @@ export default function Header() {
                                     <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
                                     <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
                                  </div>
-                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
+                                 <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
                                  <div className="grid grid-cols-1 gap-1">
                                     <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
                                     <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Loan EMI Calculator</Link>
+                                    <Link href="/compliance-calendar" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Compliance Calendar</Link>
+                                    <Link href="/calculators/penalty" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Penalty Calculator</Link>
                                  </div>
                               </AccordionContent>
                            </AccordionItem>
                         </Accordion>
 
-                        <Link href="/blog" className="px-6 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600">
+                        <Link 
+                          href="/blog" 
+                          onTouchStart={() => preloadOnHover("/blog")}
+                          className={cn(
+                          "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
+                          location.startsWith('/blog') ? "font-bold" : "font-normal"
+                        )}>
                            Knowledge Hub (Blog)
                         </Link>
 
-                        <Link href="/about" className="px-6 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600">
+                        <Link 
+                          href="/about" 
+                          onTouchStart={() => preloadOnHover("/about")}
+                          className={cn(
+                          "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
+                          location === '/about' ? "font-bold" : "font-normal"
+                        )}>
                            About MyeCA.in
                         </Link>
                         
-                        <Link href="/contact" className="px-6 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600">
+                        <Link 
+                          href="/contact" 
+                          onTouchStart={() => preloadOnHover("/contact")}
+                          className={cn(
+                          "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
+                          location === '/contact' ? "font-bold" : "font-normal"
+                        )}>
                            Contact Us
                         </Link>
                       </div>
@@ -1030,7 +1060,7 @@ export default function Header() {
                     <div className="p-6 border-t mt-auto bg-slate-50/50">
                        {!isLoading && !isAuthenticated && (
                           <div className="grid gap-3">
-                             <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                             <Link href="/login" onTouchStart={() => preloadOnHover("/login")} onClick={() => setMobileMenuOpen(false)}>
                                 <Button className="w-full justify-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl h-11 shadow-lg shadow-blue-200">
                                    Join / Sign in
                                 </Button>

@@ -4,8 +4,12 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { addPerformanceHints } from "./utils/performance-hints";
 import "./utils/safe-dom";
 import "./index.css";
+
+// Initialize performance hints (preconnect, dns-prefetch)
+addPerformanceHints();
 
 // PWA Service Worker registration
 import { registerServiceWorker, setupInstallPrompt } from "./utils/registerSW";

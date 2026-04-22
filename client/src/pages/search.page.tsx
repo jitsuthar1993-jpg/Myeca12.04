@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,8 +8,19 @@ import { Badge } from "@/components/ui/badge";
 import { Search, FileText, Calendar, User } from "lucide-react";
 
 export default function SearchPage() {
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Initialize search from URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q) {
+      setSearchQuery(q);
+      setSearchTerm(q);
+    }
+  }, []);
 
   // Fetch blog posts
   const { data: blogPosts = [], isLoading } = useQuery<any[]>({
@@ -30,6 +42,11 @@ export default function SearchPage() {
 
   const handleSearch = () => {
     setSearchTerm(searchQuery);
+    if (searchQuery) {
+      setLocation(`/search?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      setLocation('/search');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -171,6 +188,7 @@ export default function SearchPage() {
                       onClick={() => {
                         setSearchQuery(topic);
                         setSearchTerm(topic);
+                        setLocation(`/search?q=${encodeURIComponent(topic)}`);
                       }}
                       className="justify-start"
                     >

@@ -1,9 +1,11 @@
 import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
+import { SEO_CONFIG } from "../client/src/config/seo.config";
 import fs from "fs";
 import path from "path";
 import { adminDb } from "./neon-admin.js";
 import { authLimiter, adminLimiter, uploadLimiter } from "./middleware/rate-limits.js";
+import { apiRateLimiter } from "./middleware/security.js";
 import documentsRouter from "./routes/documents.js";
 import referralsRouter from "./routes/referrals.js";
 import notificationsRouter from "./routes/notifications.js";
@@ -54,11 +56,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const baseUrl = "https://myeca.in";
-    const staticRoutes = [
+    const seoRoutes = Object.keys(SEO_CONFIG).filter(path => !SEO_CONFIG[path].noindex);
+    const staticRoutes = Array.from(new Set([
       "", "/services", "/all-services", "/about", "/contact",
       "/calculators", "/learn", "/blog", "/legal/privacy-policy",
-      "/legal/terms-of-service", "/legal/refund-policy"
-    ];
+      "/legal/terms-of-service", "/legal/refund-policy",
+      ...seoRoutes
+    ]));
 
     try {
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -124,13 +128,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/llms.txt", (_req: Request, res: Response) => {
+  app.get(["/llms.txt", "/llms-full.txt"], (req: Request, res: Response) => {
     try {
-      const filePath = path.resolve(process.cwd(), "public", "llms.txt");
-      res.setHeader('Content-Type', 'text/plain');
-      res.status(200).sendFile(filePath);
+      const isFull = req.path.includes("-full");
+      const fileName = isFull ? "llms-full.txt" : "llms.txt";
+      
+      // Try multiple possible locations for the file
+      const searchPaths = [
+        path.resolve(process.cwd(), "client", "public", fileName),
+        path.resolve(process.cwd(), "public", fileName),
+        path.resolve(process.cwd(), "dist", "public", fileName),
+      ];
+
+      let filePath = "";
+      for (const p of searchPaths) {
+        if (fs.existsSync(p)) {
+          filePath = p;
+          break;
+        }
+      }
+
+      if (filePath) {
+        res.setHeader('Content-Type', 'text/plain');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        return res.status(200).sendFile(filePath);
+      }
+      
+      res.status(404).send(`${fileName} not found`);
     } catch (error) {
-      res.status(404).send("llms.txt not found");
+      res.status(500).send("Error serving LLM text file");
     }
   });
 
@@ -140,7 +166,20 @@ Allow: /
 Sitemap: https://myeca.in/sitemap.xml
 Disallow: /admin/
 Disallow: /ca/
-Disallow: /api/`;
+Disallow: /api/
+Disallow: /auth/
+
+# AI Crawler optimization
+User-agent: GPTBot
+Disallow: /api/
+Disallow: /admin/
+Disallow: /ca/
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /`;
     res.setHeader('Content-Type', 'text/plain');
     res.status(200).send(robots);
   });
@@ -157,13 +196,13 @@ Disallow: /api/`;
   });
 
   // Error logging endpoint
-  app.post("/api/errors/log", express.text({ type: "*/*", limit: "200kb" }), (req: Request, res: Response) => {
+  app.post("/api/errors/log", apiRateLimiter, express.text({ type: "*/*", limit: "5kb" }), (req: Request, res: Response) => {
     // #region agent log
     const logPath = path.resolve(process.cwd(), "debug-ac3226.log");
     let parsed: unknown = undefined;
     const raw = typeof req.body === "string" ? req.body : "";
     if (raw) {
-      try { parsed = JSON.parse(raw); } catch { parsed = { raw: raw.slice(0, 2000) }; }
+      try { parsed = JSON.parse(raw); } catch { parsed = { raw: raw.slice(0, 500) }; }
     }
     const payload = {
       sessionId: "ac3226",

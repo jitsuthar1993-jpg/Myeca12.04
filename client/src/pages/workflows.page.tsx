@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,8 +14,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   Zap, Plus, Edit2, Trash2, Clock,
   Mail, Bell, FileText, Shield, 
-  Loader2, Activity, Cpu, Settings
+  Loader2, Activity, Cpu, Settings,
+  Play, CheckCircle
 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import SEO from "@/components/SEO";
 import { Layout } from "@/components/admin/Layout";
 import { cn } from "@/lib/utils";
@@ -40,6 +41,21 @@ interface Workflow {
   runs: number;
 }
 
+interface WorkflowTemplate {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  trigger: {
+    type: string;
+    config: Record<string, any>;
+  };
+  actions: Array<{
+    type: string;
+    config: Record<string, any>;
+  }>;
+}
+
 export default function WorkflowsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -54,8 +70,42 @@ export default function WorkflowsPage() {
     queryKey: ["/api/workflows"]
   });
 
+  // Fetch templates
+  const { data: templatesData = { templates: [
+    { id: 1, name: "GST Reminder", category: "Compliance", description: "Send reminders for GST filing", trigger: { type: "schedule", config: { cron: "0 0 1 * *" } }, actions: [{ type: "email", config: { to: "user@example.com" } }] },
+    { id: 2, name: "Invoice Auto-Check", category: "Accounting", description: "Validate invoices on upload", trigger: { type: "event", config: { event: "upload" } }, actions: [{ type: "webhook", config: { url: "https://api.example.com" } }] }
+  ] } } = useQuery<any>({
+    queryKey: ["/api/workflow-templates"]
+  });
+
+  const [selectedTemplate, setSelectedTemplate] = useState<WorkflowTemplate | null>(null);
+
+  // Toggle workflow mutation
+  const toggleMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/workflows/${id}/toggle`, {
+      method: "POST"
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/workflows"] });
+      toast({
         title: "Workflow updated",
         description: "The workflow status has been changed."
+      });
+    }
+  });
+
+  // Create workflow mutation
+  const createMutation = useMutation({
+    mutationFn: (workflow: any) => apiRequest("/api/workflows", {
+      method: "POST",
+      body: JSON.stringify(workflow)
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/workflows"] });
+      setIsCreateDialogOpen(false);
+      toast({
+        title: "Workflow created",
+        description: "Your new automation is now active."
       });
     }
   });
@@ -92,6 +142,18 @@ export default function WorkflowsPage() {
       actions: selectedTemplate.actions,
       enabled: true
     });
+  };
+
+  const triggerIcons: Record<string, any> = {
+    schedule: Clock,
+    event: Zap,
+    manual: Cpu
+  };
+
+  const actionIcons: Record<string, any> = {
+    email: Mail,
+    webhook: Activity,
+    notification: Bell
   };
 
   return (
@@ -401,6 +463,6 @@ export default function WorkflowsPage() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </Layout>
   );
 }

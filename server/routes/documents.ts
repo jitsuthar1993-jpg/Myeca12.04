@@ -166,7 +166,12 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
 
     const schema = z.object({
       name: z.string(),
-      url: z.string().url(),
+      url: z.string().url().refine(
+        (url) => {
+          return url.startsWith("https://") && (url.includes(".vercel-storage.com") || url.includes("public.blob.vercel-storage.com"));
+        },
+        { message: "Only trusted Vercel Blob URLs are allowed" }
+      ),
       category: z.string(),
       year: z.string().optional().nullable(),
       description: z.string().optional().nullable(),

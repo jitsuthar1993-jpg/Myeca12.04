@@ -16,6 +16,7 @@ export interface SEOConfigItem {
     availability: string;
   };
   breadcrumbs: { name: string; url: string }[];
+  noindex?: boolean;
 }
 
 export const SEO_CONFIG: Record<string, SEOConfigItem> = {
@@ -238,6 +239,140 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     keywords: ['contact tax expert', 'myeca support', 'tax helpline India', 'CA consultation online'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Contact Us', url: '/contact' }]
+  },
+  '/blog': {
+    title: 'Tax Guides & Financial Insights | MyeCA.in Blog',
+    description: 'Expert articles on income tax filing, GST compliance, startup registrations, and investment planning in India.',
+    keywords: ['tax blog', 'finance guides', 'ITR filing tips', 'GST updates', 'tax saving strategies'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Blog', url: '/blog' }]
+  },
+  '/experts': {
+    title: 'Expert CA Consultation Online | MyeCA.in Professional Network',
+    description: 'Connect with experienced Chartered Accountants and tax experts for personalized consultations and professional advice.',
+    keywords: ['online CA consultation', 'hire tax expert', 'CA network India', 'professional tax advice'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Experts', url: '/experts' }]
+  },
+  '/services/startup-india-registration': {
+    title: 'Startup India Registration Online | DPIIT Recognition | MyeCA.in',
+    description: 'Get recognized by DPIIT under the Startup India initiative. Avail tax exemptions, patent benefits, and easy self-certification.',
+    keywords: ['startup india registration', 'dpiit recognition', 'startup tax benefits', 'register startup india'],
+    type: 'service',
+    serviceData: { price: '₹4999', rating: '4.9', reviews: '320', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Startup India', url: '/services/startup-india-registration' }]
+  },
+  '/calculators/emi': {
+    title: 'EMI Calculator 2025 | Home, Car & Personal Loan EMI | MyeCA.in',
+    description: 'Calculate your loan EMIs instantly. Plan your repayments for home loans, car loans, and personal loans with our easy-to-use tool.',
+    keywords: ['emi calculator', 'loan calculator', 'home loan emi', 'car loan emi calculator'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'EMI Calculator',
+      features: ['Amortization schedule', 'Total interest calculation', 'Repayment breakdown'],
+      accuracy: '100%',
+      updates: '2025 loan rates supported'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'EMI Calculator', url: '/calculators/emi' }]
+  },
+  '/calculators/car-loan': {
+    title: 'Car Loan EMI Calculator 2025 | Vehicle Loan Interest | MyeCA.in',
+    description: 'Calculate your car loan EMI and total interest payable. Compare vehicle loan offers from top banks and plan your car purchase.',
+    keywords: ['car loan emi calculator', 'vehicle loan calculator', 'auto loan emi', 'car loan interest rates'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Car Loan Calculator',
+      features: ['Amortization chart', 'Processing fee inclusion', 'Prepayment analysis'],
+      accuracy: '100%',
+      updates: '2025 vehicle loan rates'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Car Loan', url: '/calculators/car-loan' }]
+  },
+  '/calculators/home-loan': {
+    title: 'Home Loan EMI Calculator 2025 | Mortgage Interest Calculator | MyeCA.in',
+    description: 'Calculate your home loan EMI, total interest, and principal repayment. Plan your home buying with detailed amortization schedules.',
+    keywords: ['home loan emi calculator', 'mortgage calculator', 'house loan calculator', 'housing loan interest'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Home Loan Calculator',
+      features: ['Part-payment analysis', 'Tax benefit (Sec 24/80EEA)', 'Detailed amortization'],
+      accuracy: '100%',
+      updates: '2025 mortgage rates'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Home Loan', url: '/calculators/home-loan' }]
+  },
+  '/calculators/tds': {
+    title: 'TDS Calculator 2025 | Tax Deducted at Source Rates | MyeCA.in',
+    description: 'Calculate TDS on salary, rent, professional fees, and commissions. Stay updated with latest TDS rates for FY 2024-25 and 2025-26.',
+    keywords: ['tds calculator', 'tax deducted at source', 'tds rates 2025', 'calculate tds online'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'TDS Calculator',
+      features: ['Section-wise rates', 'Salary TDS calculation', 'Non-resident TDS support'],
+      accuracy: '100%',
+      updates: 'FY 2024-25 & 2025-26 updated'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'TDS Calculator', url: '/calculators/tds' }]
+  },
+  '/calculators/penalty': {
+    title: 'GST & Income Tax Penalty Calculator 2025 | MyeCA.in',
+    description: 'Calculate late filing fees and interest penalties for GST returns, Income Tax, and TDS. Stay compliant and avoid heavy costs.',
+    keywords: ['gst penalty calculator', 'income tax late fee', 'tds penalty', 'tax compliance cost'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Penalty Calculator',
+      features: ['GST late fee', 'Section 234A/B/C interest', 'TDS delay fees'],
+      accuracy: '99.9%',
+      updates: 'FY 2024-25 compliant'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Penalty Calculator', url: '/calculators/penalty' }]
+  },
+  '/compliance-calendar': {
+    title: 'Compliance Calendar 2025-26 | GST & Tax Due Dates | MyeCA.in',
+    description: 'Stay ahead of tax deadlines with our comprehensive compliance calendar. Tracks GST, Income Tax, TDS, and MCA due dates for FY 2025-26.',
+    keywords: ['compliance calendar 2025', 'tax due dates', 'gst return deadlines', 'income tax dates'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compliance Calendar', url: '/compliance-calendar' }]
+  },
+  '/elss-comparator': {
+    title: 'ELSS Mutual Fund Comparator | Best Tax Saving Funds 2025 | MyeCA.in',
+    description: 'Compare top-performing ELSS mutual funds. Analyze returns, risk ratios, and tax-saving potential under Section 80C.',
+    keywords: ['elss comparator', 'best tax saving funds', 'compare elss mutual funds', '80C investments'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'ELSS Comparator',
+      features: ['Return analysis', 'Risk metrics', 'Direct vs Regular comparison'],
+      accuracy: '100%',
+      updates: 'Current market data'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'ELSS Comparator', url: '/elss-comparator' }]
+  },
+  '/form16-parser': {
+    title: 'Free Form 16 Parser Online | Instant ITR Pre-fill | MyeCA.in',
+    description: 'Upload your Form 16 PDF and instantly parse your salary, deductions, and tax details for easy ITR filing. Secure and private.',
+    keywords: ['form 16 parser', 'upload form 16', 'salary tax details', 'itr pre-fill tool'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Form 16 Parser',
+      features: ['PDF parsing', 'Auto-deduction mapping', 'Private & Secure'],
+      accuracy: '99%',
+      updates: 'AY 2025-26 supported'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Form 16 Parser', url: '/form16-parser' }]
+  },
+  '/tax-assistant': {
+    title: 'AI Tax Assistant | Instant Tax Answers & Support | MyeCA.in',
+    description: 'Ask our AI Tax Assistant any question about ITR filing, GST, or business compliance. Get instant, expert-backed financial advice.',
+    keywords: ['ai tax assistant', 'tax help bot', 'expert tax answers', 'chat with tax expert'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'AI Tax Assistant', url: '/tax-assistant' }]
+  },
+  '/startup-services': {
+    title: 'Complete Startup Solutions India | Launch & Scale | MyeCA.in',
+    description: 'All-in-one startup services including DPIIT recognition, funding support, and compliance management. Launch your dream venture with MyeCA.',
+    keywords: ['startup solutions', 'entrepreneur support', 'startup ecosystem India', 'launch business India'],
+    type: 'service',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }]
   }
 };
 

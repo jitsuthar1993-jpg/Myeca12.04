@@ -62,6 +62,8 @@ export default {
           dark: "#00236B",
           light: "#EEF4FF",
         },
+        "cta-primary": "#003087",
+        "primary-hover": "#00236B",
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",

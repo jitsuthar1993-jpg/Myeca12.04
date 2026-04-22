@@ -181,18 +181,18 @@ export default function FinancialGlossary() {
           )}
         </div>
 
-        {/* Feature Banner */}
-        <div className="mt-24 relative rounded-[3rem] overflow-hidden bg-slate-900 p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 group">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-600/10 to-transparent pointer-events-none"></div>
+        {/* Feature Banner - Updated to White Background */}
+        <div className="mt-24 relative rounded-[3rem] overflow-hidden bg-white p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 group border border-slate-200 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)]">
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-50 to-transparent pointer-events-none opacity-50"></div>
           <div className="relative z-10 max-w-xl">
-             <div className="inline-flex items-center gap-2 p-2 rounded-xl bg-slate-800 text-slate-300 text-[11px] font-bold uppercase tracking-widest mb-6 border border-slate-700">
-                <Hash className="w-3 h-3 text-blue-400" />
+             <div className="inline-flex items-center gap-2 p-2 rounded-xl bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-widest mb-6 border border-blue-100/50">
+                <Hash className="w-3 h-3 text-blue-500" />
                 Expert Support
              </div>
-             <h4 className="text-3xl lg:text-4xl font-extrabold text-white mb-4 tracking-tight leading-tight">
-                Still confused about <span className="text-blue-400">Tax Jargon?</span>
+             <h4 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">
+                Still confused about <span className="text-blue-600">Tax Jargon?</span>
              </h4>
-             <p className="text-lg text-slate-400 font-medium">
+             <p className="text-lg text-slate-500 font-medium">
                 Our expert CAs handle the complexity so you don't have to. Real experts, real advice.
              </p>
           </div>

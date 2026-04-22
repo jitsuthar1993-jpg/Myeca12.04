@@ -1,311 +1,249 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { calculateFD } from "@/lib/tax-calculations";
-import { PiggyBank, Coins, Percent, TrendingUp, Calendar, Target } from "lucide-react";
-import { CalculatorExport } from "@/components/ui/calculator-export";
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
+import { Slider } from "@/components/ui/slider";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  PiggyBank,
+  IndianRupee,
+  Calendar,
+  Zap,
+  TrendingUp,
+  PieChart as PieChartIcon,
+  CheckCircle2,
+  ShieldCheck,
+  History,
+  Calculator,
+  ArrowRight
+} from "lucide-react";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { getHowToSchema } from "@/utils/seo-defaults";
-import { CalculatorHeader } from "@/components/ui/calculator-header";
+import { calculateFD } from "@/lib/tax-calculations";
+import { cn } from "@/lib/utils";
 
-export default function FDCalculatorPage() {
+// Atomic Components
+import CalcLayout from "@/features/calculators/components/CalcLayout";
+import CalcHero from "@/features/calculators/components/CalcHero";
+import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components/CalcInputCard";
+import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
+import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
+
+const CHART_COLORS = ["#2563eb", "#ef4444"];
+
+export default function FDCalculator() {
   const seo = getSEOConfig('/calculators/fd');
-  const [principal, setPrincipal] = useState<number>(0);
-  const [rate, setRate] = useState<number>(0);
-  const [tenure, setTenure] = useState<number>(0);
+  
+  const [principal, setPrincipal] = useState<number>(100000);
+  const [rate, setRate] = useState<number>(7);
+  const [tenure, setTenure] = useState<number>(5);
   const [compoundingFrequency, setCompoundingFrequency] = useState<number>(4);
-  const [result, setResult] = useState<any>(null);
 
-  const handleCalculate = () => {
-    if (principal > 0 && rate > 0 && tenure > 0) {
-      const fdResult = calculateFD(principal, rate, tenure, compoundingFrequency);
-      setResult(fdResult);
-    }
-  };
+  const calculations = useMemo(() => {
+    return calculateFD(principal, rate, tenure, compoundingFrequency);
+  }, [principal, rate, tenure, compoundingFrequency]);
 
-  const compoundingOptions = [
-    { value: 1, label: 'Annually' },
-    { value: 2, label: 'Half-yearly' },
-    { value: 4, label: 'Quarterly' },
-    { value: 12, label: 'Monthly' }
+  const chartData = [
+    { name: "Principal", value: principal },
+    { name: "Interest", value: calculations.totalInterest },
   ];
 
-  const currentRates = [
-    { bank: 'SBI', rate: '6.50%', tenure: '1-2 years' },
-    { bank: 'HDFC Bank', rate: '6.75%', tenure: '1-2 years' },
-    { bank: 'ICICI Bank', rate: '6.70%', tenure: '1-2 years' },
-    { bank: 'Axis Bank', rate: '6.75%', tenure: '1-2 years' },
-    { bank: 'Kotak Mahindra', rate: '6.80%', tenure: '1-2 years' },
-    { bank: 'Yes Bank', rate: '7.25%', tenure: '1-2 years' }
-  ];
-
-  const howToSchema = getHowToSchema({
-    name: "How to Calculate Fixed Deposit Returns",
-    description: "Calculate your FD maturity amount in 4 simple steps",
-    totalTime: "PT2M",
-    steps: [
-      {
-        name: "Enter principal amount",
-        text: "Input the amount you want to invest in fixed deposit"
-      },
-      {
-        name: "Enter interest rate",
-        text: "Input the annual interest rate offered by your bank"
-      },
-      {
-        name: "Select tenure",
-        text: "Choose the duration of your fixed deposit in years"
-      },
-      {
-        name: "Select compounding frequency",
-        text: "Choose how often interest is compounded (quarterly, monthly, etc.)"
-      }
-    ]
-  });
+  const fmt = (n: number) =>
+    n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
 
   return (
     <>
       <MetaSEO
-        title={seo?.title || "FD Calculator 2025 | MyeCA.in"}
-        description={seo?.description || "Calculate fixed deposit maturity amount & interest earned."}
+        title={seo?.title || "FD Calculator 2025 | Fixed Deposit Maturity Amount | MyeCA.in"}
+        description={seo?.description || "Calculate your FD maturity amount and interest earned. Compare latest bank FD rates and plan your savings."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
         breadcrumbs={seo?.breadcrumbs}
-        howToData={{
-          name: "How to Calculate Fixed Deposit Returns",
-          description: "Calculate your FD maturity amount in 4 simple steps",
-          steps: [
-            { name: "Enter principal amount", text: "Input the amount you want to invest in fixed deposit" },
-            { name: "Enter interest rate", text: "Input the annual interest rate offered by your bank" },
-            { name: "Select tenure", text: "Choose the duration of your fixed deposit in years" },
-            { name: "Select compounding frequency", text: "Choose how often interest is compounded (quarterly, monthly, etc.)" }
-          ]
-        }}
       />
-    <div className="calculator-page min-h-screen bg-gray-50 py-4 px-4">
-      <div className="max-w-4xl mx-auto">
-        <CalculatorHeader
-          icon={PiggyBank}
-          title="Fixed Deposit Calculator"
-          subtitle="Calculate your fixed deposit returns with compound interest and current market rates."
-          color="blue"
-          align="center"
-        />
 
-        <div className="grid gap-8 md:grid-cols-2">
-          {/* Input Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Coins className="w-5 h-5" />
-                Investment Details
-              </CardTitle>
-              <CardDescription>
-                Enter your fixed deposit investment details
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="principal">Principal Amount (₹)</Label>
-                <Input
-                  id="principal"
-                  type="number"
-                  value={principal || ''}
-                  onChange={(e) => setPrincipal(Math.max(0, Number(e.target.value)))}
-                  placeholder="Enter principal amount"
-                  className="text-lg"
-                />
+      <CalcHero 
+        title="FD Calculator"
+        description="Secure your future with guaranteed returns and precise maturity projections."
+        category="Savings & Deposits"
+        icon={<PiggyBank className="w-6 h-6" />}
+        variant="blue"
+        breadcrumbItems={[{ name: "Fixed Deposit Calculator" }]}
+      />
+
+      <CalcLayout
+        variant="blue"
+        complianceFacts={[
+          { title: "DICGC Insured", content: "Your deposits are insured up to ₹5 Lakhs per bank by the Deposit Insurance and Credit Guarantee Corporation." },
+          { title: "Taxable Interest", content: "FD interest is taxable. Banks deduct 10% TDS if interest exceeds ₹40,000 (₹50,000 for seniors)." },
+          { title: "Laddering Strategy", content: "Split your investment across multiple tenures to maintain liquidity and hedge against rate fluctuations." }
+        ]}
+        sidebar={
+          <CalcGlassSidebar title="Maturity Summary">
+            <div className="space-y-1 pb-6 border-b border-white/20">
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Maturity Amount</p>
+              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+                {fmt(calculations.maturityAmount)}
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6">
+              <CalcResultRow label="Total Principal" value={fmt(principal)} />
+              <CalcResultRow label="Interest Earned" value={fmt(calculations.totalInterest)} variant="success" />
+              <CalcResultRow label="Effective Yield" value={`${calculations.effectiveRate}%`} />
+              
+              <div className="pt-6 border-t border-white/20">
+                <div className="h-[180px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={chartData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {chartData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="rate">Annual Interest Rate (%)</Label>
-                <Input
-                  id="rate"
-                  type="number"
-                  step="0.1"
-                  value={rate || ''}
-                  onChange={(e) => setRate(Math.max(0, Number(e.target.value)))}
-                  placeholder="Enter annual interest rate"
-                  className="text-lg"
-                />
-              </div>
+            <Link href="/services/advisory">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                Plan Tax-Efficient Savings
+              </button>
+            </Link>
+          </CalcGlassSidebar>
+        }
+      >
+        <div className="space-y-8">
+          <CalcInputCard title="Deposit Details" icon={<IndianRupee className="w-5 h-5" />}>
+            <CalcInputGroup 
+              label="Investment Amount" 
+              badgeValue={fmt(principal)}
+            >
+              <Slider 
+                value={[principal]} 
+                onValueChange={(v) => setPrincipal(v[0])} 
+                max={10000000} 
+                min={10000} 
+                step={10000} 
+              />
+            </CalcInputGroup>
 
-              <div className="space-y-2">
-                <Label htmlFor="tenure">Tenure (Years)</Label>
-                <Input
-                  id="tenure"
-                  type="number"
-                  value={tenure || ''}
-                  onChange={(e) => setTenure(Math.max(1, Number(e.target.value)))}
-                  placeholder="Enter tenure in years"
-                  className="text-lg"
-                  min={1}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="compounding">Compounding Frequency</Label>
-                <Select value={compoundingFrequency.toString()} onValueChange={(value) => setCompoundingFrequency(Number(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select compounding frequency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {compoundingOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value.toString()}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Button 
-                onClick={handleCalculate} 
-                className="w-full"
-                disabled={!principal || !rate || !tenure}
+            <div className="grid md:grid-cols-2 gap-8">
+              <CalcInputGroup 
+                label="Interest Rate (%)" 
+                badgeValue={`${rate}%`}
               >
-                Calculate Returns
-              </Button>
-            </CardContent>
-          </Card>
+                <Slider 
+                  value={[rate]} 
+                  onValueChange={(v) => setRate(v[0])} 
+                  max={12} 
+                  min={3} 
+                  step={0.1} 
+                />
+              </CalcInputGroup>
 
-          {/* Results Section */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Investment Returns
-                </CardTitle>
-                {result && (
-                  <CalculatorExport 
-                    title="Fixed Deposit Calculation"
-                    data={{
-                      "Principal Amount": principal,
-                      "Interest Rate": `${rate}% p.a.`,
-                      "Tenure": `${tenure} years`,
-                      "Compounding": compoundingOptions.find(o => o.value === compoundingFrequency)?.label || 'Quarterly',
-                      "Total Interest": result.totalInterest,
-                      "Maturity Amount": result.maturityAmount,
-                      "Effective Rate": `${result.effectiveRate}%`
-                    }}
-                  />
-                )}
+              <CalcInputGroup 
+                label="Tenure (Years)" 
+                badgeValue={`${tenure} Yrs`}
+              >
+                <Slider 
+                  value={[tenure]} 
+                  onValueChange={(v) => setTenure(v[0])} 
+                  max={10} 
+                  min={1} 
+                  step={1} 
+                />
+              </CalcInputGroup>
+            </div>
+
+            <div className="pt-4">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-4">Compounding Frequency</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { value: 1, label: 'Annually' },
+                  { value: 2, label: 'Half-yearly' },
+                  { value: 4, label: 'Quarterly' },
+                  { value: 12, label: 'Monthly' }
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setCompoundingFrequency(opt.value)}
+                    className={cn(
+                      "py-3 px-2 rounded-2xl border-2 font-bold text-xs transition-all",
+                      compoundingFrequency === opt.value
+                        ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm"
+                        : "border-slate-100 bg-slate-50/50 text-slate-400 hover:border-blue-200"
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
-              <CardDescription>
-                Your fixed deposit calculation results
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {result ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Target className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-700">Maturity Amount</span>
-                      </div>
-                      <p className="text-2xl font-bold text-blue-900">₹{result.maturityAmount.toLocaleString()}</p>
-                    </div>
-                    
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Percent className="w-4 h-4 text-green-600" />
-                        <span className="text-sm font-medium text-green-700">Effective Rate</span>
-                      </div>
-                      <p className="text-2xl font-bold text-green-900">{result.effectiveRate}%</p>
-                    </div>
-                  </div>
+            </div>
+          </CalcInputCard>
 
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Principal Amount</span>
-                      <span className="font-semibold">₹{principal.toLocaleString()}</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Total Interest</span>
-                      <span className="font-semibold text-green-600">₹{result.totalInterest.toLocaleString()}</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Maturity Amount</span>
-                      <span className="font-semibold text-blue-600">₹{result.maturityAmount.toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Yearly Breakdown */}
-                  <div>
-                    <h3 className="font-semibold mb-3 flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      Yearly Breakdown
-                    </h3>
-                    <div className="space-y-2 max-h-48 overflow-y-auto">
-                      {result.yearlyBreakdown.map((year: any, index: number) => (
-                        <div key={index} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
-                          <span>Year {year.year}</span>
-                          <div className="flex gap-4">
-                            <span className="text-green-600">+₹{year.interest.toLocaleString()}</span>
-                            <span className="font-semibold">₹{year.total.toLocaleString()}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center text-gray-500 py-8">
-                  <PiggyBank className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                  <p>Enter investment details to calculate returns</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Current FD Rates */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Current FD Rates (2024-25)</CardTitle>
-            <CardDescription>
-              Latest fixed deposit interest rates from major banks
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {currentRates.map((bank, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-sm">{bank.bank}</h3>
-                    <Badge variant="outline">{bank.rate}</Badge>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Tenure: {bank.tenure}
-                  </p>
+          <div className="bg-white rounded-[2rem] border border-slate-100 p-6">
+            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Calendar className="w-3 h-3 text-blue-600" /> Projected Growth
+            </h4>
+            <div className="space-y-2">
+              {calculations.yearlyBreakdown.slice(0, 5).map((year: any) => (
+                <div key={year.year} className="flex justify-between items-center p-3 rounded-xl bg-slate-50/50">
+                  <span className="text-xs font-bold text-slate-500">Year {year.year}</span>
+                  <span className="text-xs font-black text-slate-700 tabular-nums">{fmt(year.total)}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>Note:</strong> Rates are subject to change. Senior citizens may get additional 0.5% interest. 
-                TDS is applicable on interest income above ₹40,000 per year.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+        </div>
+
+        <CalculatorMiniBlog 
+          features={[
+            {
+              icon: <ShieldCheck className="w-5 h-5" />,
+              iconBg: "bg-blue-50 text-blue-600",
+              title: "Fixed Returns",
+              desc: "Unlike market-linked investments, your returns are locked in at the time of opening the FD."
+            },
+            {
+              icon: <History className="w-5 h-5" />,
+              iconBg: "bg-amber-50 text-amber-600",
+              title: "Compounding Magic",
+              desc: "By choosing quarterly compounding, you earn interest on your interest, boosting your effective yield."
+            },
+            {
+              icon: <Calculator className="w-5 h-5" />,
+              iconBg: "bg-indigo-50 text-indigo-600",
+              title: "Easy Liquidity",
+              desc: "Most banks allow premature withdrawal with a small penalty, making it a good emergency fund."
+            }
+          ]}
+          howItWorks={{
+            title: "Maturity Math",
+            description: "How we calculate your fixed deposit returns using the compounding formula.",
+            steps: [
+              { title: "Principal Deposit", desc: "The initial lump sum amount you invest with the bank." },
+              { title: "Compounding Effect", desc: "Interest is calculated on the principal + previously earned interest." },
+              { title: "Maturity Payout", desc: "The final amount paid back to you at the end of the selected tenure." }
+            ]
+          }}
+          faqs={[
+            { q: "Is FD interest tax-free?", a: "No, FD interest is added to your total income and taxed as per your slab rate." },
+            { q: "Can I open an FD for 1 month?", a: "Yes, the minimum tenure for a fixed deposit is usually 7 days." },
+            { q: "What is a Tax-Saving FD?", a: "It's a special FD with a 5-year lock-in that gives you a deduction under Section 80C." }
+          ]}
+        />
+      </CalcLayout>
     </>
   );
 }

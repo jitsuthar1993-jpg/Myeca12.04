@@ -140,6 +140,7 @@ const TermsOfServicePage = lazyWithRetry(() => import("@/pages/legal/terms-of-se
 const RefundPolicyPage = lazyWithRetry(() => import("@/pages/legal/refund-policy.page"));
 const DisclaimerPage = lazyWithRetry(() => import("@/pages/legal/disclaimer.page"));
 const ComplianceCalendarPage = lazyWithRetry(() => import("@/pages/compliance-calendar.page"));
+const PenaltyCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/penalty-calculator.page"));
 const ExpertConsultationPage = lazyWithRetry(() => import("@/pages/expert-consultation.page"));
 const HelpCenterPage = lazyWithRetry(() => import("@/pages/help/help-center.page"));
 const FAQPage = lazyWithRetry(() => import("@/pages/help/faq.page"));
@@ -379,6 +380,7 @@ export default function Routes() {
         <Route path="/legal/refund-policy" component={RefundPolicyPage} />
         <Route path="/legal/disclaimer" component={DisclaimerPage} />
         <Route path="/compliance-calendar" component={ComplianceCalendarPage} />
+        <Route path="/calculators/penalty" component={PenaltyCalculatorPage} />
         <Route path="/expert-consultation" component={ExpertConsultationPage} />
         <Route path="/help" component={HelpCenterPage} />
         <Route path="/help/faq" component={FAQPage} />

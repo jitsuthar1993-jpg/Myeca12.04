@@ -1,514 +1,256 @@
-import { useState } from "react";
-import { Calculator, GraduationCap, TrendingUp, Book, Info, Download, Clock } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Switch } from "@/components/ui/switch";
-import { m } from "framer-motion";
-import EnhancedSEO from "@/components/EnhancedSEO";
-import { getHowToSchema } from "@/utils/seo-defaults";
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
+import { Slider } from "@/components/ui/slider";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  GraduationCap,
+  IndianRupee,
+  Calendar,
+  Zap,
+  TrendingDown,
+  PieChart as PieChartIcon,
+  CheckCircle2,
+  Book,
+  Clock,
+  Calculator,
+  ArrowRight
+} from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { cn } from "@/lib/utils";
 
-export default function EducationLoanCalculatorPage() {
-  const [courseType, setCourseType] = useState<string>("domestic");
-  const [courseFee, setCourseFee] = useState<string>("500000");
-  const [interestRate, setInterestRate] = useState<string>("8.5");
-  const [tenure, setTenure] = useState<string>("10");
-  const [moratoriumPeriod, setMoratoriumPeriod] = useState<string>("4");
-  const [hasMoratorium, setHasMoratorium] = useState<boolean>(true);
-  const [loanAmount, setLoanAmount] = useState<string>("400000");
+// Atomic Components
+import CalcLayout from "@/features/calculators/components/CalcLayout";
+import CalcHero from "@/features/calculators/components/CalcHero";
+import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components/CalcInputCard";
+import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
+import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-  const calculateEducationLoan = () => {
-    const principal = parseFloat(loanAmount) || 0;
-    const monthlyRate = (parseFloat(interestRate) || 0) / 12 / 100;
-    const tenureMonths = (parseFloat(tenure) || 0) * 12;
-    const moratoriumMonths = hasMoratorium ? (parseFloat(moratoriumPeriod) || 0) * 12 : 0;
+const CHART_COLORS = ["#0d9488", "#ef4444"];
+
+export default function EducationLoanCalculator() {
+  const seo = getSEOConfig('/calculators/education-loan');
+  
+  const [principal, setPrincipal] = useState<number>(1000000);
+  const [rate, setRate] = useState<number>(8.5);
+  const [tenure, setTenure] = useState<number>(10);
+  const [moratoriumYears, setMoratoriumYears] = useState<number>(4);
+
+  const calculations = useMemo(() => {
+    const monthlyRate = rate / 12 / 100;
+    const tenureMonths = tenure * 12;
+    const moratoriumMonths = moratoriumYears * 12;
     
     if (principal <= 0 || monthlyRate <= 0 || tenureMonths <= 0) {
-      return {
-        emi: 0,
-        totalPayment: 0,
-        totalInterest: 0,
-        moratoriumInterest: 0,
-        section80E: 0,
-        effectiveCost: 0,
-        schedule: []
-      };
+      return { emi: 0, totalPayment: 0, totalInterest: 0, moratoriumInterest: 0 };
     }
 
-    // Calculate interest during moratorium period
-    let principalWithMoratoriumInterest = principal;
-    if (hasMoratorium && moratoriumMonths > 0) {
-      // Simple interest during moratorium (common practice)
-      principalWithMoratoriumInterest = principal * Math.pow(1 + monthlyRate, moratoriumMonths);
-    }
+    // Simple interest during moratorium
+    const moratoriumInterest = principal * monthlyRate * moratoriumMonths;
+    const principalAtEmiStart = principal + moratoriumInterest;
 
-    const moratoriumInterest = principalWithMoratoriumInterest - principal;
-
-    // Calculate EMI after moratorium
-    const emi = (principalWithMoratoriumInterest * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) / 
+    const emi = (principalAtEmiStart * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) / 
                 (Math.pow(1 + monthlyRate, tenureMonths) - 1);
     
     const totalPayment = emi * tenureMonths;
-    const totalInterest = totalPayment - principal;
-    
-    // Section 80E deduction (full interest amount)
-    const section80E = totalInterest; // No upper limit for education loan interest deduction
-    const taxSavings = section80E * 0.3; // Assuming 30% tax bracket
-    const effectiveCost = totalInterest - taxSavings;
-
-    // Generate payment schedule (first 12 payments after moratorium)
-    let balance = principalWithMoratoriumInterest;
-    const schedule = [];
-    
-    for (let month = 1; month <= Math.min(12, tenureMonths); month++) {
-      const interestPayment = balance * monthlyRate;
-      const principalPayment = emi - interestPayment;
-      balance -= principalPayment;
-      
-      schedule.push({
-        month,
-        emi: Math.round(emi),
-        principal: Math.round(principalPayment),
-        interest: Math.round(interestPayment),
-        balance: Math.round(balance),
-        taxBenefit: Math.round(interestPayment * 0.3) // 30% tax benefit
-      });
-    }
+    const totalInterest = (totalPayment - principalAtEmiStart) + moratoriumInterest;
 
     return {
       emi: Math.round(emi),
-      totalPayment: Math.round(totalPayment),
+      totalPayment: Math.round(totalPayment + (moratoriumMonths > 0 ? 0 : 0)), // interest is already in totalInterest
       totalInterest: Math.round(totalInterest),
       moratoriumInterest: Math.round(moratoriumInterest),
-      section80E: Math.round(section80E),
-      taxSavings: Math.round(taxSavings),
-      effectiveCost: Math.round(effectiveCost),
-      schedule
+      taxBenefit: Math.round(totalInterest * 0.3) // assuming 30% tax bracket
     };
-  };
+  }, [principal, rate, tenure, moratoriumYears]);
 
-  const result = calculateEducationLoan();
+  const chartData = [
+    { name: "Principal", value: principal },
+    { name: "Interest", value: calculations.totalInterest },
+  ];
 
-  const getInterestRateRange = () => {
-    switch (courseType) {
-      case "domestic":
-        return "7.5% - 15.0%";
-      case "international":
-        return "10.0% - 15.5%";
-      case "professional":
-        return "8.0% - 14.0%";
-      default:
-        return "7.5% - 15.5%";
-    }
-  };
-
-  const getLoanLimitInfo = () => {
-    switch (courseType) {
-      case "domestic":
-        return "Up to ₹10 lakhs (no collateral), ₹20 lakhs+ (with collateral)";
-      case "international":
-        return "Up to ₹1.5 crores with collateral required";
-      case "professional":
-        return "Up to ₹20 lakhs (medical/engineering courses)";
-      default:
-        return "Varies by course and institution";
-    }
-  };
-
-  const howToSchema = getHowToSchema({
-    name: "How to Calculate Education Loan EMI with Moratorium",
-    description: "Calculate education loan EMI including moratorium period benefits",
-    totalTime: "PT3M",
-    steps: [
-      {
-        name: "Enter course details",
-        text: "Select course type (domestic/international) and total course fee"
-      },
-      {
-        name: "Set moratorium period",
-        text: "Enable moratorium period (course duration + 6 months grace period)"
-      },
-      {
-        name: "Calculate with tax benefits",
-        text: "View EMI, total interest, and Section 80E tax benefits calculation"
-      }
-    ]
-  });
+  const fmt = (n: number) =>
+    n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
 
   return (
     <>
-      <EnhancedSEO
-        title="Education Loan EMI Calculator 2025 | Study Loan Calculator with 80E Benefits"
-        description="Calculate education loan EMI with moratorium period & Section 80E tax benefits. For domestic (₹10L) & abroad studies (₹1.5Cr). Interest rates 8.5-11%."
-        keywords={[
-          'education loan calculator',
-          'study loan EMI calculator',
-          'student loan calculator',
-          'moratorium period calculator',
-          'section 80E tax benefits',
-          'abroad education loan',
-          'education loan interest rates',
-          'student loan eligibility'
-        ]}
-        url="https://myeca.in/calculators/education-loan"
-        type="website"
-        jsonLd={howToSchema}
+      <MetaSEO
+        title={seo?.title || "Education Loan EMI Calculator 2025 | Study Loan with 80E Benefits"}
+        description={seo?.description || "Calculate education loan EMI with moratorium period & Section 80E tax benefits. Compare rates for domestic & abroad studies."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
       />
-    <div className="calculator-page min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                <GraduationCap className="w-8 h-8 text-white" />
+
+      <CalcHero 
+        title="Education Loan Calculator"
+        description="Fund your academic journey with smart planning and Section 80E tax advantages."
+        category="Loans & EMI"
+        icon={<GraduationCap className="w-6 h-6" />}
+        variant="emerald"
+        breadcrumbItems={[{ name: "Education Loan Calculator" }]}
+      />
+
+      <CalcLayout
+        variant="emerald"
+        complianceFacts={[
+          { title: "Section 80E", content: "The entire interest paid on an education loan is tax-deductible for 8 years without any upper limit." },
+          { title: "Moratorium Period", content: "Enjoy a grace period during studies + 6-12 months before starting your EMI payments." },
+          { title: "No Collateral", content: "Loans up to ₹7.5 Lakhs typically don't require any tangible collateral security." }
+        ]}
+        sidebar={
+          <CalcGlassSidebar title="EMI Summary">
+            <div className="space-y-1 pb-6 border-b border-white/20">
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Post-Moratorium EMI</p>
+              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+                {fmt(calculations.emi)}
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6">
+              <CalcResultRow label="Principal" value={fmt(principal)} />
+              <CalcResultRow label="Total Interest" value={fmt(calculations.totalInterest)} variant="warning" />
+              <CalcResultRow label="Est. Tax Saving" value={fmt(calculations.taxBenefit)} variant="success" />
+              
+              <div className="pt-6 border-t border-white/20">
+                <div className="h-[180px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={chartData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {chartData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Education Loan EMI Calculator
-            </h1>
-            <p className="text-xl text-teal-100 max-w-3xl mx-auto">
-              Calculate education loan EMI with moratorium period and Section 80E tax benefits. 
-              Plan your higher education financing with complete cost analysis.
-            </p>
+
+            <Link href="/services/advisory">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-teal-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                Optimise 80E Tax Savings
+              </button>
+            </Link>
+          </CalcGlassSidebar>
+        }
+      >
+        <div className="space-y-8">
+          <CalcInputCard title="Loan Configuration" icon={<IndianRupee className="w-5 h-5" />}>
+            <CalcInputGroup 
+              label="Loan Principal" 
+              badgeValue={fmt(principal)}
+            >
+              <Slider 
+                value={[principal]} 
+                onValueChange={(v) => setPrincipal(v[0])} 
+                max={15000000} 
+                min={100000} 
+                step={50000} 
+              />
+            </CalcInputGroup>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <CalcInputGroup 
+                label="Interest Rate (%)" 
+                badgeValue={`${rate}%`}
+              >
+                <Slider 
+                  value={[rate]} 
+                  onValueChange={(v) => setRate(v[0])} 
+                  max={15} 
+                  min={7} 
+                  step={0.1} 
+                />
+              </CalcInputGroup>
+
+              <CalcInputGroup 
+                label="Moratorium (Years)" 
+                badgeValue={`${moratoriumYears} Yrs`}
+              >
+                <Slider 
+                  value={[moratoriumYears]} 
+                  onValueChange={(v) => setMoratoriumYears(v[0])} 
+                  max={7} 
+                  min={0} 
+                  step={0.5} 
+                />
+              </CalcInputGroup>
+            </div>
+
+            <CalcInputGroup 
+              label="Repayment Tenure (Post-Study)" 
+              badgeValue={`${tenure} Yrs`}
+            >
+              <Slider 
+                value={[tenure]} 
+                onValueChange={(v) => setTenure(v[0])} 
+                max={15} 
+                min={1} 
+                step={1} 
+              />
+            </CalcInputGroup>
+          </CalcInputCard>
+
+          <div className="bg-teal-50 border border-teal-100 p-6 rounded-[2rem] flex gap-4">
+            <Book className="w-6 h-6 text-teal-600 shrink-0 mt-1" />
+            <div>
+              <h4 className="text-sm font-black text-teal-900 mb-1">Education Loan Tip</h4>
+              <p className="text-xs font-bold text-teal-700 leading-relaxed">
+                Paying just the simple interest during the moratorium period (study years) can save you up to {fmt(calculations.moratoriumInterest)} in future interest costs and prevents your principal from swelling.
+              </p>
+            </div>
           </div>
         </div>
-      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Calculator Form */}
-          <m.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-teal-900">
-                  <Calculator className="w-5 h-5" />
-                  Education Loan Calculator
-                </CardTitle>
-                <CardDescription>
-                  Calculate EMI with moratorium period and tax benefits
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="course-type">Course Type</Label>
-                  <Select value={courseType} onValueChange={setCourseType}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="domestic">Domestic Course</SelectItem>
-                      <SelectItem value="international">International Course</SelectItem>
-                      <SelectItem value="professional">Professional Course</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-gray-600">
-                    Loan limit: {getLoanLimitInfo()}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="course-fee">Total Course Fee ({"₹"})</Label>
-                  <Input
-                    id="course-fee"
-                    type="number"
-                    value={courseFee}
-                    onChange={(e) => setCourseFee(e.target.value)}
-                    placeholder="500000"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="loan-amount">Loan Amount Required ({"₹"})</Label>
-                  <Input
-                    id="loan-amount"
-                    type="number"
-                    value={loanAmount}
-                    onChange={(e) => setLoanAmount(e.target.value)}
-                    placeholder="400000"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Usually 80-85% of course fee (remaining from own funds)
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="interest-rate">Interest Rate (% p.a.)</Label>
-                  <Input
-                    id="interest-rate"
-                    type="number"
-                    step="0.1"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(e.target.value)}
-                    placeholder="8.5"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Current rates: {getInterestRateRange()}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tenure">Repayment Tenure (Years)</Label>
-                  <Input
-                    id="tenure"
-                    type="number"
-                    value={tenure}
-                    onChange={(e) => setTenure(e.target.value)}
-                    placeholder="10"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label htmlFor="moratorium">Moratorium Period</Label>
-                      <p className="text-sm text-gray-600">Study period + 6 months grace</p>
-                    </div>
-                    <Switch
-                      id="moratorium"
-                      checked={hasMoratorium}
-                      onCheckedChange={setHasMoratorium}
-                    />
-                  </div>
-                  
-                  {hasMoratorium && (
-                    <div className="space-y-2">
-                      <Label htmlFor="moratorium-period">Moratorium Period (Years)</Label>
-                      <Input
-                        id="moratorium-period"
-                        type="number"
-                        value={moratoriumPeriod}
-                        onChange={(e) => setMoratoriumPeriod(e.target.value)}
-                        placeholder="4"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <Alert>
-                  <Book className="h-4 w-4" />
-                  <AlertDescription>
-                    Education loans offer Section 80E tax benefits with no upper limit. 
-                    Interest during study period is typically added to principal.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </m.div>
-
-          {/* Results */}
-          <m.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
-          >
-            {/* EMI Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-green-700">
-                  <TrendingUp className="w-5 h-5" />
-                  EMI Calculation Results
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {hasMoratorium && (
-                    <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
-                      <Clock className="w-4 h-4 text-blue-600" />
-                      <div className="text-sm">
-                        <span className="text-blue-700 font-medium">Moratorium Period: </span>
-                        <span className="text-gray-700">{moratoriumPeriod} years (no EMI)</span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between items-center p-4 bg-green-50 rounded-lg">
-                    <span className="text-gray-700">Monthly EMI (After Study)</span>
-                    <span className="text-2xl font-bold text-green-600">
-                      {"₹"}{result.emi.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-orange-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Total Interest</div>
-                      <div className="text-lg font-semibold text-orange-600">
-                        {"₹"}{result.totalInterest.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                    <div className="text-center p-3 bg-purple-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Total Payment</div>
-                      <div className="text-lg font-semibold text-purple-600">
-                        {"₹"}{result.totalPayment.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                  </div>
-
-                  {hasMoratorium && result.moratoriumInterest > 0 && (
-                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Interest During Study</div>
-                      <div className="text-lg font-semibold text-yellow-600">
-                        {"₹"}{result.moratoriumInterest.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Tax Benefits */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-blue-700">
-                  <Info className="w-5 h-5" />
-                  Section 80E Tax Benefits
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Total Interest Deduction</span>
-                    <span className="text-lg font-semibold text-blue-600">
-                      {"₹"}{result.section80E.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Tax Savings (30% bracket)</span>
-                    <span className="text-lg font-semibold text-green-600">
-                      {"₹"}{result.taxSavings?.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                    <span className="text-gray-700 font-medium">Effective Interest Cost</span>
-                    <span className="text-lg font-semibold text-green-600">
-                      {"₹"}{result.effectiveCost.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 p-3 bg-blue-50 rounded-lg">
-                    <strong>Note:</strong> Section 80E allows full interest deduction with no upper limit. 
-                    Deduction available for maximum 8 years or until loan is repaid.
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button className="flex-1 bg-teal-600 hover:bg-teal-700">
-                <Download className="w-4 h-4 mr-2" />
-                Download Report
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Compare Banks
-              </Button>
-            </div>
-          </m.div>
-        </div>
-
-        {/* Payment Schedule */}
-        {result.schedule.length > 0 && (
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-12"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>EMI Breakdown with Tax Benefits (First 12 Months)</CardTitle>
-                <CardDescription>
-                  Monthly payments after moratorium period with Section 80E tax benefits
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 font-medium">Month</th>
-                        <th className="text-left p-3 font-medium">EMI</th>
-                        <th className="text-left p-3 font-medium">Principal</th>
-                        <th className="text-left p-3 font-medium">Interest</th>
-                        <th className="text-left p-3 font-medium">Tax Benefit</th>
-                        <th className="text-left p-3 font-medium">Balance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.schedule.map((row) => (
-                        <tr key={row.month} className="border-b hover:bg-gray-50">
-                          <td className="p-3">{row.month}</td>
-                          <td className="p-3">{"₹"}{row.emi.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-green-600">{"₹"}{row.principal.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-red-600">{"₹"}{row.interest.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-blue-600">{"₹"}{row.taxBenefit.toLocaleString('en-IN')}</td>
-                          <td className="p-3">{"₹"}{row.balance.toLocaleString('en-IN')}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </m.div>
-        )}
-
-        {/* Education Loan Features */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-12"
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-teal-600" />
-                Education Loan Key Features
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-teal-700">Tax Benefits</h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li>• Section 80E - No upper limit</li>
-                    <li>• Available for 8 years or loan tenure</li>
-                    <li>• Applies to interest component only</li>
-                    <li>• Can be claimed by student/parent/spouse</li>
-                  </ul>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-blue-700">Loan Features</h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li>• Up to {"₹"}10L without collateral</li>
-                    <li>• Up to {"₹"}20L+ with collateral</li>
-                    <li>• Moratorium during study + 6 months</li>
-                    <li>• Lower rates for premier institutions</li>
-                  </ul>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-purple-700">Repayment Options</h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li>• EMI after course completion</li>
-                    <li>• Prepayment without penalty</li>
-                    <li>• Step-up EMI options available</li>
-                    <li>• Flexible tenure: 5-15 years</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </m.div>
-      </div>
-    </div>
+        <CalculatorMiniBlog 
+          features={[
+            {
+              icon: <Clock className="w-5 h-5" />,
+              iconBg: "bg-teal-50 text-teal-600",
+              title: "Study Period Grace",
+              desc: "Focus on your studies without worrying about repayments. EMIs typically start only after you finish the course."
+            },
+            {
+              icon: <TrendingDown className="w-5 h-5" />,
+              iconBg: "bg-emerald-50 text-emerald-600",
+              title: "Unlimited Tax Deduction",
+              desc: "Under Section 80E, there is no cap on the interest deduction, meaning you save more as you repay more interest."
+            },
+            {
+              icon: <Calculator className="w-5 h-5" />,
+              iconBg: "bg-amber-50 text-amber-600",
+              title: "Global Education",
+              desc: "Our calculator supports planning for both domestic Indian universities and international higher education."
+            }
+          ]}
+          howItWorks={{
+            title: "Moratorium Math Explained",
+            description: "How interest is handled during the grace period of your education loan.",
+            steps: [
+              { title: "Simple Interest Period", desc: "During studies, banks usually charge simple interest on the disbursed amount." },
+              { title: "Principal Capitalization", desc: "If unpaid, the moratorium interest is added to your principal before EMI starts." },
+              { title: "Repayment Tenure", desc: "Once the course ends (+ 6-12 months), the final loan amount is divided into monthly EMIs." }
+            ]
+          }}
+          faqs={[
+            { q: "Who can claim Section 80E?", a: "The person who took the loan (parent or student) and is paying the interest can claim the deduction from their taxable income." },
+            { q: "What is the maximum loan tenure?", a: "Most banks allow up to 15 years for repayment, excluding the study and grace period." },
+            { q: "Does it cover living expenses?", a: "Yes, many abroad education loans cover tuition fees, travel, books, and living expenses (Hostel/Rent)." }
+          ]}
+        />
+      </CalcLayout>
     </>
   );
 }

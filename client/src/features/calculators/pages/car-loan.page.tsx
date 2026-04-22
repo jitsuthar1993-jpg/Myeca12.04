@@ -1,42 +1,47 @@
-import { useState } from "react";
-import { Calculator, Car, TrendingUp, PieChart, Info, Download } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { m } from "framer-motion";
-import EnhancedSEO from "@/components/EnhancedSEO";
-import { getHowToSchema } from "@/utils/seo-defaults";
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
+import { Slider } from "@/components/ui/slider";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  Car,
+  IndianRupee,
+  Calendar,
+  Zap,
+  TrendingDown,
+  PieChart as PieChartIcon,
+  CheckCircle2,
+  Calculator,
+  ArrowRight
+} from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { cn } from "@/lib/utils";
 
-export default function CarLoanCalculatorPage() {
-  const [carPrice, setCarPrice] = useState<string>("800000");
-  const [downPayment, setDownPayment] = useState<string>("160000");
-  const [interestRate, setInterestRate] = useState<string>("9.5");
-  const [tenure, setTenure] = useState<string>("5");
-  const [tenureType, setTenureType] = useState<string>("years");
-  const [carType, setCarType] = useState<string>("new");
+// Atomic Components
+import CalcLayout from "@/features/calculators/components/CalcLayout";
+import CalcHero from "@/features/calculators/components/CalcHero";
+import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components/CalcInputCard";
+import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
+import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-  const calculateCarLoan = () => {
-    const totalPrice = parseFloat(carPrice) || 0;
-    const downPay = parseFloat(downPayment) || 0;
-    const principal = totalPrice - downPay;
-    const monthlyRate = (parseFloat(interestRate) || 0) / 12 / 100;
-    const tenureMonths = tenureType === "years" 
-      ? (parseFloat(tenure) || 0) * 12 
-      : (parseFloat(tenure) || 0);
+const CHART_COLORS = ["#f97316", "#ef4444"];
+
+export default function CarLoanCalculator() {
+  const seo = getSEOConfig('/calculators/car-loan');
+  
+  const [carPrice, setCarPrice] = useState<number>(1000000);
+  const [downPayment, setDownPayment] = useState<number>(200000);
+  const [rate, setRate] = useState<number>(9.5);
+  const [tenure, setTenure] = useState<number>(5);
+  const [carType, setCarType] = useState<"new" | "used">("new");
+
+  const calculations = useMemo(() => {
+    const principal = carPrice - downPayment;
+    const monthlyRate = rate / 12 / 100;
+    const tenureMonths = tenure * 12;
     
     if (principal <= 0 || monthlyRate <= 0 || tenureMonths <= 0) {
-      return {
-        loanAmount: 0,
-        emi: 0,
-        totalPayment: 0,
-        totalInterest: 0,
-        downPaymentPercent: 0,
-        monthlyIncome: 0,
-        schedule: []
-      };
+      return { emi: 0, totalPayment: 0, totalInterest: 0, loanAmount: 0, schedule: [] };
     }
 
     const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) / 
@@ -44,358 +49,254 @@ export default function CarLoanCalculatorPage() {
     
     const totalPayment = emi * tenureMonths;
     const totalInterest = totalPayment - principal;
-    const downPaymentPercent = (downPay / totalPrice) * 100;
-    const monthlyIncome = emi / 0.35; // Car loan EMI should be max 35% of income
 
-    // Generate amortization schedule (first 12 months)
     let balance = principal;
     const schedule = [];
-    
-    for (let month = 1; month <= Math.min(12, tenureMonths); month++) {
+    for (let month = 1; month <= 12; month++) {
       const interestPayment = balance * monthlyRate;
       const principalPayment = emi - interestPayment;
       balance -= principalPayment;
-      
       schedule.push({
         month,
         emi: Math.round(emi),
         principal: Math.round(principalPayment),
         interest: Math.round(interestPayment),
-        balance: Math.round(balance)
+        balance: Math.max(0, Math.round(balance))
       });
     }
 
     return {
-      loanAmount: Math.round(principal),
       emi: Math.round(emi),
       totalPayment: Math.round(totalPayment),
       totalInterest: Math.round(totalInterest),
-      downPaymentPercent: Math.round(downPaymentPercent * 100) / 100,
-      monthlyIncome: Math.round(monthlyIncome),
+      loanAmount: principal,
       schedule
     };
-  };
+  }, [carPrice, downPayment, rate, tenure]);
 
-  const result = calculateCarLoan();
+  const chartData = [
+    { name: "Principal", value: calculations.loanAmount },
+    { name: "Interest", value: calculations.totalInterest },
+  ];
 
-  const getInterestRateRange = () => {
-    switch (carType) {
-      case "new":
-        return "8.25% - 10.5%";
-      case "used":
-        return "10.0% - 15.0%";
-      default:
-        return "8.25% - 15.0%";
-    }
-  };
-
-  const howToSchema = getHowToSchema({
-    name: "How to Calculate Car Loan EMI",
-    description: "Calculate your car loan EMI in 3 simple steps",
-    totalTime: "PT2M",
-    steps: [
-      {
-        name: "Enter car price and down payment",
-        text: "Input the on-road price of the car and your down payment amount"
-      },
-      {
-        name: "Select interest rate and tenure",
-        text: "Choose the interest rate offered by your bank and loan tenure"
-      },
-      {
-        name: "View EMI and total payment",
-        text: "See your monthly EMI, total interest, and complete payment breakdown"
-      }
-    ]
-  });
+  const fmt = (n: number) =>
+    n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
 
   return (
     <>
-      <EnhancedSEO
-        title="Car Loan EMI Calculator 2025 | New & Used Car Loan Calculator"
-        description="Calculate car loan EMI for new cars (8.25-10.5%) & used cars (10-15%). Compare interest rates, down payment options & get instant EMI breakdown."
-        keywords={[
-          'car loan EMI calculator',
-          'vehicle loan calculator',
-          'car loan interest rates',
-          'used car loan calculator',
-          'car finance calculator',
-          'auto loan EMI',
-          'down payment calculator',
-          'car loan eligibility'
-        ]}
-        url="https://myeca.in/calculators/car-loan"
-        type="website"
-        jsonLd={howToSchema}
+      <MetaSEO
+        title={seo?.title || "Car Loan EMI Calculator 2025 | New & Used Car Loan Calculator"}
+        description={seo?.description || "Calculate car loan EMI for new cars (8.25-10.5%) & used cars (10-15%). Compare interest rates and down payment options."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
       />
-    <div className="calculator-page min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                <Car className="w-8 h-8 text-white" />
+
+      <CalcHero 
+        title="Car Loan Calculator"
+        description="Drive your dream car home with a perfectly planned repayment strategy."
+        category="Loans & EMI"
+        icon={<Car className="w-6 h-6" />}
+        variant="amber"
+        breadcrumbItems={[{ name: "Car Loan Calculator" }]}
+      />
+
+      <CalcLayout
+        variant="indigo"
+        complianceFacts={[
+          { title: "New vs Used", content: "New cars usually have lower rates (8.5-10%) compared to used cars (12-15%) due to depreciation risk." },
+          { title: "Down Payment", content: "A higher down payment of 20-30% can significantly reduce your monthly EMI and total interest outgo." },
+          { title: "Business Use", content: "Self-employed professionals can claim car loan interest and depreciation as tax-deductible business expenses." }
+        ]}
+        sidebar={
+          <CalcGlassSidebar title="EMI Summary">
+            <div className="space-y-1 pb-6 border-b border-white/20">
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Monthly EMI</p>
+              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+                {fmt(calculations.emi)}
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6">
+              <CalcResultRow label="Loan Amount" value={fmt(calculations.loanAmount)} />
+              <CalcResultRow label="Total Interest" value={fmt(calculations.totalInterest)} variant="warning" />
+              <CalcResultRow label="Total Payable" value={fmt(calculations.totalPayment)} variant="success" />
+              
+              <div className="pt-6 border-t border-white/20">
+                <div className="h-[180px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={chartData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {chartData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex justify-center gap-6 mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Principal</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Interest</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Car Loan EMI Calculator
-            </h1>
-            <p className="text-xl text-orange-100 max-w-3xl mx-auto">
-              Calculate your car loan EMI for new and used cars. Compare different loan scenarios 
-              and find the best financing option for your dream car.
-            </p>
+
+            <Link href="/services/business-advisory">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-orange-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                Plan Business Vehicle Tax
+              </button>
+            </Link>
+          </CalcGlassSidebar>
+        }
+      >
+        <div className="space-y-8">
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { id: 'new', label: 'New Car', desc: '8.5% - 10.5% p.a.', icon: <Car className="w-4 h-4" /> },
+              { id: 'used', label: 'Used Car', desc: '11% - 15% p.a.', icon: <Car className="w-4 h-4 opacity-60" /> }
+            ].map(type => (
+              <button
+                key={type.id}
+                onClick={() => {
+                  setCarType(type.id as 'new' | 'used');
+                  setRate(type.id === 'new' ? 9.5 : 12.5);
+                }}
+                className={cn(
+                  "p-4 rounded-[2rem] border-2 text-left transition-all",
+                  carType === type.id 
+                    ? "bg-orange-50 border-orange-600 text-orange-900" 
+                    : "bg-white border-slate-100 text-slate-500 hover:border-orange-200"
+                )}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  {type.icon}
+                  <span className="text-xs font-black">{type.label}</span>
+                </div>
+                <p className="text-[10px] font-bold opacity-60">{type.desc}</p>
+              </button>
+            ))}
           </div>
-        </div>
-      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Calculator Form */}
-          <m.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-orange-900">
-                  <Calculator className="w-5 h-5" />
-                  Car Loan Calculator
-                </CardTitle>
-                <CardDescription>
-                  Enter your car and loan details to calculate EMI
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="car-type">Car Type</Label>
-                  <Select value={carType} onValueChange={setCarType}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="new">New Car</SelectItem>
-                      <SelectItem value="used">Used Car</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+          <CalcInputCard title="Price & Down Payment" icon={<IndianRupee className="w-5 h-5" />}>
+            <CalcInputGroup 
+              label="Car Price (On-Road)" 
+              badgeValue={fmt(carPrice)}
+            >
+              <Slider 
+                value={[carPrice]} 
+                onValueChange={(v) => {
+                  setCarPrice(v[0]);
+                  if (downPayment > v[0]) setDownPayment(Math.round(v[0] * 0.2));
+                }} 
+                max={10000000} 
+                min={200000} 
+                step={50000} 
+              />
+            </CalcInputGroup>
 
-                <div className="space-y-2">
-                  <Label htmlFor="car-price">Car Price (₹)</Label>
-                  <Input
-                    id="car-price"
-                    type="number"
-                    value={carPrice}
-                    onChange={(e) => setCarPrice(e.target.value)}
-                    placeholder="800000"
-                  />
-                </div>
+            <CalcInputGroup 
+              label="Down Payment" 
+              badgeValue={fmt(downPayment)}
+            >
+              <Slider 
+                value={[downPayment]} 
+                onValueChange={(v) => setDownPayment(v[0])} 
+                max={carPrice} 
+                min={0} 
+                step={10000} 
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-[10px] font-bold text-slate-400">Equity: {Math.round((downPayment / carPrice) * 100)}%</span>
+                <span className="text-[10px] font-bold text-orange-600">Loan: {fmt(calculations.loanAmount)}</span>
+              </div>
+            </CalcInputGroup>
+          </CalcInputCard>
 
-                <div className="space-y-2">
-                  <Label htmlFor="down-payment">Down Payment (₹)</Label>
-                  <Input
-                    id="down-payment"
-                    type="number"
-                    value={downPayment}
-                    onChange={(e) => setDownPayment(e.target.value)}
-                    placeholder="160000"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Recommended: {((parseFloat(carPrice) || 0) * 0.2).toLocaleString('en-IN')} 
-                    (20% of car price)
-                  </p>
-                </div>
+          <CalcInputCard title="Rate & Tenure" icon={<Calendar className="w-5 h-5" />}>
+            <div className="grid md:grid-cols-2 gap-8">
+              <CalcInputGroup 
+                label="Interest Rate (%)" 
+                badgeValue={`${rate}%`}
+              >
+                <Slider 
+                  value={[rate]} 
+                  onValueChange={(v) => setRate(v[0])} 
+                  max={20} 
+                  min={5} 
+                  step={0.1} 
+                />
+              </CalcInputGroup>
 
-                <div className="space-y-2">
-                  <Label htmlFor="interest-rate">Interest Rate (% p.a.)</Label>
-                  <Input
-                    id="interest-rate"
-                    type="number"
-                    step="0.1"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(e.target.value)}
-                    placeholder="9.5"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Current {carType} car rates: {getInterestRateRange()}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="tenure">Loan Tenure</Label>
-                    <Input
-                      id="tenure"
-                      type="number"
-                      value={tenure}
-                      onChange={(e) => setTenure(e.target.value)}
-                      placeholder="5"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="tenure-type">Tenure Type</Label>
-                    <Select value={tenureType} onValueChange={setTenureType}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="years">Years</SelectItem>
-                        <SelectItem value="months">Months</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <Alert>
-                  <Info className="h-4 w-4" />
-                  <AlertDescription>
-                    {carType === "new" 
-                      ? "New car loans offer up to 90% financing with lower interest rates (8.25%-10.5%)."
-                      : "Used car loans typically finance 80% of car value with higher rates (10%-15%)."
-                    }
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </m.div>
-
-          {/* Results */}
-          <m.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
-          >
-            {/* EMI Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-green-700">
-                  <TrendingUp className="w-5 h-5" />
-                  EMI Calculation Results
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-4 bg-green-50 rounded-lg">
-                    <span className="text-gray-700">Monthly EMI</span>
-                    <span className="text-2xl font-bold text-green-600">
-                      ₹{result.emi.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Loan Amount</div>
-                      <div className="text-lg font-semibold text-blue-600">
-                        ₹{result.loanAmount.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                    <div className="text-center p-3 bg-orange-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Total Interest</div>
-                      <div className="text-lg font-semibold text-orange-600">
-                        ₹{result.totalInterest.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Loan Analysis */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-purple-700">
-                  <PieChart className="w-5 h-5" />
-                  Loan Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Down Payment %</span>
-                    <span className="text-lg font-semibold text-purple-600">
-                      {result.downPaymentPercent}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Required Monthly Income</span>
-                    <span className="text-lg font-semibold text-blue-600">
-                      ₹{result.monthlyIncome.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Total Payment</span>
-                    <span className="text-lg font-semibold text-green-600">
-                      ₹{result.totalPayment.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 p-3 bg-yellow-50 rounded-lg">
-                    <strong>Tip:</strong> Car loan EMI should not exceed 35% of your monthly income. 
-                    Higher down payment reduces EMI and total interest cost.
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button className="flex-1 bg-orange-600 hover:bg-orange-700">
-                <Download className="w-4 h-4 mr-2" />
-                Download Report
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Compare Offers
-              </Button>
+              <CalcInputGroup 
+                label="Tenure (Years)" 
+                badgeValue={`${tenure} Yrs`}
+              >
+                <Slider 
+                  value={[tenure]} 
+                  onValueChange={(v) => setTenure(v[0])} 
+                  max={10} 
+                  min={1} 
+                  step={1} 
+                />
+              </CalcInputGroup>
             </div>
-          </m.div>
+          </CalcInputCard>
         </div>
 
-        {/* Amortization Schedule */}
-        {result.schedule.length > 0 && (
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-12"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>EMI Breakdown (First 12 Months)</CardTitle>
-                <CardDescription>
-                  Monthly breakdown of your car loan payments
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 font-medium">Month</th>
-                        <th className="text-left p-3 font-medium">EMI</th>
-                        <th className="text-left p-3 font-medium">Principal</th>
-                        <th className="text-left p-3 font-medium">Interest</th>
-                        <th className="text-left p-3 font-medium">Balance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.schedule.map((row) => (
-                        <tr key={row.month} className="border-b hover:bg-gray-50">
-                          <td className="p-3">{row.month}</td>
-                          <td className="p-3">₹{row.emi.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-green-600">₹{row.principal.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-red-600">₹{row.interest.toLocaleString('en-IN')}</td>
-                          <td className="p-3">₹{row.balance.toLocaleString('en-IN')}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </m.div>
-        )}
-      </div>
-    </div>
+        <CalculatorMiniBlog 
+          features={[
+            {
+              icon: <CheckCircle2 className="w-5 h-5" />,
+              iconBg: "bg-orange-50 text-orange-600",
+              title: "Pre-approved Rates",
+              desc: "Compare current car loan rates from HDFC, SBI, ICICI and others to get the best deal."
+            },
+            {
+              icon: <TrendingDown className="w-5 h-5" />,
+              iconBg: "bg-emerald-50 text-emerald-600",
+              title: "Depreciation Benefit",
+              desc: "Learn how to use car depreciation to offset your professional or business income tax."
+            },
+            {
+              icon: <Calculator className="w-5 h-5" />,
+              iconBg: "bg-amber-50 text-amber-600",
+              title: "Smart EMI Planning",
+              desc: "Find the balance between a low EMI and a shorter tenure to save on total interest costs."
+            }
+          ]}
+          howItWorks={{
+            title: "Car Loan Checklist",
+            description: "Essential things to consider before signing your vehicle finance agreement.",
+            steps: [
+              { title: "Check Foreclosure Charges", desc: "Many banks charge 2-5% for early closure. PSU banks often have zero foreclosure fees." },
+              { title: "Processing Fees", desc: "Negotiate on processing fees which can range from ₹1,000 to 0.5% of the loan amount." },
+              { title: "CIBIL Impact", desc: "A score above 750 can get you 'Star' interest rates which are usually 0.5% lower." }
+            ]
+          }}
+          faqs={[
+            { q: "Can I get a 100% car loan?", a: "Some banks offer 100% financing on the ex-showroom price for select profiles, but on-road funding usually requires a 10-20% down payment." },
+            { q: "Is car insurance part of the loan?", a: "No, car insurance is a recurring annual expense and must be paid separately, though some lenders offer bundled insurance for the first year." },
+            { q: "What documents are needed?", a: "KYC (Aadhar, PAN), Salary slips (3 months), and Bank statements (6 months) are the standard requirements." }
+          ]}
+        />
+      </CalcLayout>
     </>
   );
 }

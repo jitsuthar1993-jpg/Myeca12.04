@@ -4,7 +4,7 @@ import {
   Search, TrendingUp, Calculator, Coins, ArrowRight, CheckCircle,
   Users, Award, Home, Briefcase, GraduationCap, Car, IndianRupee,
   Zap, Shield, FileText, Building2, PiggyBank, BarChart3, Sparkles,
-  Bot, FileSpreadsheet, Scan, Upload, Star, Clock, ChevronRight, Tag
+  Bot, FileSpreadsheet, Scan, Upload, Star, Clock, ChevronRight, Tag, Calendar, ShieldAlert
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -75,6 +75,8 @@ const calculatorCategories = [
     calculators: [
       { name: "EMI Calculator",          href: "/calculators/emi",             icon: Calculator, isPopular: true, description: "Monthly installment calculator" },
       { name: "Loan Calculator",         href: "/calculators/home-loan",       icon: Briefcase,                   description: "Home, Car, Personal & Education" },
+      { name: "Compliance Calendar",      href: "/compliance-calendar",         icon: Calendar,    isPopular: true, description: "Track all your statutory deadlines" },
+      { name: "Penalty Calculator",       href: "/calculators/penalty",         icon: ShieldAlert,                  description: "GST & Tax penalty estimator" },
     ],
   },
 ];

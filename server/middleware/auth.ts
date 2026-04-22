@@ -26,18 +26,36 @@ function extractEmail(sessionClaims: unknown) {
 }
 
 function readAuth(req: Request) {
-  // Authentication temporarily disabled locally
-  return {
-    userId: "mock_id",
-    email: "local@example.com",
-  };
+  try {
+    const auth = getAuth(req);
+    if (auth?.userId) {
+      return {
+        userId: auth.userId,
+        email: extractEmail(auth.sessionClaims)
+      };
+    }
+  } catch (error) {
+    // Clerk middleware not properly configured or missing keys
+  }
+
+  // Strict local dev bypass ONLY if explicitly configured
+  if (process.env.NODE_ENV !== "production" && process.env.ALLOW_MOCK_AUTH === "true") {
+    return {
+      userId: "mock_id",
+      email: "local@example.com",
+    };
+  }
+
+  return null;
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-  (req as AuthRequest).auth = {
-    userId: "mock_id",
-    email: "local@example.com",
-  };
+  const auth = readAuth(req);
+  if (!auth) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  
+  (req as AuthRequest).auth = auth;
   next();
 }
 
@@ -45,21 +63,38 @@ export const authenticateToken = requireAuth;
 
 export function requireRole(allowedRoles: string[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const auth = {
-      userId: "mock_id",
-      email: "local@example.com",
-    };
+    try {
+      const auth = readAuth(req);
+      if (!auth) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
 
-    (req as AuthRequest).auth = auth;
-    (req as AuthRequest).user = {
-      id: auth.userId,
-      email: auth.email,
-      role: "admin",
-      firstName: "Jitendra",
-      lastName: "Suthar",
-    };
-    
-    next();
+      let userData = getCachedUser(auth.userId);
+      
+      if (!userData) {
+        const userDoc = await findOrCreateUserProfile(auth);
+        if (!userDoc.exists) {
+          return res.status(403).json({ error: "Access denied. Profile not found." });
+        }
+        userData = { id: userDoc.id, ...(userDoc.data() as any) };
+        setCachedUser(auth.userId, userData);
+      }
+
+      const userRole = userData.role || "user";
+      
+      if (!allowedRoles.includes(userRole)) {
+        return res.status(403).json({ 
+          error: "Access denied. Insufficient permissions.",
+        });
+      }
+
+      (req as AuthRequest).auth = auth;
+      (req as AuthRequest).user = userData;
+      
+      next();
+    } catch (error) {
+      return safeError(res, error, "Authorization failed");
+    }
   };
 }
 

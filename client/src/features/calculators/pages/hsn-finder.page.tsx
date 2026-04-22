@@ -1,248 +1,224 @@
 import React, { useState } from "react";
-import { getSEOConfig } from "@/config/seo.config";
 import { m, AnimatePresence } from "framer-motion";
 import { 
-  Search, 
-  Info, 
-  Tag, 
-  Box, 
-  Briefcase, 
-  ChevronRight,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle2,
-  FileText
+  Search, Info, Tag, Box, Briefcase, 
+  ChevronRight, Sparkles, AlertCircle, FileText,
+  Zap, IndianRupee, ShieldCheck, CheckCircle
 } from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import Breadcrumb from "@/components/Breadcrumb";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { Link } from "wouter";
+
+// Atomic Components
+import CalcLayout from "@/features/calculators/components/CalcLayout";
+import CalcHero from "@/features/calculators/components/CalcHero";
+import CalcInputCard from "@/features/calculators/components/CalcInputCard";
+import CalcGlassSidebar from "@/features/calculators/components/CalcGlassSidebar";
+import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
 const HSN_DATA = [
   { code: "1001", name: "Wheat and meslin", rate: "0%", category: "Grains" },
-  { code: "6109", name: "T-shirts, singlets and other vests, knitted or crocheted", rate: "5%", category: "Apparel" },
-  { code: "8471", name: "Automatic data processing machines and units thereof (Laptops/PCs)", rate: "18%", category: "Electronics" },
-  { code: "8517", name: "Telephone sets, including smartphones", rate: "18%", category: "Electronics" },
-  { code: "3304", name: "Beauty or make-up preparations and preparations for the care of the skin", rate: "28%", category: "Cosmetics" }
+  { code: "6109", name: "T-shirts, singlets and other vests", rate: "5%", category: "Apparel" },
+  { code: "8471", name: "Laptops, PCs and data machines", rate: "18%", category: "Electronics" },
+  { code: "8517", name: "Smartphones and telephone sets", rate: "18%", category: "Electronics" },
+  { code: "3304", name: "Beauty and skin care preparations", rate: "28%", category: "Cosmetics" }
 ];
 
 const SAC_DATA = [
-  { code: "9983", name: "Other professional, technical and business services (CA/Legal)", rate: "18%", category: "Professional" },
-  { code: "9984", name: "Telecommunications, broadcasting and information supply services", rate: "18%", category: "IT" },
-  { code: "9963", name: "Accommodation, food and beverage services (Hotels)", rate: "12%/18%", category: "Hospitality" },
-  { code: "9965", name: "Goods transport services (GTA)", rate: "5%/12%", category: "Logistics" }
+  { code: "9983", name: "Professional & Business Services (CA/Legal)", rate: "18%", category: "Professional" },
+  { code: "9984", name: "Telecom & Information Supply Services", rate: "18%", category: "IT" },
+  { code: "9963", name: "Accommodation & Food Services (Hotels)", rate: "18%", category: "Hospitality" },
+  { code: "9965", name: "Goods Transport Services (GTA)", rate: "12%", category: "Logistics" }
 ];
 
 export default function HSNFinderPage() {
-  const seo = getSEOConfig('/calculators/hsn-finder');
   const [query, setQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("hsn");
+  const [activeTab, setActiveTab] = useState<"hsn" | "sac">("hsn");
 
-  const filteredHsn = HSN_DATA.filter(item => 
+  const filteredItems = (activeTab === "hsn" ? HSN_DATA : SAC_DATA).filter(item => 
     item.name.toLowerCase().includes(query.toLowerCase()) || 
     item.code.includes(query)
   );
 
-  const filteredSac = SAC_DATA.filter(item => 
-    item.name.toLowerCase().includes(query.toLowerCase()) || 
-    item.code.includes(query)
-  );
+  const seo = getSEOConfig('/calculators/hsn-finder');
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <>
       <MetaSEO
-        title={seo?.title}
-        description={seo?.description}
+        title={seo?.title || "GST HSN & SAC Code Finder | MyeCA.in"}
+        description={seo?.description || "Find the latest HSN codes for goods and SAC codes for services with applicable GST rates for FY 2024-25."}
         keywords={seo?.keywords}
-        type={seo?.type}
+        type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
         breadcrumbs={seo?.breadcrumbs}
-        faqPageData={[
-          {
-            question: "What is HSN and SAC code?",
-            answer: "HSN (Harmonized System of Nomenclature) is used for classifying goods, while SAC (Services Accounting Code) is used for classifying services under GST."
-          },
-          {
-            question: "How many digits of HSN code are required?",
-            answer: "Businesses with turnover up to ₹5 crore need 4-digit HSN codes, while those above ₹5 crore require 6-digit codes for B2B invoices."
-          },
-          {
-            question: "Where can I find the latest GST rates for HSN codes?",
-            answer: "You can use MyeCA's HSN finder tool to search by product name or code to see the latest applicable GST rates."
-          }
-        ]}
       />
 
-      <div className="bg-white border-b">
-        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "HSN Finder" }]} />
-      </div>
+      <CalcHero 
+        title="HSN & SAC Finder"
+        description="Search for product and service codes to ensure correct GST billing and tax compliance."
+        category="GST Compliance"
+        icon={<Search className="w-6 h-6" />}
+        variant="blue"
+        breadcrumbItems={[{ name: "HSN Finder" }]}
+      />
 
-      {/* Hero */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Badge className="bg-emerald-100 text-emerald-700 px-4 py-1 font-bold border-emerald-200 mb-6">
-              Updated for FY 2025-26
-            </Badge>
-            <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-              GST HSN & SAC <span className="text-blue-600">Code Finder</span>
-            </h1>
-            <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto">
-              Quickly find the correct 4, 6, or 8-digit HSN code and applicable GST rates for your business invoices.
-            </p>
+      <CalcLayout
+        variant="blue"
+        complianceFacts={[
+          { title: "Invoice Rule", content: "Businesses with turnover > ₹5 Cr must use 6-digit HSN codes on all B2B invoices." },
+          { title: "Service Class", content: "All service codes (SAC) start with '99' and represent professional, technical, or trade services." },
+          { title: "ITC Eligibility", content: "Incorrect HSN/SAC codes on purchase invoices can lead to rejection of Input Tax Credit (ITC) claims." }
+        ]}
+        sidebar={
+          <CalcGlassSidebar title="Finder Summary">
+            <div className="space-y-6 pt-2">
+              <div className="p-5 rounded-2xl bg-white/40 border border-white/20 backdrop-blur-md">
+                <p className="text-[10px] font-bold text-blue-700 uppercase tracking-widest mb-1">Results Found</p>
+                <p className="text-3xl font-black text-slate-900">{filteredItems.length}</p>
+              </div>
 
-            <div className="relative max-w-2xl mx-auto">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" />
-              <Input 
-                placeholder="Search by name (e.g. 'Laptop') or Code (e.g. '8471')"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="pl-14 h-16 rounded-2xl border-2 border-slate-200 focus:border-blue-500 text-lg shadow-lg"
-              />
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Compliance Audit</p>
+                    <p className="text-[11px] text-slate-500 font-medium">Verify your codes with a CA to avoid GST penalties and notices.</p>
+                  </div>
+                </div>
+              </div>
+
+              <Link href="/services/gst-registration">
+                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
+                  <Zap className="w-4 h-4 text-yellow-400" />
+                  GST Compliance Package
+                </button>
+              </Link>
             </div>
-          </m.div>
-        </div>
-      </section>
+          </CalcGlassSidebar>
+        }
+      >
+        <div className="space-y-8">
+          <CalcInputCard title="Search & Filter" icon={<Search className="w-5 h-5" />}>
+             <div className="grid grid-cols-2 gap-3 mb-8">
+                <button
+                  onClick={() => setActiveTab("hsn")}
+                  className={cn(
+                    "py-4 rounded-2xl border-2 transition-all font-bold text-sm flex items-center justify-center gap-2",
+                    activeTab === "hsn" ? "border-blue-600 bg-blue-600 text-white shadow-lg" : "border-slate-50 bg-slate-50 text-slate-500"
+                  )}
+                >
+                  <Box className="w-4 h-4" /> HSN (Goods)
+                </button>
+                <button
+                  onClick={() => setActiveTab("sac")}
+                  className={cn(
+                    "py-4 rounded-2xl border-2 transition-all font-bold text-sm flex items-center justify-center gap-2",
+                    activeTab === "sac" ? "border-blue-600 bg-blue-600 text-white shadow-lg" : "border-slate-50 bg-slate-50 text-slate-500"
+                  )}
+                >
+                  <Briefcase className="w-4 h-4" /> SAC (Services)
+                </button>
+             </div>
 
-      {/* Search Results */}
-      <section className="py-12">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <Tabs defaultValue="hsn" onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto mb-12 bg-slate-200/50 p-1.5 rounded-2xl h-14">
-              <TabsTrigger value="hsn" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md font-bold text-lg">
-                <Box className="w-5 h-5 mr-2" />
-                HSN (Goods)
-              </TabsTrigger>
-              <TabsTrigger value="sac" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-md font-bold text-lg">
-                <Briefcase className="w-5 h-5 mr-2" />
-                SAC (Services)
-              </TabsTrigger>
-            </TabsList>
+             <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-600" />
+                <Input 
+                  placeholder={activeTab === 'hsn' ? "Search Product (e.g. Laptop)" : "Search Service (e.g. Audit)"}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="h-16 pl-12 rounded-2xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-4 focus:ring-blue-100"
+                />
+             </div>
+          </CalcInputCard>
 
-            <TabsContent value="hsn">
-              <div className="grid gap-4">
-                {filteredHsn.map((item, i) => (
+          <div className="space-y-4">
+            <AnimatePresence mode="popLayout">
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item, i) => (
                   <m.div
                     key={item.code}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: i * 0.05 }}
+                    className="bg-white rounded-3xl border border-slate-100 p-6 flex items-center justify-between hover:shadow-lg hover:border-blue-200 transition-all group"
                   >
-                    <Card className="hover:border-blue-300 transition-all group hover:shadow-md border-slate-200">
-                      <CardContent className="p-6 flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                          <div className="w-16 h-14 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-900 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-                            {item.code}
-                          </div>
-                          <div>
-                            <div className="font-bold text-slate-900 text-lg">{item.name}</div>
-                            <div className="text-sm text-slate-500 font-medium">{item.category}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge className="bg-blue-600 text-white font-black px-4 py-1 text-base">
-                            {item.rate} GST
-                          </Badge>
-                          <div className="text-xs text-slate-400 mt-1 font-bold italic">Applicable 2025</div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-900 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                        {item.code}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900 text-lg">{item.name}</p>
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{item.category}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className="bg-blue-600 text-white font-black px-4 py-1.5 text-base rounded-xl">
+                        {item.rate} GST
+                      </Badge>
+                    </div>
                   </m.div>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="sac">
-              <div className="grid gap-4">
-                {filteredSac.map((item, i) => (
-                  <m.div
-                    key={item.code}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Card className="hover:border-blue-300 transition-all group hover:shadow-md border-slate-200">
-                      <CardContent className="p-6 flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                        <div className="w-16 h-14 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-900 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-                            {item.code}
-                          </div>
-                          <div>
-                            <div className="font-bold text-slate-900 text-lg">{item.name}</div>
-                            <div className="text-sm text-slate-500 font-medium">{item.category}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge className="bg-blue-600 text-white font-black px-4 py-1 text-base">
-                            {item.rate} GST
-                          </Badge>
-                          <div className="text-xs text-slate-400 mt-1 font-bold italic">Applicable 2025</div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </m.div>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </section>
-
-      {/* Info Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
-                <Info className="w-6 h-6 text-blue-600" />
-                What is HSN Code?
-              </h2>
-              <p className="text-slate-600 leading-relaxed mb-4">
-                HSN stands for **Harmonized System of Nomenclature**. It is a multipurpose international product 
-                nomenclature developed by the World Customs Organization (WCO).
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                In India, HSN codes help in classifying goods for systematic GST calculation and trade documentation. 
-                Businesses with turnover above ₹5 Cr require 6-digit HSN codes.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
-                <Briefcase className="w-6 h-6 text-blue-600" />
-                What is SAC Code?
-              </h2>
-              <p className="text-slate-600 leading-relaxed mb-4">
-                SAC stands for **Services Accounting Code**. It is a classification system for services 
-                similar to HSN for goods.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                All services under GST are assigned a unique 6-digit SAC code starting with '99'. 
-                Using the correct SAC ensures you claim the right Input Tax Credit (ITC).
-              </p>
-            </div>
+                ))
+              ) : (
+                <m.div 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }}
+                  className="p-12 text-center bg-white rounded-3xl border border-slate-100 border-dashed"
+                >
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <AlertCircle className="w-8 h-8 text-slate-300" />
+                  </div>
+                  <p className="text-slate-500 font-bold">No matching codes found for "{query}"</p>
+                  <p className="text-xs text-slate-400 mt-1">Try searching by code or category instead.</p>
+                </m.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-      </section>
 
-      {/* Lead Magnet Integration */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="p-8 bg-blue-600 rounded-3xl text-white text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-            <h2 className="text-2xl font-black mb-4">Need help with GST Billing?</h2>
-            <p className="mb-8 text-blue-100">Our CAs can help you set up your billing system and ensure 100% compliance.</p>
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-black px-10 rounded-xl">
-              Get Expert Assistance
-            </Button>
-          </div>
-        </div>
-      </section>
-    </div>
+        <CalculatorMiniBlog 
+          features={[
+            {
+              icon: <CheckCircle className="w-5 h-5" />,
+              iconBg: "bg-blue-50 text-blue-600",
+              title: "Updated Rates",
+              desc: "Our database is updated with the latest GST Council recommendations to ensure you use correct tax rates."
+            },
+            {
+              icon: <Info className="w-5 h-5" />,
+              iconBg: "bg-amber-50 text-amber-600",
+              title: "Code Accuracy",
+              desc: "Using the wrong HSN code can lead to GST audits and potential penalties. Always verify your classification."
+            },
+            {
+              icon: <ShieldCheck className="w-5 h-5" />,
+              iconBg: "bg-emerald-50 text-emerald-600",
+              title: "ITC Protection",
+              desc: "Correct HSN codes are mandatory for your customers to claim Input Tax Credit seamlessly."
+            }
+          ]}
+          howItWorks={{
+            title: "GST Classification",
+            description: "Goods and services are classified using a harmonized system of nomenclature.",
+            steps: [
+              { title: "HSN (Goods)", desc: "Harmonized System of Nomenclature is used for classifying physical goods." },
+              { title: "SAC (Services)", desc: "Services Accounting Code is used for classifying services and intangibles." },
+              { title: "Digit Requirement", desc: "4 digits for turnover < ₹5 Cr, 6 digits for turnover > ₹5 Cr on B2B invoices." }
+            ]
+          }}
+          faqs={[
+            { q: "Is 8-digit HSN mandatory?", a: "8-digit HSN codes are mandatory only for export and import businesses." },
+            { q: "Can I find GST rates here?", a: "Yes, our finder provides the most common GST rates (0%, 5%, 12%, 18%, 28%) for each code." },
+            { q: "What if my product isn't listed?", a: "If you can't find a specific code, consult a GST expert to avoid misclassification penalties." }
+          ]}
+        />
+      </CalcLayout>
+    </>
   );
 }

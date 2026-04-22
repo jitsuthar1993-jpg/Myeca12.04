@@ -4,10 +4,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, ArrowLeft, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { m } from "framer-motion";
-import Logo from "@/components/ui/logo";
+import { Mail, ArrowLeft, Loader2, AlertCircle, CheckCircle2, ShieldQuestion } from "lucide-react";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
 
 export default function ForgotPasswordPage() {
   const { sendPasswordReset } = useAuth();
@@ -42,133 +40,93 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
-      >
-        <div className="flex justify-center mb-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="lg" />
-            <span className="font-black text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              MyeCA.in
-            </span>
-          </Link>
-        </div>
-        <h2 className="text-center text-3xl font-black text-slate-900 tracking-tight">
-          Reset your password
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 font-medium">
-          Remember your password?{" "}
-          <Link href="/login" className="font-black text-blue-600 hover:text-blue-500 transition-colors">
-            Sign in
-          </Link>
-        </p>
-      </m.div>
-
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-      >
-        <Card className="border-slate-200/60 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden">
-          <CardHeader className="space-y-1 pt-8 px-8">
-            <CardTitle className="text-xl font-bold">
-              {sent ? "Check your email" : "Forgot Password"}
-            </CardTitle>
-            <CardDescription className="text-slate-500">
-              {sent
-                ? "We've sent a password reset link to your email."
-                : "Enter your email and we'll send you a link to reset your password."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-8 pb-8">
-            {sent ? (
-              <div className="space-y-6">
-                <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-start gap-3 text-green-700 text-sm">
-                  <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-semibold">Reset email sent!</p>
-                    <p className="mt-1 text-green-600">
-                      Check your inbox at <strong>{email}</strong> and follow the link to reset your password.
-                      If you don't see it, check your spam folder.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSent(false);
-                      setEmail("");
-                    }}
-                    className="w-full"
-                  >
-                    Try a different email
-                  </Button>
-                  <Link href="/login">
-                    <Button variant="ghost" className="w-full gap-2">
-                      <ArrowLeft className="w-4 h-4" />
-                      Back to Sign In
-                    </Button>
-                  </Link>
-                </div>
+    <AuthPageShell
+      eyebrow="Account recovery"
+      title={sent ? "Check your email" : "Reset password"}
+      description={sent 
+        ? "We've sent a recovery link to your inbox. Follow the instructions to securely reset your password." 
+        : "Enter your registered email address and we'll send you a link to reset your password securely."
+      }
+      panelTitle="Need help?"
+      panelDescription="If you're having trouble accessing your account, our team is here to assist you."
+      panelItems={[
+        { label: "Official recovery links", icon: ShieldQuestion },
+        { label: "24/7 technical support", icon: CheckCircle2 },
+        { label: "Secure encrypted reset", icon: CheckCircle2 },
+      ]}
+      primaryLink={{
+        href: "/auth/login",
+        text: "Remember your password?",
+        label: "Sign in",
+      }}
+    >
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)]">
+        {sent ? (
+          <div className="space-y-6">
+            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-start gap-3 text-emerald-700 text-sm">
+              <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0" />
+              <div>
+                <p className="font-black text-emerald-900">Reset email sent!</p>
+                <p className="mt-1 leading-relaxed">
+                  Check your inbox at <strong>{email}</strong> and follow the link to reset your password.
+                </p>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                  <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-start gap-3 text-red-600 text-sm animate-in fade-in slide-in-from-top-1">
-                    <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                    <p className="font-medium">{error}</p>
-                  </div>
-                )}
+            </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Email Address
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 h-12 rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
-                      required
-                      autoFocus
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={loading || !email.trim()}
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 transition-all duration-300"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Send Reset Link"
-                  )}
-                </Button>
-
-                <Link href="/login">
-                  <Button variant="ghost" className="w-full gap-2 mt-2">
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Sign In
-                  </Button>
-                </Link>
-              </form>
+            <div className="flex flex-col gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSent(false);
+                  setEmail("");
+                }}
+                className="h-11 w-full rounded-xl border-slate-200 font-bold"
+              >
+                Try a different email
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 flex items-start gap-3 text-rose-800 text-sm">
+                <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+                <p className="font-bold">{error}</p>
+              </div>
             )}
-          </CardContent>
-        </Card>
-      </m.div>
-    </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-black text-slate-800">
+                Email Address
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 h-12 rounded-xl border-slate-200"
+                  required
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading || !email.trim()}
+              className="w-full h-12 rounded-xl bg-[#003087] hover:bg-[#06439f] text-white font-black text-sm shadow-lg shadow-blue-500/10 transition-all"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Send Reset Link
+            </Button>
+          </form>
+        )}
+      </div>
+    </AuthPageShell>
   );
 }

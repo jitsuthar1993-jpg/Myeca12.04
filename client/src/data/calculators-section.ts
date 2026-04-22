@@ -5,7 +5,7 @@ export interface CalculatorItem {
   icon: string;
   color: string;
   href: string;
-  category: 'tax' | 'investment' | 'loan';
+  category: 'tax' | 'investment' | 'loan' | 'other';
 }
 
 export const calculators: CalculatorItem[] = [
@@ -103,6 +103,26 @@ export const calculators: CalculatorItem[] = [
     color: "blue",
     href: "/calculators/home-loan",
     category: "loan"
+  },
+
+  // Other Tools
+  {
+    id: "compliance-calendar",
+    title: "Compliance Calendar",
+    description: "Stay ahead of regulatory deadlines for GST, Income Tax, and MCA with our automated timeline.",
+    icon: "Calendar",
+    color: "indigo",
+    href: "/compliance-calendar",
+    category: "loan"
+  },
+  {
+    id: "penalty-calculator",
+    title: "Penalty Calculator",
+    description: "Estimate potential late fees and penalties for delayed GST filings and Income Tax returns.",
+    icon: "ShieldAlert",
+    color: "red",
+    href: "/calculators/penalty",
+    category: "loan"
   }
 ];
 
@@ -121,5 +141,5 @@ export const calculatorCategories = [
     id: "loan",
     title: "Loan Calculators",
     description: "Calculate EMI and loan repayment schedules"
-  }
+  },
 ];

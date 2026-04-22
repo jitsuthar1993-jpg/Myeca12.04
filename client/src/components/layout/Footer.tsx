@@ -1,10 +1,12 @@
 import { Link } from "wouter";
 import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin, Shield, Award, Clock, Globe, Instagram, Youtube } from "lucide-react";
-import Logo from "@/components/ui/logo";
+import BrandLockup from "@/components/ui/brand-lockup";
 import { useAuth } from "@/components/AuthProvider";
+import { useRoutePreload } from '@/hooks/use-route-preload';
 
 export default function Footer() {
   const { isAuthenticated } = useAuth();
+  const { preloadOnHover } = useRoutePreload();
 
   // For authenticated users (dashboard view), show a compact footer
   if (isAuthenticated) {
@@ -13,7 +15,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Logo size="sm" />
+              <BrandLockup logoSize="sm" wordmarkSize="sm" compact />
               <span className="text-sm font-medium">&copy; 2025 MyeCA.in</span>
               <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 border-l border-slate-300 pl-4">
                  <span>🇮🇳 Made in India</span>
@@ -68,13 +70,13 @@ export default function Footer() {
             
             {/* Company Info */}
             <div className="lg:col-span-1">
-              <a href="https://myeca.in" className="flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity cursor-pointer">
-                <Logo size="sm" />
-                <div>
-                  <div className="text-lg font-bold text-slate-800">MyeCA.in</div>
-                  <div className="text-xs text-slate-600 font-medium">Expert Tax Filing Platform</div>
-                </div>
-              </a>
+              <Link href="/" className="mb-4 inline-block hover:opacity-80 transition-opacity cursor-pointer">
+                <BrandLockup
+                  logoSize="sm"
+                  wordmarkSize="sm"
+                  subtitle="Expert Tax Filing Platform"
+                />
+              </Link>
               <p className="text-slate-600 text-sm leading-relaxed mb-4">
                 India's most trusted platform for professional tax filing and business services.
               </p>
@@ -136,12 +138,12 @@ export default function Footer() {
                 Tax & Filing Services
               </h3>
               <ul className="space-y-2">
-                <li><Link href="/itr/form-selector" className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>ITR Filing (All Forms)</Link></li>
-                <li><Link href="/services/gst-registration" className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>GST Registration</Link></li>
-                <li><Link href="/services/tds-filing" className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>TDS Filing</Link></li>
-                <li><Link href="/services/notice-compliance" className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>Tax Notice Handling</Link></li>
-                <li><Link href="/calculators" className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>Tax Calculators</Link></li>
-                <li><Link href="/services" className="text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors mt-4 inline-block">View All Tax Services →</Link></li>
+                <li><Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover("/itr/form-selector")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>ITR Filing (All Forms)</Link></li>
+                <li><Link href="/services/gst-registration" onMouseEnter={() => preloadOnHover("/services/gst-registration")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>GST Registration</Link></li>
+                <li><Link href="/services/tds-filing" onMouseEnter={() => preloadOnHover("/services/tds-filing")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>TDS Filing</Link></li>
+                <li><Link href="/services/notice-compliance" onMouseEnter={() => preloadOnHover("/services/notice-compliance")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>Tax Notice Handling</Link></li>
+                <li><Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>Tax Calculators</Link></li>
+                <li><Link href="/services" onMouseEnter={() => preloadOnHover("/services")} className="text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors mt-4 inline-block">View All Tax Services →</Link></li>
               </ul>
             </div>
 
@@ -152,12 +154,12 @@ export default function Footer() {
                 Business Services
               </h3>
               <ul className="space-y-2">
-                <li><Link href="/services/company-registration" className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Company Registration</Link></li>
-                <li><Link href="/services/trademark-registration" className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Trademark Registration</Link></li>
-                <li><Link href="/services/iso-certification" className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>ISO Certification</Link></li>
-                <li><Link href="/startup-services" className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Startup Services</Link></li>
-                <li><Link href="/compliance-calendar" className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Compliance Calendar</Link></li>
-                <li><Link href="/services" className="text-emerald-600 text-sm font-semibold hover:text-emerald-700 transition-colors mt-4 inline-block">View All Business Services →</Link></li>
+                <li><Link href="/services/company-registration" onMouseEnter={() => preloadOnHover("/services/company-registration")} className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Company Registration</Link></li>
+                <li><Link href="/services/trademark-registration" onMouseEnter={() => preloadOnHover("/services/trademark-registration")} className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Trademark Registration</Link></li>
+                <li><Link href="/services/iso-certification" onMouseEnter={() => preloadOnHover("/services/iso-certification")} className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>ISO Certification</Link></li>
+                <li><Link href="/startup-services" onMouseEnter={() => preloadOnHover("/startup-services")} className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Startup Services</Link></li>
+                <li><Link href="/compliance-calendar" onMouseEnter={() => preloadOnHover("/compliance-calendar")} className="text-slate-600 text-sm hover:text-emerald-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-emerald-600">→</span>Compliance Calendar</Link></li>
+                <li><Link href="/services" onMouseEnter={() => preloadOnHover("/services")} className="text-emerald-600 text-sm font-semibold hover:text-emerald-700 transition-colors mt-4 inline-block">View All Business Services →</Link></li>
               </ul>
             </div>
 
@@ -168,13 +170,13 @@ export default function Footer() {
                 Resources & Support
               </h3>
               <ul className="space-y-2 mb-4">
-                <li><Link href="/about" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>About MyeCA.in</Link></li>
-                <li><Link href="/blog" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Tax Guides & Blog</Link></li>
-                <li><Link href="/experts" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Meet our Experts</Link></li>
-                <li><Link href="/pricing" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Pricing & Plans</Link></li>
-                <li><Link href="/search" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Help Center</Link></li>
-                <li><Link href="/legal/privacy-policy" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Privacy Policy</Link></li>
-                <li><Link href="/legal/terms-of-service" className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Terms of Service</Link></li>
+                <li><Link href="/about" onMouseEnter={() => preloadOnHover("/about")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>About MyeCA.in</Link></li>
+                <li><Link href="/blog" onMouseEnter={() => preloadOnHover("/blog")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Tax Guides & Blog</Link></li>
+                <li><Link href="/experts" onMouseEnter={() => preloadOnHover("/experts")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Meet our Experts</Link></li>
+                <li><Link href="/pricing" onMouseEnter={() => preloadOnHover("/pricing")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Pricing & Plans</Link></li>
+                <li><Link href="/search" onMouseEnter={() => preloadOnHover("/search")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Help Center</Link></li>
+                <li><Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Privacy Policy</Link></li>
+                <li><Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Terms of Service</Link></li>
               </ul>
               
               {/* Contact Info */}
@@ -210,16 +212,16 @@ export default function Footer() {
               {/* Subtle background accent */}
               <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-100 rounded-full blur-3xl opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
               
-              <h3 className="text-2xl font-black text-slate-900 mb-2 relative z-10">Ready to File Your ITR?</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2 relative z-10">Ready to File Your ITR?</h3>
               <p className="text-slate-500 mb-8 max-w-xl mx-auto text-base font-medium relative z-10">Start free. Your personal CA reviews every return before filing.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-10">
-                <Link href="/itr/form-selector">
-                  <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-500 transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover("/itr/form-selector")}>
+                  <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-500 transition-all duration-300 font-semibold text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     Start Filing Now
                   </button>
                 </Link>
-                <Link href="/pricing">
-                  <button className="bg-white border-2 border-slate-200 text-slate-700 px-8 py-3 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 font-bold text-sm">
+                <Link href="/pricing" onMouseEnter={() => preloadOnHover("/pricing")}>
+                  <button className="bg-white border-2 border-slate-200 text-slate-700 px-8 py-3 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 font-semibold text-sm">
                     View Pricing
                   </button>
                 </Link>
@@ -235,10 +237,10 @@ export default function Footer() {
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-full">
                     <span>🇮🇳</span>
-                    <span className="font-semibold">Made in India</span>
+                    <span className="font-normal">Made in India</span>
                   </div>
                   <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                    <span className="font-semibold">v2.0 Platform</span>
+                    <span className="font-normal">v2.0 Platform</span>
                   </div>
                 </div>
               </div>
@@ -264,10 +266,10 @@ export default function Footer() {
             {/* Legal Links Row */}
             <div className="mt-4 pt-4 border-t border-slate-100">
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
-                <Link href="/legal/privacy-policy" className="hover:text-slate-700 transition-colors font-medium">Privacy Policy</Link>
-                <Link href="/legal/terms-of-service" className="hover:text-slate-700 transition-colors font-medium">Terms of Service</Link>
-                <Link href="/legal/refund-policy" className="hover:text-slate-700 transition-colors font-medium">Refund Policy</Link>
-                <Link href="/legal/disclaimer" className="hover:text-slate-700 transition-colors font-medium">Disclaimer</Link>
+                <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="hover:text-slate-700 transition-colors font-medium">Privacy Policy</Link>
+                <Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="hover:text-slate-700 transition-colors font-medium">Terms of Service</Link>
+                <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700 transition-colors font-medium">Refund Policy</Link>
+                <Link href="/legal/disclaimer" onMouseEnter={() => preloadOnHover("/legal/disclaimer")} className="hover:text-slate-700 transition-colors font-medium">Disclaimer</Link>
                 <span className="text-slate-400 font-medium">Mumbai, Maharashtra, India</span>
               </div>
             </div>

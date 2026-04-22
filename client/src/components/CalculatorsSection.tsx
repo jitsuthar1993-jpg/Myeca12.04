@@ -14,7 +14,9 @@ import {
   Car,
   Wallet,
   GraduationCap,
-  ArrowRight
+  ArrowRight,
+  Calendar,
+  ShieldAlert
 } from "lucide-react";
 import { Link } from "wouter";
 import { calculators, calculatorCategories } from "@/data/calculators-section";
@@ -31,7 +33,9 @@ const iconMap = {
   CreditCard,
   Car,
   Wallet,
-  GraduationCap
+  GraduationCap,
+  Calendar,
+  ShieldAlert
 };
 
 const colorMap = {
@@ -63,6 +67,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
   const taxCalculators = filteredCalculators.filter(calc => calc.category === 'tax');
   const investmentCalculators = filteredCalculators.filter(calc => calc.category === 'investment');
   const loanCalculators = filteredCalculators.filter(calc => calc.category === 'loan');
+  const otherCalculators = filteredCalculators.filter(calc => calc.category === 'other');
 
   return (
     <section className="relative py-12 bg-gray-50 overflow-hidden">
@@ -114,7 +119,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {taxCalculators.map((calculator, index) => {
-                const Icon = iconMap[calculator.icon as keyof typeof iconMap];
+                const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
                   <m.div
@@ -128,7 +133,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                       <Link href={calculator.href}>
                         <div className="flex items-start justify-between mb-4">
                           <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                            colorMap[calculator.color as keyof typeof colorMap]
+                            colorMap[calculator.color as keyof typeof colorMap] || colorMap.blue
                           }`}>
                             <Icon className="w-7 h-7" />
                           </div>
@@ -182,7 +187,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {investmentCalculators.map((calculator, index) => {
-                const Icon = iconMap[calculator.icon as keyof typeof iconMap];
+                const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
                   <m.div
@@ -196,7 +201,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                         <Link href={calculator.href}>
                           <div className="flex items-start justify-between mb-4">
                             <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                              colorMap[calculator.color as keyof typeof colorMap]
+                              colorMap[calculator.color as keyof typeof colorMap] || colorMap.green
                             }`}>
                               <Icon className="w-7 h-7" />
                             </div>
@@ -229,7 +234,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
         {/* Loan Calculators */}
         {loanCalculators.length > 0 && (
           <m.div
-            className="mb-8"
+            className="mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -250,7 +255,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {loanCalculators.map((calculator, index) => {
-                const Icon = iconMap[calculator.icon as keyof typeof iconMap];
+                const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
                 
                 return (
                   <m.div
@@ -264,7 +269,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                       <Link href={calculator.href}>
                         <div className="flex items-start justify-between mb-4">
                           <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                            colorMap[calculator.color as keyof typeof colorMap]
+                            colorMap[calculator.color as keyof typeof colorMap] || colorMap.orange
                           }`}>
                             <Icon className="w-7 h-7" />
                           </div>
@@ -280,6 +285,74 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                         </p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center text-orange-600 font-semibold text-sm group-hover:text-orange-700 transition-colors">
+                            Calculate Now
+                            <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
+                          </div>
+                          <div className="text-xs text-gray-400">Free</div>
+                        </div>
+                      </Link>
+                    </Card>
+                  </m.div>
+                );
+              })}
+            </div>
+          </m.div>
+        )}
+
+        {/* Other Tools */}
+        {otherCalculators.length > 0 && (
+          <m.div
+            className="mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                  <div className="w-2 h-8 bg-indigo-600 rounded-full mr-4"></div>
+                  Other Utilities
+                  <span className="ml-3 text-lg font-normal text-gray-500">({otherCalculators.length})</span>
+                </h3>
+                <p className="text-gray-600 ml-6">
+                  Statutory calendars and compliance utilities
+                </p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {otherCalculators.map((calculator, index) => {
+                const Icon = iconMap[calculator.icon as keyof typeof iconMap] || Calculator;
+                
+                return (
+                  <m.div
+                    key={calculator.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <Card className="group bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 h-full cursor-pointer hover:border-indigo-300">
+                      <Link href={calculator.href}>
+                        <div className="flex items-start justify-between mb-4">
+                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                            colorMap[calculator.color as keyof typeof colorMap] || colorMap.indigo
+                          }`}>
+                            <Icon className="w-7 h-7" />
+                          </div>
+                          <div className="px-2 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">
+                            {calculator.category.toUpperCase()}
+                          </div>
+                        </div>
+                        <h4 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                          {calculator.title}
+                        </h4>
+                        <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                          {calculator.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center text-indigo-600 font-semibold text-sm group-hover:text-indigo-700 transition-colors">
                             Calculate Now
                             <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
                           </div>

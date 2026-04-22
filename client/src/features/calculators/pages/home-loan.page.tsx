@@ -1,38 +1,47 @@
-import { useState } from "react";
-import { Calculator, Home, TrendingUp, PieChart, Info, Download } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { m } from "framer-motion";
-import EnhancedSEO from "@/components/EnhancedSEO";
-import { getHowToSchema, getFAQSchema } from "@/utils/seo-defaults";
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
+import { Slider } from "@/components/ui/slider";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  Building2,
+  IndianRupee,
+  Calendar,
+  Percent,
+  Zap,
+  TrendingDown,
+  PieChart as PieChartIcon,
+  Home,
+  CheckCircle2,
+  Calculator,
+  ArrowRight
+} from "lucide-react";
+import { getSEOConfig } from "@/config/seo.config";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { cn } from "@/lib/utils";
 
-export default function HomeLoanCalculatorPage() {
-  const [loanAmount, setLoanAmount] = useState<string>("2500000");
-  const [interestRate, setInterestRate] = useState<string>("8.5");
-  const [tenure, setTenure] = useState<string>("20");
-  const [tenureType, setTenureType] = useState<string>("years");
-  const [propertyValue, setPropertyValue] = useState<string>("3000000");
+// Atomic Components
+import CalcLayout from "@/features/calculators/components/CalcLayout";
+import CalcHero from "@/features/calculators/components/CalcHero";
+import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components/CalcInputCard";
+import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
+import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-  const calculateHomeLoan = () => {
-    const principal = parseFloat(loanAmount) || 0;
-    const monthlyRate = (parseFloat(interestRate) || 0) / 12 / 100;
-    const tenureMonths = tenureType === "years" 
-      ? (parseFloat(tenure) || 0) * 12 
-      : (parseFloat(tenure) || 0);
+const CHART_COLORS = ["#6366f1", "#f43f5e"];
+
+export default function HomeLoanCalculator() {
+  const seo = getSEOConfig('/calculators/home-loan');
+  
+  const [propertyValue, setPropertyValue] = useState<number>(5000000);
+  const [principal, setPrincipal] = useState<number>(4000000);
+  const [rate, setRate] = useState<number>(8.5);
+  const [tenure, setTenure] = useState<number>(20);
+
+  const calculations = useMemo(() => {
+    const monthlyRate = rate / 12 / 100;
+    const tenureMonths = tenure * 12;
     
     if (principal <= 0 || monthlyRate <= 0 || tenureMonths <= 0) {
-      return {
-        emi: 0,
-        totalPayment: 0,
-        totalInterest: 0,
-        ltvRatio: 0,
-        monthlyIncome: 0,
-        schedule: []
-      };
+      return { emi: 0, totalPayment: 0, totalInterest: 0, ltvRatio: 0, schedule: [] };
     }
 
     const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) / 
@@ -40,24 +49,20 @@ export default function HomeLoanCalculatorPage() {
     
     const totalPayment = emi * tenureMonths;
     const totalInterest = totalPayment - principal;
-    const ltvRatio = (principal / (parseFloat(propertyValue) || principal)) * 100;
-    const monthlyIncome = emi / 0.4; // Assuming 40% of income goes to EMI
+    const ltvRatio = (principal / propertyValue) * 100;
 
-    // Generate amortization schedule (first 12 months)
     let balance = principal;
     const schedule = [];
-    
-    for (let month = 1; month <= Math.min(12, tenureMonths); month++) {
+    for (let month = 1; month <= 12; month++) {
       const interestPayment = balance * monthlyRate;
       const principalPayment = emi - interestPayment;
       balance -= principalPayment;
-      
       schedule.push({
         month,
         emi: Math.round(emi),
         principal: Math.round(principalPayment),
         interest: Math.round(interestPayment),
-        balance: Math.round(balance)
+        balance: Math.max(0, Math.round(balance))
       });
     }
 
@@ -66,287 +71,236 @@ export default function HomeLoanCalculatorPage() {
       totalPayment: Math.round(totalPayment),
       totalInterest: Math.round(totalInterest),
       ltvRatio: Math.round(ltvRatio * 100) / 100,
-      monthlyIncome: Math.round(monthlyIncome),
       schedule
     };
-  };
+  }, [propertyValue, principal, rate, tenure]);
 
-  const result = calculateHomeLoan();
+  const chartData = [
+    { name: "Principal", value: principal },
+    { name: "Interest", value: calculations.totalInterest },
+  ];
 
-  const faqSchema = getFAQSchema([
-    {
-      question: "What is the current home loan interest rate in 2025?",
-      answer: "Home loan interest rates in 2025 range from 8.5% to 10.5% depending on your credit score, loan amount, and lender. Top banks offer rates starting from 8.5% for salaried individuals."
-    },
-    {
-      question: "How much home loan can I get on my salary?",
-      answer: "Generally, banks approve home loans up to 60 times your monthly income, with EMI not exceeding 40-50% of your monthly salary. Eligibility also depends on age, existing loans, and credit score."
-    },
-    {
-      question: "What is the maximum tenure for home loan?",
-      answer: "Most banks offer home loans for a maximum tenure of 30 years or until the borrower reaches 65-70 years of age, whichever is earlier."
-    }
-  ]);
+  const fmt = (n: number) =>
+    n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
 
   return (
     <>
-      <EnhancedSEO
-        title="Home Loan EMI Calculator 2025 | Calculate Housing Loan EMI & Eligibility"
-        description="Calculate home loan EMI with current interest rates 8.5-10.5%. Check eligibility, LTV ratio, tax benefits & compare 20+ banks. Plan your dream home purchase."
-        keywords={[
-          'home loan EMI calculator',
-          'housing loan calculator',
-          'home loan eligibility',
-          'property loan EMI',
-          'home loan interest rates 2025',
-          'LTV ratio calculator',
-          'home loan tax benefits',
-          'mortgage calculator India'
-        ]}
-        url="https://myeca.in/calculators/home-loan"
-        type="website"
-        jsonLd={faqSchema}
+      <MetaSEO
+        title={seo?.title || "Home Loan EMI Calculator 2025 | Calculate Housing Loan EMI & Eligibility"}
+        description={seo?.description || "Calculate home loan EMI with current interest rates 8.5-10.5%. Check eligibility, LTV ratio, tax benefits & compare 20+ banks."}
+        keywords={seo?.keywords}
+        type={seo?.type || "calculator"}
+        calculatorData={seo?.calculatorData}
+        breadcrumbs={seo?.breadcrumbs}
       />
-    <div className="calculator-page min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                <Home className="w-8 h-8 text-white" />
+
+      <CalcHero 
+        title="Home Loan Calculator"
+        description="Plan your dream home with our high-precision EMI and eligibility engine."
+        category="Loans & EMI"
+        icon={<Building2 className="w-6 h-6" />}
+        variant="indigo"
+        breadcrumbItems={[{ name: "Home Loan Calculator" }]}
+      />
+
+      <CalcLayout
+        variant="indigo"
+        complianceFacts={[
+          { title: "Tax Benefits", content: "Claim up to ₹2 Lakhs on interest (Sec 24b) and ₹1.5 Lakhs on principal (Sec 80C) annually." },
+          { title: "Prepayment", content: "Floating rate home loans have zero prepayment penalties for individual borrowers as per RBI norms." },
+          { title: "LTV Ratio", content: "Most banks finance 80-90% of the agreement value, depending on the loan amount." }
+        ]}
+        sidebar={
+          <CalcGlassSidebar title="EMI Summary">
+            <div className="space-y-1 pb-6 border-b border-white/20">
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Monthly EMI</p>
+              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+                {fmt(calculations.emi)}
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6">
+              <CalcResultRow label="Total Principal" value={fmt(principal)} />
+              <CalcResultRow label="Total Interest" value={fmt(calculations.totalInterest)} variant="warning" />
+              <CalcResultRow label="Total Payable" value={fmt(calculations.totalPayment)} variant="success" />
+              
+              <div className="pt-6 border-t border-white/20">
+                <div className="h-[180px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={chartData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {chartData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex justify-center gap-6 mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Principal</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Interest</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Home Loan EMI Calculator
-            </h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Calculate your home loan EMI, total interest, and eligibility. Compare different loan scenarios 
-              and plan your home purchase with confidence.
-            </p>
+
+            <Link href="/services/home-loan">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                Apply for Best Rates
+              </button>
+            </Link>
+          </CalcGlassSidebar>
+        }
+      >
+        <div className="space-y-8">
+          <CalcInputCard title="Loan Configuration" icon={<Home className="w-5 h-5" />}>
+            <CalcInputGroup 
+              label="Property Value" 
+              badgeValue={fmt(propertyValue)}
+            >
+              <Slider 
+                value={[propertyValue]} 
+                onValueChange={(v) => {
+                  setPropertyValue(v[0]);
+                  if (principal > v[0]) setPrincipal(v[0]);
+                }} 
+                max={100000000} 
+                min={500000} 
+                step={100000} 
+              />
+            </CalcInputGroup>
+
+            <CalcInputGroup 
+              label="Loan Principal" 
+              badgeValue={fmt(principal)}
+            >
+              <Slider 
+                value={[principal]} 
+                onValueChange={(v) => setPrincipal(v[0])} 
+                max={propertyValue} 
+                min={100000} 
+                step={50000} 
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-[10px] font-bold text-slate-400">LTV: {calculations.ltvRatio}%</span>
+                <span className="text-[10px] font-bold text-indigo-600">Max: {fmt(propertyValue)}</span>
+              </div>
+            </CalcInputGroup>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <CalcInputGroup 
+                label="Interest Rate (%)" 
+                badgeValue={`${rate}%`}
+              >
+                <Slider 
+                  value={[rate]} 
+                  onValueChange={(v) => setRate(v[0])} 
+                  max={15} 
+                  min={5} 
+                  step={0.1} 
+                />
+              </CalcInputGroup>
+
+              <CalcInputGroup 
+                label="Loan Tenure (Years)" 
+                badgeValue={`${tenure} Yrs`}
+              >
+                <Slider 
+                  value={[tenure]} 
+                  onValueChange={(v) => setTenure(v[0])} 
+                  max={30} 
+                  min={1} 
+                  step={1} 
+                />
+              </CalcInputGroup>
+            </div>
+          </CalcInputCard>
+
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8">
+            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-indigo-500" />
+              First Year Repayment Schedule
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left border-separate border-spacing-y-2">
+                <thead>
+                  <tr className="text-slate-400 uppercase tracking-widest font-bold">
+                    <th className="pb-2 pl-4">Month</th>
+                    <th className="pb-2">Principal</th>
+                    <th className="pb-2">Interest</th>
+                    <th className="pb-2 pr-4 text-right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {calculations.schedule.map((row) => (
+                    <tr key={row.month} className="bg-slate-50/50 rounded-xl overflow-hidden group hover:bg-slate-50 transition-colors">
+                      <td className="py-4 pl-4 font-bold text-slate-400">Month {row.month}</td>
+                      <td className="py-4 font-bold text-indigo-600">{fmt(row.principal)}</td>
+                      <td className="py-4 font-bold text-rose-500">{fmt(row.interest)}</td>
+                      <td className="py-4 pr-4 text-right font-black text-slate-700">{fmt(row.balance)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button className="w-full py-3 mt-4 rounded-xl border border-dashed border-slate-200 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all">
+              Download Full 20 Year Schedule
+            </button>
           </div>
         </div>
-      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Calculator Form */}
-          <m.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-blue-900">
-                  <Calculator className="w-5 h-5" />
-                  Home Loan Calculator
-                </CardTitle>
-                <CardDescription>
-                  Enter your loan details to calculate EMI and eligibility
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="property-value">Property Value (₹)</Label>
-                  <Input
-                    id="property-value"
-                    type="number"
-                    value={propertyValue}
-                    onChange={(e) => setPropertyValue(e.target.value)}
-                    placeholder="3000000"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="loan-amount">Loan Amount (₹)</Label>
-                  <Input
-                    id="loan-amount"
-                    type="number"
-                    value={loanAmount}
-                    onChange={(e) => setLoanAmount(e.target.value)}
-                    placeholder="2500000"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="interest-rate">Interest Rate (% p.a.)</Label>
-                  <Input
-                    id="interest-rate"
-                    type="number"
-                    step="0.1"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(e.target.value)}
-                    placeholder="8.5"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="tenure">Loan Tenure</Label>
-                    <Input
-                      id="tenure"
-                      type="number"
-                      value={tenure}
-                      onChange={(e) => setTenure(e.target.value)}
-                      placeholder="20"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="tenure-type">Tenure Type</Label>
-                    <Select value={tenureType} onValueChange={setTenureType}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="years">Years</SelectItem>
-                        <SelectItem value="months">Months</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <Alert>
-                  <Info className="h-4 w-4" />
-                  <AlertDescription>
-                    Current home loan rates range from 8.25% to 9.5% for all major banks. 
-                    Most banks approve loans up to 85% of property value.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </m.div>
-
-          {/* Results */}
-          <m.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
-          >
-            {/* EMI Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-green-700">
-                  <TrendingUp className="w-5 h-5" />
-                  EMI Calculation Results
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-4 bg-green-50 rounded-lg">
-                    <span className="text-gray-700">Monthly EMI</span>
-                    <span className="text-2xl font-bold text-green-600">
-                      ₹{result.emi.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Total Interest</div>
-                      <div className="text-lg font-semibold text-blue-600">
-                        ₹{result.totalInterest.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                    <div className="text-center p-3 bg-purple-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Total Payment</div>
-                      <div className="text-lg font-semibold text-purple-600">
-                        ₹{result.totalPayment.toLocaleString('en-IN')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Eligibility Analysis */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-orange-700">
-                  <PieChart className="w-5 h-5" />
-                  Eligibility Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">LTV Ratio</span>
-                    <span className="text-lg font-semibold text-orange-600">
-                      {result.ltvRatio}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Required Monthly Income</span>
-                    <span className="text-lg font-semibold text-blue-600">
-                      ₹{result.monthlyIncome.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 p-3 bg-yellow-50 rounded-lg">
-                    <strong>Note:</strong> Banks typically require EMI to be max 40% of monthly income. 
-                    LTV ratio should be below 85% for better approval chances.
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-                <Download className="w-4 h-4 mr-2" />
-                Download Report
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Compare Loans
-              </Button>
-            </div>
-          </m.div>
-        </div>
-
-        {/* Amortization Schedule */}
-        {result.schedule.length > 0 && (
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-12"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>EMI Breakdown (First 12 Months)</CardTitle>
-                <CardDescription>
-                  See how your EMI is split between principal and interest payments
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 font-medium">Month</th>
-                        <th className="text-left p-3 font-medium">EMI</th>
-                        <th className="text-left p-3 font-medium">Principal</th>
-                        <th className="text-left p-3 font-medium">Interest</th>
-                        <th className="text-left p-3 font-medium">Balance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.schedule.map((row) => (
-                        <tr key={row.month} className="border-b hover:bg-gray-50">
-                          <td className="p-3">{row.month}</td>
-                          <td className="p-3">₹{row.emi.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-green-600">₹{row.principal.toLocaleString('en-IN')}</td>
-                          <td className="p-3 text-red-600">₹{row.interest.toLocaleString('en-IN')}</td>
-                          <td className="p-3">₹{row.balance.toLocaleString('en-IN')}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </m.div>
-        )}
-      </div>
-    </div>
+        <CalculatorMiniBlog 
+          features={[
+            {
+              icon: <CheckCircle2 className="w-5 h-5" />,
+              iconBg: "bg-blue-50 text-blue-600",
+              title: "Instant Eligibility",
+              desc: "See how much you can borrow based on property value and your repayment capacity."
+            },
+            {
+              icon: <TrendingDown className="w-5 h-5" />,
+              iconBg: "bg-emerald-50 text-emerald-600",
+              title: "Tax Optimization",
+              desc: "We factor in Section 24(b) and 80C benefits to show you the real effective cost of your loan."
+            },
+            {
+              icon: <Calculator className="w-5 h-5" />,
+              iconBg: "bg-amber-50 text-amber-600",
+              title: "Principal Breakdown",
+              desc: "Visualise exactly how your monthly EMI is split between interest and principal over the years."
+            }
+          ]}
+          howItWorks={{
+            title: "Home Loan EMI Formula",
+            description: "Equated Monthly Installments are calculated using the reducing balance method.",
+            steps: [
+              { title: "EMI = [P x R x (1+R)^N] / [(1+R)^N-1]", desc: "Where P is Principal, R is monthly interest rate, and N is tenure in months." },
+              { title: "Interest Component", desc: "Initially, a larger part of your EMI goes towards interest. This reverses as the principal reduces." },
+              { title: "Reducing Balance", desc: "Interest is only charged on the outstanding principal at the end of each month." }
+            ]
+          }}
+          faqs={[
+            { q: "Can I prepay my home loan?", a: "Yes, you can prepay any amount at any time. For floating rate loans, banks cannot charge any penalty." },
+            { q: "Does CIBIL score affect interest rates?", a: "Absolutely. A CIBIL score above 750 can help you secure the lowest possible interest rates (currently 8.5-8.7%)." },
+            { q: "What is LTV in home loans?", a: "Loan-to-Value (LTV) is the percentage of property value financed by the bank. Typically it is 80% for loans above ₹30 Lakh." }
+          ]}
+        />
+      </CalcLayout>
     </>
   );
 }

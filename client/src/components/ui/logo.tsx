@@ -26,23 +26,24 @@ export default function Logo({ className = "", size = 'md' }: LogoProps) {
         className={`${iconSizeClasses[size]} text-slate-900 fill-current relative z-10 group-hover:scale-110 transition-transform duration-300`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Calculator base - Transitioned to Slate-900 (Black) */}
-        <rect x="8" y="10" width="24" height="24" rx="3" className="fill-none stroke-slate-900 stroke-[2] opacity-100" />
+        {/* Main Body - Larger and more defined */}
+        <rect x="4" y="6" width="32" height="30" rx="4" className="fill-none stroke-slate-900 stroke-[2.5]" />
+        
+        {/* Screen - More detailed */}
+        <rect x="8" y="10" width="24" height="8" rx="2" className="fill-slate-100/80 stroke-slate-900 stroke-[0.75]" />
+        <line x1="10" y1="14" x2="20" y2="14" className="stroke-slate-900 stroke-[1.5] stroke-round opacity-40" />
+        
+        {/* Keypad Grid - Better spacing and sizing */}
+        <rect x="8" y="22" width="6" height="4" rx="1" className="fill-slate-900" />
+        <rect x="17" y="22" width="6" height="4" rx="1" className="fill-slate-900" />
+        <rect x="26" y="22" width="6" height="4" rx="1" className="fill-slate-900" />
+        
+        <rect x="8" y="29" width="6" height="4" rx="1" className="fill-slate-900" />
+        <rect x="17" y="29" width="6" height="4" rx="1" className="fill-slate-900" />
+        <rect x="26" y="29" width="6" height="4" rx="1" className="fill-blue-600" />
 
-        {/* Screen */}
-        <rect x="11" y="13" width="18" height="6" rx="1.5" className="fill-slate-100/50 stroke-slate-900 stroke-[0.5]" />
-
-        {/* Buttons grid - Professional Contrast */}
-        <circle cx="14" cy="24" r="1.5" className="fill-slate-900" />
-        <circle cx="20" cy="24" r="1.5" className="fill-slate-900" />
-        <circle cx="26" cy="24" r="1.5" className="fill-slate-900" />
-
-        <circle cx="14" cy="29" r="1.5" className="fill-slate-900" />
-        <circle cx="20" cy="29" r="1.5" className="fill-slate-900" />
-        <circle cx="26" cy="29" r="1.5" className="fill-blue-600" />
-
-        {/* Logo text accent */}
-        <path d="M18 8 L22 8" className="stroke-slate-900 stroke-[2] stroke-round" />
+        {/* Accent line */}
+        <path d="M16 4 L24 4" className="stroke-slate-900 stroke-[2.5] stroke-round" />
       </svg>
     </div>
   );

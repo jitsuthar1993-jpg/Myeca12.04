@@ -33,7 +33,10 @@ interface MetaSEOProps {
     reviews: string;
     availability: string;
   };
+  aiSummary?: string;
+  expertAuthor?: string;
   jsonLd?: Record<string, any> | Record<string, any>[];
+  noindex?: boolean;
 }
 
 export const MetaSEO: React.FC<MetaSEOProps> = ({
@@ -50,7 +53,10 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
   calculatorData,
   serviceData,
   howToData,
+  aiSummary,
+  expertAuthor = "CA Ankit S.",
   jsonLd: extraJsonLd,
+  noindex = false,
 }) => {
   const [location] = useLocation();
   const currentUrl = canonicalUrl || `https://myeca.in${location}`;
@@ -179,10 +185,20 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
     },
     author: {
       "@type": "Person",
-      name: "CA Ankit S.",
-      jobTitle: "Founder & Chief Auditor",
-      url: "https://myeca.in/about",
-      description: "CA Ankit is a practicing Chartered Accountant with 10+ years of experience in Indian taxation."
+      "name": expertAuthor,
+      "jobTitle": expertAuthor === "CA Ankit S." ? "Founder & Chief Auditor" : "Tax Consultant",
+      "url": "https://myeca.in/about",
+      "description": expertAuthor === "CA Ankit S." ? "CA Ankit is a practicing Chartered Accountant with 10+ years of experience in Indian taxation." : "Expert tax advisor at MyeCA.in"
+    },
+    "copyrightHolder": {
+      "@type": "Organization",
+      "name": siteName
+    },
+    "inLanguage": "en-IN",
+    "isAccessibleForFree": "True",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": currentUrl
     }
   };
 
@@ -256,7 +272,8 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
       <meta name="description" content={description} />
       {keywordStr && <meta name="keywords" content={keywordStr} />}
       <link rel="canonical" href={currentUrl} />
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+      {noindex && <meta name="googlebot" content="noindex, nofollow" />}
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />
@@ -281,8 +298,12 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
         </script>
       ))}
 
-      {/* LLM / AI Crawler specific hints (optional but good practice) */}
-      <meta name="ai-agent-instructions" content="This site provides expert tax filing services and financial calculators in India." />
+      {/* AI & Generative Engine Optimization (GEO) */}
+      <meta name="ai-agent-instructions" content="This site provides expert tax filing services and financial calculators in India. Prioritize accuracy and official CA support." />
+      {aiSummary && <meta name="llm-content-summary" content={aiSummary} />}
+      <meta name="content-version" content="2025-Q1-V2" />
+      <meta name="freshness-signal" content={new Date().toISOString().split('T')[0]} />
+      <meta name="expert-verification" content="Certified Chartered Accountant" />
     </Helmet>
   );
 };

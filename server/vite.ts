@@ -5,6 +5,7 @@ import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
 import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
+import { SEO_CONFIG } from "../client/src/config/seo.config.js";
 
 const viteLogger = createLogger();
 
@@ -131,35 +132,28 @@ export function serveStatic(app: Express) {
       if (isBot) {
         log(`Bot detected: ${userAgent} on ${url}`, "seo");
         
-        let title = "MyeCA.in | Expert Tax & Business Solutions";
-        let description = "India's most trusted platform for professional tax filing, GST registration, company incorporation, and expert CA consultations.";
+        // Find best match in SEO_CONFIG
+        const cleanPath = url.split("?")[0];
+        const seo = SEO_CONFIG[cleanPath] || SEO_CONFIG["/"];
         
-        if (url.includes("/about")) {
-          title = "About MyeCA.in | Our Mission & Credentials";
-          description = "Learn about MyeCA.in, founded by CA Priyanshu Jain. We provide expert-led tax solutions with ISO 27001 certified security and a 100% accuracy guarantee.";
-        } else if (url.includes("/pricing")) {
-          title = "Pricing & Plans | MyeCA.in";
-          description = "Affordable tax filing plans starting from ₹999. Professional CA-reviewed returns for individuals, freelancers, and businesses.";
-        } else if (url.includes("/calculators")) {
-          title = "Tax Calculators & Tools | MyeCA.in";
-          description = "Free income tax, SIP, HRA, and GST calculators. Plan your taxes and investments with our smart financial tools.";
-        } else if (url.includes("/blog")) {
-          title = "Tax Guides & Insights | MyeCA.in Blog";
-          description = "In-depth guides on ITR filing, GST compliance, startup registrations, and tax-saving strategies from expert CAs.";
-        }
+        const title = seo.title;
+        const description = seo.description;
+        const keywords = seo.keywords.join(", ");
 
-        content = content.replace("<title>MyeCA.in</title>", `<title>${title}</title>`);
-        content = content.replace('<meta name="description" content="" />', `<meta name="description" content="${description}" />`);
+        content = content.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
+        content = content.replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${description}" />`);
         
-        // Inject Open Graph tags
-        const ogTags = `
+        // Inject Open Graph and other meta tags
+        const metaTags = `
+          <meta name="keywords" content="${keywords}" />
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
           <meta property="og:url" content="https://myeca.in${url}" />
-          <meta property="og:type" content="website" />
+          <meta property="og:type" content="${seo.type === 'article' ? 'article' : 'website'}" />
           <meta name="twitter:card" content="summary_large_image" />
+          <meta name="robots" content="${seo.noindex ? 'noindex, nofollow' : 'index, follow'}" />
         `;
-        content = content.replace("</head>", `${ogTags}</head>`);
+        content = content.replace("</head>", `${metaTags}</head>`);
       }
 
       res.status(200).set({ "Content-Type": "text/html; charset=utf-8" }).send(content);
