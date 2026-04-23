@@ -3,6 +3,7 @@ import { Suspense, lazy } from 'react';
 import { lazyWithRetry } from '@/utils/bundle-optimization';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import HomePage from "@/pages/home.page";
+const MobileAppScreensPage = lazyWithRetry(() => import("@/pages/mobile-app-screens.page"));
 
 // Route components loaded lazily to reduce initial bundle size
 const NotFound = lazyWithRetry(() => import("@/pages/not-found"));
@@ -164,6 +165,8 @@ export default function Routes() {
     <Suspense fallback={<AppLoading />}>
       <Switch>
         <Route path="/" component={HomePage} />
+        <Route path="/mobile-app" component={MobileAppScreensPage} />
+        <Route path="/mobile-app-screens" component={MobileAppScreensPage} />
         <Route path="/calculators/income-tax" component={IncomeTaxCalculator} />
         <Route path="/calculators/tax-regime" component={TaxRegimeCalculator} />
         <Route path="/calculators/hra" component={HRACalculator} />
