@@ -21,6 +21,7 @@ import adminRouter from "./routes/admin.js";
 import auditRouter from "./routes/audit.js";
 import publicRouter from "./routes/public.js";
 import blogWebhooksRouter from "./routes/blog-webhooks.js";
+import whatsappRouter from "./routes/whatsapp.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -243,6 +244,7 @@ Allow: /`;
   // Admin routes
   app.use("/api/admin", adminLimiter, adminRouter);
   app.use("/api/webhooks", blogWebhooksRouter);
+  app.use("/api/whatsapp", whatsappRouter);
   
   // CA routes
   const caRouter = (await import("./routes/ca")).default;
