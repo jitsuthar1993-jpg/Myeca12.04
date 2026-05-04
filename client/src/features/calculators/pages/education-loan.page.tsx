@@ -102,8 +102,8 @@ export default function EducationLoanCalculator() {
         sidebar={
           <CalcGlassSidebar title="EMI Summary">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Post-Moratorium EMI</p>
-              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Post-Moratorium EMI</p>
+              <p className="text-4xl font-normal text-slate-900 tracking-tight tabular-nums">
                 {fmt(calculations.emi)}
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function EducationLoanCalculator() {
             </div>
 
             <Link href="/services/advisory">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-teal-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-teal-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 Optimise 80E Tax Savings
               </button>
@@ -206,8 +206,8 @@ export default function EducationLoanCalculator() {
           <div className="bg-teal-50 border border-teal-100 p-6 rounded-[2rem] flex gap-4">
             <Book className="w-6 h-6 text-teal-600 shrink-0 mt-1" />
             <div>
-              <h4 className="text-sm font-black text-teal-900 mb-1">Education Loan Tip</h4>
-              <p className="text-xs font-bold text-teal-700 leading-relaxed">
+              <h4 className="text-sm font-normal text-teal-900 mb-1">Education Loan Tip</h4>
+              <p className="text-xs font-normal text-teal-700 leading-relaxed">
                 Paying just the simple interest during the moratorium period (study years) can save you up to {fmt(calculations.moratoriumInterest)} in future interest costs and prevents your principal from swelling.
               </p>
             </div>

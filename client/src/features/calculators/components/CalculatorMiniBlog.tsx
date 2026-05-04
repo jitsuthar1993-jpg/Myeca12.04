@@ -60,7 +60,7 @@ export function CalculatorMiniBlog({
             <div className={`w-10 h-10 rounded-xl ${f.iconBg} flex items-center justify-center mb-4`}>
               {f.icon}
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">{f.title}</h3>
+            <h3 className="text-lg font-normal text-slate-900 mb-2">{f.title}</h3>
             <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
           </motion.div>
         ))}
@@ -70,7 +70,7 @@ export function CalculatorMiniBlog({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* How it works */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-2xl font-normal text-slate-900 tracking-tight">
             {howItWorks?.title}
           </h2>
           <div className="text-slate-500 leading-relaxed">
@@ -92,11 +92,11 @@ export function CalculatorMiniBlog({
             <div className="space-y-4">
               {howItWorks.steps.map((step, idx) => (
                 <div key={idx} className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-normal shrink-0">
                     {idx + 1}
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900">{step.title}</h4>
+                    <h4 className="font-normal text-slate-900">{step.title}</h4>
                     <p className="text-sm text-slate-500">{step.desc}</p>
                   </div>
                 </div>
@@ -107,7 +107,7 @@ export function CalculatorMiniBlog({
 
         {/* FAQ */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+          <h2 className="text-2xl font-normal text-slate-900 tracking-tight flex items-center gap-3">
             <HelpCircle className="w-6 h-6 text-blue-600" />
             Common Questions
           </h2>
@@ -117,7 +117,7 @@ export function CalculatorMiniBlog({
                 key={i}
                 className="bg-white rounded-2xl border border-slate-200/70 p-5 hover:border-blue-200 hover:shadow-sm transition-all"
               >
-                <h4 className="font-bold text-slate-800 mb-1.5">{faq.q}</h4>
+                <h4 className="font-normal text-slate-800 mb-1.5">{faq.q}</h4>
                 <p className="text-sm text-slate-500 leading-relaxed">{faq.a}</p>
               </div>
             ))}
@@ -132,7 +132,7 @@ export function CalculatorMiniBlog({
             {ctaIcon}
           </div>
           <div className="text-center sm:text-left flex-1">
-            <h3 className="text-xl font-extrabold text-slate-900 mb-1">
+            <h3 className="text-xl font-normal text-slate-900 mb-1">
               {ctaTitle}
             </h3>
             <p className="text-slate-500 text-sm max-w-xl">
@@ -140,7 +140,7 @@ export function CalculatorMiniBlog({
             </p>
           </div>
           <Link href={ctaLink}>
-            <Button className="bg-slate-900 hover:bg-blue-700 text-white rounded-xl px-6 h-11 font-bold shadow-sm transition-colors whitespace-nowrap">
+            <Button className="bg-slate-900 hover:bg-blue-700 text-white rounded-xl px-6 h-11 font-normal shadow-sm transition-colors whitespace-nowrap">
               {ctaButtonText}
               <ArrowUpRight className="w-4 h-4 ml-2" />
             </Button>

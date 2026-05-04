@@ -240,7 +240,18 @@ export default function HelpCenterPage() {
                   <TabsTrigger value="popular">Popular</TabsTrigger>
                   <TabsTrigger value="videos">Videos</TabsTrigger>
                 </TabsList>
-                        </CardTitle>
+                
+                <TabsContent value="categories" className="space-y-6 mt-6">
+                  {helpCategories.map((category, index) => (
+                    <Card key={index} className="hover:shadow-md transition-shadow">
+                      <CardHeader className="flex flex-row items-center gap-4">
+                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                          <category.icon className="w-6 h-6" />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-xl">{category.title}</CardTitle>
+                          <p className="text-sm text-gray-500">{category.description}</p>
+                        </div>
                       </CardHeader>
                       <CardContent>
                         <ul className="space-y-3">

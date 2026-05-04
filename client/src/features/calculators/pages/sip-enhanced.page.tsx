@@ -103,7 +103,7 @@ export default function EnhancedSIPCalculator() {
           <Card className="bg-white rounded-2xl shadow-lg">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold text-gray-900">
+                <CardTitle className="text-2xl font-normal text-gray-900">
                   SIP Investment Details
                 </CardTitle>
                 <div className="p-2 bg-blue-100 rounded-lg">
@@ -158,7 +158,7 @@ export default function EnhancedSIPCalculator() {
                 <Label>Investment Period (Years)</Label>
                 <div className="px-4 py-3 bg-green-50 rounded-lg">
                   <div className="text-center mb-2">
-                    <span className="text-2xl font-bold text-green-700">{years} years</span>
+                    <span className="text-2xl font-normal text-green-700">{years} years</span>
                   </div>
                   <Slider
 colorTheme="blue"                     value={[years]}
@@ -180,7 +180,7 @@ colorTheme="blue"                     value={[years]}
                 <Label>Expected Annual Return (%)</Label>
                 <div className="px-4 py-3 bg-purple-50 rounded-lg">
                   <div className="text-center mb-2">
-                    <span className="text-2xl font-bold text-purple-700">{expectedReturn}%</span>
+                    <span className="text-2xl font-normal text-purple-700">{expectedReturn}%</span>
                   </div>
                   <Slider
 colorTheme="blue"                     value={[expectedReturn]}
@@ -207,7 +207,7 @@ colorTheme="blue"                     value={[expectedReturn]}
           <Card className="bg-white rounded-2xl shadow-lg">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold text-gray-900">
+                <CardTitle className="text-2xl font-normal text-gray-900">
                   Investment Results
                 </CardTitle>
                 <div className="flex gap-2">
@@ -236,8 +236,8 @@ colorTheme="blue"                     value={[expectedReturn]}
                 <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-600 text-sm font-medium">Total Investment</p>
-                      <p className="text-2xl font-bold text-blue-900">{formatCurrency(result.totalInvestment)}</p>
+                      <p className="text-blue-600 text-sm font-normal">Total Investment</p>
+                      <p className="text-2xl font-normal text-blue-900">{formatCurrency(result.totalInvestment)}</p>
                     </div>
                     <PiggyBank className="w-8 h-8 text-blue-600" />
                   </div>
@@ -246,8 +246,8 @@ colorTheme="blue"                     value={[expectedReturn]}
                 <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-600 text-sm font-medium">Wealth Gain</p>
-                      <p className="text-2xl font-bold text-green-900">+{formatCurrency(result.wealthGain)}</p>
+                      <p className="text-green-600 text-sm font-normal">Wealth Gain</p>
+                      <p className="text-2xl font-normal text-green-900">+{formatCurrency(result.wealthGain)}</p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-green-600" />
                   </div>
@@ -256,8 +256,8 @@ colorTheme="blue"                     value={[expectedReturn]}
                 <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-600 text-sm font-medium">Maturity Value</p>
-                      <p className="text-2xl font-bold text-purple-900">{formatCurrency(result.maturityValue)}</p>
+                      <p className="text-purple-600 text-sm font-normal">Maturity Value</p>
+                      <p className="text-2xl font-normal text-purple-900">{formatCurrency(result.maturityValue)}</p>
                     </div>
                     <Target className="w-8 h-8 text-purple-600" />
                   </div>
@@ -298,15 +298,15 @@ colorTheme="blue"                     value={[expectedReturn]}
 
               {/* Key Metrics */}
               <div className="bg-gray-50 p-4 rounded-xl">
-                <h3 className="font-semibold mb-3">Key Metrics</h3>
+                <h3 className="font-normal mb-3">Key Metrics</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Wealth Multiplier:</span>
-                    <span className="font-semibold ml-2">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
+                    <span className="font-normal ml-2">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
                   </div>
                   <div>
                     <span className="text-gray-600">Monthly Commitment:</span>
-                    <span className="font-semibold ml-2">{formatCurrency(monthlyAmount)}</span>
+                    <span className="font-normal ml-2">{formatCurrency(monthlyAmount)}</span>
                   </div>
                 </div>
               </div>

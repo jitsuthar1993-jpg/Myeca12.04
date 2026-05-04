@@ -100,21 +100,21 @@ export default function EnhancedFDCalculator() {
               <CalcResultRow label="Post-Tax Returns" value={formatCurrency(result.postTaxReturns)} variant="success" />
               
               <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Yield Analysis</p>
+                <p className="text-[10px] font-normal text-slate-500 uppercase tracking-widest mb-2">Yield Analysis</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] font-medium text-slate-400">Effective rate</p>
-                    <p className="text-sm font-bold text-slate-800">{result.effectiveRate}%</p>
+                    <p className="text-[10px] font-normal text-slate-400">Effective rate</p>
+                    <p className="text-sm font-normal text-slate-800">{result.effectiveRate}%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-medium text-slate-400">Total Tax</p>
-                    <p className="text-sm font-bold text-red-600">{formatCurrency(result.taxOnInterest)}</p>
+                    <p className="text-[10px] font-normal text-slate-400">Total Tax</p>
+                    <p className="text-sm font-normal text-red-600">{formatCurrency(result.taxOnInterest)}</p>
                   </div>
                 </div>
               </div>
 
               <Link href="/services/tax-consultation">
-                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
+                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
                   <Zap className="w-4 h-4 text-yellow-400" />
                   Optimize FD Tax Now
                 </button>
@@ -134,7 +134,7 @@ export default function EnhancedFDCalculator() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Select Bank</Label>
+                    <Label className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Select Bank</Label>
                     <Select value={bankSelected} onValueChange={handleBankChange}>
                       <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
                         <SelectValue />
@@ -154,7 +154,7 @@ export default function EnhancedFDCalculator() {
                       type="number"
                       value={principal}
                       onChange={(e) => setPrincipal(Math.max(0, Number(e.target.value)))}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-bold"
+                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-normal"
                     />
                   </CalcInputGroup>
 
@@ -164,7 +164,7 @@ export default function EnhancedFDCalculator() {
                       step="0.1"
                       value={rate}
                       onChange={(e) => setRate(Math.max(0, Number(e.target.value)))}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-bold"
+                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-normal"
                     />
                   </CalcInputGroup>
                 </div>
@@ -175,12 +175,12 @@ export default function EnhancedFDCalculator() {
                       type="number"
                       value={years}
                       onChange={(e) => setYears(Math.max(1, Number(e.target.value)))}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-bold"
+                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-normal"
                     />
                   </CalcInputGroup>
 
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Compounding</Label>
+                    <Label className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Compounding</Label>
                     <Select value={compoundingFrequency.toString()} onValueChange={(value) => setCompoundingFrequency(Number(value))}>
                       <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
                         <SelectValue />
@@ -196,7 +196,7 @@ export default function EnhancedFDCalculator() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Your Tax Slab</Label>
+                    <Label className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Your Tax Slab</Label>
                     <Select value={taxRate.toString()} onValueChange={(value) => setTaxRate(Number(value))}>
                       <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
                         <SelectValue />
@@ -227,16 +227,16 @@ export default function EnhancedFDCalculator() {
 
           <TabsContent value="comparison" className="space-y-6">
             <CalcInputCard title="Market Rates Comparison">
-              <p className="text-xs text-slate-500 font-medium mb-6">
+              <p className="text-xs text-slate-500 font-normal mb-6">
                 Projected returns for ₹{principal.toLocaleString()} over {years} years.
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th className="text-left p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bank</th>
-                      <th className="text-center p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rate</th>
-                      <th className="text-right p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Maturity</th>
+                      <th className="text-left p-4 text-[10px] font-normal text-slate-400 uppercase tracking-widest">Bank</th>
+                      <th className="text-center p-4 text-[10px] font-normal text-slate-400 uppercase tracking-widest">Rate</th>
+                      <th className="text-right p-4 text-[10px] font-normal text-slate-400 uppercase tracking-widest">Maturity</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -244,13 +244,13 @@ export default function EnhancedFDCalculator() {
                       const bankResult = calculateEnhancedFD(principal, bank.rate, years, compoundingFrequency, taxRate);
                       return (
                         <tr key={bank.value} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 font-bold text-slate-800 text-sm">{bank.label}</td>
+                          <td className="p-4 font-normal text-slate-800 text-sm">{bank.label}</td>
                           <td className="text-center p-4">
-                            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-bold px-2.5 py-0.5 rounded-full text-[10px]">
+                            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-normal px-2.5 py-0.5 rounded-full text-[10px]">
                               {bank.rate}%
                             </Badge>
                           </td>
-                          <td className="text-right p-4 font-bold text-slate-900 text-sm">
+                          <td className="text-right p-4 font-normal text-slate-900 text-sm">
                             {formatCurrency(bankResult.maturityValue)}
                           </td>
                         </tr>

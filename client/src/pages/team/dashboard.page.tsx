@@ -180,5 +180,3 @@ export default function TeamDashboard() {
     </Layout>
   );
 }
-  );
-}

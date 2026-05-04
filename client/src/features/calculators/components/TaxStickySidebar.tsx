@@ -40,38 +40,38 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-6 opacity-60">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Live Tax Summary</span>
+            <span className="text-[10px] font-normal uppercase tracking-widest">Live Tax Summary</span>
           </div>
 
           <div className="space-y-6">
             <div>
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Tax Payable</p>
-              <h2 className="text-3xl font-black tracking-tight text-white flex items-baseline gap-1">
+              <p className="text-slate-400 text-xs font-normal uppercase tracking-wider mb-1">Total Tax Payable</p>
+              <h2 className="text-3xl font-normal tracking-tight text-white flex items-baseline gap-1">
                 {formatCurrency(taxPayable)}
-                <span className="text-xs font-medium text-slate-500">/year</span>
+                <span className="text-xs font-normal text-slate-500">/year</span>
               </h2>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
               <div>
-                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">Taxable Income</p>
-                <p className="text-sm font-black text-slate-200">{formatCurrency(result.taxableIncome)}</p>
+                <p className="text-slate-500 text-[10px] font-normal uppercase tracking-wider mb-1">Taxable Income</p>
+                <p className="text-sm font-normal text-slate-200">{formatCurrency(result.taxableIncome)}</p>
               </div>
               <div>
-                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">Effective Rate</p>
+                <p className="text-slate-500 text-[10px] font-normal uppercase tracking-wider mb-1">Effective Rate</p>
                 <div className="flex items-center gap-1.5">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                   <p className="text-sm font-black text-emerald-400">{effectiveRate.toFixed(1)}%</p>
+                   <p className="text-sm font-normal text-emerald-400">{effectiveRate.toFixed(1)}%</p>
                 </div>
               </div>
             </div>
 
             <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Take Home Income</span>
+                  <span className="text-[10px] font-normal text-slate-400 uppercase tracking-widest">Take Home Income</span>
                   <TrendingUp className="w-3 h-3 text-emerald-400" />
                </div>
-               <p className="text-lg font-black text-white">{formatCurrency(netIncome)}</p>
+               <p className="text-lg font-normal text-white">{formatCurrency(netIncome)}</p>
             </div>
           </div>
         </div>
@@ -80,18 +80,18 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
       {/* Regime Comparison Quick Peek */}
       <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">Comparison</h4>
+            <h4 className="text-xs font-normal text-slate-900 uppercase tracking-widest">Comparison</h4>
             <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
          </div>
          <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-               <span className="text-slate-500 font-bold">New Regime</span>
-               <span className="text-slate-900 font-black">{formatCurrency(taxPayable)}</span>
+               <span className="text-slate-500 font-normal">New Regime</span>
+               <span className="text-slate-900 font-normal">{formatCurrency(taxPayable)}</span>
             </div>
             <div className="w-full bg-slate-50 h-1 rounded-full overflow-hidden">
                <div className="bg-blue-600 h-full" style={{ width: '100%' }} />
             </div>
-            <p className="text-[10px] text-slate-400 font-medium italic">
+            <p className="text-[10px] text-slate-400 font-normal italic">
                Assumes {inputs.regime === 'new' ? 'New' : 'Old'} Regime is active.
             </p>
          </div>

@@ -105,15 +105,15 @@ export default function PenaltyCalculatorPage() {
           >
              <div className="space-y-6">
                 <div className="text-center py-6">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">Total Due</span>
+                   <span className="text-[10px] font-normal uppercase tracking-widest text-slate-400 block mb-1">Total Due</span>
                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-2xl font-black text-slate-400">₹</span>
-                      <span className="text-6xl font-black text-slate-900 tracking-tighter">
+                      <span className="text-2xl font-normal text-slate-400">₹</span>
+                      <span className="text-6xl font-normal text-slate-900 tracking-tighter">
                         {result.value.toLocaleString('en-IN')}
                       </span>
                    </div>
                    <div className="mt-4 flex justify-center">
-                      <Badge className={cn("rounded-full border-none px-4 py-1 font-black text-[9px] tracking-widest", severity.color)}>
+                      <Badge className={cn("rounded-full border-none px-4 py-1 font-normal text-[9px] tracking-widest", severity.color)}>
                         {severity.label}
                       </Badge>
                    </div>
@@ -125,7 +125,7 @@ export default function PenaltyCalculatorPage() {
                    <CalcResultRow label="Regulation" value={regData.label} />
                 </div>
 
-                <Button className="w-full h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-amber-100 mt-4 transition-all">
+                <Button className="w-full h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-normal text-xs uppercase tracking-widest shadow-xl shadow-amber-100 mt-4 transition-all">
                    Consult Advisor <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
              </div>
@@ -148,7 +148,7 @@ export default function PenaltyCalculatorPage() {
                   key={key}
                   onClick={() => { setActiveReg(key); setActiveItem(Object.keys(reg.items)[0]); }}
                   className={cn(
-                    "flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all",
+                    "flex-1 py-3 rounded-2xl text-[10px] font-normal uppercase tracking-wider transition-all",
                     activeReg === key 
                       ? "bg-slate-900 text-white shadow-lg" 
                       : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
@@ -177,10 +177,10 @@ export default function PenaltyCalculatorPage() {
                        <CheckCircle2 className="w-5 h-5 text-amber-500" />
                     </div>
                   )}
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">
+                  <span className="text-[9px] font-normal uppercase tracking-[0.2em] text-slate-400 mb-2 block">
                     {item.rateType.replace('daily', 'per day').replace('percent', '% per month')}
                   </span>
-                  <h4 className={cn("text-sm font-bold leading-tight", activeItem === key ? "text-slate-900" : "text-slate-600 group-hover:text-slate-900")}>
+                  <h4 className={cn("text-sm font-normal leading-tight", activeItem === key ? "text-slate-900" : "text-slate-600 group-hover:text-slate-900")}>
                     {item.name}
                   </h4>
                 </button>
@@ -194,10 +194,10 @@ export default function PenaltyCalculatorPage() {
                   <div className="space-y-6">
                     <div className="flex justify-between items-end">
                       <div className="space-y-1">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Delay Period</Label>
-                        <h3 className="text-lg font-bold text-slate-900">How many days were missed?</h3>
+                        <Label className="text-[10px] font-normal uppercase tracking-widest text-slate-400">Delay Period</Label>
+                        <h3 className="text-lg font-normal text-slate-900">How many days were missed?</h3>
                       </div>
-                      <div className="text-3xl font-black text-amber-600">{delay} <span className="text-xs font-bold text-slate-300 uppercase">Days</span></div>
+                      <div className="text-3xl font-normal text-amber-600">{delay} <span className="text-xs font-normal text-slate-300 uppercase">Days</span></div>
                     </div>
                     <Slider 
                       value={[delay]} 
@@ -206,7 +206,7 @@ export default function PenaltyCalculatorPage() {
                       step={1} 
                       className="py-4"
                     />
-                    <div className="flex justify-between text-[8px] font-black text-slate-300 uppercase tracking-widest">
+                    <div className="flex justify-between text-[8px] font-normal text-slate-300 uppercase tracking-widest">
                        <span>1 Day Delay</span>
                        <span>6 Months Delay</span>
                     </div>
@@ -216,16 +216,16 @@ export default function PenaltyCalculatorPage() {
                 {itemData.rateType === "percent" && (
                   <div className="space-y-6 pt-6 border-t border-slate-50">
                     <div className="space-y-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Base Amount</Label>
-                      <h3 className="text-lg font-bold text-slate-900">Total Tax Payable (₹)</h3>
+                      <Label className="text-[10px] font-normal uppercase tracking-widest text-slate-400">Base Amount</Label>
+                      <h3 className="text-lg font-normal text-slate-900">Total Tax Payable (₹)</h3>
                     </div>
                     <div className="relative">
-                      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 font-bold">₹</div>
+                      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 font-normal">₹</div>
                       <Input 
                         type="number"
                         value={amount}
                         onChange={e => setAmount(Number(e.target.value))}
-                        className="h-16 pl-10 rounded-2xl bg-slate-50 border-slate-100 focus:bg-white text-xl font-bold text-slate-900"
+                        className="h-16 pl-10 rounded-2xl bg-slate-50 border-slate-100 focus:bg-white text-xl font-normal text-slate-900"
                       />
                     </div>
                   </div>
@@ -236,8 +236,8 @@ export default function PenaltyCalculatorPage() {
                     <Info className="w-5 h-5 text-slate-400" />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Statutory Provision</span>
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                    <span className="text-[9px] font-normal uppercase tracking-widest text-slate-400">Statutory Provision</span>
+                    <p className="text-xs text-slate-600 font-normal leading-relaxed">
                       {itemData.desc}
                     </p>
                   </div>
@@ -250,8 +250,8 @@ export default function PenaltyCalculatorPage() {
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900">Compound Effect</h4>
-                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                <h4 className="text-lg font-normal text-slate-900">Compound Effect</h4>
+                <p className="text-sm text-slate-500 font-normal leading-relaxed">
                   Penalties like GSTR-3B accumulate daily. Filing even 1 day earlier can save you ₹50 - ₹200 depending on your return type.
                 </p>
               </div>
@@ -259,12 +259,12 @@ export default function PenaltyCalculatorPage() {
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <Clock className="w-5 h-5" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900">Deadline Alerts</h4>
-                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                <h4 className="text-lg font-normal text-slate-900">Deadline Alerts</h4>
+                <p className="text-sm text-slate-500 font-normal leading-relaxed">
                   Never pay penalties again. Use our Compliance Calendar to set automated email alerts for all your statutory due dates.
                 </p>
                 <Link href="/compliance-calendar">
-                  <Button variant="link" className="p-0 h-auto text-indigo-600 font-bold text-xs uppercase tracking-widest">
+                  <Button variant="link" className="p-0 h-auto text-indigo-600 font-normal text-xs uppercase tracking-widest">
                     Open Calendar <ArrowRight className="w-3 h-3 ml-2" />
                   </Button>
                 </Link>

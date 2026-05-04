@@ -51,7 +51,9 @@
       "Bash(git commit -m ' *)",
       "Bash(grep -v \"^$\")",
       "Bash(grep -v \"\\\\.tsx:$\")",
-      "Bash(node generate-og-image.mjs)"
+      "Bash(node generate-og-image.mjs)",
+      "Bash(grep -r \"twilio\\\\|whatsapp\\\\|TWILIO\" package.json server/ --include=\"*.ts\" --include=\"*.json\" -l)",
+      "Bash(grep -i \"twilio\\\\|whatsapp\" .env.example)"
     ]
   }
 }

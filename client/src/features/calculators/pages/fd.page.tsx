@@ -34,7 +34,7 @@ export default function FDCalculator() {
     }).format(n).replace("₹", "₹ ");
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] font-inter">
+    <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "FD Calculator 2025 | Fixed Deposit Maturity Amount | MyeCA.in"}
         description={seo?.description || "Calculate your FD maturity amount and interest earned. Compare latest bank FD rates and plan your savings."}
@@ -47,36 +47,36 @@ export default function FDCalculator() {
       <div className="container mx-auto px-4 py-4 max-w-7xl">
         {/* Modern Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#175CD3] mb-4 uppercase tracking-widest bg-[#EFF8FF] w-fit px-4 py-1.5 rounded-full border border-[#B2DDFF]">
+          <div className="flex items-center gap-2 text-xs font-normal text-[#175CD3] mb-4 uppercase tracking-widest bg-[#EFF8FF] w-fit px-4 py-1.5 rounded-full border border-[#B2DDFF]">
             <Sparkles className="w-3.5 h-3.5" />
             Guaranteed Returns
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-black text-[#101828] tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
                 FD <span className="text-[#175CD3]">Calculator</span>
               </h1>
-              <p className="text-[#667085] text-base max-w-xl font-medium">
+              <p className="text-[#667085] text-base max-w-xl font-normal">
                 Calculate your maturity amount and interest with bank-grade precision.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-bold text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
                     {i === 1 ? 'RK' : i === 2 ? 'PS' : 'MD'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-bold text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-bold text-[#175CD3]">50k+ Savers</p>
+                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="text-xs font-normal text-[#175CD3]">50k+ Savers</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-bold text-[#667085]">4.8/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">4.8/5 Rating</p>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function FDCalculator() {
                   <Calculator className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Deposit Configuration</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Deposit Configuration</h2>
                   <p className="text-xs text-[#667085]">Plan your fixed deposit investment</p>
                 </div>
               </div>
@@ -107,16 +107,16 @@ export default function FDCalculator() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#344054]">Deposit Amount</span>
+                        <span className="text-sm font-normal text-[#344054]">Deposit Amount</span>
                         <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm focus-within:border-[#175CD3] focus-within:ring-1 focus-within:ring-[#175CD3]/10 transition-all">
-                        <span className="text-xs font-bold text-[#667085]">₹</span>
+                        <span className="text-xs font-normal text-[#667085]">₹</span>
                         <input 
                           type="number"
                           value={principal}
                           onChange={(e) => setPrincipal(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </div>
                     </div>
@@ -135,7 +135,7 @@ export default function FDCalculator() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#344054]">Interest Rate (%)</span>
+                        <span className="text-sm font-normal text-[#344054]">Interest Rate (%)</span>
                         <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[100px] flex items-center gap-1.5 shadow-sm focus-within:border-[#175CD3] focus-within:ring-1 focus-within:ring-[#175CD3]/10 transition-all">
@@ -143,9 +143,9 @@ export default function FDCalculator() {
                           type="number"
                           value={rate}
                           onChange={(e) => setRate(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield]"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield]"
                         />
-                        <span className="text-xs font-bold text-[#667085]">%</span>
+                        <span className="text-xs font-normal text-[#667085]">%</span>
                       </div>
                     </div>
                     <input 
@@ -163,7 +163,7 @@ export default function FDCalculator() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#344054]">Tenure (Years)</span>
+                        <span className="text-sm font-normal text-[#344054]">Tenure (Years)</span>
                         <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[100px] flex items-center gap-1.5 shadow-sm focus-within:border-[#175CD3] focus-within:ring-1 focus-within:ring-[#175CD3]/10 transition-all">
@@ -171,9 +171,9 @@ export default function FDCalculator() {
                           type="number"
                           value={tenure}
                           onChange={(e) => setTenure(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield]"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield]"
                         />
-                        <span className="text-xs font-bold text-[#667085]">Yrs</span>
+                        <span className="text-xs font-normal text-[#667085]">Yrs</span>
                       </div>
                     </div>
                     <input 
@@ -189,7 +189,7 @@ export default function FDCalculator() {
 
                   {/* Compounding Selector */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-[#667085] uppercase tracking-widest px-1">Compounding Frequency</label>
+                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Compounding Frequency</label>
                     <div className="grid grid-cols-2 gap-2">
                       {[
                         { label: "Monthly", value: 12 },
@@ -201,7 +201,7 @@ export default function FDCalculator() {
                           key={opt.value}
                           onClick={() => setCompoundingFrequency(opt.value)}
                           className={cn(
-                            "py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center",
+                            "py-2 px-3 rounded-xl border text-xs font-normal transition-all text-center",
                             compoundingFrequency === opt.value
                               ? "bg-[#175CD3] border-[#175CD3] text-white shadow-sm"
                               : "bg-white border-[#EAECF0] text-[#344054] hover:border-[#B2DDFF]"
@@ -223,8 +223,8 @@ export default function FDCalculator() {
                   <TrendingUp className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-[#667085] uppercase tracking-wider">Effective Yield</p>
-                  <p className="text-xl font-black text-[#101828]">{calculations.effectiveRate}%</p>
+                  <p className="text-[11px] font-normal text-[#667085] uppercase tracking-wider">Effective Yield</p>
+                  <p className="text-xl font-normal text-[#101828]">{calculations.effectiveRate}%</p>
                 </div>
               </div>
               <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm flex items-center gap-4">
@@ -232,8 +232,8 @@ export default function FDCalculator() {
                   <ArrowUpRight className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-[#667085] uppercase tracking-wider">Maturity Date</p>
-                  <p className="text-xl font-black text-[#101828]">Year {new Date().getFullYear() + tenure}</p>
+                  <p className="text-[11px] font-normal text-[#667085] uppercase tracking-wider">Maturity Date</p>
+                  <p className="text-xl font-normal text-[#101828]">Year {new Date().getFullYear() + tenure}</p>
                 </div>
               </div>
             </div>
@@ -243,8 +243,8 @@ export default function FDCalculator() {
           <div className="lg:col-span-5">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-xl font-bold text-[#101828]">Maturity Summary</h2>
-                <div className="text-[10px] font-bold px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
+                <h2 className="text-xl font-normal text-[#101828]">Maturity Summary</h2>
+                <div className="text-[10px] font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
                   <CheckCircle2 className="w-3 h-3" />
                   Calculated
                 </div>
@@ -257,11 +257,11 @@ export default function FDCalculator() {
                   <div className="absolute -right-4 -bottom-4 opacity-10">
                     <IndianRupee className="w-32 h-32" />
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-80 block mb-2">Total Maturity Amount</span>
-                  <span className="text-4xl font-black block tabular-nums leading-none">
+                  <span className="text-[11px] font-normal uppercase tracking-[0.2em] opacity-80 block mb-2">Total Maturity Amount</span>
+                  <span className="text-4xl font-normal block tabular-nums leading-none">
                     {fmt(calculations.maturityAmount)}
                   </span>
-                  <div className="mt-4 flex items-center gap-2 text-xs font-medium bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
+                  <div className="mt-4 flex items-center gap-2 text-xs font-normal bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
                     <Zap className="w-3 h-3 text-yellow-300 fill-yellow-300" />
                     Growth of {((calculations.totalInterest / principal) * 100).toFixed(1)}%
                   </div>
@@ -269,34 +269,34 @@ export default function FDCalculator() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-[20px] border border-[#EAECF0] bg-[#F9FAFB]">
-                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider block mb-1">Total Principal</span>
-                    <span className="text-lg font-bold text-[#101828] block tabular-nums">{fmt(principal)}</span>
+                    <span className="text-[10px] font-normal text-[#667085] uppercase tracking-wider block mb-1">Total Principal</span>
+                    <span className="text-lg font-normal text-[#101828] block tabular-nums">{fmt(principal)}</span>
                   </div>
                   <div className="p-4 rounded-[20px] border border-[#EAECF0] bg-[#F9FAFB]">
-                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider block mb-1">Interest Earned</span>
-                    <span className="text-lg font-bold text-[#175CD3] block tabular-nums">{fmt(calculations.totalInterest)}</span>
+                    <span className="text-[10px] font-normal text-[#667085] uppercase tracking-wider block mb-1">Interest Earned</span>
+                    <span className="text-lg font-normal text-[#175CD3] block tabular-nums">{fmt(calculations.totalInterest)}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4 flex-grow px-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Compounding Every</span>
-                  <span className="text-xs font-bold text-[#101828]">
+                  <span className="text-xs font-normal text-[#667085]">Compounding Every</span>
+                  <span className="text-xs font-normal text-[#101828]">
                     {compoundingFrequency === 12 ? 'Month' : compoundingFrequency === 4 ? 'Quarter' : compoundingFrequency === 2 ? '6 Months' : 'Year'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Lock-in Period</span>
-                  <span className="text-xs font-bold text-[#101828]">{tenure} Years</span>
+                  <span className="text-xs font-normal text-[#667085]">Lock-in Period</span>
+                  <span className="text-xs font-normal text-[#101828]">{tenure} Years</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Effective Yield</span>
-                  <span className="text-xs font-bold text-[#027A48]">{calculations.effectiveRate}%</span>
+                  <span className="text-xs font-normal text-[#667085]">Effective Yield</span>
+                  <span className="text-xs font-normal text-[#027A48]">{calculations.effectiveRate}%</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
-                  <span className="text-sm font-bold text-[#101828]">Maturity Proceeds</span>
-                  <span className="text-base font-black text-[#175CD3]">{fmt(calculations.maturityAmount)}</span>
+                  <span className="text-sm font-normal text-[#101828]">Maturity Proceeds</span>
+                  <span className="text-base font-normal text-[#175CD3]">{fmt(calculations.maturityAmount)}</span>
                 </div>
               </div>
 
@@ -306,10 +306,10 @@ export default function FDCalculator() {
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#101828] mb-0.5">Need Higher Returns?</h4>
+                  <h4 className="text-sm font-normal text-[#101828] mb-0.5">Need Higher Returns?</h4>
                   <p className="text-[11px] text-[#667085] mb-2 leading-tight">Explore Corporate FDs & Debt Mutual Funds with our expert CAs.</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-bold text-[#175CD3] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-[13px] font-normal text-[#175CD3] flex items-center gap-2 hover:gap-3 transition-all">
                       Consult an Expert
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -333,7 +333,7 @@ export default function FDCalculator() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-bold text-[#101828]">{item.label}</h5>
+                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
                 <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>

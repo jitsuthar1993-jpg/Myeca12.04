@@ -177,13 +177,13 @@ export default function UnifiedLoanCalculatorPage() {
                 </ResponsiveContainer>
               </div>
               <div className="space-y-1">
-                <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Monthly EMI</p>
+                <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
                 <AnimatePresence mode="wait">
                   <motion.p 
                     key={result.emi} 
                     initial={{ opacity: 0, y: 10 }} 
                     animate={{ opacity: 1, y: 0 }} 
-                    className="text-3xl font-bold text-slate-900 tracking-tight tabular-nums"
+                    className="text-3xl font-normal text-slate-900 tracking-tight tabular-nums"
                   >
                     {fmt(result.emi)}
                   </motion.p>
@@ -199,13 +199,13 @@ export default function UnifiedLoanCalculatorPage() {
               {activeTab === 'personal' && (
                 <div className="mt-4 pt-4 border-t border-white/20">
                    <CalcResultRow label="EMI/Income Ratio" value={`${result.emiToIncomeRatio}%`} variant={result.emiToIncomeRatio > 40 ? "warning" : "success"} />
-                   <p className="text-[10px] text-slate-400 font-medium mt-1 leading-relaxed">Banks prefer &lt; 40% for personal loans.</p>
+                   <p className="text-[10px] text-slate-400 font-normal mt-1 leading-relaxed">Banks prefer &lt; 40% for personal loans.</p>
                 </div>
               )}
             </div>
 
             <Link href="/services/advisory">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 Plan with CA Advisory
               </button>
@@ -231,7 +231,7 @@ export default function UnifiedLoanCalculatorPage() {
                     )}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider">{loanConfig[type].title.split(' ')[0]}</span>
+                    <span className="text-[10px] font-normal uppercase tracking-wider">{loanConfig[type].title.split(' ')[0]}</span>
                   </button>
                 )
               })}
@@ -297,8 +297,8 @@ export default function UnifiedLoanCalculatorPage() {
               <div className="pt-6 border-t border-slate-50 space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-slate-800">Moratorium Period</p>
-                    <p className="text-[10px] text-slate-400 font-medium">Interest calculation during study period</p>
+                    <p className="text-sm font-normal text-slate-800">Moratorium Period</p>
+                    <p className="text-[10px] text-slate-400 font-normal">Interest calculation during study period</p>
                   </div>
                   <div 
                     onClick={() => setHasMoratorium(!hasMoratorium)}

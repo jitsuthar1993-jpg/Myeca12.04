@@ -118,14 +118,14 @@ const complianceData: Record<string, { date: string; reg: string; activity: stri
   ],
 };
 
-const months = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
 const REG_STYLES: Record<string, { bg: string; text: string; border: string; dot: string; lightBg: string; darkBg: string }> = {
-  GST:  { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-100",   dot: "bg-blue-600", lightBg: "bg-blue-50", darkBg: "bg-blue-600" },
-  IT:   { bg: "bg-emerald-50",text: "text-emerald-700",border: "border-emerald-100",dot: "bg-emerald-600", lightBg: "bg-emerald-50", darkBg: "bg-emerald-600" },
-  MCA:  { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-100", dot: "bg-violet-600", lightBg: "bg-violet-50", darkBg: "bg-violet-600" },
-  "PF/ESI": { bg: "bg-orange-50",  text: "text-orange-700", border: "border-orange-100", dot: "bg-orange-600", lightBg: "bg-orange-50", darkBg: "bg-orange-600" },
-  RBI:  { bg: "bg-rose-50",   text: "text-rose-700",   border: "border-rose-100",   dot: "bg-rose-600", lightBg: "bg-rose-50", darkBg: "bg-rose-600" },
+  GST: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-100", dot: "bg-blue-600", lightBg: "bg-blue-50", darkBg: "bg-blue-600" },
+  IT: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-100", dot: "bg-emerald-600", lightBg: "bg-emerald-50", darkBg: "bg-emerald-600" },
+  MCA: { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-100", dot: "bg-violet-600", lightBg: "bg-violet-50", darkBg: "bg-violet-600" },
+  "PF/ESI": { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-100", dot: "bg-orange-600", lightBg: "bg-orange-50", darkBg: "bg-orange-600" },
+  RBI: { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-100", dot: "bg-rose-600", lightBg: "bg-rose-50", darkBg: "bg-rose-600" },
 };
 
 export default function ComplianceCalendarPage() {
@@ -147,12 +147,12 @@ export default function ComplianceCalendarPage() {
     if (!selectedDate || isNaN(selectedDate.getTime())) return [];
     const items: { date: Date; activity: string; reg: string }[] = [];
     let checkDate = new Date(selectedDate);
-    
+
     // Look ahead 60 days for upcoming
     for (let i = 0; i < 60; i++) {
       checkDate = addDays(checkDate, 1);
       if (isNaN(checkDate.getTime())) break;
-      
+
       const dayItems = getComplianceForDate(checkDate);
       dayItems.forEach(item => {
         items.push({ ...item, date: new Date(checkDate) });
@@ -177,12 +177,12 @@ export default function ComplianceCalendarPage() {
 
   return (
     <>
-      <MetaSEO 
-        title="Statutory Compliance Calendar 2026-27 | GST & Tax Due Dates | MyeCA.in" 
-        description="Stay ahead of GST, Income Tax, and MCA deadlines with our interactive compliance calendar. Tracks all statutory due dates for FY 2026-27." 
+      <MetaSEO
+        title="Statutory Compliance Calendar 2026-27 | GST & Tax Due Dates | MyeCA.in"
+        description="Stay ahead of GST, Income Tax, and MCA deadlines with our interactive compliance calendar. Tracks all statutory due dates for FY 2026-27."
         keywords={[
-          "compliance calendar 2026", "tax due dates India", "GST return deadlines", 
-          "income tax dates", "MCA filing calendar", "TDS deposit dates", 
+          "compliance calendar 2026", "tax due dates India", "GST return deadlines",
+          "income tax dates", "MCA filing calendar", "TDS deposit dates",
           "statutory compliance schedule", "CA assisted compliance"
         ]}
         faqPageData={[
@@ -197,7 +197,7 @@ export default function ComplianceCalendarPage() {
         ]}
       />
 
-      <CalcHero 
+      <CalcHero
         title="Compliance Calendar"
         description="Never miss a regulatory deadline. Interactive timeline for GST, Income Tax, and MCA filings for FY 2026-27."
         icon={<CalendarDays className="w-6 h-6 text-blue-600" />}
@@ -205,7 +205,7 @@ export default function ComplianceCalendarPage() {
         hideBreadcrumbs={true}
       />
 
-      <CalcLayout 
+      <CalcLayout
         variant="indigo"
         complianceFacts={[
           {
@@ -248,36 +248,36 @@ export default function ComplianceCalendarPage() {
           }
         ]}
       >
-        <div className="space-y-16">
+        <div className="space-y-12">
           {/* Main Two Sections Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Timeline Browser */}
             <div className="lg:col-span-5">
-              <Card className="rounded-[2.5rem] border-slate-100 shadow-xl shadow-slate-100/50 flex flex-col overflow-hidden bg-white group/timeline">
-                <div className="p-7 border-b border-slate-50 bg-slate-50/30">
+              <Card className="rounded-[32px] border-slate-100 shadow-sm flex flex-col overflow-hidden bg-white">
+                <div className="p-8 border-b border-slate-50 bg-slate-50/30">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Timeline Browser</h2>
+                      <h2 className="text-xl font-normal text-slate-900 tracking-tight">Timeline Browser</h2>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="rounded-xl border-slate-200 text-slate-500 font-black text-[10px] h-8 bg-white hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl border-slate-200 text-slate-500 font-normal text-xs h-9 bg-white hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
                       onClick={() => {
                         const today = new Date();
                         setSelectedDate(today);
                         setCurrentMonth(today);
                       }}
                     >
-                      <CalendarIcon className="w-3.5 h-3.5 mr-2" />
-                      TODAY
+                      <CalendarIcon className="w-4 h-4 mr-2" />
+                      Today
                     </Button>
                   </div>
-                  <p className="text-slate-400 text-[11px] font-bold uppercase tracking-wider">FY 2026-27 COMPLIANCE STREAM</p>
+                  <p className="text-slate-500 text-sm font-normal">FY 2026-27 Compliance Stream</p>
                 </div>
 
-                <div className="p-7">
+                <div className="p-8">
                   <Calendar
                     mode="single"
                     selected={selectedDate}
@@ -289,7 +289,7 @@ export default function ComplianceCalendarPage() {
                       months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
                       month: "space-y-6 w-full",
                       caption: "flex justify-between items-center px-2 pt-1 relative",
-                      caption_label: "text-sm font-black text-slate-900 uppercase tracking-[0.2em]",
+                      caption_label: "text-sm font-normal text-slate-900",
                       nav: "flex items-center gap-1",
                       nav_button: cn(
                         "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 transition-opacity rounded-xl border border-slate-100 flex items-center justify-center hover:bg-slate-50"
@@ -298,14 +298,14 @@ export default function ComplianceCalendarPage() {
                       nav_button_next: "relative",
                       table: "w-full border-collapse space-y-1",
                       head_row: "flex w-full mb-4",
-                      head_cell: "text-slate-400 w-full font-black text-[10px] uppercase tracking-widest",
+                      head_cell: "text-slate-400 w-full font-normal text-xs uppercase tracking-wider",
                       row: "flex w-full mt-2",
                       cell: cn(
                         "relative h-11 w-full text-center text-sm p-0 focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-transparent",
                         "first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
                       ),
                       day: cn(
-                        "h-10 w-10 p-0 font-bold aria-selected:opacity-100 hover:bg-slate-50 rounded-full transition-all mx-auto flex items-center justify-center"
+                        "h-10 w-10 p-0 font-normal aria-selected:opacity-100 hover:bg-slate-50 rounded-full transition-all mx-auto flex items-center justify-center"
                       ),
                       day_selected: "bg-blue-600 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white shadow-lg shadow-blue-200",
                       day_today: "bg-slate-100 text-slate-900",
@@ -325,9 +325,9 @@ export default function ComplianceCalendarPage() {
 
                         return (
                           <div className={cn(
-                            "relative w-full h-full flex items-center justify-center rounded-full transition-all",
-                            isSelected && !isSolid && "text-blue-600 font-black scale-110",
-                            isSolid && "bg-blue-600 text-white font-black shadow-lg shadow-blue-200 ring-2 ring-white"
+                            "relative w-full h-full flex items-center justify-center rounded-full transition-all font-normal",
+                            isSelected && !isSolid && "text-white font-medium scale-110",
+                            isSolid && "bg-blue-600 text-white shadow-lg shadow-blue-200 ring-2 ring-white"
                           )}>
                             {day}
                             {hasDot && !isSolid && !isSelected && (
@@ -343,12 +343,12 @@ export default function ComplianceCalendarPage() {
                   />
                 </div>
 
-                <div className="mt-auto p-7 bg-slate-50/50 border-t border-slate-50">
+                <div className="mt-auto p-8 bg-slate-50/50 border-t border-slate-50">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="flex -space-x-2">
                         {[1, 2, 3].map((_, i) => (
-                          <div key={i} className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-100 shadow-sm">
+                          <div key={i} className="w-8 h-8 rounded-full bg-white p-0.5 border border-slate-100 shadow-sm">
                             <div className={cn(
                               "w-full h-full rounded-full",
                               i === 0 ? "bg-blue-600" : i === 1 ? "bg-emerald-400" : "bg-violet-400"
@@ -357,13 +357,13 @@ export default function ComplianceCalendarPage() {
                         ))}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Global Sync</span>
-                        <span className="text-[8px] font-bold text-slate-400 uppercase mt-1">250+ Firms Verified</span>
+                        <span className="text-xs font-normal text-slate-900">Global Sync</span>
+                        <span className="text-[10px] font-normal text-slate-500">250+ Firms Verified</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-100 shadow-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-                      <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">LIVE FY 26-27</span>
+                      <span className="text-[10px] font-normal text-slate-600">LIVE FY 26-27</span>
                     </div>
                   </div>
                 </div>
@@ -372,7 +372,7 @@ export default function ComplianceCalendarPage() {
 
             {/* Compliance Details */}
             <div className="lg:col-span-7 space-y-8">
-              <Card className="rounded-[2.5rem] border-slate-100 shadow-xl shadow-slate-100/50 bg-white overflow-hidden">
+              <Card className="rounded-[32px] border-slate-100 shadow-sm bg-white overflow-hidden">
                 <div className="p-8">
                   <AnimatePresence mode="wait">
                     <m.div
@@ -384,59 +384,59 @@ export default function ComplianceCalendarPage() {
                     >
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-8 border-b border-slate-50">
                         <div className="flex items-center gap-5">
-                          <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100/50 shadow-inner">
-                            <CalendarDays className="w-6 h-6 text-indigo-600" />
+                          <div className="w-14 h-14 rounded-[20px] bg-indigo-50 flex items-center justify-center border border-indigo-100 shadow-inner">
+                            <CalendarDays className="w-7 h-7 text-indigo-600" />
                           </div>
                           <div>
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                            <h3 className="text-[28px] font-normal text-slate-900 tracking-tight">
                               {selectedDate ? selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Select a date'}
                             </h3>
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Active Compliance Requirements</p>
+                            <p className="text-slate-500 text-sm font-normal mt-1">Active Compliance Requirements</p>
                           </div>
                         </div>
-                        <div className="w-16 h-16 rounded-full border-4 border-indigo-50 bg-white flex flex-col items-center justify-center shadow-lg shadow-indigo-100">
-                          <span className="text-2xl font-black text-indigo-600 leading-none">{getComplianceForDate(selectedDate).length}</span>
-                          <span className="text-[8px] font-black text-indigo-400 uppercase tracking-widest mt-1">Due</span>
+                        <div className="w-16 h-16 rounded-full border-4 border-indigo-50 bg-white flex flex-col items-center justify-center shadow-sm">
+                          <span className="text-2xl font-normal text-indigo-600 leading-none">{getComplianceForDate(selectedDate).length}</span>
+                          <span className="text-[10px] font-normal text-indigo-400 mt-1">Due</span>
                         </div>
                       </div>
 
                       {getComplianceForDate(selectedDate).length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {getComplianceForDate(selectedDate).map((item, i) => (
-                            <m.div 
+                            <m.div
                               key={i}
                               whileHover={{ scale: 1.02, x: 4 }}
-                              className="group p-5 rounded-[2rem] bg-slate-50/50 border border-slate-100/50 hover:bg-white hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-500/5 transition-all cursor-pointer"
+                              className="group p-6 rounded-3xl bg-slate-50/50 border border-slate-100/50 hover:bg-white hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/5 transition-all cursor-pointer"
                             >
                               <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
                                   <div className={cn(
-                                    "w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black shadow-sm ring-4 ring-white transition-transform group-hover:rotate-6",
+                                    "w-12 h-12 rounded-[16px] flex items-center justify-center text-xs font-normal shadow-sm ring-4 ring-white transition-transform group-hover:rotate-6",
                                     REG_STYLES[item.reg as keyof typeof REG_STYLES]?.bg || "bg-slate-500",
                                     REG_STYLES[item.reg as keyof typeof REG_STYLES]?.text || "text-white"
                                   )}>
                                     {item.reg}
                                   </div>
                                   <div>
-                                    <p className="font-bold text-slate-900 text-sm">{item.activity}</p>
-                                    <div className="text-[10px] font-medium text-slate-400 flex items-center gap-1.5 mt-0.5">
+                                    <p className="font-normal text-slate-900 text-base">{item.activity}</p>
+                                    <div className="text-xs font-normal text-slate-500 flex items-center gap-2 mt-1">
                                       <div className={cn("w-1.5 h-1.5 rounded-full", REG_STYLES[item.reg as keyof typeof REG_STYLES]?.dot || "bg-slate-400")} />
-                                      {item.reg} Compliance Protocol
+                                      {item.reg} Compliance
                                     </div>
                                   </div>
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                                <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-400 transition-colors" />
                               </div>
                             </m.div>
                           ))}
                         </div>
                       ) : (
-                        <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50/30 rounded-[2.5rem] border border-dashed border-slate-200">
-                          <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                            <CheckCircle2 className="w-8 h-8 text-slate-300" />
+                        <div className="py-16 flex flex-col items-center justify-center text-center bg-slate-50/30 rounded-3xl border border-dashed border-slate-200">
+                          <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-6">
+                            <CheckCircle2 className="w-10 h-10 text-slate-400" />
                           </div>
-                          <p className="text-slate-400 font-bold text-sm">No statutory deadlines for this date</p>
-                          <p className="text-slate-300 text-xs mt-1">Enjoy your compliance-free day!</p>
+                          <p className="text-slate-600 font-normal text-lg">No statutory deadlines for this date</p>
+                          <p className="text-slate-500 text-sm mt-2 font-normal">Enjoy your compliance-free day!</p>
                         </div>
                       )}
                     </m.div>
@@ -445,19 +445,19 @@ export default function ComplianceCalendarPage() {
               </Card>
 
               {/* Upcoming Section inside the same column but outside the selection card */}
-              <div className="bg-slate-50/50 rounded-[3rem] p-8 space-y-6 border border-slate-100">
+              <div className="bg-white rounded-[32px] p-8 space-y-6 border border-slate-100 shadow-sm">
                 <div className="flex items-center justify-between px-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-100">
-                      <Clock className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 rounded-[14px] bg-indigo-50 flex items-center justify-center border border-indigo-100">
+                      <Clock className="w-5 h-5 text-indigo-600" />
                     </div>
-                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Next 60 Days</h4>
+                    <h4 className="text-lg font-normal text-slate-900">Next 60 Days</h4>
                   </div>
-                  <Link href="/calculators" className="text-[11px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-wider flex items-center gap-1 group">
-                    Full Schedule <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  <Link href="/calculators" className="text-sm font-normal text-indigo-600 hover:text-indigo-700 flex items-center gap-1 group">
+                    Full Schedule <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {upcomingItems.slice(0, 4).map((item, idx) => {
                     const s = REG_STYLES[item.reg] || REG_STYLES.GST;
@@ -468,16 +468,16 @@ export default function ComplianceCalendarPage() {
                         tabIndex={0}
                         onClick={() => setSelectedDate(item.date)}
                         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelectedDate(item.date)}
-                        className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-100 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-50/50 transition-all cursor-pointer group"
+                        className="flex items-center gap-4 p-5 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer group"
                       >
-                        <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 shrink-0 group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-all duration-300">
-                          <span className="text-sm font-black text-slate-900 group-hover:text-white leading-none">{item.date.getDate().toString().padStart(2, '0')}</span>
-                          <span className="text-[8px] font-bold text-slate-400 group-hover:text-white/70 uppercase mt-1">{item.date.toLocaleDateString('en-US', { month: 'short' })}</span>
+                        <div className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white border border-slate-100 shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-all duration-300 shadow-sm">
+                          <span className="text-xl font-normal text-slate-900 group-hover:text-indigo-700 leading-none">{item.date.getDate().toString().padStart(2, '0')}</span>
+                          <span className="text-[10px] font-normal text-slate-500 group-hover:text-indigo-600 mt-1">{item.date.toLocaleDateString('en-US', { month: 'short' })}</span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h5 className="text-xs font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">{item.activity}</h5>
-                          <div className={cn("inline-flex items-center gap-1.5 mt-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider", s.bg, s.text)}>
-                            <div className={cn("w-1 h-1 rounded-full", s.dot)} />
+                          <h5 className="text-sm font-normal text-slate-800 truncate group-hover:text-indigo-700 transition-colors">{item.activity}</h5>
+                          <div className={cn("inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full text-[10px] font-normal", s.bg, s.text)}>
+                            <div className={cn("w-1.5 h-1.5 rounded-full", s.dot)} />
                             {item.reg}
                           </div>
                         </div>
@@ -493,32 +493,32 @@ export default function ComplianceCalendarPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Category Legend - Horizontal */}
             <div className="lg:col-span-7">
-              <div className="h-full p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-xl shadow-slate-100/50 flex flex-col justify-between">
+              <div className="h-full p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-                      <Filter className="w-5 h-5 text-indigo-600" />
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-12 h-12 rounded-[16px] bg-indigo-50 flex items-center justify-center border border-indigo-100">
+                      <Filter className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-black text-slate-900 tracking-tight">Category Legend</h3>
-                      <p className="text-slate-500 text-[11px] font-medium">Classification by authority</p>
+                      <h3 className="text-2xl font-normal text-slate-900 tracking-tight">Category Legend</h3>
+                      <p className="text-slate-500 text-sm font-normal mt-1">Classification by authority</p>
                     </div>
                   </div>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {Object.entries(REG_STYLES).map(([reg, style]) => (
-                      <div key={reg} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50 hover:border-slate-200 transition-colors group">
-                        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0 shadow-sm text-white", style.darkBg)}>
+                      <div key={reg} className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/50 hover:border-slate-200 hover:bg-white transition-colors group">
+                        <div className={cn("w-10 h-10 rounded-[14px] flex items-center justify-center text-xs font-normal shrink-0 shadow-sm text-white", style.darkBg)}>
                           {reg}
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-bold text-slate-900 truncate">{reg}</p>
-                          <p className="text-[9px] font-medium text-slate-500 truncate">
-                            {reg === 'GST' ? 'GST Compliance' : 
-                             reg === 'IT' ? 'Income Tax' : 
-                             reg === 'MCA' ? 'Corporate Affairs' : 
-                             reg === 'PF/ESI' ? 'Regulatory' : 
-                             reg === 'RBI' ? 'Regulatory' : 'Statutory'}
+                        <div className="min-w-0 flex flex-col gap-0.5">
+                          <p className="text-sm font-normal text-slate-900 truncate leading-none m-0">{reg}</p>
+                          <p className="text-[11px] font-normal text-slate-500 truncate leading-none m-0">
+                            {reg === 'GST' ? 'GST Compliance' :
+                              reg === 'IT' ? 'Income Tax' :
+                                reg === 'MCA' ? 'Corporate Affairs' :
+                                  reg === 'PF/ESI' ? 'Regulatory' :
+                                    reg === 'RBI' ? 'Regulatory' : 'Statutory'}
                           </p>
                         </div>
                       </div>
@@ -530,61 +530,91 @@ export default function ComplianceCalendarPage() {
 
             {/* Deadline Alerts */}
             <div className="lg:col-span-5">
-              <Card className="h-full p-8 rounded-[2.5rem] bg-blue-50/50 border-blue-100/50 relative overflow-hidden group">
+              <Card className="h-full p-8 rounded-[32px] bg-indigo-50 border-indigo-100 relative overflow-hidden group shadow-none">
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
-                      <Bell className="w-5 h-5 text-white" />
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-[16px] bg-indigo-600 flex items-center justify-center shadow-md">
+                      <Bell className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-black text-slate-900 tracking-tight leading-none">Deadline Alerts</h3>
-                      <p className="text-[11px] font-bold text-blue-600/80 mt-1">Smart statutory reminders</p>
+                      <h3 className="text-2xl font-normal text-slate-900 tracking-tight leading-none">Deadline Alerts</h3>
+                      <p className="text-sm font-normal text-indigo-700 mt-2">Smart statutory reminders</p>
                     </div>
                   </div>
-                  <p className="text-slate-500 text-[11px] font-medium leading-relaxed mb-8 max-w-[280px]">
+                  <p className="text-slate-600 text-sm font-normal leading-relaxed mb-8 max-w-[280px]">
                     Never miss a statutory filing again. Get real-time notifications via WhatsApp and Email.
                   </p>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-12 font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-blue-100 transition-all flex items-center justify-center gap-2">
-                    <BellRing className="w-4 h-4" />
+                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl h-14 font-normal text-base shadow-md transition-all flex items-center justify-center gap-2">
+                    <BellRing className="w-5 h-5" />
                     Activate Alerts
                   </Button>
-                  <div className="flex items-center justify-center gap-2 mt-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Free for all active users</span>
+                  <div className="flex items-center justify-center gap-2 mt-6">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-normal text-slate-500">Free for all active users</span>
                   </div>
                 </div>
                 {/* Decorative element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-600/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
               </Card>
             </div>
           </div>
 
-          {/* Recent Compliance Activity Section */}
-          <Card className="rounded-[2.5rem] border-slate-100 shadow-xl shadow-slate-100/50 overflow-hidden bg-white">
-            <div className="p-8 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center">
-                  <ClipboardList className="w-6 h-6 text-slate-600" />
+          {/* Penalty Calculator Section */}
+          <Card className="rounded-[32px] border-amber-100 shadow-sm overflow-hidden bg-amber-50 relative group">
+            <div className="p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 rounded-[20px] bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-200 shrink-0">
+                  <ShieldAlert className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 tracking-tight">Recent Compliance Activity</h3>
-                  <p className="text-[11px] font-medium text-slate-400 italic">Audit log of latest statutory filings</p>
+                  <h3 className="text-2xl font-normal text-slate-900 tracking-tight">Missed a Statutory Deadline?</h3>
+                  <p className="text-sm font-normal text-amber-700 mt-2 max-w-lg">
+                    Don't guess your late fees. Use our Penalty Calculator to instantly compute exact late fees, interest, and statutory penalties for GST, IT, and MCA.
+                  </p>
                 </div>
               </div>
-              <Link href="#" className="text-blue-600 hover:text-blue-700 font-bold text-xs flex items-center gap-2 group transition-colors">
+              <div className="shrink-0 w-full md:w-auto flex flex-col items-center md:items-end">
+                <Link href="/calculators/penalty">
+                  <Button className="w-full md:w-auto bg-amber-500 hover:bg-amber-600 text-white rounded-2xl h-14 px-8 font-normal text-base shadow-md transition-all flex items-center justify-center gap-2">
+                    <Search className="w-5 h-5" />
+                    Calculate Penalty Now
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-xs font-normal text-slate-500">Statutory accuracy guaranteed</span>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-amber-500/5 rounded-full group-hover:scale-110 transition-transform duration-700" />
+          </Card>
+
+          {/* Recent Compliance Activity Section */}
+          <Card className="rounded-[32px] border-slate-100 shadow-sm overflow-hidden bg-white">
+            <div className="p-8 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 rounded-[20px] bg-white shadow-sm border border-slate-100 flex items-center justify-center">
+                  <ClipboardList className="w-7 h-7 text-slate-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-normal text-slate-900 tracking-tight">Recent Compliance Activity</h3>
+                  <p className="text-sm font-normal text-slate-500 mt-1">Audit log of latest statutory filings</p>
+                </div>
+              </div>
+              <Link href="#" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center gap-2 group transition-colors">
                 View all activity <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Regulatory Body</th>
-                    <th className="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Compliance Activity</th>
-                    <th className="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Due Date</th>
-                    <th className="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                    <th className="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
+                    <th className="px-8 py-5 text-left text-xs font-normal text-slate-500">Regulatory Body</th>
+                    <th className="px-8 py-5 text-left text-xs font-normal text-slate-500">Compliance Activity</th>
+                    <th className="px-8 py-5 text-left text-xs font-normal text-slate-500">Due Date</th>
+                    <th className="px-8 py-5 text-left text-xs font-normal text-slate-500">Status</th>
+                    <th className="px-8 py-5 text-right text-xs font-normal text-slate-500">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -596,33 +626,33 @@ export default function ComplianceCalendarPage() {
                     { reg: 'PF/ESI', activity: 'Monthly ECR Filing', date: 'Apr 15, 2026', status: 'Pending' },
                   ].map((item, idx) => (
                     <tr key={idx} className="group hover:bg-slate-50/50 transition-colors">
-                      <td className="px-8 py-4">
+                      <td className="px-8 py-5">
                         <div className="flex items-center gap-3">
-                          <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-[8px] font-black text-white shadow-sm", REG_STYLES[item.reg as keyof typeof REG_STYLES]?.darkBg || "bg-slate-600")}>
+                          <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-[10px] font-normal text-white shadow-sm", REG_STYLES[item.reg as keyof typeof REG_STYLES]?.darkBg || "bg-slate-600")}>
                             {item.reg}
                           </div>
-                          <span className="text-xs font-bold text-slate-700">{item.reg}</span>
+                          <span className="text-sm font-normal text-slate-800">{item.reg}</span>
                         </div>
                       </td>
-                      <td className="px-8 py-4">
-                        <p className="text-xs font-bold text-slate-900">{item.activity}</p>
-                        <p className="text-[10px] font-medium text-slate-400">Statutory Filing Protocol</p>
+                      <td className="px-8 py-5">
+                        <p className="text-sm font-normal text-slate-900">{item.activity}</p>
+                        <p className="text-xs font-normal text-slate-500 mt-1">Statutory Filing Protocol</p>
                       </td>
-                      <td className="px-8 py-4">
-                        <span className="text-xs font-medium text-slate-600">{item.date}</span>
+                      <td className="px-8 py-5">
+                        <span className="text-sm font-normal text-slate-600">{item.date}</span>
                       </td>
-                      <td className="px-8 py-4">
+                      <td className="px-8 py-5">
                         <Badge className={cn(
-                          "rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-wider",
-                          item.status === 'Completed' ? "bg-blue-600 text-white" : 
-                          item.status === 'Pending' ? "bg-orange-500 text-white" : "bg-slate-100 text-slate-600"
+                          "rounded-full px-4 py-1.5 text-[11px] font-normal",
+                          item.status === 'Completed' ? "bg-emerald-100 text-emerald-700" :
+                            item.status === 'Pending' ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-600"
                         )}>
                           {item.status}
                         </Badge>
                       </td>
-                      <td className="px-8 py-4 text-right">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-white hover:shadow-md transition-all">
-                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                      <td className="px-8 py-5 text-right">
+                        <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-xl hover:bg-white hover:shadow-sm transition-all">
+                          <ChevronRight className="w-5 h-5 text-slate-400" />
                         </Button>
                       </td>
                     </tr>
@@ -630,18 +660,18 @@ export default function ComplianceCalendarPage() {
                 </tbody>
               </table>
             </div>
-            
+
             <div className="p-6 bg-slate-50/30 border-t border-slate-50 text-center">
-              <Link href="#" className="text-blue-600 hover:text-blue-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 group transition-all">
-                View all compliance activity <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              <Link href="#" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center justify-center gap-2 group transition-all">
+                View all compliance activity <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </Card>
 
           {/* Footer Note */}
           <div className="flex items-center justify-center gap-2 pt-8 text-slate-400">
-            <ShieldCheck className="w-5 h-5 text-slate-300" />
-            <p className="text-[11px] font-black uppercase tracking-widest">Secure. Reliable. Compliant.</p>
+            <ShieldCheck className="w-5 h-5 text-slate-400" />
+            <p className="text-sm font-normal">Secure. Reliable. Compliant.</p>
           </div>
         </div>
       </CalcLayout>

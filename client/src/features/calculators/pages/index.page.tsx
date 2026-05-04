@@ -142,12 +142,12 @@ function ToolCard({ calc, color, bg, border, index }: { calc: any; color: string
               {(calc.isPopular || calc.isNew) && (
                 <div className="flex flex-col gap-1 items-end">
                   {calc.isPopular && (
-                    <span className="text-[9px] font-black uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg bg-amber-400/10 text-amber-600 border border-amber-400/20 backdrop-blur-sm">
+                    <span className="text-[9px] font-normal uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg bg-amber-400/10 text-amber-600 border border-amber-400/20 backdrop-blur-sm">
                       Popular
                     </span>
                   )}
                   {calc.isNew && (
-                    <span className="text-[9px] font-black uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg bg-violet-400/10 text-violet-600 border border-violet-400/20 backdrop-blur-sm">
+                    <span className="text-[9px] font-normal uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg bg-violet-400/10 text-violet-600 border border-violet-400/20 backdrop-blur-sm">
                       Brand New
                     </span>
                   )}
@@ -155,7 +155,7 @@ function ToolCard({ calc, color, bg, border, index }: { calc: any; color: string
               )}
             </div>
 
-            <h3 className="text-base font-black text-slate-800 mb-2 leading-tight group-hover:text-slate-900 transition-colors">
+            <h3 className="text-base font-normal text-slate-800 mb-2 leading-tight group-hover:text-slate-900 transition-colors">
               {calc.name}
             </h3>
             <p className="text-xs font-medium text-slate-500 leading-relaxed flex-1 opacity-80 group-hover:opacity-100 transition-opacity">
@@ -165,7 +165,7 @@ function ToolCard({ calc, color, bg, border, index }: { calc: any; color: string
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100/50">
               <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-all">
                 <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Free Tool</span>
+                <span className="text-[10px] font-normal text-slate-400 uppercase tracking-widest">Free Tool</span>
               </div>
               <div 
                 className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-500 group-hover:translate-x-1 shadow-sm group-hover:shadow-md" 
@@ -236,7 +236,7 @@ export default function CalculatorsPage() {
                 <m.div
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200 bg-white shadow-sm text-slate-500 text-[10px] font-black uppercase tracking-widest mb-6"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200 bg-white shadow-sm text-slate-500 text-[10px] font-normal uppercase tracking-widest mb-6"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-violet-500" />
                   Financial Intelligence Hub
@@ -246,7 +246,7 @@ export default function CalculatorsPage() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-5"
+                  className="text-4xl md:text-5xl lg:text-6xl font-normal text-slate-900 leading-[1.1] tracking-tight mb-5"
                 >
                   Calculate with{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Precision</span>
@@ -274,7 +274,7 @@ export default function CalculatorsPage() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search calculators..."
-                        className="w-full h-12 pl-12 pr-4 rounded-2xl bg-slate-50/50 border border-slate-100 text-slate-700 text-sm font-medium placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold"
+                        className="w-full h-12 pl-12 pr-4 rounded-2xl bg-slate-50/50 border border-slate-100 text-slate-700 text-sm font-normal placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
                       />
                     </div>
                     <div className="flex gap-1 p-1 bg-slate-50 rounded-2xl border border-slate-100 overflow-x-auto no-scrollbar">
@@ -283,7 +283,7 @@ export default function CalculatorsPage() {
                           key={opt.id}
                           onClick={() => setActiveCategory(opt.id)}
                           className={cn(
-                            "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
+                            "px-5 py-2.5 rounded-xl text-[10px] font-normal uppercase tracking-wider transition-all whitespace-nowrap",
                             activeCategory === opt.id
                               ? "bg-slate-900 text-white shadow-lg shadow-slate-300"
                               : "text-slate-400 hover:text-slate-700 hover:bg-white"
@@ -316,10 +316,10 @@ export default function CalculatorsPage() {
                       <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                         <s.icon className="w-6 h-6" />
                       </div>
-                      <div className="text-2xl font-black text-slate-800 tabular-nums tracking-tighter leading-none mb-2">
+                      <div className="text-2xl font-normal text-slate-800 tabular-nums tracking-tighter leading-none mb-2">
                         {s.value}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-black uppercase tracking-[0.1em] leading-tight opacity-80">
+                      <div className="text-[10px] text-slate-400 font-normal uppercase tracking-[0.1em] leading-tight opacity-80">
                         {s.label}
                       </div>
                     </m.div>
@@ -335,11 +335,11 @@ export default function CalculatorsPage() {
           {filtered.length === 0 ? (
             <div className="text-center py-24">
               <Calculator className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-              <p className="text-slate-400 font-semibold text-lg">No tools found for "{searchTerm}"</p>
+              <p className="text-slate-400 font-normal text-lg">No tools found for "{searchTerm}"</p>
             </div>
           ) : isFiltering ? (
             <div>
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-6">{filtered.length} tool{filtered.length !== 1 ? "s" : ""} found</p>
+              <p className="text-xs text-slate-400 font-normal uppercase tracking-widest mb-6">{filtered.length} tool{filtered.length !== 1 ? "s" : ""} found</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filtered.map((c, i) => <ToolCard key={i} calc={c} color={c.color} bg={c.bg} border={c.border} index={i} />)}
               </div>
@@ -352,9 +352,9 @@ export default function CalculatorsPage() {
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
                       <cat.icon className="w-4 h-4" style={{ color: cat.color }} />
                     </div>
-                    <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">{cat.name}</h2>
+                    <h2 className="text-lg font-normal text-slate-800 tracking-tight">{cat.name}</h2>
                     <div className="flex-1 h-px bg-slate-200" />
-                    <button onClick={() => setActiveCategory(cat.id)} className="text-xs font-bold text-slate-400 hover:text-slate-700 flex items-center gap-0.5 transition-colors whitespace-nowrap">
+                    <button onClick={() => setActiveCategory(cat.id)} className="text-xs font-normal text-slate-400 hover:text-slate-700 flex items-center gap-0.5 transition-colors whitespace-nowrap">
                       See all <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -382,7 +382,7 @@ export default function CalculatorsPage() {
                 <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3">
                   <Icon className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-sm font-bold text-slate-700">{label}</p>
+                <p className="text-sm font-normal text-slate-700">{label}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
               </div>
             ))}
@@ -392,20 +392,20 @@ export default function CalculatorsPage() {
         {/* CTA */}
         <section className="bg-white py-20 border-t border-slate-100">
           <div className="max-w-4xl mx-auto px-4 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-normal uppercase tracking-widest mb-6">
               <Award className="w-3.5 h-3.5 text-blue-600" />
               Expert Consultation
             </div>
-            <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Need a <span className="text-blue-600">CA's Advice?</span></h2>
+            <h2 className="text-4xl font-normal text-slate-900 mb-4 tracking-tight">Need a <span className="text-blue-600">CA's Advice?</span></h2>
             <p className="text-slate-500 text-lg mb-10 font-medium">Our calculators give you the numbers. Our Chartered Accountants give you the strategy.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/itr/filing">
-                <Button size="lg" className="px-10 h-14 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-base shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-0.5">
+                <Button size="lg" className="px-10 h-14 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-normal text-base shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-0.5">
                   Start ITR Filing
                 </Button>
               </Link>
               <Link href="/services">
-                <Button size="lg" variant="outline" className="px-10 h-14 rounded-xl border-slate-200 text-slate-700 font-bold text-base hover:bg-slate-50 transition-all hover:-translate-y-0.5 shadow-sm">
+                <Button size="lg" variant="outline" className="px-10 h-14 rounded-xl border-slate-200 text-slate-700 font-normal text-base hover:bg-slate-50 transition-all hover:-translate-y-0.5 shadow-sm">
                   Explore Services
                 </Button>
               </Link>

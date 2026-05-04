@@ -49,19 +49,19 @@ export default function TaxStepIndicator({ steps, currentStep, onStepClick }: Ta
                 {isCompleted ? (
                   <Check className="w-5 h-5 stroke-[3px]" />
                 ) : (
-                  <span className="text-sm font-bold">{index + 1}</span>
+                  <span className="text-sm font-normal">{index + 1}</span>
                 )}
               </div>
               
               <div className="mt-3 text-center">
                 <span className={cn(
-                  "block text-[11px] font-black uppercase tracking-wider transition-colors",
+                  "block text-[11px] font-normal uppercase tracking-wider transition-colors",
                   isActive ? "text-slate-900" : "text-slate-400"
                 )}>
                   {step.label}
                 </span>
                 <span className={cn(
-                   "hidden md:block text-[10px] font-bold text-slate-300 mt-0.5 whitespace-nowrap",
+                   "hidden md:block text-[10px] font-normal text-slate-300 mt-0.5 whitespace-nowrap",
                    isActive && "text-blue-500/60"
                 )}>
                   {step.description}

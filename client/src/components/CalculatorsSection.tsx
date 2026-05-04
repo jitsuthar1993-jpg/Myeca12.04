@@ -210,9 +210,9 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
                           </div>
                         </Link>
                       </Card>
-                </m.div>
-              );
-            })}
+                  </div>
+                );
+              })}
             </div>
           </m.div>
         )}

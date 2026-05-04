@@ -259,7 +259,7 @@ export default function TaxRegimeCalculator() {
             <m.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 text-[11px] font-normal uppercase tracking-widest mb-6 shadow-sm"
             >
               <Scale className="w-3.5 h-3.5" />
               Regime Comparator
@@ -267,7 +267,7 @@ export default function TaxRegimeCalculator() {
             <m.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6"
+              className="text-4xl md:text-5xl lg:text-6xl font-normal text-slate-900 tracking-tight leading-tight mb-6"
             >
               Old vs <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">New Regime</span>
             </m.h1>
@@ -275,7 +275,7 @@ export default function TaxRegimeCalculator() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-slate-500 max-w-2xl mx-auto font-medium"
+              className="text-lg text-slate-500 max-w-2xl mx-auto font-normal"
             >
               Discover which tax regime helps you save more money. Compare side-by-side with the latest FY 2024-25 rates.
             </m.p>
@@ -298,24 +298,24 @@ export default function TaxRegimeCalculator() {
                       <Calculator className="w-6 h-6" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Your Details</h2>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Income & Deductions</p>
+                      <h2 className="text-xl font-normal text-slate-900 tracking-tight">Your Details</h2>
+                      <p className="text-xs font-normal text-slate-400 uppercase tracking-wider">Income & Deductions</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="p-8 space-y-6">
                   <div className="space-y-3">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                    <Label className="text-[11px] font-normal uppercase tracking-widest text-slate-400 block">
                       Assessment Year
                     </Label>
                     <Select value={selectedYear} onValueChange={setSelectedYear}>
-                      <SelectTrigger className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white focus:ring-4 focus:ring-blue-100">
+                      <SelectTrigger className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-normal focus:bg-white focus:ring-4 focus:ring-blue-100">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-slate-100 shadow-xl">
                         {assessmentYears.map((year) => (
-                          <SelectItem key={year.value} value={year.value} className="font-bold text-slate-700">
+                          <SelectItem key={year.value} value={year.value} className="font-normal text-slate-700">
                             {year.label}
                           </SelectItem>
                         ))}
@@ -324,7 +324,7 @@ export default function TaxRegimeCalculator() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                    <Label className="text-[11px] font-normal uppercase tracking-widest text-slate-400 block">
                       Gross Annual Income
                     </Label>
                     <div className="relative group">
@@ -334,14 +334,14 @@ export default function TaxRegimeCalculator() {
                         placeholder="0"
                         value={income}
                         onChange={(e) => setIncome(e.target.value)}
-                        className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-blue-100"
+                        className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-normal focus:bg-white transition-all focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block">
+                      <Label className="text-[11px] font-normal uppercase tracking-widest text-slate-400 block">
                         Total Deductions (80C, 80D)
                       </Label>
                     </div>
@@ -352,16 +352,16 @@ export default function TaxRegimeCalculator() {
                         placeholder="0"
                         value={deductions}
                         onChange={(e) => setDeductions(e.target.value)}
-                        className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-black focus:bg-white transition-all focus:ring-4 focus:ring-blue-100"
+                        className="h-14 pl-12 rounded-2xl border-slate-100 bg-slate-50/50 text-lg font-normal focus:bg-white transition-all focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Standard Deduction (50k/75k) is applied automatically</p>
+                    <p className="text-[10px] font-normal text-slate-400 uppercase tracking-widest">Standard Deduction (50k/75k) is applied automatically</p>
                   </div>
 
                   <Button
                     onClick={handleCalculate}
                     disabled={!income}
-                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black shadow-lg shadow-blue-200 hover:-translate-y-0.5 transition-all text-lg"
+                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-normal shadow-lg shadow-blue-200 hover:-translate-y-0.5 transition-all text-lg"
                   >
                     Compare Now <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
@@ -374,9 +374,9 @@ export default function TaxRegimeCalculator() {
                     <ShieldCheck className="w-5 h-5 text-slate-400" />
                  </div>
                  <div>
-                    <h3 className="text-sm font-black text-slate-900 mb-1 tracking-tight">Accurate Estimations</h3>
-                    <p className="text-xs font-medium text-slate-500 mb-3">Calculations use default Budget 2024 rates. For precise planning, verify with current notifications.</p>
-                    <Button variant="outline" size="sm" onClick={searchTaxRates} disabled={isSearching} className="h-8 rounded-lg text-xs font-bold border-slate-200">
+                    <h3 className="text-sm font-normal text-slate-900 mb-1 tracking-tight">Accurate Estimations</h3>
+                    <p className="text-xs font-normal text-slate-500 mb-3">Calculations use default Budget 2024 rates. For precise planning, verify with current notifications.</p>
+                    <Button variant="outline" size="sm" onClick={searchTaxRates} disabled={isSearching} className="h-8 rounded-lg text-xs font-normal border-slate-200">
                        {isSearching ? 'Opening...' : 'Verify Rates on Google'}
                     </Button>
                  </div>
@@ -406,20 +406,20 @@ export default function TaxRegimeCalculator() {
                         </div>
                         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:justify-between gap-6">
                            <div>
-                              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-[10px] font-black uppercase tracking-widest mb-4">
+                              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-[10px] font-normal uppercase tracking-widest mb-4">
                                  Recommendation
                               </div>
-                              <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-2">
+                              <h3 className="text-2xl md:text-3xl font-normal tracking-tight mb-2">
                                  {recommendation.regime === 'new' ? 'Choose New Regime' : recommendation.regime === 'old' ? 'Choose Old Regime' : 'Both are Similar'}
                               </h3>
-                              <p className="text-white/80 font-medium">
+                              <p className="text-white/80 font-normal">
                                  {recommendation.text}
                               </p>
                            </div>
                            {recommendation.savings > 0 && (
                               <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 text-center min-w-[160px] border border-white/20">
-                                 <span className="text-[10px] font-black uppercase tracking-widest text-white/70 block mb-1">You Save</span>
-                                 <span className="text-3xl font-black tracking-tighter">₹{recommendation.savings.toLocaleString()}</span>
+                                 <span className="text-[10px] font-normal uppercase tracking-widest text-white/70 block mb-1">You Save</span>
+                                 <span className="text-3xl font-normal tracking-tighter">₹{recommendation.savings.toLocaleString()}</span>
                               </div>
                            )}
                         </div>
@@ -432,40 +432,40 @@ export default function TaxRegimeCalculator() {
                       {/* Old Regime Card */}
                       <div className="bg-white rounded-[2.5rem] border-2 border-indigo-50 shadow-sm overflow-hidden flex flex-col">
                         <div className="p-6 bg-indigo-50/50 border-b border-indigo-50 text-center">
-                          <h4 className="font-black text-indigo-900 tracking-tight text-lg mb-1">Old Regime</h4>
+                          <h4 className="font-normal text-indigo-900 tracking-tight text-lg mb-1">Old Regime</h4>
                           <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 text-[10px] uppercase tracking-widest border-0">Traditional</Badge>
                         </div>
                         <div className="p-6 space-y-6 flex-1">
                           <div className="text-center">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Tax Payable</span>
-                            <div className="text-4xl font-black tracking-tighter text-slate-900">
+                            <span className="text-[10px] font-normal uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Tax Payable</span>
+                            <div className="text-4xl font-normal tracking-tighter text-slate-900">
                               ₹{calculations.oldRegime.taxPayable.toLocaleString()}
                             </div>
                           </div>
 
                           <div className="space-y-3 pt-6 border-t border-slate-100">
                             <div className="flex justify-between items-center py-1">
-                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gross</span>
-                              <span className="font-black text-slate-900">₹{calculations.oldRegime.grossIncome.toLocaleString()}</span>
+                              <span className="text-xs font-normal text-slate-500 uppercase tracking-wider">Gross</span>
+                              <span className="font-normal text-slate-900">₹{calculations.oldRegime.grossIncome.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center py-1">
-                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deductions</span>
-                              <span className="font-black text-slate-900">-₹{(Number(deductions) + 50000).toLocaleString()}</span>
+                              <span className="text-xs font-normal text-slate-500 uppercase tracking-wider">Deductions</span>
+                              <span className="font-normal text-slate-900">-₹{(Number(deductions) + 50000).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center py-1">
-                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Taxable</span>
-                              <span className="font-black text-indigo-600">₹{calculations.oldRegime.taxableIncome.toLocaleString()}</span>
+                              <span className="text-xs font-normal text-slate-500 uppercase tracking-wider">Taxable</span>
+                              <span className="font-normal text-indigo-600">₹{calculations.oldRegime.taxableIncome.toLocaleString()}</span>
                             </div>
                           </div>
 
                           {calculations.oldRegime.slabWiseBreakdown.length > 0 && (
                             <div className="pt-6 border-t border-slate-100">
-                               <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Slab Breakdown</h5>
+                               <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-3">Slab Breakdown</h5>
                                <div className="space-y-2">
                                   {calculations.oldRegime.slabWiseBreakdown.map((slab, i) => (
                                      <div key={i} className="flex justify-between text-xs">
-                                        <span className="text-slate-500 font-medium">{slab.slab}</span>
-                                        <span className="font-bold text-slate-700">₹{slab.tax.toLocaleString()}</span>
+                                        <span className="text-slate-500 font-normal">{slab.slab}</span>
+                                        <span className="font-normal text-slate-700">₹{slab.tax.toLocaleString()}</span>
                                      </div>
                                   ))}
                                </div>
@@ -477,40 +477,40 @@ export default function TaxRegimeCalculator() {
                       {/* New Regime Card */}
                       <div className="bg-white rounded-[2.5rem] border-2 border-emerald-50 shadow-sm overflow-hidden flex flex-col">
                         <div className="p-6 bg-emerald-50/50 border-b border-emerald-50 text-center">
-                          <h4 className="font-black text-emerald-900 tracking-tight text-lg mb-1">New Regime</h4>
+                          <h4 className="font-normal text-emerald-900 tracking-tight text-lg mb-1">New Regime</h4>
                           <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[10px] uppercase tracking-widest border-0">Default from FY24</Badge>
                         </div>
                         <div className="p-6 space-y-6 flex-1">
                           <div className="text-center">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Tax Payable</span>
-                            <div className="text-4xl font-black tracking-tighter text-slate-900">
+                            <span className="text-[10px] font-normal uppercase tracking-[0.2em] text-slate-400 block mb-2">Total Tax Payable</span>
+                            <div className="text-4xl font-normal tracking-tighter text-slate-900">
                               ₹{calculations.newRegime.taxPayable.toLocaleString()}
                             </div>
                           </div>
 
                           <div className="space-y-3 pt-6 border-t border-slate-100">
                             <div className="flex justify-between items-center py-1">
-                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gross</span>
-                              <span className="font-black text-slate-900">₹{calculations.newRegime.grossIncome.toLocaleString()}</span>
+                              <span className="text-xs font-normal text-slate-500 uppercase tracking-wider">Gross</span>
+                              <span className="font-normal text-slate-900">₹{calculations.newRegime.grossIncome.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center py-1">
-                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Std. Ded.</span>
-                              <span className="font-black text-slate-900">-₹75,000</span>
+                              <span className="text-xs font-normal text-slate-500 uppercase tracking-wider">Std. Ded.</span>
+                              <span className="font-normal text-slate-900">-₹75,000</span>
                             </div>
                             <div className="flex justify-between items-center py-1">
-                              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Taxable</span>
-                              <span className="font-black text-emerald-600">₹{calculations.newRegime.taxableIncome.toLocaleString()}</span>
+                              <span className="text-xs font-normal text-slate-500 uppercase tracking-wider">Taxable</span>
+                              <span className="font-normal text-emerald-600">₹{calculations.newRegime.taxableIncome.toLocaleString()}</span>
                             </div>
                           </div>
 
                           {calculations.newRegime.slabWiseBreakdown.length > 0 && (
                             <div className="pt-6 border-t border-slate-100">
-                               <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Slab Breakdown</h5>
+                               <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-3">Slab Breakdown</h5>
                                <div className="space-y-2">
                                   {calculations.newRegime.slabWiseBreakdown.map((slab, i) => (
                                      <div key={i} className="flex justify-between text-xs">
-                                        <span className="text-slate-500 font-medium">{slab.slab}</span>
-                                        <span className="font-bold text-slate-700">₹{slab.tax.toLocaleString()}</span>
+                                        <span className="text-slate-500 font-normal">{slab.slab}</span>
+                                        <span className="font-normal text-slate-700">₹{slab.tax.toLocaleString()}</span>
                                      </div>
                                   ))}
                                </div>
@@ -530,8 +530,8 @@ export default function TaxRegimeCalculator() {
                     <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6">
                       <Scale className="w-10 h-10 text-slate-300" />
                     </div>
-                    <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2">Compare Regimes</h3>
-                    <p className="text-slate-500 font-medium max-w-sm">Enter your income and deductions to instantly see which tax regime works best for you.</p>
+                    <h3 className="text-xl font-normal text-slate-900 tracking-tight mb-2">Compare Regimes</h3>
+                    <p className="text-slate-500 font-normal max-w-sm">Enter your income and deductions to instantly see which tax regime works best for you.</p>
                   </m.div>
                 )}
               </AnimatePresence>
@@ -544,35 +544,35 @@ export default function TaxRegimeCalculator() {
         <section className="max-w-7xl mx-auto px-4 mt-24">
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
             <div className="max-w-3xl">
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-6">
+              <h2 className="text-3xl font-normal text-slate-900 tracking-tight mb-6">
                 Old vs New Tax Regime: Which is Better? (FY 2024-25)
               </h2>
-              <div className="space-y-6 text-slate-600 font-medium leading-relaxed">
+              <div className="space-y-6 text-slate-600 font-normal leading-relaxed">
                 <p>
                   Choosing between the Old and New Tax Regimes is one of the most critical financial decisions taxpayers face. The New Tax Regime offers lower tax slab rates but strips away most deductions. In contrast, the Old Tax Regime retains higher tax rates but allows you to reduce your taxable income using deductions like Section 80C, HRA, and home loan interest.
                 </p>
                 
-                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                <h3 className="text-xl font-normal text-slate-900 tracking-tight mt-8 mb-4">
                   The New Tax Regime (Default)
                 </h3>
                 <p>
                   As of FY 2023-24, the New Regime is the default option. If you do not explicitly choose the Old Regime with your employer or while filing ITR, your taxes will be computed under the New Regime. It is generally beneficial for individuals who do not have significant tax-saving investments or home loans. Notably, it offers a Standard Deduction of ₹75,000 for salaried employees and zero tax on income up to ₹7 Lakhs due to Section 87A rebate.
                 </p>
 
-                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                <h3 className="text-xl font-normal text-slate-900 tracking-tight mt-8 mb-4">
                   The Old Tax Regime
                 </h3>
                 <p>
                   The Old Regime rewards disciplined saving. It allows a multitude of deductions:
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
-                  <li><strong className="text-slate-900 font-bold">Section 80C:</strong> Up to ₹1.5 Lakhs (PPF, ELSS, EPF, Life Insurance).</li>
-                  <li><strong className="text-slate-900 font-bold">Section 80D:</strong> Medical insurance premiums.</li>
-                  <li><strong className="text-slate-900 font-bold">Section 24(b):</strong> Up to ₹2 Lakhs on home loan interest.</li>
-                  <li><strong className="text-slate-900 font-bold">HRA & LTA:</strong> Exemptions for rent and travel.</li>
+                  <li><strong className="text-slate-900 font-normal">Section 80C:</strong> Up to ₹1.5 Lakhs (PPF, ELSS, EPF, Life Insurance).</li>
+                  <li><strong className="text-slate-900 font-normal">Section 80D:</strong> Medical insurance premiums.</li>
+                  <li><strong className="text-slate-900 font-normal">Section 24(b):</strong> Up to ₹2 Lakhs on home loan interest.</li>
+                  <li><strong className="text-slate-900 font-normal">HRA & LTA:</strong> Exemptions for rent and travel.</li>
                 </ul>
 
-                <h3 className="text-xl font-black text-slate-900 tracking-tight mt-8 mb-4">
+                <h3 className="text-xl font-normal text-slate-900 tracking-tight mt-8 mb-4">
                   The Break-Even Point
                 </h3>
                 <p>
@@ -585,7 +585,7 @@ export default function TaxRegimeCalculator() {
 
             {/* FAQs */}
             <div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-8 flex items-center gap-2">
+              <h2 className="text-2xl font-normal text-slate-900 tracking-tight mb-8 flex items-center gap-2">
                 <Info className="w-6 h-6 text-indigo-500" />
                 Frequently Asked Questions
               </h2>
@@ -597,8 +597,8 @@ export default function TaxRegimeCalculator() {
                   { q: "What if my income is exactly ₹7.5 Lakhs?", a: "Under the New Regime, a salaried individual with ₹7.5L income pays ZERO tax (₹7.5L - ₹75k standard deduction = ₹6.75L taxable, which is under the ₹7L rebate limit)." }
                 ].map((faq, idx) => (
                   <div key={idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
-                    <h4 className="font-black text-slate-900 mb-2">{faq.q}</h4>
-                    <p className="text-sm font-medium text-slate-600">{faq.a}</p>
+                    <h4 className="font-normal text-slate-900 mb-2">{faq.q}</h4>
+                    <p className="text-sm font-normal text-slate-600">{faq.a}</p>
                   </div>
                 ))}
               </div>

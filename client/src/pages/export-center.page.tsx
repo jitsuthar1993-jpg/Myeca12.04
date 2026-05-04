@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { addDays, format } from "date-fns";
-import Layout from "@/components/Layout";
+import { Layout } from "@/components/admin/Layout";
 import { cn } from "@/lib/utils";
 
 // Export types
@@ -446,6 +446,6 @@ export default function ExportCenterPage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

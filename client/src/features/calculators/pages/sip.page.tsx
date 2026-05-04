@@ -81,11 +81,11 @@ export default function SIPCalculator() {
               <CalcResultRow label="Maturity Value" value={fmt(result.maturityValue)} variant="highlight" className="pt-4 border-t border-white/20" />
               
               <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Growth Analysis</p>
+                <p className="text-[10px] font-normal text-slate-500 uppercase tracking-widest mb-2">Growth Analysis</p>
                 <div className="space-y-2">
                    <div className="flex justify-between items-center">
-                    <span className="text-[11px] font-medium text-slate-400">Wealth Multiple</span>
-                    <span className="text-xs font-bold text-blue-600">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
+                    <span className="text-[11px] font-normal text-slate-400">Wealth Multiple</span>
+                    <span className="text-xs font-normal text-blue-600">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
                   </div>
                   <div className="w-full bg-slate-200/50 h-1.5 rounded-full overflow-hidden">
                     <div 
@@ -98,7 +98,7 @@ export default function SIPCalculator() {
               </div>
 
               <Link href="/services/wealth-management">
-                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
+                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
                   <Zap className="w-4 h-4 text-yellow-400" />
                   Optimize Portfolio Now
                 </button>
@@ -186,11 +186,11 @@ export default function SIPCalculator() {
                       if (active && payload && payload.length) {
                         return (
                           <div className="bg-white border border-slate-100 p-4 rounded-xl shadow-xl">
-                            <p className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Year {label}</p>
-                            <p className="text-sm font-bold text-slate-900 flex justify-between gap-8">
+                            <p className="text-[10px] font-normal text-slate-400 mb-2 uppercase tracking-widest">Year {label}</p>
+                            <p className="text-sm font-normal text-slate-900 flex justify-between gap-8">
                               Total: <span className="text-blue-600">{fmt(payload[0].value as number)}</span>
                             </p>
-                            <p className="text-sm font-bold text-slate-900 flex justify-between gap-8">
+                            <p className="text-sm font-normal text-slate-900 flex justify-between gap-8">
                               Invested: <span className="text-slate-500">{fmt(payload[1].value as number)}</span>
                             </p>
                           </div>

@@ -154,10 +154,10 @@ export default function RegimeComparatorPage() {
         sidebar={
           <CalcGlassSidebar title="Savings Analysis">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Recommended Choice</p>
+              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Recommended Choice</p>
               <div className="flex items-baseline gap-2">
-                <p className="text-3xl font-bold text-slate-900 tracking-tight">{calculations.betterRegime}</p>
-                <div className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-bold uppercase">Optimized</div>
+                <p className="text-3xl font-normal text-slate-900 tracking-tight">{calculations.betterRegime}</p>
+                <div className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-normal uppercase">Optimized</div>
               </div>
             </div>
 
@@ -169,16 +169,16 @@ export default function RegimeComparatorPage() {
                 <div className="bg-blue-600 rounded-2xl p-5 text-white shadow-xl shadow-blue-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Net Savings</span>
+                    <span className="text-[10px] font-normal uppercase tracking-widest">Net Savings</span>
                   </div>
-                  <p className="text-3xl font-black tabular-nums">{fmt(calculations.savings)}</p>
-                  <p className="text-[10px] font-bold text-blue-100 mt-2 italic">Per financial year</p>
+                  <p className="text-3xl font-normal tabular-nums">{fmt(calculations.savings)}</p>
+                  <p className="text-[10px] font-normal text-blue-100 mt-2 italic">Per financial year</p>
                 </div>
               </div>
             </div>
 
             <Link href="/services/tax-planning">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 Talk to a Tax Expert
               </button>
             </Link>
@@ -272,14 +272,14 @@ export default function RegimeComparatorPage() {
             <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-emerald-500" />
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total: {fmt(calculations.oldDeductions)}</span>
+                <span className="text-[10px] font-normal text-slate-400 uppercase tracking-widest">Total: {fmt(calculations.oldDeductions)}</span>
               </div>
-              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest italic">Ignored in New Regime</p>
+              <p className="text-[10px] font-normal text-amber-600 uppercase tracking-widest italic">Ignored in New Regime</p>
             </div>
           </CalcInputCard>
 
           <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8">
-            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <h3 className="text-lg font-normal text-slate-900 mb-6 flex items-center gap-2">
               <Scale className="w-5 h-5 text-blue-500" />
               Regime Comparison Highlights
             </h3>
@@ -291,8 +291,8 @@ export default function RegimeComparatorPage() {
                 { label: "Taxable Income (New)", value: fmt(calculations.grossIncome - 75000) }
               ].map((item, idx) => (
                 <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
-                  <p className="text-base font-black text-slate-900">{item.value}</p>
+                  <p className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
+                  <p className="text-base font-normal text-slate-900">{item.value}</p>
                 </div>
               ))}
             </div>

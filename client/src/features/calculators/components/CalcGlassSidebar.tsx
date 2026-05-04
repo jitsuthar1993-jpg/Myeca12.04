@@ -4,12 +4,16 @@ import { cn } from "@/lib/utils";
 interface CalcGlassSidebarProps {
   children: React.ReactNode;
   title?: string;
+  description?: string;
+  variant?: string;
   className?: string;
 }
 
 export default function CalcGlassSidebar({ 
   children, 
   title = "Result Summary",
+  description,
+  variant,
   className 
 }: CalcGlassSidebarProps) {
   return (
@@ -22,12 +26,19 @@ export default function CalcGlassSidebar({
         <div className="absolute inset-0 bg-white/40 backdrop-blur-2xl rounded-[2.5rem] -z-10 border border-white/50 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] transition-all group-hover:bg-white/60" />
         
         <div className="p-8 lg:p-10 space-y-8">
-          {title && (
+          {(title || description) && (
             <div className="space-y-1">
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                {title}
-              </h3>
-              <div className="w-12 h-1 bg-primary/20 rounded-full" />
+              {title && (
+                <h3 className="text-xl font-normal text-slate-900 tracking-tight">
+                  {title}
+                </h3>
+              )}
+              {description && (
+                <p className="text-sm font-normal text-slate-500 mt-1">
+                  {description}
+                </p>
+              )}
+              <div className="w-12 h-1 bg-primary/20 rounded-full mt-4" />
             </div>
           )}
           
@@ -55,19 +66,19 @@ export function CalcResultRow({
 }) {
   const variantStyles = {
     default: "text-slate-900",
-    highlight: "text-primary font-bold",
-    success: "text-emerald-600 font-bold",
-    warning: "text-amber-600 font-bold",
+    highlight: "text-primary font-normal",
+    success: "text-emerald-600 font-normal",
+    warning: "text-amber-600 font-normal",
   };
 
   return (
     <div className={cn("flex items-center justify-between gap-4 py-1", className)}>
       <div className="space-y-0.5">
-        <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
+        <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">
           {label}
         </p>
         {subValue && (
-          <p className="text-[10px] text-slate-400 font-medium italic">
+          <p className="text-[10px] text-slate-400 font-normal italic">
             {subValue}
           </p>
         )}

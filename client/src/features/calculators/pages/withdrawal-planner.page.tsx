@@ -82,14 +82,14 @@ export default function WithdrawalPlannerPage() {
         sidebar={
           <CalcGlassSidebar title="Plan Summary">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Ending Balance</p>
+              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Ending Balance</p>
               <AnimatePresence mode="wait">
                 <motion.p 
                   key={result.endingBalance} 
                   initial={{ opacity: 0, y: 10 }} 
                   animate={{ opacity: 1, y: 0 }} 
                   className={cn(
-                    "text-4xl font-bold tracking-tight tabular-nums",
+                    "text-4xl font-normal tracking-tight tabular-nums",
                     result.depleted ? "text-red-600" : "text-slate-900"
                   )}
                 >
@@ -97,7 +97,7 @@ export default function WithdrawalPlannerPage() {
                 </motion.p>
               </AnimatePresence>
               {result.depleted && (
-                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest border border-red-100">
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-normal uppercase tracking-widest border border-red-100">
                   <AlertCircle className="w-3 h-3" />
                   Corpus Depleted in Year {Math.floor(result.depletionPeriod / (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1))}
                 </div>
@@ -124,7 +124,7 @@ export default function WithdrawalPlannerPage() {
             </div>
 
             <Link href="/services/investment-advisory">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 <Sparkles className="w-4 h-4 text-yellow-400" />
                 Get Custom SWP Plan
               </button>
@@ -140,7 +140,7 @@ export default function WithdrawalPlannerPage() {
                     type="number"
                     value={principal}
                     onChange={(e) => setPrincipal(Number(e.target.value))}
-                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
@@ -150,7 +150,7 @@ export default function WithdrawalPlannerPage() {
                       key={amt} 
                       onClick={() => setPrincipal(amt)}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold",
+                        "px-3 py-1.5 rounded-lg border transition-all text-[10px] font-normal",
                         principal === amt ? "border-indigo-600 bg-indigo-50 text-indigo-600" : "border-slate-100 bg-white text-slate-500 hover:border-indigo-200"
                       )}
                     >
@@ -167,7 +167,7 @@ export default function WithdrawalPlannerPage() {
                     step="0.1"
                     value={annualRate}
                     onChange={(e) => setAnnualRate(Number(e.target.value))}
-                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <TrendingUp className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
@@ -177,9 +177,9 @@ export default function WithdrawalPlannerPage() {
           <CalcInputCard title="Withdrawal Strategy" icon={<Clock className="w-5 h-5" />}>
              <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Frequency</label>
+                  <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Frequency</label>
                   <Select value={frequency} onValueChange={(v) => setFrequency(v as WithdrawalFrequency)}>
-                    <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50 font-bold text-sm">
+                    <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -190,12 +190,12 @@ export default function WithdrawalPlannerPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Duration (Years)</label>
+                  <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Duration (Years)</label>
                   <Input 
                     type="number"
                     value={years}
                     onChange={(e) => setYears(Number(e.target.value))}
-                    className="h-12 rounded-xl border-slate-100 bg-slate-50 font-bold text-sm focus:ring-2 focus:ring-indigo-100"
+                    className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm focus:ring-2 focus:ring-indigo-100"
                   />
                 </div>
              </div>
@@ -206,7 +206,7 @@ export default function WithdrawalPlannerPage() {
                     type="number"
                     value={withdrawalAmount}
                     onChange={(e) => setWithdrawalAmount(Number(e.target.value))}
-                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
@@ -215,9 +215,9 @@ export default function WithdrawalPlannerPage() {
              <div className="mt-8 p-5 rounded-2xl bg-amber-50 border border-amber-100">
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="w-4 h-4 text-amber-600" />
-                  <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Sustainability Insight</p>
+                  <p className="text-[10px] font-normal text-amber-700 uppercase tracking-widest">Sustainability Insight</p>
                 </div>
-                <p className="text-[11px] text-amber-800 font-medium leading-relaxed">
+                <p className="text-[11px] text-amber-800 font-normal leading-relaxed">
                   {withdrawalAmount * (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1) > principal * (annualRate/100) 
                     ? "Your withdrawal rate exceeds the interest earned. Your principal will deplete over time." 
                     : "Your withdrawal rate is lower than the interest earned. Your corpus is growing or stable!"}

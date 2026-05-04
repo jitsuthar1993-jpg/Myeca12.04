@@ -78,7 +78,7 @@ export default function TDSCalculatorPage() {
     }).format(n).replace("₹", "₹ ");
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] font-inter">
+    <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "TDS Calculator 2025 | Rates & Sections | MyeCA.in"}
         description={seo?.description || "Calculate TDS across income types with current rates for AY 2025-26. Professional tax planning with PAN and threshold insights."}
@@ -91,36 +91,36 @@ export default function TDSCalculatorPage() {
       <div className="container mx-auto px-4 py-4 max-w-7xl">
         {/* Modern Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#444CE7] mb-4 uppercase tracking-widest bg-[#F5F8FF] w-fit px-4 py-1.5 rounded-full border border-[#D1E0FF]">
+          <div className="flex items-center gap-2 text-xs font-normal text-[#444CE7] mb-4 uppercase tracking-widest bg-[#F5F8FF] w-fit px-4 py-1.5 rounded-full border border-[#D1E0FF]">
             <Sparkles className="w-3.5 h-3.5" />
             Compliance Tool
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-black text-[#101828] tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
                 TDS <span className="text-[#444CE7]">Calculator</span>
               </h1>
-              <p className="text-[#667085] text-base max-w-xl font-medium">
+              <p className="text-[#667085] text-base max-w-xl font-normal">
                 Instant TDS estimates based on Income Tax sections and threshold limits.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-bold text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
                     {i === 1 ? 'JD' : i === 2 ? 'AS' : 'RK'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-bold text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-bold text-[#444CE7]">50k+ Businesses</p>
+                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="text-xs font-normal text-[#444CE7]">50k+ Businesses</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-bold text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
               </div>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function TDSCalculatorPage() {
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Payment Details</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Payment Details</h2>
                   <p className="text-xs text-[#667085]">Configure your payment nature and amount</p>
                 </div>
               </div>
@@ -148,14 +148,14 @@ export default function TDSCalculatorPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Income Nature */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[#667085] uppercase tracking-widest px-1">Income Nature</label>
+                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Income Nature</label>
                     <Select value={incomeType} onValueChange={setIncomeType}>
-                      <SelectTrigger className="h-10 rounded-lg border-[#EAECF0] bg-white font-bold text-sm shadow-sm">
+                      <SelectTrigger className="h-10 rounded-lg border-[#EAECF0] bg-white font-normal text-sm shadow-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
                         {incomeTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value} className="font-bold py-2.5">
+                          <SelectItem key={type.value} value={type.value} className="font-normal py-2.5">
                             <div className="flex items-center gap-2">
                               {type.icon}
                               <span>{type.label}</span>
@@ -168,14 +168,14 @@ export default function TDSCalculatorPage() {
 
                   {/* Assessment Year */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[#667085] uppercase tracking-widest px-1">Assessment Year</label>
+                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Assessment Year</label>
                     <Select value={selectedYear} onValueChange={setSelectedYear}>
-                      <SelectTrigger className="h-10 rounded-lg border-[#EAECF0] bg-white font-bold text-sm shadow-sm">
+                      <SelectTrigger className="h-10 rounded-lg border-[#EAECF0] bg-white font-normal text-sm shadow-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
                         {assessmentYears.map((y) => (
-                          <SelectItem key={y.value} value={y.value} className="font-bold">{y.label}</SelectItem>
+                          <SelectItem key={y.value} value={y.value} className="font-normal">{y.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -186,27 +186,27 @@ export default function TDSCalculatorPage() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#344054]">Payment Amount</span>
+                      <span className="text-sm font-normal text-[#344054]">Payment Amount</span>
                       <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[140px] flex items-center gap-1.5 shadow-sm focus-within:border-[#444CE7] focus-within:ring-1 focus-within:ring-[#444CE7]/10 transition-all">
-                      <span className="text-xs font-bold text-[#667085]">₹</span>
+                      <span className="text-xs font-normal text-[#667085]">₹</span>
                       <input 
                         type="number"
                         value={income}
                         onChange={(e) => setIncome(Number(e.target.value))}
-                        className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-medium uppercase tracking-wider mt-1">
+                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider mt-1">
                     <span>Enter the gross invoice amount before tax</span>
                   </div>
                 </div>
 
                 {/* Compliance Checks */}
                 <div className="pt-4 border-t border-[#F2F4F7]">
-                  <label className="text-[10px] font-bold text-[#667085] uppercase tracking-widest px-1 mb-3 block">Compliance Checks</label>
+                  <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1 mb-3 block">Compliance Checks</label>
                   <div className="grid grid-cols-1 gap-1.5">
                     {[
                       { label: "Valid PAN Available", state: panProvided, setState: setPanProvided, icon: <UserCheck className="w-3.5 h-3.5 text-[#444CE7]" />, desc: panProvided ? "Standard Rate" : "20% Penalty Rate" },
@@ -219,8 +219,8 @@ export default function TDSCalculatorPage() {
                             {item.icon}
                           </div>
                           <div className="space-y-0.5">
-                            <p className="text-xs font-bold text-[#101828] leading-tight">{item.label}</p>
-                            <p className="text-[9px] text-[#667085] font-medium uppercase tracking-tight leading-none">{item.desc}</p>
+                            <p className="text-xs font-normal text-[#101828] leading-tight">{item.label}</p>
+                            <p className="text-[9px] text-[#667085] font-normal uppercase tracking-tight leading-none">{item.desc}</p>
                           </div>
                         </div>
                         <div className="scale-75 origin-right">
@@ -238,9 +238,9 @@ export default function TDSCalculatorPage() {
           <div className="lg:col-span-5">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-xl font-bold text-[#101828]">Deduction Summary</h2>
+                <h2 className="text-xl font-normal text-[#101828]">Deduction Summary</h2>
                 <div className={cn(
-                  "text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider",
+                  "text-[10px] font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider",
                   result?.tdsAmount > 0 ? "bg-[#FEF3F2] text-[#B42318]" : "bg-[#ECFDF3] text-[#027A48]"
                 )}>
                   {result?.tdsAmount > 0 ? <AlertTriangle className="w-3 h-3" /> : <CheckCircle2 className="w-3 h-3" />}
@@ -250,14 +250,14 @@ export default function TDSCalculatorPage() {
               <p className="text-sm text-[#667085] mb-4">Final TDS calculation</p>
 
               <div className="p-5 rounded-[24px] border-2 mb-6 transition-all bg-[#F9FAFB] border-[#EAECF0]">
-                <span className="text-xs font-bold text-[#667085] block mb-1 uppercase tracking-widest">TDS Amount to Deduct</span>
+                <span className="text-xs font-normal text-[#667085] block mb-1 uppercase tracking-widest">TDS Amount to Deduct</span>
                 <AnimatePresence mode="wait">
                   <motion.span 
                     key={result?.tdsAmount}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className={cn(
-                      "text-4xl font-black block tabular-nums",
+                      "text-4xl font-normal block tabular-nums",
                       result?.tdsAmount > 0 ? "text-[#B42318]" : "text-[#027A48]"
                     )}
                   >
@@ -265,8 +265,8 @@ export default function TDSCalculatorPage() {
                   </motion.span>
                 </AnimatePresence>
                 <div className="mt-4 pt-4 border-t border-[#EAECF0] flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-[#667085] uppercase">Applicable Rate</span>
-                  <span className="text-sm font-black text-[#101828] bg-white px-2 py-0.5 rounded border border-[#EAECF0]">{result?.tdsRate || 0}%</span>
+                  <span className="text-[10px] font-normal text-[#667085] uppercase">Applicable Rate</span>
+                  <span className="text-sm font-normal text-[#101828] bg-white px-2 py-0.5 rounded border border-[#EAECF0]">{result?.tdsRate || 0}%</span>
                 </div>
               </div>
 
@@ -282,7 +282,7 @@ export default function TDSCalculatorPage() {
                   {result?.applicable ? <AlertTriangle className="w-6 h-6" /> : <CheckCircle2 className="w-6 h-6" />}
                 </div>
                 <div>
-                  <p className={cn("text-sm font-bold", result?.applicable ? "text-[#B42318]" : "text-[#027A48]")}>
+                  <p className={cn("text-sm font-normal", result?.applicable ? "text-[#B42318]" : "text-[#027A48]")}>
                     {result?.applicable ? "Action Required" : "No Deduction Needed"}
                   </p>
                   <p className="text-[11px] text-[#667085] leading-tight">
@@ -293,16 +293,16 @@ export default function TDSCalculatorPage() {
 
               <div className="space-y-4 flex-grow">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Total Invoice Amount</span>
-                  <span className="text-xs font-bold text-[#101828] text-right">{fmt(income)}</span>
+                  <span className="text-xs font-normal text-[#667085]">Total Invoice Amount</span>
+                  <span className="text-xs font-normal text-[#101828] text-right">{fmt(income)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">PAN Status Penalty</span>
-                  <span className="text-xs font-bold text-[#B42318] text-right">{panProvided ? "Nil" : "20% Apply"}</span>
+                  <span className="text-xs font-normal text-[#667085]">PAN Status Penalty</span>
+                  <span className="text-xs font-normal text-[#B42318] text-right">{panProvided ? "Nil" : "20% Apply"}</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
-                  <span className="text-sm font-bold text-[#101828]">Net Payable to Vendor</span>
-                  <span className="text-base font-bold text-[#444CE7] text-right">{fmt(result?.netIncome || 0)}</span>
+                  <span className="text-sm font-normal text-[#101828]">Net Payable to Vendor</span>
+                  <span className="text-base font-normal text-[#444CE7] text-right">{fmt(result?.netIncome || 0)}</span>
                 </div>
               </div>
 
@@ -312,10 +312,10 @@ export default function TDSCalculatorPage() {
                   <FileBadge className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#101828] mb-0.5">Need to file TDS?</h4>
+                  <h4 className="text-sm font-normal text-[#101828] mb-0.5">Need to file TDS?</h4>
                   <p className="text-xs text-[#667085] mb-2">Get CA assistance for monthly TDS filing</p>
                   <Link href="/services/tds-filing">
-                    <button className="text-[13px] font-bold text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-[13px] font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Start Filing Now
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -339,7 +339,7 @@ export default function TDSCalculatorPage() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-bold text-[#101828]">{item.label}</h5>
+                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
                 <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>

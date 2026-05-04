@@ -69,7 +69,7 @@ export default function HomeLoanCalculator() {
     }).format(n).replace("₹", "₹ ");
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] font-inter">
+    <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "Home Loan EMI Calculator 2025 | Calculate Housing Loan EMI & Eligibility"}
         description={seo?.description || "Calculate home loan EMI with current interest rates 8.5-10.5%. Check eligibility, LTV ratio, tax benefits & compare 20+ banks."}
@@ -82,36 +82,36 @@ export default function HomeLoanCalculator() {
       <div className="container mx-auto px-4 py-4 max-w-7xl">
         {/* Modern Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#444CE7] mb-4 uppercase tracking-widest bg-[#EEF2FF] w-fit px-4 py-1.5 rounded-full border border-[#C7D2FE]">
+          <div className="flex items-center gap-2 text-xs font-normal text-[#444CE7] mb-4 uppercase tracking-widest bg-[#EEF2FF] w-fit px-4 py-1.5 rounded-full border border-[#C7D2FE]">
             <Home className="w-3.5 h-3.5" />
             Property Financing
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-black text-[#101828] tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
                 Home Loan <span className="text-[#444CE7]">Calculator</span>
               </h1>
-              <p className="text-[#667085] text-base max-w-xl font-medium">
+              <p className="text-[#667085] text-base max-w-xl font-normal">
                 High-precision EMI and eligibility engine for your dream home.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-bold text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
                     {i === 1 ? 'RK' : i === 2 ? 'PS' : 'MD'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-bold text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-bold text-[#444CE7]">120k+ Homeowners</p>
+                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="text-xs font-normal text-[#444CE7]">120k+ Homeowners</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-bold text-[#667085]">5.0/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">5.0/5 Rating</p>
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function HomeLoanCalculator() {
                   <Calculator className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Loan Parameters</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Loan Parameters</h2>
                   <p className="text-xs text-[#667085]">Map your home loan journey</p>
                 </div>
               </div>
@@ -140,14 +140,14 @@ export default function HomeLoanCalculator() {
                   {/* Property Value */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-bold text-[#344054]">Property Value</span>
+                      <span className="text-sm font-normal text-[#344054]">Property Value</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
-                        <span className="text-xs font-bold text-[#667085]">₹</span>
+                        <span className="text-xs font-normal text-[#667085]">₹</span>
                         <input 
                           type="number"
                           value={propertyValue}
                           onChange={(e) => setPropertyValue(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828]"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
                       </div>
                     </div>
@@ -165,14 +165,14 @@ export default function HomeLoanCalculator() {
                   {/* Loan Amount */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-bold text-[#344054]">Loan Principal</span>
+                      <span className="text-sm font-normal text-[#344054]">Loan Principal</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
-                        <span className="text-xs font-bold text-[#667085]">₹</span>
+                        <span className="text-xs font-normal text-[#667085]">₹</span>
                         <input 
                           type="number"
                           value={principal}
                           onChange={(e) => setPrincipal(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828]"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
                       </div>
                     </div>
@@ -190,15 +190,15 @@ export default function HomeLoanCalculator() {
                   {/* Rate */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-bold text-[#344054]">Interest Rate</span>
+                      <span className="text-sm font-normal text-[#344054]">Interest Rate</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
                         <input 
                           type="number"
                           value={rate}
                           onChange={(e) => setRate(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828]"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
-                        <span className="text-xs font-bold text-[#667085]">%</span>
+                        <span className="text-xs font-normal text-[#667085]">%</span>
                       </div>
                     </div>
                     <input 
@@ -215,15 +215,15 @@ export default function HomeLoanCalculator() {
                   {/* Tenure */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-bold text-[#344054]">Tenure (Years)</span>
+                      <span className="text-sm font-normal text-[#344054]">Tenure (Years)</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
                         <input 
                           type="number"
                           value={tenure}
                           onChange={(e) => setTenure(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828]"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
-                        <span className="text-xs font-bold text-[#667085]">Yrs</span>
+                        <span className="text-xs font-normal text-[#667085]">Yrs</span>
                       </div>
                     </div>
                     <input 
@@ -241,16 +241,16 @@ export default function HomeLoanCalculator() {
                 <div className="pt-6 border-t border-[#F2F4F7]">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#EAECF0]">
-                      <p className="text-[10px] font-bold text-[#667085] uppercase mb-0.5 tracking-wider">LTV Ratio</p>
-                      <p className="text-sm font-black text-[#101828]">{calculations.ltvRatio}%</p>
+                      <p className="text-[10px] font-normal text-[#667085] uppercase mb-0.5 tracking-wider">LTV Ratio</p>
+                      <p className="text-sm font-normal text-[#101828]">{calculations.ltvRatio}%</p>
                     </div>
                     <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#EAECF0]">
-                      <p className="text-[10px] font-bold text-[#667085] uppercase mb-0.5 tracking-wider">Total Interest</p>
-                      <p className="text-sm font-black text-[#B42318]">{fmt(calculations.totalInterest)}</p>
+                      <p className="text-[10px] font-normal text-[#667085] uppercase mb-0.5 tracking-wider">Total Interest</p>
+                      <p className="text-sm font-normal text-[#B42318]">{fmt(calculations.totalInterest)}</p>
                     </div>
                     <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#EAECF0] col-span-2 md:col-span-1">
-                      <p className="text-[10px] font-bold text-[#667085] uppercase mb-0.5 tracking-wider">Total Tenure</p>
-                      <p className="text-sm font-black text-[#101828]">{tenure * 12} Months</p>
+                      <p className="text-[10px] font-normal text-[#667085] uppercase mb-0.5 tracking-wider">Total Tenure</p>
+                      <p className="text-sm font-normal text-[#101828]">{tenure * 12} Months</p>
                     </div>
                   </div>
                 </div>
@@ -264,9 +264,9 @@ export default function HomeLoanCalculator() {
                   <div className="w-10 h-10 rounded-xl bg-[#F6FEF9] flex items-center justify-center text-[#027A48] border border-[#D1FADF]">
                     <TrendingDown className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#101828]">First Year Schedule</h3>
+                  <h3 className="text-lg font-normal text-[#101828]">First Year Schedule</h3>
                 </div>
-                <button className="flex items-center gap-2 text-xs font-bold text-[#444CE7] hover:bg-[#EEF2FF] px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-[#C7D2FE]">
+                <button className="flex items-center gap-2 text-xs font-normal text-[#444CE7] hover:bg-[#EEF2FF] px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-[#C7D2FE]">
                   <Download className="w-3.5 h-3.5" />
                   Full Schedule
                 </button>
@@ -275,7 +275,7 @@ export default function HomeLoanCalculator() {
               <div className="overflow-hidden border border-[#EAECF0] rounded-2xl">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead className="bg-[#F9FAFB] border-b border-[#EAECF0]">
-                    <tr className="text-[#667085] font-bold uppercase tracking-wider">
+                    <tr className="text-[#667085] font-normal uppercase tracking-wider">
                       <th className="px-4 py-3">Month</th>
                       <th className="px-4 py-3">Principal</th>
                       <th className="px-4 py-3">Interest</th>
@@ -285,10 +285,10 @@ export default function HomeLoanCalculator() {
                   <tbody className="divide-y divide-[#F2F4F7]">
                     {calculations.schedule.map((row) => (
                       <tr key={row.month} className="hover:bg-[#F9FAFB] transition-colors group">
-                        <td className="px-4 py-3 font-bold text-[#667085]">Month {row.month}</td>
-                        <td className="px-4 py-3 font-bold text-[#444CE7]">{fmt(row.principal)}</td>
-                        <td className="px-4 py-3 font-bold text-[#B42318]">{fmt(row.interest)}</td>
-                        <td className="px-4 py-3 text-right font-black text-[#101828]">{fmt(row.balance)}</td>
+                        <td className="px-4 py-3 font-normal text-[#667085]">Month {row.month}</td>
+                        <td className="px-4 py-3 font-normal text-[#444CE7]">{fmt(row.principal)}</td>
+                        <td className="px-4 py-3 font-normal text-[#B42318]">{fmt(row.interest)}</td>
+                        <td className="px-4 py-3 text-right font-normal text-[#101828]">{fmt(row.balance)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -301,8 +301,8 @@ export default function HomeLoanCalculator() {
           <div className="lg:col-span-5">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-xl font-bold text-[#101828]">EMI Breakdown</h2>
-                <div className="text-[10px] font-bold px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
+                <h2 className="text-xl font-normal text-[#101828]">EMI Breakdown</h2>
+                <div className="text-[10px] font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
                   <Activity className="w-3 h-3" />
                   Live
                 </div>
@@ -315,11 +315,11 @@ export default function HomeLoanCalculator() {
                   <div className="absolute -right-4 -bottom-4 opacity-10">
                     <Home className="w-32 h-32" />
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-80 block mb-2">Monthly Installment (EMI)</span>
-                  <span className="text-4xl font-black block tabular-nums leading-none">
+                  <span className="text-[11px] font-normal uppercase tracking-[0.2em] opacity-80 block mb-2">Monthly Installment (EMI)</span>
+                  <span className="text-4xl font-normal block tabular-nums leading-none">
                     {fmt(calculations.emi)}
                   </span>
-                  <div className="mt-4 flex items-center gap-2 text-xs font-medium bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
+                  <div className="mt-4 flex items-center gap-2 text-xs font-normal bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
                     <TrendingDown className="w-3 h-3 text-emerald-300" />
                     Floating Rate Estimate
                   </div>
@@ -327,32 +327,32 @@ export default function HomeLoanCalculator() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-[20px] border border-[#EAECF0] bg-[#F9FAFB]">
-                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider block mb-1">Total Payment</span>
-                    <span className="text-lg font-bold text-[#101828] block tabular-nums">{fmt(calculations.totalPayment)}</span>
+                    <span className="text-[10px] font-normal text-[#667085] uppercase tracking-wider block mb-1">Total Payment</span>
+                    <span className="text-lg font-normal text-[#101828] block tabular-nums">{fmt(calculations.totalPayment)}</span>
                   </div>
                   <div className="p-4 rounded-[20px] border border-[#EAECF0] bg-[#F9FAFB]">
-                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider block mb-1">Total Interest</span>
-                    <span className="text-lg font-bold text-[#B42318] block tabular-nums">{fmt(calculations.totalInterest)}</span>
+                    <span className="text-[10px] font-normal text-[#667085] uppercase tracking-wider block mb-1">Total Interest</span>
+                    <span className="text-lg font-normal text-[#B42318] block tabular-nums">{fmt(calculations.totalInterest)}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4 flex-grow px-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Monthly Rate</span>
-                  <span className="text-xs font-bold text-[#101828]">{(rate / 12).toFixed(3)}%</span>
+                  <span className="text-xs font-normal text-[#667085]">Monthly Rate</span>
+                  <span className="text-xs font-normal text-[#101828]">{(rate / 12).toFixed(3)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">LTV Comparison</span>
-                  <span className="text-xs font-bold text-[#027A48]">{calculations.ltvRatio}% Coverage</span>
+                  <span className="text-xs font-normal text-[#667085]">LTV Comparison</span>
+                  <span className="text-xs font-normal text-[#027A48]">{calculations.ltvRatio}% Coverage</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Section 24(b) Savings</span>
-                  <span className="text-xs font-bold text-[#101828]">Up to ₹2L /yr</span>
+                  <span className="text-xs font-normal text-[#667085]">Section 24(b) Savings</span>
+                  <span className="text-xs font-normal text-[#101828]">Up to ₹2L /yr</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
-                  <span className="text-sm font-bold text-[#101828]">Monthly EMI</span>
-                  <span className="text-base font-black text-[#444CE7]">{fmt(calculations.emi)}</span>
+                  <span className="text-sm font-normal text-[#101828]">Monthly EMI</span>
+                  <span className="text-base font-normal text-[#444CE7]">{fmt(calculations.emi)}</span>
                 </div>
               </div>
 
@@ -362,10 +362,10 @@ export default function HomeLoanCalculator() {
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#101828] mb-0.5">Need a Home Loan?</h4>
+                  <h4 className="text-sm font-normal text-[#101828] mb-0.5">Need a Home Loan?</h4>
                   <p className="text-[11px] text-[#667085] mb-2 leading-tight">Compare 20+ banks and get pre-approved instantly with our CA assistance.</p>
                   <Link href="/services/home-loan">
-                    <button className="text-[13px] font-bold text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-[13px] font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Apply Now
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -389,7 +389,7 @@ export default function HomeLoanCalculator() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-bold text-[#101828]">{item.label}</h5>
+                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
                 <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>

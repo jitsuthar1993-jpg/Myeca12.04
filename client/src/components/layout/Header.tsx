@@ -170,16 +170,16 @@ export default function Header() {
               <div className="flex items-center gap-4">
                 <a href="https://myeca.in" className="flex items-center gap-2 group shrink-0">
                   <Logo size={isScrolled ? "sm" : "md"} />
-                  <div className="flex flex-col">
+                  <div className="flex flex-col justify-center gap-0.5">
                     <span className={cn(
-                      "font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 leading-none tracking-tight",
+                      "font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 leading-none tracking-tight block m-0",
                       isScrolled ? "text-[1.25rem]" : "text-2xl"
                     )}>
                       MyeCA.in
                     </span>
                     <span className={cn(
-                      "text-[9.5px] text-slate-500 font-normal tracking-[0.15em] transition-all duration-500",
-                      isScrolled ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100 mt-1"
+                      "text-[9.5px] text-slate-500 font-normal tracking-[0.15em] transition-all duration-500 block m-0 leading-none",
+                      isScrolled ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100"
                     )}>
                       SMART TAX SOLUTIONS
                     </span>
@@ -921,11 +921,11 @@ export default function Header() {
                         className="flex items-center gap-3 p-6 hover:bg-white transition-all cursor-pointer group"
                       >
                         <Logo size="md" className="group-hover:scale-105 transition-transform" />
-                        <div className="flex flex-col">
-                          <span className="font-bold text-xl text-[#315efb]">
+                        <div className="flex flex-col justify-center gap-0.5">
+                          <span className="font-bold text-xl text-[#315efb] block m-0 leading-none">
                             MyeCA.in
                           </span>
-                          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">FINANCIAL COCKPIT</span>
+                          <span className="text-[9px] text-slate-400 font-normal uppercase tracking-widest block m-0 leading-none">SMART TAX SOLUTIONS</span>
                         </div>
                       </a>
                       <SheetTitle className="sr-only">Navigation Menu</SheetTitle>

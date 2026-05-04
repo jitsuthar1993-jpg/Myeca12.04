@@ -76,8 +76,8 @@ export default function HSNFinderPage() {
           <CalcGlassSidebar title="Finder Summary">
             <div className="space-y-6 pt-2">
               <div className="p-5 rounded-2xl bg-white/40 border border-white/20 backdrop-blur-md">
-                <p className="text-[10px] font-bold text-blue-700 uppercase tracking-widest mb-1">Results Found</p>
-                <p className="text-3xl font-black text-slate-900">{filteredItems.length}</p>
+                <p className="text-[10px] font-normal text-blue-700 uppercase tracking-widest mb-1">Results Found</p>
+                <p className="text-3xl font-normal text-slate-900">{filteredItems.length}</p>
               </div>
 
               <div className="space-y-4">
@@ -86,14 +86,14 @@ export default function HSNFinderPage() {
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-800">Compliance Audit</p>
-                    <p className="text-[11px] text-slate-500 font-medium">Verify your codes with a CA to avoid GST penalties and notices.</p>
+                    <p className="text-xs font-normal text-slate-800">Compliance Audit</p>
+                    <p className="text-[11px] text-slate-500 font-normal">Verify your codes with a CA to avoid GST penalties and notices.</p>
                   </div>
                 </div>
               </div>
 
               <Link href="/services/gst-registration">
-                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
+                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
                   <Zap className="w-4 h-4 text-yellow-400" />
                   GST Compliance Package
                 </button>
@@ -108,7 +108,7 @@ export default function HSNFinderPage() {
                 <button
                   onClick={() => setActiveTab("hsn")}
                   className={cn(
-                    "py-4 rounded-2xl border-2 transition-all font-bold text-sm flex items-center justify-center gap-2",
+                    "py-4 rounded-2xl border-2 transition-all font-normal text-sm flex items-center justify-center gap-2",
                     activeTab === "hsn" ? "border-blue-600 bg-blue-600 text-white shadow-lg" : "border-slate-50 bg-slate-50 text-slate-500"
                   )}
                 >
@@ -117,7 +117,7 @@ export default function HSNFinderPage() {
                 <button
                   onClick={() => setActiveTab("sac")}
                   className={cn(
-                    "py-4 rounded-2xl border-2 transition-all font-bold text-sm flex items-center justify-center gap-2",
+                    "py-4 rounded-2xl border-2 transition-all font-normal text-sm flex items-center justify-center gap-2",
                     activeTab === "sac" ? "border-blue-600 bg-blue-600 text-white shadow-lg" : "border-slate-50 bg-slate-50 text-slate-500"
                   )}
                 >
@@ -131,7 +131,7 @@ export default function HSNFinderPage() {
                   placeholder={activeTab === 'hsn' ? "Search Product (e.g. Laptop)" : "Search Service (e.g. Audit)"}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="h-16 pl-12 rounded-2xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-4 focus:ring-blue-100"
+                  className="h-16 pl-12 rounded-2xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-4 focus:ring-blue-100"
                 />
              </div>
           </CalcInputCard>
@@ -150,16 +150,16 @@ export default function HSNFinderPage() {
                     className="bg-white rounded-3xl border border-slate-100 p-6 flex items-center justify-between hover:shadow-lg hover:border-blue-200 transition-all group"
                   >
                     <div className="flex items-center gap-6">
-                      <div className="w-16 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-900 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                      <div className="w-16 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-normal text-slate-900 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                         {item.code}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 text-lg">{item.name}</p>
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{item.category}</p>
+                        <p className="font-normal text-slate-900 text-lg">{item.name}</p>
+                        <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">{item.category}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <Badge className="bg-blue-600 text-white font-black px-4 py-1.5 text-base rounded-xl">
+                      <Badge className="bg-blue-600 text-white font-normal px-4 py-1.5 text-base rounded-xl">
                         {item.rate} GST
                       </Badge>
                     </div>
@@ -174,7 +174,7 @@ export default function HSNFinderPage() {
                   <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <AlertCircle className="w-8 h-8 text-slate-300" />
                   </div>
-                  <p className="text-slate-500 font-bold">No matching codes found for "{query}"</p>
+                  <p className="text-slate-500 font-normal">No matching codes found for "{query}"</p>
                   <p className="text-xs text-slate-400 mt-1">Try searching by code or category instead.</p>
                 </m.div>
               )}

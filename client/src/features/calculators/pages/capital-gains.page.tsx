@@ -54,7 +54,7 @@ export default function CapitalGainsCalculatorPage() {
     }).format(n).replace("₹", "₹ ");
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] font-inter">
+    <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "Capital Gains Calculator 2025 | STCG & LTCG Tax | MyeCA.in"}
         description={seo?.description || "Calculate capital gains tax for equity, property, and gold under new Budget 2024 rules. Instant STCG & LTCG liability estimates."}
@@ -67,36 +67,36 @@ export default function CapitalGainsCalculatorPage() {
       <div className="container mx-auto px-4 py-4 max-w-7xl">
         {/* Modern Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#027A48] mb-4 uppercase tracking-widest bg-[#ECFDF3] w-fit px-4 py-1.5 rounded-full border border-[#D1FADF]">
+          <div className="flex items-center gap-2 text-xs font-normal text-[#027A48] mb-4 uppercase tracking-widest bg-[#ECFDF3] w-fit px-4 py-1.5 rounded-full border border-[#D1FADF]">
             <Sparkles className="w-3.5 h-3.5" />
             Investment Tax Tool
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-black text-[#101828] tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
                 Capital <span className="text-[#027A48]">Gains</span>
               </h1>
-              <p className="text-[#667085] text-base max-w-xl font-medium">
+              <p className="text-[#667085] text-base max-w-xl font-normal">
                 Calculate STCG & LTCG liability based on latest Budget 2024 rules.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-bold text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
                     {i === 1 ? 'JD' : i === 2 ? 'AS' : 'RK'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-bold text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-bold text-[#027A48]">25k+ Investors</p>
+                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="text-xs font-normal text-[#027A48]">25k+ Investors</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-bold text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function CapitalGainsCalculatorPage() {
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Asset Configuration</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Asset Configuration</h2>
                   <p className="text-xs text-[#667085]">Select asset type and transaction details</p>
                 </div>
               </div>
@@ -142,8 +142,8 @@ export default function CapitalGainsCalculatorPage() {
                         )}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <p className={cn("text-[11px] font-bold leading-tight", assetType === type.value ? "text-[#101828]" : "text-[#344054]")}>{type.label}</p>
-                        <p className="text-[9px] text-[#667085] font-medium mt-0.5">LTCG {type.ltcgRate}</p>
+                        <p className={cn("text-[11px] font-normal leading-tight", assetType === type.value ? "text-[#101828]" : "text-[#344054]")}>{type.label}</p>
+                        <p className="text-[9px] text-[#667085] font-normal mt-0.5">LTCG {type.ltcgRate}</p>
                         {assetType === type.value && (
                           <div className="absolute top-2 right-2">
                             <CheckCircle2 className="w-3.5 h-3.5 text-[#027A48]" />
@@ -157,13 +157,13 @@ export default function CapitalGainsCalculatorPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#F2F4F7]">
                   {/* Purchase Date */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[#667085] uppercase tracking-widest px-1">Purchase Date</label>
+                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Purchase Date</label>
                     <div className="relative group">
                       <input 
                         type="date"
                         value={purchaseDate}
                         onChange={(e) => setPurchaseDate(e.target.value)}
-                        className="w-full h-10 pl-10 pr-3 rounded-lg border border-[#EAECF0] bg-white font-bold text-sm focus:ring-1 focus:ring-[#027A48]/10 focus:border-[#027A48] outline-none transition-all"
+                        className="w-full h-10 pl-10 pr-3 rounded-lg border border-[#EAECF0] bg-white font-normal text-sm focus:ring-1 focus:ring-[#027A48]/10 focus:border-[#027A48] outline-none transition-all"
                       />
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#98A2B3] group-focus-within:text-[#027A48] transition-colors" />
                     </div>
@@ -171,13 +171,13 @@ export default function CapitalGainsCalculatorPage() {
 
                   {/* Sale Date */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[#667085] uppercase tracking-widest px-1">Sale Date</label>
+                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Sale Date</label>
                     <div className="relative group">
                       <input 
                         type="date"
                         value={saleDate}
                         onChange={(e) => setSaleDate(e.target.value)}
-                        className="w-full h-10 pl-10 pr-3 rounded-lg border border-[#EAECF0] bg-white font-bold text-sm focus:ring-1 focus:ring-[#027A48]/10 focus:border-[#027A48] outline-none transition-all"
+                        className="w-full h-10 pl-10 pr-3 rounded-lg border border-[#EAECF0] bg-white font-normal text-sm focus:ring-1 focus:ring-[#027A48]/10 focus:border-[#027A48] outline-none transition-all"
                       />
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#98A2B3] group-focus-within:text-[#027A48] transition-colors" />
                     </div>
@@ -189,16 +189,16 @@ export default function CapitalGainsCalculatorPage() {
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#344054]">Purchase Price</span>
+                        <span className="text-sm font-normal text-[#344054]">Purchase Price</span>
                         <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm focus-within:border-[#027A48] focus-within:ring-1 focus-within:ring-[#027A48]/10 transition-all">
-                        <span className="text-xs font-bold text-[#667085]">₹</span>
+                        <span className="text-xs font-normal text-[#667085]">₹</span>
                         <input 
                           type="number"
                           value={purchasePrice}
                           onChange={(e) => setPurchasePrice(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </div>
                     </div>
@@ -208,16 +208,16 @@ export default function CapitalGainsCalculatorPage() {
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#344054]">Sale Price</span>
+                        <span className="text-sm font-normal text-[#344054]">Sale Price</span>
                         <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm focus-within:border-[#027A48] focus-within:ring-1 focus-within:ring-[#027A48]/10 transition-all">
-                        <span className="text-xs font-bold text-[#667085]">₹</span>
+                        <span className="text-xs font-normal text-[#667085]">₹</span>
                         <input 
                           type="number"
                           value={salePrice}
                           onChange={(e) => setSalePrice(Number(e.target.value))}
-                          className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </div>
                     </div>
@@ -233,7 +233,7 @@ export default function CapitalGainsCalculatorPage() {
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Holding Insight</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Holding Insight</h2>
                   <p className="text-xs text-[#667085]">Duration and taxation eligibility</p>
                 </div>
               </div>
@@ -244,9 +244,9 @@ export default function CapitalGainsCalculatorPage() {
                     <Target className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold text-[#667085] uppercase tracking-wider">Holding Period</p>
-                    <p className="text-sm font-black text-[#101828]">
-                      {result?.holdingPeriodDays} Days <span className="text-[#667085] font-medium text-xs">({result?.holdingPeriod} Yrs)</span>
+                    <p className="text-[11px] font-normal text-[#667085] uppercase tracking-wider">Holding Period</p>
+                    <p className="text-sm font-normal text-[#101828]">
+                      {result?.holdingPeriodDays} Days <span className="text-[#667085] font-normal text-xs">({result?.holdingPeriod} Yrs)</span>
                     </p>
                   </div>
                 </div>
@@ -255,8 +255,8 @@ export default function CapitalGainsCalculatorPage() {
                   <div className="w-8 h-8 rounded-full bg-[#027A48] flex items-center justify-center text-white shrink-0">
                     <Zap className="w-4 h-4" />
                   </div>
-                  <p className="text-[11px] text-[#027A48] font-bold leading-tight">
-                    {result?.gainType} Gain detected. Applied rate: <span className="font-black underline">{result?.taxRate}%</span>
+                  <p className="text-[11px] text-[#027A48] font-normal leading-tight">
+                    {result?.gainType} Gain detected. Applied rate: <span className="font-normal underline">{result?.taxRate}%</span>
                   </p>
                 </div>
               </div>
@@ -267,9 +267,9 @@ export default function CapitalGainsCalculatorPage() {
           <div className="lg:col-span-5">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-xl font-bold text-[#101828]">Tax Summary</h2>
+                <h2 className="text-xl font-normal text-[#101828]">Tax Summary</h2>
                 <div className={cn(
-                  "text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider",
+                  "text-[10px] font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider",
                   (result?.taxPayable || 0) > 0 ? "bg-[#FEF3F2] text-[#B42318]" : "bg-[#ECFDF3] text-[#027A48]"
                 )}>
                   {selectedAssetType?.value}
@@ -283,25 +283,25 @@ export default function CapitalGainsCalculatorPage() {
                   "p-4 rounded-[20px] border-2 transition-all",
                   (result?.capitalGain || 0) >= 0 ? "bg-[#F6FEF9] border-[#ECFDF3]" : "bg-[#FFFBFA] border-[#FEF3F2]"
                 )}>
-                  <span className="text-xs font-bold text-[#101828] block mb-0.5">Total Gain/Loss</span>
+                  <span className="text-xs font-normal text-[#101828] block mb-0.5">Total Gain/Loss</span>
                   <span className="text-[10px] text-[#667085] block mb-2">Net appreciation</span>
                   <span className={cn(
-                    "text-2xl font-bold block mb-0.5 tabular-nums",
+                    "text-2xl font-normal block mb-0.5 tabular-nums",
                     (result?.capitalGain || 0) >= 0 ? "text-[#027A48]" : "text-[#B42318]"
                   )}>
                     {fmt(result?.capitalGain || 0)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-medium uppercase tracking-widest">{result?.gainType}</span>
+                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">{result?.gainType}</span>
                 </div>
 
                 {/* Net Tax Payable */}
                 <div className="p-4 rounded-[20px] border-2 border-[#EAECF0] bg-[#F9FAFB]">
-                  <span className="text-xs font-bold text-[#101828] block mb-0.5">Tax Payable</span>
+                  <span className="text-xs font-normal text-[#101828] block mb-0.5">Tax Payable</span>
                   <span className="text-[10px] text-[#667085] block mb-2">Final liability</span>
-                  <span className="text-2xl font-bold block mb-0.5 text-[#B42318] tabular-nums">
+                  <span className="text-2xl font-normal block mb-0.5 text-[#B42318] tabular-nums">
                     {fmt(result?.taxPayable || 0)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-medium uppercase tracking-widest">Post Exemption</span>
+                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Post Exemption</span>
                 </div>
               </div>
 
@@ -312,33 +312,33 @@ export default function CapitalGainsCalculatorPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-[#475467]">Net In-Hand Profit</span>
-                    <span className="text-2xl font-bold text-[#444CE7] tabular-nums">{fmt(result?.netGain || 0)}</span>
+                    <span className="text-sm font-normal text-[#475467]">Net In-Hand Profit</span>
+                    <span className="text-2xl font-normal text-[#444CE7] tabular-nums">{fmt(result?.netGain || 0)}</span>
                   </div>
                   <p className="text-xs text-[#667085] leading-relaxed">
-                    Final profit after deducting <span className="font-bold text-[#101828]">all taxes</span>.
+                    Final profit after deducting <span className="font-normal text-[#101828]">all taxes</span>.
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4 flex-grow">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Purchase Value</span>
-                  <span className="text-xs font-bold text-[#101828] text-right">{fmt(purchasePrice)}</span>
+                  <span className="text-xs font-normal text-[#667085]">Purchase Value</span>
+                  <span className="text-xs font-normal text-[#101828] text-right">{fmt(purchasePrice)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Sale Value</span>
-                  <span className="text-xs font-bold text-[#101828] text-right">{fmt(salePrice)}</span>
+                  <span className="text-xs font-normal text-[#667085]">Sale Value</span>
+                  <span className="text-xs font-normal text-[#101828] text-right">{fmt(salePrice)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Exemption Applied</span>
-                  <span className="text-xs font-bold text-[#027A48] text-right">
+                  <span className="text-xs font-normal text-[#667085]">Exemption Applied</span>
+                  <span className="text-xs font-normal text-[#027A48] text-right">
                     {assetType === 'equity' && (result?.capitalGain || 0) > 125000 ? "₹ 1,25,000" : "N/A"}
                   </span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
-                  <span className="text-sm font-bold text-[#101828]">Tax Rate (%)</span>
-                  <span className="text-base font-bold text-[#B42318] text-right">{result?.taxRate}%</span>
+                  <span className="text-sm font-normal text-[#101828]">Tax Rate (%)</span>
+                  <span className="text-base font-normal text-[#B42318] text-right">{result?.taxRate}%</span>
                 </div>
               </div>
 
@@ -348,10 +348,10 @@ export default function CapitalGainsCalculatorPage() {
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#101828] mb-0.5">Optimize Gains?</h4>
+                  <h4 className="text-sm font-normal text-[#101828] mb-0.5">Optimize Gains?</h4>
                   <p className="text-xs text-[#667085] mb-2">Save tax on gains with expert planning</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-bold text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-[13px] font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
                       Consult a CA Expert
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -375,7 +375,7 @@ export default function CapitalGainsCalculatorPage() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-bold text-[#101828]">{item.label}</h5>
+                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
                 <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>

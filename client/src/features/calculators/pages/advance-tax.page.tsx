@@ -171,13 +171,13 @@ export default function AdvanceTaxCalculatorPage() {
         sidebar={
           <CalcGlassSidebar title="Compliance Overview">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Net Tax Liability</p>
+              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Net Tax Liability</p>
               <AnimatePresence mode="wait">
                 <motion.p 
                   key={calculations.netTaxLiability} 
                   initial={{ opacity: 0, y: 10 }} 
                   animate={{ opacity: 1, y: 0 }} 
-                  className="text-4xl font-bold text-slate-900 tracking-tight tabular-nums"
+                  className="text-4xl font-normal text-slate-900 tracking-tight tabular-nums"
                 >
                   {formatCurrency(calculations.netTaxLiability)}
                 </motion.p>
@@ -192,7 +192,7 @@ export default function AdvanceTaxCalculatorPage() {
               {!calculations.advanceTaxRequired && (
                 <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-200 mt-4 flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <p className="text-[10px] font-bold text-emerald-700 leading-relaxed uppercase tracking-widest">No Advance Tax Required (&lt;₹10k)</p>
+                  <p className="text-[10px] font-normal text-emerald-700 leading-relaxed uppercase tracking-widest">No Advance Tax Required (&lt;₹10k)</p>
                 </div>
               )}
 
@@ -200,16 +200,16 @@ export default function AdvanceTaxCalculatorPage() {
                 <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 mt-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <Bell className="w-4 h-4 text-amber-600" />
-                    <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Next Due Date</p>
+                    <p className="text-[10px] font-normal text-amber-700 uppercase tracking-widest">Next Due Date</p>
                   </div>
-                  <p className="text-sm font-bold text-slate-900">{ADVANCE_TAX_SCHEDULE[currentQuarter - 1].dueDate}</p>
-                  <p className="text-[10px] text-slate-500 font-medium italic">Installment Target: {ADVANCE_TAX_SCHEDULE[currentQuarter - 1].cumulativePercent}%</p>
+                  <p className="text-sm font-normal text-slate-900">{ADVANCE_TAX_SCHEDULE[currentQuarter - 1].dueDate}</p>
+                  <p className="text-[10px] text-slate-500 font-normal italic">Installment Target: {ADVANCE_TAX_SCHEDULE[currentQuarter - 1].cumulativePercent}%</p>
                 </div>
               )}
             </div>
 
             <Link href="/services/tax-planning">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 Plan Tax with CA
               </button>
@@ -220,14 +220,14 @@ export default function AdvanceTaxCalculatorPage() {
         <div className="space-y-8">
           <CalcInputCard title="Tax Configuration" icon={<ShieldCheck className="w-5 h-5" />}>
              <div className="space-y-4 mb-8">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Tax Regime</label>
+                <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Tax Regime</label>
                 <div className="grid grid-cols-2 gap-3">
                   {['new', 'old'].map((r) => (
                     <button
                       key={r}
                       onClick={() => setRegime(r as any)}
                       className={cn(
-                        "py-4 rounded-2xl border-2 transition-all font-bold text-sm",
+                        "py-4 rounded-2xl border-2 transition-all font-normal text-sm",
                         regime === r ? "border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-600/10" : "border-slate-100 bg-slate-50 text-slate-500 hover:border-indigo-200"
                       )}
                     >
@@ -243,7 +243,7 @@ export default function AdvanceTaxCalculatorPage() {
                     type="number"
                     value={inputs.estimatedIncome}
                     onChange={(e) => setInputs({...inputs, estimatedIncome: Number(e.target.value)})}
-                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
@@ -255,7 +255,7 @@ export default function AdvanceTaxCalculatorPage() {
                     type="number"
                     value={inputs.tdsDeducted}
                     onChange={(e) => setInputs({...inputs, tdsDeducted: Number(e.target.value)})}
-                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                    className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <Receipt className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 </div>
@@ -266,7 +266,7 @@ export default function AdvanceTaxCalculatorPage() {
              <div className="grid grid-cols-2 gap-4 mb-8">
                 {(['q1', 'q2', 'q3', 'q4'] as const).map((q, i) => (
                   <div key={q} className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
+                    <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">
                       {ADVANCE_TAX_SCHEDULE[i].quarter} Paid (INR)
                     </label>
                     <Input 
@@ -276,7 +276,7 @@ export default function AdvanceTaxCalculatorPage() {
                         ...inputs, 
                         advanceTaxPaid: { ...inputs.advanceTaxPaid, [q]: Number(e.target.value) }
                       })}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 font-bold text-sm focus:ring-2 focus:ring-indigo-100"
+                      className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm focus:ring-2 focus:ring-indigo-100"
                       placeholder="0"
                     />
                   </div>
@@ -284,17 +284,17 @@ export default function AdvanceTaxCalculatorPage() {
              </div>
 
              <div className="space-y-6 pt-6 border-t border-slate-50">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Payment Progress</label>
+                <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Payment Progress</label>
                 <div className="space-y-4">
                   {calculations.quarterlyAnalysis.map((q, i) => (
                     <div key={i} className="space-y-2">
-                      <div className="flex justify-between text-xs font-bold">
+                      <div className="flex justify-between text-xs font-normal">
                         <span className="text-slate-600">{q.quarter} Cumulative ({q.cumulativePercent}%)</span>
                         <span className="text-slate-900">{formatCurrency(q.cumulativeAmount)}</span>
                       </div>
                       <Progress value={(q.paidTillQuarter / q.cumulativeAmount) * 100} className="h-2 bg-slate-100" />
                       {q.shortfall > 0 && (
-                        <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Shortfall: {formatCurrency(q.shortfall)}</p>
+                        <p className="text-[10px] font-normal text-red-500 uppercase tracking-widest">Shortfall: {formatCurrency(q.shortfall)}</p>
                       )}
                     </div>
                   ))}

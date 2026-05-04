@@ -67,7 +67,7 @@ export default function HRACalculator() {
   const minVal = Math.min(hra, result.breakdown.rentMinus10Percent, result.breakdown.cityAllowance);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] font-inter">
+    <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "HRA Calculator 2025 | House Rent Allowance Exemption | MyeCA.in"}
         description={
@@ -83,36 +83,36 @@ export default function HRACalculator() {
       <div className="container mx-auto px-4 py-4 max-w-7xl">
         {/* Modern Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#444CE7] mb-4 uppercase tracking-widest bg-[#F5F8FF] w-fit px-4 py-1.5 rounded-full border border-[#D1E0FF]">
+          <div className="flex items-center gap-2 text-xs font-normal text-[#444CE7] mb-4 uppercase tracking-widest bg-[#F5F8FF] w-fit px-4 py-1.5 rounded-full border border-[#D1E0FF]">
             <Sparkles className="w-3.5 h-3.5" />
             Tax Optimization Tool
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-black text-[#101828] tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
                 HRA <span className="text-[#444CE7]">Calculator</span>
               </h1>
-              <p className="text-[#667085] text-base max-w-xl font-medium">
+              <p className="text-[#667085] text-base max-w-xl font-normal">
                 Calculate your tax-exempt House Rent Allowance under Section 10(13A).
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-bold text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
                     {i === 1 ? 'JD' : i === 2 ? 'AS' : 'RK'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-bold text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-bold text-[#444CE7]">10k+ Taxpayers</p>
+                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="text-xs font-normal text-[#444CE7]">10k+ Taxpayers</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-bold text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function HRACalculator() {
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Salary & Rent Details</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Salary & Rent Details</h2>
                   <p className="text-xs text-[#667085]">Fill in your annual salary components</p>
                 </div>
               </div>
@@ -141,16 +141,16 @@ export default function HRACalculator() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#344054]">Annual Basic Salary</span>
+                      <span className="text-sm font-normal text-[#344054]">Annual Basic Salary</span>
                       <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
-                      <span className="text-xs font-bold text-[#667085]">₹</span>
+                      <span className="text-xs font-normal text-[#667085]">₹</span>
                       <input 
                         type="number"
                         value={salary}
                         onChange={(e) => setSalary(Number(e.target.value))}
-                        className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export default function HRACalculator() {
                     min={100000} 
                     step={10000} 
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-medium uppercase tracking-wider">
+                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 1L</span>
                     <span>Max: 50L</span>
                   </div>
@@ -171,16 +171,16 @@ export default function HRACalculator() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#344054]">Annual HRA Received</span>
+                      <span className="text-sm font-normal text-[#344054]">Annual HRA Received</span>
                       <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
-                      <span className="text-xs font-bold text-[#667085]">₹</span>
+                      <span className="text-xs font-normal text-[#667085]">₹</span>
                       <input 
                         type="number"
                         value={hra}
                         onChange={(e) => setHra(Number(e.target.value))}
-                        className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -191,7 +191,7 @@ export default function HRACalculator() {
                     min={0} 
                     step={5000} 
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-medium uppercase tracking-wider">
+                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 0</span>
                     <span>Max: 20L</span>
                   </div>
@@ -201,16 +201,16 @@ export default function HRACalculator() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#344054]">Annual Rent Paid</span>
+                      <span className="text-sm font-normal text-[#344054]">Annual Rent Paid</span>
                       <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
-                      <span className="text-xs font-bold text-[#667085]">₹</span>
+                      <span className="text-xs font-normal text-[#667085]">₹</span>
                       <input 
                         type="number"
                         value={rent}
                         onChange={(e) => setRent(Number(e.target.value))}
-                        className="bg-transparent border-none outline-none text-right w-full text-sm font-bold text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function HRACalculator() {
                     min={0} 
                     step={5000} 
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-medium uppercase tracking-wider">
+                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 0</span>
                     <span>Max: 20L</span>
                   </div>
@@ -230,7 +230,7 @@ export default function HRACalculator() {
                 {/* City Type Selection */}
                 <div className="pt-4 border-t border-[#F2F4F7]">
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-sm font-bold text-[#344054]">Residential City Type</span>
+                    <span className="text-sm font-normal text-[#344054]">Residential City Type</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {[
@@ -255,8 +255,8 @@ export default function HRACalculator() {
                             {opt.icon}
                           </div>
                           <div>
-                            <p className={cn("text-sm font-bold", city === opt.id ? "text-[#101828]" : "text-[#344054]")}>{opt.label}</p>
-                            <p className="text-[10px] text-[#667085] font-medium">{opt.sub}</p>
+                            <p className={cn("text-sm font-normal", city === opt.id ? "text-[#101828]" : "text-[#344054]")}>{opt.label}</p>
+                            <p className="text-[10px] text-[#667085] font-normal">{opt.sub}</p>
                           </div>
                         </div>
                         {city === opt.id && (
@@ -278,7 +278,7 @@ export default function HRACalculator() {
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#101828]">Calculation Rules</h2>
+                  <h2 className="text-lg font-normal text-[#101828]">Calculation Rules</h2>
                   <p className="text-xs text-[#667085]">Exemption is the minimum of these three</p>
                 </div>
               </div>
@@ -302,11 +302,11 @@ export default function HRACalculator() {
                         {item.value === minVal ? <CheckCircle2 className="w-3.5 h-3.5" /> : <div className="w-1 h-1 rounded-full bg-current" />}
                       </div>
                       <div>
-                        <p className={cn("text-sm font-bold", item.value === minVal ? "text-[#101828]" : "text-[#344054]")}>{item.label}</p>
-                        <p className="text-[10px] text-[#667085] font-medium">{item.desc}</p>
+                        <p className={cn("text-sm font-normal", item.value === minVal ? "text-[#101828]" : "text-[#344054]")}>{item.label}</p>
+                        <p className="text-[10px] text-[#667085] font-normal">{item.desc}</p>
                       </div>
                     </div>
-                    <span className={cn("text-sm font-bold", item.value === minVal ? "text-[#027A48]" : "text-[#101828]")}>
+                    <span className={cn("text-sm font-normal", item.value === minVal ? "text-[#027A48]" : "text-[#101828]")}>
                       {fmt(item.value)}
                     </span>
                   </div>
@@ -319,8 +319,8 @@ export default function HRACalculator() {
           <div className="lg:col-span-5">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-8">
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-xl font-bold text-[#101828]">HRA Summary</h2>
-                <div className="bg-[#ECFDF3] text-[#027A48] text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
+                <h2 className="text-xl font-normal text-[#101828]">HRA Summary</h2>
+                <div className="bg-[#ECFDF3] text-[#027A48] text-[10px] font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
                   <Star className="w-3 h-3 fill-[#027A48]" />
                   Section 10(13A)
                 </div>
@@ -330,22 +330,22 @@ export default function HRACalculator() {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 {/* Exempt HRA */}
                 <div className="p-4 rounded-[20px] border-2 border-[#ECFDF3] bg-[#F6FEF9]">
-                  <span className="text-xs font-bold text-[#101828] block mb-0.5">Exempt HRA</span>
+                  <span className="text-xs font-normal text-[#101828] block mb-0.5">Exempt HRA</span>
                   <span className="text-[10px] text-[#667085] block mb-2">Non-taxable part</span>
-                  <span className="text-2xl font-bold block mb-0.5 text-[#027A48]">
+                  <span className="text-2xl font-normal block mb-0.5 text-[#027A48]">
                     {fmt(result.exemption)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-medium uppercase tracking-widest">Tax Free</span>
+                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Tax Free</span>
                 </div>
 
                 {/* Taxable HRA */}
                 <div className="p-4 rounded-[20px] border-2 border-[#FEF3F2] bg-[#FFFBFA]">
-                  <span className="text-xs font-bold text-[#101828] block mb-0.5">Taxable HRA</span>
+                  <span className="text-xs font-normal text-[#101828] block mb-0.5">Taxable HRA</span>
                   <span className="text-[10px] text-[#667085] block mb-2">Added to salary</span>
-                  <span className="text-2xl font-bold block mb-0.5 text-[#B42318]">
+                  <span className="text-2xl font-normal block mb-0.5 text-[#B42318]">
                     {fmt(result.taxableHRA)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-medium uppercase tracking-widest">Added to Tax</span>
+                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Added to Tax</span>
                 </div>
               </div>
 
@@ -356,31 +356,31 @@ export default function HRACalculator() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-[#475467]">Potential Tax Savings</span>
-                    <span className="text-2xl font-bold text-[#027A48]">{fmt(Math.round(result.exemption * 0.312))}</span>
+                    <span className="text-sm font-normal text-[#475467]">Potential Tax Savings</span>
+                    <span className="text-2xl font-normal text-[#027A48]">{fmt(Math.round(result.exemption * 0.312))}</span>
                   </div>
                   <p className="text-xs text-[#667085] leading-relaxed">
-                    Estimated tax saved at <span className="font-bold text-[#101828]">30% bracket</span> (including cess).
+                    Estimated tax saved at <span className="font-normal text-[#101828]">30% bracket</span> (including cess).
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4 flex-grow">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Annual Basic</span>
-                  <span className="text-xs font-bold text-[#101828] text-right">{fmt(salary)}</span>
+                  <span className="text-xs font-normal text-[#667085]">Annual Basic</span>
+                  <span className="text-xs font-normal text-[#101828] text-right">{fmt(salary)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Total HRA Received</span>
-                  <span className="text-xs font-bold text-[#101828] text-right">{fmt(hra)}</span>
+                  <span className="text-xs font-normal text-[#667085]">Total HRA Received</span>
+                  <span className="text-xs font-normal text-[#101828] text-right">{fmt(hra)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#667085]">Total Rent Paid</span>
-                  <span className="text-xs font-bold text-[#101828] text-right">{fmt(rent)}</span>
+                  <span className="text-xs font-normal text-[#667085]">Total Rent Paid</span>
+                  <span className="text-xs font-normal text-[#101828] text-right">{fmt(rent)}</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
-                  <span className="text-sm font-bold text-[#101828]">Net Taxable Salary</span>
-                  <span className="text-base font-bold text-[#B42318] text-right">{fmt(salary + result.taxableHRA)}</span>
+                  <span className="text-sm font-normal text-[#101828]">Net Taxable Salary</span>
+                  <span className="text-base font-normal text-[#B42318] text-right">{fmt(salary + result.taxableHRA)}</span>
                 </div>
               </div>
 
@@ -390,10 +390,10 @@ export default function HRACalculator() {
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#101828] mb-0.5">Maximize HRA?</h4>
+                  <h4 className="text-sm font-normal text-[#101828] mb-0.5">Maximize HRA?</h4>
                   <p className="text-xs text-[#667085] mb-2">Get CA assistance for HRA optimization</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-bold text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-[13px] font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Book Consultation
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -417,7 +417,7 @@ export default function HRACalculator() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-bold text-[#101828]">{item.label}</h5>
+                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
                 <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>

@@ -112,8 +112,8 @@ export default function CarLoanCalculator() {
         sidebar={
           <CalcGlassSidebar title="EMI Summary">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Monthly EMI</p>
-              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
+              <p className="text-4xl font-normal text-slate-900 tracking-tight tabular-nums">
                 {fmt(calculations.emi)}
               </p>
             </div>
@@ -147,18 +147,18 @@ export default function CarLoanCalculator() {
                 <div className="flex justify-center gap-6 mt-2">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">Principal</span>
+                    <span className="text-[10px] font-normal text-slate-500 uppercase">Principal</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">Interest</span>
+                    <span className="text-[10px] font-normal text-slate-500 uppercase">Interest</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <Link href="/services/business-advisory">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-orange-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-orange-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 Plan Business Vehicle Tax
               </button>
@@ -187,9 +187,9 @@ export default function CarLoanCalculator() {
               >
                 <div className="flex items-center gap-2 mb-1">
                   {type.icon}
-                  <span className="text-xs font-black">{type.label}</span>
+                  <span className="text-xs font-normal">{type.label}</span>
                 </div>
-                <p className="text-[10px] font-bold opacity-60">{type.desc}</p>
+                <p className="text-[10px] font-normal opacity-60">{type.desc}</p>
               </button>
             ))}
           </div>
@@ -223,8 +223,8 @@ export default function CarLoanCalculator() {
                 step={10000} 
               />
               <div className="flex justify-between mt-2">
-                <span className="text-[10px] font-bold text-slate-400">Equity: {Math.round((downPayment / carPrice) * 100)}%</span>
-                <span className="text-[10px] font-bold text-orange-600">Loan: {fmt(calculations.loanAmount)}</span>
+                <span className="text-[10px] font-normal text-slate-400">Equity: {Math.round((downPayment / carPrice) * 100)}%</span>
+                <span className="text-[10px] font-normal text-orange-600">Loan: {fmt(calculations.loanAmount)}</span>
               </div>
             </CalcInputGroup>
           </CalcInputCard>

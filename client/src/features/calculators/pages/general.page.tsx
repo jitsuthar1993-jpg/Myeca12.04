@@ -117,7 +117,7 @@ export default function GeneralCalculatorPage() {
     return num.toLocaleString("en-US", { maximumFractionDigits: 10 }).replace(/,/g, ",");
   })();
 
-  const btnBase = "h-[68px] text-xl font-semibold rounded-none transition-all duration-100 border-0";
+  const btnBase = "h-[68px] text-xl font-normal rounded-none transition-all duration-100 border-0";
 
   return (
     <>
@@ -150,16 +150,16 @@ export default function GeneralCalculatorPage() {
             className="flex items-center justify-between mb-5"
           >
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="text-3xl lg:text-4xl font-normal text-slate-900 tracking-tight">
                 General Calculator
               </h1>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[9px] font-bold text-slate-600 uppercase tracking-wider">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[9px] font-normal text-slate-600 uppercase tracking-wider">
                 <Sparkles className="w-3 h-3" />
                 Keyboard Supported
               </span>
             </div>
             <Link href="/calculators">
-              <button className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-blue-700 transition-colors">
+              <button className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-normal hover:bg-blue-700 transition-colors">
                 <Calculator className="w-3.5 h-3.5 text-blue-400" />
                 All Calculators
               </button>
@@ -181,7 +181,7 @@ export default function GeneralCalculatorPage() {
                 {/* ── Display Area (LIGHT THEMED) ── */}
                 <div className="bg-slate-50 border-b border-slate-200 px-5 pt-5 pb-4 text-right relative">
                   <div className="absolute top-3 left-4 flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] font-bold text-slate-500 border-slate-200 bg-white">Standard</Badge>
+                    <Badge variant="outline" className="text-[10px] font-normal text-slate-500 border-slate-200 bg-white">Standard</Badge>
                     <button
                       onClick={() => setShowHistory(!showHistory)}
                       className={cn(
@@ -194,7 +194,7 @@ export default function GeneralCalculatorPage() {
                     </button>
                   </div>
                   <div className="h-6 text-slate-400 text-xs font-mono mb-1 mt-2 truncate">{equation || "\u00A0"}</div>
-                  <div className="text-4xl sm:text-5xl font-bold text-slate-900 font-mono tracking-tight overflow-x-auto whitespace-nowrap scrollbar-hide">
+                  <div className="text-4xl sm:text-5xl font-normal text-slate-900 font-mono tracking-tight overflow-x-auto whitespace-nowrap scrollbar-hide">
                     {formattedDisplay}
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export default function GeneralCalculatorPage() {
                         key={btn.label}
                         onClick={btn.action}
                         title={btn.title}
-                        className="h-12 text-[15px] font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-colors border-r border-slate-100 last:border-r-0"
+                        className="h-12 text-[15px] font-normal text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-colors border-r border-slate-100 last:border-r-0"
                       >
                         {btn.label}
                       </button>
@@ -223,22 +223,22 @@ export default function GeneralCalculatorPage() {
                   {/* Main Keypad */}
                   <div className="grid grid-cols-4 gap-[1px] bg-slate-100">
                     {/* Row 1: AC, +/−, ops */}
-                    <button onClick={clear} className={cn(btnBase, "h-[64px] text-red-500 bg-white hover:bg-red-50 font-bold text-base")}>AC</button>
+                    <button onClick={clear} className={cn(btnBase, "h-[64px] text-red-500 bg-white hover:bg-red-50 font-normal text-base")}>AC</button>
                     <button onClick={() => handleFunction("neg")} className={cn(btnBase, "h-[64px] text-slate-600 bg-white hover:bg-slate-50 text-lg")}>+/−</button>
-                    <button onClick={() => performOperation("/")} className={cn(btnBase, "h-[64px] text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-bold text-xl")}>÷</button>
-                    <button onClick={() => performOperation("*")} className={cn(btnBase, "h-[64px] text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-bold text-xl")}>×</button>
+                    <button onClick={() => performOperation("/")} className={cn(btnBase, "h-[64px] text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-normal text-xl")}>÷</button>
+                    <button onClick={() => performOperation("*")} className={cn(btnBase, "h-[64px] text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-normal text-xl")}>×</button>
 
                     {/* Row 2: 7,8,9, − */}
                     {["7", "8", "9"].map(d => (
                       <button key={d} onClick={() => inputDigit(d)} className={cn(btnBase, "bg-white text-slate-800 hover:bg-slate-50")}>{d}</button>
                     ))}
-                    <button onClick={() => performOperation("-")} className={cn(btnBase, "text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-bold")}>−</button>
+                    <button onClick={() => performOperation("-")} className={cn(btnBase, "text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-normal")}>−</button>
 
                     {/* Row 3: 4,5,6, + */}
                     {["4", "5", "6"].map(d => (
                       <button key={d} onClick={() => inputDigit(d)} className={cn(btnBase, "bg-white text-slate-800 hover:bg-slate-50")}>{d}</button>
                     ))}
-                    <button onClick={() => performOperation("+")} className={cn(btnBase, "text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-bold")}>+</button>
+                    <button onClick={() => performOperation("+")} className={cn(btnBase, "text-blue-600 bg-blue-50/40 hover:bg-blue-50 font-normal")}>+</button>
 
                     {/* Row 4: 1,2,3, = */}
                     {["1", "2", "3"].map(d => (
@@ -251,11 +251,11 @@ export default function GeneralCalculatorPage() {
 
                     {/* Row 5: +/−, 0, . */}
                     <button onClick={() => inputDigit("0")} className={cn(btnBase, "col-span-2 bg-white text-slate-800 hover:bg-slate-50")}>0</button>
-                    <button onClick={inputDecimal} className={cn(btnBase, "bg-white text-slate-800 hover:bg-slate-50 font-bold text-2xl")}>.</button>
+                    <button onClick={inputDecimal} className={cn(btnBase, "bg-white text-slate-800 hover:bg-slate-50 font-normal text-2xl")}>.</button>
                   </div>
                 </CardContent>
               </Card>
-              <p className="mt-3 text-center text-[11px] text-slate-400 font-medium">
+              <p className="mt-3 text-center text-[11px] text-slate-400 font-normal">
                 ⌨️ Keyboard shortcuts supported · NumPad enabled
               </p>
             </motion.div>
@@ -269,10 +269,10 @@ export default function GeneralCalculatorPage() {
               >
                 <Card className="h-full max-h-[520px] flex flex-col bg-white border-slate-200 shadow-sm rounded-3xl overflow-hidden">
                   <div className="px-5 py-3.5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 className="font-bold text-sm text-slate-700 flex items-center gap-2">
+                    <h3 className="font-normal text-sm text-slate-700 flex items-center gap-2">
                       <History className="w-4 h-4 text-slate-400" /> Calculation History
                     </h3>
-                    <button onClick={() => setHistory([])} disabled={history.length === 0} className="text-[11px] font-bold text-red-500 hover:text-red-600 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <button onClick={() => setHistory([])} disabled={history.length === 0} className="text-[11px] font-normal text-red-500 hover:text-red-600 disabled:opacity-40 disabled:cursor-not-allowed">
                       Clear All
                     </button>
                   </div>
@@ -280,7 +280,7 @@ export default function GeneralCalculatorPage() {
                     {history.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-40 text-slate-400">
                         <Calculator className="w-8 h-8 mb-2 opacity-20" />
-                        <p className="text-xs font-medium">No history yet</p>
+                        <p className="text-xs font-normal">No history yet</p>
                       </div>
                     ) : (
                       <div className="space-y-2.5">
@@ -292,7 +292,7 @@ export default function GeneralCalculatorPage() {
                             title="Click to use this value"
                           >
                             <div className="text-xs text-slate-400 text-right mb-0.5 font-mono">{item.expression} =</div>
-                            <div className="text-base font-bold text-slate-800 text-right group-hover:text-blue-600 font-mono tabular-nums">
+                            <div className="text-base font-normal text-slate-800 text-right group-hover:text-blue-600 font-mono tabular-nums">
                               {parseFloat(item.result).toLocaleString()}
                             </div>
                           </div>
@@ -365,7 +365,7 @@ export default function GeneralCalculatorPage() {
 
         {/* Footer */}
         <div className="border-t border-slate-200/60 py-8 px-4 text-center mt-12">
-          <p className="text-[11px] font-medium text-slate-400 tracking-wide">
+          <p className="text-[11px] font-normal text-slate-400 tracking-wide">
             MyeCA.in · Free Online Calculator · Professional Financial Tools · © 2025
           </p>
         </div>

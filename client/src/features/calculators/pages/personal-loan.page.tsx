@@ -96,8 +96,8 @@ export default function PersonalLoanCalculator() {
         sidebar={
           <CalcGlassSidebar title="EMI Summary">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Monthly EMI</p>
-              <p className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
+              <p className="text-4xl font-normal text-slate-900 tracking-tight tabular-nums">
                 {fmt(calculations.emi)}
               </p>
             </div>
@@ -132,7 +132,7 @@ export default function PersonalLoanCalculator() {
             </div>
 
             <Link href="/services/advisory">
-              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-purple-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-purple-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 Plan Debt Consolidation
               </button>
@@ -201,8 +201,8 @@ export default function PersonalLoanCalculator() {
             <div className="bg-rose-50 border border-rose-100 p-6 rounded-[2rem] flex gap-4">
               <AlertTriangle className="w-6 h-6 text-rose-600 shrink-0 mt-1" />
               <div>
-                <h4 className="text-sm font-black text-rose-900 mb-1">High EMI Exposure Alert</h4>
-                <p className="text-xs font-bold text-rose-700 leading-relaxed">
+                <h4 className="text-sm font-normal text-rose-900 mb-1">High EMI Exposure Alert</h4>
+                <p className="text-xs font-normal text-rose-700 leading-relaxed">
                   Your EMI consumes {calculations.incomeRatio}% of your income. Banks generally prefer a ratio under 40% for approval. Consider increasing the tenure or reducing the loan amount.
                 </p>
               </div>
