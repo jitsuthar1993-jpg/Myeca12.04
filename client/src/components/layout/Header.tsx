@@ -811,8 +811,12 @@ export default function Header() {
               {/* Right Side Actions - Pill Style */}
               <div className="flex items-center gap-3">
                 {/* Search - Desktop */}
-                <Button variant="ghost" size="icon" className="hidden lg:flex text-slate-500 hover:text-blue-600 hover:bg-blue-50/50 rounded-full w-10 h-10 transition-all duration-300">
-                  <Search className="w-5 h-5" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="hidden lg:flex text-slate-400 hover:text-[#2563eb] hover:bg-blue-50/80 rounded-xl w-10 h-10 transition-all duration-300 border border-transparent hover:border-blue-100/50"
+                >
+                  <Search className="w-[18px] h-[18px]" />
                 </Button>
 
                 {!isLoading && isAuthenticated && (
@@ -823,7 +827,7 @@ export default function Header() {
                           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[11px] font-normal text-white shadow-sm ring-2 ring-white">
                             {getInitials()}
                           </div>
-                          <span className="hidden sm:inline text-xs font-bold text-slate-700">
+                          <span className="hidden sm:inline text-xs font-normal text-slate-600">
                             {user?.firstName}
                           </span>
                         </Button>
@@ -835,14 +839,14 @@ export default function Header() {
                               {getInitials()}
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <span className="text-sm font-black text-slate-900 truncate">
+                              <span className="text-sm font-normal text-slate-900 truncate">
                                 {[user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || user?.email}
                               </span>
                               <span className="text-[10px] font-medium text-slate-500 truncate mt-0.5">
                                 {user?.email}
                               </span>
                               <div className="mt-1.5 flex items-center gap-1.5">
-                                <span className="px-1.5 py-0.5 rounded-md bg-blue-100 text-[9px] font-black text-blue-700 uppercase tracking-wider">
+                                <span className="px-1.5 py-0.5 rounded-md bg-blue-50 text-[9px] font-normal text-blue-600 uppercase tracking-widest border border-blue-100/50">
                                   {user?.role || 'User'}
                                 </span>
                                 {user?.isVerified && (
@@ -864,7 +868,7 @@ export default function Header() {
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
                               <LayoutDashboard className="w-4 h-4" />
                             </div>
-                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Dashboard</span>
+                            <span className="text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">Dashboard</span>
                           </Link>
                         </DropdownMenuItem>
 
@@ -873,7 +877,7 @@ export default function Header() {
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
                               <Settings className="w-4 h-4" />
                             </div>
-                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Account Settings</span>
+                            <span className="text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">Account Settings</span>
                           </Link>
                         </DropdownMenuItem>
 
@@ -887,7 +891,7 @@ export default function Header() {
                             <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-500 group-hover:bg-red-100 transition-colors">
                               <LogOut className="w-4 h-4" />
                             </div>
-                            <span className="text-sm font-black uppercase tracking-tight">Sign Out</span>
+                            <span className="text-sm font-normal text-slate-700 group-hover:text-red-600 transition-colors uppercase tracking-tight">Sign Out</span>
                           </div>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -896,10 +900,10 @@ export default function Header() {
                 )}
 
                 {!isLoading && !isAuthenticated && (
-                  <div className="hidden lg:flex items-center">
+                  <div className="hidden lg:flex items-center gap-3">
                     <Link href="/login">
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-full px-8 h-11 shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,99,235,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5">
-                        <User className="w-4 h-4" />
+                      <Button className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-normal text-sm rounded-xl px-7 h-11 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5">
+                        <User className="w-[18px] h-[18px]" />
                         <span>Log in / Join</span>
                       </Button>
                     </Link>

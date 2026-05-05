@@ -59,6 +59,7 @@ const VirtualCFOPage = lazyWithRetry(() => import("@/pages/business/virtual-cfo.
 
 const NoticeCompliancePage = lazyWithRetry(() => import("@/pages/services/notice-compliance.page"));
 const TdsFilingPage = lazyWithRetry(() => import("@/pages/services/tds-filing.page"));
+const ITRForSalariedPage = lazyWithRetry(() => import("@/pages/services/itr-for-salaried.page"));
 const GstRegistrationPage = lazyWithRetry(() => import("@/pages/services/gst-registration.page"));
 const CompanyRegistrationPage = lazyWithRetry(() => import("@/pages/services/company-registration.page"));
 const StartupIndiaRegistrationPage = lazyWithRetry(() => import("@/pages/services/startup-india-registration.page"));
@@ -225,6 +226,7 @@ export default function Routes() {
 
         <Route path="/services/notice-compliance" component={NoticeCompliancePage} />
         <Route path="/services/tds-filing" component={TdsFilingPage} />
+        <Route path="/salary" component={ITRForSalariedPage} />
         <Route path="/services/gst-registration" component={GstRegistrationPage} />
         <Route path="/services/company-registration" component={CompanyRegistrationPage} />
         <Route path="/services/startup-india-registration" component={StartupIndiaRegistrationPage} />
