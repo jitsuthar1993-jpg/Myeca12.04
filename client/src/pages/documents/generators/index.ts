@@ -32,6 +32,9 @@ import { LeaseDeedGenerator } from './lease-deed';
 import { FounderAgreementGenerator } from './founder-agreement';
 import { ServiceAgreementGenerator } from './contract-service';
 import { ReportGenerator } from './report';
+import { CertificateGenerator } from './certificate';
+import { Form12bbGenerator } from './form-12bb';
+import { NocGenerator } from './noc';
 // Mapping of document type ID to its respective Generator Config
 export const DOCUMENT_GENERATORS: Record<string, DocumentGeneratorConfig> = {
   'invoice': InvoiceGenerator,
@@ -67,5 +70,8 @@ export const DOCUMENT_GENERATORS: Record<string, DocumentGeneratorConfig> = {
   'founder-agreement': FounderAgreementGenerator,
   'contract-service': ServiceAgreementGenerator,
   'report': ReportGenerator,
+  'certificate': CertificateGenerator,
+  'form-12bb': Form12bbGenerator,
+  'noc': NocGenerator,
   // Add more modular exports here as you build them.
 };

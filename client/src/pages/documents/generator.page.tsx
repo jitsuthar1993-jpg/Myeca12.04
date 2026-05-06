@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo } from 'react';
 import { sanitizeHTML } from '@/lib/sanitize';
 import MetaSEO from "@/components/seo/MetaSEO";
 import { useRoute, useLocation } from 'wouter';
@@ -33,6 +33,115 @@ import {
 // Import modular configurations
 import { DOCUMENT_GENERATORS } from './generators';
 import { DocumentGeneratorConfig } from './generators/types';
+
+const A4_PAGE_HEIGHT_MM = 297;
+
+function DocumentPreview({ htmlContent }: { htmlContent: string }) {
+  const sanitizedHtml = useMemo(() => sanitizeHTML(htmlContent), [htmlContent]);
+  const [pages, setPages] = useState<string[]>([]);
+
+  useLayoutEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const source = document.createElement('div');
+    source.innerHTML = sanitizedHtml;
+
+    const sourceRoot =
+      source.children.length === 1
+        ? (source.firstElementChild as HTMLElement)
+        : source;
+    const sourceChildren = Array.from(sourceRoot.childNodes).filter(
+      (node) => node.nodeType !== Node.TEXT_NODE || Boolean(node.textContent?.trim())
+    );
+
+    if (sourceChildren.length === 0) {
+      setPages([sanitizedHtml]);
+      return;
+    }
+
+    const measurer = document.createElement('div');
+    measurer.style.cssText = [
+      'position:absolute',
+      'left:-10000px',
+      'top:0',
+      'visibility:hidden',
+      'pointer-events:none',
+      'width:210mm',
+      'box-sizing:border-box',
+      'padding:20mm',
+      'background:#fff',
+    ].join(';');
+    document.body.appendChild(measurer);
+
+    const pageHeightPx = A4_PAGE_HEIGHT_MM * (96 / 25.4) + 4;
+    const measuredPages: HTMLElement[] = [];
+
+    const createPageRoot = () => {
+      const pageRoot = sourceRoot.cloneNode(false) as HTMLElement;
+      const page = document.createElement('div');
+      page.style.cssText = [
+        'width:210mm',
+        'min-height:297mm',
+        'box-sizing:border-box',
+        'padding:20mm',
+        'background:#fff',
+      ].join(';');
+      page.appendChild(pageRoot);
+      measurer.appendChild(page);
+      measuredPages.push(pageRoot);
+      return pageRoot;
+    };
+
+    let activeRoot = createPageRoot();
+
+    sourceChildren.forEach((child) => {
+      const clonedChild = child.cloneNode(true);
+      activeRoot.appendChild(clonedChild);
+
+      const pageElement = activeRoot.parentElement;
+      if (
+        pageElement &&
+        pageElement.scrollHeight > pageHeightPx &&
+        activeRoot.childNodes.length > 1
+      ) {
+        activeRoot.removeChild(clonedChild);
+        activeRoot = createPageRoot();
+        activeRoot.appendChild(clonedChild);
+      }
+    });
+
+    const nextPages = measuredPages
+      .filter((pageRoot) => pageRoot.textContent?.trim() || pageRoot.children.length > 0)
+      .map((pageRoot) => pageRoot.outerHTML);
+
+    document.body.removeChild(measurer);
+    setPages(nextPages.length > 0 ? nextPages : [sanitizedHtml]);
+  }, [sanitizedHtml]);
+
+  const pagesToRender = pages.length > 0 ? pages : [sanitizedHtml];
+
+  return (
+    <div className="flex w-full flex-col items-center gap-8">
+      {pagesToRender.map((pageHtml, index) => (
+        <div
+          key={`${index}-${pageHtml.length}`}
+          className="bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] ring-1 ring-white/10 print-exact origin-top transition-all duration-500 hover:scale-[1.01]"
+          style={{
+            width: '210mm',
+            minHeight: '297mm',
+            padding: '20mm',
+            marginBottom: index === pagesToRender.length - 1 ? '40px' : 0,
+          }}
+        >
+          <div
+            dangerouslySetInnerHTML={{ __html: pageHtml }}
+            className="prose prose-sm max-w-none text-gray-900"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function DocumentGenerator() {
   const [match, params] = useRoute<{ type: string }>('/documents/generator/:type');
@@ -432,21 +541,7 @@ export default function DocumentGenerator() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800/40 via-[#0f172a] to-[#0f172a] pointer-events-none"></div>
 
             <div className="max-w-5xl mx-auto relative z-10 w-full flex justify-center">
-              {/* Floating Paper Layout */}
-              <div
-                className="bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] ring-1 ring-white/10 print-exact origin-top transition-all duration-500 hover:scale-[1.01]"
-                style={{
-                  width: '210mm',
-                  minHeight: '297mm',
-                  padding: '20mm',
-                  marginBottom: '40px',
-                }}
-              >
-                <div
-                  dangerouslySetInnerHTML={{ __html: sanitizeHTML(config.generateHTML(formData)) }}
-                  className="prose prose-sm max-w-none text-gray-900"
-                />
-              </div>
+              <DocumentPreview htmlContent={config.generateHTML(formData)} />
             </div>
           </div>
         )}

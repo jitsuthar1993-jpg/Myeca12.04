@@ -73,7 +73,7 @@ const CATEGORIES = [
 
 // Extended Generator Cards mapped to categories
 const documentGenerators = [
-  // LEGAL & PERSONAL (10 documents)
+  // LEGAL & PERSONAL (11 documents)
   {
     id: 'rent-agreement-rc',
     title: 'Residential Rent Agreement',
@@ -184,6 +184,17 @@ const documentGenerators = [
     validity: 'Instruments Act',
     features: ['Demand / Fixed Date', 'Interest Clauses', 'Revenue Stamp Space'],
   },
+  {
+    id: 'noc',
+    title: 'NOC Letter',
+    description:
+      'Flexible No Objection Certificate for employers, companies, institutions, and general authority submissions.',
+    category: 'legal',
+    icon: <Mail className="w-5 h-5" />,
+    status: 'active',
+    validity: 'All India',
+    features: ['General NOC Format', 'Named Recipient Option', 'Authority Ready'],
+  },
 
   // BUSINESS & CORPORATE (8 documents)
   {
@@ -275,7 +286,7 @@ const documentGenerators = [
     features: ['Data visualization blocks', 'Multiple styling layouts', 'Export to PDF/DOCX'],
   },
 
-  // COMPLIANCE & TAX (6 documents)
+  // COMPLIANCE & TAX (7 documents)
   {
     id: 'invoice',
     title: 'GST Compliant Tax Invoice',
@@ -330,6 +341,17 @@ const documentGenerators = [
     status: 'active',
     validity: 'Income Tax Act',
     features: ['DOB Validation', 'Tax Exemption', 'Senior Citizen Scope'],
+  },
+  {
+    id: 'form-12bb',
+    title: 'Form 12BB',
+    description:
+      'Employee investment declaration for HRA, LTC, home loan interest, and Chapter VI-A deduction proofs under section 192.',
+    category: 'tax',
+    icon: <FileDigit className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Income Tax Act',
+    features: ['Rule 26C Format', 'Deduction Proofs', 'Employer Declaration'],
   },
   // REAL ESTATE (4 documents)
   {
@@ -388,7 +410,7 @@ const documentGenerators = [
     features: ['Landlord PAN Field', 'Multiple Receipts/Page', 'HRA Claim Ready'],
   },
 
-  // CAREER & HR (5 documents)
+  // CAREER & HR (6 documents)
   {
     id: 'resume',
     title: 'Professional Resume Builder',

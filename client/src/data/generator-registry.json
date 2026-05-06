@@ -27,11 +27,12 @@
       "category": "hr",
       "type": "document",
       "priority": 2,
-      "version": "0.1.0",
-      "status": "coming_soon",
+      "version": "1.0.0",
+      "status": "available",
       "icon": "Receipt",
       "owner": "docs-team",
       "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
       "docs": "salary-slip"
     },
     {
@@ -41,11 +42,12 @@
       "category": "tax",
       "type": "document",
       "priority": 3,
-      "version": "0.1.0",
-      "status": "coming_soon",
+      "version": "1.0.0",
+      "status": "available",
       "icon": "FileCheck",
       "owner": "docs-team",
       "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
       "docs": "form-12bb"
     },
     {
@@ -55,11 +57,12 @@
       "category": "legal",
       "type": "document",
       "priority": 3,
-      "version": "0.1.0",
-      "status": "coming_soon",
+      "version": "1.0.0",
+      "status": "available",
       "icon": "FileText",
       "owner": "docs-team",
       "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
       "docs": "invoice"
     },
     {
@@ -69,11 +72,12 @@
       "category": "hr",
       "type": "document",
       "priority": 4,
-      "version": "0.1.0",
-      "status": "coming_soon",
+      "version": "1.0.0",
+      "status": "available",
       "icon": "Award",
       "owner": "docs-team",
       "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
       "docs": "experience-letter"
     },
     {
@@ -83,12 +87,28 @@
       "category": "legal",
       "type": "document",
       "priority": 4,
-      "version": "0.1.0",
-      "status": "coming_soon",
+      "version": "1.0.0",
+      "status": "available",
       "icon": "Mail",
       "owner": "docs-team",
       "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
       "docs": "noc"
+    },
+    {
+      "id": "certificate",
+      "name": "Award / Excellence Certificate",
+      "description": "Design appreciation and completion certificates",
+      "category": "hr",
+      "type": "document",
+      "priority": 5,
+      "version": "1.0.0",
+      "status": "available",
+      "icon": "Award",
+      "owner": "docs-team",
+      "dependencies": [],
+      "path": "client/src/pages/documents/generator.page.tsx",
+      "docs": "certificate"
     }
   ]
 }
