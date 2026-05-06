@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { Link } from 'wouter';
 import { m, AnimatePresence } from 'framer-motion';
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -22,9 +22,21 @@ import {
   CheckCircle2,
   ChevronDown,
   CheckCircle,
+  Download,
+  ExternalLink,
+  FileArchive,
+  RefreshCw,
 } from 'lucide-react';
 
 import { useAuth } from '@/components/AuthProvider';
+import {
+  incomeTaxFormDownloads,
+  incomeTaxFormsAssessmentYear,
+  incomeTaxFormsFinancialYearLabel,
+  incomeTaxFormsLastSynced,
+  incomeTaxFormsSourceUrl,
+  type IncomeTaxFormDownload,
+} from '@/data/income-tax-forms';
 
 // Document Categories based on the new Indian Market Plan
 const CATEGORIES = [
@@ -54,6 +66,14 @@ const CATEGORIES = [
     badge: 'bg-green-100 text-green-800',
   },
   {
+    id: 'income-tax-forms',
+    name: 'Income Tax Forms',
+    icon: <FileArchive className="w-5 h-5" />,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    badge: 'bg-emerald-100 text-emerald-800',
+  },
+  {
     id: 'real-estate',
     name: 'Real Estate',
     icon: <HomeIcon className="w-5 h-5" />,
@@ -68,6 +88,14 @@ const CATEGORIES = [
     color: 'text-purple-600',
     bg: 'bg-purple-50',
     badge: 'bg-purple-100 text-purple-800',
+  },
+  {
+    id: 'applications',
+    name: 'Applications & Certificates',
+    icon: <FileText className="w-5 h-5" />,
+    color: 'text-teal-600',
+    bg: 'bg-teal-50',
+    badge: 'bg-teal-100 text-teal-800',
   },
 ];
 
@@ -410,6 +438,140 @@ const documentGenerators = [
     features: ['Landlord PAN Field', 'Multiple Receipts/Page', 'HRA Claim Ready'],
   },
 
+  // APPLICATIONS & CERTIFICATES (12 documents)
+  {
+    id: 'legal-notice',
+    title: 'Legal Notice',
+    description:
+      'Formal pre-action notice for recovery, contract, property, service, and general disputes.',
+    category: 'applications',
+    icon: <Scale className="w-5 h-5" />,
+    status: 'active',
+    validity: 'All India',
+    features: ['Pre-action Draft', 'Demand Timeline', 'Review Reminder'],
+  },
+  {
+    id: 'rti-application',
+    title: 'RTI Application',
+    description:
+      'Right to Information request format for public records, government data, and department responses.',
+    category: 'applications',
+    icon: <FileText className="w-5 h-5" />,
+    status: 'active',
+    validity: 'RTI Act 2005',
+    features: ['PIO Address Block', 'Fee Details', 'Section 6(3) Transfer'],
+  },
+  {
+    id: 'consumer-complaint-letter',
+    title: 'Consumer Complaint Letter',
+    description:
+      'Complaint letter for defective goods, delayed services, refunds, warranties, and support escalation.',
+    category: 'applications',
+    icon: <Mail className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Consumer Law',
+    features: ['Order Details', 'Relief Requested', 'Escalation Wording'],
+  },
+  {
+    id: 'police-complaint-lost-document',
+    title: 'Lost Document Police Complaint',
+    description:
+      'Police intimation draft for lost IDs, certificates, mark sheets, passports, and official papers.',
+    category: 'applications',
+    icon: <Shield className="w-5 h-5" />,
+    status: 'active',
+    validity: 'All India',
+    features: ['Document Number', 'Loss Location', 'Acknowledgement Request'],
+  },
+  {
+    id: 'general-affidavit',
+    title: 'General Affidavit',
+    description:
+      'Flexible sworn statement format for common administrative, banking, and official submissions.',
+    category: 'applications',
+    icon: <FileText className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Notary Format',
+    features: ['Custom Statements', 'Verification Clause', 'Stamp Paper Note'],
+  },
+  {
+    id: 'one-same-person-affidavit',
+    title: 'One & Same Person Affidavit',
+    description:
+      'Declare that different name spellings across records refer to the same person.',
+    category: 'applications',
+    icon: <User className="w-5 h-5" />,
+    status: 'active',
+    validity: 'All India',
+    features: ['Name Variations', 'Record List', 'Identity Declaration'],
+  },
+  {
+    id: 'bonafide-certificate',
+    title: 'Bonafide Certificate',
+    description:
+      'Certificate format for schools, colleges, institutions, and organizations to confirm association.',
+    category: 'applications',
+    icon: <Award className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Institutional',
+    features: ['Roll/ID Field', 'Course or Role', 'Purpose Statement'],
+  },
+  {
+    id: 'transfer-certificate',
+    title: 'Transfer Certificate',
+    description:
+      'School or college transfer certificate draft with admission, leaving, and conduct details.',
+    category: 'applications',
+    icon: <FileText className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Institutional',
+    features: ['Admission Number', 'Leaving Reason', 'Conduct Record'],
+  },
+  {
+    id: 'student-fee-receipt',
+    title: 'Student Fee Receipt',
+    description:
+      'Education fee receipt for schools, institutes, coaching centers, and training programs.',
+    category: 'applications',
+    icon: <IndianRupee className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Institutional',
+    features: ['Receipt Number', 'Payment Mode', 'Fee Period'],
+  },
+  {
+    id: 'invitation-letter',
+    title: 'Invitation Letter',
+    description:
+      'Invitation draft for visa, business visit, event, conference, and personal visit purposes.',
+    category: 'applications',
+    icon: <Mail className="w-5 h-5" />,
+    status: 'active',
+    validity: 'General Use',
+    features: ['Visit Purpose', 'Venue Details', 'Support Statement'],
+  },
+  {
+    id: 'marriage-biodata',
+    title: 'Marriage Biodata',
+    description:
+      'Printable matrimonial profile with personal, education, profession, family, and contact details.',
+    category: 'applications',
+    icon: <User className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Personal Use',
+    features: ['Family Details', 'Preferences', 'Contact Block'],
+  },
+  {
+    id: 'pension-request-application',
+    title: 'Pension Request Application',
+    description:
+      'Application for pension start, correction, arrears, life certificate update, or related requests.',
+    category: 'applications',
+    icon: <Building2 className="w-5 h-5" />,
+    status: 'active',
+    validity: 'Department Use',
+    features: ['PPO Details', 'Request Type', 'Attachment List'],
+  },
+
   // CAREER & HR (6 documents)
   {
     id: 'resume',
@@ -499,9 +661,52 @@ function Key({ className }: { className?: string }) {
   return <HomeIcon className={className} />;
 }
 
+const incomeTaxFileTypeStyles: Record<
+  IncomeTaxFormDownload['fileType'],
+  { label: string; className: string; icon: JSX.Element }
+> = {
+  pdf: {
+    label: 'PDF',
+    className: 'bg-red-50 text-red-700 border-red-100',
+    icon: <FileText className="h-3.5 w-3.5" />,
+  },
+  utility: {
+    label: 'Utility ZIP',
+    className: 'bg-blue-50 text-blue-700 border-blue-100',
+    icon: <FileArchive className="h-3.5 w-3.5" />,
+  },
+  schema: {
+    label: 'Schema',
+    className: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+    icon: <FileArchive className="h-3.5 w-3.5" />,
+  },
+  zip: {
+    label: 'ZIP',
+    className: 'bg-slate-100 text-slate-700 border-slate-200',
+    icon: <FileArchive className="h-3.5 w-3.5" />,
+  },
+  link: {
+    label: 'Official Link',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+    icon: <ExternalLink className="h-3.5 w-3.5" />,
+  },
+};
+
+function formatSyncDate(value: string) {
+  return new Date(value).toLocaleString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export default function DocumentGeneratorRegistry() {
+  const mainContentRef = useRef<HTMLElement | null>(null);
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [incomeTaxSearchQuery, setIncomeTaxSearchQuery] = useState('');
   const [selectedState, setSelectedState] = useState('All States');
 
   const INDIAN_STATES = [
@@ -517,6 +722,8 @@ export default function DocumentGeneratorRegistry() {
   ];
 
   const filteredDocs = useMemo(() => {
+    if (activeCategory === 'income-tax-forms') return [];
+
     return documentGenerators.filter((doc) => {
       const matchesCategory = activeCategory === 'all' || doc.category === activeCategory;
       const matchesSearch =
@@ -526,9 +733,42 @@ export default function DocumentGeneratorRegistry() {
     });
   }, [activeCategory, searchQuery]);
 
+  const filteredIncomeTaxForms = useMemo(() => {
+    const query = incomeTaxSearchQuery.trim().toLowerCase();
+
+    if (!query) return incomeTaxFormDownloads;
+
+    const queryTerms = query.split(/\s+/).filter(Boolean);
+
+    return incomeTaxFormDownloads.filter((form) => {
+      const searchable = [
+        form.title,
+        form.fileType,
+        form.act,
+        ...form.tags,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return queryTerms.every((term) => searchable.includes(term));
+    });
+  }, [incomeTaxSearchQuery]);
+
   // Get category styling
   const getCategoryStyle = (catId: string) => {
     return CATEGORIES.find((c) => c.id === catId) || CATEGORIES[1];
+  };
+
+  const showIncomeTaxForms =
+    activeCategory === 'tax' || activeCategory === 'income-tax-forms';
+  const showDocumentGrid = activeCategory !== 'income-tax-forms';
+
+  const handleCategoryChange = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    requestAnimationFrame(() => {
+      mainContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   };
 
   return (
@@ -557,7 +797,7 @@ export default function DocumentGeneratorRegistry() {
           {CATEGORIES.map((category) => (
             <button
               key={category.id}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => handleCategoryChange(category.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 activeCategory === category.id
                   ? 'bg-blue-50 text-blue-700'
@@ -569,9 +809,11 @@ export default function DocumentGeneratorRegistry() {
               >
                 {category.icon}
               </div>
-              {category.name}
+              <span className="min-w-0 flex-1 whitespace-nowrap text-left text-[13px] md:text-sm">
+                {category.name}
+              </span>
               {activeCategory === category.id && (
-                <ChevronRight className="w-4 h-4 ml-auto text-blue-600" />
+                <ChevronRight className="w-4 h-4 shrink-0 text-blue-600" />
               )}
             </button>
           ))}
@@ -579,7 +821,7 @@ export default function DocumentGeneratorRegistry() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 p-6 md:p-8 lg:p-10">
+      <main ref={mainContentRef} className="flex-1 min-w-0 p-6 md:p-8 lg:p-10">
         {/* Top Search & Filter Bar */}
         <div className="max-w-7xl mx-auto mb-10">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -618,7 +860,168 @@ export default function DocumentGeneratorRegistry() {
           </div>
         </div>
 
+        {/* Income Tax Forms Downloads */}
+        {showIncomeTaxForms && (
+        <section className="max-w-7xl mx-auto mb-12">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="p-6 md:p-7 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-white">
+              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+                <div className="max-w-3xl">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-3">
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Last synced {formatSyncDate(incomeTaxFormsLastSynced)}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
+                    Income Tax Forms for FY {incomeTaxFormsFinancialYearLabel}
+                  </h2>
+                  <p className="mt-2 text-sm md:text-base text-gray-600 leading-relaxed">
+                    ITR utilities, schemas, and locally mirrored PDF documents for the official
+                    2025-26 return downloads catalog.
+                  </p>
+                </div>
+
+                <a
+                  href={incomeTaxFormsSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:border-blue-200 hover:text-blue-700"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Official source
+                </a>
+              </div>
+
+              <div className="mt-6 relative max-w-2xl">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search ITR forms, utilities, schemas..."
+                  value={incomeTaxSearchQuery}
+                  onChange={(event) => setIncomeTaxSearchQuery(event.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow outline-none text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+
+            <div className="p-5 md:p-6">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <p className="text-sm font-medium text-gray-600">
+                  Showing {filteredIncomeTaxForms.length} of {incomeTaxFormDownloads.length} official
+                  download entries
+                </p>
+                {incomeTaxSearchQuery && (
+                  <button
+                    onClick={() => setIncomeTaxSearchQuery('')}
+                    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {filteredIncomeTaxForms.map((form) => {
+                  const typeStyle = incomeTaxFileTypeStyles[form.fileType];
+                  const downloadHref = form.localPath || form.officialUrl;
+                  const isLocalPdf = Boolean(form.localPath);
+
+                  return (
+                    <article
+                      key={form.id}
+                      className="flex flex-col rounded-xl border border-gray-200 bg-white p-4 hover:border-emerald-200 hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h3 className="text-base font-bold text-gray-900 leading-snug">
+                            {form.title}
+                          </h3>
+                          <div className="mt-2 flex flex-wrap items-center gap-2">
+                            <span
+                              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${typeStyle.className}`}
+                            >
+                              {typeStyle.icon}
+                              {typeStyle.label}
+                            </span>
+                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                              FY {incomeTaxFormsFinancialYearLabel}
+                            </span>
+                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                              AY {incomeTaxFormsAssessmentYear}
+                            </span>
+                            {form.version && (
+                              <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                                v{form.version}
+                              </span>
+                            )}
+                            {form.size && (
+                              <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                                {form.size}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <p className="mt-3 text-sm text-gray-600 leading-relaxed line-clamp-3">
+                        {form.description || 'Official Income Tax Department form download.'}
+                      </p>
+
+                      {form.latestReleaseDate && (
+                        <p className="mt-3 text-xs font-medium text-gray-500">
+                          Latest release: {form.latestReleaseDate}
+                        </p>
+                      )}
+
+                      <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                        <a
+                          href={downloadHref}
+                          target={isLocalPdf ? undefined : '_blank'}
+                          rel={isLocalPdf ? undefined : 'noopener noreferrer'}
+                          download={isLocalPdf ? true : undefined}
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                        >
+                          {isLocalPdf ? (
+                            <>
+                              <Download className="h-4 w-4" />
+                              Download PDF
+                            </>
+                          ) : (
+                            <>
+                              <ExternalLink className="h-4 w-4" />
+                              Open official file
+                            </>
+                          )}
+                        </a>
+                        <a
+                          href={form.officialUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 hover:border-blue-200 hover:text-blue-700"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          Official source
+                        </a>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {filteredIncomeTaxForms.length === 0 && (
+                <div className="text-center py-12 border border-dashed border-gray-300 rounded-xl">
+                  <Search className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                  <h3 className="text-base font-bold text-gray-900">No Income Tax forms found</h3>
+                  <p className="text-sm text-gray-500 mt-1">Try a different form number or keyword.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+        )}
+
         {/* Categories Header */}
+        {showDocumentGrid && (
+        <>
         <div className="max-w-7xl mx-auto mb-8 flex items-baseline justify-between">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             {CATEGORIES.find((c) => c.id === activeCategory)?.name}
@@ -736,6 +1139,8 @@ export default function DocumentGeneratorRegistry() {
               Clear filters
             </button>
           </div>
+        )}
+        </>
         )}
       </main>
     </div>
