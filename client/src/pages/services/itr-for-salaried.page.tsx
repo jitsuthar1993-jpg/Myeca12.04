@@ -205,7 +205,7 @@ export default function ITRForSalariedPage() {
                 </h1>
               </div>
               <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mb-8">
-                Hassle-free ITR filing with expert CA assistance. Maximise your tax savings, claim all eligible deductions, and ensure 100% compliance with accurate Form 16 processing.
+                Hassle-free ITR filing with expert assistance. Review eligible deductions, reconcile Form 16 details, and choose the right support level before filing.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button 
@@ -224,7 +224,7 @@ export default function ITRForSalariedPage() {
                 </Link>
               </div>
               <div className="mt-8 flex items-center gap-6 text-sm font-medium text-gray-600">
-                <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Guaranteed Accuracy</span>
+                <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Review-Based Filing</span>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Data Privacy</span>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Notice Support</span>
               </div>
@@ -272,13 +272,13 @@ export default function ITRForSalariedPage() {
               Comprehensive ITR Filing
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Our service covers all complexities a salaried individual might face, ensuring absolute compliance and optimal refunds.
+              Our service covers common salaried return complexities, with document-based review where deductions, house property, or capital gains need closer checks.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Form 16 & Form 16A Parsing", icon: FileText, desc: "We automatically parse your TDS certificates to ensure 100% data accuracy." },
+              { title: "Form 16 & Form 16A Parsing", icon: FileText, desc: "Use TDS certificate details as a starting point and review the extracted data before filing." },
               { title: "Multiple Employers", icon: Users, desc: "Switched jobs? We seamlessly consolidate income and TDS from multiple employers." },
               { title: "Capital Gains Sync", icon: PieChart, desc: "Include your stock market and mutual fund gains directly using broker statements." },
               { title: "HRA & Rent Optimization", icon: Building2, desc: "Forgot to declare rent to employer? Claim HRA directly in your ITR." },
@@ -647,7 +647,7 @@ export default function ITRForSalariedPage() {
               { title: "Income Tax", desc: "Calculate your tax liability under new & old regimes.", icon: Wallet, link: "/calculators/income-tax", color: "text-blue-600", bg: "bg-blue-50" },
               { title: "HRA Calculator", desc: "Find out your exact House Rent Allowance exemption.", icon: Building2, link: "/calculators/hra", color: "text-indigo-600", bg: "bg-indigo-50" },
               { title: "TDS Calculator", desc: "Determine TDS on salary, professional fees & rent.", icon: Receipt, link: "/calculators/tds", color: "text-emerald-600", bg: "bg-emerald-50" },
-              { title: "Regime Comparator", desc: "Compare Old vs New Tax Regimes to save maximum tax.", icon: Scale, link: "/calculators/tax-regime", color: "text-purple-600", bg: "bg-purple-50" }
+              { title: "Regime Comparator", desc: "Compare old vs new tax regimes using your eligible deductions.", icon: Scale, link: "/calculators/tax-regime", color: "text-purple-600", bg: "bg-purple-50" }
             ].map((calc, i) => (
               <Link key={i} href={calc.link}>
                 <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-gray-100 group">
@@ -684,7 +684,7 @@ export default function ITRForSalariedPage() {
               </p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-3 text-blue-50">
-                  <CheckCircle className="w-5 h-5 text-green-400" /> Maximum Refund Guarantee
+                  <CheckCircle className="w-5 h-5 text-green-400" /> Eligible Deduction Review
                 </li>
                 <li className="flex items-center gap-3 text-blue-50">
                   <CheckCircle className="w-5 h-5 text-green-400" /> Secure Document Handling

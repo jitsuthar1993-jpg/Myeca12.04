@@ -25,7 +25,7 @@ const faqCategories = {
       },
       {
         question: 'Is MyeCA.in safe and secure?',
-        answer: 'Yes, MyeCA.in is completely safe and secure. We use bank-level 256-bit SSL encryption, are ISO 27001 certified, and follow strict data protection protocols. Your personal and financial information is encrypted and stored securely. We never share your data with third parties without your consent.'
+        answer: 'MyeCA.in uses encrypted document handling and access controls for tax documents. Your personal and financial information should be shared only through the secure workflow, and we do not sell your data.'
       },
       {
         question: 'How much does it cost to use MyeCA.in?',
@@ -73,7 +73,7 @@ const faqCategories = {
     questions: [
       {
         question: 'How accurate are your tax calculators?',
-        answer: 'Our calculators are 99.8% accurate and updated with the latest tax laws for FY 2024-25. They incorporate current tax slabs, deductions, exemptions, and cess rates. All calculations are verified by our CA team and tested against official tax computation.'
+        answer: 'Our calculators are estimates for common cases and are being updated for AY 2026-27 / FY 2025-26. Results can vary for salary versus non-salary income, house property, capital gains, special-rate income, residency, and surcharge cases.'
       },
       {
         question: 'Which tax regime should I choose - Old or New?',

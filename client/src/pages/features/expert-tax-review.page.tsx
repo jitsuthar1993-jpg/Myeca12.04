@@ -21,7 +21,7 @@ const caProcess = [
   {
     num: "02",
     title: "CA reviews your return",
-    desc: "A licensed CA checks your form against source documents, verifies deductions, and flags any issues within 24 hours.",
+    desc: "An expert checks your form against source documents, verifies deductions, and flags issues based on document readiness.",
   },
   {
     num: "03",
@@ -46,7 +46,7 @@ export default function ExpertTaxReviewPage() {
             A CA Reviews Your Return <span className="text-[#315efb]">Before It's Filed</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
-            Every ITR filed through MyeCA.in is reviewed by a licensed CA — not an algorithm. They check for errors, missed deductions, and notice risks before submission.
+            CA-assisted plans include expert review before submission. The review checks source documents, deductions, and common notice-risk areas.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/itr/form-selector">
@@ -115,7 +115,7 @@ export default function ExpertTaxReviewPage() {
                 Tax software can auto-fill fields from Form 16. It can't exercise judgment on ambiguous cases, catch an AIS discrepancy caused by a broker error, or decide whether a particular expense qualifies under a specific section.
               </p>
               <p className="text-slate-500 mb-8">
-                A licensed CA can — and every return filed through MyeCA.in has one assigned to it before it's submitted.
+                A CA-assisted plan can add this review before submission when your return needs expert support.
               </p>
               <div className="space-y-3">
                 {[

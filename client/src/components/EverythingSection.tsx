@@ -6,8 +6,8 @@ import { Link } from "wouter";
 const features = [
   {
     id: "itr-filing",
-    title: "Fastest ITR Filing",
-    description: "File your ITR in just 4 simple steps with CA review. Get done efficiently with our AI-powered platform.",
+    title: "Guided ITR Filing",
+    description: "File your ITR through simple guided steps and add CA review where your case needs it.",
     color: "bg-[var(--color-accent-600)]",
     shadowColor: "shadow-[var(--color-accent-500)]/40",
     icon: Zap,
@@ -15,8 +15,8 @@ const features = [
   },
   {
     id: "tax-calculators", 
-    title: "Accurate Tax Calculator",
-    description: "Get precise tax calculations instantly. Compare old vs new regime and maximize your savings.",
+    title: "Tax Estimate Calculator",
+    description: "Estimate tax instantly, compare old vs new regime, and review assumptions before filing.",
     color: "bg-[var(--color-success-600)]",
     shadowColor: "shadow-[var(--color-success-500)]/40",
     icon: Calculator,
@@ -34,7 +34,7 @@ const features = [
   {
     id: "tax-expert",
     title: "Expert Tax Review",
-    description: "Every return reviewed by certified CAs. Get maximum refund with zero errors guarantee.",
+    description: "Get expert review for complex deductions, notices, capital gains, business income, and NRI cases.",
     color: "bg-[var(--color-warning-600)]",
     shadowColor: "shadow-[var(--color-warning-500)]/40",
     icon: ShieldCheck,

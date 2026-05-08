@@ -47,12 +47,13 @@ export default function IncomeTaxCalculator() {
   const auto80TTA = regime === 'old' ? Math.min(savingInterest, 10000) : 0;
   const totalDeductions = deductions80C + deductions80D + otherDeductions + auto80TTA;
 
-  const inputs: IncomeTaxInputs & { assessmentYear: string; age: number } = {
+  const inputs: IncomeTaxInputs & { assessmentYear: string; age: number; salaryIncome: number } = {
     income: totalIncome,
     regime,
     deductions: totalDeductions,
     assessmentYear,
     age,
+    salaryIncome: basicSalary,
   };
 
   const { result, otherResult, comparison } = useMemo(() => {
@@ -100,17 +101,17 @@ export default function IncomeTaxCalculator() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
             <h1 className="text-[40px] font-normal text-[#101828] tracking-tight">Income Tax Calculator</h1>
-            <p className="text-[#667085] text-lg">Optimize your taxes. Compare regimes. Save more.</p>
+            <p className="text-[#667085] text-lg">Estimate your taxes, compare regimes, and review key assumptions.</p>
           </div>
           <div className="flex items-center gap-4 bg-[#F0F2F5] px-4 py-2 rounded-full border border-[#D0D5DD]">
             <div className="flex items-center gap-2 text-[13px] font-normal text-[#475467]">
               <CheckCircle2 className="w-4 h-4 text-[#101828]" />
-              CA Verified
+              Rule-based estimate
             </div>
             <div className="w-px h-4 bg-[#D0D5DD]" />
             <div className="text-[13px] font-normal text-[#475467]">100% Secure</div>
             <div className="w-px h-4 bg-[#D0D5DD]" />
-            <div className="text-[13px] font-normal text-[#475467]">No data shared</div>
+            <div className="text-[13px] font-normal text-[#475467]">Review before filing</div>
           </div>
         </div>
 
@@ -547,7 +548,7 @@ export default function IncomeTaxCalculator() {
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
-            { icon: <Award className="w-5 h-5" />, label: "100% Accurate", desc: "As per latest tax laws" },
+            { icon: <Award className="w-5 h-5" />, label: "Current Slabs", desc: "Common AY 2026-27 cases" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
           ].map((item, i) => (
@@ -583,21 +584,21 @@ export default function IncomeTaxCalculator() {
                 icon: <Target className="w-5 h-5" />,
                 iconBg: "bg-amber-50 text-amber-600",
                 title: "Tax Optimization",
-                desc: "Our calculator automatically compares both regimes and suggests the one that saves you more money based on the latest 2026-27 rates."
+                desc: "Our calculator compares both regimes using AY 2026-27 slabs. Special-rate income and complex house-property cases may need expert review."
               }
             ]}
             howItWorks={{
               title: "How Income Tax is Calculated (AY 2026-27)",
-              description: `${TAX_TRANSITION_NOTE} Income tax calculation follows a structured process of summing income, subtracting exemptions, and applying slab rates.`,
+              description: `${TAX_TRANSITION_NOTE} This calculator is an estimate for common salary and other-income cases. Special-rate income, detailed house-property computation, surcharge relief, and business income may need separate review.`,
               steps: [
                 { title: "Gross Total Income", desc: "Sum up salary, interest, rental income, and business profits." },
-                { title: "Exemptions & Deductions", desc: "Subtract Standard Deduction (₹75k for New Regime) and Chapter VI-A investments." },
+                { title: "Exemptions & Deductions", desc: "Apply salary standard deduction and eligible Old Regime deductions where allowed." },
                 { title: "Slab Application", desc: "Apply the AY 2026-27 new-regime slabs: 0% up to 4L, 5% up to 8L, 10% up to 12L, 15% up to 16L, 20% up to 20L, 25% up to 24L, and 30% above 24L." }
               ]
             }}
             faqs={[
               { q: "What is the new 12L rebate in AY 2026-27?", a: "For AY 2026-27, if your taxable income is up to ₹12 lakh under the New Regime, Section 87A allows rebate up to ₹60,000, making your net tax zero before cess." },
-              { q: "Is the ₹75k Standard Deduction for everyone?", a: "Yes, it applies to all salaried individuals and pensioners, but only for those opting for the New Tax Regime." },
+              { q: "Is the standard deduction for everyone?", a: "No. It applies to salary or pension income. It should not be applied to pure business, capital gains, or other non-salary income." },
               { q: "Can I claim HRA in the New Regime?", a: "No, HRA exemption is not available in the New Tax Regime. It is only available in the Old Tax Regime." }
             ]}
           />

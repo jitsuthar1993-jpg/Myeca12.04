@@ -41,7 +41,7 @@ export interface NPSComparison {
   elss: { corpus: number; taxBenefit: number; netReturn: number };
 }
 
-// Tax slabs for tax saving calculation (FY 2024-25, New Regime)
+// Tax slabs for tax-saving estimate under common-case new-regime assumptions.
 const TAX_SLABS_NEW = [
   { min: 0, max: 300000, rate: 0 },
   { min: 300000, max: 700000, rate: 0.05 },
@@ -247,4 +247,3 @@ export const NPS_TIERS = {
     exitTax: 'As per income slab',
   },
 };
-

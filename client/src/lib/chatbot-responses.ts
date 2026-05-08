@@ -35,7 +35,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   {
     id: 'deadline',
     patterns: ['deadline', 'due date', 'last date', 'when to file', 'itr deadline', 'filing date'],
-    response: "📅 **ITR Filing Deadlines for FY 2024-25 (AY 2025-26):**\n\n• **Individual/HUF (no audit):** July 31, 2025\n• **Businesses (audit required):** October 31, 2025\n• **Transfer Pricing cases:** November 30, 2025\n• **Revised/Belated Return:** December 31, 2025\n\n⚠️ Late filing attracts penalty of ₹1,000 to ₹10,000 plus interest under Section 234A.",
+    response: "📅 **ITR Filing Deadlines for FY 2025-26 (AY 2026-27):**\n\n• **Individual/HUF (no audit):** usually July 31 of the assessment year, unless extended\n• **Audit cases:** usually October 31\n• **Transfer pricing cases:** usually November 30\n• **Revised/Belated Return:** usually December 31\n\n⚠️ Check the Income Tax Department portal for extensions before filing.",
     quickActions: [
       { label: 'Start Filing Now', action: 'file_itr', href: '/itr/form-selector' },
       { label: 'Set Reminder', action: 'set_reminder' },
@@ -46,7 +46,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   {
     id: 'regime',
     patterns: ['old regime', 'new regime', 'which regime', 'better regime', 'regime comparison', 'tax regime'],
-    response: "🔄 **Old vs New Tax Regime Comparison:**\n\n**New Regime (Default from FY 24-25):**\n• Lower tax rates (5%-30%)\n• Standard deduction: ₹75,000\n• No other deductions allowed\n• Rebate up to ₹7 lakh income\n\n**Old Regime:**\n• Higher rates but more deductions\n• 80C (₹1.5L), 80D, HRA, LTA allowed\n• Good if deductions > ₹3.75 lakh\n\nWant me to help you compare based on your income?",
+    response: "🔄 **Old vs New Tax Regime Comparison (AY 2026-27):**\n\n**New Regime:**\n• Default regime with revised slabs\n• Standard deduction up to ₹75,000 for salary/pension income\n• Most old-regime deductions are not available\n• Section 87A rebate may apply based on taxable income and rules\n\n**Old Regime:**\n• More deductions and exemptions such as 80C, 80D, HRA, and home loan interest\n\nUse the calculator and review special-rate income separately.",
     quickActions: [
       { label: 'Compare My Tax', action: 'compare_regimes', href: '/calculators/regime-comparator' },
       { label: 'Tax Optimizer', action: 'optimize', href: '/tax-optimizer' },
@@ -95,7 +95,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   {
     id: 'capital_gains',
     patterns: ['capital gain', 'stcg', 'ltcg', 'stock tax', 'share tax', 'mutual fund tax'],
-    response: "📈 **Capital Gains Tax (FY 2024-25):**\n\n**Equity (Stocks, Equity MF):**\n• STCG (< 1 year): 20%\n• LTCG (> 1 year): 12.5% above ₹1.25 lakh\n\n**Debt MF, Gold, Property:**\n• STCG: As per income slab\n• LTCG (> 2 years): 12.5% without indexation\n\n💡 Tip: Use Tax Loss Harvesting to offset gains with losses!",
+    response: "📈 **Capital Gains Tax (FY 2025-26 estimate):**\n\n**Listed equity/equity MF:**\n• STCG may be taxed at special rates\n• LTCG may have a threshold exemption\n\n**Debt funds, gold, property, and other assets:**\n• Rate, holding period, and indexation treatment depend on asset type and acquisition date\n\nUse capital gains results as an estimate and review broker statements before filing.",
     quickActions: [
       { label: 'Capital Gains Calculator', action: 'cg_calc', href: '/calculators/capital-gains' },
       { label: 'Loss Harvesting', action: 'harvest', href: '/tax-loss-harvesting' },
@@ -106,7 +106,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   {
     id: 'advance_tax',
     patterns: ['advance tax', 'quarterly tax', '234b', '234c', 'advance payment'],
-    response: "📆 **Advance Tax Due Dates (FY 2024-25):**\n\n• **June 15:** 15% of total tax\n• **September 15:** 45% of total tax\n• **December 15:** 75% of total tax\n• **March 15:** 100% of total tax\n\n⚠️ **Who must pay?**\nTax liability > ₹10,000 after TDS\n\n💸 **Interest:** 1% per month under 234B & 234C for delays",
+    response: "📆 **Advance Tax Due Dates (FY 2025-26):**\n\n• **June 15, 2025:** 15% of total tax\n• **September 15, 2025:** 45% of total tax\n• **December 15, 2025:** 75% of total tax\n• **March 15, 2026:** 100% of total tax\n\n⚠️ **Who must pay?**\nTax liability above ₹10,000 after TDS/TCS, subject to exceptions.\n\n💸 **Interest:** delays can attract interest under Sections 234B and 234C.",
     quickActions: [
       { label: 'Calculate Advance Tax', action: 'advance_calc', href: '/calculators/advance-tax' },
     ],
@@ -234,4 +234,3 @@ export const TAX_TIPS = [
   "💡 Complete e-verification within 30 days of filing your ITR.",
   "💡 Pre-validate your bank account for faster refund processing.",
 ];
-

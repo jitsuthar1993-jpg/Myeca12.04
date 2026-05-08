@@ -125,7 +125,7 @@ const StartupServicesPage = () => {
       title: "Tax Planning & Incentives Optimization",
       price: "₹8,999 - ₹25,000",
       schemes: ["Section 80-IAC", "Capital Gains Relief", "R&D Incentives"],
-      benefits: "Maximum tax exemptions & IP reimbursements",
+      benefits: "Eligible tax exemptions & IP reimbursement support",
       icon: TrendingUp,
       color: "purple",
       description: "Optimize all available tax exemptions, handle GST/IT filings, R&D incentives, and IP reimbursements"
@@ -164,7 +164,7 @@ const StartupServicesPage = () => {
       title: "Business Valuation Services",
       price: "₹15,999 - ₹75,000",
       duration: "1-2 weeks",
-      guarantee: "100% Accurate",
+      guarantee: "Review Based",
       icon: PieChart,
       description: "Professional valuations for funding rounds, acquisitions, and strategic planning"
     },
@@ -172,7 +172,7 @@ const StartupServicesPage = () => {
       title: "Due Diligence Support",
       price: "₹25,999 - ₹1,50,000", 
       duration: "2-4 weeks",
-      guarantee: "Investor Approved",
+      guarantee: "Investor Ready",
       icon: Shield,
       description: "Complete financial and legal due diligence for funding readiness"
     },
@@ -180,7 +180,7 @@ const StartupServicesPage = () => {
       title: "IPO Readiness Advisory",
       price: "₹2,99,999 - ₹15,00,000",
       duration: "6-12 months",
-      guarantee: "IPO Success",
+      guarantee: "Process Ready",
       icon: Award,
       description: "End-to-end IPO preparation, compliance, and listing advisory"
     },
@@ -188,7 +188,7 @@ const StartupServicesPage = () => {
       title: "Investor Pitch Deck",
       price: "₹9,999 - ₹35,000",
       duration: "3-7 days",
-      guarantee: "Funding Ready",
+      guarantee: "Document Ready",
       icon: FileText,
       description: "Professional pitch decks with financial projections and market analysis"
     }
@@ -456,7 +456,7 @@ const StartupServicesPage = () => {
                             <p className="font-semibold text-gray-900">{service.duration}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Guarantee</p>
+                            <p className="text-gray-500">Support</p>
                             <p className="font-semibold text-green-600">{service.guarantee}</p>
                           </div>
                         </div>

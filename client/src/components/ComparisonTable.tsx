@@ -5,28 +5,28 @@ import { MobileCard } from "@/components/mobile";
 const comparisonData = [
   {
     feature: "CA Review",
-    myeCA: "Every return manually reviewed by a named CA",
+    myeCA: "CA review available for assisted plans",
     diy: "None - You're on your own",
     other: "AI/Bot review or optional batch review",
     icon: UserCheck
   },
   {
     feature: "Refund Optimization",
-    myeCA: "Maximum refund guaranteed (Section 80C, 80D, etc.)",
+    myeCA: "Eligible deductions reviewed with documents",
     diy: "Likely to miss common deductions",
     other: "Basic automated deduction matching",
     icon: Calculator
   },
   {
-    feature: "Accuracy Guarantee",
-    myeCA: "Professional liability assumed for every filing",
+    feature: "Accuracy Support",
+    myeCA: "Review notes and checks for supported filing workflows",
     diy: "High risk of notices due to errors",
     other: "Standard disclaimer - no liability",
     icon: Shield
   },
   {
     feature: "Filing Speed",
-    myeCA: "Done in 15 mins; CA review within 24 hours",
+    myeCA: "Guided workflow with timelines based on package and document readiness",
     diy: "Hours of manual data entry",
     other: "3-5 business days for batch processing",
     icon: Clock

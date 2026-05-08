@@ -24,8 +24,8 @@ const mockNotifications: Notification[] = [
   {
     id: 1,
     userId: "system",
-    title: "ITR Filing Deadline Approaching",
-    message: "Your ITR filing deadline is on July 31, 2025. File now to avoid penalties.",
+    title: "AY 2026-27 Filing Prep",
+    message: "Prepare Form 16, AIS, Form 26AS, bank interest, and investment records before filing your AY 2026-27 ITR.",
     type: "deadline" as const,
     category: "deadline_reminder" as const,
     read: false,
@@ -35,8 +35,8 @@ const mockNotifications: Notification[] = [
   {
     id: 2,
     userId: "system",
-    title: "Tax Refund Processed",
-    message: "Your tax refund of ₹15,500 has been processed and will be credited within 5-7 days.",
+    title: "Refund Tracking Reminder",
+    message: "Refund credit depends on e-verification, CPC processing, and bank validation. Track status from your filing dashboard.",
     type: "success" as const,
     category: "payment" as const,
     read: false,
@@ -45,8 +45,8 @@ const mockNotifications: Notification[] = [
   {
     id: 3,
     userId: "system",
-    title: "New Tax Regime Updates",
-    message: "Important changes to the new tax regime for FY 2025-26. Review the updates.",
+    title: "AY 2026-27 Regime Review",
+    message: "Review Old vs New Regime using FY 2025-26 income and deductions before final filing.",
     type: "tax_update" as const,
     category: "tax_update" as const,
     read: true,

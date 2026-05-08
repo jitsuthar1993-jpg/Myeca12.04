@@ -308,7 +308,7 @@ export default function ServiceSelectionPage() {
                 <ShieldCheck className="h-7 w-7 text-blue-600" />
               </div>
               <h3 className="text-xl font-black tracking-tight text-slate-900 mb-4">Enterprise Security</h3>
-              <p className="text-slate-500 font-medium text-sm leading-relaxed">Your data is encrypted with AES-256 and stored on ISO 27001-certified infrastructure.</p>
+              <p className="text-slate-500 font-medium text-sm leading-relaxed">Your data is handled through encrypted storage and controlled document workflows.</p>
             </div>
 
             <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 transition-all duration-300 hover:bg-amber-50 hover:border-amber-200 group">
@@ -316,7 +316,7 @@ export default function ServiceSelectionPage() {
                 <Zap className="h-7 w-7 text-amber-600" />
               </div>
               <h3 className="text-xl font-black tracking-tight text-slate-900 mb-4">Flash Delivery</h3>
-              <p className="text-slate-500 font-medium text-sm leading-relaxed">Our automated systems and expert CAs guarantee the fastest turnaround times in the industry.</p>
+              <p className="text-slate-500 font-medium text-sm leading-relaxed">Our workflow is designed for faster turnaround, depending on document readiness and filing complexity.</p>
             </div>
 
             <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 transition-all duration-300 hover:bg-violet-50 hover:border-violet-200 group">

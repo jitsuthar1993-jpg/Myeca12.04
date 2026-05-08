@@ -85,7 +85,7 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
     stats: [
       { value: "2 hr", label: "callback window" },
       { value: "50+", label: "experts" },
-      { value: "4.9/5", label: "rating" },
+      { value: "Review", label: "focused" },
     ],
   },
 };
@@ -343,7 +343,7 @@ export default function ExpertConsultationPage() {
           <h3 className="mt-4 text-lg font-normal text-slate-950">Trusted expert support</h3>
           <div className="mt-4 grid grid-cols-2 gap-3">
             {[
-              { icon: Star, text: "4.9/5 rating" },
+              { icon: Star, text: "Document-based guidance" },
               { icon: CalendarClock, text: "6 days/week" },
               { icon: ShieldCheck, text: "Confidential" },
               { icon: Phone, text: "Fast callback" },

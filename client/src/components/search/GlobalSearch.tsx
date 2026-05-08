@@ -26,7 +26,7 @@ const searchableContent = [
   { id: 6, title: "Notice Compliance", type: "service", url: "/services/notice-compliance", description: "Expert help for income tax notices", keywords: ["notice", "compliance", "tax", "scrutiny"] },
   
   // Calculators
-  { id: 7, title: "Income Tax Calculator", type: "calculator", url: "/calculators/income-tax", description: "Calculate your income tax for FY 2024-25", keywords: ["income", "tax", "calculator", "salary"] },
+  { id: 7, title: "Income Tax Calculator", type: "calculator", url: "/calculators/income-tax", description: "Estimate your income tax for AY 2026-27", keywords: ["income", "tax", "calculator", "salary"] },
   { id: 8, title: "HRA Calculator", type: "calculator", url: "/calculators/hra", description: "Calculate HRA exemption and tax savings", keywords: ["hra", "calculator", "rent", "exemption"] },
   { id: 9, title: "SIP Calculator", type: "calculator", url: "/calculators/sip", description: "Calculate SIP returns and wealth creation", keywords: ["sip", "calculator", "investment", "mutual fund"] },
   { id: 10, title: "EMI Calculator", type: "calculator", url: "/calculators/emi", description: "Calculate EMI for loans", keywords: ["emi", "calculator", "loan", "interest"] },
@@ -43,7 +43,7 @@ const searchableContent = [
   
   // Help & Resources
   { id: 12, title: "How to File ITR", type: "help", url: "/help/user-guide", description: "Step-by-step guide to file income tax return", keywords: ["how to", "file", "itr", "guide"] },
-  { id: 13, title: "Tax Saving Tips", type: "help", url: "/help/knowledge-base", description: "Expert tips to save maximum tax", keywords: ["tax", "saving", "tips", "deduction"] },
+  { id: 13, title: "Tax Saving Tips", type: "help", url: "/help/knowledge-base", description: "Practical tips to review eligible deductions", keywords: ["tax", "saving", "tips", "deduction"] },
   { id: 14, title: "GST Compliance Guide", type: "help", url: "/help/knowledge-base", description: "Complete guide for GST compliance", keywords: ["gst", "compliance", "guide", "business"] },
   { id: 15, title: "Document Checklist", type: "help", url: "/help/faq", description: "Required documents for tax filing", keywords: ["documents", "checklist", "required", "filing"] },
   

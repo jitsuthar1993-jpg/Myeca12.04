@@ -14,19 +14,19 @@ export default function GSTNoticeSection() {
     },
     {
       title: "GST Returns Filing",
-      description: "Monthly/Quarterly GSTR-1, GSTR-3B filing assistance", 
+      description: "Monthly/Quarterly GSTR-1, GSTR-3B filing assistance",
       icon: FileText,
       color: "bg-indigo-100 text-indigo-600"
     },
     {
       title: "GST Scrutiny Notice",
-      description: "Expert handling of GST scrutiny and assessment notices",
+      description: "Support for GST scrutiny and assessment notices",
       icon: AlertCircle,
       color: "bg-pink-100 text-pink-600"
     },
     {
       title: "GST Refunds",
-      description: "Quick processing of GST refund applications",
+      description: "GST refund application support based on documents",
       icon: TrendingUp,
       color: "bg-teal-100 text-teal-600"
     }
@@ -36,12 +36,12 @@ export default function GSTNoticeSection() {
     {
       step: "1",
       title: "GST Analysis",
-      description: "Expert review of your GST compliance status"
+      description: "Review of your GST compliance status"
     },
     {
       step: "2", 
       title: "Return Preparation",
-      description: "Accurate preparation of all GST returns"
+      description: "Prepared using the details and documents you provide"
     },
     {
       step: "3",
@@ -74,7 +74,7 @@ export default function GSTNoticeSection() {
             GST Compliance Made <span className="text-purple-600">Simple!</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Complete GST solutions - from registration to returns filing and notice handling by expert CAs
+            GST support from registration to returns filing and notice response workflows
           </p>
         </m.div>
 
@@ -87,20 +87,20 @@ export default function GSTNoticeSection() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
         >
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">10K+</div>
-            <div className="text-sm text-gray-600">GST Returns Filed</div>
+            <div className="text-3xl font-bold text-purple-600">GSTR</div>
+            <div className="text-sm text-gray-600">Return Support</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">48hr</div>
-            <div className="text-sm text-gray-600">Registration Time</div>
+            <div className="text-3xl font-bold text-purple-600">FY</div>
+            <div className="text-sm text-gray-600">2025-26 Ready</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">99%</div>
-            <div className="text-sm text-gray-600">Accuracy Rate</div>
+            <div className="text-3xl font-bold text-purple-600">ITC</div>
+            <div className="text-sm text-gray-600">Reconciliation</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">24/7</div>
-            <div className="text-sm text-gray-600">Expert Support</div>
+            <div className="text-3xl font-bold text-purple-600">GST</div>
+            <div className="text-sm text-gray-600">Notice Support</div>
           </div>
         </m.div>
 
@@ -148,7 +148,7 @@ export default function GSTNoticeSection() {
             </div>
             <div className="text-left">
               <h3 className="text-xl font-bold text-gray-900">Need GST Assistance?</h3>
-              <p className="text-gray-600">Get expert help for all GST matters!</p>
+              <p className="text-gray-600">Get GST help based on your facts and documents.</p>
             </div>
           </div>
           
@@ -182,11 +182,11 @@ export default function GSTNoticeSection() {
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>100% Accurate</span>
+                <span>Review Required</span>
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>Expert CAs</span>
+                <span>Expert Support</span>
               </div>
             </div>
           </div>

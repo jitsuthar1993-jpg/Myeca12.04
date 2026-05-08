@@ -1,4 +1,4 @@
-export type IncomeTaxFormDownload = {
+﻿export type IncomeTaxFormDownload = {
   id: string;
   title: string;
   description: string;
@@ -21,7 +21,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
   {
     "id": "ay-2025-26-common-offline-utility-itr-1-to-itr-4-utility-itde-filing-2025-setup-1-2-9-zip",
     "title": "Common Offline Utility (ITR 1 to ITR 4) - Utility",
-    "description": "Common Offline Utility for filing Income-tax Returns ITR 1, ITR 2, ITR 3 and ITR 4 for the AY 2025-26.",
+    "description": "Common Offline Utility for filing Income-tax Returns ITR 1, ITR 2, ITR 3 and ITR 4 for archived AY 2025-26.",
     "fileType": "utility",
     "act": "Unknown",
     "version": "1.2.9",
@@ -31,7 +31,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -42,7 +42,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
   {
     "id": "ay-2025-26-common-offline-utility-itr-1-to-itr-4-utility-for-mac-itde-filing-2025-1-2-9-zip",
     "title": "Common Offline Utility (ITR 1 to ITR 4) - Utility for MAC",
-    "description": "Common Offline Utility for filing Income-tax Returns ITR 1, ITR 2, ITR 3 and ITR 4 for the AY 2025-26.",
+    "description": "Common Offline Utility for filing Income-tax Returns ITR 1, ITR 2, ITR 3 and ITR 4 for archived AY 2025-26.",
     "fileType": "utility",
     "act": "Unknown",
     "version": "1.2.9",
@@ -52,7 +52,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -73,7 +73,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -93,7 +93,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -112,7 +112,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -134,7 +134,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -156,7 +156,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -176,7 +176,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -195,7 +195,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -217,7 +217,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -239,7 +239,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -259,7 +259,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -278,7 +278,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -300,7 +300,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -322,7 +322,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -342,7 +342,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -361,7 +361,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -383,7 +383,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -405,7 +405,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -425,7 +425,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -445,7 +445,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -465,7 +465,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -484,7 +484,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -506,7 +506,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -528,7 +528,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -548,7 +548,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -568,7 +568,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -588,7 +588,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -607,7 +607,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -629,7 +629,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -651,7 +651,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -671,7 +671,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -691,7 +691,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "utility",
@@ -711,7 +711,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "schema",
@@ -730,7 +730,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",
@@ -752,7 +752,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
     "tags": [
       "income tax",
       "income tax return",
-      "ay 2025-26",
+      "ay 2025-26 archive",
       "fy 2025-26",
       "return",
       "pdf",

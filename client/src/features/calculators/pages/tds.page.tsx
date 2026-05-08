@@ -42,7 +42,7 @@ const incomeTypes = [
   { value: 'professional_fees', label: 'Professional Fees', section: '194J', rate: '10%', icon: <Briefcase className="w-4 h-4" /> },
   { value: 'interest', label: 'Interest on Deposits', section: '194A', rate: '10%', icon: <TrendingUp className="w-4 h-4" /> },
   { value: 'rent', label: 'Rent Income', section: '194I', rate: '10%', icon: <Home className="w-4 h-4" /> },
-  { value: 'commission', label: 'Commission', section: '194H', rate: '5%', icon: <Percent className="w-4 h-4" /> },
+  { value: 'commission', label: 'Commission', section: '194H', rate: '2%', icon: <Percent className="w-4 h-4" /> },
   { value: 'contractor_payment', label: 'Contractor Payment', section: '194C', rate: '1/2%', icon: <Receipt className="w-4 h-4" /> },
   { value: 'dividend', label: 'Dividend Income', section: '194', rate: '10%', icon: <UserCheck className="w-4 h-4" /> },
 ];
@@ -50,7 +50,7 @@ const incomeTypes = [
 export default function TDSCalculatorPage() {
   const [income, setIncome] = useState<number>(50000);
   const [incomeType, setIncomeType] = useState<string>('professional_fees');
-  const [selectedYear, setSelectedYear] = useState<string>("2025-26");
+  const [selectedYear, setSelectedYear] = useState<string>("2026-27");
   const [panProvided, setPanProvided] = useState<boolean>(true);
   const [isSeniorCitizen, setIsSeniorCitizen] = useState<boolean>(false);
   const [form15G15HSubmitted, setForm15G15HSubmitted] = useState<boolean>(false);
@@ -80,8 +80,8 @@ export default function TDSCalculatorPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
-        title={seo?.title || "TDS Calculator 2025 | Rates & Sections | MyeCA.in"}
-        description={seo?.description || "Calculate TDS across income types with current rates for AY 2025-26. Professional tax planning with PAN and threshold insights."}
+        title={seo?.title || "TDS Calculator AY 2026-27 | Rates & Sections | MyeCA.in"}
+        description={seo?.description || "Estimate TDS across common resident payment types for AY 2026-27 with PAN and threshold notes."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -120,7 +120,7 @@ export default function TDSCalculatorPage() {
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">TDS Estimate</p>
               </div>
             </div>
           </div>
@@ -330,7 +330,7 @@ export default function TDSCalculatorPage() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
-            { icon: <Award className="w-5 h-5" />, label: "100% Accurate", desc: "As per latest tax laws" },
+            { icon: <Award className="w-5 h-5" />, label: "Rule-Based Estimate", desc: "Review section and deductee type" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
           ].map((item, i) => (
@@ -354,7 +354,7 @@ export default function TDSCalculatorPage() {
                 icon: <Shield className="w-5 h-5" />,
                 iconBg: "bg-indigo-50 text-indigo-600",
                 title: "PAN Compliance",
-                desc: "Always ensure the payee provides a valid PAN. Without it, TDS is deducted at a flat 20% under Section 206AA."
+                desc: "Always ensure the payee provides a valid PAN. Without it, TDS is generally deducted at 20% or the applicable higher rate under Section 206AA."
               },
               {
                 icon: <FileSpreadsheet className="w-5 h-5" />,
@@ -371,11 +371,11 @@ export default function TDSCalculatorPage() {
             ]}
             howItWorks={{
               title: "TDS Threshold Limits",
-              description: "TDS is only applicable if the total payment to a person in a financial year exceeds certain limits.",
+              description: "This calculator is a simplified estimate for common resident payments. Non-resident payments, deductee type, 194I vs 194IB, 194J sub-categories, and treaty cases need separate review.",
               steps: [
-                { title: "Sec 194J", desc: "Professional Fees: Threshold of ₹30,000 per year. Rate is 10% (2% for Technical Services)." },
+                { title: "Sec 194J", desc: "Professional Fees: Threshold of ₹50,000 per year. Rate is 10% for common professional services and can be 2% for specified technical/service categories." },
                 { title: "Sec 194C", desc: "Contracts: Threshold of ₹30,000 for single payment or ₹1,00,000 aggregate per year." },
-                { title: "Sec 194I", desc: "Rent: Threshold of ₹2,40,000 per year for rent of land, building, or furniture." }
+                { title: "Sec 194I", desc: "Rent: Common land/building/furniture threshold shown as ₹6,00,000 per year. 194IB individual/HUF rent cases can follow a separate ₹50,000/month rule." }
               ]
             }}
             faqs={[

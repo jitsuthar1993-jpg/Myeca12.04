@@ -8,15 +8,30 @@ import {
   getSlabsForRegime,
 } from "@/lib/tax-law-reference";
 
-export function calculateIncomeTax(inputs: IncomeTaxInputs & { age?: number; assessmentYear?: string }): TaxCalculationResult {
-  const { income, regime, deductions, age = 30, assessmentYear = DEFAULT_ASSESSMENT_YEAR } = inputs;
+export function calculateIncomeTax(inputs: IncomeTaxInputs & {
+  age?: number;
+  assessmentYear?: string;
+  salaryIncome?: number;
+}): TaxCalculationResult {
+  const {
+    income,
+    regime,
+    deductions,
+    age = 30,
+    assessmentYear = DEFAULT_ASSESSMENT_YEAR,
+    salaryIncome,
+  } = inputs;
+
+  const eligibleSalaryIncome = Math.max(0, salaryIncome ?? income);
+  const standardDeduction = Math.min(
+    eligibleSalaryIncome,
+    STANDARD_DEDUCTION_BY_REGIME[regime],
+  );
   
   // Calculate taxable income
-  let taxableIncome = Math.max(0, income - deductions);
-  
-  if (regime === 'new') {
-    taxableIncome = Math.max(0, income - STANDARD_DEDUCTION_BY_REGIME.new); 
-  }
+  const taxableIncome = regime === 'new'
+    ? Math.max(0, income - standardDeduction)
+    : Math.max(0, income - deductions - standardDeduction);
   
   const slabs = getSlabsForRegime(regime, assessmentYear, age);
   
@@ -60,7 +75,7 @@ export function calculateIncomeTax(inputs: IncomeTaxInputs & { age?: number; ass
     tax = Math.max(0, tax - rebate);
   }
   
-  // Calculate surcharge based on FY 2024-25 rates
+  // Calculate surcharge using common individual surcharge bands.
   // Surcharge slabs:
   // 50L - 1Cr: 10%
   // 1Cr - 2Cr: 15%
@@ -434,15 +449,15 @@ export function calculateTDS(options: CalculateTDSOptions): {
   const {
     income,
     incomeType,
-    assessmentYear = "2025-26",
+    assessmentYear = "2026-27",
     panProvided = true,
     isSeniorCitizen = false,
     form15G15HSubmitted = false,
   } = options;
 
-  const ay: AssessmentYear = ["2025-26","2024-25","2023-24","2022-23","2021-22"].includes(assessmentYear as AssessmentYear)
+  const ay: AssessmentYear = ["2026-27","2025-26","2024-25","2023-24","2022-23","2021-22"].includes(assessmentYear as AssessmentYear)
     ? (assessmentYear as AssessmentYear)
-    : "2025-26";
+    : "2026-27";
 
   const typeKey = (incomeType as TDSIncomeType);
   const rulesForAY = tdsRulesByAY[ay];
@@ -451,7 +466,7 @@ export function calculateTDS(options: CalculateTDSOptions): {
   // Derive threshold adjustments
   let threshold = baseRule.threshold;
   if (typeKey === "interest" && isSeniorCitizen) {
-    threshold = 50000; // Senior citizen threshold
+    threshold = ay === "2026-27" ? 100000 : 50000;
   }
 
   // Form 15G/15H submission can prevent TDS on interest if eligible. Simplified toggle.

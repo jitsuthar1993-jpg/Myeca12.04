@@ -27,8 +27,8 @@ export default function UserDashboard() {
   const { user } = useAuth();
 
   const activeServices = [
-    { id: 1, title: "Income Tax Return (ITR-1)", year: "AY 2025-26", status: "In Progress", progress: 65, color: "blue", description: "Standard filing for individuals with salary income." },
-    { id: 2, title: "GST Registration", year: "FY 2024-25", status: "Review", progress: 90, color: "emerald", description: "Business registration for tax compliance." }
+    { id: 1, title: "Income Tax Return (ITR-1)", year: "AY 2026-27", status: "In Progress", progress: 65, color: "blue", description: "Standard filing for individuals with salary income." },
+    { id: 2, title: "GST Registration", year: "FY 2025-26", status: "Review", progress: 90, color: "emerald", description: "Business registration for tax compliance." }
   ];
 
   return (

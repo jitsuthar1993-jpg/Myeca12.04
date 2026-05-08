@@ -66,7 +66,7 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>ISO 27001 Data Security</span>
+                    <span>Secure Document Workflow</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />

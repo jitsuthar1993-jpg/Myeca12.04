@@ -124,7 +124,7 @@ export default function NoticeCompliancePage() {
     <div className="min-h-screen bg-gray-50">
       <MetaSEO
         title="Income Tax Notice Response | Scrutiny & Compliance Help"
-        description="Received an Income Tax notice? Get expert CA help with Scrutiny, Defective Returns, and Mismatch notices. Professional response drafting within 24 hours. Guaranteed resolution."
+        description="Received an Income Tax notice? Get expert help with scrutiny, defective returns, and mismatch notices. Response drafting timelines depend on facts and document readiness."
         keywords={[
           "income tax notice response", "scrutiny notice help", "Section 143(2) response", 
           "tax compliance India", "defective return notice", "income tax department notice"
@@ -166,7 +166,7 @@ export default function NoticeCompliancePage() {
                 </h1>
               </div>
               <p className="text-gray-600 text-lg mb-6 leading-relaxed">
-                Expert handling of Income Tax notices with 24-hour analysis and guaranteed professional response.
+                Expert handling of Income Tax notices with document-based analysis and response drafting support.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button 
@@ -386,7 +386,7 @@ export default function NoticeCompliancePage() {
         {/* SEO Depth Section: The Ultimate Guide to Handling Income Tax Notices */}
         <div className="mt-24 space-y-16 border-t pt-16">
           <div className="max-w-4xl mx-auto text-left">
-            <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight italic underline decoration-red-500 decoration-4 underline-offset-8">The Ultimate Guide to Handling Income Tax Notices (AY 2025-26)</h2>
+            <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight italic underline decoration-red-500 decoration-4 underline-offset-8">Guide to Handling Income Tax Notices (AY 2026-27)</h2>
             <p className="text-xl text-slate-600 leading-relaxed mb-8 font-medium">
               Receiving an <span className="text-red-600 font-bold">Income Tax Notice</span> can be a stressful experience for any taxpayer. 
               However, with the shift towards <span className="font-bold underline decoration-blue-300">Faceless Assessment</span> and digital communication, 

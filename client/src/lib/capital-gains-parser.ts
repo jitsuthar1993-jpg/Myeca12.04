@@ -54,7 +54,7 @@ export interface ParsedCapitalGains {
   };
 }
 
-// Tax rates (FY 2024-25)
+// Capital gains rate assumptions for estimates.
 const TAX_RATES = {
   equitySTCG: 0.20, // 20% from Budget 2024
   equityLTCG: 0.125, // 12.5% from Budget 2024
@@ -530,4 +530,3 @@ export function exportForITR(data: ParsedCapitalGains): string {
   
   return output;
 }
-

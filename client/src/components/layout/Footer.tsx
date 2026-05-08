@@ -20,7 +20,7 @@ export default function Footer() {
               <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 border-l border-slate-300 pl-4">
                  <span>🇮🇳 Made in India</span>
                  <span className="mx-2">•</span>
-                 <span>Secure ISO 27001</span>
+                 <span>Secure document workflow</span>
               </div>
             </div>
             
@@ -57,8 +57,8 @@ export default function Footer() {
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           {[
             ["ERI", "Govt. registered"],
-            ["ISO", "Secure"],
-            ["100%", "CA-reviewed"],
+            ["Secure", "Documents"],
+            ["CA", "Review available"],
           ].map(([value, label]) => (
             <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
               <div className="text-base font-black tracking-tight text-slate-950">{value}</div>
@@ -106,16 +106,16 @@ export default function Footer() {
               <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Govt. Registered Intermediary</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">ISO</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">27001 Certified Security</div>
+              <div className="text-2xl font-black tracking-tight">Secure</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Document Workflow</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">100%</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">CA-Reviewed Returns</div>
+              <div className="text-2xl font-black tracking-tight">CA</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Review Available</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">4.8 ★</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">User Rating</div>
+              <div className="text-2xl font-black tracking-tight">AY 2026</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Filing Ready</div>
             </div>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                India's most trusted platform for professional tax filing and business services.
+                Practical tax filing and business compliance workflows for Indian taxpayers.
               </p>
               
               {/* Key Features */}
@@ -145,19 +145,19 @@ export default function Footer() {
                   <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
                     <Shield className="h-3 w-3 text-green-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">ISO 27001 Certified</span>
+                  <span className="text-slate-600 font-medium">Secure Document Workflow</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Award className="h-3 w-3 text-blue-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">CA-Reviewed Returns</span>
+                  <span className="text-slate-600 font-medium">CA Review Available</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center">
                     <Clock className="h-3 w-3 text-orange-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">24-Hour Turnaround</span>
+                  <span className="text-slate-600 font-medium">Clear Filing Timelines</span>
                 </div>
               </div>
               
@@ -269,7 +269,7 @@ export default function Footer() {
             <div className="bg-slate-50 rounded-2xl p-8 text-center border border-slate-200 shadow-sm overflow-hidden relative group">
 
               <h3 className="text-2xl font-bold text-slate-900 mb-2 relative z-10">Ready to File Your ITR?</h3>
-              <p className="text-slate-500 mb-8 max-w-xl mx-auto text-base font-medium relative z-10">Start free. Your personal CA reviews every return before filing.</p>
+              <p className="text-slate-500 mb-8 max-w-xl mx-auto text-base font-medium relative z-10">Start with a guided workflow and add CA review where your case needs it.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-10">
                 <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover("/itr/form-selector")}>
                   <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-500 transition-all duration-300 font-semibold text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
@@ -313,7 +313,7 @@ export default function Footer() {
                     <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Award className="h-3 w-3 text-blue-600" />
                     </div>
-                    <span className="text-slate-600 font-medium">Certified</span>
+                    <span className="text-slate-600 font-medium">Reviewed</span>
                   </div>
                 </div>
               </div>

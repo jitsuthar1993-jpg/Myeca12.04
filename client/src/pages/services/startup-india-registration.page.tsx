@@ -510,7 +510,7 @@ export default function StartupIndiaRegistrationPage() {
               </h3>
               <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
                 Get expert assistance with complete documentation, incorporation, and DPIIT registration. 
-                Our CA team ensures 100% compliance and maximum benefits.
+                Our team helps review eligibility, documents, and available benefits before submission.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -124,19 +124,19 @@ function generateAgentResponse(message: string): string {
   const lowerMessage = message.toLowerCase();
   
   if (lowerMessage.includes("itr") || lowerMessage.includes("income tax return")) {
-    return "I can help you with ITR filing! We offer expert CA-assisted filing starting at ₹1,499. Our CAs ensure maximum refunds and handle all complexities. Would you like to start filing your ITR?";
+    return "I can help you with AY 2026-27 ITR filing. Packages start at ₹499 for simple filing guidance, with CA-assisted options from ₹999 depending on scope. Would you like to start the workflow?";
   }
   
   if (lowerMessage.includes("refund")) {
-    return "Tax refunds typically take 4-8 weeks after e-verification. We help track your refund status and ensure all deductions are claimed for maximum refunds. Our success rate is 99.8%!";
+    return "Tax refunds typically depend on e-verification, CPC processing, and bank validation. We help review eligible deductions and track refund status, but final processing is controlled by the Income Tax Department.";
   }
   
   if (lowerMessage.includes("deadline")) {
-    return "The ITR filing deadline for AY 2025-26 is July 31, 2025. Don't wait until the last minute! We can help you file quickly and accurately with our expert CA team.";
+    return "For AY 2026-27, use the due date notified for your taxpayer category. Common non-audit individual returns are usually due on July 31 unless the department extends the date.";
   }
   
   if (lowerMessage.includes("price") || lowerMessage.includes("cost")) {
-    return "Our ITR filing services start at ₹1,499 for CA-assisted filing. This includes expert review, maximum refund optimization, and e-filing support. We also offer self-filing options starting at ₹299.";
+    return "ITR packages start at ₹499 for simple workflows. CA-assisted filing starts at ₹999, while capital gains, NRI, business income, and notice-risk cases are priced separately.";
   }
   
   if (lowerMessage.includes("documents")) {

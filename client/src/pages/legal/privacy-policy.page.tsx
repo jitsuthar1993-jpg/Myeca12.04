@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Shield className="w-6 h-6 text-green-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">ISO 27001 Certified</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">Secure Document Handling</h3>
                   <p className="text-gray-600 text-sm">Our security practices meet international standards.</p>
                 </div>
                 

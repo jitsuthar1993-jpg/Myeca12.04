@@ -48,7 +48,7 @@ const ASSET_TYPES = [
 ];
 
 const TAX_RATES = {
-  equity_stcg: 20, // Changed from 15% to 20% for FY 2024-25
+  equity_stcg: 20, // Current common-case listed equity STCG assumption
   equity_ltcg: 12.5, // Changed from 10% to 12.5%
   equity_ltcg_exemption: 125000,
   debt_stcg: 30, // As per slab
@@ -211,7 +211,7 @@ export default function TaxLossHarvestingPage() {
           type: "Tax Management",
           features: ["Portfolio analysis", "STCG/LTCG offset", "Tax savings estimation", "Wash sale alerts"],
           accuracy: "99.9%",
-          updates: "FY 2024-25"
+          updates: "FY 2025-26 estimate"
         }}
         breadcrumbs={[
           { name: "Home", url: "/" },
@@ -515,7 +515,7 @@ export default function TaxLossHarvestingPage() {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Calculator className="h-4 w-4" />
-                    Tax Rates (FY 2024-25)
+                    Tax Rates (FY 2025-26 Estimate)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -644,4 +644,3 @@ export default function TaxLossHarvestingPage() {
     </>
   );
 }
-

@@ -34,9 +34,9 @@ const featuredCategories = [
 const sampleBlogPosts: BlogPost[] = [
   {
     id: 1,
-    title: "New Tax Regime vs Old Tax Regime: Complete Comparison for AY 2025-26",
+    title: "Archived: New Tax Regime vs Old Tax Regime for AY 2025-26",
     content: "Detailed comparison of tax regimes...",
-    excerpt: "Learn which tax regime works best for your income level and investment pattern. Get detailed comparisons with real examples.",
+    excerpt: "Historical AY 2025-26 comparison retained for archive reference. Use current calculators for AY 2026-27 filing decisions.",
     author: "CA Priya Sharma",
     publishedAt: "2025-01-10",
     status: "published",
@@ -46,9 +46,9 @@ const sampleBlogPosts: BlogPost[] = [
   },
   {
     id: 2,
-    title: "Step-by-Step Guide to Filing ITR-1 Online in 2025",
+    title: "Archived: Step-by-Step Guide to Filing ITR-1 Online in 2025",
     content: "Complete guide for ITR-1 filing...",
-    excerpt: "Master the art of filing ITR-1 with our comprehensive guide. Avoid common mistakes and maximize your refunds.",
+    excerpt: "Archived ITR-1 process note. Check current AY 2026-27 workflows and portal notices before filing.",
     author: "CA Rajesh Kumar",
     publishedAt: "2025-01-08",
     status: "published",

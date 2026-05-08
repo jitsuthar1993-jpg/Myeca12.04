@@ -26,7 +26,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              CA-Reviewed ITR Filing — Starting at <span className="text-[#315efb] font-bold">₹499</span>
+              Guided ITR Filing - Starting at <span className="text-[#315efb] font-bold">₹499</span>
             </m.p>
 
             <m.p
@@ -35,7 +35,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              Upload your documents, and a licensed Chartered Accountant reviews and files your return. Average turnaround: 24 hours.
+              Upload your documents, compare regimes, and add CA review where your filing package or facts require it.
             </m.p>
             
             {/* Rating */}
@@ -50,7 +50,7 @@ export default function HeroSection() {
                   <Star key={i} className="w-5 h-5 fill-current" />
                 ))}
               </div>
-              <span className="text-gray-600 font-medium">4.7 — Client Rating</span>
+              <span className="text-gray-600 font-medium">AY 2026-27 filing support</span>
             </m.div>
 
             {/* Assessment Year Selector */}
@@ -61,14 +61,14 @@ export default function HeroSection() {
               transition={{ duration: 0.8, delay: 0.6 }}
             >
               <label className="text-gray-700 font-medium">Assessment Year:</label>
-              <Select defaultValue="2024-25">
+              <Select defaultValue="2026-27">
                 <SelectTrigger className="w-40 border-2 border-primary/20 focus:border-primary rounded-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="2024-25">AY 2024-25</SelectItem>
-                  <SelectItem value="2023-24">AY 2023-24</SelectItem>
-                  <SelectItem value="2022-23">AY 2022-23</SelectItem>
+                  <SelectItem value="2026-27">AY 2026-27</SelectItem>
+                  <SelectItem value="2025-26">AY 2025-26 (archive)</SelectItem>
+                  <SelectItem value="2024-25">AY 2024-25 (archive)</SelectItem>
                 </SelectContent>
               </Select>
             </m.div>
@@ -138,7 +138,7 @@ export default function HeroSection() {
                   </div>
                 </div>
                 <h4 className="font-semibold text-gray-800 mb-2 text-sm">CA Review</h4>
-                <p className="text-gray-600 text-xs">Expert CA checks your return for accuracy</p>
+                <p className="text-gray-600 text-xs">Add expert review before filing</p>
               </div>
 
               {/* Step 4 */}
@@ -157,11 +157,11 @@ export default function HeroSection() {
             <div className="flex justify-center items-center space-x-6 mt-6 pt-4 border-t border-gray-200">
               <div className="text-center">
                 <div className="text-lg font-bold text-[#315efb]">24 hrs</div>
-                <div className="text-xs text-gray-600">Avg. Turnaround</div>
+                <div className="text-xs text-gray-600">Target Turnaround</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-[#315efb]">100%</div>
-                <div className="text-xs text-gray-600">CA-Reviewed</div>
+                <div className="text-lg font-bold text-[#315efb]">CA</div>
+                <div className="text-xs text-gray-600">Review Add-on</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-[#315efb]">950+</div>

@@ -52,7 +52,7 @@ interface MonthlyTaxPlan {
   remainingInvestment: number;
 }
 
-// Tax slabs for FY 2024-25
+// Tax slabs for common-case estimates.
 const TAX_SLABS_OLD_REGIME_2024_25: TaxSlab[] = [
   { min: 0, max: 250000, rate: 0 },
   { min: 250000, max: 500000, rate: 5 },

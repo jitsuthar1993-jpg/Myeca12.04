@@ -17,11 +17,11 @@ interface Message {
 const predefinedResponses: Record<string, string> = {
   "hello": "Hello! Welcome to MyeCA.in. How can I help you with your tax filing today?",
   "hi": "Hi there! I'm here to help with your tax queries. What would you like to know?",
-  "itr": "I can help you file your ITR! We offer expert CA assistance starting at ₹1,499. Would you like to know more about our ITR filing services?",
-  "price": "Our ITR filing starts at ₹1,499 with CA expert assistance. We also have a FREE DIY option. Which one interests you?",
-  "refund": "Tax refunds typically process within 30-45 days after ITR verification. We help maximize your refund through expert deduction planning!",
+  "itr": "I can help you file your AY 2026-27 ITR. Packages start at ₹499 for simple filing guidance, with CA-assisted options from ₹999 depending on scope.",
+  "price": "ITR packages start at ₹499 for simple workflows. CA-assisted filing starts at ₹999, and complex capital gains, NRI, or business-income cases are priced separately.",
+  "refund": "Tax refund timelines depend on e-verification, CPC processing, and bank validation. We can help review deductions and track the refund status.",
   "documents": "For ITR filing, you'll need: Form 16/16A, bank statements, investment proofs, and PAN card. Need a detailed checklist?",
-  "deadline": "The ITR filing deadline for AY 2025-26 is July 31, 2025. Don't wait - file early to avoid penalties!",
+  "deadline": "For AY 2026-27, use the due date notified for your taxpayer category. Common non-audit individual returns are usually due on July 31 unless the department extends the date.",
   "help": "I can help with: ITR filing, tax calculations, document requirements, deadlines, and our services. What do you need?",
 };
 

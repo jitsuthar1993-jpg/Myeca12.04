@@ -1,19 +1,19 @@
-
+﻿
 export const blogPosts = [
   {
     id: 1,
-    title: "ITR Filing Guide for FY 2024-25: Everything You Need to Know",
-    excerpt: "Complete guide to filing your income tax return for the financial year 2024-25, including new tax regimes, deductions, and deadlines.",
+    title: "Archived: ITR Filing Guide for FY 2024-25",
+    excerpt: "Historical guide for archived FY 2024-25 / archived AY 2025-26. Use current AY 2026-27 pages and calculators for active filing guidance.",
     content: `
-      <h2>Important Dates for ITR Filing FY 2024-25</h2>
-      <p>The deadline for filing ITR for FY 2024-25 (AY 2025-26) is July 31, 2025 for individuals and HUFs whose accounts are not required to be audited. For businesses requiring audit, the deadline is October 31, 2025.</p>
-      
-      <h3>Key Changes in FY 2024-25</h3>
+      <h2>Important Dates for ITR Filing archived FY 2024-25</h2>
+      <p>The deadline for filing ITR for archived FY 2024-25 (archived AY 2025-26) is archived July 31, 2025 for individuals and HUFs whose accounts are not required to be audited. For businesses requiring audit, the deadline is October 31, 2025.</p>
+
+      <h3>Key Changes in archived FY 2024-25</h3>
       <ul>
-        <li>Standard deduction increased to ₹ 75,000 under new tax regime</li>
-        <li>Tax exemption limit increased to ₹ 3 lakh under new regime</li>
-        <li>Rebate under section 87A increased to ₹ 25,000 for income up to ₹ 7 lakh</li>
-        <li>Family pension deduction increased from ₹ 15,000 to ₹ 25,000</li>
+        <li>Standard deduction increased to â‚¹ 75,000 under new tax regime</li>
+        <li>Tax exemption limit increased to â‚¹ 3 lakh under new regime</li>
+        <li>Rebate under section 87A increased to â‚¹ 25,000 for income up to â‚¹ 7 lakh</li>
+        <li>Family pension deduction increased from â‚¹ 15,000 to â‚¹ 25,000</li>
       </ul>
 
       <h3>Documents Required for ITR Filing</h3>
@@ -28,7 +28,7 @@ export const blogPosts = [
       <h3>Step-by-Step Filing Process</h3>
       <p>1. <strong>Choose the Right ITR Form:</strong> ITR-1 for salaried individuals, ITR-2 for capital gains, ITR-3 for business income</p>
       <p>2. <strong>Calculate Total Income:</strong> Add all income sources including salary, interest, capital gains</p>
-      <p>3. <strong>Claim Deductions:</strong> Under sections 80C (up to ₹ 1.5 lakh), 80D (health insurance), etc.</p>
+      <p>3. <strong>Claim Deductions:</strong> Under sections 80C (up to â‚¹ 1.5 lakh), 80D (health insurance), etc.</p>
       <p>4. <strong>Compute Tax:</strong> Use tax slabs applicable to your chosen regime</p>
       <p>5. <strong>E-Verify:</strong> Complete verification within 30 days of filing</p>
 
@@ -45,8 +45,8 @@ export const blogPosts = [
     date: "January 18, 2025",
     readTime: "8 min read",
     category: "Tax Filing",
-    tags: ["ITR", "Tax Filing", "FY 2024-25", "Income Tax"],
-    image: "📊",
+    tags: ["ITR", "Tax Filing", "archived FY 2024-25", "Income Tax"],
+    image: "ðŸ“Š",
     slug: "itr-filing-guide-2024-25"
   },
   {
@@ -60,40 +60,40 @@ export const blogPosts = [
       <h3>New Tax Regime (Default from FY 2023-24)</h3>
       <table>
         <tr><th>Income Slab</th><th>Tax Rate</th></tr>
-        <tr><td>Up to ₹ 3,00,000</td><td>Nil</td></tr>
-        <tr><td>₹ 3,00,001 - ₹ 6,00,000</td><td>5%</td></tr>
-        <tr><td>₹ 6,00,001 - ₹ 9,00,000</td><td>10%</td></tr>
-        <tr><td>₹ 9,00,001 - ₹ 12,00,000</td><td>15%</td></tr>
-        <tr><td>₹ 12,00,001 - ₹ 15,00,000</td><td>20%</td></tr>
-        <tr><td>Above ₹ 15,00,000</td><td>30%</td></tr>
+        <tr><td>Up to â‚¹ 3,00,000</td><td>Nil</td></tr>
+        <tr><td>â‚¹ 3,00,001 - â‚¹ 6,00,000</td><td>5%</td></tr>
+        <tr><td>â‚¹ 6,00,001 - â‚¹ 9,00,000</td><td>10%</td></tr>
+        <tr><td>â‚¹ 9,00,001 - â‚¹ 12,00,000</td><td>15%</td></tr>
+        <tr><td>â‚¹ 12,00,001 - â‚¹ 15,00,000</td><td>20%</td></tr>
+        <tr><td>Above â‚¹ 15,00,000</td><td>30%</td></tr>
       </table>
-      <p><strong>Standard Deduction:</strong> ₹ 75,000 (increased in Budget 2024)</p>
-      <p><strong>Rebate u/s 87A:</strong> ₹ 25,000 for income up to ₹ 7 lakh</p>
+      <p><strong>Standard Deduction:</strong> â‚¹ 75,000 (increased in Budget 2024)</p>
+      <p><strong>Rebate u/s 87A:</strong> â‚¹ 25,000 for income up to â‚¹ 7 lakh</p>
 
       <h3>Old Tax Regime</h3>
       <table>
         <tr><th>Income Slab</th><th>Tax Rate</th></tr>
-        <tr><td>Up to ₹ 2,50,000</td><td>Nil</td></tr>
-        <tr><td>₹ 2,50,001 - ₹ 5,00,000</td><td>5%</td></tr>
-        <tr><td>₹ 5,00,001 - ₹ 10,00,000</td><td>20%</td></tr>
-        <tr><td>Above ₹ 10,00,000</td><td>30%</td></tr>
+        <tr><td>Up to â‚¹ 2,50,000</td><td>Nil</td></tr>
+        <tr><td>â‚¹ 2,50,001 - â‚¹ 5,00,000</td><td>5%</td></tr>
+        <tr><td>â‚¹ 5,00,001 - â‚¹ 10,00,000</td><td>20%</td></tr>
+        <tr><td>Above â‚¹ 10,00,000</td><td>30%</td></tr>
       </table>
 
       <h3>Key Deductions Available in Old Regime</h3>
       <ul>
-        <li><strong>Section 80C:</strong> Up to ₹ 1.5 lakh (PPF, ELSS, LIC, etc.)</li>
+        <li><strong>Section 80C:</strong> Up to â‚¹ 1.5 lakh (PPF, ELSS, LIC, etc.)</li>
         <li><strong>Section 80D:</strong> Health insurance premiums</li>
-        <li><strong>Section 24:</strong> Home loan interest up to ₹ 2 lakh</li>
+        <li><strong>Section 24:</strong> Home loan interest up to â‚¹ 2 lakh</li>
         <li><strong>HRA Exemption:</strong> Based on salary and rent paid</li>
         <li><strong>LTA:</strong> Leave Travel Allowance</li>
       </ul>
 
       <h3>When to Choose New Regime?</h3>
       <ul>
-        <li>Annual deductions less than ₹ 2.5 lakh</li>
+        <li>Annual deductions less than â‚¹ 2.5 lakh</li>
         <li>No home loan or minimal interest payment</li>
         <li>Prefer simplicity over tax planning</li>
-        <li>Income above ₹ 15 lakh with limited deductions</li>
+        <li>Income above â‚¹ 15 lakh with limited deductions</li>
       </ul>
 
       <h3>When to Choose Old Regime?</h3>
@@ -101,7 +101,7 @@ export const blogPosts = [
         <li>Significant investments in 80C instruments</li>
         <li>Paying home loan EMIs</li>
         <li>High HRA claims</li>
-        <li>Multiple deductions exceeding ₹ 2.5 lakh annually</li>
+        <li>Multiple deductions exceeding â‚¹ 2.5 lakh annually</li>
       </ul>
     `,
     author: "CA Rajesh Kumar",
@@ -109,7 +109,7 @@ export const blogPosts = [
     readTime: "6 min read",
     category: "Tax Planning",
     tags: ["Tax Regime", "Tax Planning", "Comparison"],
-    image: "⚖️",
+    image: "âš–ï¸",
     slug: "new-vs-old-tax-regime"
   },
   {
@@ -118,19 +118,19 @@ export const blogPosts = [
     excerpt: "Explore the best investment options under Section 80C and other provisions to minimize your tax liability effectively.",
     content: `
       <h2>Maximize Your Tax Savings in 2025</h2>
-      <p>Smart tax planning through investments can help you save up to ₹ 46,800 in taxes (for 30% tax bracket) under Section 80C alone.</p>
+      <p>Smart tax planning through investments can help you save up to â‚¹ 46,800 in taxes (for 30% tax bracket) under Section 80C alone.</p>
 
       <h3>1. Public Provident Fund (PPF)</h3>
       <ul>
-        <li><strong>Current Interest Rate:</strong> 7.1% p.a. (Q4 FY 2024-25)</li>
+        <li><strong>Current Interest Rate:</strong> 7.1% p.a. (Q4 archived FY 2024-25)</li>
         <li><strong>Lock-in:</strong> 15 years</li>
         <li><strong>Tax Benefit:</strong> EEE (Exempt-Exempt-Exempt)</li>
-        <li><strong>Investment Limit:</strong> Min ₹ 500, Max ₹ 1.5 lakh per year</li>
+        <li><strong>Investment Limit:</strong> Min â‚¹ 500, Max â‚¹ 1.5 lakh per year</li>
       </ul>
 
       <h3>2. Employee Provident Fund (EPF)</h3>
       <ul>
-        <li><strong>Current Interest Rate:</strong> 8.25% p.a. (FY 2024-25)</li>
+        <li><strong>Current Interest Rate:</strong> 8.25% p.a. (archived FY 2024-25)</li>
         <li><strong>Tax Benefit:</strong> Deduction under 80C</li>
         <li><strong>Additional Benefit:</strong> Employer contribution is tax-free</li>
       </ul>
@@ -139,26 +139,26 @@ export const blogPosts = [
       <ul>
         <li><strong>Lock-in:</strong> 3 years (shortest among 80C options)</li>
         <li><strong>Potential Returns:</strong> 12-15% (market-linked)</li>
-        <li><strong>Tax on Gains:</strong> LTCG above ₹ 1 lakh taxed at 12.5%</li>
+        <li><strong>Tax on Gains:</strong> LTCG above â‚¹ 1 lakh taxed at 12.5%</li>
       </ul>
 
       <h3>4. National Pension System (NPS)</h3>
       <ul>
-        <li><strong>Additional Deduction:</strong> ₹ 50,000 under 80CCD(1B)</li>
-        <li><strong>Total Benefit:</strong> Up to ₹ 2 lakh (80C + 80CCD)</li>
+        <li><strong>Additional Deduction:</strong> â‚¹ 50,000 under 80CCD(1B)</li>
+        <li><strong>Total Benefit:</strong> Up to â‚¹ 2 lakh (80C + 80CCD)</li>
         <li><strong>Maturity:</strong> 60% withdrawal tax-free</li>
       </ul>
 
       <h3>5. Senior Citizens Savings Scheme (SCSS)</h3>
       <ul>
-        <li><strong>Interest Rate:</strong> 8.2% p.a. (Q4 FY 2024-25)</li>
+        <li><strong>Interest Rate:</strong> 8.2% p.a. (Q4 archived FY 2024-25)</li>
         <li><strong>Eligibility:</strong> 60 years and above</li>
-        <li><strong>Investment Limit:</strong> ₹ 30 lakh</li>
+        <li><strong>Investment Limit:</strong> â‚¹ 30 lakh</li>
       </ul>
 
       <h3>6. Sukanya Samriddhi Yojana (SSY)</h3>
       <ul>
-        <li><strong>Interest Rate:</strong> 8.2% p.a. (Q4 FY 2024-25)</li>
+        <li><strong>Interest Rate:</strong> 8.2% p.a. (Q4 archived FY 2024-25)</li>
         <li><strong>For:</strong> Girl child below 10 years</li>
         <li><strong>Maturity:</strong> 21 years from opening</li>
       </ul>
@@ -174,21 +174,21 @@ export const blogPosts = [
       <ul>
         <li><strong>Traditional Plans:</strong> Sum assured should be 10x premium</li>
         <li><strong>Term Insurance:</strong> Pure protection, low premium</li>
-        <li><strong>Deduction Limit:</strong> Included in ₹ 1.5 lakh</li>
+        <li><strong>Deduction Limit:</strong> Included in â‚¹ 1.5 lakh</li>
       </ul>
 
       <h3>9. Health Insurance (Section 80D)</h3>
       <ul>
-        <li><strong>Self & Family:</strong> ₹ 25,000 (₹ 50,000 for senior citizens)</li>
-        <li><strong>Parents:</strong> Additional ₹ 25,000 (₹ 50,000 if senior)</li>
-        <li><strong>Preventive Health Check:</strong> ₹ 5,000</li>
+        <li><strong>Self & Family:</strong> â‚¹ 25,000 (â‚¹ 50,000 for senior citizens)</li>
+        <li><strong>Parents:</strong> Additional â‚¹ 25,000 (â‚¹ 50,000 if senior)</li>
+        <li><strong>Preventive Health Check:</strong> â‚¹ 5,000</li>
       </ul>
 
       <h3>10. Home Loan Principal (Section 80C)</h3>
       <ul>
-        <li><strong>Principal Repayment:</strong> Up to ₹ 1.5 lakh</li>
-        <li><strong>Interest (Section 24):</strong> Up to ₹ 2 lakh</li>
-        <li><strong>First-Time Buyers:</strong> Additional ₹ 50,000 under 80EE</li>
+        <li><strong>Principal Repayment:</strong> Up to â‚¹ 1.5 lakh</li>
+        <li><strong>Interest (Section 24):</strong> Up to â‚¹ 2 lakh</li>
+        <li><strong>First-Time Buyers:</strong> Additional â‚¹ 50,000 under 80EE</li>
       </ul>
     `,
     author: "CA Neha Gupta",
@@ -196,7 +196,7 @@ export const blogPosts = [
     readTime: "7 min read",
     category: "Investment",
     tags: ["Tax Saving", "Investment", "80C", "Financial Planning"],
-    image: "💰",
+    image: "ðŸ’°",
     slug: "tax-saving-investments-2025"
   },
   {
@@ -205,7 +205,7 @@ export const blogPosts = [
     excerpt: "Learn about the most common GST filing errors that can lead to penalties and how to ensure accurate and timely GST compliance.",
     content: `
       <h2>Avoid Costly GST Filing Mistakes</h2>
-      <p>GST compliance errors can result in heavy penalties ranging from ₹ 10,000 to ₹ 25,000. Here's how to avoid common mistakes.</p>
+      <p>GST compliance errors can result in heavy penalties ranging from â‚¹ 10,000 to â‚¹ 25,000. Here's how to avoid common mistakes.</p>
 
       <h3>1. Mismatch in GSTR-1 and GSTR-3B</h3>
       <ul>
@@ -217,7 +217,7 @@ export const blogPosts = [
       <h3>2. Wrong HSN Code Classification</h3>
       <ul>
         <li><strong>Impact:</strong> Wrong tax rate application</li>
-        <li><strong>Requirement:</strong> 4-digit HSN for turnover above ₹ 5 Cr</li>
+        <li><strong>Requirement:</strong> 4-digit HSN for turnover above â‚¹ 5 Cr</li>
         <li><strong>Best Practice:</strong> Maintain HSN master list</li>
       </ul>
 
@@ -238,13 +238,13 @@ export const blogPosts = [
       <h3>5. Late Filing Penalties</h3>
       <table>
         <tr><th>Return Type</th><th>Due Date</th><th>Late Fee</th></tr>
-        <tr><td>GSTR-1</td><td>11th of next month</td><td>₹ 50/day (₹ 25 CGST + ₹ 25 SGST)</td></tr>
-        <tr><td>GSTR-3B</td><td>20th of next month</td><td>₹ 50/day (capped at ₹ 5,000)</td></tr>
+        <tr><td>GSTR-1</td><td>11th of next month</td><td>â‚¹ 50/day (â‚¹ 25 CGST + â‚¹ 25 SGST)</td></tr>
+        <tr><td>GSTR-3B</td><td>20th of next month</td><td>â‚¹ 50/day (capped at â‚¹ 5,000)</td></tr>
       </table>
 
       <h3>6. E-Invoice Compliance</h3>
       <ul>
-        <li><strong>Threshold:</strong> ₹ 5 Cr turnover (from Aug 2023)</li>
+        <li><strong>Threshold:</strong> â‚¹ 5 Cr turnover (from Aug 2023)</li>
         <li><strong>Time Limit:</strong> Generate within 30 days</li>
         <li><strong>Cancellation:</strong> Within 24 hours only</li>
       </ul>
@@ -263,13 +263,13 @@ export const blogPosts = [
     readTime: "6 min read",
     category: "GST",
     tags: ["GST", "Compliance", "Return Filing", "Penalties"],
-    image: "📋",
+    image: "ðŸ“‹",
     slug: "gst-filing-mistakes"
   },
   {
     id: 5,
-    title: "Budget 2025 Expectations: What Taxpayers Should Know",
-    excerpt: "Anticipated tax changes in Budget 2025 including potential modifications to tax slabs, deductions, and new compliance requirements.",
+    title: "Archived: Budget 2025 Expectations",
+    excerpt: "Historical pre-Budget 2025 expectations retained for archive reference, not current filing guidance.",
     content: `
       <h2>Key Expectations from Union Budget 2025</h2>
       <p>With the budget announcement on February 1, 2025, taxpayers are expecting significant reforms in direct and indirect taxation.</p>
@@ -277,9 +277,9 @@ export const blogPosts = [
       <h3>Expected Changes in Income Tax</h3>
       <ul>
         <li><strong>Tax Slabs:</strong> Possible revision in new regime slabs</li>
-        <li><strong>Standard Deduction:</strong> May increase to ₹ 1 lakh</li>
-        <li><strong>Section 80C:</strong> Limit may increase to ₹ 2 lakh</li>
-        <li><strong>NPS Benefit:</strong> Additional deduction may go up to ₹ 75,000</li>
+        <li><strong>Standard Deduction:</strong> May increase to â‚¹ 1 lakh</li>
+        <li><strong>Section 80C:</strong> Limit may increase to â‚¹ 2 lakh</li>
+        <li><strong>NPS Benefit:</strong> Additional deduction may go up to â‚¹ 75,000</li>
       </ul>
 
       <h3>Corporate Tax Expectations</h3>
@@ -324,7 +324,7 @@ export const blogPosts = [
     readTime: "5 min read",
     category: "Tax News",
     tags: ["Budget 2025", "Tax Reform", "Income Tax", "GST"],
-    image: "📰",
+    image: "ðŸ“°",
     slug: "budget-2025-expectations"
   },
   {
@@ -336,7 +336,7 @@ export const blogPosts = [
       <p>Form 16 is a certificate issued by employers showing tax deducted at source (TDS) from your salary. It's crucial for filing ITR.</p>
 
       <h3>Components of Form 16</h3>
-      
+
       <h4>Part A - TDS Certificate</h4>
       <ul>
         <li>Employee and Employer Details (Name, PAN, TAN)</li>
@@ -400,55 +400,55 @@ export const blogPosts = [
     readTime: "6 min read",
     category: "Documentation",
     tags: ["Form 16", "TDS", "Salary", "Tax Filing"],
-    image: "📄",
+    image: "ðŸ“„",
     slug: "understanding-form-16"
   },
   {
     id: 7,
-    title: "Zero Tax on ₹12 Lakh Income: Complete Guide to New Tax Regime 2025",
-    excerpt: "Breaking down how the new tax regime makes income up to ₹12 lakh tax-free with increased rebates and deductions for FY 2025-26.",
+    title: "Zero Tax on â‚¹12 Lakh Income: Complete Guide to New Tax Regime 2025",
+    excerpt: "Breaking down how the new tax regime makes income up to â‚¹12 lakh tax-free with increased rebates and deductions for FY 2025-26.",
     content: `
       <h2>Revolutionary Tax Changes in Budget 2025</h2>
-      <p>The Union Budget 2025 has brought game-changing updates to the new tax regime, making it incredibly attractive for taxpayers. The most significant change is that individuals earning up to ₹12 lakh can now pay zero tax under the new regime.</p>
-      
+      <p>The Union Budget 2025 has brought game-changing updates to the new tax regime, making it incredibly attractive for taxpayers. The most significant change is that individuals earning up to â‚¹12 lakh can now pay zero tax under the new regime.</p>
+
       <h3>Key Changes in New Tax Regime</h3>
       <ul>
-        <li><strong>Basic Exemption Limit:</strong> Increased from ₹3 lakh to ₹4 lakh</li>
-        <li><strong>Rebate u/s 87A:</strong> Increased from ₹25,000 to ₹60,000</li>
-        <li><strong>Standard Deduction:</strong> Enhanced to ₹75,000 (from ₹50,000)</li>
-        <li><strong>Zero Tax Income:</strong> Up to ₹12 lakh (effective tax-free income)</li>
+        <li><strong>Basic Exemption Limit:</strong> Increased from â‚¹3 lakh to â‚¹4 lakh</li>
+        <li><strong>Rebate u/s 87A:</strong> Increased from â‚¹25,000 to â‚¹60,000</li>
+        <li><strong>Standard Deduction:</strong> Enhanced to â‚¹75,000 (from â‚¹50,000)</li>
+        <li><strong>Zero Tax Income:</strong> Up to â‚¹12 lakh (effective tax-free income)</li>
       </ul>
 
       <h3>New Tax Slabs for FY 2025-26</h3>
       <table>
         <tr><th>Income Range</th><th>Tax Rate</th><th>Tax Amount</th></tr>
-        <tr><td>Up to ₹4,00,000</td><td>0%</td><td>Nil</td></tr>
-        <tr><td>₹4,00,001 - ₹6,00,000</td><td>5%</td><td>₹10,000 max</td></tr>
-        <tr><td>₹6,00,001 - ₹9,00,000</td><td>10%</td><td>₹30,000</td></tr>
-        <tr><td>₹9,00,001 - ₹12,00,000</td><td>15%</td><td>₹45,000</td></tr>
-        <tr><td>₹12,00,001 - ₹15,00,000</td><td>20%</td><td>₹60,000</td></tr>
-        <tr><td>Above ₹15,00,000</td><td>30%</td><td>As applicable</td></tr>
+        <tr><td>Up to â‚¹4,00,000</td><td>0%</td><td>Nil</td></tr>
+        <tr><td>â‚¹4,00,001 - â‚¹6,00,000</td><td>5%</td><td>â‚¹10,000 max</td></tr>
+        <tr><td>â‚¹6,00,001 - â‚¹9,00,000</td><td>10%</td><td>â‚¹30,000</td></tr>
+        <tr><td>â‚¹9,00,001 - â‚¹12,00,000</td><td>15%</td><td>â‚¹45,000</td></tr>
+        <tr><td>â‚¹12,00,001 - â‚¹15,00,000</td><td>20%</td><td>â‚¹60,000</td></tr>
+        <tr><td>Above â‚¹15,00,000</td><td>30%</td><td>As applicable</td></tr>
       </table>
 
-      <h3>How ₹12 Lakh Income Becomes Tax-Free</h3>
+      <h3>How â‚¹12 Lakh Income Becomes Tax-Free</h3>
       <p><strong>Example Calculation:</strong></p>
       <ul>
-        <li>Gross Income: ₹12,00,000</li>
-        <li>Less: Standard Deduction: ₹75,000</li>
-        <li>Taxable Income: ₹11,25,000</li>
+        <li>Gross Income: â‚¹12,00,000</li>
+        <li>Less: Standard Deduction: â‚¹75,000</li>
+        <li>Taxable Income: â‚¹11,25,000</li>
         <li>Tax Calculation:
           <ul>
             <li>0-4L: Nil</li>
-            <li>4-6L: ₹10,000</li>
-            <li>6-9L: ₹30,000</li>
-            <li>9-11.25L: ₹33,750</li>
+            <li>4-6L: â‚¹10,000</li>
+            <li>6-9L: â‚¹30,000</li>
+            <li>9-11.25L: â‚¹33,750</li>
           </ul>
         </li>
-        <li>Total Tax: ₹73,750</li>
-        <li>Less: Rebate u/s 87A: ₹60,000</li>
-        <li>Net Tax Payable: ₹13,750</li>
-        <li>Health & Education Cess (4%): ₹550</li>
-        <li><strong>Total Tax: ₹14,300 (Effective Rate: 1.19%)</strong></li>
+        <li>Total Tax: â‚¹73,750</li>
+        <li>Less: Rebate u/s 87A: â‚¹60,000</li>
+        <li>Net Tax Payable: â‚¹13,750</li>
+        <li>Health & Education Cess (4%): â‚¹550</li>
+        <li><strong>Total Tax: â‚¹14,300 (Effective Rate: 1.19%)</strong></li>
       </ul>
 
       <h3>Who Benefits Most?</h3>
@@ -462,25 +462,25 @@ export const blogPosts = [
       <h3>New vs Old Regime Comparison</h3>
       <table>
         <tr><th>Income Level</th><th>Old Regime Tax</th><th>New Regime Tax</th><th>Savings</th></tr>
-        <tr><td>₹7 lakh</td><td>₹52,500*</td><td>₹0</td><td>₹52,500</td></tr>
-        <tr><td>₹10 lakh</td><td>₹1,12,500*</td><td>₹35,000</td><td>₹77,500</td></tr>
-        <tr><td>₹12 lakh</td><td>₹1,72,500*</td><td>₹14,300</td><td>₹1,58,200</td></tr>
-        <tr><td>₹15 lakh</td><td>₹2,62,500*</td><td>₹78,000</td><td>₹1,84,500</td></tr>
+        <tr><td>â‚¹7 lakh</td><td>â‚¹52,500*</td><td>â‚¹0</td><td>â‚¹52,500</td></tr>
+        <tr><td>â‚¹10 lakh</td><td>â‚¹1,12,500*</td><td>â‚¹35,000</td><td>â‚¹77,500</td></tr>
+        <tr><td>â‚¹12 lakh</td><td>â‚¹1,72,500*</td><td>â‚¹14,300</td><td>â‚¹1,58,200</td></tr>
+        <tr><td>â‚¹15 lakh</td><td>â‚¹2,62,500*</td><td>â‚¹78,000</td><td>â‚¹1,84,500</td></tr>
       </table>
-      <p><small>*Assuming standard deductions of ₹1.5L (80C) + ₹50K (others) in old regime</small></p>
+      <p><small>*Assuming standard deductions of â‚¹1.5L (80C) + â‚¹50K (others) in old regime</small></p>
 
       <h3>Strategic Tax Planning Tips</h3>
       <ul>
         <li><strong>Salary Structuring:</strong> Optimize with allowances and perquisites</li>
         <li><strong>Investment Strategy:</strong> Focus on wealth creation over tax saving</li>
-        <li><strong>NPS Contribution:</strong> Additional ₹50,000 deduction even in new regime</li>
-        <li><strong>Leave Encashment:</strong> Plan to stay within ₹12 lakh limit</li>
+        <li><strong>NPS Contribution:</strong> Additional â‚¹50,000 deduction even in new regime</li>
+        <li><strong>Leave Encashment:</strong> Plan to stay within â‚¹12 lakh limit</li>
       </ul>
 
       <h3>Action Points for Taxpayers</h3>
       <ol>
         <li>Calculate tax under both regimes using updated slabs</li>
-        <li>Consider switching to new regime if investments < ₹2.5 lakh</li>
+        <li>Consider switching to new regime if investments < â‚¹2.5 lakh</li>
         <li>Restructure salary to maximize take-home pay</li>
         <li>File updated declaration with employer for TDS adjustment</li>
         <li>Plan investments for wealth rather than just tax saving</li>
@@ -491,20 +491,20 @@ export const blogPosts = [
     readTime: "10 min read",
     category: "Tax Planning",
     tags: ["Budget 2025", "New Tax Regime", "Tax Saving", "Income Tax"],
-    image: "💰",
+    image: "ðŸ’°",
     slug: "zero-tax-12-lakh-income-guide"
   },
   {
     id: 8,
-    title: "ITR Filing Deadline Extension to September 15, 2025: What You Need to Know",
-    excerpt: "CBDT extends ITR filing deadline by 45 days. Understanding the reasons, implications, and how to make the most of this extension.",
+    title: "Archived: ITR Filing Deadline Extension to September 15, 2025",
+    excerpt: "Historical archived AY 2025-26 deadline update retained for archive reference. Check current Income Tax Department notices for active deadlines.",
     content: `
       <h2>Important: ITR Filing Deadline Extended</h2>
-      <p>The Central Board of Direct Taxes (CBDT) has announced a significant extension of the ITR filing deadline for FY 2024-25 (AY 2025-26). The new deadline is September 15, 2025, providing taxpayers an additional 45 days from the original July 31 deadline.</p>
-      
+      <p>The Central Board of Direct Taxes (CBDT) has announced a significant extension of the ITR filing deadline for archived FY 2024-25 (archived AY 2025-26). The new deadline is September 15, 2025, providing taxpayers an additional 45 days from the original July 31 deadline.</p>
+
       <h3>Official Extension Details</h3>
       <ul>
-        <li><strong>Original Deadline:</strong> July 31, 2025</li>
+        <li><strong>Original Deadline:</strong> archived July 31, 2025</li>
         <li><strong>Extended Deadline:</strong> September 15, 2025</li>
         <li><strong>Applicable To:</strong> Non-audit cases (individuals, HUFs, firms)</li>
         <li><strong>Audit Cases:</strong> Remain at October 31, 2025</li>
@@ -531,7 +531,7 @@ export const blogPosts = [
         <tr><td>Tax Audit Cases</td><td>October 31</td><td>No Change</td></tr>
       </table>
 
-      <h3>Key ITR Form Changes for AY 2025-26</h3>
+      <h3>Key ITR Form Changes for archived AY 2025-26</h3>
       <ul>
         <li><strong>New Schedules:</strong> Additional reporting for foreign assets</li>
         <li><strong>Simplified Structure:</strong> Reduced fields in ITR-1 and ITR-2</li>
@@ -552,7 +552,7 @@ export const blogPosts = [
       <h3>Important Considerations</h3>
       <ul>
         <li><strong>Interest u/s 234A:</strong> Still applicable if tax dues pending</li>
-        <li><strong>Late Filing Fees:</strong> ₹5,000 applicable after September 15</li>
+        <li><strong>Late Filing Fees:</strong> â‚¹5,000 applicable after September 15</li>
         <li><strong>Revised Returns:</strong> Can be filed till March 31, 2026</li>
         <li><strong>Carry Forward Losses:</strong> Must file within extended deadline</li>
         <li><strong>Refund Processing:</strong> Early filing ensures faster refunds</li>
@@ -584,25 +584,25 @@ export const blogPosts = [
     date: "January 19, 2025",
     readTime: "8 min read",
     category: "Tax Filing",
-    tags: ["ITR Deadline", "Extension", "Tax Filing", "AY 2025-26"],
-    image: "📅",
+    tags: ["ITR Deadline", "Extension", "Tax Filing", "archived AY 2025-26"],
+    image: "ðŸ“…",
     slug: "itr-deadline-extension-september-2025"
   },
   {
     id: 9,
-    title: "Updated ITR Forms for AY 2025-26: Major Changes and How to Choose",
-    excerpt: "Comprehensive guide to the restructured ITR forms with significant changes in content and filing requirements for the assessment year 2025-26.",
+    title: "Archived: Updated ITR Forms for AY 2025-26",
+    excerpt: "Historical archived AY 2025-26 form guide retained for archive reference. Use AY 2026-27 form guidance for active filing.",
     content: `
-      <h2>Major ITR Form Updates for AY 2025-26</h2>
-      <p>The Income Tax Department has introduced substantial changes to ITR forms for AY 2025-26, affecting millions of taxpayers. These modifications aim to simplify filing while ensuring comprehensive income reporting.</p>
-      
+      <h2>Major ITR Form Updates for archived AY 2025-26</h2>
+      <p>The Income Tax Department has introduced substantial changes to ITR forms for archived AY 2025-26, affecting millions of taxpayers. These modifications aim to simplify filing while ensuring comprehensive income reporting.</p>
+
       <h3>Overview of ITR Forms</h3>
       <table>
         <tr><th>Form</th><th>Applicable For</th><th>Income Limit</th><th>Key Changes</th></tr>
-        <tr><td>ITR-1 (Sahaj)</td><td>Salaried, One House</td><td>₹50 lakh</td><td>Simplified layout</td></tr>
+        <tr><td>ITR-1 (Sahaj)</td><td>Salaried, One House</td><td>â‚¹50 lakh</td><td>Simplified layout</td></tr>
         <tr><td>ITR-2</td><td>Capital Gains, Multiple Houses</td><td>No limit</td><td>New CG schedules</td></tr>
         <tr><td>ITR-3</td><td>Business/Profession</td><td>No limit</td><td>Enhanced P&L format</td></tr>
-        <tr><td>ITR-4 (Sugam)</td><td>Presumptive Income</td><td>₹50 lakh</td><td>Digital focus</td></tr>
+        <tr><td>ITR-4 (Sugam)</td><td>Presumptive Income</td><td>â‚¹50 lakh</td><td>Digital focus</td></tr>
       </table>
 
       <h3>Key Structural Changes</h3>
@@ -616,7 +616,7 @@ export const blogPosts = [
 
       <h3>ITR-1 (Sahaj) - Major Updates</h3>
       <ul>
-        <li><strong>Eligibility Expanded:</strong> Income limit increased to ₹50 lakh</li>
+        <li><strong>Eligibility Expanded:</strong> Income limit increased to â‚¹50 lakh</li>
         <li><strong>New Fields:</strong>
           <ul>
             <li>Standard deduction auto-calculated</li>
@@ -640,7 +640,7 @@ export const blogPosts = [
         <li><strong>New Schedules Added:</strong>
           <ul>
             <li>Schedule FA: Foreign Assets enhanced</li>
-            <li>Schedule AL: Assets & Liabilities (₹50L+ income)</li>
+            <li>Schedule AL: Assets & Liabilities (â‚¹50L+ income)</li>
             <li>Schedule VDA: Virtual Digital Assets</li>
           </ul>
         </li>
@@ -650,11 +650,11 @@ export const blogPosts = [
       <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h4>Decision Tree:</h4>
         <ol>
-          <li><strong>Only Salary + 1 House Property?</strong> → ITR-1</li>
-          <li><strong>Capital Gains/Multiple Houses?</strong> → ITR-2</li>
-          <li><strong>Business/Professional Income?</strong> → ITR-3</li>
-          <li><strong>Presumptive Taxation?</strong> → ITR-4</li>
-          <li><strong>Company/Firm?</strong> → ITR-5/6</li>
+          <li><strong>Only Salary + 1 House Property?</strong> â†’ ITR-1</li>
+          <li><strong>Capital Gains/Multiple Houses?</strong> â†’ ITR-2</li>
+          <li><strong>Business/Professional Income?</strong> â†’ ITR-3</li>
+          <li><strong>Presumptive Taxation?</strong> â†’ ITR-4</li>
+          <li><strong>Company/Firm?</strong> â†’ ITR-5/6</li>
         </ol>
       </div>
 
@@ -671,8 +671,8 @@ export const blogPosts = [
         <li><strong>Mandatory Cases:</strong>
           <ul>
             <li>Companies and firms (all cases)</li>
-            <li>Tax audit required (₹1 crore+ business)</li>
-            <li>Claiming refund above ₹5 lakh</li>
+            <li>Tax audit required (â‚¹1 crore+ business)</li>
+            <li>Claiming refund above â‚¹5 lakh</li>
           </ul>
         </li>
         <li><strong>Optional:</strong> All other individual taxpayers</li>
@@ -682,7 +682,7 @@ export const blogPosts = [
       <h3>New Reporting Requirements</h3>
       <ol>
         <li><strong>High-Value Transactions:</strong> Auto-populated from SFT</li>
-        <li><strong>Cash Deposits:</strong> Aggregate above ₹10 lakh</li>
+        <li><strong>Cash Deposits:</strong> Aggregate above â‚¹10 lakh</li>
         <li><strong>Foreign Remittances:</strong> Under LRS reporting</li>
         <li><strong>Dividend Income:</strong> Company-wise breakup required</li>
         <li><strong>Interest Income:</strong> Bank-wise details with account numbers</li>
@@ -710,8 +710,8 @@ export const blogPosts = [
     date: "January 18, 2025",
     readTime: "12 min read",
     category: "Tax Filing",
-    tags: ["ITR Forms", "AY 2025-26", "Tax Filing", "Form Selection"],
-    image: "📋",
+    tags: ["ITR Forms", "archived AY 2025-26", "Tax Filing", "Form Selection"],
+    image: "ðŸ“‹",
     slug: "itr-forms-guide-ay-2025-26"
   },
   {
@@ -721,7 +721,7 @@ export const blogPosts = [
     content: `
       <h2>Capital Gains Tax Overhaul in 2025</h2>
       <p>Budget 2025 has introduced significant changes to capital gains taxation, affecting investors across asset classes. Understanding these changes is crucial for effective tax planning and investment decisions.</p>
-      
+
       <h3>New Capital Gains Tax Structure</h3>
       <table>
         <tr><th>Asset Type</th><th>Holding Period</th><th>STCG Rate</th><th>LTCG Rate</th></tr>
@@ -737,48 +737,48 @@ export const blogPosts = [
       <ul>
         <li><strong>LTCG Rate Increased:</strong> From 10% to 12.5% for listed securities</li>
         <li><strong>STCG Rate Increased:</strong> From 15% to 20% for equity</li>
-        <li><strong>Exemption Limit:</strong> ₹1.25 lakh annually for LTCG</li>
+        <li><strong>Exemption Limit:</strong> â‚¹1.25 lakh annually for LTCG</li>
         <li><strong>Indexation Removed:</strong> No indexation benefit for any asset</li>
         <li><strong>Uniform Holding Period:</strong> 12 months for listed, 24 for others</li>
       </ul>
 
       <h3>Calculation Examples</h3>
-      
+
       <h4>Example 1: Listed Equity Shares</h4>
       <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 10px 0;">
         <ul>
           <li>Purchase Date: January 1, 2024</li>
-          <li>Purchase Price: ₹5,00,000</li>
+          <li>Purchase Price: â‚¹5,00,000</li>
           <li>Sale Date: February 1, 2025</li>
-          <li>Sale Price: ₹7,50,000</li>
-          <li>Capital Gain: ₹2,50,000</li>
+          <li>Sale Price: â‚¹7,50,000</li>
+          <li>Capital Gain: â‚¹2,50,000</li>
           <li>Type: LTCG (held > 12 months)</li>
-          <li>Exemption: ₹1,25,000</li>
-          <li>Taxable Gain: ₹1,25,000</li>
-          <li><strong>Tax Payable: ₹15,625 (12.5%)</strong></li>
+          <li>Exemption: â‚¹1,25,000</li>
+          <li>Taxable Gain: â‚¹1,25,000</li>
+          <li><strong>Tax Payable: â‚¹15,625 (12.5%)</strong></li>
         </ul>
       </div>
 
       <h4>Example 2: Real Estate Property</h4>
       <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 10px 0;">
         <ul>
-          <li>Purchase Price (2020): ₹50,00,000</li>
-          <li>Sale Price (2025): ₹80,00,000</li>
-          <li>Capital Gain: ₹30,00,000</li>
+          <li>Purchase Price (2020): â‚¹50,00,000</li>
+          <li>Sale Price (2025): â‚¹80,00,000</li>
+          <li>Capital Gain: â‚¹30,00,000</li>
           <li>Type: LTCG (held > 24 months)</li>
           <li>No Indexation Available</li>
-          <li><strong>Tax Payable: ₹3,75,000 (12.5%)</strong></li>
+          <li><strong>Tax Payable: â‚¹3,75,000 (12.5%)</strong></li>
         </ul>
       </div>
 
       <h3>Tax-Saving Strategies</h3>
-      
+
       <h4>1. Section 54 - Residential Property</h4>
       <ul>
         <li>Invest LTCG in residential property</li>
         <li>Time Limit: 2 years for purchase, 3 years for construction</li>
-        <li>Maximum Exemption: ₹10 crore</li>
-        <li>Can invest in 2 properties if gain ≤ ₹2 crore</li>
+        <li>Maximum Exemption: â‚¹10 crore</li>
+        <li>Can invest in 2 properties if gain â‰¤ â‚¹2 crore</li>
       </ul>
 
       <h4>2. Section 54F - Other Assets</h4>
@@ -792,19 +792,19 @@ export const blogPosts = [
       <h4>3. Section 54EC - Capital Gain Bonds</h4>
       <ul>
         <li>Invest in specified bonds (NHAI, REC, PFC, IRFC)</li>
-        <li>Maximum Investment: ₹50 lakh per financial year</li>
+        <li>Maximum Investment: â‚¹50 lakh per financial year</li>
         <li>Lock-in Period: 5 years</li>
         <li>Interest Rate: ~5-5.25% (taxable)</li>
       </ul>
 
       <h3>Special Situations</h3>
-      
+
       <h4>Cryptocurrency/Virtual Digital Assets</h4>
       <ul>
         <li>Flat 30% tax on gains</li>
         <li>No deduction except cost of acquisition</li>
         <li>No set-off against other income</li>
-        <li>1% TDS on transfer above ₹50,000</li>
+        <li>1% TDS on transfer above â‚¹50,000</li>
       </ul>
 
       <h4>Gifts and Inheritance</h4>
@@ -846,7 +846,7 @@ export const blogPosts = [
     readTime: "15 min read",
     category: "Tax Planning",
     tags: ["Capital Gains", "LTCG", "STCG", "Tax Planning", "Budget 2025"],
-    image: "📈",
+    image: "ðŸ“ˆ",
     slug: "capital-gains-tax-complete-guide-2025"
   },
   {
@@ -856,12 +856,12 @@ export const blogPosts = [
     content: `
       <h2>Why Register with Startup India?</h2>
       <p>The Startup India initiative by the Govt. of India offers significant tax exemptions, patent filing benefits, and access to funding for eligible companies.</p>
-      
+
       <h3>Eligibility Criteria</h3>
       <ul>
         <li>Date of Incorporation: Not older than 10 years</li>
         <li>Type of Entity: Private Limited, LLP, or Partnership Firm</li>
-        <li>Annual Turnover: Should not exceed ₹100 Crore in any financial year</li>
+        <li>Annual Turnover: Should not exceed â‚¹100 Crore in any financial year</li>
         <li>Nature of Work: Innovation, development, or improvement of products or services</li>
       </ul>
 
@@ -887,7 +887,7 @@ export const blogPosts = [
     readTime: "9 min read",
     category: "Startup",
     tags: ["Startup India", "Tax Benefits", "DPIIT", "Entrepreneurship"],
-    image: "🚀",
+    image: "ðŸš€",
     slug: "startup-india-registration-guide"
   },
   {
@@ -947,7 +947,7 @@ export const blogPosts = [
     readTime: "11 min read",
     category: "Business Setup",
     tags: ["Business Setup", "Pvt Ltd", "LLP", "OPC", "Registration"],
-    image: "🏢",
+    image: "ðŸ¢",
     slug: "company-registration-comparison-guide"
   }
 ];
@@ -976,8 +976,8 @@ export const getRelatedPosts = (currentPostId: number, limit: number = 3): BlogP
 
   return blogPosts
     .filter(post => post.id !== currentPostId)
-    .filter(post => 
-      post.category === currentPost.category || 
+    .filter(post =>
+      post.category === currentPost.category ||
       post.tags.some(tag => currentPost.tags.includes(tag))
     )
     .slice(0, limit);

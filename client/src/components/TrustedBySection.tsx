@@ -1,65 +1,55 @@
-import { m } from "framer-motion";
-import { 
-  ShieldCheck, 
-  Award, 
-  CheckCircle2, 
+﻿import { m } from "framer-motion";
+import {
+  ShieldCheck,
   Users2,
   Building2,
   Lock,
-  Globe,
   Sparkles,
   Star,
   FileCheck
 } from "lucide-react";
-import { LazyImage } from "@/components/performance/LazyImage";
 import { cn } from "@/lib/utils";
 
-// Authentic company logos using verified assets
-const companyLogos = [
-  { name: "Reliance Industries", logoPath: "/assets/logos/reliance.png" },
-  { name: "Infosys", logoPath: "/assets/logos/infosys.svg" },
-  { name: "HDFC Bank", logoPath: "/assets/logos/hdfc.png" },
-  { name: "ICICI Bank", logoPath: "/assets/logos/icici.svg" },
-  { name: "SBI", logoPath: "/assets/logos/sbi.png" },
-  { name: "LIC", logoPath: "/assets/logos/lic.png" },
-  { name: "ITC", logoPath: "/assets/logos/itc.svg" },
-  { name: "Wipro", logoPath: "/assets/logos/wipro.svg" },
-  { name: "Asian Paints", logoPath: "/assets/logos/asian_paints.png" },
-  { name: "Paytm", logoPath: "/assets/logos/paytm.png" },
-  { name: "Zomato", logoPath: "/assets/logos/zomato.png" },
-  { name: "DLF", logoPath: "/assets/logos/dlf.png" },
-  { name: "PhonePe", logoPath: "/assets/logos/phonepe.svg" },
+const supportedProfiles = [
+  "Salaried professionals",
+  "Freelancers",
+  "Business owners",
+  "Capital gains investors",
+  "GST-registered businesses",
+  "Startup founders",
+  "Notice recipients",
+  "NRI taxpayers",
 ];
 
 const stats = [
-  { 
-    label: "Total Filings", 
-    val: "10,000+", 
-    sub: "Successful ITR Filings",
+  {
+    label: "Filing Year",
+    val: "AY 2026",
+    sub: "FY 2025-26 Support",
     icon: FileCheck,
     color: "text-blue-600",
     bgColor: "bg-blue-50"
   },
-  { 
-    label: "Accuracy", 
-    val: "100%", 
-    sub: "CA-Reviewed Returns",
+  {
+    label: "Review",
+    val: "Optional",
+    sub: "CA Assistance Available",
     icon: ShieldCheck,
     color: "text-emerald-600",
     bgColor: "bg-emerald-50"
   },
-  { 
-    label: "Data Security", 
-    val: "ISO 27001", 
-    sub: "Certified Protection",
+  {
+    label: "Data Security",
+    val: "Secure",
+    sub: "Document Workflow",
     icon: Lock,
     color: "text-indigo-600",
     bgColor: "bg-indigo-50"
   },
-  { 
-    label: "User Trust", 
-    val: "4.8/5", 
-    sub: "Customer Satisfaction",
+  {
+    label: "Pricing",
+    val: "Rs 499",
+    sub: "Simple Filing From",
     icon: Star,
     color: "text-amber-600",
     bgColor: "bg-amber-50"
@@ -79,17 +69,16 @@ export default function TrustedBySection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Enterprise Trust</span>
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Production-Ready Filing</span>
           </div>
           <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
-            Trusted by Professionals from <br />
+            Built for Common Indian <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              India's Largest Entities
+              Tax Filing Profiles
             </span>
           </h2>
           <p className="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed font-medium">
-            MyeCA power users come from the highest echelons of Indian business. 
-            Experience the standard of excellence they trust.
+            Use guided workflows for salary, business, GST, capital gains, notices, and startup compliance, with expert review available when facts need a closer look.
           </p>
         </m.div>
 
@@ -127,8 +116,8 @@ export default function TrustedBySection() {
                  <Building2 className="w-6 h-6" />
               </div>
               <div className="text-left">
-                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Corporate Ecosystem</h3>
-                 <p className="text-[11px] text-blue-600 font-black uppercase tracking-[0.15em]">Filed by users of Top 4 & Global Firms</p>
+                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Supported Profiles</h3>
+                 <p className="text-[11px] text-blue-600 font-black uppercase tracking-[0.15em]">Guided flows by income and compliance type</p>
               </div>
            </div>
            <div className="flex items-center gap-4 bg-white/50 py-2 px-4 rounded-2xl border border-slate-100">
@@ -139,23 +128,23 @@ export default function TrustedBySection() {
                   </div>
                 ))}
                 <div className="w-10 h-10 rounded-full border-2 border-white bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white z-10 shadow-lg">
-                   +10k
+                   AY
                 </div>
               </div>
               <div className="h-8 w-px bg-slate-200 mx-1" />
               <div className="text-left">
-                 <div className="text-xs font-black text-slate-900 leading-none">Power Users</div>
-                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Verified Employees</div>
+                 <div className="text-xs font-black text-slate-900 leading-none">2026-27 Ready</div>
+                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Review before filing</div>
               </div>
            </div>
         </div>
 
-        {/* Company Logos - Marquee */}
+        {/* Profile chips - no unverifiable brand affiliation claims */}
         <div className="relative py-10 rounded-[3rem] bg-white border border-slate-200/60 shadow-inner-lg overflow-hidden group/marquee">
           {/* Gradient Masks */}
           <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-white via-white/80 to-transparent z-20 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
-          
+
           <m.div
             className="flex items-center"
             animate={{ x: [0, "-50%"] }}
@@ -171,18 +160,14 @@ export default function TrustedBySection() {
           >
             {[0, 1].map((setIndex) => (
               <div key={`set-${setIndex}`} className="flex items-center">
-                {companyLogos.map((company, index) => (
+                {supportedProfiles.map((profile, index) => (
                   <div
-                    key={`${company.name}-${setIndex}-${index}`}
-                    className="flex items-center justify-center w-52 h-24 flex-shrink-0 mx-4 transition-all duration-500 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110"
+                    key={`${profile}-${setIndex}-${index}`}
+                    className="flex items-center justify-center w-60 h-24 flex-shrink-0 mx-4 transition-all duration-500 opacity-80 hover:opacity-100 hover:scale-105"
                   >
-                    <LazyImage 
-                      src={company.logoPath} 
-                      alt={`${company.name} logo`}
-                      priority={true}
-                      className="w-full h-full p-2"
-                      imgClassName="max-w-full max-h-20 object-contain"
-                    />
+                    <span className="rounded-2xl border border-slate-100 bg-slate-50 px-5 py-3 text-center text-sm font-black uppercase tracking-[0.12em] text-slate-600">
+                      {profile}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -195,12 +180,12 @@ export default function TrustedBySection() {
            <div className="flex items-center gap-8 py-4 px-8 rounded-2xl bg-white border border-slate-100 shadow-sm">
               <div className="flex items-center gap-2">
                  <Lock className="w-4 h-4 text-emerald-500" />
-                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Bank-Grade 256-bit SSL Encryption</span>
+                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Secure Document Workflow</span>
               </div>
               <div className="w-px h-4 bg-slate-200" />
               <div className="flex items-center gap-2">
                  <ShieldCheck className="w-4 h-4 text-blue-500" />
-                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">100% Data Privacy Guaranteed</span>
+                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Privacy-Focused Handling</span>
               </div>
            </div>
         </div>
@@ -208,4 +193,3 @@ export default function TrustedBySection() {
     </section>
   );
 }
-

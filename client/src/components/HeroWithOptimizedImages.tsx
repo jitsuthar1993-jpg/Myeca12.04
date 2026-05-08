@@ -7,7 +7,7 @@ import StructuredData from "@/components/StructuredData";
 import { preloadImage } from "@/utils/image-utils";
 import { useEffect } from "react";
 
-const assessmentYears = ["2025-26", "2024-25", "2023-24"];
+const assessmentYears = ["2026-27", "2025-26", "2024-25"];
 
 export default function HeroWithOptimizedImages() {
   // Preload critical hero images
@@ -20,9 +20,9 @@ export default function HeroWithOptimizedImages() {
   return (
     <>
       <SEO 
-        title="Expert Income Tax Filing & ITR e-Filing Services India 2025-26"
-        description="File ITR online with MyeCA.in. Every return reviewed by a licensed CA. ITR filing starts at ₹499. File AY 2025-26 returns now."
-        keywords="ITR filing, income tax return, tax filing India, e-filing, AY 2025-26, tax consultant, CA services"
+        title="Income Tax Filing & ITR e-Filing Services India AY 2026-27"
+        description="File ITR online with MyeCA.in. Guided workflows start at ₹499, with optional CA-assisted review for eligible plans."
+        keywords="ITR filing, income tax return, tax filing India, e-filing, AY 2026-27, tax consultant, CA services"
       />
       
       <StructuredData
@@ -82,10 +82,10 @@ export default function HeroWithOptimizedImages() {
               <div>
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
                   Expert Income Tax Filing <br />
-                  <span className="text-[#315efb]">with a Licensed CA on Every Return</span>
+                  <span className="text-[#315efb]">with Guided Workflows and Optional CA Review</span>
                 </h1>
                 <p className="mt-4 text-base lg:text-lg text-gray-600">
-                  A real Chartered Accountant reviews your ITR before it's filed — not an algorithm, not a checklist.
+                  Upload your documents, compare regimes, and choose the right review level before filing.
                 </p>
               </div>
 
@@ -93,7 +93,7 @@ export default function HeroWithOptimizedImages() {
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-green-600" />
-                  <span className="text-gray-700">100% Secure</span>
+                  <span className="text-gray-700">Secure Workflow</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-600" />
@@ -101,7 +101,7 @@ export default function HeroWithOptimizedImages() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-orange-600" />
-                  <span className="text-gray-700">Expert CAs</span>
+                  <span className="text-gray-700">CA Assistance Available</span>
                 </div>
               </div>
 
@@ -136,11 +136,11 @@ export default function HeroWithOptimizedImages() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-gray-900">24 hrs</div>
-                  <div className="text-sm text-gray-600">Avg. Turnaround</div>
+                  <div className="text-sm text-gray-600">Target Turnaround</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">100%</div>
-                  <div className="text-sm text-gray-600">CA-Reviewed</div>
+                  <div className="text-2xl font-bold text-gray-900">CA</div>
+                  <div className="text-sm text-gray-600">Review Add-on</div>
                 </div>
               </div>
             </m.div>
@@ -173,7 +173,7 @@ export default function HeroWithOptimizedImages() {
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900">Website Launch Offer</div>
-                  <div className="text-sm text-gray-600">Save up to {"₹"}500 on filing</div>
+                  <div className="text-sm text-gray-600">Save up to ₹500 on eligible plans</div>
                 </div>
               </m.div>
             </m.div>
@@ -193,7 +193,7 @@ export default function HeroWithOptimizedImages() {
               {[
                 { step: 1, title: "Upload Documents", desc: "Form 16, bank statements", icon: "📄" },
                 { step: 2, title: "Fill Details", desc: "Our experts guide you", icon: "✍️" },
-                { step: 3, title: "Let CA check your returns", desc: "Expert review for maximum refund", icon: "👨‍💼" },
+                { step: 3, title: "Review before filing", desc: "Add expert review for complex facts", icon: "3" },
                 { step: 4, title: "File ITR", desc: "E-verify and relax", icon: "✅" }
               ].map((item) => (
                 <m.div

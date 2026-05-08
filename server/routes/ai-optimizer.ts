@@ -47,7 +47,7 @@ function calculateTax(income: number, deductions: any, regime: "old" | "new") {
   let tax = 0;
   
   if (regime === "old") {
-    // Old regime tax slabs (FY 2024-25)
+    // Old regime tax slabs for common-case estimates.
     if (taxableIncome > 1500000) {
       tax += (taxableIncome - 1500000) * 0.30;
       taxableIncome = 1500000;
@@ -68,7 +68,7 @@ function calculateTax(income: number, deductions: any, regime: "old" | "new") {
       tax += (taxableIncome - 300000) * 0.05;
     }
   } else {
-    // New regime tax slabs (FY 2024-25)
+    // New regime tax slabs for common-case estimates.
     if (taxableIncome > 1500000) {
       tax += (taxableIncome - 1500000) * 0.30;
       taxableIncome = 1500000;

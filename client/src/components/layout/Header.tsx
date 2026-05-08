@@ -391,7 +391,7 @@ export default function Header() {
                                     <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Optimized AI</span>
                                   </div>
                                   <h6 className="text-xl font-normal text-slate-900 leading-tight mb-2">Tax Optimizer AI</h6>
-                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Save up to {"₹"}50k in taxes with our smart algorithm.</p>
+                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Compare regimes and review eligible deductions before filing.</p>
                                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-blue-200/50">
                                     Explore Tool <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                                   </div>
@@ -622,7 +622,7 @@ export default function Header() {
                             </div>
                             <ul className="space-y-4">
                               {[
-                                { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "AY 2025-26 Tax Analysis", color: "emerald" },
+                                { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "AY 2026-27 Tax Estimate", color: "emerald" },
                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" },
                                 { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
                                 { href: "/calculators/gst", icon: Receipt, title: "GST Calculator", desc: "Add or remove GST", color: "blue" },

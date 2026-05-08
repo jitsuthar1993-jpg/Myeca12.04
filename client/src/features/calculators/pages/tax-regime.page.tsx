@@ -56,12 +56,12 @@ interface TaxCalculation {
 
 const assessmentYears = [
   { value: "2026-27", label: "AY 2026-27 (FY 2025-26)" },
-  { value: "2025-26", label: "AY 2025-26 (FY 2024-25)" },
-  { value: "2024-25", label: "AY 2024-25 (FY 2023-24)" },
-  { value: "2023-24", label: "AY 2023-24 (FY 2022-23)" }
+  { value: "2025-26", label: "AY 2025-26 (FY 2024-25 - archive)" },
+  { value: "2024-25", label: "AY 2024-25 (FY 2023-24 - archive)" },
+  { value: "2023-24", label: "AY 2023-24 (FY 2022-23 - archive)" }
 ];
 
-// Default tax rates (Budget 2024 rates for FY 2024-25)
+// Default tax rates include current AY 2026-27 rules and archived legacy years.
 const defaultTaxRates: { [key: string]: TaxRates } = {
   "2026-27": {
     year: "2026-27",

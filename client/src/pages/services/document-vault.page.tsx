@@ -271,7 +271,7 @@ export default function DocumentVaultServicePage() {
                          <div key={i} className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white" />
                        ))}
                     </div>
-                    10k+ Secure Uploads Daily
+                    Secure Upload Workflow
                  </div>
                </div>
             </div>

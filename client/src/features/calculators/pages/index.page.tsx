@@ -94,7 +94,7 @@ const calculatorCategories: CalculatorCategory[] = [
     icon: FileText,
     color: "blue",
     calculators: [
-      { name: "Income Tax Calculator", href: "/calculators/income-tax", icon: IndianRupee, isPopular: true, description: "AY 2025-26 tax calculation" },
+      { name: "Income Tax Calculator", href: "/calculators/income-tax", icon: IndianRupee, isPopular: true, description: "AY 2026-27 tax estimate" },
       { name: "Tax Regime Comparator", href: "/calculators/regime-comparator", icon: Zap, isNew: true, description: "Old vs new regime side by side" },
       { name: "HRA Calculator", href: "/calculators/hra", icon: Home, description: "House rent allowance benefits" },
       { name: "GST Calculator", href: "/calculators/gst", icon: FileText, isNew: true, isPopular: true, description: "Add or remove GST instantly" },
@@ -163,9 +163,9 @@ const calculatorCategories: CalculatorCategory[] = [
 ];
 
 const stats = [
-  { value: "2.5M+", label: "Calculations done", icon: Calculator },
-  { value: "150K+", label: "Monthly users", icon: Users },
-  { value: "99.8%", label: "Accuracy rate", icon: CheckCircle },
+  { value: "AY 2026", label: "Tax tools ready", icon: Calculator },
+  { value: "20+", label: "Estimate tools", icon: Users },
+  { value: "Review", label: "Caveats included", icon: CheckCircle },
 ];
 
 const featuredTools = [
@@ -254,8 +254,8 @@ export default function CalculatorsPage() {
         calculatorData={{
           type: "Financial Planning Tools",
           features: ["Income Tax Calculator", "SIP Calculator", "EMI Calculator", "GST Calculator"],
-          accuracy: "99.8%",
-          updates: "AY 2025-26",
+          accuracy: "Estimate tools with caveats",
+          updates: "AY 2026-27",
         }}
         breadcrumbs={[
           { name: "Home", url: "/" },

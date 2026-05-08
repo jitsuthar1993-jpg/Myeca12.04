@@ -12,7 +12,7 @@ export const taxCalculators: CalculatorFeature[] = [
   {
     id: "tax-regime",
     title: "Tax Regime Calculator",
-    description: "Compare old vs new tax regime to find the best option for you with FY 2024-25 rates",
+    description: "Compare old vs new tax regime for AY 2026-27 using current common-case rules",
     icon: "GitCompare",
     path: "/calculators/tax-regime",
     color: "green"

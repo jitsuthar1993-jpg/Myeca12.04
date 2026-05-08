@@ -35,7 +35,7 @@ const LTCG_TAX_RATE = 0.125; // 12.5%
 const MAX_80C_DEDUCTION = 150000;
 const LOCK_IN_YEARS = 3;
 
-// Tax slabs (New Regime FY 2024-25)
+// Tax slabs for common-case new-regime estimate.
 const TAX_SLABS = [
   { min: 0, max: 300000, rate: 0 },
   { min: 300000, max: 700000, rate: 0.05 },
@@ -278,4 +278,3 @@ export function compareWith80COptions(
     nsc: { value: Math.round(nscValue - nscTax), taxBenefit: Math.round(taxBenefit) },
   };
 }
-

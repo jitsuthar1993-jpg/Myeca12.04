@@ -8,7 +8,7 @@ export default function NoticeComplianceSection() {
   const noticeTypes = [
     {
       title: "Scrutiny Assessment",
-      description: "Expert handling of scrutiny notices with complete documentation",
+      description: "Support for scrutiny notices with document review",
       icon: FileText,
       color: "bg-blue-100 text-blue-600"
     },
@@ -26,7 +26,7 @@ export default function NoticeComplianceSection() {
     },
     {
       title: "Penalty Notices",
-      description: "Expert assistance for penalty and interest notices",
+      description: "Assistance for penalty and interest notices",
       icon: Clock,
       color: "bg-red-100 text-red-600"
     }
@@ -36,7 +36,7 @@ export default function NoticeComplianceSection() {
     {
       step: "1",
       title: "Notice Analysis",
-      description: "Our CA experts analyze your notice within 24 hours"
+      description: "Notice review timeline depends on facts and document readiness"
     },
     {
       step: "2", 
@@ -74,7 +74,7 @@ export default function NoticeComplianceSection() {
             Income Tax Notice? <span className="text-red-600">Don't Panic!</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Expert CA assistance for all types of income tax notices. Professional response 
+            Expert assistance for income tax notices. Professional response
             preparation for quick notice resolution.
           </p>
         </m.div>
@@ -169,7 +169,7 @@ export default function NoticeComplianceSection() {
             </div>
             <div className="text-left">
               <h3 className="text-2xl font-bold text-gray-900">Got an Income Tax Notice?</h3>
-              <p className="text-gray-600">Don't wait - Get expert help now!</p>
+              <p className="text-gray-600">Get notice help based on your facts and documents.</p>
             </div>
           </div>
           
@@ -199,15 +199,15 @@ export default function NoticeComplianceSection() {
             <div className="flex items-center justify-center space-x-4">
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>24/7 Support</span>
+                <span>Support Workflow</span>
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>Expert CA Team</span>
+                <span>Expert Review</span>
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>Guaranteed Response</span>
+                <span>Response Drafting</span>
               </div>
             </div>
           </div>

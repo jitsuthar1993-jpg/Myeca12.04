@@ -38,15 +38,33 @@ interface TaxCalculation {
 }
 
 const assessmentYears = [
-  { value: "2025-26", label: "AY 2025-26 (FY 2024-25)" },
-  { value: "2024-25", label: "AY 2024-25 (FY 2023-24)" },
-  { value: "2023-24", label: "AY 2023-24 (FY 2022-23)" },
-  { value: "2022-23", label: "AY 2022-23 (FY 2021-22)" },
-  { value: "2021-22", label: "AY 2021-22 (FY 2020-21)" }
+  { value: "2026-27", label: "AY 2026-27 (FY 2025-26)" },
+  { value: "2025-26", label: "AY 2025-26 (FY 2024-25 - archive)" },
+  { value: "2024-25", label: "AY 2024-25 (FY 2023-24 - archive)" }
 ];
 
-// Default tax rates (will be updated via API search)
+// Default tax rates for current and archived comparison years.
 const defaultTaxRates: { [key: string]: TaxRates } = {
+  "2026-27": {
+    year: "2026-27",
+    oldRegime: [
+      { min: 0, max: 250000, rate: 0 },
+      { min: 250000, max: 500000, rate: 5 },
+      { min: 500000, max: 1000000, rate: 20 },
+      { min: 1000000, max: null, rate: 30 }
+    ],
+    newRegime: [
+      { min: 0, max: 400000, rate: 0 },
+      { min: 400000, max: 800000, rate: 5 },
+      { min: 800000, max: 1200000, rate: 10 },
+      { min: 1200000, max: 1600000, rate: 15 },
+      { min: 1600000, max: 2000000, rate: 20 },
+      { min: 2000000, max: 2400000, rate: 25 },
+      { min: 2400000, max: null, rate: 30 }
+    ],
+    standardDeduction: 75000,
+    basicExemption: 400000
+  },
   "2025-26": {
     year: "2025-26",
     oldRegime: [
@@ -88,7 +106,7 @@ const defaultTaxRates: { [key: string]: TaxRates } = {
 };
 
 export default function TaxRegimeComparison() {
-  const [selectedYear, setSelectedYear] = useState("2025-26");
+  const [selectedYear, setSelectedYear] = useState("2026-27");
   const [income, setIncome] = useState("");
   const [deductions, setDeductions] = useState("");
   const [isSearching, setIsSearching] = useState(false);

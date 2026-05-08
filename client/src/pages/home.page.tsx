@@ -69,10 +69,10 @@ const HomePage = () => {
   return (
     <>
       <MetaSEO
-        title={seo?.title || "Expert Income Tax Filing & ITR e-Filing Services India 2025-26"}
-        description={seo?.description || "File ITR online with MyeCA.in. Every return reviewed by a licensed CA. ITR filing starts at ₹499. File AY 2025-26 returns now."}
+        title={seo?.title || "Income Tax Filing & ITR e-Filing Services India AY 2026-27"}
+        description={seo?.description || "File ITR online with MyeCA.in using guided workflows, tax calculators, and optional CA-assisted review. ITR filing starts at Rs 499 for AY 2026-27."}
         keywords={seo?.keywords}
-        aiSummary="MyeCA.in is India's leading tax platform offering CA-assisted ITR filing, GST compliance, and startup registration. Key features include AY 2025-26 tax calculators, Form 16 parsing, and 24/7 expert support."
+        aiSummary="MyeCA.in offers guided ITR filing, GST compliance, startup registration, AY 2026-27 tax calculators, Form 16 parsing, and optional expert support for eligible plans."
         localBusinessData={{
           "name": "MyeCA.in",
           "email": "support@myeca.in",
@@ -82,24 +82,24 @@ const HomePage = () => {
             "addressRegion": "Maharashtra",
             "addressCountry": "IN"
           },
-          "priceRange": "₹499-₹9999"
+          "priceRange": "Rs 499-Rs 9,999"
         }}
         faqPageData={[
           {
             question: "What is the fastest way to file ITR in India?",
-            answer: "MyeCA.in offers a 4-step ITR filing process where you can auto-import data from Form 16 and get it reviewed by a certified CA within 24 hours."
+            answer: "MyeCA.in offers a guided ITR filing process where you can enter details, use Form 16 support where available, and choose CA-assisted review on eligible plans."
           },
           {
             question: "Is CA review mandatory for all tax filings on MyeCA.in?",
-            answer: "Yes, every return filed through MyeCA.in is manually reviewed by a named Chartered Accountant to ensure zero errors and maximum tax savings."
+            answer: "No. Self-service filing and CA-assisted packages are separate options, so choose the review level that fits your facts and document readiness."
           },
           {
             question: "How much does it cost to file ITR online?",
-            answer: "ITR filing starts at just ₹499 on MyeCA.in. We offer transparent pricing with no hidden charges, and you only pay after your return is reviewed by a CA."
+            answer: "ITR filing starts at Rs 499 for simple self-service cases, with CA-assisted package levels such as Rs 999 and Rs 1,499 depending on the return type and support required."
           },
           {
             question: "Can I get a refund for my income tax through MyeCA.in?",
-            answer: "Our expert CAs optimize your return to ensure you claim all eligible deductions under Section 80C, 80D, and others, maximizing your chance of a refund."
+            answer: "A refund depends on your income, TDS, advance tax, deductions, exemptions, and final processing by the Income Tax Department. MyeCA helps you review eligible claims based on the documents you provide."
           }
         ]}
       />
@@ -114,19 +114,18 @@ const HomePage = () => {
                 <Shield className="w-4 h-4 text-[var(--color-accent-600)]" />
                 <span>ERI Registered</span>
                 <span className="text-[var(--color-primary-400)]">•</span>
-                <span className="text-[var(--color-success-600)] font-semibold">CA Verified Every Return</span>
+                <span className="text-[var(--color-success-600)] font-semibold">CA Review Available</span>
               </div>
 
               {/* Headline */}
               <h1 className="text-[30px] font-bold leading-tight text-[var(--color-primary-900)] md:text-3xl lg:text-5xl">
-                Get Your <span className="text-[var(--color-accent-600)]">Maximum Tax Refund</span> — 
+                File Your <span className="text-[var(--color-accent-600)]">AY 2026-27 ITR</span>
                 <br className="hidden sm:block" />
-                Expert CA Filing from ₹999
+                Guided Filing from Rs 499
               </h1>
 
               <p className="max-w-2xl text-sm leading-6 text-gray-600 md:mx-auto md:text-lg">
-                File your ITR with a real, named Chartered Accountant reviewing every detail.
-                Maximum refund. Zero errors. Filed via official Income Tax Portal.
+                Use guided filing, regime comparison, and optional CA-assisted review before submission through the official Income Tax Portal.
               </p>
 
               {/* CTA Buttons */}
@@ -154,11 +153,11 @@ const HomePage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  No Document Upload Needed
+                  Simple Document Flow
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  Pay Only After CA Review
+                  CA-Assisted Plans Available
                 </div>
               </div>
             </div>
@@ -172,8 +171,8 @@ const HomePage = () => {
             <div className="mx-auto grid max-w-7xl gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
               {[
                 {
-                  title: "Fastest ITR Filing",
-                  description: "File your ITR in just 4 simple steps with CA review. Get done efficiently with our AI-powered platform.",
+                  title: "Guided ITR Filing",
+                  description: "Complete your return with a structured workflow and optional expert review for eligible plans.",
                   icon: FastITRFilingLogo,
                   bgColor: "bg-indigo-50",
                   textColor: "text-indigo-600",
@@ -182,8 +181,8 @@ const HomePage = () => {
                   href: "/features/fastest-itr-filing",
                 },
                 {
-                  title: "Accurate Tax Calculator",
-                  description: "Get precise tax calculations instantly. Compare old vs new regime and maximize your savings.",
+                  title: "Tax Estimate Calculator",
+                  description: "Estimate tax under old and new regimes for AY 2026-27, with caveats for special cases.",
                   icon: AccurateTaxCalculatorLogo,
                   bgColor: "bg-emerald-50",
                   textColor: "text-emerald-600",
@@ -203,7 +202,7 @@ const HomePage = () => {
                 },
                 {
                   title: "Expert Tax Review",
-                  description: "Every return reviewed by certified CAs. Get maximum refund with zero errors guarantee.",
+                  description: "Choose CA-assisted review for complex returns, deductions, capital gains, or business income.",
                   icon: ExpertTaxReviewLogo,
                   bgColor: "bg-orange-50",
                   textColor: "text-orange-600",
@@ -259,7 +258,7 @@ const HomePage = () => {
               <h2 className="text-xl font-extrabold tracking-tight text-slate-900 md:text-3xl lg:text-4xl">
                 File ITR in <span className="text-blue-600">3 Simple Steps</span>
               </h2>
-              <p className="mt-2 text-sm text-slate-500 md:mt-4 md:text-lg">Our streamlined process makes tax filing effortless.</p>
+              <p className="mt-2 text-sm text-slate-500 md:mt-4 md:text-lg">Our workflow keeps filing structured, documented, and easier to review.</p>
             </div>
 
             <div className="relative mx-auto grid max-w-5xl gap-3 md:grid-cols-3 md:gap-8">
@@ -268,7 +267,7 @@ const HomePage = () => {
               
               {[
                 { num: "1", title: "Enter Details", desc: "Add your income & deductions", icon: FileText, color: "bg-blue-600 shadow-blue-500/30" },
-                { num: "2", title: "CA Review", desc: "Expert verification for accuracy", icon: Users, color: "bg-indigo-600 shadow-indigo-500/30" },
+                { num: "2", title: "Review", desc: "Check calculations and choose expert help if needed", icon: Users, color: "bg-indigo-600 shadow-indigo-500/30" },
                 { num: "3", title: "File ITR", desc: "Submit to Income Tax Dept", icon: CheckCircle, color: "bg-emerald-600 shadow-emerald-500/30" },
               ].map((step, idx) => (
                 <div key={step.num} className="relative z-10 flex gap-3 rounded-lg border border-slate-100 bg-white p-4 shadow-sm transition-all duration-300 md:block md:rounded-card md:p-8 md:hover:-translate-y-1 md:hover:shadow-xl">
@@ -295,12 +294,12 @@ const HomePage = () => {
               <h2 className="mb-2 text-xl font-bold text-gray-900 md:mb-3 md:text-2xl lg:text-3xl">
                 Free Tax <span className="text-blue-600">Calculators</span>
               </h2>
-              <p className="text-sm text-gray-600 md:text-base">Plan your taxes with our accurate calculators</p>
+              <p className="text-sm text-gray-600 md:text-base">Plan your taxes with estimate calculators and review caveats</p>
             </div>
 
             <div className="mx-auto grid max-w-5xl gap-3 md:grid-cols-3 md:gap-6">
               {[
-                { title: "Income Tax Calculator", desc: "AY 2025-26 tax calculation", href: "/calculators/income-tax", icon: Calculator },
+                { title: "Income Tax Calculator", desc: "AY 2026-27 tax estimate", href: "/calculators/income-tax", icon: Calculator },
                 { title: "HRA Calculator", desc: "Optimize rent allowance", href: "/calculators/hra", icon: Shield },
                 { title: "SIP Calculator", desc: "Plan your investments", href: "/calculators/sip", icon: TrendingUp },
               ].map((calc) => (
@@ -341,7 +340,7 @@ const HomePage = () => {
                       <h3 className="text-base font-bold tracking-tight text-[var(--color-primary-900)] md:text-[22px]">AI Tax Assistant</h3>
                       <span className="px-2 py-0.5 bg-[var(--color-warning-100)] text-[var(--color-warning-700)] text-xs font-bold rounded-full uppercase tracking-tighter">BETA</span>
                     </div>
-                    <p className="text-[var(--color-primary-500)] text-sm">Instant tax help, Form 16 parser & bank analyzer</p>
+                    <p className="text-[var(--color-primary-500)] text-sm">Tax help, Form 16 support & document review workflows</p>
                   </div>
                 </div>
                 <Button variant="brand" className="h-11 w-full rounded-lg px-6 transition-all sm:w-auto md:h-12 md:px-8">
@@ -385,10 +384,10 @@ const HomePage = () => {
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 text-center md:grid-cols-4 md:gap-8">
               {[
-                { value: "100%", label: "CA-Reviewed Returns" },
-                { value: "₹15L+", label: "Tax Saved for Clients" },
-                { value: "950+", label: "ITRs Verified & Filed" },
-                { value: "24 hrs", label: "CA Turnaround Time" },
+                { value: "AY 2026", label: "Filing Support" },
+                { value: "Rs 499", label: "Simple Filing From" },
+                { value: "Rs 999", label: "Assisted Filing From" },
+                { value: "Add-on", label: "CA Review Available" },
               ].map((stat, idx) => (
                 <div key={stat.label} className={cn("rounded-lg border border-slate-100 bg-white p-4 shadow-sm transition-transform duration-300 md:rounded-[24px] md:p-8 md:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] md:hover:-translate-y-1", idx > 1 && "hidden md:block")}>
                   <div className="text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl lg:text-4xl">{stat.value}</div>
@@ -433,7 +432,7 @@ const HomePage = () => {
               <div className="relative z-10">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100/50 bg-blue-50/50 px-3 py-2 text-xs font-semibold text-brand-600 md:mb-8 md:rounded-full md:px-5">
                   <Award className="w-4 h-4" />
-                  ERI Registered · CA Verified · Filed via Official IT Portal
+                  ERI Registered · CA Review Available · Official Portal Workflow
                 </div>
 
                 <h2 className="mb-3 text-2xl font-extrabold tracking-tight text-slate-900 md:mb-6 md:text-4xl lg:text-5xl">
@@ -441,7 +440,7 @@ const HomePage = () => {
                 </h2>
 
                 <p className="mb-5 max-w-2xl text-sm leading-6 text-slate-500 md:mx-auto md:mb-10 md:text-lg md:leading-relaxed">
-                  Start free. A named CA reviews every return. Pay only when satisfied.
+                  Start with guided filing and add expert review when your return needs a closer look.
                 </p>
 
                 <div className="flex flex-col gap-2 sm:flex-row md:justify-center md:gap-4">

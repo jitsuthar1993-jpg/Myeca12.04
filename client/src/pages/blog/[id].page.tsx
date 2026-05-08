@@ -28,7 +28,7 @@ interface BlogPost {
 const sampleBlogPosts: { [key: string]: BlogPost } = {
   "1": {
     id: 1,
-    title: "New Tax Regime vs Old Tax Regime: Complete Comparison for AY 2025-26",
+    title: "Archived: New Tax Regime vs Old Tax Regime for AY 2025-26",
     content: `
 # Understanding Tax Regimes in India
 
@@ -120,7 +120,7 @@ In this example, the new regime saves ₹10,400 in taxes.
 3. **Business Income**: Choice is annual and can be changed
 4. **Form 10-IE**: Required to opt for new regime if you're a salaried employee
 
-## Recent Updates for AY 2025-26
+## Archived AY 2025-26 Notes
 
 The government has made several changes to make the new regime more attractive:
 - Increased basic exemption limit to ₹3,00,000
@@ -133,7 +133,7 @@ The choice between old and new tax regime depends on your individual financial s
 
 **Key Takeaway**: If your total deductions are less than ₹2.5 lakhs, the new regime is likely beneficial. For those with higher deductions, especially home loan borrowers, the old regime might be more advantageous.
     `,
-    excerpt: "Learn which tax regime works best for your income level and investment pattern. Get detailed comparisons with real examples.",
+    excerpt: "Historical AY 2025-26 comparison retained for archive reference. Use current calculators for AY 2026-27 filing decisions.",
     author: "CA Priya Sharma",
     publishedAt: "2025-01-10",
     status: "published",

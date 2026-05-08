@@ -13,7 +13,7 @@ export const calculators: CalculatorItem[] = [
   {
     id: "income-tax",
     title: "Income Tax Calculator",
-    description: "Calculate your income tax liability for FY 2024-25 with both old and new tax regimes comparison.",
+    description: "Estimate your income tax liability for AY 2026-27 with both old and new tax regimes comparison.",
     icon: "Calculator",
     color: "blue",
     href: "/calculators/income-tax",
@@ -49,7 +49,7 @@ export const calculators: CalculatorItem[] = [
   {
     id: "tax-regime",
     title: "Tax Regime Comparison",
-    description: "Compare old vs new tax regime to find which one saves you more tax for FY 2024-25.",
+    description: "Compare old vs new tax regime to estimate which one may save more tax for AY 2026-27.",
     icon: "GitCompare",
     color: "indigo",
     href: "/calculators/tax-regime",

@@ -90,7 +90,7 @@ export default function NPSCalculatorPage() {
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">Projection Tool</p>
               </div>
             </div>
           </div>

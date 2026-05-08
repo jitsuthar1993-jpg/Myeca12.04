@@ -100,7 +100,7 @@ export function calculateEnhancedSIP(
   };
 }
 
-// Enhanced PPF calculation with current rules (7.1% for FY 2024-25)
+// Enhanced PPF calculation with editable/current-rate assumptions.
 export function calculateEnhancedPPF(
   annualAmount: number,
   years: number = 15,

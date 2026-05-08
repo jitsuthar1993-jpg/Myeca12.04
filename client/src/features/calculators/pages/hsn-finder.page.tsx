@@ -49,7 +49,7 @@ export default function HSNFinderPage() {
     <>
       <MetaSEO
         title={seo?.title || "GST HSN & SAC Code Finder | MyeCA.in"}
-        description={seo?.description || "Find the latest HSN codes for goods and SAC codes for services with applicable GST rates for FY 2024-25."}
+        description={seo?.description || "Find HSN codes for goods and SAC codes for services with applicable GST rate guidance for FY 2025-26."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -188,7 +188,7 @@ export default function HSNFinderPage() {
               icon: <CheckCircle className="w-5 h-5" />,
               iconBg: "bg-blue-50 text-blue-600",
               title: "Updated Rates",
-              desc: "Our database is updated with the latest GST Council recommendations to ensure you use correct tax rates."
+              desc: "Review GST Council updates and notifications before using a rate for billing or filing."
             },
             {
               icon: <Info className="w-5 h-5" />,

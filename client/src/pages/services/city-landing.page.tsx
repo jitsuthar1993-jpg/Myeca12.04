@@ -58,7 +58,7 @@ export default function CityLandingPage() {
   }
 
   const pageTitle = `${service.title} in ${city.name} | Expert CA Services ${city.name}`;
-  const pageDesc = `Get professional ${service.title} in ${city.name}. Expert CA assistance for ${city.landmark} businesses. Local expertise, fast processing, and 100% compliance guaranteed.`;
+  const pageDesc = `Get professional ${service.title} in ${city.name}. Expert assistance for ${city.landmark} businesses, with local context and document-based compliance support.`;
 
   return (
     <div className="min-h-screen bg-white">
@@ -209,7 +209,7 @@ export default function CityLandingPage() {
               </h2>
               <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
                 Join the league of successful {city.name} entrepreneurs. Get your {service.title} 
-                started by a licensed CA today.
+                started with expert assistance today.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-black h-14 px-10 rounded-xl transition-all hover:scale-105">

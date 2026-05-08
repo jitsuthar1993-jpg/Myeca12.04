@@ -106,13 +106,13 @@ export default function HRACalculator() {
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
                 <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-normal text-[#444CE7]">10k+ Taxpayers</p>
+                <p className="text-xs font-normal text-[#444CE7]">HRA Estimate Tool</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">Rule-Based</p>
               </div>
             </div>
           </div>
@@ -408,7 +408,7 @@ export default function HRACalculator() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
-            { icon: <Award className="w-5 h-5" />, label: "100% Accurate", desc: "As per latest tax laws" },
+            { icon: <Award className="w-5 h-5" />, label: "Rule-based", desc: "Review documents before filing" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
           ].map((item, i) => (

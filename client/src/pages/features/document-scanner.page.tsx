@@ -141,7 +141,7 @@ export default function DocumentScannerPage() {
                 { icon: Upload, label: "Supported Formats", desc: "PDF, JPG, PNG — up to 10 MB per file. No special export needed." },
                 { icon: Zap, label: "Fast Extraction", desc: "Most documents are read within 30 seconds of upload." },
                 { icon: ScanLine, label: "Accuracy Check", desc: "Extracted values are flagged if they appear inconsistent with other documents." },
-                { icon: FileText, label: "CA Verifies Output", desc: "A licensed CA reviews all extracted data before your return is filed." },
+                { icon: FileText, label: "Review Output", desc: "Check extracted data before your return is filed, with CA assistance available on eligible plans." },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="w-9 h-9 shrink-0 rounded-lg bg-white border border-slate-100 flex items-center justify-center">

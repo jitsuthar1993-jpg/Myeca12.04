@@ -11,6 +11,7 @@ import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
+import { calculateIncomeTax } from "@/lib/tax-calculations";
 
 // Atomic Components
 import CalcLayout from "@/features/calculators/components/CalcLayout";
@@ -19,13 +20,20 @@ import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components
 import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-// Advance Tax Due Dates for FY 2024-25
-const ADVANCE_TAX_SCHEDULE = [
-  { quarter: "Q1", dueDate: "June 15, 2024", cumulativePercent: 15, label: "First Installment" },
-  { quarter: "Q2", dueDate: "September 15, 2024", cumulativePercent: 45, label: "Second Installment" },
-  { quarter: "Q3", dueDate: "December 15, 2024", cumulativePercent: 75, label: "Third Installment" },
-  { quarter: "Q4", dueDate: "March 15, 2025", cumulativePercent: 100, label: "Fourth Installment" },
-];
+const DEFAULT_FINANCIAL_YEAR = "2026-27";
+const DEFAULT_ASSESSMENT_YEAR = "2026-27";
+
+const getAdvanceTaxSchedule = (financialYear: string) => {
+  const startYear = Number(financialYear.slice(0, 4));
+  const endYear = startYear + 1;
+
+  return [
+    { quarter: "Q1", dueDate: `June 15, ${startYear}`, cumulativePercent: 15, label: "First Installment" },
+    { quarter: "Q2", dueDate: `September 15, ${startYear}`, cumulativePercent: 45, label: "Second Installment" },
+    { quarter: "Q3", dueDate: `December 15, ${startYear}`, cumulativePercent: 75, label: "Third Installment" },
+    { quarter: "Q4", dueDate: `March 15, ${endYear}`, cumulativePercent: 100, label: "Fourth Installment" },
+  ];
+};
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -53,55 +61,23 @@ export default function AdvanceTaxCalculatorPage() {
   });
 
   const [regime, setRegime] = useState<"old" | "new">("new");
-
-  const calculateTax = (income: number, selectedRegime: "old" | "new") => {
-    let tax = 0;
-    if (selectedRegime === "new") {
-      const slabs = [
-        { min: 0, max: 300000, rate: 0 },
-        { min: 300000, max: 700000, rate: 5 },
-        { min: 700000, max: 1000000, rate: 10 },
-        { min: 1000000, max: 1200000, rate: 15 },
-        { min: 1200000, max: 1500000, rate: 20 },
-        { min: 1500000, max: Infinity, rate: 30 },
-      ];
-      const taxableIncome = Math.max(0, income - 75000); // Standard deduction
-      for (const slab of slabs) {
-        if (taxableIncome > slab.min) {
-          const taxableInSlab = Math.min(taxableIncome - slab.min, slab.max - slab.min);
-          tax += taxableInSlab * (slab.rate / 100);
-        }
-      }
-      if (taxableIncome <= 700000) tax = Math.max(0, tax - 25000);
-    } else {
-      const slabs = [
-        { min: 0, max: 250000, rate: 0 },
-        { min: 250000, max: 500000, rate: 5 },
-        { min: 500000, max: 1000000, rate: 20 },
-        { min: 1000000, max: Infinity, rate: 30 },
-      ];
-      const taxableIncome = Math.max(0, income - 50000); // Standard deduction
-      for (const slab of slabs) {
-        if (taxableIncome > slab.min) {
-          const taxableInSlab = Math.min(taxableIncome - slab.min, slab.max - slab.min);
-          tax += taxableInSlab * (slab.rate / 100);
-        }
-      }
-      if (taxableIncome <= 500000) tax = Math.max(0, tax - 12500);
-    }
-    return tax + (tax * 0.04);
-  };
+  const [financialYear, setFinancialYear] = useState(DEFAULT_FINANCIAL_YEAR);
 
   const calculations = useMemo(() => {
-    const totalTax = calculateTax(inputs.estimatedIncome, regime);
+    const schedule = getAdvanceTaxSchedule(financialYear);
+    const totalTax = calculateIncomeTax({
+      income: inputs.estimatedIncome,
+      salaryIncome: inputs.estimatedIncome,
+      deductions: 0,
+      regime,
+      assessmentYear: DEFAULT_ASSESSMENT_YEAR,
+    }).taxPayable;
     const totalTdsAndTcs = inputs.tdsDeducted + inputs.tcsCollected;
     const netTaxLiability = Math.max(0, totalTax - totalTdsAndTcs);
     const advanceTaxRequired = netTaxLiability > 10000;
     
-    const quarterlyAnalysis = ADVANCE_TAX_SCHEDULE.map((schedule, index) => {
-      const previousPercent = index > 0 ? ADVANCE_TAX_SCHEDULE[index - 1].cumulativePercent : 0;
-      const installmentPercent = schedule.cumulativePercent - previousPercent;
-      const cumulativeAmount = (netTaxLiability * schedule.cumulativePercent) / 100;
+    const quarterlyAnalysis = schedule.map((installment, index) => {
+      const cumulativeAmount = (netTaxLiability * installment.cumulativePercent) / 100;
       const paidTillQuarter = [
         inputs.advanceTaxPaid.q1,
         inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2,
@@ -112,7 +88,7 @@ export default function AdvanceTaxCalculatorPage() {
       const shortfall = Math.max(0, cumulativeAmount - paidTillQuarter);
       
       return {
-        ...schedule,
+        ...installment,
         cumulativeAmount,
         paidTillQuarter,
         shortfall,
@@ -130,7 +106,7 @@ export default function AdvanceTaxCalculatorPage() {
       totalAdvanceTaxPaid,
       balanceTax,
     };
-  }, [inputs, regime]);
+  }, [inputs, regime, financialYear]);
 
   const seo = getSEOConfig('/calculators/advance-tax');
   const currentQuarter = (() => {
@@ -144,8 +120,8 @@ export default function AdvanceTaxCalculatorPage() {
   return (
     <>
       <MetaSEO
-        title={seo?.title || "Advance Tax Calculator 2025 | Quarterly Payments | MyeCA.in"}
-        description={seo?.description || "Calculate quarterly advance tax payments for FY 2024-25. Avoid Sec 234B/C interest penalties with professional planning."}
+        title={seo?.title || "Advance Tax Calculator 2026 | Quarterly Payments | MyeCA.in"}
+        description={seo?.description || "Estimate quarterly advance tax payments using official installment percentages and selected financial-year dates."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -202,8 +178,8 @@ export default function AdvanceTaxCalculatorPage() {
                     <Bell className="w-4 h-4 text-amber-600" />
                     <p className="text-[10px] font-normal text-amber-700 uppercase tracking-widest">Next Due Date</p>
                   </div>
-                  <p className="text-sm font-normal text-slate-900">{ADVANCE_TAX_SCHEDULE[currentQuarter - 1].dueDate}</p>
-                  <p className="text-[10px] text-slate-500 font-normal italic">Installment Target: {ADVANCE_TAX_SCHEDULE[currentQuarter - 1].cumulativePercent}%</p>
+                  <p className="text-sm font-normal text-slate-900">{calculations.quarterlyAnalysis[currentQuarter - 1].dueDate}</p>
+                  <p className="text-[10px] text-slate-500 font-normal italic">Installment Target: {calculations.quarterlyAnalysis[currentQuarter - 1].cumulativePercent}%</p>
                 </div>
               )}
             </div>
@@ -220,6 +196,21 @@ export default function AdvanceTaxCalculatorPage() {
         <div className="space-y-8">
           <CalcInputCard title="Tax Configuration" icon={<ShieldCheck className="w-5 h-5" />}>
              <div className="space-y-4 mb-8">
+                <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Financial Year</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {["2026-27", "2025-26"].map((fy) => (
+                    <button
+                      key={fy}
+                      onClick={() => setFinancialYear(fy)}
+                      className={cn(
+                        "py-3 rounded-2xl border-2 transition-all font-normal text-sm",
+                        financialYear === fy ? "border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-600/10" : "border-slate-100 bg-slate-50 text-slate-500 hover:border-indigo-200"
+                      )}
+                    >
+                      FY {fy}
+                    </button>
+                  ))}
+                </div>
                 <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Tax Regime</label>
                 <div className="grid grid-cols-2 gap-3">
                   {['new', 'old'].map((r) => (
@@ -267,7 +258,7 @@ export default function AdvanceTaxCalculatorPage() {
                 {(['q1', 'q2', 'q3', 'q4'] as const).map((q, i) => (
                   <div key={q} className="space-y-2">
                     <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">
-                      {ADVANCE_TAX_SCHEDULE[i].quarter} Paid (INR)
+                      {calculations.quarterlyAnalysis[i].quarter} Paid (INR)
                     </label>
                     <Input 
                       type="number"

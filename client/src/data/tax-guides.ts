@@ -263,7 +263,7 @@ export const TAX_GUIDES: TaxGuide[] = [
       {
         id: 'tax-rates',
         title: 'Know the Tax Rates',
-        description: 'Current tax rates for equity capital gains (FY 2024-25).',
+        description: 'Current tax-rate estimate for equity capital gains (FY 2025-26).',
         checklist: [
           'STCG: 20% flat rate',
           'LTCG: 12.5% above ₹1.25 lakh exemption',

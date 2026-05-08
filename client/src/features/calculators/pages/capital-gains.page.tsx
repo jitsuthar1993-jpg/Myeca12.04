@@ -57,7 +57,7 @@ export default function CapitalGainsCalculatorPage() {
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "Capital Gains Calculator 2025 | STCG & LTCG Tax | MyeCA.in"}
-        description={seo?.description || "Calculate capital gains tax for equity, property, and gold under new Budget 2024 rules. Instant STCG & LTCG liability estimates."}
+        description={seo?.description || "Estimate capital gains tax for common equity, property, gold, and bond cases. Complex exemptions, acquisition dates, and special assets need review."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -77,7 +77,7 @@ export default function CapitalGainsCalculatorPage() {
                 Capital <span className="text-[#027A48]">Gains</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
-                Calculate STCG & LTCG liability based on latest Budget 2024 rules.
+                Estimate STCG & LTCG liability. Final tax can vary by asset facts, acquisition date, exemptions, and special rates.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
@@ -96,7 +96,7 @@ export default function CapitalGainsCalculatorPage() {
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">Estimate Tool</p>
               </div>
             </div>
           </div>
@@ -256,7 +256,7 @@ export default function CapitalGainsCalculatorPage() {
                     <Zap className="w-4 h-4" />
                   </div>
                   <p className="text-[11px] text-[#027A48] font-normal leading-tight">
-                    {result?.gainType} Gain detected. Applied rate: <span className="font-normal underline">{result?.taxRate}%</span>
+                    {result?.gainType} estimate detected. Applied simplified rate: <span className="font-normal underline">{result?.taxRate}%</span>
                   </p>
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function CapitalGainsCalculatorPage() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
-            { icon: <Award className="w-5 h-5" />, label: "100% Accurate", desc: "As per latest Budget 2024" },
+            { icon: <Award className="w-5 h-5" />, label: "Estimate Tool", desc: "Review complex cases" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
           ].map((item, i) => (
@@ -407,16 +407,16 @@ export default function CapitalGainsCalculatorPage() {
             ]}
             howItWorks={{
               title: "Budget 2024 Changes",
-              description: "The Union Budget 2024 introduced significant changes to the capital gains tax structure in India.",
+              description: "This is a simplified estimate. Capital gains can change based on listed/unlisted status, acquisition date, indexation/transition rules, exemptions, resident status, and special-rate income.",
               steps: [
-                { title: "Standard LTCG", desc: "Long-term capital gains on all assets are now taxed at a flat rate of 12.5% without indexation." },
+                { title: "Standard LTCG", desc: "Many common long-term capital gains now use a 12.5% rate, but asset-specific transition and exemption rules can change the result." },
                 { title: "Increased STCG", desc: "Short-term capital gains (STCG) on listed equity have been increased from 15% to 20%." },
                 { title: "Higher Exemption", desc: "The annual exemption limit for LTCG on equity has been increased from ₹1 Lakh to ₹1.25 Lakhs." }
               ]
             }}
             faqs={[
               { q: "What is the holding period for property?", a: "Real estate is considered long-term if held for more than 2 years (24 months) from the date of acquisition." },
-              { q: "Is indexation benefit available for gold?", a: "No, as per the new rules, indexation benefits have been removed for all assets including gold and debt funds." },
+              { q: "Is indexation benefit available?", a: "It depends on asset type, acquisition date, and transition rules. Treat this calculator as an estimate and review high-value cases before filing." },
               { q: "Can I carry forward capital losses?", a: "Yes, both short-term and long-term capital losses can be carried forward for up to 8 assessment years." }
             ]}
           />

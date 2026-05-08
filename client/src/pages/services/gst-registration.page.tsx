@@ -392,7 +392,7 @@ export default function GstRegistrationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-900">
                 <AlertCircle className="w-6 h-6" />
-                GST Registration Thresholds - FY 2024-25
+                GST Registration Thresholds - FY 2025-26
               </CardTitle>
               <CardDescription>
                 Know when GST registration becomes mandatory for your business
@@ -901,7 +901,7 @@ export default function GstRegistrationPage() {
                    <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Warning: GST Non-Compliance Penalties</h3>
                    <p className="text-slate-600 leading-relaxed mb-6 font-medium">
                       Operating without a mandatory GSTIN can lead to a penalty of <span className="text-red-600 font-bold">₹10,000 or 10% of the tax due</span> (whichever is higher). 
-                      Additionally, late filing of returns (GSTR-1 or GSTR-3B) attracts a late fee of up to ₹50 per day. Our experts ensure you never miss a deadline.
+                      Additionally, late filing of returns (GSTR-1 or GSTR-3B) attracts late fees that vary by return type and facts. Use reminders and expert support to reduce missed-deadline risk.
                    </p>
                    <div className="flex flex-wrap gap-4">
                       <Button className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold px-6 h-12 shadow-md">Fix GST Notices Now</Button>

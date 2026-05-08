@@ -74,7 +74,7 @@ export default function EMICalculator() {
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">4.9/5 Rating</p>
+                <p className="text-[10px] font-normal text-[#667085]">Estimate Tool</p>
               </div>
             </div>
           </div>
@@ -312,7 +312,7 @@ export default function EMICalculator() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Plan your loan deductions" },
-            { icon: <Award className="w-5 h-5" />, label: "100% Accurate", desc: "Standard amortization math" },
+            { icon: <Award className="w-5 h-5" />, label: "Formula Estimate", desc: "Standard amortization math" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Zero data collection" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Tax Analysis", desc: "Analyze 24b implications" }
           ].map((item, i) => (

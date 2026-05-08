@@ -41,7 +41,7 @@ const taxRegimeData = {
       { min: 1500001, max: Infinity, rate: 30 }
     ],
     deductions: [
-      { name: "Standard Deduction", limit: 75000, description: "For salaried employees (FY 2024-25)" },
+      { name: "Standard Deduction", limit: 75000, description: "For salary or pension income (FY 2025-26)" },
       { name: "No other deductions", limit: 0, description: "Simplified tax structure" }
     ]
   }
@@ -212,7 +212,7 @@ export default function ComparisonToolsPage() {
               <CardHeader>
                 <CardTitle>Old vs New Tax Regime Comparison</CardTitle>
                 <CardDescription>
-                  Compare your tax liability under both regimes for AY 2025-26
+                  Compare your estimated tax liability under both regimes for AY 2026-27
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">

@@ -78,15 +78,15 @@ const ITR_FORMS = [
 
 const ASSESSMENT_YEARS = [
   { value: '2026-27', label: 'AY 2026-27 (FY 2025-26)', period: '1st April 2025 to 31st March 2026' },
-  { value: '2025-26', label: 'AY 2025-26 (FY 2024-25)', period: '1st April 2024 to 31st March 2025' },
-  { value: '2024-25', label: 'AY 2024-25 (FY 2023-24)', period: '1st April 2023 to 31st March 2024' },
-  { value: '2023-24', label: 'AY 2023-24 (FY 2022-23)', period: '1st April 2022 to 31st March 2023' },
-  { value: '2022-23', label: 'AY 2022-23 (FY 2021-22)', period: '1st April 2021 to 31st March 2022' }
+  { value: '2025-26', label: 'AY 2025-26 (FY 2024-25 - archive)', period: '1st April 2024 to 31st March 2025' },
+  { value: '2024-25', label: 'AY 2024-25 (FY 2023-24 - archive)', period: '1st April 2023 to 31st March 2024' },
+  { value: '2023-24', label: 'AY 2023-24 (FY 2022-23 - archive)', period: '1st April 2022 to 31st March 2023' },
+  { value: '2022-23', label: 'AY 2022-23 (FY 2021-22 - archive)', period: '1st April 2021 to 31st March 2022' }
 ];
 
 export default function ITRFormSelectorPage() {
   const [selectedForm, setSelectedForm] = useState('');
-  const [assessmentYear, setAssessmentYear] = useState('2025-26');
+  const [assessmentYear, setAssessmentYear] = useState('2026-27');
 
   // Parse recommended form from URL if coming back from the assistant
   useEffect(() => {

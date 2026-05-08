@@ -1,14 +1,14 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  PiggyBank, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  PiggyBank,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -50,7 +50,7 @@ export default function TdsFilingPage() {
       subtitle: "TDS on Salary",
       description: "Quarterly TDS return for salary payments to employees",
       dueDate: "31st of the month following quarter end",
-      penalty: "₹200/day",
+      penalty: "Rs 200/day",
       color: "blue",
       features: [
         "Salary TDS deduction details",
@@ -61,11 +61,11 @@ export default function TdsFilingPage() {
     },
     {
       id: "26q",
-      title: "Form 26Q", 
+      title: "Form 26Q",
       subtitle: "TDS on Non-Salary (Domestic)",
       description: "Quarterly TDS return for payments other than salary to residents",
       dueDate: "15th of the month following quarter end",
-      penalty: "₹200/day",
+      penalty: "Rs 200/day",
       color: "green",
       features: [
         "Professional fees TDS (194J)",
@@ -79,8 +79,8 @@ export default function TdsFilingPage() {
       title: "Form 27Q",
       subtitle: "TDS on Non-Salary (NRI/Foreign)",
       description: "Quarterly TDS return for payments to non-residents",
-      dueDate: "15th of the month following quarter end", 
-      penalty: "₹200/day",
+      dueDate: "15th of the month following quarter end",
+      penalty: "Rs 200/day",
       color: "purple",
       features: [
         "NRI payments",
@@ -95,7 +95,7 @@ export default function TdsFilingPage() {
       subtitle: "TCS Returns",
       description: "Quarterly TCS (Tax Collected at Source) returns",
       dueDate: "15th of the month following quarter end",
-      penalty: "₹200/day", 
+      penalty: "Rs 200/day",
       color: "orange",
       features: [
         "E-commerce TCS (194O)",
@@ -111,36 +111,36 @@ export default function TdsFilingPage() {
       section: "194A",
       type: "Interest",
       rate: "10%",
-      threshold: "₹40,000 - ₹1,00,000",
+      threshold: "Rs 50,000; Rs 1,00,000 for senior citizens",
       description: "Interest on bank deposits, bonds, debentures"
     },
     {
-      section: "194C", 
+      section: "194C",
       type: "Contractor Payments",
       rate: "1% (Individual/HUF), 2% (Others)",
-      threshold: "₹30,000 per transaction / ₹1,00,000 per year",
+      threshold: "Rs 30,000 per transaction / Rs 1,00,000 per year",
       description: "Payments to contractors and sub-contractors"
     },
     {
       section: "194H",
-      type: "Commission/Brokerage", 
-      rate: "5%",
-      threshold: "₹15,000 per year",
+      type: "Commission/Brokerage",
+      rate: "2%",
+      threshold: "Rs 20,000 per year",
       description: "Commission, brokerage, discount payments"
     },
     {
       section: "194I",
       type: "Rent",
       rate: "2% (Plant/Machinery), 10% (Land/Building)",
-      threshold: "₹2,40,000 per year",
-      description: "Rent payments for property, plant, machinery"
+      threshold: "Rs 6,00,000 per year; 194IB has separate Rs 50,000/month rule",
+      description: "Rent payments vary by asset type, deductor, and section"
     },
     {
       section: "194J",
       type: "Professional Fees",
       rate: "10% (Professional), 2% (Technical)",
-      threshold: "₹30,000 per year", 
-      description: "Fees to professionals, technical consultants"
+      threshold: "Rs 50,000 per year",
+      description: "Professional and technical fees; some 194J categories use 2%"
     },
     {
       section: "192",
@@ -153,27 +153,27 @@ export default function TdsFilingPage() {
 
   const quarterlyDueDates = [
     {
-      quarter: "Q1 (Apr-Jun 2024)",
-      form24Q: "31st July 2024",
-      otherForms: "15th July 2024",
+      quarter: "Q1 (Apr-Jun 2025)",
+      form24Q: "31st July 2025",
+      otherForms: "31st July 2025",
       status: "completed"
     },
     {
-      quarter: "Q2 (Jul-Sep 2024)", 
-      form24Q: "31st October 2024",
-      otherForms: "31st October 2024",
+      quarter: "Q2 (Jul-Sep 2025)",
+      form24Q: "31st October 2025",
+      otherForms: "31st October 2025",
       status: "completed"
     },
     {
-      quarter: "Q3 (Oct-Dec 2024)",
-      form24Q: "31st January 2025",
-      otherForms: "31st January 2025",
-      status: "upcoming"
+      quarter: "Q3 (Oct-Dec 2025)",
+      form24Q: "31st January 2026",
+      otherForms: "31st January 2026",
+      status: "completed"
     },
     {
-      quarter: "Q4 (Jan-Mar 2025)",
-      form24Q: "31st May 2025", 
-      otherForms: "31st May 2025",
+      quarter: "Q4 (Jan-Mar 2026)",
+      form24Q: "31st May 2026",
+      otherForms: "31st May 2026",
       status: "upcoming"
     }
   ];
@@ -195,7 +195,7 @@ export default function TdsFilingPage() {
     },
     {
       step: 3,
-      title: "Filing & Submission", 
+      title: "Filing & Submission",
       description: "File returns on TRACES portal within due dates and obtain acknowledgment",
       icon: Upload,
       color: "purple"
@@ -261,8 +261,8 @@ export default function TdsFilingPage() {
                 Complete compliance solution with quarterly return filing, certificate generation, and expert CA assistance.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 font-semibold"
                   onClick={() => {
                     setCheckoutPrice(799);
@@ -305,7 +305,7 @@ export default function TdsFilingPage() {
                   </li>
                   <li className="flex items-start">
                     <AlertCircle className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
-                    Late filing fee is {"₹"}200/day; avoid penalties by timely filing.
+                    Late filing fee is {"â‚¹"}200/day; avoid penalties by timely filing.
                   </li>
                 </ul>
               </CardContent>
@@ -363,14 +363,14 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Banks & Financial Institutions</div>
-                      <div className="text-sm text-gray-600">On interest payments exceeding {"₹"}40,000 annually</div>
+                      <div className="text-sm text-gray-600">On interest payments exceeding applicable thresholds, generally Rs 50,000 and Rs 1,00,000 for senior citizens</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Property Buyers</div>
-                      <div className="text-sm text-gray-600">1% TDS on property purchases above {"₹"}50 lakhs</div>
+                      <div className="text-sm text-gray-600">1% TDS on property purchases above {"â‚¹"}50 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
@@ -384,7 +384,7 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">High-Value Individual/HUF</div>
-                      <div className="text-sm text-gray-600">Business turnover &gt;{"₹"}1 crore or profession &gt;{"₹"}50 lakhs</div>
+                      <div className="text-sm text-gray-600">Business turnover &gt;{"â‚¹"}1 crore or profession &gt;{"â‚¹"}50 lakhs</div>
                     </div>
                   </li>
                 </ul>
@@ -408,28 +408,28 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Overseas Remittance Services</div>
-                      <div className="text-sm text-gray-600">5% TCS on foreign remittances via LRS above ₹7 lakhs</div>
+                      <div className="text-sm text-gray-600">5% TCS on foreign remittances via LRS above â‚¹7 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Motor Vehicle Dealers</div>
-                      <div className="text-sm text-gray-600">1% TCS on vehicle sales above ₹10 lakhs</div>
+                      <div className="text-sm text-gray-600">1% TCS on vehicle sales above â‚¹10 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Goods/Services Sellers</div>
-                      <div className="text-sm text-gray-600">0.1% TCS on receipts above ₹50 lakhs (Section 206C(1H))</div>
+                      <div className="text-sm text-gray-600">0.1% TCS on receipts above â‚¹50 lakhs (Section 206C(1H))</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Overseas Tour Packages</div>
-                      <div className="text-sm text-gray-600">5% TCS on tour packages above ₹2 lakhs</div>
+                      <div className="text-sm text-gray-600">5% TCS on tour packages above â‚¹2 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
@@ -564,14 +564,14 @@ export default function TdsFilingPage() {
               TDS/TCS Forms We Handle
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Expert filing services for all quarterly TDS and TCS returns with 100% accuracy
+              Expert filing services for quarterly TDS and TCS returns, with document-based review before submission
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {tdsFormsData.map((form) => (
-              <Card 
-                key={form.id} 
+              <Card
+                key={form.id}
                 className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 ${
                   form.color === 'blue' ? 'border-l-blue-500' :
                   form.color === 'green' ? 'border-l-green-500' :
@@ -595,7 +595,7 @@ export default function TdsFilingPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">{form.description}</p>
-                  
+
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
                       <Clock className="w-4 h-4 mr-2 text-red-500" />
@@ -635,7 +635,7 @@ export default function TdsFilingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-indigo-900">
                 <Calculator className="w-6 h-6" />
-                TDS Rates FY 2024-25 - Key Sections
+                TDS Rates FY 2025-26 - Key Sections
               </CardTitle>
               <CardDescription>
                 Latest TDS rates and threshold limits effective for current financial year
@@ -688,7 +688,7 @@ export default function TdsFilingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-900">
                 <Calendar className="w-6 h-6" />
-                Quarterly Filing Due Dates - FY 2024-25
+                Quarterly Filing Due Dates - FY 2025-26
               </CardTitle>
               <CardDescription>
                 Important due dates for TDS/TCS return filing to avoid penalties
@@ -697,11 +697,11 @@ export default function TdsFilingPage() {
             <CardContent>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {quarterlyDueDates.map((quarter, index) => (
-                  <div 
+                  <div
                     key={index}
                     className={`p-4 rounded-lg border ${
-                      quarter.status === 'completed' 
-                        ? 'bg-green-50 border-green-200' 
+                      quarter.status === 'completed'
+                        ? 'bg-green-50 border-green-200'
                         : 'bg-yellow-50 border-yellow-200'
                     }`}
                   >
@@ -715,10 +715,10 @@ export default function TdsFilingPage() {
                         <span>Others:</span>
                         <span className="font-medium">{quarter.otherForms}</span>
                       </div>
-                      <Badge 
+                      <Badge
                         className={`w-full justify-center mt-2 ${
-                          quarter.status === 'completed' 
-                            ? 'bg-green-100 text-green-800' 
+                          quarter.status === 'completed'
+                            ? 'bg-green-100 text-green-800'
                             : 'bg-yellow-100 text-yellow-800'
                         }`}
                       >
@@ -744,7 +744,7 @@ export default function TdsFilingPage() {
               Our 4-Step TDS Filing Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Streamlined process ensuring 100% compliance and timely filing
+              Streamlined process to reduce compliance misses and support timely filing
             </p>
           </div>
 
@@ -783,7 +783,7 @@ export default function TdsFilingPage() {
               Why Choose Our TDS Filing Services?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive TDS compliance with expert support and guaranteed accuracy
+              Comprehensive TDS compliance support with review for deductee type, section, and threshold assumptions
             </p>
           </div>
 
@@ -819,7 +819,7 @@ export default function TdsFilingPage() {
                 Get Started with TDS Filing
               </CardTitle>
               <CardDescription>
-                Share your requirements and get expert assistance within 24 hours
+                Share your requirements and get expert assistance based on document readiness and filing complexity
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -890,15 +890,15 @@ export default function TdsFilingPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="requirements">Additional Requirements</Label>
-                <Textarea 
-                  id="requirements" 
+                <Textarea
+                  id="requirements"
                   placeholder="Describe your TDS filing requirements, number of deductees, quarterly data, etc."
                   rows={4}
                 />
               </div>
 
               <div className="flex gap-4">
-                <Button 
+                <Button
                   className="flex-1 bg-indigo-600 hover:bg-indigo-700"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
@@ -925,13 +925,13 @@ export default function TdsFilingPage() {
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">TDS Filing Service Pricing</h3>
               <div className="flex justify-center items-baseline gap-2 mb-2">
-                <span className="text-4xl font-bold text-indigo-600">₹799</span>
+                <span className="text-4xl font-bold text-indigo-600">â‚¹799</span>
                 <span className="text-lg text-gray-600">per quarter</span>
                 <Badge className="bg-green-100 text-green-800">Starting Price</Badge>
               </div>
               <p className="text-gray-600">Comprehensive TDS filing with expert CA support</p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
@@ -947,13 +947,13 @@ export default function TdsFilingPage() {
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                99.9% accuracy guaranteed
+                Review-based filing support
               </div>
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-indigo-600 hover:bg-indigo-700 px-8"
                 onClick={() => setIsCheckoutOpen(true)}
               >
@@ -967,7 +967,7 @@ export default function TdsFilingPage() {
             </div>
 
             <p className="text-sm text-gray-600 mt-4">
-              Trusted by 10,000+ businesses • 99.9% filing accuracy • Expert CA team
+              Trusted by 10,000+ businesses â€¢ 99.9% filing accuracy â€¢ Expert CA team
             </p>
           </Card>
         </m.div>

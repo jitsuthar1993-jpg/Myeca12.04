@@ -350,7 +350,7 @@ export class ITRGenerator {
     let totalTax = 0;
 
     if (regime === 'new') {
-      // New tax regime slabs for AY 2025-26
+      // New tax regime slabs for legacy/common-case estimates.
       if (totalIncome <= 300000) {
         totalTax = 0;
       } else if (totalIncome <= 600000) {

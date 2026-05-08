@@ -403,7 +403,7 @@ export default function MobileAppScreensPage() {
                       </div>
                     </div>
                     <div className="mt-4 flex items-center gap-2 text-xs font-normal uppercase tracking-[0.2em] text-blue-100/90">
-                      <span className="rounded-full bg-white/10 px-3 py-1">AY 2025-26</span>
+                      <span className="rounded-full bg-white/10 px-3 py-1">AY 2026-27</span>
                       <span className="rounded-full bg-white/10 px-3 py-1">Deadline 31 Jul</span>
                     </div>
                   </div>

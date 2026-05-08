@@ -39,7 +39,7 @@ export const servicesData: ServiceCategory[] = [
         popular: true,
         features: [
           "CA Expert Review",
-          "Maximum Refund Guarantee",
+          "Eligible deduction review",
           "Form 16 Processing",
           "Investment Optimization",
           "Free Consultation"
@@ -573,7 +573,7 @@ export const testimonialsByCategory = {
 export const groupedServices = {
   "income-tax": {
     title: "Income Tax Services",
-    description: "Expert CA assistance for individual and business tax filing with maximum refund optimization",
+    description: "Expert assistance for individual and business tax filing with eligible deduction review",
     services: getServicesByCategory("tax-services")
   },
   "labour-law": {

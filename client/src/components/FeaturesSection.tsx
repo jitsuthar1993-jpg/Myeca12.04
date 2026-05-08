@@ -34,13 +34,13 @@ export default function FeaturesSection() {
         >
           <div className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4 border border-blue-100">
             <Sparkles className="w-4 h-4" />
-            ERI-Registered · CA-Reviewed Returns
+            Guided Filing · CA Review Available
           </div>
           <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4 tracking-tight">
             Why MyeCA.in <span className="text-[#315efb]">Outperforms Self-Filing</span>
           </h2>
           <p className="text-sm md:text-lg text-gray-600 max-w-2xl md:mx-auto">
-            Every return is reviewed by a licensed CA before submission — so errors get caught before the IT department does.
+            Guided workflows help reduce filing mistakes, and CA-assisted review is available for cases that need professional judgment.
           </p>
         </m.div>
 
