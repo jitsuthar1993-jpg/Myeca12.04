@@ -31,6 +31,15 @@ const searchableContent = [
   { id: 9, title: "SIP Calculator", type: "calculator", url: "/calculators/sip", description: "Calculate SIP returns and wealth creation", keywords: ["sip", "calculator", "investment", "mutual fund"] },
   { id: 10, title: "EMI Calculator", type: "calculator", url: "/calculators/emi", description: "Calculate EMI for loans", keywords: ["emi", "calculator", "loan", "interest"] },
   { id: 11, title: "PPF Calculator", type: "calculator", url: "/calculators/ppf", description: "Calculate PPF maturity amount", keywords: ["ppf", "calculator", "investment", "tax saving"] },
+  { id: 20, title: "GST Calculator", type: "calculator", url: "/calculators/gst", description: "Add or remove GST with CGST, SGST and IGST split", keywords: ["gst", "calculator", "tax", "invoice"] },
+  { id: 21, title: "Salary Calculator", type: "calculator", url: "/calculators/salary", description: "Convert CTC to monthly in-hand salary", keywords: ["salary", "ctc", "in hand", "take home"] },
+  { id: 22, title: "Gratuity Calculator", type: "calculator", url: "/calculators/gratuity", description: "Estimate gratuity using the 15/26 formula", keywords: ["gratuity", "employee", "benefit", "salary"] },
+  { id: 23, title: "EPF Calculator", type: "calculator", url: "/calculators/epf", description: "Project provident fund maturity", keywords: ["epf", "pf", "provident fund", "retirement"] },
+  { id: 24, title: "RD Calculator", type: "calculator", url: "/calculators/rd", description: "Calculate recurring deposit maturity", keywords: ["rd", "recurring deposit", "deposit", "interest"] },
+  { id: 25, title: "Lumpsum Calculator", type: "calculator", url: "/calculators/lumpsum", description: "Project one-time investment growth", keywords: ["lumpsum", "mutual fund", "investment", "returns"] },
+  { id: 26, title: "SWP Calculator", type: "calculator", url: "/calculators/swp", description: "Plan systematic withdrawals from a corpus", keywords: ["swp", "withdrawal", "retirement", "mutual fund"] },
+  { id: 27, title: "Inflation Calculator", type: "calculator", url: "/calculators/inflation", description: "Estimate future cost and purchasing power", keywords: ["inflation", "future cost", "purchasing power"] },
+  { id: 28, title: "Loan Eligibility Calculator", type: "calculator", url: "/calculators/loan-eligibility", description: "Estimate eligible loan amount from income and EMI capacity", keywords: ["loan eligibility", "foir", "emi", "income"] },
   
   // Help & Resources
   { id: 12, title: "How to File ITR", type: "help", url: "/help/user-guide", description: "Step-by-step guide to file income tax return", keywords: ["how to", "file", "itr", "guide"] },

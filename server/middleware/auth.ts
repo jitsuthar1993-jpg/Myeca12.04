@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { findOrCreateUserProfile } from "../services/user-accounts.js";
 import { safeError } from "../utils/error-response.js";
 import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
+import { getTemporaryTestUserByToken } from "../../shared/temporary-test-users.js";
 
 export { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
@@ -26,6 +27,18 @@ function extractEmail(sessionClaims: unknown) {
 }
 
 function readAuth(req: Request) {
+  const authorization = req.get("authorization") || "";
+  const bearerToken = authorization.match(/^Bearer\s+(.+)$/i)?.[1];
+  if (bearerToken) {
+    const temporaryUser = getTemporaryTestUserByToken(bearerToken);
+    if (temporaryUser) {
+      return {
+        userId: temporaryUser.id,
+        email: temporaryUser.email,
+      };
+    }
+  }
+
   try {
     const auth = getAuth(req);
     if (auth?.userId) {

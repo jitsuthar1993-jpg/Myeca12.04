@@ -4,6 +4,7 @@ import { defaultBlogCategories } from "../data/default-blog-content.js";
 import { adminDb } from "../neon-admin.js";
 import {
   buildPublicBlogDetail,
+  listDefaultPublishedBlogPosts,
   listPublishedBlogPosts,
   sortPublishedPosts,
   toPublicBlogSummary,
@@ -14,6 +15,7 @@ const router = Router();
 
 // Cache at Vercel Edge for 5 min, stale-while-revalidate for 1 hour — fast + cheap
 const CACHE_HEADER = "public, s-maxage=300, stale-while-revalidate=3600";
+const DB_FALLBACK_TIMEOUT_MS = 2500;
 
 type PublicBlogSummaryCompat = PublicBlogSummary & {
   featuredImage: string | null;
@@ -37,6 +39,15 @@ type PublicBlogDetailCompat = Omit<PublicBlogDetail, "relatedPosts"> &
 
 function normalizeKey(value: string | null | undefined) {
   return (value ?? "").trim().toLowerCase();
+}
+
+function withTimeout<T>(promise: Promise<T>, label: string, timeoutMs = DB_FALLBACK_TIMEOUT_MS): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs);
+    }),
+  ]);
 }
 
 function splitAuthorName(name: string) {
@@ -123,7 +134,11 @@ const getCachedActiveUpdates = memoize(
 const getCachedBlogs = memoize(
   async (options: { page?: number; limit?: number; category?: string; search?: string; audience?: string } = {}) => {
     const { page = 1, limit = 12, category, search, audience } = options;
-    const publishedPosts = sortPublishedPosts(await listPublishedBlogPosts());
+    const publishedPosts = sortPublishedPosts(
+      process.env.USE_DATABASE_PUBLIC_BLOGS === "true"
+        ? await listPublishedBlogPosts()
+        : listDefaultPublishedBlogPosts(),
+    );
     const summaries = publishedPosts.map(toPublicBlogSummary);
 
     const filtered = summaries.filter((post) => matchesCategory(post, category) && matchesAudience(post, audience) && matchesSearch(post, search));
@@ -148,7 +163,11 @@ const getCachedBlogs = memoize(
 
 const getCachedBlogBySlug = memoize(
   async (slug: string) => {
-    const publishedPosts = sortPublishedPosts(await listPublishedBlogPosts());
+    const publishedPosts = sortPublishedPosts(
+      process.env.USE_DATABASE_PUBLIC_BLOGS === "true"
+        ? await listPublishedBlogPosts()
+        : listDefaultPublishedBlogPosts(),
+    );
     const post = publishedPosts.find((candidate) => candidate.slug === slug);
     if (!post) return null;
     return withDetailCompat(buildPublicBlogDetail(post, publishedPosts));
@@ -161,7 +180,14 @@ const getCachedCategories = memoize(
     let categories: Array<{ id: string; name: string; slug: string; description: string | null }> = [];
 
     try {
-      const snapshot = await adminDb.collection("categories").orderBy("name").get();
+      if (process.env.USE_DATABASE_PUBLIC_BLOGS !== "true") {
+        throw new Error("Using bundled public blog categories");
+      }
+
+      const snapshot = await withTimeout(
+        adminDb.collection("categories").orderBy("name").get(),
+        "Loading public categories",
+      );
       categories = snapshot.docs.map((doc) => {
         const data = doc.data() as Record<string, unknown>;
         const name = typeof data.name === "string" && data.name.trim() ? data.name.trim() : "General";

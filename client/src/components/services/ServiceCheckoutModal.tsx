@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, CreditCard, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocation } from "wouter";
+import { formatINR } from "@/data/pricing";
 
 interface ServiceCheckoutModalProps {
   isOpen: boolean;
@@ -136,15 +137,15 @@ export function ServiceCheckoutModal({
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 mt-4">
                 <div className="flex justify-between items-center mb-2 text-sm">
                   <span className="text-slate-500">Service Fee</span>
-                  <span className="font-medium text-slate-900">₹{priceAmount}</span>
+                  <span className="font-medium text-slate-900">{formatINR(priceAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm mb-4 pb-4 border-b border-slate-200">
                   <span className="text-slate-500">GST (18%)</span>
-                  <span className="font-medium text-slate-900">₹{Math.round(priceAmount * 0.18)}</span>
+                  <span className="font-medium text-slate-900">{formatINR(Math.round(priceAmount * 0.18))}</span>
                 </div>
                 <div className="flex justify-between items-center font-bold">
                   <span className="text-slate-900">Total Payable</span>
-                  <span className="text-indigo-600 text-lg">₹{(priceAmount * 1.18).toFixed(2)}</span>
+                  <span className="text-indigo-600 text-lg">{formatINR(Math.round(priceAmount * 1.18))}</span>
                 </div>
               </div>
 
@@ -162,7 +163,7 @@ export function ServiceCheckoutModal({
                   ) : (
                     <>
                       <CreditCard className="mr-2 h-4 w-4" />
-                      {isAuthenticated ? `Pay ₹${(priceAmount * 1.18).toFixed(2)} & Activate` : "Login to Activate"}
+                      {isAuthenticated ? `Pay ${formatINR(Math.round(priceAmount * 1.18))} & Activate` : "Login to Activate"}
                     </>
                   )}
                 </Button>

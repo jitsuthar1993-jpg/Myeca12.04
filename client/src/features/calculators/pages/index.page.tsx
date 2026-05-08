@@ -1,418 +1,485 @@
-import React, { useState, useMemo } from "react";
-import { m } from "framer-motion";
+import React, { useMemo, useState } from "react";
 import {
-  Search, TrendingUp, Calculator, Coins, ArrowRight, CheckCircle,
-  Users, Award, Home, Briefcase, GraduationCap, Car, IndianRupee,
-  Zap, Shield, FileText, Building2, PiggyBank, BarChart3, Sparkles,
-  Bot, FileSpreadsheet, Scan, Upload, Star, Clock, ChevronRight, Tag, Calendar, ShieldAlert
+  ArrowRight,
+  Award,
+  BarChart3,
+  Bot,
+  Briefcase,
+  Building2,
+  Calculator,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Coins,
+  FileSpreadsheet,
+  FileText,
+  Home,
+  IndianRupee,
+  PiggyBank,
+  Scan,
+  Search,
+  Shield,
+  ShieldAlert,
+  Sparkles,
+  Tag,
+  TrendingUp,
+  Upload,
+  Users,
+  Wallet,
+  Zap,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import MetaSEO from "@/components/seo/MetaSEO";
-import Breadcrumb from "@/components/Breadcrumb";
 import { Link } from "wouter";
+import Breadcrumb from "@/components/Breadcrumb";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { MobilePageHeader } from "@/components/mobile";
 
-/* ─────────────────────────────────────────────────────────
-   DATA
-───────────────────────────────────────────────────────── */
+type CalculatorItem = {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+  isNew?: boolean;
+  isPopular?: boolean;
+};
 
-const calculatorCategories = [
-  {
-    id: "ai-tools",
-    name: "AI-Powered Tools",
-    icon: Bot,
-    color: "#6d28d9",
-    bg: "#f5f3ff",
-    border: "#ede9fe",
-    calculators: [
-      { name: "AI Tax Assistant",        href: "/tax-assistant",          icon: Bot,          isNew: true,  isPopular: true,  description: "Instant answers to tax questions" },
-      { name: "Form 16 Parser",          href: "/form16-parser",          icon: Scan,         isNew: true,  description: "Extract salary data from Form 16" },
-      { name: "Bank Statement Analyzer", href: "/bank-analyzer",          icon: FileSpreadsheet, isNew: true, description: "Auto-categorize transactions" },
-      { name: "AIS / 26AS Viewer",       href: "/ais-viewer",            icon: FileText,     isNew: true,  description: "Analyze your tax credit statement" },
-      { name: "Capital Gains Import",    href: "/capital-gains-import",  icon: Upload,       isNew: true,  description: "Import broker statements" },
-    ],
+type CalculatorCategory = {
+  id: string;
+  name: string;
+  eyebrow: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: "blue" | "emerald" | "orange" | "indigo";
+  calculators: CalculatorItem[];
+};
+
+const colorClasses = {
+  blue: {
+    icon: "bg-blue-50 text-blue-600 border-blue-100",
+    text: "text-blue-600",
+    hover: "group-hover:text-blue-600",
+    active: "bg-blue-600 text-white border-blue-600",
+    soft: "bg-blue-50 text-blue-700 border-blue-100",
   },
+  emerald: {
+    icon: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    text: "text-emerald-600",
+    hover: "group-hover:text-emerald-600",
+    active: "bg-emerald-600 text-white border-emerald-600",
+    soft: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  },
+  orange: {
+    icon: "bg-orange-50 text-orange-600 border-orange-100",
+    text: "text-orange-600",
+    hover: "group-hover:text-orange-600",
+    active: "bg-orange-600 text-white border-orange-600",
+    soft: "bg-orange-50 text-orange-700 border-orange-100",
+  },
+  indigo: {
+    icon: "bg-indigo-50 text-indigo-600 border-indigo-100",
+    text: "text-indigo-600",
+    hover: "group-hover:text-indigo-600",
+    active: "bg-indigo-600 text-white border-indigo-600",
+    soft: "bg-indigo-50 text-indigo-700 border-indigo-100",
+  },
+};
+
+const calculatorCategories: CalculatorCategory[] = [
   {
     id: "tax",
     name: "Tax Calculators",
+    eyebrow: "Compliance hub",
+    description: "Income tax, GST, TDS, salary and capital gains tools for everyday filing decisions.",
     icon: FileText,
-    color: "#0369a1",
-    bg: "#f0f9ff",
-    border: "#bae6fd",
+    color: "blue",
     calculators: [
-      { name: "Income Tax Calculator",   href: "/calculators/income-tax",      icon: IndianRupee, isPopular: true, description: "AY 2025-26 tax calculation" },
-      { name: "HRA Calculator",          href: "/calculators/hra",             icon: Home,                         description: "House rent allowance benefits" },
-      { name: "TDS Calculator",          href: "/calculators/tds",             icon: Shield,                       description: "Tax deducted at source" },
-      { name: "Capital Gains Calc.",     href: "/calculators/capital-gains",   icon: BarChart3,                    description: "LTCG / STCG calculation" },
-      { name: "Tax Regime Comparator",   href: "/calculators/regime-comparator", icon: Zap,     isNew: true,      description: "Old vs New regime" },
-      { name: "Advance Tax Calculator",  href: "/calculators/advance-tax",     icon: Clock,   isNew: true,        description: "Quarterly tax payments" },
-      { name: "HSN / SAC Code Finder",   href: "/calculators/hsn-finder",      icon: Tag,     isNew: true,        description: "GST rates for goods & services" },
+      { name: "Income Tax Calculator", href: "/calculators/income-tax", icon: IndianRupee, isPopular: true, description: "AY 2025-26 tax calculation" },
+      { name: "Tax Regime Comparator", href: "/calculators/regime-comparator", icon: Zap, isNew: true, description: "Old vs new regime side by side" },
+      { name: "HRA Calculator", href: "/calculators/hra", icon: Home, description: "House rent allowance benefits" },
+      { name: "GST Calculator", href: "/calculators/gst", icon: FileText, isNew: true, isPopular: true, description: "Add or remove GST instantly" },
+      { name: "Salary Calculator", href: "/calculators/salary", icon: Wallet, isNew: true, description: "CTC to in-hand salary" },
+      { name: "TDS Calculator", href: "/calculators/tds", icon: Shield, description: "Tax deducted at source" },
+      { name: "Capital Gains Calculator", href: "/calculators/capital-gains", icon: BarChart3, description: "LTCG and STCG computation" },
+      { name: "Advance Tax Calculator", href: "/calculators/advance-tax", icon: Clock, isNew: true, description: "Quarterly tax payment planner" },
+      { name: "HSN / SAC Code Finder", href: "/calculators/hsn-finder", icon: Tag, isNew: true, description: "GST rates for goods and services" },
     ],
   },
   {
     id: "investment",
-    name: "Investment Tools",
+    name: "Investment & Savings",
+    eyebrow: "Financial planning",
+    description: "Plan SIPs, deposits, provident funds, withdrawals and long-term purchasing power.",
     icon: PiggyBank,
-    color: "#065f46",
-    bg: "#ecfdf5",
-    border: "#a7f3d0",
+    color: "emerald",
     calculators: [
-      { name: "SIP Calculator",         href: "/calculators/sip",              icon: TrendingUp, isPopular: true, description: "Systematic investment planning" },
-      { name: "PPF Calculator",         href: "/calculators/ppf",              icon: Shield,                      description: "Public Provident Fund returns" },
-      { name: "FD Calculator",          href: "/calculators/fd",               icon: Building2,                   description: "Fixed deposit maturity value" },
-      { name: "NPS Calculator",         href: "/calculators/nps",              icon: Award,                       description: "National Pension Scheme" },
-      { name: "ELSS Calculator",        href: "/calculators/elss",             icon: Coins,                       description: "Tax-saving mutual funds" },
-      { name: "Tax Loss Harvesting",    href: "/tax-loss-harvesting",          icon: TrendingUp, isNew: true,     description: "Optimize capital gains tax" },
+      { name: "SIP Calculator", href: "/calculators/sip", icon: TrendingUp, isPopular: true, description: "Systematic investment planning" },
+      { name: "PPF Calculator", href: "/calculators/ppf", icon: Shield, description: "Public Provident Fund returns" },
+      { name: "FD Calculator", href: "/calculators/fd", icon: Building2, description: "Fixed deposit maturity value" },
+      { name: "RD Calculator", href: "/calculators/rd", icon: Calendar, isNew: true, description: "Recurring deposit maturity" },
+      { name: "NPS Calculator", href: "/calculators/nps", icon: Award, description: "National Pension Scheme corpus" },
+      { name: "EPF Calculator", href: "/calculators/epf", icon: Award, isNew: true, description: "Provident fund projection" },
+      { name: "Lumpsum Calculator", href: "/calculators/lumpsum", icon: TrendingUp, isNew: true, description: "One-time mutual fund growth" },
+      { name: "SWP Calculator", href: "/calculators/swp", icon: Coins, isNew: true, description: "Systematic withdrawal plan" },
+      { name: "Inflation Calculator", href: "/calculators/inflation", icon: Zap, isNew: true, description: "Future cost and real value" },
+      { name: "ELSS Comparator", href: "/elss-comparator", icon: Coins, description: "Compare tax-saving mutual funds" },
+      { name: "Tax Loss Harvesting", href: "/tax-loss-harvesting", icon: TrendingUp, isNew: true, description: "Optimize capital gains tax" },
     ],
   },
   {
     id: "loan",
-    name: "Loan Calculators",
+    name: "Loan & EMI",
+    eyebrow: "Borrowing tools",
+    description: "Estimate EMIs, eligibility, loan affordability and employee benefit payouts.",
     icon: Briefcase,
-    color: "#92400e",
-    bg: "#fffbeb",
-    border: "#fde68a",
+    color: "orange",
     calculators: [
-      { name: "EMI Calculator",          href: "/calculators/emi",             icon: Calculator, isPopular: true, description: "Monthly installment calculator" },
-      { name: "Loan Calculator",         href: "/calculators/home-loan",       icon: Briefcase,                   description: "Home, Car, Personal & Education" },
-      { name: "Compliance Calendar",      href: "/compliance-calendar",         icon: Calendar,    isPopular: true, description: "Track all your statutory deadlines" },
-      { name: "Penalty Calculator",       href: "/calculators/penalty",         icon: ShieldAlert,                  description: "GST & Tax penalty estimator" },
+      { name: "EMI Calculator", href: "/calculators/emi", icon: Calculator, isPopular: true, description: "Monthly instalment calculator" },
+      { name: "Home Loan Calculator", href: "/calculators/home-loan", icon: Home, description: "Housing loan EMI and interest" },
+      { name: "Car Loan Calculator", href: "/calculators/car-loan", icon: Briefcase, description: "Vehicle loan EMI planning" },
+      { name: "Personal Loan Calculator", href: "/calculators/personal-loan", icon: IndianRupee, description: "Unsecured loan repayment view" },
+      { name: "Education Loan Calculator", href: "/calculators/education-loan", icon: Award, description: "Moratorium and repayment planning" },
+      { name: "Loan Eligibility", href: "/calculators/loan-eligibility", icon: Calculator, isNew: true, description: "Borrowing power estimator" },
+      { name: "Gratuity Calculator", href: "/calculators/gratuity", icon: Shield, isNew: true, description: "Employee exit benefit" },
+      { name: "Penalty Calculator", href: "/calculators/penalty", icon: ShieldAlert, description: "GST and tax penalty estimator" },
+    ],
+  },
+  {
+    id: "ai-tools",
+    name: "AI & Document Tools",
+    eyebrow: "Smart assistants",
+    description: "Use automation for Form 16, AIS, bank statements and faster tax review workflows.",
+    icon: Bot,
+    color: "indigo",
+    calculators: [
+      { name: "AI Tax Assistant", href: "/tax-assistant", icon: Bot, isNew: true, isPopular: true, description: "Instant answers to tax questions" },
+      { name: "Form 16 Parser", href: "/form16-parser", icon: Scan, isNew: true, description: "Extract salary data from Form 16" },
+      { name: "Bank Statement Analyzer", href: "/bank-analyzer", icon: FileSpreadsheet, isNew: true, description: "Auto-categorize transactions" },
+      { name: "AIS / 26AS Viewer", href: "/ais-viewer", icon: FileText, isNew: true, description: "Analyze your tax credit statement" },
+      { name: "Capital Gains Import", href: "/capital-gains-import", icon: Upload, isNew: true, description: "Import broker statements" },
+      { name: "Compliance Calendar", href: "/compliance-calendar", icon: Calendar, isPopular: true, description: "Track statutory deadlines" },
     ],
   },
 ];
 
 const stats = [
-  { value: "2.5M+",  label: "Calculations Done", icon: Calculator },
-  { value: "150K+",  label: "Monthly Users",      icon: Users },
-  { value: "₹850Cr+", label: "Tax Saved",         icon: Coins },
-  { value: "99.8%",  label: "Accuracy Rate",      icon: Star },
+  { value: "2.5M+", label: "Calculations done", icon: Calculator },
+  { value: "150K+", label: "Monthly users", icon: Users },
+  { value: "99.8%", label: "Accuracy rate", icon: CheckCircle },
 ];
 
-/* ─────────────────────────────────────────────────────────
-   HELPER COMPONENTS
- ───────────────────────────────────────────────────────── */
-function CalculatorPattern({ color }: { color: string }) {
+const featuredTools = [
+  "/calculators/income-tax",
+  "/calculators/sip",
+  "/calculators/emi",
+  "/calculators/regime-comparator",
+];
+
+function ToolCard({ calc, category }: { calc: CalculatorItem; category: CalculatorCategory }) {
+  const Icon = calc.icon;
+  const colors = colorClasses[category.color];
+
   return (
-    <svg className="absolute inset-0 w-full h-full opacity-[0.015] pointer-events-none group-hover:opacity-[0.04] transition-opacity duration-700" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <pattern id="calc-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="1.5" fill={color} />
-          <path d="M30 10l-4 4m0-4l4 4M10 30h6" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <circle cx="25" cy="25" r="3" stroke={color} strokeWidth="1" fill="none" opacity="0.3" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#calc-pattern)" />
-    </svg>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   TOOL CARD
- ───────────────────────────────────────────────────────── */
-function ToolCard({ calc, color, bg, border, index }: { calc: any; color: string; bg: string; border: string; index: number }) {
-  return (
-    <m.div
-      initial={{ opacity: 0, y: 15 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
-      className="h-full"
-    >
-      <Link href={calc.href}>
-        <div 
-          className="group relative flex flex-col h-full bg-white/70 backdrop-blur-md rounded-[2rem] border border-white/80 p-6 hover:border-white hover:bg-white/90 transition-all duration-500 cursor-pointer overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] active:scale-[0.98]"
-          style={{ 
-            boxShadow: `0 10px 30px -10px ${color}15`
-          }}
-        >
-          <CalculatorPattern color={color} />
-          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-32 h-32 blur-[60px] opacity-20 transition-all duration-500 group-hover:opacity-30 group-hover:scale-125" style={{ background: color }} />
-          <div className="relative z-10 flex flex-col h-full">
-            <div className="flex items-start justify-between mb-5">
-              <div 
-                className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-lg" 
-                style={{ 
-                  background: `linear-gradient(135deg, ${bg} 0%, white 100%)`, 
-                  border: `1.5px solid ${border}` 
-                }}
-              >
-                <calc.icon className="w-6 h-6 transition-transform duration-500" style={{ color }} />
-              </div>
-
-              {(calc.isPopular || calc.isNew) && (
-                <div className="flex flex-col gap-1 items-end">
-                  {calc.isPopular && (
-                    <span className="text-[9px] font-normal uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg bg-amber-400/10 text-amber-600 border border-amber-400/20 backdrop-blur-sm">
-                      Popular
-                    </span>
-                  )}
-                  {calc.isNew && (
-                    <span className="text-[9px] font-normal uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg bg-violet-400/10 text-violet-600 border border-violet-400/20 backdrop-blur-sm">
-                      Brand New
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <h3 className="text-base font-normal text-slate-800 mb-2 leading-tight group-hover:text-slate-900 transition-colors">
-              {calc.name}
-            </h3>
-            <p className="text-xs font-medium text-slate-500 leading-relaxed flex-1 opacity-80 group-hover:opacity-100 transition-opacity">
-              {calc.description}
-            </p>
-
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100/50">
-              <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-all">
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-                <span className="text-[10px] font-normal text-slate-400 uppercase tracking-widest">Free Tool</span>
-              </div>
-              <div 
-                className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-500 group-hover:translate-x-1 shadow-sm group-hover:shadow-md" 
-                style={{ background: `linear-gradient(135deg, white 0%, ${bg} 100%)`, border: `1px solid ${border}` }}
-              >
-                <ChevronRight className="w-4 h-4" style={{ color }} />
-              </div>
-            </div>
+    <Link href={calc.href} className="group block h-full">
+      <article className="flex h-full flex-col rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border", colors.icon)}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            {calc.isPopular && (
+              <span className="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700">
+                Popular
+              </span>
+            )}
+            {calc.isNew && (
+              <span className="rounded-md border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-indigo-700">
+                New
+              </span>
+            )}
           </div>
         </div>
-      </Link>
-    </m.div>
+
+        <h3 className={cn("text-sm font-medium text-slate-900 transition-colors", colors.hover)}>
+          {calc.name}
+        </h3>
+        <p className="mt-2 flex-1 text-xs leading-5 text-slate-500">{calc.description}</p>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
+          <span className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Free tool</span>
+          <ArrowRight className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", colors.text)} />
+        </div>
+      </article>
+    </Link>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   PAGE
-───────────────────────────────────────────────────────── */
 export default function CalculatorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
-  const allCalcs = calculatorCategories.flatMap((cat) =>
-    cat.calculators.map((c) => ({ ...c, categoryId: cat.id, color: cat.color, bg: cat.bg, border: cat.border }))
+  const allCalcs = useMemo(
+    () =>
+      calculatorCategories.flatMap((category) =>
+        category.calculators.map((calculator) => ({ ...calculator, category }))
+      ),
+    []
   );
 
   const filtered = useMemo(() => {
-    return allCalcs.filter((c) => {
-      const inSearch = !searchTerm || c.name.toLowerCase().includes(searchTerm.toLowerCase()) || c.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const inCat = activeCategory === "all" || c.categoryId === activeCategory;
-      return inSearch && inCat;
-    });
-  }, [searchTerm, activeCategory]);
+    const query = searchTerm.trim().toLowerCase();
 
-  const isFiltering = searchTerm !== "" || activeCategory !== "all";
+    return allCalcs.filter(({ name, description, category }) => {
+      const matchesSearch =
+        !query ||
+        name.toLowerCase().includes(query) ||
+        description.toLowerCase().includes(query) ||
+        category.name.toLowerCase().includes(query);
+      const matchesCategory = activeCategory === "all" || category.id === activeCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [activeCategory, allCalcs, searchTerm]);
+
+  const featured = allCalcs.filter(({ href }) => featuredTools.includes(href));
+  const isFiltering = searchTerm.trim() !== "" || activeCategory !== "all";
 
   return (
     <>
       <MetaSEO
-        title="Tax & Financial Calculators \u2014 Income Tax, SIP, EMI, HRA | MyeCA.in"
-        description="Free professional calculators for income tax AY 2025-26, SIP returns, EMI, HRA, PPF and more. 99.8% accuracy with CA-verified algorithms."
-        keywords={[
-          "income tax calculator", "SIP calculator", "EMI calculator", "HRA calculator", "PPF calculator"
-        ]}
+        title="Tax & Financial Calculators | Income Tax, SIP, EMI, HRA | MyeCA.in"
+        description="Free calculators for income tax, SIP, EMI, HRA, GST, FD, PPF and loans. Fast, CA-informed tools for Indian taxpayers and investors."
+        keywords={["income tax calculator", "SIP calculator", "EMI calculator", "HRA calculator", "GST calculator", "FD calculator"]}
         type="calculator"
         calculatorData={{
           type: "Financial Planning Tools",
-          features: ["Income Tax Calculator", "SIP Calculator", "EMI Calculator"],
+          features: ["Income Tax Calculator", "SIP Calculator", "EMI Calculator", "GST Calculator"],
           accuracy: "99.8%",
-          updates: "AY 2025-26"
+          updates: "AY 2025-26",
         }}
-        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Calculators", url: "/calculators" }]}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: "Calculators", url: "/calculators" },
+        ]}
       />
 
-      <div className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-slate-50">
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:py-10 lg:px-8 lg:py-12">
+            <div className="hidden md:block">
+              <Breadcrumb items={[{ name: "Calculators" }]} />
+            </div>
+            <nav className="mb-6 hidden items-center gap-2 text-xs text-slate-500 md:flex" aria-label="Breadcrumb">
+              <Link href="/" className="hover:text-blue-600">Home</Link>
+              <ArrowRight className="h-3 w-3 text-slate-300" />
+              <span className="font-medium text-slate-700">Calculators</span>
+            </nav>
 
-        {/* Hero Section - Split Layout */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-slate-100/30 border-b border-slate-200/60 transition-all duration-500">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-blue-100/40 blur-[140px]" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-violet-100/30 blur-[120px]" />
-          </div>
-
-          <div className="relative z-10 max-w-7xl mx-auto px-4 pt-10 pb-16">
-            <div className="flex flex-col lg:flex-row items-center gap-12 lg:text-left text-center">
-              {/* Left Side: Content & Search */}
-              <div className="flex-1 max-w-3xl">
-                <m.div
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200 bg-white shadow-sm text-slate-500 text-[10px] font-normal uppercase tracking-widest mb-6"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-violet-500" />
-                  Financial Intelligence Hub
-                </m.div>
-
-                <m.h1
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-normal text-slate-900 leading-[1.1] tracking-tight mb-5"
-                >
-                  Calculate with{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Precision</span>
-                </m.h1>
-
-                <m.p
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-lg text-slate-500 max-w-xl lg:mx-0 mx-auto mb-10 font-medium opacity-80"
-                >
-                  Professional-grade calculators for tax, investments & loans — expert-verified and always up to date.
-                </m.p>
-
-                <m.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="max-w-2xl"
-                >
-                  <div className="flex flex-col md:flex-row gap-3 p-2 bg-white rounded-[2rem] border border-slate-200/60 shadow-2xl shadow-slate-200/50">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
-                      <input
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search calculators..."
-                        className="w-full h-12 pl-12 pr-4 rounded-2xl bg-slate-50/50 border border-slate-100 text-slate-700 text-sm font-normal placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
-                      />
-                    </div>
-                    <div className="flex gap-1 p-1 bg-slate-50 rounded-2xl border border-slate-100 overflow-x-auto no-scrollbar">
-                      {[{ id: "all", label: "All" }, ...calculatorCategories.map(c => ({ id: c.id, label: c.name.split(' ')[0] }))].map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => setActiveCategory(opt.id)}
-                          className={cn(
-                            "px-5 py-2.5 rounded-xl text-[10px] font-normal uppercase tracking-wider transition-all whitespace-nowrap",
-                            activeCategory === opt.id
-                              ? "bg-slate-900 text-white shadow-lg shadow-slate-300"
-                              : "text-slate-400 hover:text-slate-700 hover:bg-white"
-                          )}
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </m.div>
+            <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
+              <div>
+                <div className="md:hidden">
+                  <MobilePageHeader
+                    eyebrow="Calculator Library"
+                    icon={<Sparkles className="h-4 w-4" />}
+                    title="Financial calculators for tax, investing and loans."
+                    description="Search, compare and open focused tools for Indian tax and money decisions."
+                  />
+                </div>
+                <div className="mb-5 hidden items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-blue-700 md:inline-flex">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Calculator Library
+                </div>
+                <h1 className="hidden max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 md:block sm:text-5xl">
+                  Financial calculators for tax, investing and loans.
+                </h1>
+                <p className="mt-5 hidden max-w-2xl text-base leading-7 text-slate-600 md:block">
+                  Fast, focused tools for Indian taxpayers. Compare regimes, plan SIPs, estimate EMIs, calculate GST and keep every major money decision in one place.
+                </p>
               </div>
 
-              {/* Right Side: Stats Grid */}
-              <div className="w-full lg:w-[440px] shrink-0">
-                <m.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.25, type: "spring", stiffness: 100 }}
-                  className="grid grid-cols-2 gap-4"
-                >
-                  {stats.map((s, idx) => (
-                    <m.div
-                      key={s.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + idx * 0.05 }}
-                      className="group bg-white/70 backdrop-blur-md rounded-[2.5rem] border border-white p-6 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-                    >
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                        <s.icon className="w-6 h-6" />
-                      </div>
-                      <div className="text-2xl font-normal text-slate-800 tabular-nums tracking-tighter leading-none mb-2">
-                        {s.value}
-                      </div>
-                      <div className="text-[10px] text-slate-400 font-normal uppercase tracking-[0.1em] leading-tight opacity-80">
-                        {s.label}
-                      </div>
-                    </m.div>
-                  ))}
-                </m.div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 md:p-4">
+                <div className="mb-3 flex items-center justify-between md:mb-4">
+                  <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Popular now</p>
+                  <span className="rounded-md border border-emerald-100 bg-emerald-50 px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-emerald-700">
+                    Updated
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {featured.map(({ category, ...calc }) => {
+                    const Icon = calc.icon;
+                    const colors = colorClasses[category.color];
+                    return (
+                      <Link key={calc.href} href={calc.href} className="group flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 transition-colors hover:border-slate-300">
+                        <span className={cn("flex h-9 w-9 items-center justify-center rounded-lg border", colors.icon)}>
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-medium text-slate-800">{calc.name}</span>
+                          <span className="block truncate text-xs text-slate-500">{category.name}</span>
+                        </span>
+                        <ArrowRight className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", colors.text)} />
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Calculator Grid */}
-        <section className="max-w-7xl mx-auto px-4 py-14">
-          {filtered.length === 0 ? (
-            <div className="text-center py-24">
-              <Calculator className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-              <p className="text-slate-400 font-normal text-lg">No tools found for "{searchTerm}"</p>
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto grid max-w-7xl gap-3 px-4 py-3 sm:px-6 md:gap-4 md:py-4 lg:grid-cols-[1fr_auto] lg:px-8">
+            <label className="relative block">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search by calculator, tax, SIP, EMI, GST..."
+                className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-50 md:h-12 md:bg-slate-50 md:focus:bg-white"
+              />
+            </label>
+
+            <div className="flex gap-2 overflow-x-auto pb-1 lg:justify-end lg:pb-0">
+              {[{ id: "all", name: "All" }, ...calculatorCategories].map((category) => {
+                const active = activeCategory === category.id;
+                const categoryColor = category.id === "all" ? "blue" : (category as CalculatorCategory).color;
+
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => setActiveCategory(category.id)}
+                    className={cn(
+                      "h-10 shrink-0 rounded-lg border px-3 text-xs font-medium uppercase tracking-wider transition-colors md:h-12 md:px-4",
+                      active
+                        ? colorClasses[categoryColor].active
+                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    )}
+                  >
+                    {category.name}
+                  </button>
+                );
+              })}
             </div>
-          ) : isFiltering ? (
-            <div>
-              <p className="text-xs text-slate-400 font-normal uppercase tracking-widest mb-6">{filtered.length} tool{filtered.length !== 1 ? "s" : ""} found</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filtered.map((c, i) => <ToolCard key={i} calc={c} color={c.color} bg={c.bg} border={c.border} index={i} />)}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:py-8 lg:px-8">
+          <div className="mb-8 hidden gap-3 md:grid sm:grid-cols-3">
+            {stats.map(({ icon: Icon, label, value }) => (
+              <div key={label} className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xl font-semibold tabular-nums text-slate-950">{value}</p>
+                  <p className="text-xs uppercase tracking-wider text-slate-500">{label}</p>
+                </div>
               </div>
+            ))}
+          </div>
+
+          {isFiltering ? (
+            <div>
+              <div className="mb-5 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Search results</p>
+                  <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">
+                    {filtered.length} matching tool{filtered.length === 1 ? "" : "s"}
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setActiveCategory("all");
+                  }}
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                >
+                  Clear filters
+                </button>
+              </div>
+
+              {filtered.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center">
+                  <Calculator className="mx-auto h-10 w-10 text-slate-300" />
+                  <p className="mt-4 text-base font-medium text-slate-800">No calculator found</p>
+                  <p className="mt-2 text-sm text-slate-500">Try another keyword or browse all categories.</p>
+                </div>
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {filtered.map(({ category, ...calc }) => (
+                    <ToolCard key={`${category.id}-${calc.href}`} calc={calc} category={category} />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
-            <div className="space-y-14">
-              {calculatorCategories.map((cat) => (
-                <div key={cat.id}>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
-                      <cat.icon className="w-4 h-4" style={{ color: cat.color }} />
+            <div className="space-y-7 md:space-y-10">
+              {calculatorCategories.map((category) => {
+                const CategoryIcon = category.icon;
+                const colors = colorClasses[category.color];
+
+                return (
+                  <section key={category.id} aria-labelledby={`${category.id}-heading`}>
+                    <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between md:mb-5 md:gap-4">
+                      <div className="flex gap-4">
+                        <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border md:h-12 md:w-12", colors.icon)}>
+                          <CategoryIcon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium uppercase tracking-widest text-slate-500">{category.eyebrow}</p>
+                          <h2 id={`${category.id}-heading`} className="mt-1 text-xl font-semibold tracking-tight text-slate-950 md:text-2xl">
+                            {category.name}
+                          </h2>
+                          <p className="mt-2 hidden max-w-2xl text-sm leading-6 text-slate-600 sm:block">{category.description}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveCategory(category.id)}
+                        className={cn("inline-flex items-center gap-2 text-sm font-medium", colors.text)}
+                      >
+                        View category <ArrowRight className="h-4 w-4" />
+                      </button>
                     </div>
-                    <h2 className="text-lg font-normal text-slate-800 tracking-tight">{cat.name}</h2>
-                    <div className="flex-1 h-px bg-slate-200" />
-                    <button onClick={() => setActiveCategory(cat.id)} className="text-xs font-normal text-slate-400 hover:text-slate-700 flex items-center gap-0.5 transition-colors whitespace-nowrap">
-                      See all <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {cat.calculators.map((calc, i) => (
-                      <ToolCard key={i} calc={calc} color={cat.color} bg={cat.bg} border={cat.border} index={i} />
-                    ))}
-                  </div>
-                </div>
-              ))}
+
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {category.calculators.map((calc) => (
+                        <ToolCard key={calc.href} calc={calc} category={category} />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
             </div>
           )}
         </section>
 
-        {/* Trust Strip */}
-        <section className="border-t border-slate-200 bg-white py-12">
-          <div className="max-w-4xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { icon: Sparkles, label: "100% Free",     sub: "No charges, ever" },
-              { icon: Clock,    label: "Live Rates",    sub: "Always up to date" },
-              { icon: CheckCircle, label: "CA-Verified", sub: "Expert-approved math" },
-              { icon: FileText, label: "PDF Reports",   sub: "Download summaries" },
-            ].map(({ icon: Icon, label, sub }) => (
-              <div key={label} className="flex flex-col items-center">
-                <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3">
-                  <Icon className="w-5 h-5 text-blue-600" />
-                </div>
-                <p className="text-sm font-normal text-slate-700">{label}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="bg-white py-20 border-t border-slate-100">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-normal uppercase tracking-widest mb-6">
-              <Award className="w-3.5 h-3.5 text-blue-600" />
-              Expert Consultation
+        <section className="border-t border-slate-200 bg-white">
+          <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:px-6 md:py-10 lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Need expert review?</p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-950 md:text-2xl">Use the calculators, then file with confidence.</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                MyeCA can help turn your calculator results into accurate ITR filing, tax planning and compliance action.
+              </p>
             </div>
-            <h2 className="text-4xl font-normal text-slate-900 mb-4 tracking-tight">Need a <span className="text-blue-600">CA's Advice?</span></h2>
-            <p className="text-slate-500 text-lg mb-10 font-medium">Our calculators give you the numbers. Our Chartered Accountants give you the strategy.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col gap-2 sm:flex-row md:gap-3">
               <Link href="/itr/filing">
-                <Button size="lg" className="px-10 h-14 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-normal text-base shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-0.5">
+                <Button className="h-11 w-full rounded-lg bg-blue-600 px-5 text-white hover:bg-blue-700 sm:w-auto">
                   Start ITR Filing
                 </Button>
               </Link>
               <Link href="/services">
-                <Button size="lg" variant="outline" className="px-10 h-14 rounded-xl border-slate-200 text-slate-700 font-normal text-base hover:bg-slate-50 transition-all hover:-translate-y-0.5 shadow-sm">
+                <Button variant="outline" className="h-11 w-full rounded-lg border-slate-200 px-5 text-slate-700 hover:bg-slate-50 sm:w-auto">
                   Explore Services
                 </Button>
               </Link>
             </div>
           </div>
         </section>
-      </div>
+      </main>
     </>
   );
 }

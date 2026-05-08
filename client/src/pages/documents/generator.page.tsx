@@ -30,8 +30,7 @@ import {
   AlertCircle,
   CheckCircle,
 } from 'lucide-react';
-// Import modular configurations
-import { DOCUMENT_GENERATORS } from './generators';
+import { loadDocumentGenerator } from './generators';
 import { DocumentGeneratorConfig } from './generators/types';
 
 const A4_PAGE_HEIGHT_MM = 297;
@@ -144,7 +143,7 @@ function DocumentPreview({ htmlContent }: { htmlContent: string }) {
 }
 
 export default function DocumentGenerator() {
-  const [match, params] = useRoute<{ type: string }>('/documents/generator/:type');
+  const [, params] = useRoute<{ type: string }>('/documents/generator/:type');
   const [, setLocation] = useLocation();
   const { user } = useAuth();
 
@@ -156,10 +155,40 @@ export default function DocumentGenerator() {
   const [documentId, setDocumentId] = useState<string | null>(null);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [config, setConfig] = useState<DocumentGeneratorConfig | null>(null);
+  const [isConfigLoading, setIsConfigLoading] = useState(true);
 
   // Fallback to 'resume' if the document is not properly loaded yet in Phase 1
   const documentType = params?.type || 'resume';
-  const config: DocumentGeneratorConfig | undefined = DOCUMENT_GENERATORS[documentType];
+
+  useEffect(() => {
+    let isActive = true;
+
+    setIsConfigLoading(true);
+    setConfig(null);
+
+    loadDocumentGenerator(documentType)
+      .then((loadedConfig) => {
+        if (isActive) {
+          setConfig(loadedConfig);
+        }
+      })
+      .catch((error) => {
+        console.error(`Failed to load document generator '${documentType}':`, error);
+        if (isActive) {
+          setConfig(null);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsConfigLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [documentType]);
 
   const {
     register,
@@ -175,6 +204,12 @@ export default function DocumentGenerator() {
   });
 
   const formData = watch();
+
+  useEffect(() => {
+    if (config) {
+      reset(config.defaultValues);
+    }
+  }, [config, reset]);
 
   // Load existing draft on mount
   useEffect(() => {
@@ -346,6 +381,17 @@ export default function DocumentGenerator() {
       setDocumentId(null);
     }
   };
+
+  if (isConfigLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 shadow-sm">
+          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+          Loading document generator...
+        </div>
+      </div>
+    );
+  }
 
   if (!config) {
     return (

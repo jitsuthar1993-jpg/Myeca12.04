@@ -1,42 +1,20 @@
 import { useState, useEffect } from "react";
 import { 
   MessageCircle, 
-  Bot, 
   X, 
-  HelpCircle,
-  ChevronUp
+  HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeedbackDialog } from "@/components/feedback/FeedbackDialog";
 import { cn } from "@/lib/utils";
 
 interface UnifiedFABProps {
-  onChatbotOpen?: () => void;
   isChatbotOpen?: boolean;
 }
 
-export function UnifiedFAB({ onChatbotOpen, isChatbotOpen = false }: UnifiedFABProps) {
+export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // Track scroll position for scroll-to-top button
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleChatbotClick = () => {
-    setIsExpanded(false);
-    onChatbotOpen?.();
-  };
 
   const handleFeedbackClick = () => {
     setIsExpanded(false);
@@ -55,34 +33,17 @@ export function UnifiedFAB({ onChatbotOpen, isChatbotOpen = false }: UnifiedFABP
 
   return (
     <>
-      {/* Scroll to Top Button */}
-      <button
-        onClick={scrollToTop}
-        className={cn(
-          "fixed z-40 p-3 rounded-full bg-white border border-gray-200 shadow-lg",
-          "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
-          "transition-all duration-300 ease-out",
-          "bottom-24 right-6 md:bottom-28 md:right-6",
-          showScrollTop 
-            ? "opacity-100 translate-y-0 pointer-events-auto" 
-            : "opacity-0 translate-y-4 pointer-events-none"
-        )}
-        aria-label="Scroll to top"
-      >
-        <ChevronUp className="w-5 h-5" />
-      </button>
-
       {/* Backdrop when expanded */}
       <div 
         className={cn(
-          "fixed inset-0 bg-black/20 z-40 transition-opacity duration-200",
+          "fixed inset-0 z-40 hidden bg-black/20 transition-opacity duration-200 md:block",
           isExpanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setIsExpanded(false)}
       />
 
       {/* FAB Container */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 md:bottom-6">
+      <div className="fixed bottom-6 right-6 z-50 hidden flex-col items-end gap-3 md:flex">
         {/* Action Buttons - shown when expanded */}
         <div className={cn(
           "flex flex-col gap-2 transition-all duration-200",
@@ -90,25 +51,6 @@ export function UnifiedFAB({ onChatbotOpen, isChatbotOpen = false }: UnifiedFABP
             ? "opacity-100 translate-y-0 pointer-events-auto" 
             : "opacity-0 translate-y-4 pointer-events-none"
         )}>
-          {/* Tax Assistant Button */}
-          <button
-            onClick={handleChatbotClick}
-            className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-xl",
-              "bg-gradient-to-r from-purple-600 to-indigo-600 text-white",
-              "shadow-lg hover:shadow-xl hover:scale-105",
-              "transition-all duration-200"
-            )}
-          >
-            <div className="p-1.5 bg-white/20 rounded-lg">
-              <Bot className="w-4 h-4" />
-            </div>
-            <div className="text-left">
-              <span className="font-medium text-sm">Tax Assistant</span>
-              <span className="text-purple-200 text-xs block">AI-powered help</span>
-            </div>
-          </button>
-
           {/* Feedback Button */}
           <button
             onClick={handleFeedbackClick}
@@ -188,6 +130,3 @@ export function UnifiedFAB({ onChatbotOpen, isChatbotOpen = false }: UnifiedFABP
 }
 
 export default UnifiedFAB;
-
-
-

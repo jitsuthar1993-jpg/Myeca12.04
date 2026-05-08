@@ -97,3 +97,9 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+queryClient.setQueryDefaults(["/api/public/blogs"], CACHE_TIMES.content);
+queryClient.setQueryDefaults(["/api/public/categories"], CACHE_TIMES.content);
+queryClient.setQueryDefaults(["/api/user/dashboard"], CACHE_TIMES.user);
+queryClient.setQueryDefaults(["/api/admin/stats"], CACHE_TIMES.user);
+queryClient.setQueryDefaults(["/api/ca/stats"], CACHE_TIMES.user);

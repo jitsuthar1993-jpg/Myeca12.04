@@ -166,7 +166,7 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
                         const Icon = item.icon;
                         const isActive = location === item.href;
                         return (
-                          <Link key={item.href} href={item.href}>
+                          <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href}>
                             <div
                               className={cn(
                                 'flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group',
@@ -313,4 +313,3 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
     </div>
   );
 }
-

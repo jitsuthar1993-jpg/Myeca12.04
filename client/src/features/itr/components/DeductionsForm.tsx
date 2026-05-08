@@ -5,6 +5,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Heart, GraduationCap, Calculator } from "lucide-react";
+import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
+import { STANDARD_DEDUCTION_BY_REGIME } from "@/lib/tax-law-reference";
 
 const deductionsSchema = z.object({
   section80C: z.string().default("0"),
@@ -12,7 +14,7 @@ const deductionsSchema = z.object({
   section80G: z.string().default("0"),
   section80E: z.string().default("0"),
   section24: z.string().default("0"),
-  standardDeduction: z.string().default("50000"),
+  standardDeduction: z.string().default(String(STANDARD_DEDUCTION_BY_REGIME.old)),
   professionalTax: z.string().default("0"),
   nps: z.string().default("0"),
   otherDeductions: z.string().default("0")
@@ -34,7 +36,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
       section80G: data.section80G || "0",
       section80E: data.section80E || "0",
       section24: data.section24 || "0",
-      standardDeduction: data.standardDeduction || "50000",
+      standardDeduction: data.standardDeduction || String(STANDARD_DEDUCTION_BY_REGIME.old),
       professionalTax: data.professionalTax || "0",
       nps: data.nps || "0",
       otherDeductions: data.otherDeductions || "0"
@@ -74,7 +76,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Shield className="h-5 w-5 mr-2" />
-                Section 80C Deductions
+                Section 80C Deductions<SectionReferenceBadge section="80C" />
               </CardTitle>
               <CardDescription>Investment and insurance deductions (Max: ₹1,50,000)</CardDescription>
             </CardHeader>
@@ -84,7 +86,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                 name="section80C"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Section 80C Deductions *</FormLabel>
+                    <FormLabel>Section 80C Deductions *<SectionReferenceBadge section="80C" /></FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="150000" 
@@ -121,7 +123,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                 name="section80D"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Section 80D - Health Insurance</FormLabel>
+                    <FormLabel>Section 80D - Health Insurance<SectionReferenceBadge section="80D" /></FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="25000" 
@@ -159,7 +161,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                   name="section80E"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 80E - Education Loan Interest</FormLabel>
+                      <FormLabel>Section 80E - Education Loan Interest<SectionReferenceBadge section="80E" /></FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="50000" 
@@ -184,7 +186,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                   name="section80G"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 80G - Donations</FormLabel>
+                      <FormLabel>Section 80G - Donations<SectionReferenceBadge section="80G" /></FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="10000" 
@@ -220,7 +222,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                   name="section24"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 24 - Home Loan Interest</FormLabel>
+                      <FormLabel>Section 24(b) - Home Loan Interest<SectionReferenceBadge section="24(b)" /></FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="200000" 

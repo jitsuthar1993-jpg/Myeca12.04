@@ -1,6 +1,7 @@
 // Admin API Client - Simple and Clean
 
 import type { AnalyticsOverview, ApiResponse, AuditLog, DashboardStats, FilterParams, User } from './types';
+import { getAuthToken } from '@/lib/authToken';
 
 const API_BASE = '/api/admin';
 
@@ -13,10 +14,12 @@ class AdminApi {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
+      const token = await getAuthToken();
       const response = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
           ...options.headers,
         },
         credentials: 'include',

@@ -1,213 +1,170 @@
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { track } from "@vercel/analytics";
 import {
   ArrowRight,
-  Bot,
+  BookOpen,
   Calculator,
+  ClipboardList,
   FileText,
-  MessageCircle,
   PiggyBank,
-  Quote,
-  ShieldAlert,
+  ReceiptText,
+  Scale,
   Sparkles,
-  Upload,
-  ChevronRight,
-  Activity,
-  Cpu,
-  BrainCircuit,
-  Zap,
-  Shield
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { TaxChatbot } from "@/components/chat/TaxChatbot";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Layout } from "@/components/admin/Layout";
 import SEO from "@/components/SEO";
-import { cn } from "@/lib/utils";
-import { m } from "framer-motion";
+import { TaxChatbot } from "@/components/chat/TaxChatbot";
+import { getChatbotPageContext } from "@/lib/chatbot-context";
 
-const contextChips = [
-  "Salary income detected",
-  "FY 2025-26 regime rules",
-  "Form 16 OCR-ready",
-  "Capital gains check pending",
-];
-
-const citedAnswers = [
+const starterCards = [
   {
-    title: "Which regime should I choose?",
-    source: "Income-tax slab logic for FY 2025-26",
-    action: "Open Regime Analyzer",
-    href: "/itr/filing",
+    title: "Choose ITR form",
+    description: "Match salary, business, capital gains, and foreign asset details to the right return.",
+    prompt: "Help me choose the correct ITR form for my income sources",
+    icon: FileText,
+    testId: "starter-choose-itr-form",
   },
   {
-    title: "Can I claim HRA without rent agreement?",
-    source: "HRA calculation and rent receipt evidence workflow",
-    action: "Generate Rent Receipt",
-    href: "/documents/generator/rent-receipt",
+    title: "Compare regimes",
+    description: "Review old vs new regime tradeoffs before filing or planning deductions.",
+    prompt: "Compare old and new tax regime for my salary and deductions",
+    icon: Scale,
+    testId: "starter-compare-regimes",
+  },
+  {
+    title: "Explain notice",
+    description: "Understand demand notices, AIS mismatches, and response next steps.",
+    prompt: "Explain a tax notice in simple terms and tell me what to check first",
+    icon: ReceiptText,
+    testId: "starter-explain-notice",
+  },
+  {
+    title: "Prepare documents",
+    description: "Build a clean filing checklist for Form 16, bank, investment, and proof documents.",
+    prompt: "Create a document checklist for my ITR filing",
+    icon: ClipboardList,
+    testId: "starter-prepare-documents",
   },
 ];
 
-const goalPrompts = [
-  "Find missed deductions from my documents",
-  "Explain my tax notice in plain English",
-  "Compare Old vs New Regime for my salary",
-  "Prepare questions for my assigned CA",
+const quickTools = [
+  { title: "Income Tax", href: "/calculators/income-tax", icon: Calculator },
+  { title: "Regime Compare", href: "/calculators/regime-comparator", icon: PiggyBank },
+  { title: "ITR Filing", href: "/itr/filing", icon: FileText },
+  { title: "Document Vault", href: "/documents", icon: ClipboardList },
+  { title: "Blog Guides", href: "/blog", icon: BookOpen },
 ];
 
 export default function TaxAssistantPage() {
+  const [externalPrompt, setExternalPrompt] = useState<{ id: number; text: string }>();
+  const [showStarters, setShowStarters] = useState(true);
+  const assistantContext = useMemo(
+    () => getChatbotPageContext("/tax-assistant", "AI Tax Assistant"),
+    []
+  );
+
+  const sendPrompt = (prompt: string) => {
+    track("tax_assistant_prompt_click", { prompt });
+    setShowStarters(false);
+    setExternalPrompt({ id: Date.now(), text: prompt });
+  };
+
   return (
-    <Layout>
-      <SEO 
+    <div className="min-h-[calc(100vh-74px)] overflow-x-hidden bg-slate-50" data-testid="tax-assistant-single-page">
+      <SEO
         title="AI Tax Assistant | MyeCA.in"
-        description="Interact with our context-aware AI tax advisor for real-time guidance and source-backed answers."
+        description="Use the MyeCA Tax Assistant for ITR filing, tax planning, document preparation, notices, and calculator guidance."
       />
 
-      <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
-        {/* Sticky Left Summary Section */}
-        <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
-          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
-             <div className="h-32 bg-gradient-to-br from-blue-600 to-indigo-700 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-                <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                   <div className="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                      <BrainCircuit className="h-6 w-6 text-white" />
-                   </div>
-                   <h2 className="text-white font-black tracking-tight">Neural Context</h2>
-                </div>
-             </div>
-             
-             <CardContent className="px-6 pb-8 relative">
-                <div className="mt-8 space-y-8">
-                   <div className="space-y-3">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contextual Chips</p>
-                      <div className="flex flex-wrap gap-2">
-                         {contextChips.map((chip, i) => (
-                           <Badge key={i} className="bg-blue-50 text-blue-700 border-none font-black text-[9px] uppercase px-3 py-1.5 rounded-xl">
-                              {chip}
-                           </Badge>
-                         ))}
-                      </div>
-                   </div>
+      <section className="mx-auto flex min-h-[calc(100vh-74px)] w-full max-w-[1040px] flex-col px-4 pb-28 sm:px-6">
+        <div className="flex min-h-0 flex-1 flex-col">
+          {showStarters && (
+            <div className="mx-auto w-full max-w-[860px] pb-5 pt-6 text-center sm:pb-7 sm:pt-10">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-blue-700 shadow-sm">
+                <Sparkles className="h-3.5 w-3.5" />
+                Tax Assistant
+              </div>
+              <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
+                How can I help with your taxes?
+              </h1>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                Ask about ITR forms, deductions, tax notices, filing documents, calculators, or the
+                next step before you submit.
+              </p>
 
-                   <div className="space-y-4">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Goal Templates</p>
-                      <div className="space-y-2">
-                         {goalPrompts.map((prompt, i) => (
-                           <button
-                              key={i}
-                              onClick={() => track("ai_goal_prompt_click", { prompt })}
-                              className="w-full flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50/50 transition-all group"
-                           >
-                              <span className="text-xs font-black text-left leading-tight pr-4">{prompt}</span>
-                              <MessageCircle className="h-3 w-3 text-slate-300 group-hover:text-blue-600" />
-                           </button>
-                         ))}
-                      </div>
-                   </div>
+              <div className="mt-6 grid grid-cols-2 gap-3 text-left">
+                {starterCards.map((card) => {
+                  const Icon = card.icon;
+                  return (
+                    <button
+                      key={card.title}
+                      type="button"
+                      data-testid={card.testId}
+                      onClick={() => sendPrompt(card.prompt)}
+                      className="group flex min-h-[112px] flex-col justify-between rounded-2xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:min-h-[128px] sm:p-4"
+                    >
+                      <span className="flex items-start justify-between gap-4">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                          <Icon className="h-5 w-5" />
+                        </span>
+                        <ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-blue-500" />
+                      </span>
+                      <span>
+                        <span className="block text-sm font-black text-slate-950 sm:text-base">{card.title}</span>
+                        <span className="mt-1 hidden text-sm leading-5 text-slate-600 sm:block">{card.description}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-                   <div className="p-6 rounded-[32px] bg-amber-50 border border-amber-100">
-                      <div className="flex items-center gap-3 mb-4">
-                         <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center">
-                            <ShieldAlert className="h-5 w-5 text-amber-600" />
-                         </div>
-                         <p className="text-[10px] font-black text-amber-900 uppercase tracking-widest leading-none">AI Advisory Node</p>
-                      </div>
-                      <p className="text-[10px] font-medium text-amber-800 leading-relaxed">Guidance is assistive. All final filings must be routed through human CA validation.</p>
-                   </div>
-                </div>
-             </CardContent>
-          </Card>
+              <nav
+                aria-label="Tax assistant quick tools"
+                className="mt-5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:justify-center [&::-webkit-scrollbar]:hidden"
+              >
+                {quickTools.map((tool) => {
+                  const Icon = tool.icon;
+                  return (
+                    <Link key={tool.href} href={tool.href}>
+                      <span className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                        <Icon className="h-4 w-4" />
+                        {tool.title}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          )}
 
-          <Card className="border-none shadow-sm rounded-[40px] bg-white p-8 border border-slate-100/50 space-y-4">
-             <div className="flex items-center gap-2 mb-2">
-                <Quote className="h-4 w-4 text-blue-600" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Source Citations</span>
-             </div>
-             <div className="space-y-4">
-                {citedAnswers.map((answer, i) => (
-                  <div key={i} className="p-4 rounded-[24px] bg-slate-50 border border-slate-100/50">
-                     <p className="text-xs font-black text-slate-900 leading-tight mb-2">{answer.title}</p>
-                     <p className="text-[9px] text-slate-500 font-medium leading-relaxed mb-3">{answer.source}</p>
-                     <Link href={answer.href}>
-                        <Button variant="ghost" className="h-8 w-full justify-between px-3 bg-white hover:bg-blue-50 hover:text-blue-600 font-black text-[8px] uppercase tracking-widest rounded-xl transition-all">
-                           {answer.action}
-                           <ArrowRight className="h-2 w-2" />
-                        </Button>
-                     </Link>
-                  </div>
+          {!showStarters && (
+            <div className="mx-auto flex w-full max-w-[860px] items-center justify-between gap-3 py-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black text-slate-950">AI Tax Assistant</p>
+                <p className="truncate text-xs font-semibold text-slate-500">{assistantContext.subtitle}</p>
+              </div>
+              <div className="hidden gap-2 overflow-x-auto sm:flex">
+                {quickTools.slice(0, 3).map((tool) => (
+                  <Link key={tool.href} href={tool.href}>
+                    <span className="inline-flex h-8 shrink-0 items-center rounded-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-blue-200 hover:text-blue-700">
+                      {tool.title}
+                    </span>
+                  </Link>
                 ))}
-             </div>
-          </Card>
-        </div>
-
-        {/* Main Content Area - Full Page Scroll */}
-        <div className="flex-1 min-w-0 w-full lg:max-w-7xl space-y-10 pb-20">
-          {/* Header */}
-          <div className="bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50 flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div className="space-y-2">
-               <div className="flex items-center gap-3">
-                  <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Cognitive Layer</span>
-               </div>
-               <h1 className="text-4xl font-black text-slate-900 tracking-tight">AI Tax Advisor</h1>
-               <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
-                  A workflow-aware assistant that parses your documents, cross-references statutory rules, and provides verified tax guidance.
-               </p>
+              </div>
             </div>
-            <div className="flex gap-4">
-               <Button className="rounded-2xl h-14 px-8 bg-blue-600 font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20">
-                  <Sparkles className="h-4 w-4 mr-3" />
-                  Neural Search
-               </Button>
-            </div>
-          </div>
+          )}
 
-          <div className="bg-white rounded-[48px] border border-slate-100 shadow-sm overflow-hidden min-h-[700px] flex flex-col">
-             <div className="p-8 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                   <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white">
-                      <Bot className="h-6 w-6" />
-                   </div>
-                   <div>
-                      <h3 className="text-sm font-black text-slate-900 leading-none">MyeCA Assistant</h3>
-                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-1">Live Encryption Active</p>
-                   </div>
-                </div>
-                <div className="flex gap-2">
-                   <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-white hover:bg-slate-50 shadow-sm border border-slate-100">
-                      <RefreshCw className="h-4 w-4 text-slate-400" />
-                   </Button>
-                </div>
-             </div>
-             <div className="flex-1 p-0 relative">
-                <TaxChatbot embedded />
-             </div>
-          </div>
-
-          {/* Quick Action Tiles */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-             {[
-               { label: "Calc Tax", icon: Calculator, href: "/calculators/income-tax", color: "blue" },
-               { label: "Upload Proof", icon: Upload, href: "/documents", color: "emerald" },
-               { label: "Optimize", icon: PiggyBank, href: "/tax-optimizer", color: "amber" },
-               { label: "File Now", icon: FileText, href: "/itr/filing", color: "indigo" }
-             ].map((action, i) => (
-               <Link key={i} href={action.href}>
-                  <Card className="p-8 rounded-[40px] border-none shadow-sm bg-white hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer border border-slate-100/50">
-                     <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform", `bg-${action.color}-50 text-${action.color}-600`)}>
-                        <action.icon className="h-6 w-6" />
-                     </div>
-                     <p className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1">{action.label}</p>
-                     <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-none">Execute Action</p>
-                  </Card>
-               </Link>
-             ))}
-          </div>
+          <main className="min-h-[420px] min-w-0 flex-1">
+            <TaxChatbot
+              mode="singlePage"
+              context={assistantContext}
+              externalPrompt={externalPrompt}
+              onConversationStateChange={(hasUserMessages) => setShowStarters(!hasUserMessages)}
+            />
+          </main>
         </div>
-      </div>
-    </Layout>
+      </section>
+    </div>
   );
 }
-

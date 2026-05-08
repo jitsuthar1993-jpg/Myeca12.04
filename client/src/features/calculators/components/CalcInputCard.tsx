@@ -45,7 +45,7 @@ export function CalcInputGroup({
   badgeValue,
   onBadgeClick 
 }: { 
-  label: string; 
+  label: React.ReactNode; 
   children: React.ReactNode; 
   badgeValue?: string;
   onBadgeClick?: () => void;

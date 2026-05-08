@@ -31,6 +31,17 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
+import {
+  AY_2026_27_NEW_REGIME_SLABS,
+  DEFAULT_ASSESSMENT_YEAR,
+  DEFAULT_FINANCIAL_YEAR,
+  REBATE_87A_BY_REGIME,
+  STANDARD_DEDUCTION_BY_REGIME,
+  TAX_TRANSITION_NOTE,
+  formatCurrency,
+  formatSlabRange,
+} from "@/lib/tax-law-reference";
 
 export default function ITRForSalariedPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -81,7 +92,7 @@ export default function ITRForSalariedPage() {
   }, []);
   
   const grossSalary = (Number(form16.basic) || 0) + (Number(form16.hra) || 0) + (Number(form16.special) || 0) + (Number(form16.lta) || 0);
-  const totalDeductions = 50000 + (Number(form16.sec80c) || 0) + (Number(form16.sec80d) || 0); // 50k standard deduction
+  const totalDeductions = STANDARD_DEDUCTION_BY_REGIME.old + (Number(form16.sec80c) || 0) + (Number(form16.sec80d) || 0);
   const taxableIncome = Math.max(0, grossSalary - totalDeductions);
 
   const taxSlabsNew = [
@@ -100,29 +111,40 @@ export default function ITRForSalariedPage() {
     { income: "Above ₹10,00,000", rate: "30%", tax: "₹1,12,500 + 30% on > ₹10L" }
   ];
 
+  const ay2026NewTaxSlabs = AY_2026_27_NEW_REGIME_SLABS.map((slab) => ({
+    income: formatSlabRange(slab),
+    rate: slab.rate === 0 ? "Nil" : `${slab.rate * 100}%`,
+    tax: slab.rate === 0 ? "₹0" : `${slab.rate * 100}% on this slab`
+  }));
+
   const deductions = [
     {
       section: "Sec 80C",
+      sectionKey: "80C",
       limit: "₹1,50,000",
       description: "EPF, PPF, ELSS Mutual Funds, LIC Premiums, Home Loan Principal, Tuition Fees."
     },
     {
       section: "Sec 80D",
+      sectionKey: "80D",
       limit: "₹25,000 to ₹1,00,000",
       description: "Medical Insurance Premium for self, family, and dependent parents."
     },
     {
       section: "Sec 80CCD(1B)",
+      sectionKey: "80CCD(2)",
       limit: "₹50,000",
       description: "Additional deduction for National Pension System (NPS) contributions."
     },
     {
       section: "Sec 24(b)",
+      sectionKey: "24(b)",
       limit: "Up to ₹2,00,000",
       description: "Interest paid on Home Loan for a self-occupied property."
     },
     {
       section: "Standard Deduction",
+      sectionKey: "16",
       limit: "₹50,000",
       description: "Flat deduction available to all salaried employees across both tax regimes."
     }
@@ -212,7 +234,7 @@ export default function ITRForSalariedPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-blue-900">
                   <AlertCircle className="w-5 h-5" />
-                  Important Highlights (AY 2026-27)
+                  Important Highlights (AY {DEFAULT_ASSESSMENT_YEAR})
                 </CardTitle>
                 <CardDescription>Stay informed about your tax compliance</CardDescription>
               </CardHeader>
@@ -220,15 +242,19 @@ export default function ITRForSalariedPage() {
                 <ul className="space-y-4">
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <Clock className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">Due date for filing ITR for FY 2025-26 without penalty is <strong>31st July 2026</strong>.</span>
+                    <span className="text-sm text-gray-700">Due date for filing ITR for FY {DEFAULT_FINANCIAL_YEAR} without penalty is <strong>31st July 2026</strong>.</span>
                   </li>
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <Scale className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700"><strong>New Tax Regime</strong> is the default regime. The standard deduction under New Regime is now <strong>₹75,000</strong>.</span>
+                    <span className="text-sm text-gray-700"><strong>New Tax Regime</strong> is the default regime under <strong>Section 115BAC</strong><SectionReferenceBadge section="115BAC" />. The standard deduction under New Regime is <strong>₹75,000</strong>.</span>
                   </li>
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <TrendingUp className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700"><strong>Rebate u/s 87A:</strong> Tax rebate limit is up to ₹7 Lakhs under the New Tax Regime.</span>
+                    <span className="text-sm text-gray-700"><strong>Rebate under Section 87A</strong><SectionReferenceBadge section="87A" /> is up to {formatCurrency(REBATE_87A_BY_REGIME.new.maxRebate)} where taxable income does not exceed ₹12,00,000 under the New Tax Regime.</span>
+                  </li>
+                  <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
+                    <FileText className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-700">{TAX_TRANSITION_NOTE}</span>
                   </li>
                 </ul>
               </CardContent>
@@ -276,7 +302,7 @@ export default function ITRForSalariedPage() {
         <section>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-              Understanding Tax Regimes (FY 2025-26)
+              Understanding Tax Regimes (FY {DEFAULT_FINANCIAL_YEAR})
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Compare the tax slabs to understand how your income is taxed.
@@ -292,7 +318,7 @@ export default function ITRForSalariedPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-blue-700">New Tax Regime Highlights</CardTitle>
-                  <CardDescription>Default regime. Standard deduction of ₹75,000 is allowed. No other major deductions (80C, 80D, HRA) allowed. Zero tax for income up to ₹7 Lakhs.</CardDescription>
+                  <CardDescription>Default regime under Section 115BAC. Standard deduction of ₹75,000 is allowed. Most old-regime deductions such as 80C, 80D, and HRA are not available. Rebate under Section 87A can make tax zero up to ₹12 lakh taxable income.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
@@ -305,7 +331,7 @@ export default function ITRForSalariedPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y">
-                        {taxSlabsNew.map((slab, i) => (
+                        {ay2026NewTaxSlabs.map((slab, i) => (
                           <tr key={i} className="hover:bg-slate-50">
                             <td className="px-4 py-3 font-medium">{slab.income}</td>
                             <td className="px-4 py-3">{slab.rate}</td>
@@ -367,7 +393,7 @@ export default function ITRForSalariedPage() {
               <Card key={i} className="border-l-4 border-l-green-500">
                 <CardHeader className="pb-2">
                   <Badge className="w-fit bg-green-100 text-green-800 hover:bg-green-100 mb-2">Limit: {deduction.limit}</Badge>
-                  <CardTitle className="text-lg">{deduction.section}</CardTitle>
+                  <CardTitle className="text-lg">{deduction.section}<SectionReferenceBadge section={deduction.sectionKey} /></CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600">{deduction.description}</p>
@@ -590,14 +616,14 @@ export default function ITRForSalariedPage() {
                         </div>
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-slate-400">Other Deductions</span>
-                          <span className="text-red-400">- ₹{(totalDeductions - 50000).toLocaleString('en-IN')}</span>
+                          <span className="text-red-400">- ₹{(totalDeductions - STANDARD_DEDUCTION_BY_REGIME.old).toLocaleString('en-IN')}</span>
                         </div>
                       </div>
                       
                       <div className="pt-6 border-t border-slate-700/50">
                         <p className="text-slate-300 font-medium mb-1">Estimated Taxable Income</p>
                         <p className="text-4xl font-bold text-green-400">₹{taxableIncome.toLocaleString('en-IN')}</p>
-                        <p className="text-xs text-slate-500 mt-2">*Calculation based on Old Tax Regime for estimation purposes.</p>
+                        <p className="text-xs text-slate-500 mt-2">*Calculation based on Old Tax Regime for AY {DEFAULT_ASSESSMENT_YEAR} estimation.</p>
                       </div>
                     </div>
                   </div>
@@ -795,8 +821,10 @@ export default function ITRForSalariedPage() {
       <ServiceCheckoutModal 
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
+        serviceId="itr-for-salaried"
         serviceTitle={checkoutTitle}
-        amount={checkoutPrice}
+        category="individual"
+        priceAmount={checkoutPrice}
       />
     </div>
   );

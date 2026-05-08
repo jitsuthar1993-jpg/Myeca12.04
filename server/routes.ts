@@ -1,6 +1,5 @@
 import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
-import { SEO_CONFIG } from "../client/src/config/seo.config";
 import fs from "fs";
 import path from "path";
 import { adminDb } from "./neon-admin.js";
@@ -22,6 +21,7 @@ import auditRouter from "./routes/audit.js";
 import publicRouter from "./routes/public.js";
 import blogWebhooksRouter from "./routes/blog-webhooks.js";
 import whatsappRouter from "./routes/whatsapp.js";
+import { listPublishedBlogPosts, sortPublishedPosts } from "./services/blog.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -41,29 +41,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(200).send(sitemapCache.xml);
     }
 
-    let posts: any[] = [];
+    let posts: Array<{ slug: string; id: string; updatedAt: string | null; createdAt: string | null; publishedAt: string | null }> = [];
     try {
-      if (adminDb) {
-        try {
-          const snapshot = await adminDb.collection("blog_posts")
-            .where("status", "==", "published")
-            .get();
-          posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
-        } catch (dbErr) {
-          console.error("[SITEMAP] DB error (skipping blogs):", dbErr);
-        }
-      }
+      posts = sortPublishedPosts(await listPublishedBlogPosts()).map((post) => ({
+        id: post.id,
+        slug: post.slug,
+        updatedAt: post.updatedAt,
+        createdAt: post.createdAt,
+        publishedAt: post.publishedAt,
+      }));
     } catch (generalErr) {
-      console.error("[SITEMAP] Setup error:", generalErr);
+      console.error("[SITEMAP] Blog loading error (skipping blogs):", generalErr);
     }
 
     const baseUrl = "https://myeca.in";
-    const seoRoutes = Object.keys(SEO_CONFIG).filter(path => !SEO_CONFIG[path].noindex);
     const staticRoutes = Array.from(new Set([
       "", "/services", "/all-services", "/about", "/contact",
       "/calculators", "/learn", "/blog", "/legal/privacy-policy",
       "/legal/terms-of-service", "/legal/refund-policy",
-      ...seoRoutes
+      "/itr/form-selector", "/itr/form-recommender", "/itr/filing",
+      "/form16-parser", "/ais-viewer", "/tds-refund-tracker",
+      "/calculators/income-tax", "/calculators/regime-comparator",
+      "/calculators/capital-gains", "/calculators/advance-tax",
+      "/services/notice-compliance", "/expert-consultation"
     ]));
 
     try {
@@ -76,10 +76,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     <changefreq>${route === "" ? "daily" : "weekly"}</changefreq>
     <priority>${route === "" ? "1.0" : "0.8"}</priority>
   </url>`).join('')}
-  ${posts.map((post: any) => {
+  ${posts.map((post) => {
     let dateStr = new Date().toISOString().split('T')[0];
     try {
-      const dateVal = post.updatedAt?.toDate?.() || post.updatedAt || post.createdAt?.toDate?.() || post.createdAt || new Date();
+      const dateVal = post.updatedAt || post.publishedAt || post.createdAt || new Date();
       const d = new Date(dateVal);
       if (!isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
     } catch (e) {}

@@ -1,12 +1,23 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { visualizer } from "rollup-plugin-visualizer";
+
+const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === "1";
 
 export default defineConfig({
   envPrefix: ["VITE_", "NEXT_PUBLIC_"],
   plugins: [
     react(),
-  ],
+    shouldAnalyzeBundle
+      ? visualizer({
+          filename: path.resolve(process.cwd(), "dist", "bundle-stats.html"),
+          gzipSize: true,
+          brotliSize: true,
+          template: "treemap",
+        })
+      : null,
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(process.cwd(), "client", "src"),
@@ -44,10 +55,7 @@ export default defineConfig({
           ) {
             return "vendor";
           }
-          // Radix UI — needed for buttons/tooltips on first paint
-          if (id.includes("node_modules/@radix-ui/")) {
-            return "vendor";
-          }
+          // Radix UI stays route/component scoped so feature-heavy widgets do not inflate core vendor.
           // Clerk auth — heavy (~200KB), lazy-load separately
           if (id.includes("node_modules/@clerk/")) {
             return "clerk";
@@ -90,7 +98,6 @@ export default defineConfig({
       "wouter",
       "@tanstack/react-query",
       "lucide-react",
-      "@radix-ui/react-tooltip",
       "react-helmet-async",
     ],
   },

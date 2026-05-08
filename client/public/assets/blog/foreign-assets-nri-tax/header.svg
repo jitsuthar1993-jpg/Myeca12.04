@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Foreign Assets blog header</title>
+  <desc id="desc">A light MyeCA editorial header image for foreign assets articles.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8FAFC"/>
+      <stop offset="0.58" stop-color="#EEF4FF"/>
+      <stop offset="1" stop-color="#F0FDFA"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EEF4FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <path d="M0 478 C180 428 306 482 476 438 C644 395 798 388 1200 448 L1200 630 L0 630 Z" fill="#315EFB" opacity="0.06"/>
+  <rect x="56" y="58" width="1088" height="514" rx="38" fill="#FFFFFF" opacity="0.82"/>
+  <rect x="58" y="58" width="1084" height="510" rx="36" fill="none" stroke="#BFDBFE" stroke-width="2" opacity="0.75"/>
+  <g transform="translate(92 112)">
+    <rect x="0" y="0" width="424" height="306" rx="28" fill="url(#panel)" stroke="#BFDBFE" stroke-width="2"/>
+    <rect x="46" y="48" width="204" height="20" rx="10" fill="#315EFB" opacity="0.9"/>
+    <rect x="46" y="102" width="300" height="16" rx="8" fill="#93C5FD" opacity="0.9"/>
+    <rect x="46" y="144" width="252" height="16" rx="8" fill="#BFDBFE"/>
+    <rect x="46" y="186" width="280" height="16" rx="8" fill="#BFDBFE" opacity="0.72"/>
+    <rect x="46" y="238" width="154" height="42" rx="14" fill="#EEF4FF" stroke="#315EFB" stroke-width="2"/>
+    <path d="M74 258 l22 22 l48 -54" fill="none" stroke="#0F766E" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(560 158)">
+    <text x="0" y="0" fill="#0F766E" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="3">MYECA INSIGHTS</text>
+    <text x="0" y="80" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="800">Foreign Assets</text>
+    <text x="0" y="136" fill="#315EFB" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">NRI tax, disclosures, and reporting</text>
+    <text x="0" y="192" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="500">Cross-border income made easier</text>
+    <rect x="0" y="238" width="178" height="46" rx="23" fill="#EEF4FF" stroke="#BFDBFE" stroke-width="2"/>
+    <text x="28" y="268" fill="#315EFB" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Learn with MyeCA</text>
+  </g>
+</svg>

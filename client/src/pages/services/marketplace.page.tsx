@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { StandardPricingCompactCard } from "@/components/pricing/StandardPricingSection";
 import {
   SERVICES,
   SERVICE_CATEGORIES,
@@ -26,6 +27,7 @@ import {
   searchServices,
   formatPrice,
 } from "@/data/services-catalog";
+import { formatPricingLabel, getPricingByServiceId } from "@/data/pricing";
 
 const CATEGORY_ICONS: Record<ServiceCategory, React.ReactNode> = {
   'individual': <User className="h-5 w-5" />,
@@ -63,6 +65,7 @@ export default function ServicesMarketplacePage() {
 
   // Service card component
   const ServiceCard = ({ service, index }: { service: Service; index: number }) => {
+    const standardPricing = getPricingByServiceId(service.id);
     const hasDiscount = service.pricing.originalAmount && service.pricing.originalAmount > service.pricing.amount;
     const discount = hasDiscount 
       ? Math.round((1 - service.pricing.amount / service.pricing.originalAmount!) * 100)
@@ -117,6 +120,11 @@ export default function ServicesMarketplacePage() {
           </div>
 
           <div className="pt-6 border-t border-slate-100/50">
+            {standardPricing ? (
+              <div className="mb-6">
+                <StandardPricingCompactCard service={standardPricing} />
+              </div>
+            ) : (
             <div className="flex items-center justify-between mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -140,6 +148,7 @@ export default function ServicesMarketplacePage() {
                 </div>
               )}
             </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <Button 
@@ -447,7 +456,9 @@ export default function ServicesMarketplacePage() {
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Price</p>
                     <p className="text-4xl font-black text-slate-900 tracking-tight">
-                      {formatPrice(selectedService.pricing)}
+                      {getPricingByServiceId(selectedService.id)
+                        ? formatPricingLabel(getPricingByServiceId(selectedService.id)!.pricing)
+                        : formatPrice(selectedService.pricing)}
                     </p>
                     {selectedService.pricing.unit && (
                       <p className="text-xs font-bold text-slate-400 mt-1">{selectedService.pricing.unit}</p>
@@ -512,7 +523,9 @@ export default function ServicesMarketplacePage() {
           <DialogHeader>
             <DialogTitle className="text-2xl font-black text-slate-900">Request Service</DialogTitle>
             <DialogDescription className="font-bold text-blue-600 text-sm mt-1">
-              {selectedService?.name} — {formatPrice(selectedService?.pricing || { type: 'custom', amount: 0 })}
+              {selectedService?.name} — {selectedService && getPricingByServiceId(selectedService.id)
+                ? formatPricingLabel(getPricingByServiceId(selectedService.id)!.pricing)
+                : formatPrice(selectedService?.pricing || { type: 'custom', amount: 0 })}
             </DialogDescription>
           </DialogHeader>
           

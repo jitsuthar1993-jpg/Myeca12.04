@@ -23,23 +23,23 @@ const colorMap = {
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="relative py-16 bg-white border-y border-gray-100 scroll-mt-20">
+    <section id="features" className="relative py-9 md:py-16 bg-white border-y border-gray-100 scroll-mt-20">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <m.div
-          className="text-center mb-12"
+          className="mb-6 text-left md:mb-12 md:text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4 border border-blue-100">
+          <div className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4 border border-blue-100">
             <Sparkles className="w-4 h-4" />
             ERI-Registered · CA-Reviewed Returns
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4 tracking-tight">
             Why MyeCA.in <span className="text-[#315efb]">Outperforms Self-Filing</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm md:text-lg text-gray-600 max-w-2xl md:mx-auto">
             Every return is reviewed by a licensed CA before submission — so errors get caught before the IT department does.
           </p>
         </m.div>

@@ -84,6 +84,8 @@ dist
 # Gatsby files
 .cache/
 public
+!api/public/
+!api/public/**
 !client/public/
 !client/public/assets/
 !client/public/assets/income-tax-forms/
@@ -198,3 +200,5 @@ button-component-docs.md
 check_logos.js
 proxy.ts
 my site.md
+.vercel
+.env*.local

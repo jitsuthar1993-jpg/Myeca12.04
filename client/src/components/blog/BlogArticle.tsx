@@ -61,23 +61,29 @@ function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 }
 
-function ActionLink({ href, label, variant = "solid", size = "md" }: {
-  href: string; label: string; variant?: "solid" | "ghost" | "outline"; size?: "sm" | "md";
+function ActionLink({ href, label, variant = "solid", size = "md", className, children }: {
+  href: string;
+  label?: string;
+  variant?: "solid" | "ghost" | "outline";
+  size?: "sm" | "md";
+  className?: string;
+  children?: React.ReactNode;
 }) {
-  const base = "inline-flex items-center justify-center font-semibold transition rounded-xl gap-2";
+  const base = "inline-flex items-center justify-center font-semibold transition rounded-xl gap-2 whitespace-nowrap";
   const sizes = size === "sm" ? "h-9 px-4 text-sm" : "h-11 px-5 text-sm";
   const styles = {
-    solid: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-200",
-    ghost: "text-white/90 hover:bg-white/10",
+    solid: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
+    ghost: "text-blue-700 hover:bg-blue-50",
     outline: "border border-blue-200 text-blue-700 hover:bg-blue-50",
   }[variant];
 
-  const cls = cn(base, sizes, styles);
+  const cls = className ?? cn(base, sizes, styles);
+  const content = children ?? label;
 
   if (href.startsWith("/")) {
-    return <Link href={href}><span className={cls}>{label}</span></Link>;
+    return <Link href={href}><span className={cls}>{content}</span></Link>;
   }
-  return <a href={href} className={cls} rel="noreferrer" target="_blank">{label}</a>;
+  return <a href={href} className={cls} rel="noreferrer" target="_blank">{content}</a>;
 }
 
 function scrollToTocTarget(id: string) {
@@ -205,7 +211,7 @@ function RightSidebar({
               {toc.length} sections
             </span>
           </div>
-          <ul className="max-h-[50vh] space-y-1 overflow-y-auto pr-1">
+          <ul className="space-y-1">
             {toc.map((item) => {
               const isActive = activeId === item.id;
               return (
@@ -303,18 +309,18 @@ function RightSidebar({
         {activeTab === "info" && (
           <div className="space-y-4">
             {/* Expert CTA */}
-            <div className="rounded-xl bg-gradient-to-br from-blue-600 to-sky-600 p-4 text-white">
+            <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-slate-700 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-                  <MessageSquare className="w-3.5 h-3.5 text-white" />
+                <div className="w-7 h-7 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
+                  <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
                 </div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-blue-100">Free Consultation</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
               </div>
-              <h3 className="text-sm font-bold leading-snug mb-1.5">Need expert help?</h3>
-              <p className="text-xs text-blue-100 leading-relaxed mb-3">
+              <h3 className="text-sm font-bold leading-snug mb-1.5 text-slate-950">Need expert help?</h3>
+              <p className="text-xs text-slate-600 leading-relaxed mb-3">
                 Talk to a MyeCA CA for your filing or compliance case.
               </p>
-              <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="ghost" size="sm" />
+              <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="solid" size="sm" />
             </div>
 
             {/* Article info */}
@@ -403,13 +409,13 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
       <FixedMobileIndex toc={toc} activeId={activeId} />
 
       {/* Hero / Banner */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600">
+      <div className="border-y border-blue-100 bg-blue-50/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-          <p className="text-sm text-blue-100 font-medium hidden sm:block">
+          <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
             ⚡ Expert CA review on every ITR — <span className="text-white font-semibold">starting ₹999</span>
           </p>
           <Link href="/itr/filing">
-            <span className="inline-flex items-center gap-1.5 text-xs font-black bg-white text-blue-700 px-4 py-1.5 rounded-full hover:bg-blue-50 transition shrink-0">
+            <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
               File Now <ArrowRight className="w-3 h-3" />
             </span>
           </Link>
@@ -465,7 +471,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
           {/* Meta row */}
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-500 border-b border-slate-100 pb-6">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-sky-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+              <div className="w-8 h-8 rounded-full border border-blue-100 bg-blue-50 flex items-center justify-center text-blue-700 text-xs font-bold shrink-0">
                 {getInitials(post.authorName)}
               </div>
               <div>
@@ -501,26 +507,19 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
           )}
         </div>
 
-        {/* Cover image — full width above content */}
-        {isImageUrl(post.coverImage) && (
-          <div className="mb-10 overflow-hidden rounded-2xl border border-slate-200 shadow-sm max-h-[480px]">
-            <img src={post.coverImage ?? ""} alt={post.title} className="w-full h-full object-cover" />
-          </div>
-        )}
-
         {/* Key highlights */}
         {highlights.length > 0 && (
-          <section className="mb-10 rounded-2xl border border-amber-200 bg-amber-50 p-6 lg:p-8">
+          <section className="mb-10 rounded-2xl border border-blue-100 bg-blue-50/50 p-6 shadow-sm lg:p-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-lg bg-amber-400/20 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-amber-600" />
+              <div className="w-8 h-8 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-blue-600" />
               </div>
               <h2 className="text-base font-bold text-slate-900">Key highlights</h2>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {highlights.map((hl) => (
-                <div key={hl} className="flex items-start gap-3 rounded-xl border border-amber-100 bg-white/80 p-4 shadow-sm">
-                  <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div key={hl} className="flex items-start gap-3 rounded-xl border border-blue-100/70 bg-white p-4 shadow-sm">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
                   <p className="text-sm leading-6 text-slate-700">{hl}</p>
                 </div>
               ))}
@@ -560,18 +559,18 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
 
             {/* Mobile info panel — shown lg:hidden */}
             <div className="mt-10 lg:hidden space-y-4">
-              <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-600 to-sky-600 p-5 text-white shadow-md shadow-blue-100">
+              <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5 text-slate-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                    <MessageSquare className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 text-blue-600" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-100">Free Consultation</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
                 </div>
-                <h3 className="text-base font-bold leading-snug mb-2">Need expert help?</h3>
-                <p className="text-sm text-blue-100 leading-relaxed mb-4">
+                <h3 className="text-base font-bold leading-snug mb-2 text-slate-950">Need expert help?</h3>
+                <p className="text-sm text-slate-600 leading-relaxed mb-4">
                   Talk to a MyeCA CA to apply these insights to your filing or compliance case.
                 </p>
-                <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="ghost" size="sm" />
+                <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="solid" size="sm" />
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="mb-3 text-[10px] font-black text-slate-400 uppercase tracking-[2px]">Share this guide</p>
@@ -583,7 +582,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
             {post.authorBio && (
               <section id="authorBio" className="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 lg:p-8">
                 <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-md shadow-blue-100">
+                  <div className="w-14 h-14 rounded-2xl border border-blue-100 bg-blue-50 flex items-center justify-center text-blue-700 text-lg font-bold shrink-0">
                     {getInitials(post.authorName)}
                   </div>
                   <div className="min-w-0">
@@ -663,22 +662,28 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
             )}
 
             {/* Bottom CTA banner */}
-            <section className="mt-12 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 p-6 lg:p-10 text-white shadow-xl shadow-blue-200/40 overflow-hidden relative">
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+            <section className="mt-12 rounded-2xl border border-blue-100 bg-blue-50/60 p-6 lg:p-8 text-slate-700 shadow-sm overflow-hidden relative">
               <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div className="max-w-xl">
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200 mb-2">Next step</p>
-                  <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700 mb-2">Next step</p>
+                  <h2 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-950">
                     Ready to put this into action?
                   </h2>
-                  <p className="mt-3 text-sm leading-7 text-blue-100">
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
                     Get hands-on help from MyeCA experts — ITR filing, GST, tax planning, and business compliance — without the guesswork.
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-3 shrink-0">
-                  <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="ghost" />
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                  <ActionLink
+                    href={post.ctaHref ?? "/expert-consultation"}
+                    className="group inline-flex h-12 w-full items-center justify-center gap-3 rounded-lg bg-blue-600 px-5 text-sm font-black text-white shadow-lg shadow-blue-200/70 transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-200 sm:w-auto"
+                  >
+                    {post.ctaLabel ?? "Talk to a CA"}
+                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                  </ActionLink>
                   <Link href="/blog">
-                    <span className="inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white/80 border border-white/20 hover:bg-white/10 transition">
+                    <span className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-5 text-sm font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 sm:w-auto">
+                      <BookOpen className="h-4 w-4 text-blue-500" />
                       More articles
                     </span>
                   </Link>
@@ -689,7 +694,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
 
           {/* ── RIGHT SIDEBAR — fixed/sticky, lg+ only ── */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+            <div className="sticky top-24">
               <RightSidebar
                 post={post}
                 toc={toc}

@@ -199,6 +199,7 @@ class NeonQuery {
     private readonly clauses: WhereClause[] = [],
     private readonly order: OrderClause[] = [],
     private readonly maxRows?: number,
+    private readonly offsetRows?: number,
   ) {}
 
   where(field: string, op: string, value: unknown) {
@@ -216,11 +217,16 @@ class NeonQuery {
       this.clauses,
       [...this.order, { field, direction }],
       this.maxRows,
+      this.offsetRows,
     );
   }
 
   limit(maxRows: number) {
-    return new NeonQuery(this.collectionName, this.clauses, this.order, maxRows);
+    return new NeonQuery(this.collectionName, this.clauses, this.order, maxRows, this.offsetRows);
+  }
+
+  offset(offsetRows: number) {
+    return new NeonQuery(this.collectionName, this.clauses, this.order, this.maxRows, offsetRows);
   }
 
   async get() {
@@ -229,7 +235,8 @@ class NeonQuery {
     const whereSql = buildWhere(this.clauses, params);
     const orderSql = buildOrder(this.order);
     const limitSql = this.maxRows ? ` LIMIT ${Math.max(1, Math.floor(this.maxRows))}` : "";
-    const rows = await getSql().query(`SELECT id, data FROM ${table}${whereSql}${orderSql}${limitSql}`, params);
+    const offsetSql = this.offsetRows ? ` OFFSET ${Math.max(0, Math.floor(this.offsetRows))}` : "";
+    const rows = await getSql().query(`SELECT id, data FROM ${table}${whereSql}${orderSql}${limitSql}${offsetSql}`, params);
     return new NeonQuerySnapshot(
       rows.map((row: any) => new NeonDocumentSnapshot(row.id, fromRow(row), new NeonDocumentRef(this.collectionName, row.id))),
     );

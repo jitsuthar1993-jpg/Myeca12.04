@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, Coins, Target, FileText, Download, Calendar, Users, Filter, ChevronRight, Activity } from "lucide-react";
+import { BarChart3, TrendingUp, Coins, Target, FileText, Download, Calendar, Users, Filter, ChevronRight, Activity, Shield } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { Layout } from "@/components/admin/Layout";
 import TaxSummaryDashboard from "@/features/itr/components/TaxSummaryDashboard";
@@ -353,4 +353,4 @@ export default function AnalyticsPage() {
       </div>
     </Layout>
   );
-}
+}

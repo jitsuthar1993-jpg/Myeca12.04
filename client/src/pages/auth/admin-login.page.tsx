@@ -2,6 +2,7 @@ import { SignIn } from "@clerk/clerk-react";
 import { Link } from "wouter";
 import { KeyRound, ShieldCheck, UserRoundPlus, Lock } from "lucide-react";
 import { AuthPageShell, clerkAuthAppearance } from "@/components/auth/AuthPageShell";
+import { isClerkEnabled } from "@/lib/clerk-config";
 
 export default function AdminLoginPage() {
   const redirectUrl = new URLSearchParams(window.location.search).get("redirect_url") || "/admin/dashboard";
@@ -25,7 +26,7 @@ export default function AdminLoginPage() {
       }}
     >
       <div className="rounded-2xl border border-slate-200 bg-white p-1 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)]">
-        {import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+        {isClerkEnabled ? (
           <SignIn
             path="/auth/admin-login"
             routing="path"

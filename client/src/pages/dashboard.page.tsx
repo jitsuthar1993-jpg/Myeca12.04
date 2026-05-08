@@ -34,6 +34,7 @@ import { Layout } from "@/components/admin/Layout";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
+import { getAuthToken } from "@/lib/authToken";
 
 export default function DashboardPage() {
   const seo = getSEOConfig('/dashboard');
@@ -48,8 +49,9 @@ export default function DashboardPage() {
   const { data: notificationsData } = useQuery<any[]>({
     queryKey: ['/api/notifications'],
     queryFn: async () => {
+      const token = await getAuthToken();
       const res = await fetch('/api/notifications', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       const data = await res.json();
       return data.notifications || [];
@@ -60,8 +62,9 @@ export default function DashboardPage() {
   const { data: activityData } = useQuery<any[]>({
     queryKey: ['/api/user/activity'],
     queryFn: async () => {
+      const token = await getAuthToken();
       const res = await fetch('/api/user/activity', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       const data = await res.json();
       return data.data?.activities || [];
@@ -307,7 +310,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </Layout>
-  );
-}
   );
 }

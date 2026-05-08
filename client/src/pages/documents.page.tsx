@@ -32,6 +32,7 @@ import { Layout } from "@/components/admin/Layout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { caseTimelineStages, vaultChecklist } from "@/data/competitive-growth";
 
 interface Document {
   id: string;
@@ -229,6 +230,27 @@ export default function DocumentsPage() {
              <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">Automated OCR detects mismatches in Form 16 vs 26AS data.</p>
              <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-blue-100 border-none transition-all">Scan Documents</Button>
           </div>
+
+          <Card className="border-none shadow-sm rounded-[32px] bg-white">
+            <CardHeader className="p-6 border-b border-slate-50">
+              <CardTitle className="text-sm font-black uppercase tracking-widest">Filing readiness</CardTitle>
+              <CardDescription className="text-xs">What the CA can verify from this vault.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-5 space-y-3">
+              {vaultChecklist.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.label} className="flex gap-3 rounded-2xl bg-slate-50 p-4">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                    <div>
+                      <p className="text-xs font-black text-slate-800">{item.label}</p>
+                      <p className="mt-1 text-[10px] font-medium leading-relaxed text-slate-500">{item.detail}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content Area - Full Page Scroll */}
@@ -433,6 +455,23 @@ export default function DocumentsPage() {
               </Card>
             </div>
           </div>
+
+          <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-slate-950 text-white">
+            <CardHeader className="p-8 border-b border-white/10">
+              <CardTitle className="text-xl font-black">Linked case timeline</CardTitle>
+              <CardDescription className="text-slate-400">
+                Documents are not just stored; they move the filing or service case forward.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-4">
+              {caseTimelineStages.map((stage, index) => (
+                <div key={stage} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-300">Stage {index + 1}</p>
+                  <p className="mt-2 text-sm font-bold text-white">{stage}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
 

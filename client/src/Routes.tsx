@@ -20,13 +20,23 @@ const PPFCalculator = lazyWithRetry(() => import("@/features/calculators/pages/p
 const WithdrawalPlannerPage = lazyWithRetry(() => import("@/features/calculators/pages/withdrawal-planner.page"));
 const CapitalGainsCalculator = lazyWithRetry(() => import("@/features/calculators/pages/capital-gains.page"));
 const LoanCalculator = lazyWithRetry(() => import("@/features/calculators/pages/loan-calculator.page"));
+const GeneratedCalculatorInfoPage = lazyWithRetry(() => import("@/pages/calculators/generated-calculator-info.page"));
 
 const CalculatorsPage = lazyWithRetry(() => import("@/features/calculators/pages/index.page"));
 const TaxOptimizerPage = lazyWithRetry(() => import("@/pages/tax-optimizer.page"));
-const RegimeComparatorPage = lazyWithRetry(() => import("@/features/calculators/pages/regime-comparator.page"));
+const RegimeComparatorPage = lazyWithRetry(() => import("@/features/calculators/pages/tax-regime.page"));
 const AdvanceTaxCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/advance-tax.page"));
 const GeneralCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/general.page"));
 const HSNFinderPage = lazyWithRetry(() => import("@/features/calculators/pages/hsn-finder.page"));
+const GSTCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/gst.page"));
+const SalaryCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/salary.page"));
+const GratuityCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/gratuity.page"));
+const EPFCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/epf.page"));
+const RDCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/rd.page"));
+const LumpsumCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/lumpsum.page"));
+const SWPCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/swp.page"));
+const InflationCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/inflation.page"));
+const LoanEligibilityCalculatorPage = lazyWithRetry(() => import("@/features/calculators/pages/loan-eligibility.page"));
 const ITRStatusTrackerPage = lazyWithRetry(() => import("@/features/itr/pages/status-tracker.page"));
 const TDSRefundTrackerPage = lazyWithRetry(() => import("@/pages/tds-refund-tracker.page"));
 const TaxLossHarvestingPage = lazyWithRetry(() => import("@/pages/tax-loss-harvesting.page"));
@@ -74,10 +84,12 @@ const StartupServicesPage = lazyWithRetry(() => import("@/pages/startup-services
 const CityLandingPage = lazyWithRetry(() => import("@/pages/services/city-landing.page"));
 const FundingPage = lazyWithRetry(() => import("@/pages/startup/funding.page"));
 const StartupRegistrationPage = lazyWithRetry(() => import("@/pages/startup/registration.page"));
+const GeneratedStartupTopicPage = lazyWithRetry(() => import("@/pages/startup/generated-startup-topic.page"));
 const TaxPlanningPage = lazyWithRetry(() => import("@/pages/services/tax-planning.page"));
 const ComplianceManagementPage = lazyWithRetry(() => import("@/pages/services/compliance-management.page"));
 const AuditServicesPage = lazyWithRetry(() => import("@/pages/services/audit-services.page"));
 const DocumentVaultServicePage = lazyWithRetry(() => import("@/pages/services/document-vault.page"));
+const GeneratedServicePage = lazyWithRetry(() => import("@/pages/services/generated-service.page"));
 const PricingPage = lazyWithRetry(() => import("@/pages/pricing.page"));
 const FastestITRFilingPage = lazyWithRetry(() => import("@/pages/features/fastest-itr-filing.page"));
 const TaxCalculatorFeaturePage = lazyWithRetry(() => import("@/pages/features/tax-calculator.page"));
@@ -114,6 +126,7 @@ const CADashboard = lazyWithRetry(() => import("@/pages/ca/dashboard.page"));
 const AdminServices = lazyWithRetry(() => import("@/pages/admin/services.page"));
 const AdminBlog = lazyWithRetry(() => import("@/pages/admin/blog.page"));
 const AdminAnalyticsPage = lazyWithRetry(() => import("@/pages/admin/analytics/index.page"));
+const AdminAnalyticsOverviewPage = lazyWithRetry(() => import("@/pages/admin/analytics/overview.page"));
 const AdminUsers = lazyWithRetry(() => import("@/pages/admin/users.page"));
 const AdminUserManagement = lazyWithRetry(() => import("@/pages/admin/user-management.page"));
 const AuditLogsPage = lazyWithRetry(() => import("@/pages/admin/audit-logs.page"));
@@ -156,6 +169,8 @@ const UserGuidePage = lazyWithRetry(() => import("@/pages/help/user-guide.page")
 const DashboardServicesPage = lazyWithRetry(() => import("@/pages/dashboard/services.page"));
 const UnifiedAccountPage = lazyWithRetry(() => import("@/pages/dashboard/account.page"));
 const KnowledgeBasePage = lazyWithRetry(() => import("@/pages/help/knowledge-base.page"));
+const CompetitorComparisonPage = lazyWithRetry(() => import("@/pages/compare/competitor-comparison.page"));
+const LogoutPage = lazyWithRetry(() => import("@/pages/logout.page"));
 
 
 
@@ -189,6 +204,15 @@ export default function Routes() {
         <Route path="/calculators/advance-tax" component={AdvanceTaxCalculatorPage} />
         <Route path="/calculators/general" component={GeneralCalculatorPage} />
         <Route path="/calculators/hsn-finder" component={HSNFinderPage} />
+        <Route path="/calculators/gst" component={GSTCalculatorPage} />
+        <Route path="/calculators/salary" component={SalaryCalculatorPage} />
+        <Route path="/calculators/gratuity" component={GratuityCalculatorPage} />
+        <Route path="/calculators/epf" component={EPFCalculatorPage} />
+        <Route path="/calculators/rd" component={RDCalculatorPage} />
+        <Route path="/calculators/lumpsum" component={LumpsumCalculatorPage} />
+        <Route path="/calculators/swp" component={SWPCalculatorPage} />
+        <Route path="/calculators/inflation" component={InflationCalculatorPage} />
+        <Route path="/calculators/loan-eligibility" component={LoanEligibilityCalculatorPage} />
         <Route path="/tax-optimizer" component={TaxOptimizerPage} />
         <Route path="/itr/status-tracker" component={ITRStatusTrackerPage} />
         <Route path="/tds-refund-tracker" component={TDSRefundTrackerPage} />
@@ -227,6 +251,7 @@ export default function Routes() {
         <Route path="/services/notice-compliance" component={NoticeCompliancePage} />
         <Route path="/services/tds-filing" component={TdsFilingPage} />
         <Route path="/salary" component={ITRForSalariedPage} />
+        <Route path="/services/itr-for-salaried" component={ITRForSalariedPage} />
         <Route path="/services/gst-registration" component={GstRegistrationPage} />
         <Route path="/services/company-registration" component={CompanyRegistrationPage} />
         <Route path="/services/startup-india-registration" component={StartupIndiaRegistrationPage} />
@@ -240,12 +265,14 @@ export default function Routes() {
         <Route path="/services/iso-certification" component={ISOCertificationPage} />
         <Route path="/services/labour-law-compliance" component={LabourLawCompliancePage} />
         <Route path="/startup/funding" component={FundingPage} />
+        <Route path="/startup/:slug" component={GeneratedStartupTopicPage} />
         <Route path="/startup-services" component={StartupServicesPage} />
         <Route path="/services/funding-assistance" component={FundingPage} />
         <Route path="/services/tax-planning" component={TaxPlanningPage} />
         <Route path="/services/compliance-management" component={ComplianceManagementPage} />
         <Route path="/services/audit-services" component={AuditServicesPage} />
         <Route path="/services/document-vault" component={DocumentVaultServicePage} />
+        <Route path="/services/:slug" component={GeneratedServicePage} />
         <Route path="/services/:service/:city" component={CityLandingPage} />
         <Route path="/services" component={ServicesPage} />
         <Route path="/all-services" component={AllServicesPage} />
@@ -263,6 +290,7 @@ export default function Routes() {
         <Route path="/register" component={RegisterPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/auth/callback" component={ClerkCallback} />
+        <Route path="/logout" component={LogoutPage} />
         <Route path="/dashboard/services" component={() => <RequireAuth><DashboardServicesPage /></RequireAuth>} />
         <Route path="/dashboard" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
 
@@ -320,6 +348,11 @@ export default function Routes() {
         <Route path="/admin/blog" component={() => (
           <RequireAdmin>
             <AdminBlog />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/analytics/overview" component={() => (
+          <RequireAdmin>
+            <AdminAnalyticsOverviewPage />
           </RequireAdmin>
         )} />
         <Route path="/admin/analytics" component={() => (
@@ -384,7 +417,9 @@ export default function Routes() {
         <Route path="/legal/disclaimer" component={DisclaimerPage} />
         <Route path="/compliance-calendar" component={ComplianceCalendarPage} />
         <Route path="/calculators/penalty" component={PenaltyCalculatorPage} />
+        <Route path="/calculators/:slug" component={GeneratedCalculatorInfoPage} />
         <Route path="/expert-consultation" component={ExpertConsultationPage} />
+        <Route path="/consultation" component={ExpertConsultationPage} />
         <Route path="/help" component={HelpCenterPage} />
         <Route path="/help/faq" component={FAQPage} />
         <Route path="/help/user-guide" component={UserGuidePage} />
@@ -392,6 +427,7 @@ export default function Routes() {
         <Route path="/advanced-features" component={AdvancedFeaturesPage} />
         <Route path="/analytics-dashboard" component={AnalyticsDashboardPage} />
         <Route path="/compare" component={ComparisonToolsPage} />
+        <Route path="/compare/:slug" component={CompetitorComparisonPage} />
         <Route path="/api-docs" component={ApiDocsPage} />
         <Route path="/export" component={ExportCenterPage} />
         <Route path="/integrations" component={IntegrationsPage} />

@@ -58,11 +58,11 @@ $env:NODE_ENV='development'; tsx server/index.ts
 | Document | Description |
 |----------|-------------|
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production deployment instructions |
-| [Website Audit](docs/WEBSITE_AUDIT.md) | Performance & SEO analysis |
+| [Site Audit](docs/SITE_AUDIT.md) | Visual, backend, flow, link, and performance audit |
 | [Theming Guide](docs/THEMING_GUIDE.md) | Light mode design system |
-| [Optimization Plan](docs/WebsiteOptimization.md) | Performance improvements |
+| [Design System](docs/DESIGN_SYSTEM.md) | Canonical design system |
 | [Database Guide](docs/DatabaseManagement.md) | Database operations |
-| [Dashboard Design](docs/DashboardDesign.md) | Admin dashboard specs |
+| [Product Blueprint](docs/MYECA_PRODUCT_BLUEPRINT.md) | Product and workflow blueprint |
 
 ## ⚙️ Configuration
 

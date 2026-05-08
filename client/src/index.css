@@ -138,6 +138,10 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  html {
+    overflow-x: clip;
+  }
+
   /* Calculator Styles */
   .calculator-gradient-bg {
     background: #f8fafc;

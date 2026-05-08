@@ -1,74 +1,24 @@
-import { TaxCalculationResult, IncomeTaxInputs, TaxSlabs } from "@/types/calculator";
+import { TaxCalculationResult, IncomeTaxInputs } from "@/types/calculator";
 import { tdsRulesByAY, assessmentYears, type AssessmentYear, type TDSIncomeType } from "@/data/tds-rules";
-
-// Updated for FY 2024-25 (AY 2025-26)
-const OLD_REGIME_SLABS: TaxSlabs[] = [
-  { min: 0, max: 250000, rate: 0 },
-  { min: 250000, max: 500000, rate: 0.05 },
-  { min: 500000, max: 1000000, rate: 0.2 },
-  { min: 1000000, max: Infinity, rate: 0.3 }
-];
-
-const OLD_REGIME_SENIOR_SLABS: TaxSlabs[] = [
-  { min: 0, max: 300000, rate: 0 },
-  { min: 300000, max: 500000, rate: 0.05 },
-  { min: 500000, max: 1000000, rate: 0.2 },
-  { min: 1000000, max: Infinity, rate: 0.3 }
-];
-
-const OLD_REGIME_SUPER_SENIOR_SLABS: TaxSlabs[] = [
-  { min: 0, max: 500000, rate: 0 },
-  { min: 500000, max: 1000000, rate: 0.2 },
-  { min: 1000000, max: Infinity, rate: 0.3 }
-];
-
-// Updated for FY 2024-25 (AY 2025-26) - Budget 2024 Rates
-const NEW_REGIME_SLABS_2025_26: TaxSlabs[] = [
-  { min: 0, max: 300000, rate: 0 },
-  { min: 300000, max: 700000, rate: 0.05 },
-  { min: 700000, max: 1000000, rate: 0.1 },
-  { min: 1000000, max: 1200000, rate: 0.15 },
-  { min: 1200000, max: 1500000, rate: 0.2 },
-  { min: 1500000, max: Infinity, rate: 0.3 }
-];
-
-// Updated for FY 2025-26 (AY 2026-27) - Expected/New Rules
-const NEW_REGIME_SLABS_2026_27: TaxSlabs[] = [
-  { min: 0, max: 400000, rate: 0 },
-  { min: 400000, max: 800000, rate: 0.05 },
-  { min: 800000, max: 1200000, rate: 0.1 },
-  { min: 1200000, max: 1600000, rate: 0.15 },
-  { min: 1600000, max: 2000000, rate: 0.2 },
-  { min: 2000000, max: Infinity, rate: 0.3 }
-];
+import {
+  DEFAULT_ASSESSMENT_YEAR,
+  HEALTH_AND_EDUCATION_CESS_RATE,
+  REBATE_87A_BY_REGIME,
+  STANDARD_DEDUCTION_BY_REGIME,
+  getSlabsForRegime,
+} from "@/lib/tax-law-reference";
 
 export function calculateIncomeTax(inputs: IncomeTaxInputs & { age?: number; assessmentYear?: string }): TaxCalculationResult {
-  const { income, regime, deductions, age = 30, assessmentYear = "2026-27" } = inputs;
+  const { income, regime, deductions, age = 30, assessmentYear = DEFAULT_ASSESSMENT_YEAR } = inputs;
   
   // Calculate taxable income
   let taxableIncome = Math.max(0, income - deductions);
   
-  // Standard deduction for new regime
   if (regime === 'new') {
-    // AY 2026-27: Standard deduction increased to 75,000 (confirmed)
-    // AY 2025-26: Standard deduction was 75,000 (Budget 2024)
-    taxableIncome = Math.max(0, income - 75000); 
+    taxableIncome = Math.max(0, income - STANDARD_DEDUCTION_BY_REGIME.new); 
   }
   
-  // Select tax slabs based on regime and age
-  let slabs: TaxSlabs[];
-  if (regime === 'old') {
-    if (age >= 80) {
-      slabs = OLD_REGIME_SUPER_SENIOR_SLABS;
-    } else if (age >= 60) {
-      slabs = OLD_REGIME_SENIOR_SLABS;
-    } else {
-      slabs = OLD_REGIME_SLABS;
-    }
-  } else {
-    // Select New Regime slabs based on AY
-    slabs = assessmentYear === "2026-27" ? NEW_REGIME_SLABS_2026_27 : NEW_REGIME_SLABS_2025_26;
-  }
+  const slabs = getSlabsForRegime(regime, assessmentYear, age);
   
   let tax = 0;
   const breakdown = { slab1: 0, slab2: 0, slab3: 0, slab4: 0 };
@@ -87,13 +37,11 @@ export function calculateIncomeTax(inputs: IncomeTaxInputs & { age?: number; ass
     }
   });
   
-  // Apply Rebate under Section 87A and Marginal Relief
+  // Apply rebate under Section 87A and marginal relief for AY 2026-27.
   if (regime === 'new') {
-    const threshold = assessmentYear === "2026-27" ? 1200000 : 700000;
-    // Max rebate isn't strictly needed if we assume tax is 0 at threshold, 
-    // but for AY 25-26 tax at 7L is 20k (covered by 25k limit).
-    // For AY 26-27 tax at 12L is 60k.
-    const maxRebate = assessmentYear === "2026-27" ? 60000 : 25000;
+    const { incomeLimit: threshold, maxRebate } = assessmentYear === DEFAULT_ASSESSMENT_YEAR
+      ? REBATE_87A_BY_REGIME.new
+      : { incomeLimit: 700000, maxRebate: 25000 };
 
     if (taxableIncome <= threshold) {
        const rebate = Math.min(tax, maxRebate);
@@ -107,8 +55,8 @@ export function calculateIncomeTax(inputs: IncomeTaxInputs & { age?: number; ass
           tax = excessIncome;
        }
     }
-  } else if (regime === 'old' && taxableIncome <= 500000) {
-    const rebate = Math.min(tax, 12500);
+  } else if (regime === 'old' && taxableIncome <= REBATE_87A_BY_REGIME.old.incomeLimit) {
+    const rebate = Math.min(tax, REBATE_87A_BY_REGIME.old.maxRebate);
     tax = Math.max(0, tax - rebate);
   }
   
@@ -135,8 +83,7 @@ export function calculateIncomeTax(inputs: IncomeTaxInputs & { age?: number; ass
   
   tax += surcharge;
   
-  // Add cess (4% on tax + surcharge)
-  tax = tax * 1.04;
+  tax = tax * (1 + HEALTH_AND_EDUCATION_CESS_RATE);
   
   const netIncome = income - tax;
   

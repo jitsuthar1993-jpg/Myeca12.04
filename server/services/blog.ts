@@ -59,6 +59,17 @@ type CategoryLookup = {
   aliases: Map<string, BlogCategory>;
 };
 
+const DB_FALLBACK_TIMEOUT_MS = 2500;
+
+function withTimeout<T>(promise: Promise<T>, label: string, timeoutMs = DB_FALLBACK_TIMEOUT_MS): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs);
+    }),
+  ]);
+}
+
 function trimNullable(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
@@ -97,40 +108,50 @@ async function getUserSnapshot(userId: string | null | undefined) {
 }
 
 export async function getCategoryLookup(db: NeonAdminDb = adminDb): Promise<CategoryLookup> {
-  const byId = new Map<string, BlogCategory>();
-  const aliases = new Map<string, BlogCategory>();
-
-  const addCategory = (docId: string, data: Record<string, unknown>) => {
-    const category: BlogCategory = {
-      id: docId,
-      name: typeof data.name === "string" && data.name.trim() ? data.name.trim() : "General",
-      slug:
-        typeof data.slug === "string" && data.slug.trim()
-          ? data.slug.trim()
-          : slugifyHeading(typeof data.name === "string" ? data.name : "general"),
-      description: trimNullable(data.description),
-    };
-
-    byId.set(category.id, category);
-    aliases.set(category.id.toLowerCase(), category);
-    aliases.set(category.slug.toLowerCase(), category);
-    aliases.set(category.name.toLowerCase(), category);
-
-    if (data.id !== undefined && data.id !== null) {
-      aliases.set(String(data.id).toLowerCase(), category);
-    }
-  };
-
-  defaultBlogCategories.forEach((category) => addCategory(category.id, category));
+  const lookup = getDefaultCategoryLookup();
 
   try {
-    const snapshot = await db.collection("categories").orderBy("name").get();
-    snapshot.docs.forEach((doc) => addCategory(doc.id, doc.data() as Record<string, unknown>));
+    const snapshot = await withTimeout(
+      db.collection("categories").orderBy("name").get(),
+      "Loading blog categories",
+    );
+    snapshot.docs.forEach((doc) => addCategoryToLookup(lookup, doc.id, doc.data() as Record<string, unknown>));
   } catch (error) {
     console.warn("Falling back to default blog categories:", error);
   }
 
-  return { byId, aliases };
+  return lookup;
+}
+
+function addCategoryToLookup(lookup: CategoryLookup, docId: string, data: Record<string, unknown>) {
+  const category: BlogCategory = {
+    id: docId,
+    name: typeof data.name === "string" && data.name.trim() ? data.name.trim() : "General",
+    slug:
+      typeof data.slug === "string" && data.slug.trim()
+        ? data.slug.trim()
+        : slugifyHeading(typeof data.name === "string" ? data.name : "general"),
+    description: trimNullable(data.description),
+  };
+
+  lookup.byId.set(category.id, category);
+  lookup.aliases.set(category.id.toLowerCase(), category);
+  lookup.aliases.set(category.slug.toLowerCase(), category);
+  lookup.aliases.set(category.name.toLowerCase(), category);
+
+  if (data.id !== undefined && data.id !== null) {
+    lookup.aliases.set(String(data.id).toLowerCase(), category);
+  }
+}
+
+export function getDefaultCategoryLookup(): CategoryLookup {
+  const byId = new Map<string, BlogCategory>();
+  const aliases = new Map<string, BlogCategory>();
+  const lookup = { byId, aliases };
+
+  defaultBlogCategories.forEach((category) => addCategoryToLookup(lookup, category.id, category));
+
+  return lookup;
 }
 
 export function resolveCategory(categoryId: unknown, lookup: CategoryLookup): BlogCategory | null {
@@ -217,7 +238,10 @@ export async function listAllBlogPosts(db: NeonAdminDb = adminDb): Promise<Store
   let storedPosts: StoredBlogPost[] = [];
 
   try {
-    const snapshot = await db.collection("blog_posts").get();
+    const snapshot = await withTimeout(
+      db.collection("blog_posts").get(),
+      "Loading all blog posts",
+    );
     storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
   } catch (error) {
     console.warn("Falling back to default blog posts:", error);
@@ -237,7 +261,10 @@ export async function listPublishedBlogPosts(db: NeonAdminDb = adminDb): Promise
   let storedPosts: StoredBlogPost[] = [];
 
   try {
-    const snapshot = await db.collection("blog_posts").where("status", "==", "published").get();
+    const snapshot = await withTimeout(
+      db.collection("blog_posts").where("status", "==", "published").get(),
+      "Loading published blog posts",
+    );
     storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
   } catch (error) {
     console.warn("Falling back to default blog posts:", error);
@@ -252,11 +279,21 @@ export async function listPublishedBlogPosts(db: NeonAdminDb = adminDb): Promise
   return [...storedPosts, ...fallbackPosts];
 }
 
+export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
+  const lookup = getDefaultCategoryLookup();
+  return defaultBlogPosts
+    .filter((post) => post.status === "published")
+    .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
+}
+
 export async function getBlogPostById(id: string, db: NeonAdminDb = adminDb): Promise<StoredBlogPost | null> {
   const lookup = await getCategoryLookup(db);
 
   try {
-    const doc = await db.collection("blog_posts").doc(id).get();
+    const doc = await withTimeout(
+      db.collection("blog_posts").doc(id).get(),
+      `Loading blog post '${id}'`,
+    );
     if (doc.exists) return normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
   } catch (error) {
     console.warn(`Falling back while loading blog post '${id}':`, error);

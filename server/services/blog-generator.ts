@@ -1,6 +1,16 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let openaiClient: OpenAI | null = null;
+
+function getOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not set");
+  }
+
+  openaiClient ??= new OpenAI({ apiKey });
+  return openaiClient;
+}
 
 export interface GeneratedBlog {
   title: string;
@@ -47,10 +57,7 @@ CONTENT RULES (markdown):
 - FY 2025-26 / AY 2026-27 is the current financial year`;
 
 export async function generateBlog(topic: string): Promise<GeneratedBlog> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is not set");
-  }
-
+  const openai = getOpenAIClient();
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [
@@ -81,10 +88,7 @@ export async function refineBlog(
   existing: GeneratedBlog,
   editNotes: string
 ): Promise<GeneratedBlog> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is not set");
-  }
-
+  const openai = getOpenAIClient();
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [

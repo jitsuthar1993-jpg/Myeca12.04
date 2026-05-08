@@ -46,7 +46,7 @@ const PROMO_DISMISSED_KEY = 'promo-bar-dismissed-v2';
 const PROMO_DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export default function Header() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [promoDismissed, setPromoDismissed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -111,6 +111,14 @@ export default function Header() {
   const inCalculators = location.startsWith('/calculators');
   const inStartup = location.startsWith('/startup') || location === '/startup-services';
 
+  const openTaxAssistant = () => {
+    navigate('/tax-assistant');
+  };
+
+  const openSearch = () => {
+    window.dispatchEvent(new Event('openGlobalSearch'));
+  };
+
   const getInitials = () => {
     if (!user) return 'U';
     if (user.firstName && user.lastName) {
@@ -158,27 +166,27 @@ export default function Header() {
         <div className={cn(
           "w-full transition-all duration-300 border-b",
           isScrolled
-            ? "bg-white/95 backdrop-blur-xl shadow-md border-slate-200/60 py-1"
-            : "bg-white/80 backdrop-blur-lg border-slate-100 shadow-sm py-2"
+            ? "bg-white/95 backdrop-blur-xl shadow-md border-slate-200/60 py-0.5 md:py-1"
+            : "bg-white/95 backdrop-blur-lg border-slate-100 shadow-sm py-1 md:bg-white/80 md:py-2"
         )}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className={cn(
               "flex justify-between items-center transition-all duration-300",
-              isScrolled ? "h-[50px]" : "h-[58px]"
+              isScrolled ? "h-[48px] md:h-[50px]" : "h-[52px] md:h-[58px]"
             )}>
               {/* Logo Section */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 md:gap-4">
                 <a href="https://myeca.in" className="flex items-center gap-2 group shrink-0">
-                  <Logo size={isScrolled ? "sm" : "md"} />
+                  <Logo size={isScrolled ? "sm" : "md"} className="scale-90 md:scale-100" />
                   <div className="flex flex-col justify-center gap-0.5">
                     <span className={cn(
                       "font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent transition-all duration-500 leading-none tracking-tight block m-0",
-                      isScrolled ? "text-[1.25rem]" : "text-2xl"
+                      isScrolled ? "text-lg md:text-[1.25rem]" : "text-xl md:text-2xl"
                     )}>
                       MyeCA.in
                     </span>
                     <span className={cn(
-                      "text-[9.5px] text-slate-500 font-normal tracking-[0.15em] transition-all duration-500 block m-0 leading-none",
+                      "hidden text-[9.5px] text-slate-500 font-normal tracking-[0.15em] transition-all duration-500 m-0 leading-none md:block",
                       isScrolled ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100"
                     )}>
                       SMART TAX SOLUTIONS
@@ -617,9 +625,11 @@ export default function Header() {
                                 { href: "/calculators/income-tax", icon: Calculator, title: "Income Tax", desc: "AY 2025-26 Tax Analysis", color: "emerald" },
                                 { href: "/calculators/tax-regime", icon: Scale, title: "Tax Regime Compare", desc: "Old vs New side by side", color: "emerald" },
                                 { href: "/calculators/hra", icon: Home, title: "HRA Exemption", desc: "Calculate rent allowance", color: "blue" },
+                                { href: "/calculators/gst", icon: Receipt, title: "GST Calculator", desc: "Add or remove GST", color: "blue" },
+                                { href: "/calculators/salary", icon: Wallet, title: "Salary Calculator", desc: "CTC to in-hand pay", color: "emerald" },
                                 { href: "/calculators/tds", icon: Receipt, title: "TDS Calculator", desc: "Deduction on salary & more", color: "orange" },
                                 { href: "/calculators/capital-gains", icon: TrendingUp, title: "Capital Gains", desc: "STCG & LTCG computation", color: "indigo" }
-                              ].map((item, idx) => {
+                              ].slice(0, 4).map((item, idx) => {
                                 const Icon = item.icon as any;
                                 return (
                                   <li key={idx}>
@@ -666,7 +676,12 @@ export default function Header() {
                                 { href: "/calculators/nps", icon: Umbrella, title: "NPS Calculator", desc: "Pension & retirement planning", color: "indigo" },
                                 { href: "/calculators/ppf", icon: PiggyBank, title: "PPF Calculator", desc: "Public Provident Fund growth", color: "emerald" },
                                 { href: "/calculators/fd", icon: Banknote, title: "FD Calculator", desc: "Fixed deposit returns", color: "blue" },
-                              ].map((item, idx) => {
+                                { href: "/calculators/rd", icon: Calendar, title: "RD Calculator", desc: "Recurring deposit growth", color: "blue" },
+                                { href: "/calculators/epf", icon: Shield, title: "EPF Calculator", desc: "Provident fund corpus", color: "emerald" },
+                                { href: "/calculators/lumpsum", icon: TrendingUp, title: "Lumpsum Calculator", desc: "One-time investment", color: "orange" },
+                                { href: "/calculators/swp", icon: Wallet, title: "SWP Calculator", desc: "Monthly withdrawal plan", color: "indigo" },
+                                { href: "/calculators/inflation", icon: LineChart, title: "Inflation Calculator", desc: "Future cost planner", color: "orange" },
+                              ].slice(0, 4).map((item, idx) => {
                                 const Icon = item.icon as any;
                                 return (
                                   <li key={idx}>
@@ -710,9 +725,11 @@ export default function Header() {
                               {[
                                 { href: "/calculators/emi", icon: Calculator, title: "EMI Calculator", desc: "Monthly instalment planner", color: "orange" },
                                 { href: "/calculators/home-loan", icon: Landmark, title: "Loan EMI Calculator", desc: "Home, Car & Personal Loans", color: "blue" },
+                                { href: "/calculators/loan-eligibility", icon: Target, title: "Loan Eligibility", desc: "Estimate borrowing power", color: "blue" },
+                                { href: "/calculators/gratuity", icon: Gift, title: "Gratuity Calculator", desc: "Employee benefit estimate", color: "indigo" },
                                 { href: "/compliance-calendar", icon: Calendar, title: "Compliance Calendar", desc: "GST & Tax Deadlines", color: "indigo" },
                                 { href: "/calculators/penalty", icon: ShieldAlert, title: "Penalty Calculator", desc: "GST & Tax Delay Costs", color: "orange" }
-                              ].map((item, idx) => {
+                              ].slice(0, 4).map((item, idx) => {
                                 const Icon = item.icon as any;
                                 return (
                                   <li key={idx}>
@@ -742,42 +759,29 @@ export default function Header() {
                           </div>
                         </div>
 
-                        {/* Sidebar */}
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                           <div className="flex-1">
-                            <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">AI Powered</h5>
-                            <Link href="/tax-assistant" onMouseEnter={() => preloadOnHover("/tax-assistant")} className="block group">
-                              <div className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-1">
-                                <div className="flex items-center gap-3 mb-3">
-                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                                    <Bot className="w-4 h-4" />
+                            <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Calculator Index</h5>
+                            <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="block group">
+                              <div className="bg-white rounded-2xl p-6 shadow-md border border-emerald-100/50 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-lg">
+                                <div className="relative z-10">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <Grid className="w-4 h-4 text-emerald-600" />
+                                    <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">All Tools</span>
                                   </div>
-                                  <span className="text-[10px] font-normal text-slate-900 uppercase tracking-wider">AI Tax Buddy</span>
+                                  <h6 className="font-normal text-slate-900 text-lg mb-2">Browse every calculator</h6>
+                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Open the full calculator library for tax, investment, loan, and compliance tools.</p>
+                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-emerald-200/50">
+                                    View All <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                  </div>
                                 </div>
-                                <p className="text-[11px] text-slate-500 leading-relaxed mb-4">Get instant answers for ITR filing & tax savings.</p>
-                                <span className="inline-flex items-center gap-2 text-[10px] font-normal text-emerald-600 uppercase tracking-widest">Talk to AI <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></span>
                               </div>
                             </Link>
-
-                            <div className="mt-6 space-y-1">
-                              <Link href="/calculators/general" onMouseEnter={() => preloadOnHover("/calculators/general")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all">
-                                <Grid className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
-                                <span className="text-xs font-normal text-slate-600">General Calculator</span>
-                              </Link>
-                              <Link href="/calculators/hsn-finder" onMouseEnter={() => preloadOnHover("/calculators/hsn-finder")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50/50 transition-all">
-                                <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
-                                <span className="text-xs font-normal text-slate-600">HSN/SAC Finder</span>
-                              </Link>
-                              <Link href="/form16-parser" onMouseEnter={() => preloadOnHover("/form16-parser")} className="group flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50/50 transition-all">
-                                <FileText className="w-4 h-4 text-slate-400 group-hover:text-orange-600" />
-                                <span className="text-xs font-normal text-slate-600">Form 16 Parser</span>
-                              </Link>
-                            </div>
                           </div>
 
                           <div className="mt-8 pt-6 border-t border-slate-200/60">
                             <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="inline-flex items-center gap-2 text-xs font-normal text-emerald-600 hover:text-emerald-700 uppercase tracking-widest group">
-                              All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                              See All Calculators <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </Link>
                           </div>
                         </div>
@@ -812,11 +816,23 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 {/* Search - Desktop */}
                 <Button 
+                  type="button"
                   variant="ghost" 
                   size="icon" 
+                  onClick={openSearch}
+                  aria-label="Open search"
                   className="hidden lg:flex text-slate-400 hover:text-[#2563eb] hover:bg-blue-50/80 rounded-xl w-10 h-10 transition-all duration-300 border border-transparent hover:border-blue-100/50"
                 >
                   <Search className="w-[18px] h-[18px]" />
+                </Button>
+
+                <Button
+                  type="button"
+                  onClick={openTaxAssistant}
+                  className="hidden lg:inline-flex h-10 items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 text-sm font-semibold text-blue-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200"
+                >
+                  <Bot className="h-4 w-4" />
+                  <span>Tax Assistant</span>
                 </Button>
 
                 {!isLoading && isAuthenticated && (
@@ -911,39 +927,50 @@ export default function Header() {
                 )}
 
                 {/* Mobile Menu Trigger (Sheet) */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={openSearch}
+                  aria-label="Open search"
+                  className="h-10 w-10 rounded-lg text-slate-700 transition-all hover:bg-slate-100 lg:hidden"
+                >
+                  <Search className="w-5 h-5" />
+                </Button>
+
                 <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="lg:hidden text-slate-700 hover:bg-slate-100 rounded-xl transition-all">
-                      <Menu className="w-6 h-6" />
+                    <Button type="button" variant="ghost" size="icon" className="h-10 w-10 rounded-lg text-slate-700 transition-all hover:bg-slate-100 lg:hidden" aria-label="Open navigation menu">
+                      <Menu className="w-5 h-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 overflow-y-auto flex flex-col">
-                    <SheetHeader className="p-0 border-b bg-slate-50/50 text-left overflow-hidden">
+                  <SheetContent side="right" className="flex w-[calc(100vw-24px)] max-w-[340px] flex-col overflow-y-auto p-0 sm:w-[350px]">
+                    <SheetHeader className="overflow-hidden border-b bg-white p-0 text-left">
                       <a
                         href="https://myeca.in"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 p-6 hover:bg-white transition-all cursor-pointer group"
+                        className="group flex cursor-pointer items-center gap-3 p-4 transition-all hover:bg-slate-50"
                       >
-                        <Logo size="md" className="group-hover:scale-105 transition-transform" />
+                        <Logo size="sm" className="transition-transform group-hover:scale-105" />
                         <div className="flex flex-col justify-center gap-0.5">
-                          <span className="font-bold text-xl text-[#315efb] block m-0 leading-none">
+                          <span className="m-0 block text-lg font-bold leading-none text-[#315efb]">
                             MyeCA.in
                           </span>
-                          <span className="text-[9px] text-slate-400 font-normal uppercase tracking-widest block m-0 leading-none">SMART TAX SOLUTIONS</span>
+                          <span className="m-0 block text-[9px] font-normal uppercase leading-none tracking-widest text-slate-400">SMART TAX SOLUTIONS</span>
                         </div>
                       </a>
                       <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     </SheetHeader>
 
                     <div className="flex-1 overflow-y-auto">
-                      <div className="flex flex-col py-4">
+                      <div className="grid gap-2 p-4">
                         {isAuthenticated && (
                           <Link href={
                             user?.role === 'admin' ? "/admin/users" :
                               user?.role === 'ca' ? "/ca/dashboard" :
                                 user?.role === 'team_member' ? "/admin/blog-management" :
                                   "/dashboard"
-                          } className="px-6 py-3 text-sm font-bold text-blue-600 hover:bg-blue-50 transition-colors border-l-4 border-blue-600 bg-blue-50/30">
+                          } className="flex min-h-11 items-center rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700 transition-colors hover:bg-blue-100">
                             {user?.role === 'admin' ? "Admin" :
                               user?.role === 'ca' ? "CA Dashboard" :
                                 user?.role === 'team_member' ? "Staff Panel" :
@@ -951,98 +978,105 @@ export default function Header() {
                           </Link>
                         )}
 
-                        <Accordion type="single" collapsible className="w-full">
-                          <AccordionItem value="services" className="border-none">
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { href: "/", label: "Home", icon: Home },
+                            { href: "/services", label: "Services", icon: Briefcase },
+                            { href: "/calculators", label: "Calculators", icon: Calculator },
+                            { href: "/blog", label: "Blog", icon: Newspaper },
+                          ].map((item) => {
+                            const Icon = item.icon;
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onTouchStart={() => preloadOnHover(item.href)}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={cn(
+                                  "flex min-h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700",
+                                  (item.href === "/" ? location === "/" : location.startsWith(item.href)) && "border-blue-100 bg-blue-50 text-blue-700"
+                                )}
+                              >
+                                <Icon className="h-4 w-4" />
+                                {item.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+
+                        <Accordion type="single" collapsible className="w-full rounded-lg border border-slate-200 bg-white">
+                          <AccordionItem value="services" className="border-none px-1">
                             <AccordionTrigger className={cn(
-                              "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
+                              "min-h-11 px-3 py-2 text-sm text-slate-700 transition-all hover:bg-slate-50 hover:text-blue-600 hover:no-underline",
                               location.startsWith('/services') ? "font-bold" : "font-normal"
                             )}>
                               Services
                             </AccordionTrigger>
-                            <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                              <div className="space-y-3">
-                                <div className="space-y-1">
-                                  <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</h5>
-                                  <Link href="/services/tds-filing" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Filing</Link>
-                                  <Link href="/services/gst-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">GST Registration</Link>
-                                  <Link href="/services/document-vault" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Document Vault</Link>
-                                </div>
-                                <div className="space-y-1 pt-2">
-                                  <h5 className="text-xs font-normal text-slate-400 uppercase tracking-wider mb-2">Business</h5>
-                                  <Link href="/services/company-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Company Registration</Link>
-                                  <Link href="/services/trademark-registration" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Trademark</Link>
-                                </div>
+                            <AccordionContent className="px-3 pb-3">
+                              <div className="grid gap-1">
+                                {[
+                                  ["/services/tds-filing", "TDS Filing"],
+                                  ["/services/gst-registration", "GST Registration"],
+                                  ["/services/company-registration", "Company Registration"],
+                                  ["/services/trademark-registration", "Trademark"],
+                                  ["/services/document-vault", "Document Vault"],
+                                ].map(([href, label]) => (
+                                  <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
+                                    {label}
+                                  </Link>
+                                ))}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
 
-                          <AccordionItem value="startup" className="border-none">
+                          <AccordionItem value="startup" className="border-t border-slate-100 px-1">
                             <AccordionTrigger className={cn(
-                              "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-purple-600 transition-all",
+                              "min-h-11 px-3 py-2 text-sm text-slate-700 transition-all hover:bg-slate-50 hover:text-purple-600 hover:no-underline",
                               location.startsWith('/startup') ? "font-bold" : "font-normal"
                             )}>
                               Startup Services
                             </AccordionTrigger>
-                            <AccordionContent className="bg-purple-50/30 px-6 py-2">
-                              <div className="grid grid-cols-1 gap-2">
-                                <Link href="/startup-services" className="block py-1.5 text-sm text-purple-700 font-medium">Overview</Link>
-                                <Link href="/startup/registration" className="block py-1.5 text-sm text-slate-600 hover:text-purple-600">Registration</Link>
-                                <Link href="/startup/funding" className="block py-1.5 text-sm text-slate-600 hover:text-purple-600">Funding & Grants</Link>
+                            <AccordionContent className="px-3 pb-3">
+                              <div className="grid gap-1">
+                                <Link href="/startup-services" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50">Overview</Link>
+                                <Link href="/startup/registration" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Registration</Link>
+                                <Link href="/startup/funding" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Funding & Grants</Link>
                               </div>
                             </AccordionContent>
                           </AccordionItem>
 
-                          <AccordionItem value="calculators" className="border-none">
+                          <AccordionItem value="calculators" className="border-t border-slate-100 px-1">
                             <AccordionTrigger className={cn(
-                              "px-6 py-3 text-sm text-slate-700 hover:no-underline hover:bg-slate-50 hover:text-blue-600 transition-all",
+                              "min-h-11 px-3 py-2 text-sm text-slate-700 transition-all hover:bg-slate-50 hover:text-blue-600 hover:no-underline",
                               (location.startsWith('/calculators') || location === '/compliance-calendar' || location === '/elss-comparator') ? "font-bold" : "font-normal"
                             )}>
                               Calculators
                             </AccordionTrigger>
-                            <AccordionContent className="bg-slate-50/50 px-6 py-2">
-                              <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Tax & Compliance</p>
-                              <div className="grid grid-cols-1 gap-1 mb-4">
-                                <Link href="/calculators/income-tax" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Income Tax (New vs Old)</Link>
-                                <Link href="/calculators/tax-regime" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Tax Regime Compare</Link>
-                                <Link href="/calculators/hra" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">HRA Exemption</Link>
-                                <Link href="/calculators/tds" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">TDS Calculator</Link>
-                                <Link href="/calculators/capital-gains" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Capital Gains</Link>
-                              </div>
-                              <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Wealth & Savings</p>
-                              <div className="grid grid-cols-1 gap-1 mb-4">
-                                <Link href="/calculators/sip" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">SIP Calculator</Link>
-                                <Link href="/elss-comparator" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">ELSS Comparator</Link>
-                                <Link href="/calculators/nps" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">NPS Calculator</Link>
-                                <Link href="/calculators/ppf" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">PPF Calculator</Link>
-                                <Link href="/calculators/fd" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">FD Calculator</Link>
-                              </div>
-                              <p className="text-[10px] font-normal text-slate-400 uppercase tracking-wider mb-2">Loan & EMI</p>
-                              <div className="grid grid-cols-1 gap-1">
-                                <Link href="/calculators/emi" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">EMI Calculator</Link>
-                                <Link href="/calculators/home-loan" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Loan EMI Calculator</Link>
-                                <Link href="/compliance-calendar" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Compliance Calendar</Link>
-                                <Link href="/calculators/penalty" className="block py-1.5 text-sm text-slate-600 hover:text-blue-600">Penalty Calculator</Link>
+                            <AccordionContent className="px-3 pb-3">
+                              <div className="grid gap-1">
+                                {[
+                                  ["/calculators/income-tax", "Income Tax"],
+                                  ["/calculators/gst", "GST Calculator"],
+                                  ["/calculators/salary", "Salary Calculator"],
+                                  ["/calculators/sip", "SIP Calculator"],
+                                  ["/calculators/emi", "EMI Calculator"],
+                                  ["/calculators", "All Calculators"],
+                                ].map(([href, label]) => (
+                                  <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
+                                    {label}
+                                  </Link>
+                                ))}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
                         </Accordion>
 
                         <Link
-                          href="/blog"
-                          onTouchStart={() => preloadOnHover("/blog")}
-                          className={cn(
-                            "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
-                            location.startsWith('/blog') ? "font-bold" : "font-normal"
-                          )}>
-                          Knowledge Hub (Blog)
-                        </Link>
-
-                        <Link
                           href="/about"
                           onTouchStart={() => preloadOnHover("/about")}
                           className={cn(
-                            "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
-                            location === '/about' ? "font-bold" : "font-normal"
+                            "flex min-h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors hover:bg-slate-50 hover:text-blue-600",
+                            location === '/about' ? "font-bold text-blue-700" : "font-normal"
                           )}>
                           About MyeCA.in
                         </Link>
@@ -1051,19 +1085,30 @@ export default function Header() {
                           href="/contact"
                           onTouchStart={() => preloadOnHover("/contact")}
                           className={cn(
-                            "px-6 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors border-l-4 border-transparent hover:border-blue-600",
-                            location === '/contact' ? "font-bold" : "font-normal"
+                            "flex min-h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors hover:bg-slate-50 hover:text-blue-600",
+                            location === '/contact' ? "font-bold text-blue-700" : "font-normal"
                           )}>
                           Contact Us
                         </Link>
                       </div>
                     </div>
 
-                    <div className="p-6 border-t mt-auto bg-slate-50/50">
+                    <div className="mt-auto border-t bg-slate-50/50 p-4">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          openTaxAssistant();
+                          setMobileMenuOpen(false);
+                        }}
+                        className="mb-3 h-11 w-full justify-center gap-2 rounded-lg border border-blue-100 bg-blue-50 text-blue-700 shadow-sm hover:bg-blue-600 hover:text-white"
+                      >
+                        <Bot className="h-4 w-4" />
+                        Tax Assistant
+                      </Button>
                       {!isLoading && !isAuthenticated && (
                         <div className="grid gap-3">
                           <Link href="/login" onTouchStart={() => preloadOnHover("/login")} onClick={() => setMobileMenuOpen(false)}>
-                            <Button className="w-full justify-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl h-11 shadow-lg shadow-blue-200">
+                            <Button className="h-11 w-full justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-200 hover:bg-blue-700">
                               Join / Sign in
                             </Button>
                           </Link>
@@ -1076,7 +1121,7 @@ export default function Header() {
                             setMobileMenuOpen(false);
                           }}
                           variant="outline"
-                          className="w-full justify-center text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl h-11 border-red-100"
+                          className="h-11 w-full justify-center rounded-lg border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700"
                         >
                           <LogOut className="w-4 h-4 mr-2" />
                           Log Out

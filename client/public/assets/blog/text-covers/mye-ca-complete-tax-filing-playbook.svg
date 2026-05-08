@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">The Complete MyeCA Tax Filing Playbook: From Form 16 to Expert Review</title>
+  <desc id="desc">MyeCA blog cover based on the article content: Start with Form 16,</desc>
+  <rect width="1200" height="630" fill="#f4f6f8"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#ffffff" stroke="#1e2f3d" stroke-width="3"/>
+  <text x="72" y="88" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="800" letter-spacing="5" fill="#1e2f3d">MYECA INSIGHTS</text>
+  <text x="72" y="154" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="900" fill="#1e2f3d">Complete MyeCA Tax</text>
+  <text x="72" y="236" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="900" fill="#1e2f3d">Filing Playbook</text>
+  <rect x="72" y="306" width="330" height="48" rx="24" fill="#fff" stroke="#1e2f3d" stroke-width="3"/>
+  <text x="98" y="338" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#1e2f3d">Start with Form 16,</text>
+  <g transform="translate(388 252)">
+    <path d="M28 74h112l30 36h178v142H28z" fill="#e0a84e" stroke="#1e2f3d" stroke-width="6" stroke-linejoin="round"/>
+    <rect x="58" y="28" width="234" height="168" rx="14" fill="#fff" stroke="#1e2f3d" stroke-width="6"/>
+    <text x="92" y="86" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="900" fill="#1e2f3d">DOCS</text>
+    <line x1="92" y1="116" x2="230" y2="116" stroke="#1e2f3d" stroke-width="5"/>
+    <line x1="92" y1="146" x2="260" y2="146" stroke="#1e2f3d" stroke-width="5"/>
+    <path d="M28 128h320v124H28z" fill="#607d96" stroke="#1e2f3d" stroke-width="6"/>
+  </g>
+  <g transform="translate(824 262)">
+    <rect x="0" y="0" width="300" height="68" rx="18" fill="#fff" stroke="#1e2f3d" stroke-width="4"/>
+    <circle cx="38" cy="34" r="16" fill="#607d96" stroke="#1e2f3d" stroke-width="3"/>
+    <text x="70" y="43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#1e2f3d">Start with Form 16,</text>
+  </g>
+  <g transform="translate(824 352)">
+    <rect x="0" y="0" width="300" height="68" rx="18" fill="#fff" stroke="#1e2f3d" stroke-width="4"/>
+    <circle cx="38" cy="34" r="16" fill="#e0a84e" stroke="#1e2f3d" stroke-width="3"/>
+    <text x="70" y="43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#1e2f3d">Choose the ITR form</text>
+  </g>
+  <g transform="translate(824 442)">
+    <rect x="0" y="0" width="300" height="68" rx="18" fill="#fff" stroke="#1e2f3d" stroke-width="4"/>
+    <circle cx="38" cy="34" r="16" fill="#607d96" stroke="#1e2f3d" stroke-width="3"/>
+    <text x="70" y="43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#1e2f3d">Reconcile TDS before claiming</text>
+  </g>
+  <text x="72" y="574" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#1e2f3d">MyeCA.in</text>
+</svg>

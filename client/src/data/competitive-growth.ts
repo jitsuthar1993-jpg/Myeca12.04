@@ -1,0 +1,197 @@
+import {
+  BadgeCheck,
+  BriefcaseBusiness,
+  Building2,
+  FileSearch,
+  FileText,
+  FolderCheck,
+  Landmark,
+  ReceiptText,
+  ShieldCheck,
+  TrendingUp,
+  UserCheck,
+} from "lucide-react";
+
+export const competitiveProofPoints = [
+  "Named CA review before filing",
+  "AIS, 26AS and Form 16 mismatch checklist",
+  "Written scope before payment",
+  "Secure document vault with case history",
+];
+
+export const caseTimelineStages = [
+  "Intake started",
+  "Documents pending",
+  "CA assigned",
+  "Computation review",
+  "User approval",
+  "Filed or submitted",
+  "Acknowledgment uploaded",
+  "Post-filing support",
+];
+
+export const pricingPlans = [
+  {
+    name: "Salary",
+    price: "Rs. 499",
+    audience: "Single employer, salary and interest income",
+    icon: FileText,
+    badge: "Starter",
+    included: ["ITR-1 guidance", "Regime comparison", "Form 16 checklist", "Basic vault"],
+    caTouchpoints: "Optional CA review add-on",
+    sla: "24-48 hours after documents",
+    exclusions: ["Capital gains", "Business income", "Foreign assets"],
+    cta: "/auth/register",
+  },
+  {
+    name: "Expert Assisted",
+    price: "Rs. 999",
+    audience: "Most salaried users and multiple Form 16 cases",
+    icon: UserCheck,
+    badge: "Recommended",
+    included: ["Named CA review", "AIS/26AS checks", "HRA/rent support", "Refund and notice risk notes"],
+    caTouchpoints: "Named CA review plus one clarification loop",
+    sla: "24 hours after complete documents",
+    exclusions: ["F&O audit", "Foreign tax credit", "GST books"],
+    cta: "/auth/register",
+    featured: true,
+  },
+  {
+    name: "Capital Gains",
+    price: "Rs. 1,499",
+    audience: "Stocks, mutual funds, property, crypto/VDA",
+    icon: TrendingUp,
+    badge: "Investor",
+    included: ["Broker P&L upload workflow", "STCG/LTCG review", "Tax-loss harvesting notes", "Schedule CG/VDA checklist"],
+    caTouchpoints: "CA review for gain classification and set-off",
+    sla: "2-3 business days",
+    exclusions: ["Tax audit", "Foreign broker statements", "Unlisted share valuation"],
+    cta: "/capital-gains-import",
+  },
+  {
+    name: "Freelancer / 44ADA",
+    price: "Rs. 2,499",
+    audience: "Consultants, creators, professionals and contractors",
+    icon: BriefcaseBusiness,
+    badge: "Business income",
+    included: ["44ADA/44AD decision support", "Advance tax notes", "Expense checklist", "GST threshold flag"],
+    caTouchpoints: "CA review for business income, deductions and compliance risk",
+    sla: "3-5 business days",
+    exclusions: ["Statutory audit", "Monthly GST filing", "Bookkeeping cleanup"],
+    cta: "/services/tax-planning",
+  },
+  {
+    name: "NRI / Foreign Assets",
+    price: "Rs. 4,999",
+    audience: "NRI, foreign income, DTAA, Form 67 and Schedule FA",
+    icon: Landmark,
+    badge: "Specialist",
+    included: ["Residential status check", "DTAA checklist", "Schedule FA review", "Form 67 guidance"],
+    caTouchpoints: "Specialist CA review with written risk notes",
+    sla: "5-7 business days",
+    exclusions: ["Overseas tax filing", "FEMA advisory beyond India tax", "Transfer pricing"],
+    cta: "/expert-consultation",
+  },
+  {
+    name: "Business / GST",
+    price: "Custom",
+    audience: "GST, TDS, company compliance and vCFO work",
+    icon: Building2,
+    badge: "Compliance OS",
+    included: ["Service milestones", "Mandatory vs optional cost list", "Compliance calendar", "Founder dashboard"],
+    caTouchpoints: "Dedicated owner for recurring compliance",
+    sla: "Defined in written scope",
+    exclusions: ["Government fees unless stated", "Stamp duty unless stated", "Out-of-scope legal drafting"],
+    cta: "/services",
+  },
+];
+
+export const competitorPages = [
+  {
+    slug: "cleartax-alternative",
+    competitor: "ClearTax",
+    title: "ClearTax Alternative for CA-Reviewed ITR Filing",
+    description:
+      "Compare MyeCA with ClearTax if you want named CA accountability, visible AIS/26AS checks, document history and transparent scope before payment.",
+    goodPoints: ["Large brand recall", "Deep tax guides and calculators", "DIY and CA-assisted filing", "Security and trust messaging"],
+    myeCAEdge: ["Named expert visibility", "Pay-after-review messaging", "Case timeline with issue log", "Document vault tied to every filing"],
+    primaryCta: "/pricing",
+    source: "https://cleartax.in/s/pricing",
+  },
+  {
+    slug: "taxbuddy-alternative",
+    competitor: "TaxBuddy",
+    title: "TaxBuddy Alternative with Better Case Tracking",
+    description:
+      "Use MyeCA when you want assisted filing plus self-serve document status, clear plan scope and post-filing support visibility.",
+    goodPoints: ["Strong assisted filing pitch", "AI-powered positioning", "Notice and compliance services", "Affordable entry plans"],
+    myeCAEdge: ["Customer-visible case stages", "Document viewer with extraction review", "No hidden charge proof", "CA comments attached to files"],
+    primaryCta: "/documents",
+    source: "https://www.taxbuddy.com/pricing-itr-app",
+  },
+  {
+    slug: "quicko-capital-gains-alternative",
+    competitor: "Quicko",
+    title: "Quicko Alternative for Capital Gains with CA Review",
+    description:
+      "MyeCA matches investor tooling with broker upload workflows and adds CA review, notice defense and a reusable tax document vault.",
+    goodPoints: ["Investor-first product", "Low-cost paid plans", "App connections", "Tax-loss harvesting and capital gains focus"],
+    myeCAEdge: ["CA-reviewed capital gains", "F&O audit flagging", "Crypto/VDA checklist", "AIS mismatch review before filing"],
+    primaryCta: "/capital-gains-import",
+    source: "https://quicko.com/pricing",
+  },
+  {
+    slug: "indiafilings-alternative",
+    competitor: "IndiaFilings",
+    title: "IndiaFilings Alternative for Transparent Startup Compliance",
+    description:
+      "MyeCA packages GST, company registration and compliance with milestone tracking, mandatory-vs-optional cost clarity and renewal reminders.",
+    goodPoints: ["Very broad service catalog", "Startup and business setup focus", "GST, MCA, payroll and trademark coverage", "Strong business positioning"],
+    myeCAEdge: ["Transparent add-on policy", "Founder compliance dashboard", "Service milestone tracker", "Document checklist before payment"],
+    primaryCta: "/startup-services",
+    source: "https://www.indiafilings.com/",
+  },
+  {
+    slug: "best-ca-assisted-itr-filing",
+    competitor: "Online filing portals",
+    title: "Best CA-Assisted ITR Filing for Complex Indian Taxpayers",
+    description:
+      "A factual guide for choosing MyeCA when your return needs CA review, document reconciliation, capital gains, NRI checks, GST or notice support.",
+    goodPoints: ["Many portals are fast for simple returns", "Low self-filing prices exist", "Large brands have broad content", "Local CAs offer personal trust"],
+    myeCAEdge: ["Expert-led digital workflow", "Written scope and visible exclusions", "Secure vault and case history", "Tax plus compliance upgrade path"],
+    primaryCta: "/pricing",
+    source: "https://myeca.in/pricing",
+  },
+];
+
+export const vaultChecklist = [
+  { label: "Form 16 uploaded", detail: "Salary, TDS and employer TAN are readable", icon: FileText },
+  { label: "AIS and 26AS checked", detail: "Mismatch queue is visible before CA review", icon: FileSearch },
+  { label: "Supporting proofs tagged", detail: "HRA, 80C, 80D and home-loan proofs are linked", icon: FolderCheck },
+  { label: "CA comments recorded", detail: "Clarifications stay attached to the case history", icon: BadgeCheck },
+  { label: "Access audit ready", detail: "Downloads and review actions are traceable", icon: ShieldCheck },
+];
+
+export const businessWorkflowCards = [
+  {
+    title: "GST Registration",
+    href: "/services/gst-registration",
+    detail: "Documents, application, officer query response and certificate download.",
+    priceNote: "Government portal is free; MyeCA fee covers preparation and expert handling.",
+    icon: ReceiptText,
+  },
+  {
+    title: "Company Registration",
+    href: "/services/company-registration",
+    detail: "Name, DSC/DIN, incorporation, PAN/TAN and first compliance checklist.",
+    priceNote: "State stamp duty and government fees are shown separately before payment.",
+    icon: Building2,
+  },
+  {
+    title: "Founder Compliance",
+    href: "/startup-services",
+    detail: "ROC, GST, TDS, payroll, trademark and virtual CFO milestones in one dashboard.",
+    priceNote: "Mandatory, optional and recurring costs are clearly separated.",
+    icon: BriefcaseBusiness,
+  },
+];

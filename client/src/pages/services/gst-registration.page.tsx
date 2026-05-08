@@ -41,6 +41,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import StandardPricingSection from "@/components/pricing/StandardPricingSection";
+import { getCheckoutAmount, getPricingByServiceId, getServicePriceForSchema } from "@/data/pricing";
 
 export default function GstRegistrationPage() {
   const seo = getSEOConfig('/services/gst-registration');
@@ -49,6 +51,7 @@ export default function GstRegistrationPage() {
   const [checkoutTitle, setCheckoutTitle] = useState("GST Registration");
   const [businessType, setBusinessType] = useState<string>("");
   const [annualTurnover, setAnnualTurnover] = useState<string>("");
+  const standardPricing = getPricingByServiceId("gst-registration");
 
   const gstThresholds = [
     {
@@ -286,7 +289,7 @@ export default function GstRegistrationPage() {
         keywords={seo?.keywords}
         type={seo?.type || "service"}
         serviceData={{
-          price: seo?.serviceData?.price || "2999",
+          price: getServicePriceForSchema("gst-registration", seo?.serviceData?.price || "2999"),
           rating: seo?.serviceData?.rating || "4.9",
           reviews: seo?.serviceData?.reviews || "50000",
           availability: "https://schema.org/InStock"
@@ -736,6 +739,21 @@ export default function GstRegistrationPage() {
             </CardContent>
           </Card>
         </m.div>
+
+        {standardPricing && (
+          <StandardPricingSection
+            mode="service-package"
+            title="GST registration pricing"
+            description="See the MyeCA professional fee, GST treatment, inclusions, exclusions, required documents, and expected timeline before checkout."
+            service={standardPricing}
+            className="mb-4 py-0"
+            onCheckout={(service) => {
+              setCheckoutTitle(service.name);
+              setCheckoutPrice(getCheckoutAmount(service.pricing) || 2999);
+              setIsCheckoutOpen(true);
+            }}
+          />
+        )}
 
         {/* Pricing Plans */}
         <m.div

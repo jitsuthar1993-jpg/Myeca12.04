@@ -1,6 +1,6 @@
 import React from "react";
 import { Check, X, Shield, Clock, Calculator, UserCheck, Smartphone } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { MobileCard } from "@/components/mobile";
 
 const comparisonData = [
   {
@@ -42,7 +42,43 @@ const comparisonData = [
 
 export function ComparisonTable() {
   return (
-    <div className="w-full overflow-x-auto">
+    <>
+      <div className="md:hidden space-y-3">
+        {comparisonData.map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <MobileCard key={idx} className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold leading-snug text-slate-950">{item.feature}</h3>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-600">MyeCA.in advantage</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-emerald-900">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" strokeWidth={3} />
+                <span className="text-sm font-semibold leading-snug">{item.myeCA}</span>
+              </div>
+
+              <div className="space-y-1.5 text-xs leading-snug text-slate-500">
+                <div className="flex gap-2">
+                  <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-rose-500" strokeWidth={3} />
+                  <span><span className="font-semibold text-slate-700">DIY:</span> {item.diy}</span>
+                </div>
+                <div className="flex gap-2">
+                  <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" strokeWidth={3} />
+                  <span><span className="font-semibold text-slate-700">Others:</span> {item.other}</span>
+                </div>
+              </div>
+            </MobileCard>
+          );
+        })}
+      </div>
+
+      <div className="hidden w-full overflow-x-auto md:block">
       <table className="w-full border-collapse bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200">
         <thead>
           <tr className="bg-slate-50/50">
@@ -100,7 +136,8 @@ export function ComparisonTable() {
             );
           })}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }

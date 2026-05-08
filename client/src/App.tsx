@@ -23,9 +23,6 @@ const UnifiedFAB = lazy(() =>
 );
 const GlobalSearch = lazy(() => import('@/components/search/GlobalSearch'));
 const KeyboardShortcutsModal = lazy(() => import('@/components/keyboard/KeyboardShortcutsModal'));
-const TaxChatbotWidget = lazy(() =>
-  import('@/components/chat/TaxChatbot').then((m) => ({ default: m.TaxChatbot }))
-);
 const ProdOnlyComponents = lazy(() => import('@/components/ProdOnlyComponents'));
 
 const AppLoading = () => <PageSkeleton />;
@@ -88,6 +85,7 @@ function Router() {
   );
 
   const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath;
+  const hideFooter = currentPath === '/tax-assistant';
 
   useRoutePreload();
 
@@ -95,11 +93,11 @@ function Router() {
     <div className="min-h-screen flex flex-col bg-white">
       <ScrollToTop />
       {showLayoutComponents && <Header />}
-      {showLayoutComponents && <div className="h-[74px]"></div>}
+      {showLayoutComponents && <div className="h-[60px] md:h-[74px]"></div>}
       <main className="flex-1 bg-white">
         <Routes />
       </main>
-      {showLayoutComponents && <Footer />}
+      {showLayoutComponents && !hideFooter && <Footer />}
     </div>
   );
 }
@@ -108,8 +106,8 @@ function AppContent() {
   const [location, navigate] = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const isAuthScreen = isAuthLayoutPath(location);
+  const isTaxAssistantPage = location === '/tax-assistant';
 
   useAnalyticsInitialization();
   usePageTracking();
@@ -184,21 +182,10 @@ function AppContent() {
         </ErrorBoundary>
       )}
 
-      {!isAuthScreen && (
+      {!isAuthScreen && !isTaxAssistantPage && (
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
-            <UnifiedFAB
-              onChatbotOpen={() => setIsChatbotOpen(true)}
-              isChatbotOpen={isChatbotOpen}
-            />
-          </Suspense>
-        </ErrorBoundary>
-      )}
-
-      {!isAuthScreen && isChatbotOpen && (
-        <ErrorBoundary fallback={null}>
-          <Suspense fallback={null}>
-            <TaxChatbotWidget isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
+            <UnifiedFAB />
           </Suspense>
         </ErrorBoundary>
       )}

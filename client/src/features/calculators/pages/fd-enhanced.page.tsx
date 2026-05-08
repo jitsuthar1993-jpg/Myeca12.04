@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,7 +23,10 @@ import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/componen
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
 export default function EnhancedFDCalculator() {
-  const seo = getSEOConfig('/calculators/fd-enhanced');
+  const [location] = useLocation();
+  const isEnhancedRoute = location.split("?")[0] === "/calculators/fd-enhanced";
+  const seoPath = isEnhancedRoute ? "/calculators/fd-enhanced" : "/calculators/fd";
+  const seo = getSEOConfig(seoPath);
   const [principal, setPrincipal] = useState(100000);
   const [rate, setRate] = useState(6.5);
   const [years, setYears] = useState(5);
@@ -76,12 +79,16 @@ export default function EnhancedFDCalculator() {
       />
 
       <CalcHero 
-        title="Enhanced FD Planner"
-        description="Compare real-time bank interest rates and calculate post-tax maturity returns with precision."
+        title={isEnhancedRoute ? "Enhanced FD Planner" : "FD Calculator"}
+        description={
+          isEnhancedRoute
+            ? "Compare bank interest rates and calculate post-tax fixed deposit maturity returns with precision."
+            : "Calculate fixed deposit maturity, interest earned, effective yield and tax-adjusted returns."
+        }
         category="Investment Tools"
         icon={<PiggyBank className="w-6 h-6" />}
         variant="indigo"
-        breadcrumbItems={[{ name: "Enhanced FD" }]}
+        breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced FD" : "FD Calculator" }]}
       />
 
       <CalcLayout

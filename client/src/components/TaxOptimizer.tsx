@@ -26,6 +26,9 @@ import {
 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { formatCurrency } from "@/lib/utils";
+import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
+import { calculateIncomeTax } from "@/lib/tax-calculations";
+import { DEFAULT_ASSESSMENT_YEAR, STANDARD_DEDUCTION_BY_REGIME, TAX_TRANSITION_NOTE } from "@/lib/tax-law-reference";
 
 interface DeductionCategory {
   id: string;
@@ -172,19 +175,24 @@ export function TaxOptimizer() {
       return total + cat.currentAmount + remaining;
     }, 0);
 
-    // Tax calculation for old regime
-    const calculateOldRegimeTax = (taxableIncome: number) => {
-      if (taxableIncome <= 250000) return 0;
-      if (taxableIncome <= 500000) return (taxableIncome - 250000) * 0.05;
-      if (taxableIncome <= 1000000) return 12500 + (taxableIncome - 500000) * 0.20;
-      return 112500 + (taxableIncome - 1000000) * 0.30;
-    };
-
-    const currentTaxableIncome = Math.max(0, income - totalCurrentDeductions - 50000); // Standard deduction
-    const optimizedTaxableIncome = Math.max(0, income - maxPotentialDeductions - 50000);
-    
-    const currentTax = calculateOldRegimeTax(currentTaxableIncome) * 1.04; // With cess
-    const optimizedTax = calculateOldRegimeTax(optimizedTaxableIncome) * 1.04;
+    const ageValue = age === "above80" ? 82 : age === "60to80" ? 65 : 30;
+    const currentCalculation = calculateIncomeTax({
+      income,
+      regime: "old",
+      deductions: totalCurrentDeductions + STANDARD_DEDUCTION_BY_REGIME.old,
+      age: ageValue,
+      assessmentYear: DEFAULT_ASSESSMENT_YEAR,
+    });
+    const optimizedCalculation = calculateIncomeTax({
+      income,
+      regime: "old",
+      deductions: maxPotentialDeductions + STANDARD_DEDUCTION_BY_REGIME.old,
+      age: ageValue,
+      assessmentYear: DEFAULT_ASSESSMENT_YEAR,
+    });
+    const currentTaxableIncome = currentCalculation.taxableIncome;
+    const currentTax = currentCalculation.taxPayable;
+    const optimizedTax = optimizedCalculation.taxPayable;
 
     return {
       totalIncome: income,
@@ -219,7 +227,10 @@ export function TaxOptimizer() {
           Maximize Your Tax Savings
         </h1>
         <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
-          Get personalized recommendations to reduce your tax liability under the Old Regime
+          Get personalized AY 2026-27 recommendations to reduce your tax liability under the Old Regime
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          {TAX_TRANSITION_NOTE}
         </p>
       </div>
 
@@ -329,7 +340,7 @@ export function TaxOptimizer() {
                   <div className="flex items-center justify-between">
                     <Label className="flex items-center gap-2">
                       {category.icon}
-                      {category.name} ({category.section})
+                      {category.name} ({category.section})<SectionReferenceBadge section={category.section} />
                     </Label>
                     <Badge variant="outline">
                       Limit: {category.limit === Infinity ? "No limit" : formatCurrency(category.limit)}
@@ -504,7 +515,7 @@ export function TaxOptimizer() {
             <div className="flex items-start gap-2 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
               <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                These recommendations are for the Old Tax Regime. The New Regime doesn't allow most deductions but may still be beneficial for lower incomes. Compare both regimes before deciding.
+                {TAX_TRANSITION_NOTE} These recommendations are for the Old Tax Regime. The New Regime does not allow most deductions but may still be beneficial. Compare both regimes before deciding.
               </p>
             </div>
           </div>
@@ -515,4 +526,3 @@ export function TaxOptimizer() {
 }
 
 export default TaxOptimizer;
-

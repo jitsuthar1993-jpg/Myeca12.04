@@ -30,6 +30,15 @@ const STATIC_LINKS = [
   { title: "PPF Calculator", href: "/calculators/ppf", icon: Landmark, category: "Calculators" },
   { title: "EMI Calculator", href: "/calculators/emi", icon: Calculator, category: "Calculators" },
   { title: "Home Loan Calculator", href: "/calculators/home-loan", icon: Home, category: "Calculators" },
+  { title: "GST Calculator", href: "/calculators/gst", icon: Receipt, category: "Calculators" },
+  { title: "Salary Calculator", href: "/calculators/salary", icon: Calculator, category: "Calculators" },
+  { title: "Gratuity Calculator", href: "/calculators/gratuity", icon: Gem, category: "Calculators" },
+  { title: "EPF Calculator", href: "/calculators/epf", icon: Landmark, category: "Calculators" },
+  { title: "RD Calculator", href: "/calculators/rd", icon: Landmark, category: "Calculators" },
+  { title: "Lumpsum Calculator", href: "/calculators/lumpsum", icon: TrendingUp, category: "Calculators" },
+  { title: "SWP Calculator", href: "/calculators/swp", icon: TrendingUp, category: "Calculators" },
+  { title: "Inflation Calculator", href: "/calculators/inflation", icon: TrendingUp, category: "Calculators" },
+  { title: "Loan Eligibility Calculator", href: "/calculators/loan-eligibility", icon: Calculator, category: "Calculators" },
   
   // Services
   { title: "TDS Filing", href: "/services/tds-filing", icon: Receipt, category: "Services" },

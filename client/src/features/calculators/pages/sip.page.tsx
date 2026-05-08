@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Slider } from "@/components/ui/slider";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { calculateEnhancedSIP, formatCurrency } from "@/lib/enhanced-calculator-utils";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -30,7 +30,10 @@ import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/componen
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
 export default function SIPCalculator() {
-  const seo = getSEOConfig('/calculators/sip');
+  const [location] = useLocation();
+  const isEnhancedRoute = location.split("?")[0] === "/calculators/sip-enhanced";
+  const seoPath = isEnhancedRoute ? "/calculators/sip-enhanced" : "/calculators/sip";
+  const seo = getSEOConfig(seoPath);
   const [monthlyAmount, setMonthlyAmount] = useState<number>(5000);
   const [years, setYears] = useState<number>(10);
   const [expectedReturn, setExpectedReturn] = useState<number>(12);
@@ -58,12 +61,16 @@ export default function SIPCalculator() {
       />
 
       <CalcHero 
-        title="SIP Calculator"
-        description="Plan your long-term wealth creation with our professional Systematic Investment Plan calculator."
+        title={isEnhancedRoute ? "Enhanced SIP Calculator" : "SIP Calculator"}
+        description={
+          isEnhancedRoute
+            ? "Plan mutual fund SIP returns with compounding projections, year-wise growth and CA-reviewed investment context."
+            : "Plan your long-term wealth creation with our professional Systematic Investment Plan calculator."
+        }
         category="Investment Tools"
         icon={<TrendingUp className="w-6 h-6" />}
         variant="blue"
-        breadcrumbItems={[{ name: "SIP Calculator" }]}
+        breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced SIP Calculator" : "SIP Calculator" }]}
       />
 
       <CalcLayout

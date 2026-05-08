@@ -1,0 +1,26 @@
+# MyeCA.in - India's Premier Digital Tax Platform
+
+MyeCA.in is a high-performance financial services platform designed for Indian taxpayers, businesses, and startups. We combine expert Chartered Accountant (CA) assistance with intelligent automated tools.
+
+## Core Services
+- **ITR Filing**: Expert-assisted Income Tax Return filing with maximum refund guarantee.
+- **GST Compliance**: Registration, returns, and notice management for businesses.
+- **Startup Setup**: Company registration (Pvt Ltd, LLP), DPIIT recognition, and funding assistance.
+- **Business Compliance**: TDS filing, Trademark registration, and Virtual CFO services.
+
+## Interactive Tools
+- **Income Tax Calculator**: Compare New vs Old regime for AY 2025-26.
+- **HSN/SAC Finder**: Real-time search for GST codes and rates.
+- **Financial Calculators**: SIP, EMI, NPS, PPF, and Capital Gains calculators.
+- **Form 16 Parser**: Instant tax detail extraction from PDF.
+
+## Trust & Authority
+- **Expertise**: Content and tools verified by certified Chartered Accountants.
+- **Freshness**: Updated for Union Budget 2025 and latest tax laws.
+- **Security**: Bank-grade data protection and private document vault.
+
+## Key Links
+- Main Site: https://myeca.in
+- Calculators: https://myeca.in/calculators
+- Blog: https://myeca.in/blog
+- Services: https://myeca.in/services

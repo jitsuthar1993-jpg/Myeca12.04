@@ -11,11 +11,21 @@ import {
   ArrowRight, ShieldCheck, Scale, IndianRupee, Info 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import Breadcrumb from "@/components/Breadcrumb";
 import { getHowToSchema } from "@/utils/seo-defaults";
 import { cn } from "@/lib/utils";
+import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
+import {
+  AY_2026_27_NEW_REGIME_SLABS,
+  DEFAULT_ASSESSMENT_YEAR,
+  DEFAULT_FINANCIAL_YEAR,
+  REBATE_87A_BY_REGIME,
+  STANDARD_DEDUCTION_BY_REGIME,
+  TAX_TRANSITION_NOTE,
+} from "@/lib/tax-law-reference";
 
 interface TaxSlab {
   min: number;
@@ -45,6 +55,7 @@ interface TaxCalculation {
 }
 
 const assessmentYears = [
+  { value: "2026-27", label: "AY 2026-27 (FY 2025-26)" },
   { value: "2025-26", label: "AY 2025-26 (FY 2024-25)" },
   { value: "2024-25", label: "AY 2024-25 (FY 2023-24)" },
   { value: "2023-24", label: "AY 2023-24 (FY 2022-23)" }
@@ -52,6 +63,22 @@ const assessmentYears = [
 
 // Default tax rates (Budget 2024 rates for FY 2024-25)
 const defaultTaxRates: { [key: string]: TaxRates } = {
+  "2026-27": {
+    year: "2026-27",
+    oldRegime: [
+      { min: 0, max: 250000, rate: 0 },
+      { min: 250000, max: 500000, rate: 5 },
+      { min: 500000, max: 1000000, rate: 20 },
+      { min: 1000000, max: null, rate: 30 }
+    ],
+    newRegime: AY_2026_27_NEW_REGIME_SLABS.map((slab) => ({
+      min: slab.min,
+      max: Number.isFinite(slab.max) ? slab.max : null,
+      rate: slab.rate * 100
+    })),
+    standardDeduction: STANDARD_DEDUCTION_BY_REGIME.new,
+    basicExemption: 400000
+  },
   "2025-26": {
     year: "2025-26",
     oldRegime: [
@@ -93,8 +120,12 @@ const defaultTaxRates: { [key: string]: TaxRates } = {
 };
 
 export default function TaxRegimeCalculator() {
-  const seo = getSEOConfig('/calculators/tax-regime');
-  const [selectedYear, setSelectedYear] = useState("2025-26");
+  const [location] = useLocation();
+  const isComparatorRoute = location.split("?")[0] === "/calculators/regime-comparator";
+  const seoPath = isComparatorRoute ? "/calculators/regime-comparator" : "/calculators/tax-regime";
+  const seo = getSEOConfig(seoPath);
+  const pageLabel = isComparatorRoute ? "Regime Comparator" : "Tax Regime Calculator";
+  const [selectedYear, setSelectedYear] = useState(DEFAULT_ASSESSMENT_YEAR);
   const [income, setIncome] = useState("");
   const [deductions, setDeductions] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -106,51 +137,25 @@ export default function TaxRegimeCalculator() {
   
   const { toast } = useToast();
 
-  const searchTaxRates = async () => {
+  const openOfficialTaxReferences = () => {
     setIsSearching(true);
-    try {
-      const response = await fetch('/api/search-tax-rates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assessmentYear: selectedYear })
-      });
-
-      if (response.ok) {
-        const searchData = await response.json();
-        if (searchData.knownRates) {
-          setTaxRates(prev => ({
-            ...prev,
-            [selectedYear]: {
-              year: selectedYear,
-              oldRegime: searchData.knownRates.oldRegime,
-              newRegime: searchData.knownRates.newRegime,
-              standardDeduction: searchData.knownRates.standardDeduction,
-              basicExemption: searchData.knownRates.newRegime[0].max
-            }
-          }));
-        }
-        Object.entries(searchData.searchUrls).forEach(([key, url], index) => {
-          setTimeout(() => { window.open(url as string, `_blank_${key}`); }, index * 500);
-        });
-        toast({ title: "Search URLs Opened", description: `Opened Google search tabs for AY ${selectedYear} tax rates. Please verify the current rates from official sources.` });
-      } else {
-        throw new Error('Failed to get search URLs');
-      }
-    } catch (error) {
-      toast({ title: "Search Failed", description: "Could not open search URLs. Please manually search for current tax rates.", variant: "destructive" });
-    } finally {
+    [
+      "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/objective-and-scope-new-act",
+      "https://www.incometaxindia.gov.in/income-tax-bill-2025",
+    ].forEach((url, index) => {
+      setTimeout(() => { window.open(url, `_blank_official_tax_${index}`); }, index * 300);
+    });
+    toast({ title: "Official references opened", description: `Opened Income Tax Department references for AY ${selectedYear}.` });
+    setTimeout(() => {
       setIsSearching(false);
-    }
+    }, 1000);
   };
 
   const calculateTax = (grossIncome: number, totalDeds: number, regime: 'old' | 'new'): TaxCalculation => {
-    const currentRates = taxRates[selectedYear] || defaultTaxRates["2025-26"];
+    const currentRates = taxRates[selectedYear] || defaultTaxRates[DEFAULT_ASSESSMENT_YEAR];
     const slabs = regime === 'old' ? currentRates.oldRegime : currentRates.newRegime;
-    const standardDeduction = regime === 'new' ? currentRates.standardDeduction : 50000; // 50k SD in old regime usually, assuming 50k for salaried.
-    const maxDeductions = regime === 'old' ? totalDeds + 50000 : currentRates.standardDeduction; 
-    
-    // For simplicity: Old regime takes user deductions + 50k SD. New regime takes 75k SD (from Budget 24).
-    const appliedDeductions = regime === 'old' ? totalDeds + 50000 : currentRates.standardDeduction;
+    const appliedDeductions = regime === 'old' ? totalDeds + STANDARD_DEDUCTION_BY_REGIME.old : currentRates.standardDeduction;
     const taxableIncome = Math.max(0, grossIncome - appliedDeductions);
     
     let taxPayable = 0;
@@ -173,8 +178,9 @@ export default function TaxRegimeCalculator() {
     }
 
     // Rebate 87A
-    if (regime === 'old' && taxableIncome <= 500000) { taxPayable = 0; }
-    if (regime === 'new' && taxableIncome <= 700000) { taxPayable = 0; } // Assuming default 7L limit for new regime 87A
+    if (regime === 'old' && taxableIncome <= REBATE_87A_BY_REGIME.old.incomeLimit) { taxPayable = 0; }
+    if (regime === 'new' && selectedYear === DEFAULT_ASSESSMENT_YEAR && taxableIncome <= REBATE_87A_BY_REGIME.new.incomeLimit) { taxPayable = 0; }
+    if (regime === 'new' && selectedYear !== DEFAULT_ASSESSMENT_YEAR && taxableIncome <= 700000) { taxPayable = 0; }
 
     const cess = taxPayable > 0 ? taxPayable * 0.04 : 0;
     const totalTax = taxPayable + cess;
@@ -245,12 +251,12 @@ export default function TaxRegimeCalculator() {
           },
           {
             question: "Is the Standard Deduction available in both?",
-            answer: "Yes. The Standard Deduction of ₹75,000 (updated in Budget 2024) is available under the New Regime, while the Old Regime offers ₹50,000."
+            answer: "Yes. For AY 2026-27, the Standard Deduction is ₹75,000 under the New Regime and ₹50,000 under the Old Regime."
           }
         ]}
       />
       <div className="min-h-screen bg-slate-50/50 calculator-gradient-bg pb-24">
-        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: "Regime Comparator" }]} />
+        <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: pageLabel }]} />
 
         {/* --- HERO SECTION --- */}
         <section className="relative pt-12 pb-16 overflow-hidden">
@@ -262,7 +268,7 @@ export default function TaxRegimeCalculator() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 text-[11px] font-normal uppercase tracking-widest mb-6 shadow-sm"
             >
               <Scale className="w-3.5 h-3.5" />
-              Regime Comparator
+              {pageLabel}
             </m.div>
             <m.h1
               initial={{ opacity: 0, y: 10 }}
@@ -277,7 +283,7 @@ export default function TaxRegimeCalculator() {
               transition={{ delay: 0.1 }}
               className="text-lg text-slate-500 max-w-2xl mx-auto font-normal"
             >
-              Discover which tax regime helps you save more money. Compare side-by-side with the latest FY 2024-25 rates.
+              Discover which tax regime helps you save more money. Compare side-by-side with AY 2026-27 rates for FY {DEFAULT_FINANCIAL_YEAR}.
             </m.p>
           </div>
         </section>
@@ -375,9 +381,9 @@ export default function TaxRegimeCalculator() {
                  </div>
                  <div>
                     <h3 className="text-sm font-normal text-slate-900 mb-1 tracking-tight">Accurate Estimations</h3>
-                    <p className="text-xs font-normal text-slate-500 mb-3">Calculations use default Budget 2024 rates. For precise planning, verify with current notifications.</p>
-                    <Button variant="outline" size="sm" onClick={searchTaxRates} disabled={isSearching} className="h-8 rounded-lg text-xs font-normal border-slate-200">
-                       {isSearching ? 'Opening...' : 'Verify Rates on Google'}
+                    <p className="text-xs font-normal text-slate-500 mb-3">Calculations use AY 2026-27 Income Tax Department rates. Open official references for source verification.</p>
+                    <Button variant="outline" size="sm" onClick={openOfficialTaxReferences} disabled={isSearching} className="h-8 rounded-lg text-xs font-normal border-slate-200">
+                       {isSearching ? 'Opening...' : 'Official References'}
                     </Button>
                  </div>
               </div>
@@ -478,7 +484,7 @@ export default function TaxRegimeCalculator() {
                       <div className="bg-white rounded-[2.5rem] border-2 border-emerald-50 shadow-sm overflow-hidden flex flex-col">
                         <div className="p-6 bg-emerald-50/50 border-b border-emerald-50 text-center">
                           <h4 className="font-normal text-emerald-900 tracking-tight text-lg mb-1">New Regime</h4>
-                          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[10px] uppercase tracking-widest border-0">Default from FY24</Badge>
+                          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[10px] uppercase tracking-widest border-0">Default under 115BAC</Badge>
                         </div>
                         <div className="p-6 space-y-6 flex-1">
                           <div className="text-center">
@@ -545,7 +551,7 @@ export default function TaxRegimeCalculator() {
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-normal text-slate-900 tracking-tight mb-6">
-                Old vs New Tax Regime: Which is Better? (FY 2024-25)
+                Old vs New Tax Regime: Which is Better? (AY 2026-27)
               </h2>
               <div className="space-y-6 text-slate-600 font-normal leading-relaxed">
                 <p>
@@ -556,7 +562,7 @@ export default function TaxRegimeCalculator() {
                   The New Tax Regime (Default)
                 </h3>
                 <p>
-                  As of FY 2023-24, the New Regime is the default option. If you do not explicitly choose the Old Regime with your employer or while filing ITR, your taxes will be computed under the New Regime. It is generally beneficial for individuals who do not have significant tax-saving investments or home loans. Notably, it offers a Standard Deduction of ₹75,000 for salaried employees and zero tax on income up to ₹7 Lakhs due to Section 87A rebate.
+                  {TAX_TRANSITION_NOTE} The New Regime under Section 115BAC is the default option. If you do not explicitly choose the Old Regime with your employer or while filing ITR, your taxes will be computed under the New Regime. It offers a Standard Deduction of ₹75,000 for salaried employees and Section 87A rebate up to ₹60,000 where taxable income does not exceed ₹12 lakh.
                 </p>
 
                 <h3 className="text-xl font-normal text-slate-900 tracking-tight mt-8 mb-4">
@@ -566,9 +572,9 @@ export default function TaxRegimeCalculator() {
                   The Old Regime rewards disciplined saving. It allows a multitude of deductions:
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
-                  <li><strong className="text-slate-900 font-normal">Section 80C:</strong> Up to ₹1.5 Lakhs (PPF, ELSS, EPF, Life Insurance).</li>
-                  <li><strong className="text-slate-900 font-normal">Section 80D:</strong> Medical insurance premiums.</li>
-                  <li><strong className="text-slate-900 font-normal">Section 24(b):</strong> Up to ₹2 Lakhs on home loan interest.</li>
+                  <li><strong className="text-slate-900 font-normal">Section 80C:<SectionReferenceBadge section="80C" /></strong> Up to ₹1.5 Lakhs (PPF, ELSS, EPF, Life Insurance).</li>
+                  <li><strong className="text-slate-900 font-normal">Section 80D:<SectionReferenceBadge section="80D" /></strong> Medical insurance premiums.</li>
+                  <li><strong className="text-slate-900 font-normal">Section 24(b):<SectionReferenceBadge section="24(b)" /></strong> Up to ₹2 Lakhs on home loan interest.</li>
                   <li><strong className="text-slate-900 font-normal">HRA & LTA:</strong> Exemptions for rent and travel.</li>
                 </ul>
 
@@ -593,8 +599,8 @@ export default function TaxRegimeCalculator() {
                 {[
                   { q: "Can I switch regimes every year?", a: "Yes, if you have salary or pension income, you can choose a different regime every year. However, if you have income from a business or profession, you can only opt back to the Old Regime once in your lifetime." },
                   { q: "Do I get HRA in the New Tax Regime?", a: "No. House Rent Allowance (HRA) and Leave Travel Allowance (LTA) exemptions are not available under the New Tax Regime." },
-                  { q: "Is the Standard Deduction available in both?", a: "Yes. The Standard Deduction of ₹75,000 (updated in Budget 2024) is available under the New Regime, while the Old Regime offers ₹50,000." },
-                  { q: "What if my income is exactly ₹7.5 Lakhs?", a: "Under the New Regime, a salaried individual with ₹7.5L income pays ZERO tax (₹7.5L - ₹75k standard deduction = ₹6.75L taxable, which is under the ₹7L rebate limit)." }
+                  { q: "Is the Standard Deduction available in both?", a: "Yes. For AY 2026-27, the New Regime offers ₹75,000, while the Old Regime offers ₹50,000." },
+                  { q: "What if my taxable income is exactly ₹12 Lakhs?", a: "Under the New Regime for AY 2026-27, Section 87A rebate can reduce tax to zero where taxable income does not exceed ₹12 lakh." }
                 ].map((faq, idx) => (
                   <div key={idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
                     <h4 className="font-normal text-slate-900 mb-2">{faq.q}</h4>

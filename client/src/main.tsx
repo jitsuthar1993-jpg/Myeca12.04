@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { clerkPublishableKey, isClerkEnabled } from "./lib/clerk-config";
 import { addPerformanceHints } from "./utils/performance-hints";
 import "./utils/safe-dom";
 import "./index.css";
@@ -45,25 +46,13 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 
 const root = document.getElementById("root");
-const clerkPublishableKey =
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
-  import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-function MissingClerkConfig() {
-  return (
-    <div style={{ padding: 24, fontFamily: "sans-serif" }}>
-      <h1>MyeCA configuration is incomplete</h1>
-      <p>Set VITE_CLERK_PUBLISHABLE_KEY or NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to enable Clerk authentication.</p>
-    </div>
-  );
-}
 
 if (root) {
   createRoot(root).render(
     <ErrorBoundary>
-      {clerkPublishableKey ? (
+      {isClerkEnabled ? (
         <ClerkProvider
-          publishableKey={clerkPublishableKey}
+          publishableKey={clerkPublishableKey.trim()}
           signInUrl="/auth/login"
           signUpUrl="/auth/register"
           afterSignOutUrl="/"

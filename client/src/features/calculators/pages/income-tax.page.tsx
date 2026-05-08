@@ -15,6 +15,8 @@ import {
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
+import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
+import { DEFAULT_ASSESSMENT_YEAR, TAX_TRANSITION_NOTE } from "@/lib/tax-law-reference";
 
 // Atomic Components
 import CalcLayout from "@/features/calculators/components/CalcLayout";
@@ -85,8 +87,8 @@ export default function IncomeTaxCalculator() {
   return (
     <div className="min-h-screen bg-[#F8F9FD]">
       <MetaSEO
-        title={seo?.title || "Income Tax Calculator 2025-26 | AY 2026-27 | MyeCA.in"}
-        description={seo?.description || "Calculate your income tax for AY 2025-26 & 2026-27. Compare Old vs New Tax Regime and optimize your savings."}
+        title={seo?.title || `Income Tax Calculator AY ${DEFAULT_ASSESSMENT_YEAR} | MyeCA.in`}
+        description={seo?.description || `Calculate income tax for AY ${DEFAULT_ASSESSMENT_YEAR}. Compare Old vs New Tax Regime with 1961 Act sections and 2025 Act equivalents.`}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -331,7 +333,7 @@ export default function IncomeTaxCalculator() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-normal text-[#344054]">Section 80C</span>
+                      <span className="text-sm font-normal text-[#344054]">Section 80C<SectionReferenceBadge section="80C" /></span>
                       <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
@@ -361,7 +363,7 @@ export default function IncomeTaxCalculator() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-normal text-[#344054]">Section 80D</span>
+                      <span className="text-sm font-normal text-[#344054]">Section 80D<SectionReferenceBadge section="80D" /></span>
                       <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
@@ -568,8 +570,8 @@ export default function IncomeTaxCalculator() {
               {
                 icon: <Zap className="w-5 h-5" />,
                 iconBg: "bg-blue-50 text-blue-600",
-                title: "2026-27 Tax Planning",
-                desc: "For AY 2026-27, the New Regime is highly optimized. Income up to ₹12 Lakh (Net) results in zero tax due to the enhanced 87A rebate."
+                title: "AY 2026-27 Tax Planning",
+                desc: "For AY 2026-27, the New Regime is optimized around the enhanced Section 87A rebate. Taxable income up to ₹12 lakh can result in zero tax."
               },
               {
                 icon: <ShieldCheck className="w-5 h-5" />,
@@ -585,16 +587,16 @@ export default function IncomeTaxCalculator() {
               }
             ]}
             howItWorks={{
-              title: "How Income Tax is Calculated (2026-27)",
-              description: "Income tax calculation follows a structured process of summing income, subtracting exemptions, and applying slab rates.",
+              title: "How Income Tax is Calculated (AY 2026-27)",
+              description: `${TAX_TRANSITION_NOTE} Income tax calculation follows a structured process of summing income, subtracting exemptions, and applying slab rates.`,
               steps: [
                 { title: "Gross Total Income", desc: "Sum up salary, interest, rental income, and business profits." },
                 { title: "Exemptions & Deductions", desc: "Subtract Standard Deduction (₹75k for New Regime) and Chapter VI-A investments." },
-                { title: "Slab Application", desc: "Apply the new 2026-27 slabs: 0% up to 4L, 5% up to 8L, and so on." }
+                { title: "Slab Application", desc: "Apply the AY 2026-27 new-regime slabs: 0% up to 4L, 5% up to 8L, 10% up to 12L, 15% up to 16L, 20% up to 20L, 25% up to 24L, and 30% above 24L." }
               ]
             }}
             faqs={[
-              { q: "What is the new 12L rebate in 2026-27?", a: "For AY 2026-27, if your taxable income is up to ₹12 Lakh under the New Regime, you get a full tax rebate of ₹60,000, making your net tax zero." },
+              { q: "What is the new 12L rebate in AY 2026-27?", a: "For AY 2026-27, if your taxable income is up to ₹12 lakh under the New Regime, Section 87A allows rebate up to ₹60,000, making your net tax zero before cess." },
               { q: "Is the ₹75k Standard Deduction for everyone?", a: "Yes, it applies to all salaried individuals and pensioners, but only for those opting for the New Tax Regime." },
               { q: "Can I claim HRA in the New Regime?", a: "No, HRA exemption is not available in the New Tax Regime. It is only available in the Old Tax Regime." }
             ]}

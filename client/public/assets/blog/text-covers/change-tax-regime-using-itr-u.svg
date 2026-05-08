@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Can I Change Tax Regime Using ITR-U?</title>
+  <desc id="desc">MyeCA blog cover based on the article content: ITR-U is not a</desc>
+  <rect width="1200" height="630" fill="#eef8ff"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#fbfdff" stroke="#12304a" stroke-width="3"/>
+  <text x="72" y="88" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="800" letter-spacing="5" fill="#12304a">MYECA INSIGHTS</text>
+  <text x="72" y="154" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="900" fill="#12304a">Change Tax Regime</text>
+  <text x="72" y="236" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="900" fill="#12304a">Using ITR-U</text>
+  <rect x="72" y="306" width="330" height="48" rx="24" fill="#fff" stroke="#12304a" stroke-width="3"/>
+  <text x="98" y="338" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#12304a">ITR-U is not a</text>
+  <g transform="translate(390 246)">
+    <rect x="20" y="50" width="336" height="190" rx="28" fill="#fff" stroke="#12304a" stroke-width="6"/>
+    <rect x="210" y="96" width="116" height="82" rx="18" fill="#2f8ed8" stroke="#12304a" stroke-width="6"/>
+    <circle cx="262" cy="137" r="14" fill="#fff"/>
+    <circle cx="112" cy="48" r="48" fill="#67c48b" stroke="#12304a" stroke-width="6"/>
+    <text x="82" y="64" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="900" fill="#12304a">Rs</text>
+    <line x1="70" y1="146" x2="172" y2="146" stroke="#12304a" stroke-width="5"/>
+    <line x1="70" y1="178" x2="154" y2="178" stroke="#12304a" stroke-width="5"/>
+  </g>
+  <g transform="translate(824 262)">
+    <rect x="0" y="0" width="300" height="68" rx="18" fill="#fff" stroke="#12304a" stroke-width="4"/>
+    <circle cx="38" cy="34" r="16" fill="#2f8ed8" stroke="#12304a" stroke-width="3"/>
+    <text x="70" y="43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#12304a">ITR-U is not a</text>
+  </g>
+  <g transform="translate(824 352)">
+    <rect x="0" y="0" width="300" height="68" rx="18" fill="#fff" stroke="#12304a" stroke-width="4"/>
+    <circle cx="38" cy="34" r="16" fill="#67c48b" stroke="#12304a" stroke-width="3"/>
+    <text x="70" y="43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#12304a">Regime errors need time-limit</text>
+  </g>
+  <g transform="translate(824 442)">
+    <rect x="0" y="0" width="300" height="68" rx="18" fill="#fff" stroke="#12304a" stroke-width="4"/>
+    <circle cx="38" cy="34" r="16" fill="#2f8ed8" stroke="#12304a" stroke-width="3"/>
+    <text x="70" y="43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#12304a">Demand notices should be</text>
+  </g>
+  <text x="72" y="574" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#12304a">MyeCA.in</text>
+</svg>

@@ -922,8 +922,8 @@ export default function DocumentGeneratorRegistry() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {filteredIncomeTaxForms.map((form) => {
                   const typeStyle = incomeTaxFileTypeStyles[form.fileType];
-                  const downloadHref = form.localPath || form.officialUrl;
-                  const isLocalPdf = Boolean(form.localPath);
+                  const downloadHref = form.downloadUrl || form.officialUrl;
+                  const isMirroredPdf = Boolean(form.downloadUrl);
 
                   return (
                     <article
@@ -975,12 +975,12 @@ export default function DocumentGeneratorRegistry() {
                       <div className="mt-4 flex flex-col sm:flex-row gap-2">
                         <a
                           href={downloadHref}
-                          target={isLocalPdf ? undefined : '_blank'}
-                          rel={isLocalPdf ? undefined : 'noopener noreferrer'}
-                          download={isLocalPdf ? true : undefined}
+                          target={isMirroredPdf ? undefined : '_blank'}
+                          rel={isMirroredPdf ? undefined : 'noopener noreferrer'}
+                          download={isMirroredPdf ? true : undefined}
                           className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
                         >
-                          {isLocalPdf ? (
+                          {isMirroredPdf ? (
                             <>
                               <Download className="h-4 w-4" />
                               Download PDF

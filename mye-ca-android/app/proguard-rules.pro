@@ -1,0 +1,4 @@
+-keep class com.squareup.moshi.** { *; }
+-keep class retrofit2.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**

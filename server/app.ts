@@ -33,10 +33,18 @@ const clerkPublishableKey =
 // Only attach Clerk middleware when the keys are available;
 // without them, public routes still work — auth-protected routes will 401.
 if (process.env.CLERK_SECRET_KEY && clerkPublishableKey) {
-  app.use(clerkMiddleware({
+  const clerk = clerkMiddleware({
     secretKey: process.env.CLERK_SECRET_KEY,
     publishableKey: clerkPublishableKey,
-  }));
+  });
+
+  app.use((req, res, next) => {
+    if (req.path === "/api/health" || req.path.startsWith("/api/public")) {
+      return next();
+    }
+
+    return clerk(req, res, next);
+  });
 }
 
 app.use(

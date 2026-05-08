@@ -17,9 +17,7 @@ export const performanceHints = {
   ],
 
   // Critical fonts to preload
-  fonts: [
-    'https://fonts.gstatic.com/s/plusjakartasans/v8/L0xPDFytS3pcFbqBMpKwYia7W67XHd_jOnd_kG0.woff2'
-  ],
+  fonts: [],
 
   // Critical images to preload
   images: [

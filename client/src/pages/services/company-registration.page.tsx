@@ -41,6 +41,8 @@ import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import LeadMagnet from "@/components/seo/LeadMagnet";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import StandardPricingSection from "@/components/pricing/StandardPricingSection";
+import { getCheckoutAmount, getPricingByServiceId, getServicePriceForSchema } from "@/data/pricing";
 
 export default function CompanyRegistrationPage() {
   const seo = getSEOConfig('/services/company-registration');
@@ -49,6 +51,7 @@ export default function CompanyRegistrationPage() {
   const [checkoutTitle, setCheckoutTitle] = useState("Private Limited Company Registration");
   const [companyType, setCompanyType] = useState<string>("");
   const [authorizedCapital, setAuthorizedCapital] = useState<string>("");
+  const standardPricing = getPricingByServiceId("company-registration");
 
   const companyTypes = [
     {
@@ -258,7 +261,7 @@ export default function CompanyRegistrationPage() {
         keywords={seo?.keywords}
         type={seo?.type || "service"}
         serviceData={{
-          price: seo?.serviceData?.price || "6999",
+          price: getServicePriceForSchema("company-registration", seo?.serviceData?.price || "6999"),
           rating: seo?.serviceData?.rating || "4.8",
           reviews: seo?.serviceData?.reviews || "25000",
           availability: "https://schema.org/InStock"
@@ -734,6 +737,21 @@ export default function CompanyRegistrationPage() {
             </CardContent>
           </Card>
         </m.div>
+
+        {standardPricing && (
+          <StandardPricingSection
+            mode="service-package"
+            title="Company registration pricing"
+            description="Confirm the professional fee, exclusions, GST treatment, documents, and expected incorporation timeline before checkout."
+            service={standardPricing}
+            className="mb-4 py-0"
+            onCheckout={(service) => {
+              setCheckoutTitle(service.name);
+              setCheckoutPrice(getCheckoutAmount(service.pricing) || 6999);
+              setIsCheckoutOpen(true);
+            }}
+          />
+        )}
 
         {/* Pricing & CTA */}
         <m.div

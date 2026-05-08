@@ -1,5 +1,7 @@
 // Interactive Tax Guides Data
 
+const AY_2026_27_TRANSITION_NOTE = "AY 2026-27 filing uses the Income-tax Act, 1961 forms; Income-tax Act, 2025 applies from Tax Year 2026-27 for income beginning 1 April 2026.";
+
 export interface GuideStep {
   id: string;
   title: string;
@@ -41,12 +43,12 @@ export const TAX_GUIDES: TaxGuide[] = [
     id: 'salaried-itr-complete',
     slug: 'complete-itr-guide-salaried',
     title: 'Complete ITR Filing Guide for Salaried Employees',
-    description: 'Step-by-step guide to file your Income Tax Return as a salaried individual. Covers Form 16, deductions, and submission process.',
+    description: 'Step-by-step guide to file your Income Tax Return as a salaried individual for AY 2026-27. Covers Form 16, deductions, section cross-references, and submission process.',
     category: 'salaried',
     difficulty: 'beginner',
     estimatedTime: '30 mins',
     tags: ['ITR-1', 'Form 16', 'salary', 'tax filing'],
-    lastUpdated: '2024-06-15',
+    lastUpdated: '2026-05-05',
     author: 'CA Rajesh Kumar',
     relatedCalculators: ['/calculators/income-tax', '/calculators/hra'],
     steps: [
@@ -56,6 +58,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         description: 'Collect all necessary documents before starting the filing process.',
         checklist: [
           'Form 16 from employer',
+          AY_2026_27_TRANSITION_NOTE,
           'Form 26AS (Tax Credit Statement)',
           'AIS (Annual Information Statement)',
           'Bank statements for interest income',
@@ -98,11 +101,11 @@ export const TAX_GUIDES: TaxGuide[] = [
           'Calculate tax under old regime with all deductions',
           'Calculate tax under new regime (lower rates, no deductions)',
           'Compare both and choose the beneficial one',
-          'Note: New regime is default from FY 2023-24',
+          'Note: New regime under Section 115BAC (2025 Act: Section 202) is default for AY 2026-27',
         ],
         tips: [
           'Use our Tax Regime Calculator to compare both options',
-          'If your deductions exceed ₹3-4 lakhs, old regime might be better',
+          'For AY 2026-27, compare deductions against the enhanced new-regime slabs and Section 87A rebate up to ₹60,000',
           'You can switch regimes every year (non-business income)',
         ],
         links: [
@@ -334,18 +337,18 @@ export const TAX_GUIDES: TaxGuide[] = [
     id: 'maximize-deductions',
     slug: 'maximize-tax-deductions',
     title: 'Maximize Your Tax Deductions - Complete Guide',
-    description: 'Comprehensive guide to all available tax deductions under Section 80C, 80D, 80G, and more.',
+    description: 'Comprehensive AY 2026-27 guide to deductions under Income-tax Act, 1961 sections, with 2025 Act cross-references for 80C, 80D, 80G, and more.',
     category: 'deductions',
     difficulty: 'beginner',
     estimatedTime: '35 mins',
     tags: ['80C', '80D', 'deductions', 'tax saving'],
-    lastUpdated: '2024-05-25',
+    lastUpdated: '2026-05-05',
     author: 'CA Priya Sharma',
     relatedCalculators: ['/calculators/income-tax', '/calculators/nps', '/elss-comparator'],
     steps: [
       {
         id: 'section-80c',
-        title: 'Section 80C Deductions (₹1.5 Lakh)',
+        title: 'Section 80C Deductions (₹1.5 Lakh; 2025 Act: Section 123)',
         description: 'Most popular section with multiple investment options.',
         checklist: [
           'PPF (Public Provident Fund) - 15 year lock-in',
@@ -371,7 +374,7 @@ export const TAX_GUIDES: TaxGuide[] = [
       },
       {
         id: 'section-80ccd',
-        title: 'Section 80CCD - NPS Benefits (Extra ₹50K)',
+        title: 'Section 80CCD - NPS Benefits (Extra ₹50K; employer contribution maps to 2025 Act: Section 124)',
         description: 'Additional deduction for NPS investment.',
         checklist: [
           '80CCD(1): Employee contribution - part of 80C',
@@ -389,7 +392,7 @@ export const TAX_GUIDES: TaxGuide[] = [
       },
       {
         id: 'section-80d',
-        title: 'Section 80D - Health Insurance (₹25K-₹1L)',
+        title: 'Section 80D - Health Insurance (₹25K-₹1L; 2025 Act: Section 126)',
         description: 'Deduction for health insurance premiums.',
         checklist: [
           'Self & family premium: Up to ₹25,000',
@@ -424,9 +427,9 @@ export const TAX_GUIDES: TaxGuide[] = [
         title: 'Other Important Deductions',
         description: 'Additional deductions often overlooked.',
         checklist: [
-          '80E: Education loan interest (no limit)',
-          '80G: Donations to approved charities',
-          '80TTA: Savings account interest (₹10,000)',
+          '80E (2025 Act: Section 129): Education loan interest (no limit)',
+          '80G (2025 Act: Section 133): Donations to approved charities',
+          '80TTA (2025 Act: Section 153): Savings account interest (₹10,000)',
           '80TTB: Senior citizen interest (₹50,000)',
           '80U/80DD: Disability deductions',
           '80DDB: Medical treatment for specified diseases',
@@ -643,4 +646,3 @@ export function searchGuides(query: string): TaxGuide[] {
     g.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
   );
 }
-

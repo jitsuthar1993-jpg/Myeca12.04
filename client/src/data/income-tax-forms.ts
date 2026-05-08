@@ -7,7 +7,7 @@ export type IncomeTaxFormDownload = {
   version?: string;
   size?: string;
   latestReleaseDate?: string;
-  localPath?: string;
+  downloadUrl?: string;
   officialUrl: string;
   tags: string[];
 };
@@ -120,7 +120,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-1-schema-change-document-itr-201-schema-20change-20document-ay2025-26-v1-2-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-1-schema-change-document-itr-201-schema-20change-20document-ay2025-26-v1-2-pdf"
   },
   {
     "id": "ay-2025-26-itr-1-validations-cbdt-e-filing-itr-201-validation-20rules-ay-202025-26-v1-1-pdf",
@@ -141,7 +141,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "1",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-1-validations-cbdt-e-filing-itr-201-validation-20rules-ay-202025-26-v1-1-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-1-validations-cbdt-e-filing-itr-201-validation-20rules-ay-202025-26-v1-1-pdf"
   },
   {
     "id": "ay-2025-26-itr-2-utility-excel-based-itr2-ay-25-26-v1-5-0-zip",
@@ -203,7 +203,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-2-schema-change-document-itr-202-schema-20change-20document-ay2025-26-v1-2-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-2-schema-change-document-itr-202-schema-20change-20document-ay2025-26-v1-2-pdf"
   },
   {
     "id": "ay-2025-26-itr-2-validations-cbdt-e-filing-itr-202-validation-20rules-ay-202025-26-v1-0-pdf",
@@ -224,7 +224,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "2",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-2-validations-cbdt-e-filing-itr-202-validation-20rules-ay-202025-26-v1-0-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-2-validations-cbdt-e-filing-itr-202-validation-20rules-ay-202025-26-v1-0-pdf"
   },
   {
     "id": "ay-2025-26-itr-3-utility-excel-based-itr3-ay-25-26-v1-11-0-zip",
@@ -286,7 +286,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-3-schema-change-document-itr-203-schema-20change-20document-ay2025-26-v1-3-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-3-schema-change-document-itr-203-schema-20change-20document-ay2025-26-v1-3-pdf"
   },
   {
     "id": "ay-2025-26-itr-3-validations-cbdt-e-filing-itr-3-validation-20rules-v1-0-ay-2025-26-pdf",
@@ -307,7 +307,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "3",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-3-validations-cbdt-e-filing-itr-3-validation-20rules-v1-0-ay-2025-26-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-3-validations-cbdt-e-filing-itr-3-validation-20rules-v1-0-ay-2025-26-pdf"
   },
   {
     "id": "ay-2025-26-itr-4-utility-excel-based-itr4-ay-25-26-v1-6-zip",
@@ -369,7 +369,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-4-schema-change-document-itr-204-schema-20change-20document-ay2025-26-v1-3-1-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-4-schema-change-document-itr-204-schema-20change-20document-ay2025-26-v1-3-1-pdf"
   },
   {
     "id": "ay-2025-26-itr-4-validations-cbdt-e-filing-itr-204-validation-20rules-ay-202025-26-v1-1-pdf",
@@ -390,7 +390,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "4",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-4-validations-cbdt-e-filing-itr-204-validation-20rules-ay-202025-26-v1-1-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-4-validations-cbdt-e-filing-itr-204-validation-20rules-ay-202025-26-v1-1-pdf"
   },
   {
     "id": "ay-2025-26-itr-5-utility-itde-filing-5-2025-20setup-201-1-7-0-zip",
@@ -492,7 +492,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-5-schema-change-document-itr-205-schema-20change-20document-ay2025-26-v1-2-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-5-schema-change-document-itr-205-schema-20change-20document-ay2025-26-v1-2-pdf"
   },
   {
     "id": "ay-2025-26-itr-5-validations-cbdt-e-filing-itr-205-validation-20rules-v-201-0-pdf",
@@ -513,7 +513,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "5",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-5-validations-cbdt-e-filing-itr-205-validation-20rules-v-201-0-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-5-validations-cbdt-e-filing-itr-205-validation-20rules-v-201-0-pdf"
   },
   {
     "id": "ay-2025-26-itr-6-utility-itde-filing-6-2025-20setup-201-1-7-0-zip",
@@ -615,7 +615,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-6-schema-change-document-itr-206-schema-20change-20document-ay2025-26-v1-3-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-6-schema-change-document-itr-206-schema-20change-20document-ay2025-26-v1-3-pdf"
   },
   {
     "id": "ay-2025-26-itr-6-validations-cbdt-e-filing-itr-6-validation-20rules-version-201-0-20-281-29-pdf",
@@ -636,7 +636,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "6",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-6-validations-cbdt-e-filing-itr-6-validation-20rules-version-201-0-20-281-29-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-6-validations-cbdt-e-filing-itr-6-validation-20rules-version-201-0-20-281-29-pdf"
   },
   {
     "id": "ay-2025-26-itr-7-utility-itde-filing-7-2025-20setup-201-1-5-zip",
@@ -738,7 +738,7 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "schema",
       "schema change"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-7-schema-change-document-itr-207-schema-20change-20document-ay2025-26-v1-1-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-7-schema-change-document-itr-207-schema-20change-20document-ay2025-26-v1-1-pdf"
   },
   {
     "id": "ay-2025-26-itr-7-validations-cbdt-e-filing-itr-7-validation-20rules-v-201-0-ay-2025-26-pdf",
@@ -759,6 +759,6 @@ export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = [
       "7",
       "validation"
     ],
-    "localPath": "/assets/income-tax-forms/ay-2025-26-itr-7-validations-cbdt-e-filing-itr-7-validation-20rules-v-201-0-ay-2025-26-pdf.pdf"
+    "downloadUrl": "/downloads/income-tax-forms/ay-2025-26-itr-7-validations-cbdt-e-filing-itr-7-validation-20rules-v-201-0-ay-2025-26-pdf"
   }
 ];

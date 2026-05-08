@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+set -eu
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+GRADLE_VERSION="8.7"
+BOOTSTRAP="$ROOT/.gradle/bootstrap"
+GRADLE_HOME="$BOOTSTRAP/gradle-$GRADLE_VERSION"
+GRADLE_BIN="$GRADLE_HOME/bin/gradle"
+
+if [ -z "${JAVA_HOME:-}" ] && [ -d "/Applications/Android Studio.app/Contents/jbr/Contents/Home" ]; then
+  export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+fi
+
+if ! command -v java >/dev/null 2>&1; then
+  echo "Java 17 is required. Install Android Studio or set JAVA_HOME before running this build." >&2
+  exit 1
+fi
+
+if [ ! -x "$GRADLE_BIN" ]; then
+  mkdir -p "$BOOTSTRAP"
+  ZIP="$BOOTSTRAP/gradle-$GRADLE_VERSION-bin.zip"
+  if [ ! -f "$ZIP" ]; then
+    if command -v curl >/dev/null 2>&1; then
+      curl -L "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" -o "$ZIP"
+    else
+      wget "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" -O "$ZIP"
+    fi
+  fi
+  unzip -oq "$ZIP" -d "$BOOTSTRAP"
+fi
+
+exec "$GRADLE_BIN" "$@"

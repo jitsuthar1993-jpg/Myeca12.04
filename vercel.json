@@ -15,11 +15,27 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/health", "destination": "/api/index?route=health" },
+    { "source": "/api/user/dashboard", "destination": "/api/index?route=user-dashboard" },
+    { "source": "/api/user/activity", "destination": "/api/index?route=user-activity" },
+    { "source": "/api/user-services", "destination": "/api/index?route=user-services" },
+    { "source": "/api/notifications", "destination": "/api/index?route=notifications" },
+    { "source": "/api/admin/stats", "destination": "/api/index?route=admin-stats" },
+    { "source": "/api/admin/users", "destination": "/api/index?route=admin-users" },
+    { "source": "/api/ca/stats", "destination": "/api/index?route=ca-stats" },
+    { "source": "/api/ca/clients", "destination": "/api/index?route=ca-clients" },
+    { "source": "/api/cms/posts", "destination": "/api/index?route=cms-posts" },
+    { "source": "/api/cms/categories", "destination": "/api/index?route=cms-categories" },
+    { "source": "/api/public/categories", "destination": "/api/index?route=public-categories" },
+    { "source": "/api/public/blogs", "destination": "/api/index?route=public-blogs" },
+    { "source": "/api/public/blogs/:slug", "destination": "/api/index?route=public-blog&slug=:slug" },
+    { "source": "/downloads/income-tax-forms/:slug", "destination": "/api/index?route=income-tax-form-download&slug=:slug" },
     { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/sitemap.xml", "destination": "/api/index" },
-    { "source": "/robots.txt", "destination": "/api/index" },
-    { "source": "/openapi.json", "destination": "/api/index" },
-    { "source": "/llms.txt", "destination": "/api/index" },
+    { "source": "/sitemap.xml", "destination": "/api/index?route=sitemap" },
+    { "source": "/robots.txt", "destination": "/api/index?route=robots" },
+    { "source": "/openapi.json", "destination": "/api/index?route=openapi" },
+    { "source": "/llms.txt", "destination": "/api/index?route=llms" },
+    { "source": "/llms-full.txt", "destination": "/api/index?route=llms-full" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

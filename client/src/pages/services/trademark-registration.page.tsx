@@ -46,6 +46,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CollapsibleFAQ } from "@/components/ui/collapsible-faq";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import StandardPricingSection from "@/components/pricing/StandardPricingSection";
+import { getCheckoutAmount, getPricingByServiceId, getServicePriceForSchema } from "@/data/pricing";
 
 export default function TrademarkRegistrationPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -53,6 +55,7 @@ export default function TrademarkRegistrationPage() {
   const [checkoutTitle, setCheckoutTitle] = useState("Trademark Registration");
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const standardPricing = getPricingByServiceId("trademark-registration");
 
   const registrationProcess = [
     {
@@ -337,7 +340,7 @@ export default function TrademarkRegistrationPage() {
         ]}
         type="service"
         serviceData={{
-          price: "12999",
+          price: getServicePriceForSchema("trademark-registration", "12999"),
           rating: "4.7",
           reviews: "10000",
           availability: "https://schema.org/InStock"
@@ -549,6 +552,21 @@ export default function TrademarkRegistrationPage() {
             ))}
           </div>
         </m.div>
+
+        {standardPricing && (
+          <StandardPricingSection
+            mode="fee-breakdown"
+            title="Trademark registration pricing"
+            description="Government fee, search support, and MyeCA professional fee are separated so class additions or objections do not become hidden costs."
+            service={standardPricing}
+            className="mb-8 py-0"
+            onCheckout={(service) => {
+              setCheckoutTitle(service.name);
+              setCheckoutPrice(getCheckoutAmount(service.pricing) || 12999);
+              setIsCheckoutOpen(true);
+            }}
+          />
+        )}
 
         {/* Popular Trademark Classes */}
         <m.div

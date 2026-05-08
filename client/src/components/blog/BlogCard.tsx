@@ -9,6 +9,10 @@ function isImageUrl(value: string | null | undefined) {
   return /^(https?:\/\/|\/)/.test(value);
 }
 
+function isGeneratedBlogCover(value: string | null | undefined) {
+  return Boolean(value?.includes("/assets/blog/text-covers/"));
+}
+
 function formatDate(value: string | null | undefined) {
   if (!value) return "Draft";
   const date = new Date(value);
@@ -50,7 +54,12 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
             <img
               src={post.coverImage ?? ""}
               alt={post.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className={cn(
+                "h-full w-full transition-transform duration-500",
+                isGeneratedBlogCover(post.coverImage)
+                  ? "bg-white object-contain p-2"
+                  : "object-cover group-hover:scale-105",
+              )}
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-blue-50 via-slate-50 to-amber-50">

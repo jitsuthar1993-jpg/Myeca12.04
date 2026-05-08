@@ -39,6 +39,64 @@ export default function Footer() {
   // Full marketing footer for public pages
   return (
     <footer className="w-full bg-white text-slate-800 border-t border-gray-200 mt-auto">
+      <div className="md:hidden px-4 py-5">
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/" className="min-w-0 hover:opacity-80 transition-opacity">
+            <BrandLockup logoSize="sm" wordmarkSize="sm" compact />
+          </Link>
+          <Link
+            href="/contact"
+            onMouseEnter={() => preloadOnHover("/contact")}
+            aria-label="Contact support"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700"
+          >
+            <Mail className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+          {[
+            ["ERI", "Govt. registered"],
+            ["ISO", "Secure"],
+            ["100%", "CA-reviewed"],
+          ].map(([value, label]) => (
+            <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
+              <div className="text-base font-black tracking-tight text-slate-950">{value}</div>
+              <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {[
+            ["Start ITR Filing", "/itr/form-selector"],
+            ["GST Registration", "/services/gst-registration"],
+            ["Calculators", "/calculators"],
+            ["Tax Guides", "/blog"],
+          ].map(([label, href]) => (
+            <Link
+              key={href}
+              href={href}
+              onMouseEnter={() => preloadOnHover(href)}
+              className="flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-center text-sm font-semibold text-slate-700"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-5 border-t border-slate-200 pt-4">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500">
+            <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="hover:text-slate-700">Privacy</Link>
+            <Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="hover:text-slate-700">Terms</Link>
+            <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700">Refunds</Link>
+            <Link href="/contact" onMouseEnter={() => preloadOnHover("/contact")} className="hover:text-slate-700">Support</Link>
+          </div>
+          <p className="mt-3 text-center text-xs text-slate-500">&copy; 2025 MyeCA.in. Made in India.</p>
+        </div>
+      </div>
+
+      <div className="hidden md:block">
       {/* Trust Banner - Compact */}
       <div className="bg-slate-100 text-slate-900 py-10 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -273,6 +331,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

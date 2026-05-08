@@ -6,8 +6,11 @@ import { type Server } from "http";
 import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { buildPublicBlogDetail, listPublishedBlogPosts, sortPublishedPosts } from "./services/blog.js";
 
 const viteLogger = createLogger();
+const BLOG_SEO_CACHE_TTL = 5 * 60 * 1000;
+let blogSeoCache: { generatedAt: number; posts: Awaited<ReturnType<typeof listPublishedBlogPosts>> } | null = null;
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -18,6 +21,118 @@ export function log(message: string, source = "express") {
   });
 
   console.log(`${formattedTime} [${source}] ${message}`);
+}
+
+function escapeHtmlAttribute(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function replaceOrInsertMeta(content: string, selector: RegExp, tag: string) {
+  if (selector.test(content)) return content.replace(selector, tag);
+  return content.replace("</head>", `${tag}\n</head>`);
+}
+
+function toAbsoluteSiteUrl(value: string | null | undefined) {
+  if (!value) return null;
+  if (/^https?:\/\//.test(value)) return value;
+  if (value.startsWith("/")) return `https://myeca.in${value}`;
+  return null;
+}
+
+async function getPublishedBlogPostsForSeo() {
+  if (blogSeoCache && Date.now() - blogSeoCache.generatedAt < BLOG_SEO_CACHE_TTL) {
+    return blogSeoCache.posts;
+  }
+
+  const posts = sortPublishedPosts(await listPublishedBlogPosts());
+  blogSeoCache = { posts, generatedAt: Date.now() };
+  return posts;
+}
+
+async function getBlogSeoData(cleanPath: string) {
+  const match = /^\/blog\/([^/?#]+)$/.exec(cleanPath);
+  if (!match) return null;
+
+  const slug = decodeURIComponent(match[1]);
+  const posts = await getPublishedBlogPostsForSeo();
+  const post = posts.find((candidate) => candidate.slug === slug);
+  if (!post) return null;
+
+  const detail = buildPublicBlogDetail(post, posts);
+  const canonical = detail.canonicalUrl || `https://myeca.in/blog/${detail.slug}`;
+  const title = detail.seoTitle || `${detail.title} | MyeCA.in Knowledge Hub`;
+  const description = detail.seoDescription || detail.excerpt || `Read ${detail.title} on MyeCA.in.`;
+  const keywords = detail.tags.join(", ");
+  const image = toAbsoluteSiteUrl(detail.coverImage) || "https://myeca.in/og-image.jpg";
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: detail.title,
+    name: title,
+    description,
+    url: canonical,
+    image,
+    datePublished: detail.publishedAt ?? undefined,
+    dateModified: detail.updatedAt ?? detail.publishedAt ?? undefined,
+    inLanguage: "en-IN",
+    isAccessibleForFree: true,
+    author: {
+      "@type": "Person",
+      name: detail.authorName,
+      jobTitle: detail.authorRole ?? "Tax Filing Desk",
+    },
+    reviewedBy: detail.reviewedBy
+      ? {
+          "@type": "Person",
+          name: detail.reviewedBy,
+        }
+      : undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "MyeCA.in - Expert Tax Filing Services",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://myeca.in/logo.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonical,
+    },
+    about: [detail.category?.name, ...detail.tags].filter(Boolean),
+    citation: detail.sourceLinks?.map((source) => source.url) ?? [],
+  };
+
+  const faqJsonLd = detail.faqItems.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: detail.faqItems.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
+  return {
+    title,
+    description,
+    keywords,
+    canonical,
+    image,
+    type: "article",
+    noindex: false,
+    jsonLd: faqJsonLd ? [articleJsonLd, faqJsonLd] : [articleJsonLd],
+  };
 }
 
 export async function setupVite(app: Express, server: Server) {
@@ -132,26 +247,48 @@ export function serveStatic(app: Express) {
       if (isBot) {
         log(`Bot detected: ${userAgent} on ${url}`, "seo");
         
-        // Find best match in SEO_CONFIG
         const cleanPath = url.split("?")[0];
-        const seo = SEO_CONFIG[cleanPath] || SEO_CONFIG["/"];
+        const blogSeo = await getBlogSeoData(cleanPath);
+        const fallbackSeo = SEO_CONFIG[cleanPath] || SEO_CONFIG["/"];
+        const seo = blogSeo || {
+          title: fallbackSeo.title,
+          description: fallbackSeo.description,
+          keywords: fallbackSeo.keywords.join(", "),
+          canonical: `https://myeca.in${cleanPath === "/" ? "/" : cleanPath}`,
+          image: "https://myeca.in/og-image.jpg",
+          type: fallbackSeo.type === "article" ? "article" : "website",
+          noindex: Boolean(fallbackSeo.noindex),
+          jsonLd: [],
+        };
         
         const title = seo.title;
         const description = seo.description;
-        const keywords = seo.keywords.join(", ");
+        const keywords = seo.keywords;
+        const canonical = seo.canonical;
+        const escapedTitle = escapeHtmlAttribute(title);
+        const escapedDescription = escapeHtmlAttribute(description);
+        const escapedKeywords = escapeHtmlAttribute(keywords);
+        const escapedCanonical = escapeHtmlAttribute(canonical);
+        const escapedImage = escapeHtmlAttribute(seo.image);
 
-        content = content.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
-        content = content.replace(/<meta name="description" content=".*?" \/>/, `<meta name="description" content="${description}" />`);
+        content = content.replace(/<title>.*?<\/title>/, `<title>${escapedTitle}</title>`);
+        content = replaceOrInsertMeta(content, /<meta name="description" content=".*?"\s*\/?>/, `<meta name="description" content="${escapedDescription}" />`);
+        content = replaceOrInsertMeta(content, /<link rel="canonical" href=".*?"\s*\/?>/, `<link rel="canonical" href="${escapedCanonical}" />`);
         
         // Inject Open Graph and other meta tags
         const metaTags = `
-          <meta name="keywords" content="${keywords}" />
-          <meta property="og:title" content="${title}" />
-          <meta property="og:description" content="${description}" />
-          <meta property="og:url" content="https://myeca.in${url}" />
-          <meta property="og:type" content="${seo.type === 'article' ? 'article' : 'website'}" />
+          <meta name="keywords" content="${escapedKeywords}" />
+          <meta property="og:title" content="${escapedTitle}" />
+          <meta property="og:description" content="${escapedDescription}" />
+          <meta property="og:url" content="${escapedCanonical}" />
+          <meta property="og:type" content="${seo.type}" />
+          <meta property="og:image" content="${escapedImage}" />
           <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="${escapedTitle}" />
+          <meta name="twitter:description" content="${escapedDescription}" />
+          <meta name="twitter:image" content="${escapedImage}" />
           <meta name="robots" content="${seo.noindex ? 'noindex, nofollow' : 'index, follow'}" />
+          ${seo.jsonLd.map((block) => `<script type="application/ld+json">${JSON.stringify(block)}</script>`).join("\n")}
         `;
         content = content.replace("</head>", `${metaTags}</head>`);
       }

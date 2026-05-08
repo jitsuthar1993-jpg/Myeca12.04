@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'wouter';
-import { AlertCircle, Loader2, Lock, Mail } from 'lucide-react';
+import { Link, useLocation } from 'wouter';
+import { AlertCircle, Loader2, Lock, Mail, ShieldCheck, UserCog, UserRound, UsersRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/components/AuthProvider';
+import { TEMPORARY_TEST_USERS, type TemporaryTestUser } from '@/lib/temporary-test-users';
 import {
   AuthPageShell,
 } from '@/components/auth/AuthPageShell';
@@ -30,29 +31,31 @@ const reasonCopy: Record<string, { title: string; message: string }> = {
 
 export default function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
+  const [, setLocation] = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const params = new URLSearchParams(window.location.search);
-  const redirectUrl = params.get('redirect_url') || '/dashboard';
+  const redirectUrl = params.get('redirect_url') || params.get('next') || '/dashboard';
   const reason = params.get('reason');
   const reasonState = reason ? reasonCopy[reason] : null;
   const signUpUrl = `/auth/register?redirect_url=${encodeURIComponent(redirectUrl)}`;
   const mockEmail = params.get('mock_email');
+  const showTemporaryLogin = params.get('test_login') === '1';
 
   useEffect(() => {
     if (mockEmail) {
       setLoading(true);
       login(mockEmail, 'mock_password').then(() => {
-        window.location.href = redirectUrl;
+        setLocation(redirectUrl);
       }).catch(err => {
         setError(err?.message || 'Mock login failed');
         setLoading(false);
       });
     }
-  }, [mockEmail, login, redirectUrl]);
+  }, [mockEmail, login, redirectUrl, setLocation]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,7 +64,7 @@ export default function LoginPage() {
 
     try {
       await login(email.trim(), password);
-      window.location.href = redirectUrl;
+      setLocation(redirectUrl);
     } catch (err: any) {
       setError(err?.message || 'Unable to sign in. Check your details and try again.');
     } finally {
@@ -80,6 +83,21 @@ export default function LoginPage() {
       setGoogleLoading(false);
     }
   };
+
+  const handleTemporaryLogin = async (testUser: TemporaryTestUser) => {
+    setError(null);
+    setLoading(true);
+
+    try {
+      await login(testUser.email, 'temporary_test_login');
+      setLocation(testUser.redirectTo);
+    } catch (err: any) {
+      setError(err?.message || `Unable to sign in as ${testUser.label}.`);
+      setLoading(false);
+    }
+  };
+
+  const temporaryLoginIcons = [UserRound, ShieldCheck, UserCog, UsersRound];
 
   return (
     <AuthPageShell
@@ -172,6 +190,44 @@ export default function LoginPage() {
           Sign in
         </Button>
       </form>
+
+      {showTemporaryLogin && (
+        <section className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)]">
+          <div className="mb-3">
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-amber-700">
+              Temporary test login
+            </p>
+            <p className="mt-1 text-sm font-medium leading-5 text-amber-900">
+              Use these tab-only test sessions to check each role.
+            </p>
+          </div>
+
+          <div className="grid gap-2">
+            {TEMPORARY_TEST_USERS.map((testUser, index) => {
+              const Icon = temporaryLoginIcons[index] || UserRound;
+
+              return (
+                <Button
+                  key={testUser.email}
+                  type="button"
+                  variant="outline"
+                  disabled={loading || googleLoading}
+                  onClick={() => handleTemporaryLogin(testUser)}
+                  className="h-auto justify-start gap-3 rounded-lg border-amber-200 bg-white px-3 py-3 text-left text-slate-900 hover:border-amber-400 hover:bg-amber-100"
+                >
+                  <Icon className="h-4 w-4 shrink-0 text-amber-700" />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-black">{testUser.label}</span>
+                    <span className="block text-xs font-medium text-slate-500">
+                      {testUser.description}
+                    </span>
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </AuthPageShell>
   );
 }
