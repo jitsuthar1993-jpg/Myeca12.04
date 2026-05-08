@@ -3,9 +3,9 @@ export const SEO_DEFAULTS = {
   siteName: 'MyeCA.in',
   siteTitle: 'Expert Income Tax Filing & ITR e-Filing Services India',
   titleTemplate: '%s | MyeCA.in',
-  defaultDescription: 'File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!',
+  defaultDescription: 'File ITR online with MyeCA.in for AY 2026-27. Use guided workflows, secure document handling, and optional CA-assisted review. ITR filing packages start at ₹499.',
   siteUrl: 'https://myeca.in',
-  defaultImage: '/og-image.png',
+  defaultImage: '/og-image.jpg',
   twitterHandle: '@myecain',
   facebookAppId: '', // Add when available
   
@@ -15,7 +15,7 @@ export const SEO_DEFAULTS = {
     'income tax return',
     'tax filing India',
     'e-filing',
-    'AY 2025-26',
+    'AY 2026-27',
     'tax consultant',
     'CA services',
     'online tax filing',
@@ -31,9 +31,9 @@ export const SEO_DEFAULTS = {
     "url": "https://myeca.in",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://myeca.in/logo.png",
-      "width": 200,
-      "height": 60
+      "url": "https://myeca.in/favicon.svg",
+      "width": 512,
+      "height": 512
     },
     "sameAs": [
       "https://www.facebook.com/myecain",

@@ -15,7 +15,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           "name": "MyeCA.in",
           "alternateName": "MyeCA - Expert Income Tax Filing",
           "url": "https://myeca.in",
-          "logo": "https://myeca.in/logo.png",
+          "logo": "https://myeca.in/favicon.svg",
           "description": "India's premier digital platform for professional tax filing services with expert CA assistance",
           "founder": {
             "@type": "Person",
@@ -127,10 +127,10 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
               "name": "MyeCA.in"
             }
           },
-          "aggregateRating": data.rating ? {
+          "aggregateRating": Number(data.rating?.value) > 0 && Number(data.rating?.count) > 0 ? {
             "@type": "AggregateRating",
-            "ratingValue": data.rating.value,
-            "reviewCount": data.rating.count
+            "ratingValue": Number(data.rating.value),
+            "reviewCount": Number(data.rating.count)
           } : undefined
         };
 
@@ -150,7 +150,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
             "name": "MyeCA.in",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://myeca.in/logo.png"
+              "url": "https://myeca.in/favicon.svg"
             }
           },
           "datePublished": data.datePublished,

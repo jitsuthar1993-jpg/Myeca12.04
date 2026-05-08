@@ -23,8 +23,8 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Core Pages
   '/': {
     title: 'Expert Income Tax Filing & ITR e-Filing Services India AY 2026-27',
-    description: 'File your Income Tax Return (ITR) with expert CA assistance. Maximum tax refund guaranteed, 100% accuracy, and secure processing. Trusted by 2.5M+ users.',
-    keywords: ['ITR filing India', 'income tax return online', 'CA assisted tax filing', 'e-filing 2025', 'tax consultant near me'],
+    description: 'File your Income Tax Return (ITR) for AY 2026-27 with guided workflows, secure document handling, and optional CA-assisted review.',
+    keywords: ['ITR filing India', 'income tax return online', 'CA assisted tax filing', 'e-filing 2026', 'tax consultant near me'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }]
   },
@@ -54,53 +54,53 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Tax Calculators
   '/calculators/income-tax': {
     title: 'Income Tax Calculator AY 2026-27 | New vs Old Regime | MyeCA.in',
-    description: 'Accurately calculate your income tax for AY 2026-27. Compare New and Old tax regimes with 1961 Act sections and Income-tax Act, 2025 equivalents.',
+    description: 'Estimate income tax for AY 2026-27. Compare New and Old tax regimes with 1961 Act sections and Income-tax Act, 2025 equivalents.',
     keywords: ['income tax calculator 2026', 'AY 2026-27 tax calculator', 'old vs new regime calculator', 'income tax slabs 2026'],
     type: 'calculator',
     calculatorData: {
       type: 'Income Tax Calculator',
       features: ['Real-time comparison', 'Deduction optimization', 'AY 2026-27 support', '2025 Act section references'],
-      accuracy: '99.9%',
+      accuracy: 'Estimate for common cases',
       updates: 'Updated with Union Budget 2025'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Income Tax', url: '/calculators/income-tax' }]
   },
   '/calculators/capital-gains': {
-    title: 'Capital Gains Tax Calculator 2025 | STCG & LTCG Calculator | MyeCA.in',
-    description: 'Calculate capital gains tax on stocks, mutual funds, property & gold. Updated with Budget 2024 rates. Know STCG & LTCG tax rates and holding periods.',
+    title: 'Capital Gains Tax Calculator 2026 | STCG & LTCG Estimate | MyeCA.in',
+    description: 'Estimate capital gains tax on stocks, mutual funds, property and gold. Review complex asset, exemption, acquisition-date and special-rate cases before filing.',
     keywords: ['capital gains calculator', 'LTCG calculator', 'STCG calculator', 'tax on shares', 'property tax calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'Capital Gains Calculator',
-      features: ['Equity & Property support', 'Budget 2024 rates', 'LTCG/STCG breakdown'],
-      accuracy: '100%',
-      updates: 'Post-Budget 2024 updated'
+      features: ['Equity & Property support', 'LTCG/STCG breakdown', 'Estimate caveats'],
+      accuracy: 'Estimate for common cases',
+      updates: 'Production caveats added'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Capital Gains', url: '/calculators/capital-gains' }]
   },
   '/calculators/advance-tax': {
-    title: 'Advance Tax Calculator 2025 | Installment Due Dates | MyeCA.in',
-    description: 'Calculate your advance tax liability and view installment due dates for FY 2024-25. Avoid Section 234B & 234C interest penalties.',
+    title: 'Advance Tax Calculator 2026 | Installment Due Dates | MyeCA.in',
+    description: 'Estimate advance tax liability and view installment due dates by selected financial year. Avoid Section 234B & 234C interest with timely planning.',
     keywords: ['advance tax calculator', 'tax installments 2025', 'income tax due dates', 'section 234C calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'Advance Tax Calculator',
       features: ['Quarterly breakdown', 'Due date alerts', 'Penalty estimation'],
-      accuracy: '99.9%',
-      updates: 'FY 2024-25 compliant'
+      accuracy: 'Estimate for common cases',
+      updates: 'FY selector and current due dates'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Advance Tax', url: '/calculators/advance-tax' }]
   },
   '/calculators/hra': {
     title: 'HRA Calculator 2025 | House Rent Allowance Exemption | MyeCA.in',
-    description: 'Calculate your HRA tax exemption for FY 2024-25 and 2025-26. Find the exempt and taxable portion of your house rent allowance easily.',
+    description: 'Estimate your HRA tax exemption for FY 2025-26. Review the exempt and taxable portion of your house rent allowance before filing.',
     keywords: ['HRA calculator', 'house rent allowance exemption', 'calculate HRA tax', 'rent receipt calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'HRA Calculator',
       features: ['Metro/Non-metro calculation', 'Section 10(13A) compliance', 'Instant results'],
-      accuracy: '100%',
-      updates: 'FY 2024-25 & 2025-26 compliant'
+      accuracy: 'Rule-based estimate',
+      updates: 'FY 2025-26 compliant'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'HRA Calculator', url: '/calculators/hra' }]
   },
@@ -112,7 +112,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Regime Comparison Tool',
       features: ['Investment-linked analysis', 'Section 80C/80D support with 2025 Act references', 'AY 2026-27 rebate comparison'],
-      accuracy: '100%',
+      accuracy: 'Estimate for common cases',
       updates: 'Budget 2025 ready'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Tax Regime', url: '/calculators/tax-regime' }]
@@ -125,7 +125,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Tax Regime Comparator',
       features: ['Side-by-side regime comparison', 'Deduction impact analysis', 'AY 2026-27 slab support'],
-      accuracy: '100%',
+      accuracy: 'Estimate for common cases',
       updates: 'Budget 2025 ready'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Regime Comparator', url: '/calculators/regime-comparator' }]
@@ -138,7 +138,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'HSN Finder',
       features: ['Real-time search', 'Updated GST rates', 'Category breakdown'],
-      accuracy: '100%',
+      accuracy: 'Lookup estimate',
       updates: 'Current GST council updates'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'HSN Finder', url: '/calculators/hsn-finder' }]
@@ -151,7 +151,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'GST Calculator',
       features: ['Add/remove GST', 'CGST/SGST/IGST split', '2026 rate chips'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: 'GST 2025-26 rate rationalisation ready'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'GST Calculator', url: '/calculators/gst' }]
@@ -164,7 +164,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Salary Calculator',
       features: ['CTC breakup', 'PF deduction', 'Estimated TDS'],
-      accuracy: '99%',
+      accuracy: 'Estimate',
       updates: 'AY 2026-27 tax estimate'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Salary Calculator', url: '/calculators/salary' }]
@@ -177,7 +177,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Gratuity Calculator',
       features: ['15/26 formula', 'Service year rounding', 'Eligibility message'],
-      accuracy: '100%',
+      accuracy: 'Formula estimate',
       updates: 'Payment of Gratuity Act formula'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Gratuity Calculator', url: '/calculators/gratuity' }]
@@ -190,7 +190,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'EPF Calculator',
       features: ['Employee and employer contribution', 'EPS split', 'Interest projection'],
-      accuracy: '99%',
+      accuracy: 'Projection estimate',
       updates: '8.25% default interest editable'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'EPF Calculator', url: '/calculators/epf' }]
@@ -216,7 +216,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Lumpsum Calculator',
       features: ['Future value', 'Wealth gain', 'Inflation-adjusted value'],
-      accuracy: '100%',
+      accuracy: 'Projection estimate',
       updates: '2026 planning model'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Lumpsum Calculator', url: '/calculators/lumpsum' }]
@@ -229,7 +229,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'SWP Calculator',
       features: ['Monthly withdrawal plan', 'Corpus depletion check', 'Remaining balance'],
-      accuracy: '100%',
+      accuracy: 'Projection estimate',
       updates: '2026 retirement planning model'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'SWP Calculator', url: '/calculators/swp' }]
@@ -242,7 +242,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Inflation Calculator',
       features: ['Future cost', 'Present value', 'Purchasing power loss'],
-      accuracy: '100%',
+      accuracy: 'Projection estimate',
       updates: '2026 planning model'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Inflation Calculator', url: '/calculators/inflation' }]
@@ -255,7 +255,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Loan Eligibility Calculator',
       features: ['FOIR-based eligibility', 'Eligible EMI', 'Loan amount estimate'],
-      accuracy: '99%',
+      accuracy: 'Eligibility estimate',
       updates: '2026 lending assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Loan Eligibility', url: '/calculators/loan-eligibility' }]
@@ -270,7 +270,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'SIP Calculator',
       features: ['Compound interest projection', 'Monthly breakdown', 'Goal-based planning'],
-      accuracy: '100%',
+      accuracy: 'Projection estimate',
       updates: 'FY 2025 projection model'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'SIP Calculator', url: '/calculators/sip' }]
@@ -296,8 +296,8 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'NPS Calculator',
       features: ['Tier I & II projection', 'Annuity calculation', 'Tax benefit tracking'],
-      accuracy: '99.9%',
-      updates: 'FY 2024-25 compliant'
+      accuracy: 'Projection estimate',
+      updates: 'FY 2025-26 planning assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'NPS Calculator', url: '/calculators/nps' }]
   },
@@ -344,10 +344,10 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Service Pages
   '/services/gst-registration': {
     title: 'GST Registration Online India | Fast & Easy Process | MyeCA.in',
-    description: 'Get your GST registration online within 3-5 days. Expert CA assistance, transparent pricing, and 100% compliance guaranteed.',
+    description: 'Get GST registration support online with document preparation, portal filing guidance, query support, and transparent pricing.',
     keywords: ['GST registration', 'new GST connection', 'GST certificate online', 'apply for GST India'],
     type: 'service',
-    serviceData: { price: '₹999', rating: '4.9', reviews: '1250', availability: 'InStock' },
+    serviceData: { price: '₹2999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'GST Registration', url: '/services/gst-registration' }]
   },
   '/services/company-registration': {
@@ -355,7 +355,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Register your company online with ease. Includes DSC, DIN, MOA, AOA, and PAN/TAN. Startup friendly pricing and expert support.',
     keywords: ['company registration', 'register pvt ltd', 'company incorporation', 'startup registration India'],
     type: 'service',
-    serviceData: { price: '₹5999', rating: '4.8', reviews: '850', availability: 'InStock' },
+    serviceData: { price: '₹6999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Company Registration', url: '/services/company-registration' }]
   },
   '/services/trademark-registration': {
@@ -363,7 +363,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Apply for trademark registration and protect your brand identity. Search, filing, and tracking by expert IP attorneys.',
     keywords: ['trademark registration', 'register brand name', 'TM filing India', 'trademark consultant'],
     type: 'service',
-    serviceData: { price: '₹1499', rating: '4.9', reviews: '620', availability: 'InStock' },
+    serviceData: { price: '₹12999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Trademark Registration', url: '/services/trademark-registration' }]
   },
   '/services/notice-compliance': {
@@ -371,7 +371,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Received an income tax notice? Get expert CA assistance to draft and file accurate replies for Section 143(1), 139(9), etc.',
     keywords: ['income tax notice reply', 'respond to tax notice', '143(1) notice help', 'tax compliance services'],
     type: 'service',
-    serviceData: { price: '₹1999', rating: '4.7', reviews: '450', availability: 'InStock' },
+    serviceData: { price: '₹2999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Notice Compliance', url: '/services/notice-compliance' }]
   },
   '/services/msme-udyam-registration': {
@@ -379,12 +379,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Get your MSME / Udyam registration certificate instantly. Avail government benefits, loans, and subsidies for your business.',
     keywords: ['MSME registration', 'udyam registration', 'msme certificate online', 'udyam portal India'],
     type: 'service',
-    serviceData: { price: '₹499', rating: '5.0', reviews: '2100', availability: 'InStock' },
+    serviceData: { price: '₹999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'MSME Registration', url: '/services/msme-udyam-registration' }]
   },
   '/about': {
-    title: 'About Us | MyeCA.in - India\'s Leading Tax Platform',
-    description: 'Learn about MyeCA.in, our mission to simplify tax filing, and the experts behind India\'s most trusted financial services platform.',
+    title: 'About Us | MyeCA.in Tax Filing Platform',
+    description: 'Learn about MyeCA.in, our mission to simplify tax filing, and the team building practical tax and compliance workflows.',
     keywords: ['about myeca', 'tax experts India', 'fintech startup India', 'tax filing company'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'About Us', url: '/about' }]
@@ -415,7 +415,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Get recognized by DPIIT under the Startup India initiative. Avail tax exemptions, patent benefits, and easy self-certification.',
     keywords: ['startup india registration', 'dpiit recognition', 'startup tax benefits', 'register startup india'],
     type: 'service',
-    serviceData: { price: '₹4999', rating: '4.9', reviews: '320', availability: 'InStock' },
+    serviceData: { price: '₹4999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Startup India', url: '/services/startup-india-registration' }]
   },
   '/calculators/emi': {
@@ -484,15 +484,15 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Education Loan', url: '/calculators/education-loan' }]
   },
   '/calculators/tds': {
-    title: 'TDS Calculator 2025 | Tax Deducted at Source Rates | MyeCA.in',
-    description: 'Calculate TDS on salary, rent, professional fees, and commissions. Stay updated with latest TDS rates for FY 2024-25 and 2025-26.',
-    keywords: ['tds calculator', 'tax deducted at source', 'tds rates 2025', 'calculate tds online'],
+    title: 'TDS Calculator AY 2026-27 | Tax Deducted at Source Rates | MyeCA.in',
+    description: 'Estimate TDS on salary, rent, professional fees, commissions, interest, and dividends for common resident cases with FY 2025-26 notes.',
+    keywords: ['tds calculator', 'tax deducted at source', 'tds rates 2026', 'calculate tds online'],
     type: 'calculator',
     calculatorData: {
       type: 'TDS Calculator',
-      features: ['Section-wise rates', 'Salary TDS calculation', 'Non-resident TDS support'],
-      accuracy: '100%',
-      updates: 'FY 2024-25 & 2025-26 updated'
+      features: ['Section-wise rates', 'Threshold checks', 'PAN impact'],
+      accuracy: 'Estimate for common resident cases',
+      updates: 'FY 2025-26 updated'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'TDS Calculator', url: '/calculators/tds' }]
   },
@@ -504,8 +504,8 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Penalty Calculator',
       features: ['GST late fee', 'Section 234A/B/C interest', 'TDS delay fees'],
-      accuracy: '99.9%',
-      updates: 'FY 2024-25 compliant'
+      accuracy: 'Estimate for common cases',
+      updates: 'FY 2025-26 compliant'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Penalty Calculator', url: '/calculators/penalty' }]
   },

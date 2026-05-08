@@ -75,6 +75,16 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
   }, [location, title, currentUrl]);
 
   const keywordStr = Array.isArray(keywords) ? keywords.join(", ") : keywords;
+  const serviceRatingValue = serviceData ? Number(serviceData.rating) : NaN;
+  const serviceReviewCount = serviceData ? Number(serviceData.reviews) : NaN;
+  const hasVerifiedServiceRating =
+    Number.isFinite(serviceRatingValue) &&
+    serviceRatingValue > 0 &&
+    Number.isFinite(serviceReviewCount) &&
+    serviceReviewCount > 0;
+  const servicePrice = serviceData?.price
+    ? serviceData.price.replace(/,/g, "").match(/\d+(?:\.\d+)?/)?.[0]
+    : undefined;
 
   // Build JSON-LD blocks
   const jsonLdBlocks: any[] = [];
@@ -128,6 +138,10 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
     jsonLdBlocks.push({
       "@context": "https://schema.org",
       "@type": "TaxPreparationService",
+      "@id": "https://myeca.in/#organization",
+      "url": "https://myeca.in",
+      "logo": "https://myeca.in/favicon.svg",
+      "image": "https://myeca.in/og-image.jpg",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Mumbai",
@@ -175,7 +189,7 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
       name: siteName,
       logo: {
         "@type": "ImageObject",
-        url: "https://myeca.in/logo.png"
+        url: "https://myeca.in/favicon.svg"
       },
       sameAs: [
         "https://twitter.com/myecain",
@@ -226,15 +240,15 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
     Object.assign(mainEntity, {
       offers: {
         "@type": "Offer",
-        price: serviceData.price,
+        price: servicePrice,
         priceCurrency: "INR",
         availability: serviceData.availability || "https://schema.org/InStock",
       },
-      aggregateRating: {
+      ...(hasVerifiedServiceRating ? { aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: serviceData.rating,
-        reviewCount: serviceData.reviews,
-      },
+        ratingValue: serviceRatingValue,
+        reviewCount: serviceReviewCount,
+      } } : {}),
     });
   }
 

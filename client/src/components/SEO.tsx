@@ -40,7 +40,7 @@ const SEO: React.FC<SEOProps> = ({
   description,
   keywords = 'tax filing, income tax, ITR, tax calculator, India',
   url = 'https://myeca.in',
-  image = 'https://myeca.in/og-image.png',
+  image = 'https://myeca.in/og-image.jpg',
   type = 'website',
   author = 'MyeCA.in',
   publishedTime,
@@ -54,7 +54,11 @@ const SEO: React.FC<SEOProps> = ({
   const [location] = useLocation();
   const currentUrl = `https://myeca.in${location}`;
   const siteName = 'MyeCA.in - Expert Tax Filing Services';
-  
+  const serviceRatingValue = serviceData ? Number(serviceData.rating) : NaN;
+  const serviceReviewCount = serviceData ? Number(serviceData.reviews) : NaN;
+  const hasVerifiedServiceRating = Number.isFinite(serviceRatingValue) && serviceRatingValue > 0 && Number.isFinite(serviceReviewCount) && serviceReviewCount > 0;
+  const servicePrice = serviceData?.price ? serviceData.price.replace(/,/g, '').match(/\d+(?:\.\d+)?/)?.[0] : undefined;
+
   // Track page view for Google Analytics
   useEffect(() => {
     const gtag = (window as any).gtag;
@@ -80,7 +84,7 @@ const SEO: React.FC<SEOProps> = ({
         "@type": "Organization",
         name: author,
         url: "https://myeca.in",
-        logo: "https://myeca.in/logo.png",
+        logo: "https://myeca.in/favicon.svg",
         sameAs: [
           "https://twitter.com/myecain",
           "https://facebook.com/myecain",
@@ -92,7 +96,7 @@ const SEO: React.FC<SEOProps> = ({
         name: siteName,
         logo: {
           "@type": "ImageObject",
-          url: "https://myeca.in/logo.png"
+          url: "https://myeca.in/favicon.svg"
         }
       }
     };
@@ -106,11 +110,6 @@ const SEO: React.FC<SEOProps> = ({
           "@type": "Offer",
           price: "0",
           priceCurrency: "INR"
-        },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.8",
-          ratingCount: "150000"
         },
         features: calculatorData.features,
         screenshot: "https://myeca.in/calculator-screenshot.png"
@@ -131,15 +130,15 @@ const SEO: React.FC<SEOProps> = ({
         },
         offers: {
           "@type": "Offer",
-          price: serviceData.price,
+          price: servicePrice,
           priceCurrency: "INR",
           availability: serviceData.availability || "https://schema.org/InStock"
         },
-        aggregateRating: {
+        ...(hasVerifiedServiceRating ? { aggregateRating: {
           "@type": "AggregateRating",
           ratingValue: serviceData.rating,
           reviewCount: serviceData.reviews
-        }
+        } } : {})
       };
     }
 
@@ -271,7 +270,7 @@ const SEO: React.FC<SEOProps> = ({
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             name: siteName,
-            description: "Expert CA-assisted tax filing services in India. File ITR online with maximum refund guarantee.",
+            description: "Guided and CA-assisted tax filing services in India for ITR, GST, and compliance workflows.",
             url: "https://myeca.in",
             email: "support@myeca.in",
             address: {
@@ -286,12 +285,7 @@ const SEO: React.FC<SEOProps> = ({
               opens: "09:00",
               closes: "18:00"
             },
-            priceRange: "₹499-₹4999",
-            rating: {
-              "@type": "AggregateRating",
-              ratingValue: "4.8",
-              reviewCount: "150000"
-            }
+            priceRange: "Rs 499-Rs 9,999"
           })}
         </script>
       )}
@@ -304,26 +298,15 @@ const SEO: React.FC<SEOProps> = ({
       {/* Additional SEO Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="msapplication-TileColor" content="#2563eb" />
-      <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+      <meta name="msapplication-TileImage" content="/favicon.svg" />
       <meta name="application-name" content="MyeCA.in" />
       
       {/* Favicon Tags */}
-      <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
-      <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png" />
-      <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png" />
-      <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png" />
-      <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png" />
-      <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png" />
-      <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png" />
-      <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png" />
-      <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png" />
-      <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-      <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      <link rel="apple-touch-icon" href="/favicon.svg" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <link rel="manifest" href="/manifest.json" />
       <meta name="msapplication-TileColor" content="#ffffff" />
-      <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+      <meta name="msapplication-TileImage" content="/favicon.svg" />
     </Helmet>
   );
 };

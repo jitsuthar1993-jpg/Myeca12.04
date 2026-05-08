@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "set NODE_ENV=development&& npx tsx --watch server/index.ts",
-    "build": "vite build",
+    "build": "vite build && tsx scripts/generate-seo-assets.ts",
     "start": "set NODE_ENV=production&& tsx server/index.ts",
     "check": "tsc",
     "db:generate": "dotenv -e .env -- drizzle-kit generate",

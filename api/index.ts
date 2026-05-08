@@ -14,7 +14,15 @@ import {
   requestUrl,
   setPublicCache,
 } from "./_public-blog.js";
+import { SEO_CONFIG } from "../client/src/config/seo.config.js";
 import { getIncomeTaxFormAsset } from "../shared/income-tax-form-assets.js";
+import {
+  buildRobotsTxt,
+  buildSitemapXml,
+  getIndexablePublicRoutes,
+  routePriority,
+  toAbsoluteUrl,
+} from "../shared/seo-public.js";
 
 const PUBLIC_CACHE = "public, s-maxage=300, stale-while-revalidate=3600";
 const PRIVATE_CACHE = "private, no-cache";
@@ -86,82 +94,30 @@ function redirectToIncomeTaxForm(req: any, res: any, url: URL) {
 
 function sitemapXml() {
   const blogResponse = listPublicBlogs(new URL("https://myeca.in/api/public/blogs?limit=50"));
-  const baseUrl = "https://myeca.in";
-  const staticRoutes = [
-    "",
-    "/services",
-    "/all-services",
-    "/about",
-    "/contact",
-    "/calculators",
-    "/learn",
-    "/blog",
-    "/legal/privacy-policy",
-    "/legal/terms-of-service",
-    "/legal/refund-policy",
-    "/itr/form-selector",
-    "/itr/form-recommender",
-    "/itr/filing",
-    "/form16-parser",
-    "/ais-viewer",
-    "/tds-refund-tracker",
-    "/calculators/income-tax",
-    "/calculators/regime-comparator",
-    "/calculators/capital-gains",
-    "/calculators/advance-tax",
-    "/services/notice-compliance",
-    "/expert-consultation",
-  ];
+  const blogRoutes = blogResponse.posts.map((post: any) => `/blog/${post.slug || post.id}`);
+  const blogDateMap = new Map(
+    blogResponse.posts.map((post: any) => [
+      `/blog/${post.slug || post.id}`,
+      new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()).toISOString().split("T")[0],
+    ]),
+  );
+  const routes = getIndexablePublicRoutes(
+    Object.entries(SEO_CONFIG)
+      .filter(([, config]) => !config.noindex)
+      .map(([route]) => route),
+    blogRoutes,
+  );
 
-  const urls = [
-    ...staticRoutes.map((route) => ({
-      loc: `${baseUrl}${route}`,
-      lastmod: new Date().toISOString().split("T")[0],
-      changefreq: route === "" ? "daily" : "weekly",
-      priority: route === "" ? "1.0" : "0.8",
-    })),
-    ...blogResponse.posts.map((post: any) => ({
-      loc: `${baseUrl}/blog/${post.slug || post.id}`,
-      lastmod: new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()).toISOString().split("T")[0],
-      changefreq: "monthly",
-      priority: "0.6",
-    })),
-  ];
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-  .map(
-    (entry) => `  <url>
-    <loc>${entry.loc}</loc>
-    <lastmod>${entry.lastmod}</lastmod>
-    <changefreq>${entry.changefreq}</changefreq>
-    <priority>${entry.priority}</priority>
-  </url>`,
-  )
-  .join("\n")}
-</urlset>`;
+  return buildSitemapXml(routes.map((route) => ({
+    loc: toAbsoluteUrl(route),
+    lastmod: blogDateMap.get(route) || new Date().toISOString().split("T")[0],
+    changefreq: route === "/" ? "daily" : route.startsWith("/blog/") ? "monthly" : "weekly",
+    priority: routePriority(route),
+  })));
 }
 
 function robotsTxt() {
-  return `User-agent: *
-Allow: /
-Sitemap: https://myeca.in/sitemap.xml
-Disallow: /admin/
-Disallow: /ca/
-Disallow: /api/
-Disallow: /auth/
-
-User-agent: GPTBot
-Disallow: /api/
-Disallow: /admin/
-Disallow: /ca/
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /`;
+  return buildRobotsTxt();
 }
 
 function openApiSpec() {

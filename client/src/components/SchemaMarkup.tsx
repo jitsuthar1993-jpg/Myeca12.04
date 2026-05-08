@@ -17,7 +17,7 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
         ...schema,
         name: data.name || "MyeCA.in",
         url: data.url || "https://myeca.in",
-        logo: data.logo || "https://myeca.in/logo.png",
+        logo: data.logo || "https://myeca.in/favicon.svg",
         description: data.description || "India's trusted platform for expert income tax filing and business services",
         address: {
           "@type": "PostalAddress",
@@ -83,11 +83,7 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
             name: "MyeCA.in"
           }
         },
-        aggregateRating: data.rating || {
-          "@type": "AggregateRating",
-          ratingValue: "4.8",
-          reviewCount: "15000"
-        },
+        ...(data.rating ? { aggregateRating: data.rating } : {}),
         ...data
       };
       break;
@@ -157,7 +153,7 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
           name: "MyeCA.in",
           logo: {
             "@type": "ImageObject",
-            url: "https://myeca.in/logo.png"
+            url: "https://myeca.in/favicon.svg"
           }
         },
         datePublished: data.datePublished,
