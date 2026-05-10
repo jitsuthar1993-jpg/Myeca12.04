@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, Lock, User, Shield, CreditCard, Bell } from "lucide-react";
+import { Loader2, Save, Lock, User, Shield } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -86,14 +86,19 @@ export default function AccountSettingsPage() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/profile", {
+      const res = await apiRequest("/api/profile", {
         method: "PUT",
         body: JSON.stringify(data),
       });
+      const json = await res.json();
+      return json.data?.user;
     },
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
       toast({ title: "Success", description: "Profile updated successfully" });
       logAuditEvent({ action: 'profile_update_success', category: 'authentication' });
+      if (updatedUser) {
+        queryClient.setQueryData(["/api/profile"], updatedUser);
+      }
       queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
     },
     onError: (error: any) => {
@@ -132,7 +137,7 @@ export default function AccountSettingsPage() {
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Account Configurations</h1>
           <p className="text-slate-500 max-w-2xl">
-            Fine-tune your personal information, security protocols, and account preferences.
+            Manage your personal information and security protocols.
           </p>
         </div>
 
@@ -140,7 +145,6 @@ export default function AccountSettingsPage() {
           <TabsList className="bg-slate-50 p-1 rounded-xl h-12 inline-flex border border-slate-100/50">
             <TabsTrigger value="profile" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Profile</TabsTrigger>
             <TabsTrigger value="security" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Security</TabsTrigger>
-            <TabsTrigger value="billing" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Billing</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -315,17 +319,6 @@ export default function AccountSettingsPage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="billing" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-             <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white p-12 text-center">
-                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                   <CreditCard className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">Billing & Subscription</h3>
-                <p className="text-slate-500 max-w-sm mx-auto mt-2 text-sm font-medium">You are currently on the <span className="text-blue-600 font-bold">Standard Professional</span> plan. Managed billing is coming soon to your portal.</p>
-                <Button variant="outline" className="mt-8 rounded-xl px-10 h-11 font-bold text-xs uppercase tracking-widest border-slate-100 hover:bg-slate-50">View Transactions</Button>
-             </Card>
           </TabsContent>
         </Tabs>
       </div>

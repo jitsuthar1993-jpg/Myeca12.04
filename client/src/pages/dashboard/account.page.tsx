@@ -5,12 +5,11 @@ import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Loader2, Save, Lock, User, Shield, CreditCard, Bell, 
-  Mail, Phone, Calendar, LogOut, ShieldCheck, Zap, 
-  ChevronRight, Camera, Sparkles, Globe, Fingerprint
+  Loader2, Save, Lock, User, Shield,
+  Mail, Phone, Calendar, LogOut, ShieldCheck,
+  ChevronRight, Sparkles, Globe, Fingerprint
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -77,6 +76,11 @@ export default function UnifiedAccountPage() {
     },
   });
 
+  const accountUser = profileData || user;
+  const displayName = [accountUser?.firstName, accountUser?.lastName].filter(Boolean).join(" ").trim() || accountUser?.email || "Your account";
+  const displayEmail = accountUser?.email || "Email not available";
+  const displayPhone = accountUser?.phoneNumber || "Mobile not added";
+
   useEffect(() => {
     if (profileData) {
       profileForm.reset({
@@ -97,14 +101,20 @@ export default function UnifiedAccountPage() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/profile", {
+      const res = await apiRequest("/api/profile", {
         method: "PUT",
         body: JSON.stringify(data),
       });
+      const json = await res.json();
+      return json.data?.user;
     },
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
       toast({ title: "Profile Updated", description: "Your changes have been saved successfully." });
+      if (updatedUser) {
+        queryClient.setQueryData(["/api/profile"], updatedUser);
+      }
       queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/v1/auth/me"] });
     },
     onError: (error: any) => {
       toast({ title: "Update Failed", description: error.message || "Could not save profile changes.", variant: "destructive" });
@@ -128,8 +138,8 @@ export default function UnifiedAccountPage() {
   });
 
   const getInitials = () => {
-    if (!user) return 'U';
-    return `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() || 'U';
+    if (!accountUser) return 'U';
+    return `${accountUser.firstName?.[0] || ''}${accountUser.lastName?.[0] || ''}`.toUpperCase() || 'U';
   };
 
   return (
@@ -143,7 +153,7 @@ export default function UnifiedAccountPage() {
                 <span className="text-[10px] font-black uppercase tracking-[0.2em]">User Preferences</span>
              </div>
              <h1 className="text-4xl font-black tracking-tight text-slate-900">Account Control</h1>
-             <p className="text-slate-500 font-medium text-sm">Unified management of your profile, security and billing.</p>
+             <p className="text-slate-500 font-medium text-sm">Manage your profile details and account security in one place.</p>
           </div>
           <Button 
             onClick={() => logout()}
@@ -171,17 +181,18 @@ export default function UnifiedAccountPage() {
                               {getInitials()}
                            </div>
                         </div>
-                        <button className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-slate-600 hover:text-blue-600 transition-all border border-slate-100 group-hover:scale-110">
-                           <Camera className="h-5 w-5" />
-                        </button>
                      </div>
                      <div className="mt-6 text-center">
-                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">{user?.firstName} {user?.lastName}</h2>
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">{displayName}</h2>
+                        <div className="mt-3 space-y-1 text-xs font-semibold text-slate-500">
+                           <p className="break-all">{displayEmail}</p>
+                           <p>{displayPhone}</p>
+                        </div>
                         <div className="flex items-center justify-center gap-2 mt-2">
                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
-                              {user?.role?.replace('_', ' ')}
+                              {accountUser?.role?.replace('_', ' ') || 'user'}
                            </Badge>
-                           {user?.isVerified && (
+                           {accountUser?.isVerified && (
                               <div className="h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                                  <ShieldCheck className="h-3 w-3" />
                               </div>
@@ -194,8 +205,6 @@ export default function UnifiedAccountPage() {
                      {[
                         { id: 'profile', label: 'General Profile', icon: User, desc: 'Identity & Contact' },
                         { id: 'security', label: 'Security & Access', icon: ShieldCheck, desc: 'Passwords & MFA' },
-                        { id: 'billing', label: 'Billing & Plans', icon: CreditCard, desc: 'Subscriptions' },
-                        { id: 'notifications', label: 'Notifications', icon: Bell, desc: 'Alert settings' },
                      ].map((tab) => (
                         <button
                            key={tab.id}
@@ -467,62 +476,6 @@ export default function UnifiedAccountPage() {
                   </m.div>
                )}
 
-               {activeTab === 'billing' && (
-                  <m.div
-                     key="billing"
-                     initial={{ opacity: 0, y: 20 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     exit={{ opacity: 0, y: -20 }}
-                  >
-                     <Card className="border-none shadow-sm rounded-[40px] overflow-hidden bg-white border border-slate-100/50 p-16 text-center min-h-[500px] flex flex-col items-center justify-center">
-                        <div className="w-24 h-24 bg-blue-50 rounded-[40px] flex items-center justify-center mb-10 relative">
-                           <div className="absolute inset-0 bg-blue-400 blur-3xl opacity-20 animate-pulse" />
-                           <CreditCard className="w-12 h-12 text-blue-600 relative z-10" />
-                        </div>
-                        <h3 className="text-4xl font-black text-slate-900 tracking-tight">Billing & Plans</h3>
-                        <p className="text-slate-500 max-w-sm mx-auto mt-4 text-base font-medium leading-relaxed">
-                           Securely manage your active subscriptions, payment instruments and historical invoices.
-                        </p>
-                        
-                        <div className="mt-12 p-8 rounded-[40px] bg-slate-50 border border-slate-100 flex flex-col md:flex-row items-center gap-8 max-w-lg w-full">
-                           <div className="h-14 w-14 rounded-[20px] bg-white shadow-md flex items-center justify-center text-blue-600">
-                              <Sparkles className="h-7 w-7" />
-                           </div>
-                           <div className="text-center md:text-left flex-1">
-                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Active Plan</p>
-                              <p className="text-xl font-black text-slate-900">Standard Professional</p>
-                           </div>
-                           <Badge className="bg-blue-600 text-white border-none font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full">Active</Badge>
-                        </div>
-
-                        <Button variant="outline" className="mt-10 rounded-2xl px-16 h-14 font-black text-[11px] uppercase tracking-widest border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
-                           Access Transaction Ledger
-                        </Button>
-                     </Card>
-               </m.div>
-               )}
-
-               {activeTab === 'notifications' && (
-                  <m.div
-                     key="notifications"
-                     initial={{ opacity: 0, y: 20 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     exit={{ opacity: 0, y: -20 }}
-                  >
-                     <Card className="border-none shadow-sm rounded-[40px] overflow-hidden bg-white border border-slate-100/50 p-16 text-center min-h-[500px] flex flex-col items-center justify-center">
-                        <div className="w-24 h-24 bg-amber-50 rounded-[40px] flex items-center justify-center mb-10">
-                           <Bell className="w-12 h-12 text-amber-600" />
-                        </div>
-                        <h3 className="text-4xl font-black text-slate-900 tracking-tight">Notification Engine</h3>
-                        <p className="text-slate-500 max-w-sm mx-auto mt-4 text-base font-medium leading-relaxed">
-                           Personalize your alerting system for filings, security events and system updates.
-                        </p>
-                        <Button className="mt-12 rounded-2xl px-16 h-14 bg-blue-600 text-white font-black text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">
-                           Configure Preferences
-                        </Button>
-                     </Card>
-               </m.div>
-               )}
             </AnimatePresence>
           </div>
         </div>
