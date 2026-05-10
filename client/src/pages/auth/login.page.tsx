@@ -30,6 +30,15 @@ const reasonCopy: Record<string, { title: string; message: string }> = {
   },
 };
 
+function getLoginErrorMessage(error: any) {
+  const message = error?.message || "";
+  if (/invalid login credentials/i.test(message)) {
+    return "Email or password did not match a confirmed account. Use Forgot to reset your password, or create the account here if it was made on another deployment.";
+  }
+
+  return message || 'Unable to sign in. Check your details and try again.';
+}
+
 export default function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
   const [, setLocation] = useLocation();
@@ -70,7 +79,7 @@ export default function LoginPage() {
       await login(email.trim(), password);
       reloadAfterLogin(redirectUrl);
     } catch (err: any) {
-      setError(err?.message || 'Unable to sign in. Check your details and try again.');
+      setError(getLoginErrorMessage(err));
     } finally {
       setLoading(false);
     }

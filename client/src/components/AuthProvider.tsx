@@ -19,7 +19,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, userData: Partial<AppUser>) => Promise<void>;
+  register: (email: string, password: string, userData: Partial<AppUser>) => Promise<{ needsEmailConfirmation: boolean }>;
   loginWithGoogle: () => Promise<void>;
   logout: (reason?: LogoutReason) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
@@ -227,7 +227,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!isSupabaseEnabled) {
       setAppUser(localMockUser(email));
       setIsLoading(false);
-      return;
+      return { needsEmailConfirmation: false };
     }
 
     try {
@@ -250,7 +250,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.session?.access_token) {
         setAuthUser(data.user);
         setAppUser(await fetchAppUser(data.session.access_token, data.user));
+        return { needsEmailConfirmation: false };
       }
+
+      return { needsEmailConfirmation: true };
     } finally {
       setIsLoading(false);
     }
@@ -357,7 +360,7 @@ const FALLBACK_AUTH_VALUE: AuthContextType = {
   isLoading: false,
   isAuthenticated: false,
   login: async () => {},
-  register: async () => {},
+  register: async () => ({ needsEmailConfirmation: false }),
   loginWithGoogle: async () => {},
   logout: async () => {},
   sendPasswordReset: async () => {},

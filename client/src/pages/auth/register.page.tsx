@@ -35,12 +35,18 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      await register(email.trim(), password, {
+      const result = await register(email.trim(), password, {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         phoneNumber: phoneNumber.trim() || null,
       });
-      setNotice("Account created. Check your email if Supabase asks you to confirm before signing in.");
+      if (result.needsEmailConfirmation) {
+        setPassword("");
+        setConfirmPassword("");
+        setNotice("Account created. Check your email and confirm the account before signing in.");
+        return;
+      }
+
       setLocation(redirectUrl);
     } catch (err: any) {
       setError(err?.message || "Unable to create account. Please try again.");
