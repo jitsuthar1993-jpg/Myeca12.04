@@ -4,9 +4,16 @@ import {
   countCollection,
   listCollection,
   methodAllowed,
+  requireApiUser,
   requireTemporaryRole,
   sendJson,
 } from "./_test-api.js";
+import { adminDb } from "../server/data-admin.js";
+import {
+  getBootstrapRoleForEmail,
+  getProvisionedRoleForEmail,
+  syncRoleClaims,
+} from "../server/services/user-accounts.js";
 import {
   getPublicBlogBySlug,
   listPublicBlogs,
@@ -47,6 +54,9 @@ function routeFor(req: any) {
     "/api/cms/categories": "cms-categories",
     "/api/public/blogs": "public-blogs",
     "/api/public/categories": "public-categories",
+    "/api/v1/auth/me": "auth-me",
+    "/api/v1/auth/sync": "auth-sync",
+    "/api/v1/auth/logout-event": "auth-logout-event",
     "/api/errors/log": "client-error-log",
     "/sitemap.xml": "sitemap",
     "/robots.txt": "robots",
@@ -74,6 +84,18 @@ function sendText(res: any, status: number, body: string, contentType: string, c
   res.setHeader("Content-Type", contentType);
   res.setHeader("Cache-Control", cacheControl);
   return res.status(status).send(body);
+}
+
+function requestBody(req: any) {
+  if (!req.body) return {};
+  if (typeof req.body === "string") {
+    try {
+      return JSON.parse(req.body);
+    } catch {
+      return {};
+    }
+  }
+  return req.body;
 }
 
 function redirectToIncomeTaxForm(req: any, res: any, url: URL) {
@@ -192,6 +214,65 @@ export default async function handler(req: any, res: any) {
   }
 
   res.setHeader("Cache-Control", PRIVATE_CACHE);
+
+  if (name === "auth-me") {
+    if (!methodAllowed(req, res, ["GET"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+    return sendJson(res, 200, { user });
+  }
+
+  if (name === "auth-sync") {
+    if (!methodAllowed(req, res, ["POST"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+
+    const body = requestBody(req);
+    const userRef = adminDb.collection("users").doc(user.id);
+    const role =
+      (await getProvisionedRoleForEmail(body.email || user.email)) ??
+      user.role ??
+      getBootstrapRoleForEmail(body.email || user.email) ??
+      "user";
+    const updatedUser = {
+      ...user,
+      email: body.email || user.email || null,
+      firstName: body.firstName || user.firstName || "User",
+      lastName: body.lastName || user.lastName || "",
+      phoneNumber: body.phoneNumber ?? (user as any).phoneNumber ?? null,
+      role,
+      status: user.status || "active",
+      isVerified: (user as any).isVerified ?? true,
+      updatedAt: new Date(),
+      createdAt: (user as any).createdAt ?? new Date(),
+    };
+
+    await userRef.set(updatedUser, { merge: true });
+    await syncRoleClaims(user.id, role);
+    return sendJson(res, 200, { message: "User synced", user: updatedUser });
+  }
+
+  if (name === "auth-logout-event") {
+    if (!methodAllowed(req, res, ["POST"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+    const body = requestBody(req);
+    await adminDb.collection("audit_logs").doc().set({
+      userId: user.id,
+      email: user.email ?? null,
+      action: body.reason === "timeout" ? "logout_timeout" : `logout_${body.reason || "manual"}`,
+      category: "authentication",
+      status: "success",
+      metadata: {
+        reason: body.reason || "manual",
+        userAgent: req.headers?.["user-agent"] ?? null,
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    return sendJson(res, 201, { success: true });
+  }
+
   if (!methodAllowed(req, res, ["GET"])) return;
 
   if (name === "user-dashboard") {

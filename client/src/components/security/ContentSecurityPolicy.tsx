@@ -28,10 +28,6 @@ export function ContentSecurityPolicy({ nonce }: ContentSecurityPolicyProps) {
         content: 'nosniff',
       },
       {
-        httpEquiv: 'X-Frame-Options',
-        content: 'DENY',
-      },
-      {
         httpEquiv: 'X-XSS-Protection',
         content: '1; mode=block',
       },
