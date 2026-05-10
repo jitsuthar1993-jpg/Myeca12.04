@@ -1,6 +1,5 @@
 import { adminDb } from "../server/data-admin.js";
-import { getSupabaseAdminClient } from "../server/lib/supabase.js";
-import { findOrCreateUserProfile } from "../server/services/user-accounts.js";
+import { getSupabaseAuthClient } from "../server/lib/supabase.js";
 import { getTemporaryTestUserByToken, type TemporaryTestRole } from "../shared/temporary-test-users.js";
 
 type ApiUser = {
@@ -20,6 +19,32 @@ export function sendJson(res: any, status: number, payload: unknown) {
 function readBearerToken(req: any) {
   const authorization = String(req.headers?.authorization ?? "");
   return authorization.match(/^Bearer\s+(.+)$/i)?.[1] ?? null;
+}
+
+function roleFromSupabaseUser(user: any) {
+  return user?.app_metadata?.role || user?.user_metadata?.role || "user";
+}
+
+async function findOrCreateApiUser(authUser: any) {
+  const userRef = adminDb.collection("users").doc(authUser.id);
+  let snapshot = await userRef.get();
+
+  if (!snapshot.exists) {
+    await userRef.set({
+      id: authUser.id,
+      email: authUser.email ?? null,
+      firstName: authUser.user_metadata?.firstName || authUser.user_metadata?.first_name || "User",
+      lastName: authUser.user_metadata?.lastName || authUser.user_metadata?.last_name || "",
+      role: roleFromSupabaseUser(authUser),
+      status: "active",
+      isVerified: Boolean(authUser.email_confirmed_at || authUser.confirmed_at),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    snapshot = await userRef.get();
+  }
+
+  return { id: snapshot.id, ...(snapshot.data() as ApiUser) };
 }
 
 export function readTemporaryAuth(req: any) {
@@ -52,17 +77,13 @@ export async function requireApiUser(req: any, res: any, roles: TemporaryTestRol
       return null;
     }
 
-    const { data, error } = await getSupabaseAdminClient().auth.getUser(token);
+    const { data, error } = await getSupabaseAuthClient().auth.getUser(token);
     if (error || !data.user?.id) {
       sendJson(res, 401, { error: "Invalid or expired session." });
       return null;
     }
 
-    const userDoc = await findOrCreateUserProfile({
-      userId: data.user.id,
-      email: data.user.email ?? undefined,
-    });
-    const user = { id: userDoc.id, ...(userDoc.data() as ApiUser) };
+    const user = await findOrCreateApiUser(data.user);
     if (!roles.includes(user.role as TemporaryTestRole)) {
       sendJson(res, 403, { error: "Access denied. Insufficient permissions." });
       return null;
@@ -73,7 +94,7 @@ export async function requireApiUser(req: any, res: any, roles: TemporaryTestRol
     console.error("[API_AUTH] Supabase auth/database check failed:", error);
     sendJson(res, 500, {
       error: "Auth database check failed",
-      message: error?.message || "Unknown auth database error",
+      message: "Could not verify the authenticated user.",
     });
     return null;
   }
