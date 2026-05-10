@@ -45,6 +45,9 @@ export default function LoginPage() {
   const signUpUrl = `/auth/register?redirect_url=${encodeURIComponent(redirectUrl)}`;
   const mockEmail = params.get('mock_email');
   const showTemporaryLogin = params.get('test_login') === '1';
+  const reloadAfterLogin = (target: string) => {
+    window.location.replace(target);
+  };
 
   useEffect(() => {
     if (mockEmail) {
@@ -65,7 +68,7 @@ export default function LoginPage() {
 
     try {
       await login(email.trim(), password);
-      setLocation(redirectUrl);
+      reloadAfterLogin(redirectUrl);
     } catch (err: any) {
       setError(err?.message || 'Unable to sign in. Check your details and try again.');
     } finally {
