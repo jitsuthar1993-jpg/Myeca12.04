@@ -1,6 +1,6 @@
 ﻿import crypto from "crypto";
 import { getDatabaseUrl, getSql } from "./db.js";
-import { getSupabaseAuthClient } from "./lib/supabase.js";
+import { getPublicSupabaseAuthClient } from "./lib/supabase.js";
 
 type JsonRecord = Record<string, any>;
 type WhereClause = { field: string; op: string; value: unknown };
@@ -97,7 +97,7 @@ function applySupabaseFilters(query: any, clauses: WhereClause[]) {
 }
 
 async function getRowFromSupabase(table: string, id: string) {
-  const { data, error } = await getSupabaseAuthClient()
+  const { data, error } = await getPublicSupabaseAuthClient()
     .from(table)
     .select("id,data")
     .eq("id", id)
@@ -113,7 +113,7 @@ async function selectRowsFromSupabase(
   maxRows?: number,
   offsetRows?: number,
 ) {
-  let query = getSupabaseAuthClient().from(table).select("id,data");
+  let query = getPublicSupabaseAuthClient().from(table).select("id,data");
   query = applySupabaseFilters(query, clauses);
 
   if (maxRows && offsetRows) {
@@ -130,7 +130,7 @@ async function selectRowsFromSupabase(
 }
 
 async function countRowsFromSupabase(table: string, clauses: WhereClause[]) {
-  let query = getSupabaseAuthClient().from(table).select("id", { count: "exact", head: true });
+  let query = getPublicSupabaseAuthClient().from(table).select("id", { count: "exact", head: true });
   query = applySupabaseFilters(query, clauses);
   const { count, error } = await query;
   if (error) throw error;
@@ -243,7 +243,7 @@ export class DataDocumentRef {
     );
 
     if (!hasDatabaseUrl()) {
-      const { error } = await getSupabaseAuthClient()
+      const { error } = await getPublicSupabaseAuthClient()
         .from(table)
         .upsert({ id: this.id, data: payload }, { onConflict: "id" });
 
@@ -271,7 +271,7 @@ export class DataDocumentRef {
   async delete() {
     const table = tableFor(this.collectionName);
     if (!hasDatabaseUrl()) {
-      const { error } = await getSupabaseAuthClient().from(table).delete().eq("id", this.id);
+      const { error } = await getPublicSupabaseAuthClient().from(table).delete().eq("id", this.id);
       if (error) throw error;
       return;
     }

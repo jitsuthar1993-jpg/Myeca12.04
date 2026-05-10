@@ -1,5 +1,5 @@
 import { adminDb } from "../server/data-admin.js";
-import { getSupabaseAuthClient } from "../server/lib/supabase.js";
+import { getPublicSupabaseAuthClient, getSupabaseAuthClient } from "../server/lib/supabase.js";
 import { getTemporaryTestUserByToken, type TemporaryTestRole } from "../shared/temporary-test-users.js";
 
 type ApiUser = {
@@ -47,6 +47,19 @@ async function findOrCreateApiUser(authUser: any) {
   return { id: snapshot.id, ...(snapshot.data() as ApiUser) };
 }
 
+async function getSupabaseUserFromToken(token: string) {
+  const canonical = await getPublicSupabaseAuthClient().auth.getUser(token);
+  if (canonical.data.user?.id && !canonical.error) {
+    return canonical;
+  }
+
+  try {
+    return await getSupabaseAuthClient().auth.getUser(token);
+  } catch {
+    return canonical;
+  }
+}
+
 export function readTemporaryAuth(req: any) {
   const token = readBearerToken(req);
   if (!token) return null;
@@ -77,7 +90,7 @@ export async function requireApiUser(req: any, res: any, roles: TemporaryTestRol
       return null;
     }
 
-    const { data, error } = await getSupabaseAuthClient().auth.getUser(token);
+    const { data, error } = await getSupabaseUserFromToken(token);
     if (error || !data.user?.id) {
       sendJson(res, 401, { error: "Invalid or expired session." });
       return null;
