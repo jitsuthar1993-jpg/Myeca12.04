@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/components/AuthProvider';
 import { TEMPORARY_TEST_USERS, type TemporaryTestUser } from '@/lib/temporary-test-users';
+import { isGoogleAuthEnabled } from '@/lib/supabase';
 import {
   AuthPageShell,
 } from '@/components/auth/AuthPageShell';
@@ -121,22 +122,26 @@ export default function LoginPage() {
           </div>
         )}
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleGoogle}
-          disabled={loading || googleLoading}
-          className="h-11 w-full rounded-lg border-slate-200 bg-white font-black text-slate-900 hover:border-[#315efb] hover:bg-[#f4f8ff]"
-        >
-          {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Continue with Google
-        </Button>
+        {isGoogleAuthEnabled && (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleGoogle}
+              disabled={loading || googleLoading}
+              className="h-11 w-full rounded-lg border-slate-200 bg-white font-black text-slate-900 hover:border-[#315efb] hover:bg-[#f4f8ff]"
+            >
+              {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Continue with Google
+            </Button>
 
-        <div className="flex items-center gap-3 text-xs font-black uppercase text-slate-400">
-          <div className="h-px flex-1 bg-slate-200" />
-          <span>or</span>
-          <div className="h-px flex-1 bg-slate-200" />
-        </div>
+            <div className="flex items-center gap-3 text-xs font-black uppercase text-slate-400">
+              <div className="h-px flex-1 bg-slate-200" />
+              <span>or</span>
+              <div className="h-px flex-1 bg-slate-200" />
+            </div>
+          </>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-black text-slate-800">

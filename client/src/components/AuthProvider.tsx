@@ -7,7 +7,7 @@ import {
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
 } from "@/lib/temporary-test-users";
 import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
-import { isSupabaseEnabled, supabase } from "@/lib/supabase";
+import { isGoogleAuthEnabled, isSupabaseEnabled, supabase } from "@/lib/supabase";
 
 type LogoutReason = "manual" | "timeout" | "session_expired";
 
@@ -253,6 +253,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
+    if (!isGoogleAuthEnabled) {
+      throw new Error("Google sign in is not enabled for this project yet. Use email and password to continue.");
+    }
+
     if (!isSupabaseEnabled) {
       await login("user@gmail.com", "local_mock");
       return;
