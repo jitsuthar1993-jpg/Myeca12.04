@@ -191,6 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     clearTemporaryAuthState();
+    setIsLoading(true);
 
     if (!isSupabaseEnabled) {
       setAppUser(localMockUser(email));
@@ -199,19 +200,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password: password ?? "",
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: password ?? "",
+      });
 
-    if (error) {
+      if (error) {
+        throw error;
+      }
+      if (!data.session?.access_token) throw new Error("Supabase did not return a session.");
+
+      setAuthUser(data.user);
+      setAppUser(await fetchAppUser(data.session.access_token, data.user));
+    } finally {
       setIsLoading(false);
-      throw error;
     }
-    if (!data.session?.access_token) throw new Error("Supabase did not return a session.");
-
-    setAuthUser(data.user);
-    setAppUser(await fetchAppUser(data.session.access_token, data.user));
   };
 
   const register = async (email: string, password: string, userData: Partial<AppUser>) => {
@@ -226,27 +230,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const redirectTo = `${window.location.origin}/auth/login`;
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectTo,
-        data: {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          phoneNumber: userData.phoneNumber,
+    try {
+      const redirectTo = `${window.location.origin}/auth/login`;
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectTo,
+          data: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            phoneNumber: userData.phoneNumber,
+          },
         },
-      },
-    });
+      });
 
-    if (error) throw error;
+      if (error) throw error;
 
-    if (data.session?.access_token) {
-      setAuthUser(data.user);
-      setAppUser(await fetchAppUser(data.session.access_token, data.user));
+      if (data.session?.access_token) {
+        setAuthUser(data.user);
+        setAppUser(await fetchAppUser(data.session.access_token, data.user));
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const loginWithGoogle = async () => {

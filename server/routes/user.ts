@@ -23,6 +23,20 @@ const createUserServiceSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
 });
 
+function normalizeUserService(doc: any) {
+  const data = doc.data() as Record<string, any>;
+  const metadata = (data.metadata || {}) as Record<string, any>;
+  const assignedCa = metadata.assignedCa || {};
+
+  return {
+    id: doc.id,
+    ...data,
+    assignedCaId: data.assignedCaId || metadata.assignedCaId || assignedCa.id || null,
+    assignedCaName: data.assignedCaName || metadata.assignedCaName || assignedCa.name || null,
+    assignedCaEmail: data.assignedCaEmail || metadata.assignedCaEmail || assignedCa.email || null,
+  };
+}
+
 router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
@@ -41,7 +55,7 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
     const servicesSnapshot = await adminDb.collection("user_services")
       .where("userId", "==", user.id)
       .get();
-    const activeServices = servicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const activeServices = servicesSnapshot.docs.map(normalizeUserService);
 
     const recentActivity = [
       { id: 1, action: "Logged in", timestamp: new Date(), type: "auth" },
@@ -120,7 +134,7 @@ router.get("/user-services", requireAnyAuth, async (req: AuthRequest, res: Respo
       .where("userId", "==", user.id)
       .get();
 
-    const services = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const services = snapshot.docs.map(normalizeUserService);
     res.json(services);
   } catch (error) {
     return safeError(res, error, "Failed to fetch user services");

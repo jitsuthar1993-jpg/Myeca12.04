@@ -5,8 +5,8 @@ import { Link, useLocation } from 'wouter';
 import { 
   Menu, X, Home, Users, BarChart3, FileText, Settings, 
   LogOut, Image as ImageIcon, Briefcase, User, FolderOpen, 
-  Heart, Search, Bell, Wallet, ChevronRight, LayoutGrid, 
-  Database, HelpCircle, Command, Sparkles, BookOpen, 
+  Search, Bell, LayoutGrid, 
+  Database, HelpCircle, Command, BookOpen, 
   ShieldCheck, PieChart, Layers, Globe, Zap, History,
   ClipboardList, CreditCard, MessageSquare
 } from 'lucide-react';
@@ -102,8 +102,7 @@ const navGroups = {
       label: 'Service Catalog',
       items: [
         { icon: Zap, label: 'New Filing', href: '/dashboard/services' },
-        { icon: Heart, label: 'My Experts', href: '/experts' },
-        { icon: CreditCard, label: 'Payments', href: '/pricing' },
+        { icon: CreditCard, label: 'Payments', href: '/payments' },
       ]
     },
     {
@@ -267,24 +266,6 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
             </div>
             
             <div className="flex items-center gap-3">
-              {/* Wallet/Credits Info (Mimicking Attachment) */}
-              <div className="hidden md:flex items-center gap-4 mr-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100/50 group cursor-pointer transition-all hover:bg-blue-100/50">
-                  <Wallet className="h-3.5 w-3.5 text-blue-600" />
-                  <span className="text-xs font-bold text-blue-700">₹14,250.00</span>
-                  <div className="h-3 w-px bg-blue-200 mx-1"></div>
-                  <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors">Credits</span>
-                </div>
-                
-                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-50 border border-slate-100">
-                  <Button variant="ghost" size="sm" className="h-7 px-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-sm">Sandbox</Button>
-                  <Button variant="ghost" size="sm" className="h-7 px-3 rounded-lg text-[10px] font-black uppercase tracking-widest bg-white shadow-sm text-blue-600 border border-blue-50 font-bold">
-                    <Sparkles className="h-3 w-3 mr-1.5 text-blue-500 fill-blue-500" />
-                    Production
-                  </Button>
-                </div>
-              </div>
-
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-slate-500 hover:bg-slate-50">

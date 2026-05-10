@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, File, X, CheckCircle, AlertCircle, Eye, Loader2 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { compressImage, getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/file_utils";
+import { getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, prepareDocumentForUpload } from "@/lib/file_utils";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
 import { getAuthToken } from "@/lib/authToken";
 
@@ -60,14 +60,18 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
 
     try {
       setIsUploading((prev) => ({ ...prev, [docId]: true }));
-      const compressed = await compressImage(file);
-      setUploadedDocs((prev) => ({ ...prev, [docId]: compressed }));
+      const preparedFile = await prepareDocumentForUpload(file);
+      setUploadedDocs((prev) => ({ ...prev, [docId]: preparedFile }));
       
-      const preview = getFilePreview(compressed);
+      const preview = getFilePreview(preparedFile);
       setPreviews((prev) => ({ ...prev, [docId]: preview }));
     } catch (err) {
-      console.error("Compression failed:", err);
-      setUploadedDocs((prev) => ({ ...prev, [docId]: file }));
+      console.error("Upload preparation failed:", err);
+      toast({
+        title: "Document not ready",
+        description: err instanceof Error ? err.message : "Could not prepare this file for upload.",
+        variant: "destructive",
+      });
     } finally {
       setIsUploading((prev) => ({ ...prev, [docId]: false }));
     }
@@ -181,7 +185,7 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
                       {doc.required && <span className="text-red-500 ml-1">*</span>}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {uploadedDocs[doc.id] ? (uploadedDocs[doc.id] as File).name : "PDF, JPG or PNG (Max 10MB)"}
+                      {uploadedDocs[doc.id] ? (uploadedDocs[doc.id] as File).name : "PDF, JPG, PNG, WebP, Word or Excel"}
                     </p>
                   </div>
                 </div>
@@ -206,7 +210,7 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
                     <input
                       type="file"
                       className="hidden"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept={ALLOWED_FILE_TYPES.join(",")}
                       onChange={(e) => handleFileChange(doc.id, e.target.files?.[0] || null)}
                       disabled={isUploading[doc.id]}
                     />

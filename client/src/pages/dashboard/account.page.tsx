@@ -232,14 +232,6 @@ export default function UnifiedAccountPage() {
                   </div>
                </CardContent>
             </Card>
-
-            <div className="p-10 rounded-[48px] bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-100/50 relative overflow-hidden group cursor-pointer shadow-xl shadow-blue-50">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all group-hover:scale-150" />
-               <Sparkles className="h-8 w-8 text-blue-500 mb-6" />
-               <h3 className="font-black text-2xl leading-tight mb-3 text-slate-900">Expert Advisory</h3>
-               <p className="text-slate-500 text-xs font-medium leading-relaxed mb-8">Direct priority access to our most senior Chartered Accountants.</p>
-               <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 font-black text-[11px] uppercase tracking-widest h-14 rounded-3xl shadow-lg shadow-blue-100 border-none transition-all hover:-translate-y-1">Connect Now</Button>
-            </div>
           </div>
 
           {/* Main Content Area - Full Page Scroll */}

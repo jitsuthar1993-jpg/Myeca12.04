@@ -7,6 +7,7 @@ import { AlertCircle, CheckCircle, CreditCard, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocation } from "wouter";
 import { formatINR } from "@/data/pricing";
+import { apiRequest } from "@/lib/queryClient";
 
 interface ServiceCheckoutModalProps {
   isOpen: boolean;
@@ -48,18 +49,15 @@ export function ServiceCheckoutModal({
     setError(null);
 
     try {
-      const response = await fetch("/api/user-services", {
+      const response = await apiRequest("/api/user-services", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           serviceId,
           serviceTitle,
           serviceCategory: category,
           paymentAmount: priceAmount,
-          paymentStatus: "paid", // Instantly activate for now based on rules
-          status: "active",
+          paymentStatus: "pending",
+          status: "pending",
           metadata: requirementData
         }),
       });
@@ -73,7 +71,7 @@ export function ServiceCheckoutModal({
       setSuccess(true);
       setTimeout(() => {
         onClose();
-        setLocation("/admin/dashboard");
+        setLocation("/dashboard");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");

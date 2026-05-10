@@ -89,6 +89,30 @@ export function sanitizeFilename(filename: string): string {
     .substring(0, 100); // limit length
 }
 
+export async function prepareDocumentForUpload(file: File): Promise<File> {
+  if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+    throw new Error("Invalid file type. Please upload a PDF, image, Word, or Excel file.");
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    throw new Error(`File too large. Max limit is ${formatFileSize(MAX_FILE_SIZE_BYTES)}.`);
+  }
+
+  const preparedFile = file.type.startsWith('image/')
+    ? await compressImage(file)
+    : file;
+
+  if (!ALLOWED_FILE_TYPES.includes(preparedFile.type)) {
+    throw new Error("Invalid compressed file type.");
+  }
+
+  if (preparedFile.size > MAX_FILE_SIZE_BYTES) {
+    throw new Error(`Compressed file is still too large. Max limit is ${formatFileSize(MAX_FILE_SIZE_BYTES)}.`);
+  }
+
+  return preparedFile;
+}
+
 export const ALLOWED_FILE_TYPES = [
   'application/pdf', 
   'image/jpeg', 

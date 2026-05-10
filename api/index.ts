@@ -1,5 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import multer from "multer";
+import sharp from "sharp";
+import { del, get, put } from "@vercel/blob";
 import {
   countCollection,
   listCollection,
@@ -33,6 +36,31 @@ import {
 
 const PUBLIC_CACHE = "public, s-maxage=300, stale-while-revalidate=3600";
 const PRIVATE_CACHE = "private, no-cache";
+const documentUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/webp",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ];
+
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type. Only PDF, images, Word, and Excel files are allowed."));
+    }
+  },
+});
 
 function routeFor(req: any) {
   const url = requestUrl(req);
@@ -54,6 +82,9 @@ function routeFor(req: any) {
     "/api/cms/categories": "cms-categories",
     "/api/public/blogs": "public-blogs",
     "/api/public/categories": "public-categories",
+    "/api/documents": "documents-list",
+    "/api/documents/upload": "documents-upload",
+    "/api/documents/stats/summary": "documents-summary",
     "/api/v1/auth/me": "auth-me",
     "/api/v1/auth/sync": "auth-sync",
     "/api/v1/auth/logout-event": "auth-logout-event",
@@ -69,6 +100,18 @@ function routeFor(req: any) {
   if (blogMatch) {
     url.searchParams.set("slug", decodeURIComponent(blogMatch[1]));
     return { name: "public-blog", url };
+  }
+
+  const documentDownloadMatch = pathname.match(/^\/api\/documents\/([^/]+)\/download$/);
+  if (documentDownloadMatch) {
+    url.searchParams.set("id", decodeURIComponent(documentDownloadMatch[1]));
+    return { name: "documents-download", url };
+  }
+
+  const documentMatch = pathname.match(/^\/api\/documents\/([^/]+)$/);
+  if (documentMatch) {
+    url.searchParams.set("id", decodeURIComponent(documentMatch[1]));
+    return { name: "documents-detail", url };
   }
 
   const downloadMatch = pathname.match(/^\/downloads\/income-tax-forms\/([^/]+)$/);
@@ -96,6 +139,70 @@ function requestBody(req: any) {
     }
   }
   return req.body;
+}
+
+function normalizeUserService(id: string, data: Record<string, any>) {
+  const metadata = data.metadata || {};
+  const assignedCa = metadata.assignedCa || {};
+
+  return {
+    id,
+    ...data,
+    assignedCaId: data.assignedCaId || metadata.assignedCaId || assignedCa.id || null,
+    assignedCaName: data.assignedCaName || metadata.assignedCaName || assignedCa.name || null,
+    assignedCaEmail: data.assignedCaEmail || metadata.assignedCaEmail || assignedCa.email || null,
+  };
+}
+
+function serializeDocument(docId: string, data: Record<string, any>) {
+  return {
+    id: docId,
+    userId: data.userId,
+    fileName: data.fileName ?? null,
+    originalName: data.originalName ?? data.name ?? "document",
+    name: data.name,
+    mimeType: data.mimeType,
+    size: data.size ?? 0,
+    category: data.category,
+    tags: data.tags ?? [],
+    description: data.description ?? null,
+    year: data.year ?? null,
+    status: data.status,
+    version: data.version ?? 1,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    isExternal: Boolean(data.isExternal),
+    downloadPath: `/api/documents/${docId}/download`,
+  };
+}
+
+function safePathSegment(value: string) {
+  return value.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").slice(0, 160);
+}
+
+function runMiddleware(req: any, res: any, middleware: any) {
+  return new Promise<void>((resolve, reject) => {
+    middleware(req, res, (result: any) => {
+      if (result instanceof Error) {
+        reject(result);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+async function streamToBuffer(stream: ReadableStream<Uint8Array>) {
+  const reader = stream.getReader();
+  const chunks: Uint8Array[] = [];
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) chunks.push(value);
+  }
+
+  return Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
 }
 
 function redirectToIncomeTaxForm(req: any, res: any, url: URL) {
@@ -273,21 +380,196 @@ export default async function handler(req: any, res: any) {
     return sendJson(res, 201, { success: true });
   }
 
-  if (!methodAllowed(req, res, ["GET"])) return;
+  if (name === "documents-upload") {
+    if (!methodAllowed(req, res, ["POST"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+
+    try {
+      await runMiddleware(req, res, documentUpload.single("file"));
+      const file = (req as any).file;
+      if (!file) return sendJson(res, 400, { error: "No file uploaded" });
+
+      let tags: string[] = [];
+      if (req.body?.tags) {
+        try {
+          tags = typeof req.body.tags === "string" ? JSON.parse(req.body.tags) : req.body.tags;
+        } catch {
+          tags = [];
+        }
+      }
+
+      let fileBuffer = file.buffer;
+      let finalSize = file.size;
+      let mimeType = file.mimetype;
+
+      if (file.mimetype.startsWith("image/")) {
+        fileBuffer = await sharp(file.buffer)
+          .resize(2000, 2000, { fit: "inside", withoutEnlargement: true })
+          .jpeg({ quality: 80 })
+          .toBuffer();
+        finalSize = fileBuffer.length;
+        mimeType = "image/jpeg";
+      }
+
+      const docRef = adminDb.collection("documents").doc();
+      const fileName = `${Date.now()}-${safePathSegment(file.originalname || "document")}`;
+      const pathname = `documents/${user.id}/${docRef.id}/${fileName}`;
+      const blob = await put(pathname, fileBuffer, {
+        access: "private",
+        contentType: mimeType,
+      });
+
+      const newDoc = {
+        userId: user.id,
+        fileName,
+        originalName: file.originalname,
+        mimeType,
+        size: finalSize,
+        uploadPath: blob.pathname,
+        blobUrl: blob.url,
+        downloadUrl: blob.downloadUrl,
+        name: String(req.body?.name || file.originalname || "document").slice(0, 255),
+        category: String(req.body?.category || "other"),
+        tags: Array.isArray(tags) ? tags : [],
+        description: req.body?.description || null,
+        year: req.body?.year || null,
+        status: "active",
+        version: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await docRef.set(newDoc);
+      return sendJson(res, 200, { success: true, document: serializeDocument(docRef.id, newDoc) });
+    } catch (error: any) {
+      console.error("[DOCUMENT_UPLOAD]", error);
+      return sendJson(res, 500, { error: error.message || "Failed to upload document" });
+    }
+  }
+
+  if (name === "documents-list") {
+    if (!methodAllowed(req, res, ["GET"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+
+    const category = url.searchParams.get("category");
+    const year = url.searchParams.get("year");
+    const search = url.searchParams.get("search")?.toLowerCase();
+    let query: any = adminDb.collection("documents").where("userId", "==", user.id).where("status", "==", "active");
+    if (category && category !== "all") query = query.where("category", "==", category);
+    if (year && year !== "all") query = query.where("year", "==", year);
+
+    const snapshot = await query.get();
+    let documents = snapshot.docs.map((doc: any) => serializeDocument(doc.id, doc.data()));
+    if (search) {
+      documents = documents.filter((doc: any) =>
+        [doc.name, doc.description, doc.originalName].some((value) => String(value ?? "").toLowerCase().includes(search)),
+      );
+    }
+
+    return sendJson(res, 200, { success: true, documents, total: documents.length });
+  }
+
+  if (name === "documents-summary") {
+    if (!methodAllowed(req, res, ["GET"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+
+    const snapshot = await adminDb.collection("documents").where("userId", "==", user.id).where("status", "==", "active").get();
+    const stats = { total: snapshot.size, byCategory: {} as Record<string, number>, byYear: {} as Record<string, number>, totalSize: 0 };
+    snapshot.docs.forEach((doc: any) => {
+      const data = doc.data();
+      stats.byCategory[data.category] = (stats.byCategory[data.category] || 0) + 1;
+      if (data.year) stats.byYear[data.year] = (stats.byYear[data.year] || 0) + 1;
+      stats.totalSize += data.size || 0;
+    });
+
+    return sendJson(res, 200, { success: true, stats });
+  }
+
+  if (name === "documents-download") {
+    if (!methodAllowed(req, res, ["GET"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+
+    const docId = url.searchParams.get("id") || "";
+    const doc = await adminDb.collection("documents").doc(docId).get();
+    if (!doc.exists || doc.data()?.userId !== user.id) {
+      return sendJson(res, 404, { error: "Document not found" });
+    }
+
+    const documentData = doc.data() as Record<string, any>;
+    const blobUrl = documentData.blobUrl || documentData.url;
+    if (!blobUrl) return sendJson(res, 404, { error: "Document file not found" });
+
+    const blob = await get(blobUrl, { access: "private" });
+    if (!blob || blob.statusCode !== 200 || !blob.stream) {
+      return sendJson(res, 404, { error: "Document file not found" });
+    }
+
+    const file = await streamToBuffer(blob.stream);
+    res.setHeader("Content-Disposition", `attachment; filename="${encodeURIComponent(documentData.originalName || documentData.name || "document")}"`);
+    res.setHeader("Content-Type", documentData.mimeType || "application/octet-stream");
+    return res.status(200).send(file);
+  }
+
+  if (name === "documents-detail") {
+    if (!methodAllowed(req, res, ["GET", "PATCH", "DELETE"])) return;
+    const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+    if (!user) return;
+
+    const docId = url.searchParams.get("id") || "";
+    const docRef = adminDb.collection("documents").doc(docId);
+    const doc = await docRef.get();
+    if (!doc.exists || doc.data()?.userId !== user.id) {
+      return sendJson(res, 404, { error: "Document not found" });
+    }
+
+    if (req.method === "DELETE") {
+      const documentData = doc.data() as Record<string, any>;
+      if (documentData.blobUrl || documentData.url) {
+        await del(documentData.blobUrl || documentData.url).catch((error) => console.warn("[BLOB] Failed to delete blob:", error));
+      }
+      await docRef.update({ status: "deleted", deletedAt: new Date(), updatedAt: new Date() });
+      return sendJson(res, 200, { success: true, message: "Document deleted successfully" });
+    }
+
+    if (req.method === "PATCH") {
+      const body = requestBody(req);
+      const updateData = {
+        ...(body.name ? { name: String(body.name).slice(0, 255) } : {}),
+        ...(body.category ? { category: String(body.category) } : {}),
+        ...(Array.isArray(body.tags) ? { tags: body.tags } : {}),
+        ...(body.description !== undefined ? { description: body.description || null } : {}),
+        ...(body.year !== undefined ? { year: body.year || null } : {}),
+        updatedAt: new Date(),
+      };
+      await docRef.update(updateData);
+      return sendJson(res, 200, {
+        success: true,
+        document: serializeDocument(docId, { ...(doc.data() as Record<string, any>), ...updateData }),
+      });
+    }
+
+    return sendJson(res, 200, { success: true, document: serializeDocument(doc.id, doc.data() as Record<string, any>) });
+  }
 
   if (name === "user-dashboard") {
+    if (!methodAllowed(req, res, ["GET"])) return;
     const user = await requireTemporaryRole(req, res, ["admin", "ca", "team_member", "user"]);
     if (!user) return;
 
-    const [totalReturns, documentsUploaded, services] = await Promise.all([
-      countCollection("tax_returns"),
-      countCollection("documents"),
-      listCollection("user_services", 50),
+    const [returnsSnapshot, docsSnapshot, servicesSnapshot] = await Promise.all([
+      adminDb.collection("tax_returns").where("profileId", "==", user.id).get(),
+      adminDb.collection("documents").where("userId", "==", user.id).where("status", "==", "active").get(),
+      adminDb.collection("user_services").where("userId", "==", user.id).get(),
     ]);
+    const services = servicesSnapshot.docs.map((doc: any) => normalizeUserService(doc.id, doc.data()));
 
     return sendJson(res, 200, {
       success: true,
-      stats: { totalReturns, documentsUploaded, pendingTasks: 0, savedAmount: 0 },
+      stats: { totalReturns: returnsSnapshot.size, documentsUploaded: docsSnapshot.size, pendingTasks: 0, savedAmount: 0 },
       activeServices: services,
       recentActivity: [],
       taxReturns: [],
@@ -295,10 +577,37 @@ export default async function handler(req: any, res: any) {
   }
 
   if (name === "user-services") {
+    if (!methodAllowed(req, res, ["GET", "POST"])) return;
     const user = await requireTemporaryRole(req, res, ["admin", "ca", "team_member", "user"]);
     if (!user) return;
-    return sendJson(res, 200, await listCollection("user_services", 100));
+
+    if (req.method === "POST") {
+      const body = requestBody(req);
+      if (!body.serviceId || !body.serviceTitle || !body.serviceCategory) {
+        return sendJson(res, 400, { error: "serviceId, serviceTitle, and serviceCategory are required" });
+      }
+
+      const newService = {
+        userId: user.id,
+        serviceId: String(body.serviceId),
+        serviceTitle: String(body.serviceTitle),
+        serviceCategory: String(body.serviceCategory),
+        paymentAmount: body.paymentAmount ?? null,
+        paymentStatus: body.paymentStatus || null,
+        status: body.status || "pending",
+        metadata: body.metadata || {},
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const docRef = await adminDb.collection("user_services").add(newService);
+      return sendJson(res, 200, { success: true, message: "Service request created", id: docRef.id });
+    }
+
+    const snapshot = await adminDb.collection("user_services").where("userId", "==", user.id).get();
+    return sendJson(res, 200, snapshot.docs.map((doc: any) => normalizeUserService(doc.id, doc.data())));
   }
+
+  if (!methodAllowed(req, res, ["GET"])) return;
 
   if (name === "notifications") {
     const user = await requireTemporaryRole(req, res, ["admin", "ca", "team_member", "user"]);

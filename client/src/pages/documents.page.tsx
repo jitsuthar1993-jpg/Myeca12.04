@@ -27,7 +27,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { getAuthToken } from "@/lib/authToken";
-import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, formatFileSize } from "@/lib/file_utils";
+import { ALLOWED_FILE_TYPES, formatFileSize, prepareDocumentForUpload } from "@/lib/file_utils";
 import { Layout } from "@/components/admin/Layout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -90,17 +90,12 @@ export default function DocumentsPage() {
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
-      if (file.size > MAX_FILE_SIZE_BYTES) {
-        throw new Error(`File too large. Max limit is ${formatFileSize(MAX_FILE_SIZE_BYTES)}.`);
-      }
-      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-        throw new Error("Invalid file type.");
-      }
+      const preparedFile = await prepareDocumentForUpload(file);
 
       const token = await getAuthToken();
       const formData = new FormData();
-      formData.append("file", file);
-      formData.append("name", uploadData.name || file.name);
+      formData.append("file", preparedFile);
+      formData.append("name", uploadData.name || preparedFile.name);
       formData.append("category", uploadData.category);
       formData.append("year", uploadData.year);
       formData.append("description", uploadData.description);
@@ -110,7 +105,10 @@ export default function DocumentsPage() {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
-      if (!response.ok) throw new Error("Failed to upload document");
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || data.message || "Failed to upload document");
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -401,7 +399,7 @@ export default function DocumentsPage() {
                       <Upload className="h-6 w-6" />
                     </div>
                     <p className="text-sm font-bold text-slate-900">Drop files here</p>
-                    <p className="text-[10px] text-slate-400 mt-1 font-medium">PDF, Image or Spreadsheets (Max 10MB)</p>
+                    <p className="text-[10px] text-slate-400 mt-1 font-medium">PDF, image, Word or Excel (compressed when possible)</p>
                   </div>
 
                   <div className="space-y-4">

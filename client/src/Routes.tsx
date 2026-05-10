@@ -91,6 +91,7 @@ const AuditServicesPage = lazyWithRetry(() => import("@/pages/services/audit-ser
 const DocumentVaultServicePage = lazyWithRetry(() => import("@/pages/services/document-vault.page"));
 const GeneratedServicePage = lazyWithRetry(() => import("@/pages/services/generated-service.page"));
 const PricingPage = lazyWithRetry(() => import("@/pages/pricing.page"));
+const PaymentsPage = lazyWithRetry(() => import("@/pages/payments.page"));
 const FastestITRFilingPage = lazyWithRetry(() => import("@/pages/features/fastest-itr-filing.page"));
 const TaxCalculatorFeaturePage = lazyWithRetry(() => import("@/pages/features/tax-calculator.page"));
 const DocumentScannerPage = lazyWithRetry(() => import("@/pages/features/document-scanner.page"));
@@ -276,6 +277,7 @@ export default function Routes() {
         <Route path="/services" component={ServicesPage} />
         <Route path="/all-services" component={AllServicesPage} />
         <Route path="/pricing" component={PricingPage} />
+        <Route path="/payments" component={() => <RequireAuth><PaymentsPage /></RequireAuth>} />
         <Route path="/features/fastest-itr-filing" component={FastestITRFilingPage} />
         <Route path="/features/tax-calculator" component={TaxCalculatorFeaturePage} />
         <Route path="/features/document-scanner" component={DocumentScannerPage} />

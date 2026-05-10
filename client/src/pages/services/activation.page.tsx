@@ -65,7 +65,7 @@ export default function ActivationPage() {
           serviceTitle: service.title,
           serviceCategory: service.category,
           paymentAmount: priceNum,
-          paymentStatus: 'paid', // Mocked as paid for now
+          paymentStatus: 'pending',
           status: 'pending',
           metadata: {
             documentsUploaded: uploadedDocs,
