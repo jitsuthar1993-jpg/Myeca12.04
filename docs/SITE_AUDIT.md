@@ -1,4 +1,4 @@
-# MyeCA Local Site Audit
+﻿# MyeCA Local Site Audit
 
 Audit date: 2026-05-06  
 Target: local workspace at `C:\Users\jitsu\OneDrive\Desktop\Websites\Myeca.in\Myeca12.04`  
@@ -13,7 +13,7 @@ Top risks:
 
 1. Fix the compile/build blockers in `dashboard.page.tsx` and `integrations.page.tsx`.
 2. Restore real frontend auth and role guards before any production release.
-3. Fix CSP so configured Clerk, Vercel Analytics, Speed Insights, and allowed inline/bootstrap behavior do not fail at runtime.
+3. Fix CSP so configured Supabase, Vercel Analytics, Speed Insights, and allowed inline/bootstrap behavior do not fail at runtime.
 4. Repair `/integrations`, which crashes from a failed lazy import.
 5. Add or redirect `/services/itr-for-salaried`, which currently shows Page Not Found.
 6. Rebuild sitemap generation from the actual route/source-of-truth and exclude private routes.
@@ -107,11 +107,11 @@ Recommended fix: add `<Route path="/services/itr-for-salaried" component={ITRFor
 Area: backend headers, auth, analytics  
 Evidence: every browser-sampled route logged CSP failures for:
 
-- `https://dummy-key.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js`
+- `https://vedumlohmacaghuebduy.supabase.co/npm/@supabase/supabase-js@5/dist/supabase.browser.js`
 - `https://va.vercel-scripts.com/v1/script.debug.js`
 - `https://va.vercel-scripts.com/v1/speed-insights/script.debug.js`
 
-Root header currently includes `script-src 'self' 'unsafe-inline'` and `connect-src 'self' https://api.myeca.in`, but does not allow Clerk or Vercel script/connect origins. The inline font `onload` and fallback `onclick` handler also conflict with `script-src-attr 'none'`.
+Root header currently includes `script-src 'self' 'unsafe-inline'` and `connect-src 'self' https://api.myeca.in`, but does not allow Supabase or Vercel script/connect origins. The inline font `onload` and fallback `onclick` handler also conflict with `script-src-attr 'none'`.
 
 Impact: auth bootstrapping, analytics, Speed Insights, and some inline fallback behavior fail noisily.
 
@@ -288,7 +288,7 @@ Risks to resolve:
 - CSP is too strict for scripts the client attempts to load.
 - The local in-memory general API rate limiter is per-process and not durable across instances.
 - OpenAPI is incomplete.
-- DB-backed routes rely on environment variables; local warnings showed missing `DATABASE_URL`, `CLERK_SECRET_KEY`, `BLOB_READ_WRITE_TOKEN`, `ADMIN_EMAILS`, `PII_ENCRYPTION_KEY`, and `SESSION_SECRET`.
+- DB-backed routes rely on environment variables; local warnings showed missing `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `BLOB_READ_WRITE_TOKEN`, `ADMIN_EMAILS`, `PII_ENCRYPTION_KEY`, and `SESSION_SECRET`.
 
 ## Visual And Flow Notes
 
@@ -336,4 +336,3 @@ Recommended browser smoke set:
 - `/dashboard`
 - `/admin`
 - `/documents`
-

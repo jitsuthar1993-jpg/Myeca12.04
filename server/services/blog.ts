@@ -1,4 +1,4 @@
-import { adminDb, type NeonAdminDb } from "../neon-admin.js";
+﻿import { adminDb, type DataAdminDb } from "../data-admin.js";
 import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content.js";
 import {
   type BlogCategory,
@@ -107,7 +107,7 @@ async function getUserSnapshot(userId: string | null | undefined) {
   };
 }
 
-export async function getCategoryLookup(db: NeonAdminDb = adminDb): Promise<CategoryLookup> {
+export async function getCategoryLookup(db: DataAdminDb = adminDb): Promise<CategoryLookup> {
   const lookup = getDefaultCategoryLookup();
 
   try {
@@ -233,7 +233,7 @@ export function normalizeStoredBlogPostRecord(
   };
 }
 
-export async function listAllBlogPosts(db: NeonAdminDb = adminDb): Promise<StoredBlogPost[]> {
+export async function listAllBlogPosts(db: DataAdminDb = adminDb): Promise<StoredBlogPost[]> {
   const lookup = await getCategoryLookup(db);
   let storedPosts: StoredBlogPost[] = [];
 
@@ -256,7 +256,7 @@ export async function listAllBlogPosts(db: NeonAdminDb = adminDb): Promise<Store
 }
 
 /** Optimized: only fetch published posts from DB instead of all posts */
-export async function listPublishedBlogPosts(db: NeonAdminDb = adminDb): Promise<StoredBlogPost[]> {
+export async function listPublishedBlogPosts(db: DataAdminDb = adminDb): Promise<StoredBlogPost[]> {
   const lookup = await getCategoryLookup(db);
   let storedPosts: StoredBlogPost[] = [];
 
@@ -286,7 +286,7 @@ export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
     .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
 }
 
-export async function getBlogPostById(id: string, db: NeonAdminDb = adminDb): Promise<StoredBlogPost | null> {
+export async function getBlogPostById(id: string, db: DataAdminDb = adminDb): Promise<StoredBlogPost | null> {
   const lookup = await getCategoryLookup(db);
 
   try {
@@ -308,7 +308,7 @@ export async function buildBlogPostWriteData(
   options?: {
     existing?: StoredBlogPost | null;
     authUserId?: string | null;
-    db?: NeonAdminDb;
+    db?: DataAdminDb;
   },
 ) {
   const db = options?.db ?? adminDb;

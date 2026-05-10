@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,7 +41,7 @@ const formatDate = (date: any, includeTime: boolean = false) => {
 };
 
 interface User {
-  id: string; // Clerk ID
+  id: string; // Supabase ID
   email: string;
   firstName: string;
   lastName: string;

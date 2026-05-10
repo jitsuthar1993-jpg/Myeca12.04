@@ -1,4 +1,4 @@
-import { adminDb } from "./neon-admin.js";
+﻿import { adminDb } from "./data-admin.js";
 import { type User, type InsertUser, type Profile, type InsertProfile } from "../shared/schema.js";
 
 export const storage = {

@@ -1,4 +1,4 @@
-# Database Management Plan
+﻿# Database Management Plan
 ## MyeCA.in Platform Database Architecture & Management Strategy
 
 ### 1. Executive Summary
@@ -7,9 +7,9 @@ This document outlines the comprehensive database management strategy for the My
 ### 2. Current Database Architecture
 
 #### 2.1 Technology Stack
-- **Database System**: PostgreSQL (via Neon Database)
+- **Database System**: PostgreSQL (via Supabase Database)
 - **ORM**: Drizzle ORM
-- **Connection Management**: @neondatabase/serverless
+- **Connection Management**: Supabase Postgres
 - **Session Storage**: connect-pg-simple
 - **Migration Tool**: Drizzle Kit
 
@@ -251,7 +251,7 @@ WHERE state = 'active'
 #### 10.2 Emergency Contacts
 - Database Admin: admin@myeca.in
 - DevOps Team: devops@myeca.in
-- Neon Support: support@neon.tech
+- Supabase Support: support@Supabase.tech
 - On-call Engineer: +91-XXXXXXXXXX
 
 ### 11. Implementation Timeline

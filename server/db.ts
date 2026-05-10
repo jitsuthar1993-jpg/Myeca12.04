@@ -1,25 +1,31 @@
 import "dotenv/config";
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
-import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+import pg from "pg";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "./db/schema.js";
 
-let sqlClient: NeonQueryFunction<false, false> | null = null;
-let drizzleClient: NeonHttpDatabase<typeof schema> | null = null;
+const { Pool } = pg;
+
+let pool: pg.Pool | null = null;
+let drizzleClient: NodePgDatabase<typeof schema> | null = null;
 
 export function getDatabaseUrl() {
-  return process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING;
+  return process.env.DATABASE_URL;
 }
 
 export function getSql() {
-  if (!sqlClient) {
+  if (!pool) {
     const databaseUrl = getDatabaseUrl();
     if (!databaseUrl) {
-      throw new Error("DATABASE_URL or POSTGRES_URL is required for Neon Postgres access");
+      throw new Error("DATABASE_URL is required for Supabase Postgres access");
     }
-    sqlClient = neon(databaseUrl);
+
+    pool = new Pool({
+      connectionString: databaseUrl,
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+    });
   }
 
-  return sqlClient;
+  return pool;
 }
 
 export function getDb() {
@@ -30,11 +36,12 @@ export function getDb() {
   return drizzleClient;
 }
 
-export const db = new Proxy({} as NeonHttpDatabase<typeof schema>, {
+export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
   get(_target, property) {
     const currentDb = getDb() as any;
     const value = currentDb[property];
     return typeof value === "function" ? value.bind(currentDb) : value;
   },
 });
+
 export { schema };

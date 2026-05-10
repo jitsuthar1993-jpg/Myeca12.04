@@ -1,6 +1,6 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { getSql } from "../db.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { TEMPORARY_TEST_USERS } from "../../shared/temporary-test-users.js";
 
 const documentTables = [
@@ -92,8 +92,8 @@ async function seedMinimalSettings() {
 }
 
 async function main() {
-  if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL && !process.env.POSTGRES_URL_NON_POOLING) {
-    throw new Error("DATABASE_URL, POSTGRES_URL, or POSTGRES_URL_NON_POOLING is required.");
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is required.");
   }
 
   await ensureDocumentTables();
@@ -101,7 +101,7 @@ async function main() {
   await seedMinimalSettings();
   await seedTemporaryUsers();
 
-  console.log("Reset Neon document data to zero baseline.");
+  console.log("Reset Supabase document data to zero baseline.");
   console.log(`Created ${TEMPORARY_TEST_USERS.length} temporary DB-backed test users.`);
 }
 

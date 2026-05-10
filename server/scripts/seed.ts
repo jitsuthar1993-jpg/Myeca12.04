@@ -1,6 +1,6 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 
 async function upsertById(collection: string, id: string, data: Record<string, any>) {
   await adminDb.collection(collection).doc(id).set({
@@ -50,7 +50,7 @@ async function seed() {
     ),
   ]);
 
-  console.log(`Seeded Neon defaults and ${defaultBlogPosts.length} in-depth blog posts.`);
+  console.log(`Seeded Supabase defaults and ${defaultBlogPosts.length} in-depth blog posts.`);
 }
 
 seed().catch((error) => {

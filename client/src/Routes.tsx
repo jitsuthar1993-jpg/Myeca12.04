@@ -118,7 +118,6 @@ const ServerErrorPage = lazyWithRetry(() => import("@/pages/server-error.page"))
 // Blog management is handled via AdminBlog below
 const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/index.page"));
 const ForbiddenPage = lazyWithRetry(() => import("@/pages/forbidden.page"));
-const ClerkCallback = lazyWithRetry(() => import("@/components/auth/ClerkCallback"));
 import { RequireAdmin } from '@/components/auth/RequireAdmin';
 import { RequireRole } from '@/components/auth/RequireRole';
 import { RequireAuth } from '@/components/auth/RequireAuth';
@@ -289,7 +288,6 @@ export default function Routes() {
         <Route path="/auth/register" component={RegisterPage} />
         <Route path="/register" component={RegisterPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
-        <Route path="/auth/callback" component={ClerkCallback} />
         <Route path="/logout" component={LogoutPage} />
         <Route path="/dashboard/services" component={() => <RequireAuth><DashboardServicesPage /></RequireAuth>} />
         <Route path="/dashboard" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />

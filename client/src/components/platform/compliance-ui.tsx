@@ -1,4 +1,4 @@
-import type React from "react";
+﻿import type React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
@@ -237,7 +237,7 @@ export function TrustStrip() {
   return (
     <div className="grid gap-3 text-sm sm:grid-cols-3">
       {[
-        "Clerk-secured identity",
+        "Supabase-secured identity",
         "Private Blob document vault",
         "CA-reviewed compliance",
       ].map((item) => (

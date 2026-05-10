@@ -1,6 +1,6 @@
-import { Router, type Request, type Response } from "express";
+﻿import { Router, type Request, type Response } from "express";
 import { z } from "zod";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { sanitize } from "../middleware/sanitize.js";
 import { blogPostEditorSchema, type BlogPostEditorInput } from "../../shared/blog.js";
 import {

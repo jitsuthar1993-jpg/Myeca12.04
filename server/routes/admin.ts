@@ -1,6 +1,6 @@
-import { Router, Response } from 'express';
+﻿import { Router, Response } from 'express';
 import { z } from "zod";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { requireAuth, requireAdmin, AuthRequest } from "../middleware/auth.js";
 import { convertTimestamp } from "../utils/timestamps.js";
 import { validateRequest } from "../middleware/security.js";
@@ -45,8 +45,8 @@ router.post(
         invitedBy: req.auth?.userId,
       });
 
-      if (result.mode === "promoted" && result.clerkUserId) {
-        invalidateCachedUser(result.clerkUserId);
+      if (result.mode === "promoted" && result.supabaseUserId) {
+        invalidateCachedUser(result.supabaseUserId);
       }
 
       await adminDb.collection("audit_logs").doc().set({
@@ -67,8 +67,8 @@ router.post(
         success: true,
         message:
           result.mode === "promoted"
-            ? "Existing Clerk user promoted successfully."
-            : "Clerk invitation sent successfully.",
+            ? "Existing Supabase user promoted successfully."
+            : "Supabase invitation sent successfully.",
         data: result,
       });
     } catch (error) {
@@ -254,7 +254,7 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
     ]);
 
     const allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
-    // Build O(1) lookup map — avoids repeated O(n) .find() calls below
+    // Build O(1) lookup map â€” avoids repeated O(n) .find() calls below
     const userMap = new Map<string, any>(allUsers.map(u => [u.id, u]));
 
     const totalUsers = allUsers.length;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { m } from "framer-motion";
 import {
   User, Bell, Shield, Globe, Palette, Download, Key,
@@ -321,7 +321,7 @@ export default function SettingsPage() {
                 <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-start gap-3">
                   <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
                   <p className="text-xs text-blue-700 font-medium">
-                    2FA management is available through Clerk account security settings.
+                    2FA management is available through Supabase account security settings.
                   </p>
                 </div>
               </div>
@@ -340,7 +340,7 @@ export default function SettingsPage() {
                         <Monitor className="h-4 w-4 text-slate-400" />
                         <div>
                             <p className="text-sm font-bold text-slate-900">Chrome on Windows</p>
-                            <p className="text-[10px] font-medium text-slate-500">Current Session • India</p>
+                            <p className="text-[10px] font-medium text-slate-500">Current Session â€¢ India</p>
                         </div>
                     </div>
                     <Badge className="bg-emerald-50 text-emerald-600 border-0 font-bold text-[9px] uppercase tracking-widest px-2 py-0.5">Active</Badge>

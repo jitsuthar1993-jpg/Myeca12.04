@@ -1,5 +1,5 @@
-/**
- * Lightweight in-memory TTL cache for Neon-backed user profiles.
+﻿/**
+ * Lightweight in-memory TTL cache for Supabase-backed user profiles.
  * Avoids a database round-trip on every authenticated request.
  */
 
@@ -21,7 +21,7 @@ export function setCachedUser(userId: string, data: any): void {
   _cache.set(userId, { data, expiresAt: Date.now() + USER_CACHE_TTL_MS });
 }
 
-/** Call this after a role/status update so the next request re-fetches from Neon. */
+/** Call this after a role/status update so the next request re-fetches from Supabase. */
 export function invalidateCachedUser(userId: string): void {
   _cache.delete(userId);
 }

@@ -1,4 +1,4 @@
-import { adminDb } from "../server/neon-admin.js";
+﻿import { adminDb } from "../server/data-admin.js";
 import { getTemporaryTestUserByToken, type TemporaryTestRole } from "../shared/temporary-test-users.js";
 
 type ApiUser = {

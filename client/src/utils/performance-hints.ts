@@ -1,4 +1,4 @@
-// Performance hints for critical resources
+﻿// Performance hints for critical resources
 export const performanceHints = {
   // Preconnect to external domains
   preconnect: [
@@ -6,14 +6,14 @@ export const performanceHints = {
     'https://fonts.gstatic.com',
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
-    'https://clerk.myeca.in'
+    'https://vedumlohmacaghuebduy.supabase.co'
   ],
 
   // DNS prefetch for potential external resources
   dnsPrefetch: [
     'https://cdn.jsdelivr.net',
     'https://unpkg.com',
-    'https://clerk.myeca.in'
+    'https://vedumlohmacaghuebduy.supabase.co'
   ],
 
   // Critical fonts to preload

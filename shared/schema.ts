@@ -1,9 +1,9 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 // --- Base Schemas ---
 
 export const userSchema = z.object({
-  id: z.string(), // Clerk user ID
+  id: z.string(), // Supabase user ID
   username: z.string().optional().nullable(),
   email: z.string().email().optional().nullable(),
   phoneNumber: z.string().optional().nullable(),

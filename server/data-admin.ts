@@ -1,4 +1,4 @@
-import crypto from "crypto";
+﻿import crypto from "crypto";
 import { getSql } from "./db.js";
 
 type JsonRecord = Record<string, any>;
@@ -32,7 +32,7 @@ const COLLECTION_TABLES: Record<string, string> = {
 function tableFor(collectionName: string) {
   const table = COLLECTION_TABLES[collectionName];
   if (!table) {
-    throw new Error(`No Neon table mapping configured for collection '${collectionName}'`);
+    throw new Error(`No data table mapping configured for collection '${collectionName}'`);
   }
   return table;
 }
@@ -68,6 +68,11 @@ function normalizeData(id: string, data: JsonRecord = {}) {
 
 function fromRow(row: any) {
   return normalizeData(row.id, row.data ?? {});
+}
+
+async function queryRows<T = any>(text: string, params: unknown[] = []): Promise<T[]> {
+  const result = await getSql().query(text, params);
+  return Array.isArray(result) ? (result as T[]) : (result.rows as T[]);
 }
 
 function buildWhere(clauses: WhereClause[], params: unknown[]) {
@@ -110,11 +115,11 @@ function buildOrder(order: OrderClause[]) {
     .join(", ")}`;
 }
 
-export class NeonDocumentSnapshot {
+export class DataDocumentSnapshot {
   constructor(
     public readonly id: string,
     private readonly value: JsonRecord | null,
-    public readonly ref?: NeonDocumentRef,
+    public readonly ref?: DataDocumentRef,
   ) {}
 
   get exists() {
@@ -126,8 +131,8 @@ export class NeonDocumentSnapshot {
   }
 }
 
-export class NeonQuerySnapshot {
-  constructor(public readonly docs: NeonDocumentSnapshot[]) {}
+export class DataQuerySnapshot {
+  constructor(public readonly docs: DataDocumentSnapshot[]) {}
 
   get empty() {
     return this.docs.length === 0;
@@ -138,7 +143,7 @@ export class NeonQuerySnapshot {
   }
 }
 
-class NeonCountSnapshot {
+class DataCountSnapshot {
   constructor(private readonly count: number) {}
 
   data() {
@@ -146,7 +151,7 @@ class NeonCountSnapshot {
   }
 }
 
-export class NeonDocumentRef {
+export class DataDocumentRef {
   constructor(
     private readonly collectionName: string,
     public readonly id: string,
@@ -154,9 +159,9 @@ export class NeonDocumentRef {
 
   async get() {
     const table = tableFor(this.collectionName);
-    const rows = await getSql().query(`SELECT id, data FROM ${table} WHERE id = $1 LIMIT 1`, [this.id]);
+    const rows = await queryRows(`SELECT id, data FROM ${table} WHERE id = $1 LIMIT 1`, [this.id]);
     const row = rows[0];
-    return new NeonDocumentSnapshot(this.id, row ? fromRow(row) : null, this);
+    return new DataDocumentSnapshot(this.id, row ? fromRow(row) : null, this);
   }
 
   async set(data: JsonRecord, options?: { merge?: boolean }) {
@@ -170,7 +175,7 @@ export class NeonDocumentRef {
       }) as JsonRecord,
     );
 
-    await getSql().query(
+    await queryRows(
       `INSERT INTO ${table} (id, data, created_at, updated_at)
        VALUES ($1, $2::jsonb, NOW(), NOW())
        ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()`,
@@ -189,11 +194,11 @@ export class NeonDocumentRef {
 
   async delete() {
     const table = tableFor(this.collectionName);
-    await getSql().query(`DELETE FROM ${table} WHERE id = $1`, [this.id]);
+    await queryRows(`DELETE FROM ${table} WHERE id = $1`, [this.id]);
   }
 }
 
-class NeonQuery {
+class DataQuery {
   constructor(
     private readonly collectionName: string,
     private readonly clauses: WhereClause[] = [],
@@ -203,7 +208,7 @@ class NeonQuery {
   ) {}
 
   where(field: string, op: string, value: unknown) {
-    return new NeonQuery(
+    return new DataQuery(
       this.collectionName,
       [...this.clauses, { field, op, value }],
       this.order,
@@ -212,7 +217,7 @@ class NeonQuery {
   }
 
   orderBy(field: string, direction: "asc" | "desc" = "asc") {
-    return new NeonQuery(
+    return new DataQuery(
       this.collectionName,
       this.clauses,
       [...this.order, { field, direction }],
@@ -222,11 +227,11 @@ class NeonQuery {
   }
 
   limit(maxRows: number) {
-    return new NeonQuery(this.collectionName, this.clauses, this.order, maxRows, this.offsetRows);
+    return new DataQuery(this.collectionName, this.clauses, this.order, maxRows, this.offsetRows);
   }
 
   offset(offsetRows: number) {
-    return new NeonQuery(this.collectionName, this.clauses, this.order, this.maxRows, offsetRows);
+    return new DataQuery(this.collectionName, this.clauses, this.order, this.maxRows, offsetRows);
   }
 
   async get() {
@@ -236,9 +241,9 @@ class NeonQuery {
     const orderSql = buildOrder(this.order);
     const limitSql = this.maxRows ? ` LIMIT ${Math.max(1, Math.floor(this.maxRows))}` : "";
     const offsetSql = this.offsetRows ? ` OFFSET ${Math.max(0, Math.floor(this.offsetRows))}` : "";
-    const rows = await getSql().query(`SELECT id, data FROM ${table}${whereSql}${orderSql}${limitSql}${offsetSql}`, params);
-    return new NeonQuerySnapshot(
-      rows.map((row: any) => new NeonDocumentSnapshot(row.id, fromRow(row), new NeonDocumentRef(this.collectionName, row.id))),
+    const rows = await queryRows(`SELECT id, data FROM ${table}${whereSql}${orderSql}${limitSql}${offsetSql}`, params);
+    return new DataQuerySnapshot(
+      rows.map((row: any) => new DataDocumentSnapshot(row.id, fromRow(row), new DataDocumentRef(this.collectionName, row.id))),
     );
   }
 
@@ -248,21 +253,21 @@ class NeonQuery {
         const table = tableFor(this.collectionName);
         const params: unknown[] = [];
         const whereSql = buildWhere(this.clauses, params);
-        const rows = await getSql().query(`SELECT COUNT(*)::int AS count FROM ${table}${whereSql}`, params);
-        return new NeonCountSnapshot(Number(rows[0]?.count ?? 0));
+        const rows = await queryRows(`SELECT COUNT(*)::int AS count FROM ${table}${whereSql}`, params);
+        return new DataCountSnapshot(Number(rows[0]?.count ?? 0));
       },
     };
   }
 }
 
-class NeonCollectionRef extends NeonQuery {
+class DataCollectionRef extends DataQuery {
   constructor(private readonly name: string) {
     super(name);
   }
 
   doc(id?: string) {
     id ??= crypto.randomUUID();
-    return new NeonDocumentRef(this.name, id);
+    return new DataDocumentRef(this.name, id);
   }
 
   async add(data: JsonRecord) {
@@ -274,8 +279,8 @@ class NeonCollectionRef extends NeonQuery {
 
 export const adminDb = {
   collection(name: string) {
-    return new NeonCollectionRef(name);
+    return new DataCollectionRef(name);
   },
 };
 
-export type NeonAdminDb = typeof adminDb;
+export type DataAdminDb = typeof adminDb;

@@ -1,10 +1,10 @@
-import { Router, Response } from "express";
+﻿import { Router, Response } from "express";
 import { requireAuth, requireCA, AuthRequest } from "../middleware/auth.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 
 const router = Router();
 
-// GET /api/ca/clients — List all users assigned to the logged-in CA
+// GET /api/ca/clients â€” List all users assigned to the logged-in CA
 router.get("/clients", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
@@ -67,7 +67,7 @@ router.get("/clients", requireAuth, requireCA, async (req: AuthRequest, res: Res
   }
 });
 
-// GET /api/ca/clients/:userId/documents — View assigned user's documents
+// GET /api/ca/clients/:userId/documents â€” View assigned user's documents
 router.get("/clients/:userId/documents", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
@@ -102,7 +102,7 @@ router.get("/clients/:userId/documents", requireAuth, requireCA, async (req: Aut
   }
 });
 
-// GET /api/ca/clients/:userId/filings — View assigned user's tax returns
+// GET /api/ca/clients/:userId/filings â€” View assigned user's tax returns
 router.get("/clients/:userId/filings", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
@@ -153,7 +153,7 @@ router.get("/clients/:userId/filings", requireAuth, requireCA, async (req: AuthR
   }
 });
 
-// GET /api/ca/stats — CA dashboard statistics
+// GET /api/ca/stats â€” CA dashboard statistics
 router.get("/stats", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;

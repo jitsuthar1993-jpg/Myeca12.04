@@ -1,10 +1,10 @@
-import { Response, Router } from "express";
+﻿import { Response, Router } from "express";
 import { z } from "zod";
 import multer from "multer";
 import sharp from "sharp";
 import { del, get, put } from "@vercel/blob";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { safeError } from "../utils/error-response.js";
 
 const router = Router();

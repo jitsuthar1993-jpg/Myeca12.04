@@ -1,7 +1,7 @@
-import { Router } from "express";
+﻿import { Router } from "express";
 import memoize from "memoizee";
 import { defaultBlogCategories } from "../data/default-blog-content.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import {
   buildPublicBlogDetail,
   listDefaultPublishedBlogPosts,
@@ -13,7 +13,7 @@ import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/
 
 const router = Router();
 
-// Cache at Vercel Edge for 5 min, stale-while-revalidate for 1 hour — fast + cheap
+// Cache at Vercel Edge for 5 min, stale-while-revalidate for 1 hour â€” fast + cheap
 const CACHE_HEADER = "public, s-maxage=300, stale-while-revalidate=3600";
 const DB_FALLBACK_TIMEOUT_MS = 2500;
 

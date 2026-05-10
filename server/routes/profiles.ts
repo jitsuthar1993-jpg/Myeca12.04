@@ -1,7 +1,7 @@
-import { Router, Response } from "express";
+﻿import { Router, Response } from "express";
 import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption.js";
 import { safeError } from "../utils/error-response.js";
 

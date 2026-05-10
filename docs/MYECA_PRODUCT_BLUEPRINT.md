@@ -1,4 +1,4 @@
-# MyeCA.in Product Blueprint
+﻿# MyeCA.in Product Blueprint
 
 ## 1. Product Requirements Document
 
@@ -309,7 +309,7 @@ Build the most trusted digital CA platform for India where users can:
 - The ITR wizard is strong as a guided experience but currently feels partly demo/prototype in persistence and payment integration.
 - The document vault is one of the strongest real product primitives and should be treated as a core platform capability.
 - Admin and CA panels exist, but fulfillment workflows need deeper operational modeling.
-- The platform should converge toward a single “case/work item” abstraction behind tax returns and services.
+- The platform should converge toward a single â€œcase/work itemâ€ abstraction behind tax returns and services.
 
 ## 3. Tech Stack
 
@@ -333,14 +333,14 @@ Build the most trusted digital CA platform for India where users can:
 - Zod validation
 
 #### Data and infra
-- Neon Postgres
+- Supabase Postgres
 - Drizzle ORM
 - JSON-document compatibility adapter (`adminDb`)
 - Vercel Blob for document/media storage
 - Vercel hosting
 
 #### Auth and security
-- Clerk packages present for auth
+- Supabase packages present for auth
 - Role-based middleware for `admin`, `team_member`, `ca`, `user`
 - Rate limiting, security headers, audit hooks, upload restrictions
 
@@ -357,8 +357,8 @@ Build the most trusted digital CA platform for India where users can:
 - TanStack Query
 - Tailwind + Radix
 - Express on Vercel Functions
-- Neon Postgres + Drizzle
-- Clerk
+- Supabase Postgres + Drizzle
+- Supabase
 - Vercel Blob
 
 #### Strengthen
@@ -397,7 +397,7 @@ This provides flexibility, but it makes reporting, workflow transitions, joins, 
 #### Identity and access
 
 ##### `users`
-- `id` UUID / Clerk user id
+- `id` UUID / Supabase user id
 - `email`
 - `phone_number`
 - `first_name`
@@ -727,8 +727,8 @@ Goal: make the current multi-role product production-solid.
 
 Workstreams
 1. Auth and identity
-- Replace local/mock auth behavior with full Clerk-backed runtime across all app states.
-- Ensure role sync from Clerk to database is deterministic.
+- Replace local/mock auth behavior with full Supabase-backed runtime across all app states.
+- Ensure role sync from Supabase to database is deterministic.
 
 2. User dashboard
 - Replace hardcoded dashboard cards with live service and filing summaries.

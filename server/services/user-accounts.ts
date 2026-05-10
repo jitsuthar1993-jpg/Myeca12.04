@@ -1,5 +1,6 @@
-import { clerkClient } from "@clerk/express";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
+import { getSupabaseAdminClient } from "../lib/supabase.js";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 type Role = "admin" | "team_member" | "ca" | "user";
 type PrivilegedRole = Exclude<Role, "user">;
@@ -39,6 +40,12 @@ function invitationDocId(email: string) {
   return `admin_invitation_${Buffer.from(email).toString("base64url")}`;
 }
 
+function displayNameParts(userMetadata: Record<string, any> | null | undefined) {
+  const firstName = userMetadata?.firstName ?? userMetadata?.first_name ?? userMetadata?.name?.split(" ")?.[0] ?? "";
+  const lastName = userMetadata?.lastName ?? userMetadata?.last_name ?? "";
+  return { firstName, lastName };
+}
+
 export function getBootstrapRoleForEmail(email?: string | null): Role | null {
   const normalized = normalizeEmail(email);
   if (!normalized) {
@@ -75,17 +82,34 @@ export async function getProvisionedRoleForEmail(email?: string | null): Promise
 }
 
 export async function syncRoleClaims(userId: string, role?: string | null) {
-  if (!process.env.CLERK_SECRET_KEY || !role) return;
-  await clerkClient.users.updateUserMetadata(userId, {
-    publicMetadata: { role },
-  });
+  if (!role) return;
+
+  try {
+    await getSupabaseAdminClient().auth.admin.updateUserById(userId, {
+      app_metadata: { role },
+    });
+  } catch (error) {
+    console.warn("[AUTH] Could not sync Supabase app metadata:", error);
+  }
 }
 
-async function findClerkUserByEmail(email: string) {
-  if (!process.env.CLERK_SECRET_KEY) return null;
+async function findSupabaseUserByEmail(email: string) {
+  const client = getSupabaseAdminClient();
+  let page = 1;
 
-  const result = await clerkClient.users.getUserList({ emailAddress: [email] });
-  return result.data[0] ?? null;
+  while (page <= 10) {
+    const { data, error } = await client.auth.admin.listUsers({ page, perPage: 100 });
+    if (error) throw error;
+
+    const users = data.users as SupabaseUser[];
+    const user = users.find((entry) => normalizeEmail(entry.email) === email);
+    if (user) return user;
+    if (data.users.length < 100) return null;
+
+    page += 1;
+  }
+
+  return null;
 }
 
 async function recordPrivilegedProvisioning(
@@ -110,27 +134,23 @@ async function recordPrivilegedProvisioning(
 }
 
 export async function provisionPrivilegedUser(input: ProvisionPrivilegedUserInput) {
-  if (!process.env.CLERK_SECRET_KEY) {
-    throw new Error("CLERK_SECRET_KEY is required to send Clerk invitations.");
-  }
-
   const email = normalizeEmail(input.email);
   if (!email) {
     throw new Error("A valid email address is required.");
   }
 
   const now = new Date();
-  const existingClerkUser = await findClerkUserByEmail(email);
-  const displayFirstName = input.firstName?.trim() || existingClerkUser?.firstName || "";
-  const displayLastName = input.lastName?.trim() || existingClerkUser?.lastName || "";
+  const existingSupabaseUser = await findSupabaseUserByEmail(email);
+  const displayFirstName = input.firstName?.trim() || displayNameParts(existingSupabaseUser?.user_metadata).firstName || "";
+  const displayLastName = input.lastName?.trim() || displayNameParts(existingSupabaseUser?.user_metadata).lastName || "";
 
-  if (existingClerkUser) {
-    const userRef = adminDb.collection("users").doc(existingClerkUser.id);
+  if (existingSupabaseUser) {
+    const userRef = adminDb.collection("users").doc(existingSupabaseUser.id);
     const userDoc = await userRef.get();
     const existingData = userDoc.data() ?? {};
     const userData = {
       ...existingData,
-      id: existingClerkUser.id,
+      id: existingSupabaseUser.id,
       email,
       firstName: displayFirstName || existingData.firstName || "Team",
       lastName: displayLastName || existingData.lastName || "Member",
@@ -143,9 +163,9 @@ export async function provisionPrivilegedUser(input: ProvisionPrivilegedUserInpu
     };
 
     await userRef.set(userData, { merge: true });
-    await syncRoleClaims(existingClerkUser.id, input.role);
+    await syncRoleClaims(existingSupabaseUser.id, input.role);
     await recordPrivilegedProvisioning(email, input.role, "promoted", {
-      clerkUserId: existingClerkUser.id,
+      supabaseUserId: existingSupabaseUser.id,
       firstName: userData.firstName,
       lastName: userData.lastName,
       invitedBy: input.invitedBy ?? null,
@@ -154,26 +174,25 @@ export async function provisionPrivilegedUser(input: ProvisionPrivilegedUserInpu
 
     return {
       mode: "promoted" as const,
-      clerkUserId: existingClerkUser.id,
+      supabaseUserId: existingSupabaseUser.id,
       user: userData,
     };
   }
 
   const appUrl = process.env.PUBLIC_APP_URL || process.env.APP_URL || "https://myeca.in";
-  const publicMetadata: Record<string, string> = { role: input.role };
-  if (displayFirstName) publicMetadata.firstName = displayFirstName;
-  if (displayLastName) publicMetadata.lastName = displayLastName;
-
-  const invitation = await clerkClient.invitations.createInvitation({
-    emailAddress: email,
-    redirectUrl: `${appUrl.replace(/\/$/, "")}/auth/register`,
-    notify: true,
-    ignoreExisting: true,
-    publicMetadata,
+  const { data, error } = await getSupabaseAdminClient().auth.admin.inviteUserByEmail(email, {
+    data: {
+      role: input.role,
+      firstName: displayFirstName || undefined,
+      lastName: displayLastName || undefined,
+    },
+    redirectTo: `${appUrl.replace(/\/$/, "")}/auth/login`,
   });
 
+  if (error) throw error;
+
   await recordPrivilegedProvisioning(email, input.role, "invited", {
-    invitationId: invitation.id,
+    supabaseUserId: data.user?.id ?? null,
     firstName: displayFirstName || null,
     lastName: displayLastName || null,
     invitedBy: input.invitedBy ?? null,
@@ -182,7 +201,7 @@ export async function provisionPrivilegedUser(input: ProvisionPrivilegedUserInpu
 
   return {
     mode: "invited" as const,
-    invitationId: invitation.id,
+    supabaseUserId: data.user?.id ?? null,
     email,
     role: input.role,
   };
@@ -191,14 +210,16 @@ export async function provisionPrivilegedUser(input: ProvisionPrivilegedUserInpu
 export async function findOrCreateUserProfile(auth: AuthIdentity) {
   const userRef = adminDb.collection("users").doc(auth.userId);
   let userDoc = await userRef.get();
-  let email = auth.email ?? null;
+  let email = normalizeEmail(auth.email);
 
-  if (!email && process.env.CLERK_SECRET_KEY) {
+  if (!email) {
     try {
-      const clerkUser = await clerkClient.users.getUser(auth.userId);
-      email = clerkUser.primaryEmailAddress?.emailAddress ?? clerkUser.emailAddresses[0]?.emailAddress ?? null;
+      const { data, error } = await getSupabaseAdminClient().auth.admin.getUserById(auth.userId);
+      if (!error) {
+        email = normalizeEmail(data.user?.email);
+      }
     } catch (error) {
-      console.warn("[AUTH] Could not load Clerk user email:", error);
+      console.warn("[AUTH] Could not load Supabase user email:", error);
     }
   }
 

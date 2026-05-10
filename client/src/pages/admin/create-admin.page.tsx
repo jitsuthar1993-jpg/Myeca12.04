@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,7 +62,7 @@ export default function CreateAdminPage() {
       return response.json();
     },
     onSuccess: (data) => {
-      const message = data?.message || "Clerk invitation/provisioning completed successfully.";
+      const message = data?.message || "Supabase invitation/provisioning completed successfully.";
       toast({
         title: "Access provisioned",
         description: message,
@@ -78,7 +78,7 @@ export default function CreateAdminPage() {
     onError: (error: any) => {
       toast({
         title: "Provisioning failed",
-        description: error.message || "Unable to provision this Clerk user. Please try again.",
+        description: error.message || "Unable to provision this Supabase user. Please try again.",
         variant: "destructive",
       });
     },
@@ -92,11 +92,11 @@ export default function CreateAdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#0050b5]">Clerk provisioning</p>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#0050b5]">Supabase provisioning</p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">Invite Admin, CA, or Team Member</h1>
         <p className="mt-2 max-w-3xl text-slate-600">
           Passwords are no longer created inside MyeCA. Enter the person&apos;s email and role,
-          then Clerk handles the secure invite or reset flow.
+          then Supabase handles the secure invite or reset flow.
         </p>
       </div>
 
@@ -105,10 +105,10 @@ export default function CreateAdminPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-600" />
             <div>
-              <h3 className="font-bold text-amber-900">Role changes are effective after Clerk sync</h3>
+              <h3 className="font-bold text-amber-900">Role changes are effective after Supabase sync</h3>
               <p className="mt-1 text-sm leading-6 text-amber-800">
-                Existing Clerk users are promoted immediately. New users receive a Clerk invitation,
-                and their Neon role is applied the first time they sign in with that email.
+                Existing Supabase users are promoted immediately. New users receive a Supabase invitation,
+                and their Supabase role is applied the first time they sign in with that email.
               </p>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function CreateAdminPage() {
                 <MailPlus className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle>Send Clerk Invitation</CardTitle>
+                <CardTitle>Send Supabase Invitation</CardTitle>
                 <CardDescription>
                   Provision access without handling passwords, JWTs, or manual admin secrets.
                 </CardDescription>
@@ -219,11 +219,11 @@ export default function CreateAdminPage() {
           </CardHeader>
           <CardContent className="space-y-4 text-sm leading-6 text-slate-700">
             <p>
-              Clerk owns sign-in, passwordless methods, MFA, reset links, and invite acceptance. MyeCA
-              stores the role in Neon and mirrors it to Clerk public metadata for faster UI rendering.
+              Supabase owns sign-in, passwordless methods, MFA, reset links, and invite acceptance. MyeCA
+              stores the role in Supabase and mirrors it to Supabase public metadata for faster UI rendering.
             </p>
             <p>
-              If a user already exists in Clerk, this page promotes their role immediately. If they do
+              If a user already exists in Supabase, this page promotes their role immediately. If they do
               not exist yet, they receive an invitation and the provisioned role is applied during
               their first `/api/v1/auth/sync`.
             </p>

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 /**
  * MyeCA.in Vercel deployment configuration checker.
@@ -6,22 +6,21 @@
  * This is intentionally secret-safe: it only reports whether values exist.
  */
 
-const DATABASE_KEYS = ["DATABASE_URL", "POSTGRES_URL"];
+const DATABASE_KEYS = ["DATABASE_URL"];
 
 const REQUIRED_PRODUCTION_GROUPS = [
   {
-    label: "Neon Postgres",
+    label: "Supabase Postgres",
     keys: DATABASE_KEYS,
     any: true,
   },
   {
-    label: "Clerk server auth",
-    keys: ["CLERK_SECRET_KEY"],
+    label: "Supabase server auth",
+    keys: ["SUPABASE_SERVICE_ROLE_KEY"],
   },
   {
-    label: "Clerk browser auth",
-    keys: ["VITE_CLERK_PUBLISHABLE_KEY", "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
-    any: true,
+    label: "Supabase browser auth",
+    keys: ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"],
   },
   {
     label: "Vercel Blob",
@@ -93,9 +92,9 @@ function checkEnvironmentVariables() {
 
   if (!allRequiredPresent) {
     console.log("\nNext steps:");
-    console.log("- Connect Clerk, Neon, and Blob through Vercel Marketplace or add equivalent env vars.");
+    console.log("- Add Supabase Auth, Supabase Postgres, and Blob env vars in Vercel.");
     console.log("- Run `npx vercel env pull .vercel/.env.preview.local --environment=preview --yes`.");
-    console.log("- Run `npm run db:migrate:preview` after Neon is provisioned.");
+    console.log("- Run `npm run db:migrate:preview` after Supabase is provisioned.");
   }
 
   return allRequiredPresent;

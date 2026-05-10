@@ -1,10 +1,10 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
-const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL or POSTGRES_URL is required for Neon Postgres migrations");
+  throw new Error("DATABASE_URL is required for Supabase Postgres migrations");
 }
 
 export default defineConfig({

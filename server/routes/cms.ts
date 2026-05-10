@@ -1,7 +1,7 @@
-import { Router, Response } from "express";
+﻿import { Router, Response } from "express";
 import { z } from "zod";
 import { requireAuth, requireAdmin, requireTeamMember, AuthRequest } from "../middleware/auth.js";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { sanitize } from "../middleware/sanitize.js";
 import multer from "multer";
 import sharp from "sharp";

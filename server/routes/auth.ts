@@ -1,6 +1,6 @@
-import { Router, Response } from "express";
+﻿import { Router, Response } from "express";
 import { z } from "zod";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { requireAuth, AuthRequest } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/security.js";
 import {

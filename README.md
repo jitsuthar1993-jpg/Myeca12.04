@@ -1,8 +1,8 @@
-# 🧮 MyeCA.in - Smart Tax Calculator Platform
+﻿# ðŸ§® MyeCA.in - Smart Tax Calculator Platform
 
 A comprehensive tax filing platform with expert CA assistance, smart calculators, and professional financial services.
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ```bash
 # Install dependencies
@@ -21,27 +21,27 @@ npm run start
 $env:NODE_ENV='development'; tsx server/index.ts
 ```
 
-## 📁 Project Structure
+## ðŸ“ Project Structure
 
 ```
-├── client/              # React frontend (Vite)
-│   ├── src/
-│   │   ├── components/  # Reusable UI components
-│   │   ├── pages/       # Route pages
-│   │   ├── hooks/       # Custom React hooks
-│   │   ├── lib/         # Utilities & API client
-│   │   └── styles/      # CSS design system
-│   └── public/          # Static assets
-├── server/              # Express.js backend
-│   ├── routes/          # API endpoints
-│   ├── services/        # Business logic
-│   └── db/              # Database operations
-├── shared/              # Shared types & schemas
-├── docs/                # Documentation
-└── dist/                # Production build output
+â”œâ”€â”€ client/              # React frontend (Vite)
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ components/  # Reusable UI components
+â”‚   â”‚   â”œâ”€â”€ pages/       # Route pages
+â”‚   â”‚   â”œâ”€â”€ hooks/       # Custom React hooks
+â”‚   â”‚   â”œâ”€â”€ lib/         # Utilities & API client
+â”‚   â”‚   â””â”€â”€ styles/      # CSS design system
+â”‚   â””â”€â”€ public/          # Static assets
+â”œâ”€â”€ server/              # Express.js backend
+â”‚   â”œâ”€â”€ routes/          # API endpoints
+â”‚   â”œâ”€â”€ services/        # Business logic
+â”‚   â””â”€â”€ db/              # Database operations
+â”œâ”€â”€ shared/              # Shared types & schemas
+â”œâ”€â”€ docs/                # Documentation
+â””â”€â”€ dist/                # Production build output
 ```
 
-## 🛠️ Tech Stack
+## ðŸ› ï¸ Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -49,11 +49,11 @@ $env:NODE_ENV='development'; tsx server/index.ts
 | Styling | TailwindCSS, Radix UI |
 | State | TanStack Query, Zustand |
 | Backend | Express.js, Node.js |
-| Database | Neon Postgres, Drizzle |
-| Auth | Clerk |
+| Database | Supabase Postgres, Drizzle |
+| Auth | Supabase |
 | File Storage | Vercel Blob |
 
-## 📖 Documentation
+## ðŸ“– Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -64,18 +64,18 @@ $env:NODE_ENV='development'; tsx server/index.ts
 | [Database Guide](docs/DatabaseManagement.md) | Database operations |
 | [Product Blueprint](docs/MYECA_PRODUCT_BLUEPRINT.md) | Product and workflow blueprint |
 
-## ⚙️ Configuration
+## âš™ï¸ Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | 5000 | Server port |
 | `NODE_ENV` | development | Environment |
-| `DATABASE_URL` |  | Neon Postgres connection string; `POSTGRES_URL` is also accepted when provisioned by Vercel Marketplace |
-| `VITE_CLERK_PUBLISHABLE_KEY` |  | Clerk browser publishable key; `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is also accepted for Vercel Marketplace compatibility |
-| `CLERK_SECRET_KEY` |  | Clerk server secret key |
+| `DATABASE_URL` |  | Supabase Postgres connection string; `DATABASE_URL` is also accepted when provisioned by Vercel Marketplace |
+| `VITE_SUPABASE_ANON_KEY` |  | Supabase browser publishable key; `SUPABASE_ANON_KEY` is also accepted for Vercel Marketplace compatibility |
+| `SUPABASE_SERVICE_ROLE_KEY` |  | Supabase server secret key |
 | `BLOB_READ_WRITE_TOKEN` |  | Vercel Blob upload/download token |
 
-## 🎯 Key Features
+## ðŸŽ¯ Key Features
 
 - **Tax Calculators** - Income tax, HRA, TDS, SIP, EMI, Capital gains
 - **ITR Filing** - Step-by-step guided filing with form selection
@@ -84,7 +84,7 @@ $env:NODE_ENV='development'; tsx server/index.ts
 - **Professional Services** - GST, compliance, company registration
 - **Admin Dashboard** - Analytics, user management, content
 
-## 📝 Scripts
+## ðŸ“ Scripts
 
 ```bash
 npm run dev      # Start development server
@@ -98,10 +98,10 @@ npm run db:migrate:preview # Run migrations using pulled Vercel preview env
 npm run db:seed:preview    # Seed using pulled Vercel preview env
 ```
 
-## 📄 License
+## ðŸ“„ License
 
 MIT License - See LICENSE file for details.
 
 ---
 
-**Built with ❤️ for Indian taxpayers | [myeca.in](https://myeca.in)**
+**Built with â¤ï¸ for Indian taxpayers | [myeca.in](https://myeca.in)**

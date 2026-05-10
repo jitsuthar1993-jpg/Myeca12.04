@@ -1,11 +1,10 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { validateEnv } from "./lib/env-validation.js";
 validateEnv();
 
 import express from "express";
 import cors from "cors";
 import compress from "compression";
-import { clerkMiddleware } from "@clerk/express";
 import path from "path";
 import { registerRoutes } from "./routes.js";
 import { customSecurityHeaders, securityHeaders } from "./middleware/security.js";
@@ -24,28 +23,6 @@ const allowedOrigins: (string | RegExp)[] = [
 app.use(compress());
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
-
-const clerkPublishableKey =
-  process.env.CLERK_PUBLISHABLE_KEY ||
-  process.env.VITE_CLERK_PUBLISHABLE_KEY ||
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-// Only attach Clerk middleware when the keys are available;
-// without them, public routes still work — auth-protected routes will 401.
-if (process.env.CLERK_SECRET_KEY && clerkPublishableKey) {
-  const clerk = clerkMiddleware({
-    secretKey: process.env.CLERK_SECRET_KEY,
-    publishableKey: clerkPublishableKey,
-  });
-
-  app.use((req, res, next) => {
-    if (req.path === "/api/health" || req.path.startsWith("/api/public")) {
-      return next();
-    }
-
-    return clerk(req, res, next);
-  });
-}
 
 app.use(
   cors({

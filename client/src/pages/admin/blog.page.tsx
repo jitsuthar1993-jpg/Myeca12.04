@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CalendarDays, Edit, Eye, ImagePlus, Plus, Search, Trash2, Upload, WandSparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
@@ -313,7 +313,7 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
 
                 <Card className="rounded-3xl border-slate-200"><CardHeader><CardTitle>Related posts and CTA</CardTitle></CardHeader><CardContent className="space-y-4">
                   <Input value={relatedQuery} onChange={(e) => setRelatedQuery(e.target.value)} placeholder="Search published articles" />
-                  <div className="max-h-64 space-y-3 overflow-y-auto">{filteredRelated.map((item) => <label key={item.id} className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-3 transition hover:border-blue-200 hover:bg-blue-50/40"><Checkbox checked={state.relatedPostIds.includes(item.id)} onCheckedChange={() => setField("relatedPostIds", state.relatedPostIds.includes(item.id) ? state.relatedPostIds.filter((id) => id !== item.id) : [...state.relatedPostIds, item.id])} /><div><p className="font-medium text-slate-900">{item.title}</p><p className="text-sm text-slate-500">{item.category?.name || "Uncategorized"} · {item.authorName}</p></div></label>)}</div>
+                  <div className="max-h-64 space-y-3 overflow-y-auto">{filteredRelated.map((item) => <label key={item.id} className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-3 transition hover:border-blue-200 hover:bg-blue-50/40"><Checkbox checked={state.relatedPostIds.includes(item.id)} onCheckedChange={() => setField("relatedPostIds", state.relatedPostIds.includes(item.id) ? state.relatedPostIds.filter((id) => id !== item.id) : [...state.relatedPostIds, item.id])} /><div><p className="font-medium text-slate-900">{item.title}</p><p className="text-sm text-slate-500">{item.category?.name || "Uncategorized"} Â· {item.authorName}</p></div></label>)}</div>
                   <Separator />
                   <Input value={state.ctaLabel} onChange={(e) => setField("ctaLabel", e.target.value)} placeholder="CTA label" />
                   <Input value={state.ctaHref} onChange={(e) => setField("ctaHref", e.target.value)} placeholder="/expert-consultation" />
@@ -343,9 +343,9 @@ export default function AdminBlog() {
   const { data: categoriesData } = useQuery<{ categories: BlogCategory[] }>({ queryKey: ["/api/cms/categories"], queryFn: async () => (await apiRequest("/api/cms/categories")).json() });
   const { data: detailData } = useQuery<{ post: CmsPost }>({ queryKey: ["/api/cms/posts", editingId], enabled: Boolean(dialogOpen && editingId), queryFn: async () => (await apiRequest(`/api/cms/posts/${editingId}`)).json() });
 
-  const createMutation = useMutation({ mutationFn: (payload: BlogPostEditorInput) => apiRequest("/api/cms/posts", { method: "POST", body: JSON.stringify(payload) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article created", description: "The article was saved to Neon." }); setDialogOpen(false); setEditingId(null); } });
+  const createMutation = useMutation({ mutationFn: (payload: BlogPostEditorInput) => apiRequest("/api/cms/posts", { method: "POST", body: JSON.stringify(payload) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article created", description: "The article was saved to Supabase." }); setDialogOpen(false); setEditingId(null); } });
   const updateMutation = useMutation({ mutationFn: (payload: BlogPostEditorInput) => apiRequest(`/api/cms/posts/${editingId}`, { method: "PUT", body: JSON.stringify(payload) }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); if (editingId) await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts", editingId] }); toast({ title: "Article updated", description: "The article changes were saved." }); setDialogOpen(false); setEditingId(null); } });
-  const deleteMutation = useMutation({ mutationFn: (id: string) => apiRequest(`/api/cms/posts/${id}`, { method: "DELETE" }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article deleted", description: "The article was removed from Neon." }); } });
+  const deleteMutation = useMutation({ mutationFn: (id: string) => apiRequest(`/api/cms/posts/${id}`, { method: "DELETE" }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["/api/cms/posts"] }); toast({ title: "Article deleted", description: "The article was removed from Supabase." }); } });
 
   const posts = postsData?.posts ?? [];
   const categories = categoriesData?.categories ?? [];
@@ -362,7 +362,7 @@ export default function AdminBlog() {
     <div className="min-h-screen bg-slate-50 px-6 py-8 lg:px-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div><p className="text-sm font-medium text-blue-700">Editorial CMS</p><h1 className="mt-2 text-4xl font-semibold tracking-tight text-slate-900">Blog articles</h1><p className="mt-3 text-slate-600">Manage the Neon-backed editorial system, metadata, and preview flow.</p></div>
+          <div><p className="text-sm font-medium text-blue-700">Editorial CMS</p><h1 className="mt-2 text-4xl font-semibold tracking-tight text-slate-900">Blog articles</h1><p className="mt-3 text-slate-600">Manage the Supabase-backed editorial system, metadata, and preview flow.</p></div>
           <Button className="rounded-full bg-blue-600 px-5 text-white hover:bg-blue-700" onClick={() => { setEditingId(null); setDialogOpen(true); }}><Plus className="mr-2 h-4 w-4" />New article</Button>
         </div>
 

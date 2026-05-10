@@ -1,5 +1,5 @@
-import { Router, Response } from "express";
-import { adminDb } from "../neon-admin.js";
+﻿import { Router, Response } from "express";
+import { adminDb } from "../data-admin.js";
 import { requireAuth, AuthRequest } from "../middleware/auth.js";
 import * as speakeasy from "speakeasy";
 import QRCode from "qrcode";

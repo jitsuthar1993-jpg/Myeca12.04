@@ -1,4 +1,4 @@
-# MyeCA.in Dev Handoff
+﻿# MyeCA.in Dev Handoff
 
 ## API and Engineering Handoff
 
@@ -22,8 +22,8 @@ This is based on the live code structure in:
 - Frontend: React + Vite SPA
 - Backend: Express app mounted under `/api`
 - Hosting model: Vercel static assets + Vercel Node.js function
-- Primary auth pattern: Clerk bearer-token auth via `@clerk/express`
-- Primary data layer: Neon Postgres, accessed through `adminDb.collection(...)` compatibility adapter
+- Primary auth pattern: Supabase bearer-token auth via `@supabase/supabase-js`
+- Primary data layer: Supabase Postgres, accessed through `adminDb.collection(...)` compatibility adapter
 - File storage: Vercel Blob
 
 ### Base URL conventions
@@ -39,26 +39,26 @@ This is based on the live code structure in:
 ## 3. Authentication and Authorization
 
 ### Auth middleware in use
-- `requireAuth` / `authenticateToken`: requires a valid Clerk-authenticated request
+- `requireAuth` / `authenticateToken`: requires a valid Supabase-authenticated request
 - `requireAnyAuth`: requires auth plus one of `superadmin | admin | team_member | ca | user`
 - `requireAdmin`: `admin`
 - `requireCA`: `admin | ca`
 - `requireTeamMember`: `admin | team_member`
 
 ### Auth source of truth
-- Clerk session is the identity source
-- App role comes from the `users` collection in Neon
+- Supabase session is the identity source
+- App role comes from the `users` collection in Supabase
 - `findOrCreateUserProfile()` is used inside role-based middleware to hydrate app user records
 
 ### Current request auth contract
 Protected endpoints expect:
 
 ```http
-Authorization: Bearer <clerk_token>
+Authorization: Bearer <supabase_access_token>
 ```
 
 ### Important implementation note
-There are still some frontend/local-dev patterns that simulate auth behavior, but the backend contract is Clerk-first. Backend development should treat Clerk + role-backed user records as canonical.
+There are still some frontend/local-dev patterns that simulate auth behavior, but the backend contract is Supabase-first. Backend development should treat Supabase + role-backed user records as canonical.
 
 ## 4. Mounted Route Map
 
@@ -131,7 +131,7 @@ Base path: `/api/v1/auth`
 ```json
 {
   "user": {
-    "id": "clerk_user_id",
+    "id": "supabase_user_id",
     "email": "user@example.com",
     "role": "user",
     "assignedCaId": "ca_user_id",
@@ -182,12 +182,12 @@ Base path: `/api/public`
 ### `GET /updates/active`
 - Auth: none
 - Purpose: fetch active daily updates for banners/notices
-- Backing: Neon `daily_updates`
+- Backing: Supabase `daily_updates`
 
 ### `GET /blogs?page=1&limit=12&category=&search=&audience=`
 - Auth: none
 - Purpose: paginated public blog listing
-- Backing: Neon `blog_posts` via blog service helpers
+- Backing: Supabase `blog_posts` via blog service helpers
 - Response shape:
 
 ```json
@@ -258,7 +258,7 @@ Base path: `/api`
 
 ### `GET /user-services`
 - Auth: `requireAnyAuth`
-- Purpose: fetch current user’s activated services
+- Purpose: fetch current userâ€™s activated services
 
 ### `POST /user-services`
 - Auth: `requireAnyAuth`
@@ -448,11 +448,11 @@ Base path: `/api/ca`
 
 ### `GET /clients/:userId/documents`
 - Auth: `requireCA`
-- Purpose: fetch assigned client’s documents
+- Purpose: fetch assigned clientâ€™s documents
 
 ### `GET /clients/:userId/filings`
 - Auth: `requireCA`
-- Purpose: fetch assigned client’s filings across profiles
+- Purpose: fetch assigned clientâ€™s filings across profiles
 
 ### `GET /stats`
 - Auth: `requireCA`

@@ -1,8 +1,8 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 import { getDatabaseUrl } from "../db.js";
 import { defaultBlogPosts } from "../data/default-blog-content.js";
 import { blogTextCoverPath } from "../data/blog-cover-paths.js";

@@ -1,23 +1,47 @@
-import { SignIn } from "@clerk/clerk-react";
-import { Link } from "wouter";
-import { KeyRound, ShieldCheck, UserRoundPlus, Lock } from "lucide-react";
-import { AuthPageShell, clerkAuthAppearance } from "@/components/auth/AuthPageShell";
-import { isClerkEnabled } from "@/lib/clerk-config";
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { AlertCircle, KeyRound, Loader2, Lock, Mail, ShieldCheck, UserRoundPlus } from "lucide-react";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function AdminLoginPage() {
+  const { login } = useAuth();
+  const [, setLocation] = useLocation();
   const redirectUrl = new URLSearchParams(window.location.search).get("redirect_url") || "/admin/dashboard";
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      await login(email.trim(), password);
+      setLocation(redirectUrl);
+    } catch (err: any) {
+      setError(err?.message || "Unable to sign in. Check your Supabase account details and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AuthPageShell
       eyebrow="Admin access"
       title="Trusted operator sign in"
-      description="Access the Clerk-secured control room. Admin and team roles are provisioned from Neon records."
+      description="Access the Supabase-secured control room. Admin and team roles are provisioned from Supabase records."
       panelTitle="Security first"
-      panelDescription="We use enterprise-grade authentication to ensure your data remains protected."
+      panelDescription="We use Supabase Auth with app-level role checks to keep privileged workflows protected."
       panelItems={[
         { label: "No shared admin passwords", icon: KeyRound },
         { label: "Invite-first provisioning", icon: UserRoundPlus },
-        { label: "Neon roles remain authoritative", icon: ShieldCheck },
+        { label: "Supabase roles remain authoritative", icon: ShieldCheck },
       ]}
       primaryLink={{
         href: "/auth/login",
@@ -25,56 +49,39 @@ export default function AdminLoginPage() {
         label: "User sign in",
       }}
     >
-      <div className="rounded-2xl border border-slate-200 bg-white p-1 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)]">
-        {isClerkEnabled ? (
-          <SignIn
-            path="/auth/admin-login"
-            routing="path"
-            signUpUrl="/auth/register?redirect_url=%2Fadmin%2Fdashboard"
-            fallbackRedirectUrl={redirectUrl}
-            appearance={clerkAuthAppearance}
-          />
-        ) : (
-          <div className="p-6 text-center">
-            <div className="mb-4 inline-flex items-center justify-center rounded-full bg-amber-100 p-3 text-amber-600">
-              <KeyRound className="h-6 w-6" />
-            </div>
-            <h3 className="mb-2 font-bold text-slate-900">Local Development Mode</h3>
-            <p className="mb-6 text-sm text-slate-500 leading-relaxed">
-              Clerk keys are missing. Use these buttons to simulate signing in with different roles.
-            </p>
-            <div className="flex flex-col gap-3">
-              <button 
-                onClick={() => {
-                  window.location.href = `/auth/login?mock_email=admin@myeca.in&redirect_url=${encodeURIComponent(redirectUrl)}`;
-                }}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#315efb] px-4 py-3 text-sm font-black text-white hover:bg-[#082a5c] transition-all"
-              >
-                <Lock className="h-4 w-4" />
-                Sign in as Admin
-              </button>
-              <button 
-                onClick={() => {
-                  window.location.href = `/auth/login?mock_email=ca@myeca.in&redirect_url=${encodeURIComponent("/ca/dashboard")}`;
-                }}
-                className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white hover:bg-emerald-700 transition-all"
-              >
-                <ShieldCheck className="h-4 w-4" />
-                Sign in as CA
-              </button>
-              <button 
-                onClick={() => {
-                  window.location.href = `/auth/login?mock_email=team@myeca.in&redirect_url=${encodeURIComponent("/admin/dashboard")}`;
-                }}
-                className="flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-3 text-sm font-black text-white hover:bg-slate-950 transition-all"
-              >
-                <UserRoundPlus className="h-4 w-4" />
-                Sign in as Team Member
-              </button>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)]">
+        {error && (
+          <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-bold text-rose-800">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{error}</span>
           </div>
         )}
-      </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="adminEmail" className="text-sm font-black text-slate-800">
+            Email address
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input id="adminEmail" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="h-11 rounded-lg border-slate-300 pl-10 text-sm" required />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="adminPassword" className="text-sm font-black text-slate-800">
+            Password
+          </Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input id="adminPassword" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} className="h-11 rounded-lg border-slate-300 pl-10 text-sm" required />
+          </div>
+        </div>
+
+        <Button type="submit" disabled={loading} className="h-11 w-full rounded-lg bg-[#315efb] text-sm font-black text-white hover:bg-[#06439f]">
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          Sign in to admin
+        </Button>
+      </form>
     </AuthPageShell>
   );
 }

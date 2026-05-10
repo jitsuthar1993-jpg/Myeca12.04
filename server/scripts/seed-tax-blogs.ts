@@ -1,5 +1,5 @@
-import "dotenv/config";
-import { adminDb } from "../neon-admin.js";
+﻿import "dotenv/config";
+import { adminDb } from "../data-admin.js";
 
 async function seed() {
   console.log("Seeding core tax guide blogs...");
@@ -32,24 +32,24 @@ async function seed() {
   }
   console.log(`Using author: ${authorId || "none"}`);
 
-  // ─────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // BLOG POSTS
-  // ─────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const taxBlogs = [
-    // ─── 1. Income Tax in India ───────────────────────────────────────────
+    // â”€â”€â”€ 1. Income Tax in India â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     {
       title: "Income Tax in India: The Complete Guide for FY 2025-26",
       slug: "income-tax-india-complete-guide",
       excerpt:
         "Understand what income tax is, how the Old and New Tax Regime slabs work for FY 2025-26, and how to calculate your liability step by step. A one-stop guide for every Indian taxpayer.",
-      featuredImage: "🧾",
+      featuredImage: "ðŸ§¾",
       readTime: "12 min read",
       tags: JSON.stringify(["Income Tax", "Tax Slabs", "Tax Calculation", "Deductions", "FY 2025-26"]),
       content: `## What Is Income Tax?
 
 Income tax is a direct tax levied by the Central Government of India on the income earned by individuals, Hindu Undivided Families (HUFs), companies, and other entities during a financial year. It is governed by the **Income Tax Act, 1961**, and administered by the **Central Board of Direct Taxes (CBDT)**.
 
-The tax you pay funds public services — roads, defence, healthcare, and education — making it one of the most important civic obligations for every earning Indian.
+The tax you pay funds public services â€” roads, defence, healthcare, and education â€” making it one of the most important civic obligations for every earning Indian.
 
 > **Key Terms to Know:** Financial Year (FY) is the year you earn income (April 1 to March 31). Assessment Year (AY) is the year you file your returns for that income. FY 2025-26 income is reported in AY 2026-27.
 
@@ -59,11 +59,11 @@ The tax you pay funds public services — roads, defence, healthcare, and educat
 
 You must file an Income Tax Return (ITR) if any of the following apply:
 
-- Your gross total income exceeds the basic exemption limit (₹2.5 lakh under Old Regime, ₹3 lakh under New Regime)
-- You have deposited more than ₹1 crore in a bank account in a year
-- You have incurred more than ₹2 lakh on foreign travel
-- You have paid electricity bills exceeding ₹1 lakh
-- Your TDS / TCS amount is ₹25,000 or more (₹50,000 for senior citizens)
+- Your gross total income exceeds the basic exemption limit (â‚¹2.5 lakh under Old Regime, â‚¹3 lakh under New Regime)
+- You have deposited more than â‚¹1 crore in a bank account in a year
+- You have incurred more than â‚¹2 lakh on foreign travel
+- You have paid electricity bills exceeding â‚¹1 lakh
+- Your TDS / TCS amount is â‚¹25,000 or more (â‚¹50,000 for senior citizens)
 - You are a company or firm, regardless of profit or loss
 
 ---
@@ -80,12 +80,12 @@ The Old Regime has been in place for decades and allows a wide range of deductio
 
 | Income Slab | Tax Rate |
 |---|---|
-| Up to ₹2,50,000 | NIL |
-| ₹2,50,001 – ₹5,00,000 | 5% |
-| ₹5,00,001 – ₹10,00,000 | 20% |
-| Above ₹10,00,000 | 30% |
+| Up to â‚¹2,50,000 | NIL |
+| â‚¹2,50,001 â€“ â‚¹5,00,000 | 5% |
+| â‚¹5,00,001 â€“ â‚¹10,00,000 | 20% |
+| Above â‚¹10,00,000 | 30% |
 
-Additional surcharges apply for income above ₹50 lakh, and a **4% Health & Education Cess** applies on all tax amounts.
+Additional surcharges apply for income above â‚¹50 lakh, and a **4% Health & Education Cess** applies on all tax amounts.
 
 ### New Tax Regime (Default from FY 2024-25 onwards)
 
@@ -95,14 +95,14 @@ The New Regime offers lower slab rates but **removes most deductions and exempti
 
 | Income Slab | Tax Rate |
 |---|---|
-| Up to ₹3,00,000 | NIL |
-| ₹3,00,001 – ₹7,00,000 | 5% |
-| ₹7,00,001 – ₹10,00,000 | 10% |
-| ₹10,00,001 – ₹12,00,000 | 15% |
-| ₹12,00,001 – ₹15,00,000 | 20% |
-| Above ₹15,00,000 | 30% |
+| Up to â‚¹3,00,000 | NIL |
+| â‚¹3,00,001 â€“ â‚¹7,00,000 | 5% |
+| â‚¹7,00,001 â€“ â‚¹10,00,000 | 10% |
+| â‚¹10,00,001 â€“ â‚¹12,00,000 | 15% |
+| â‚¹12,00,001 â€“ â‚¹15,00,000 | 20% |
+| Above â‚¹15,00,000 | 30% |
 
-> **Budget 2025 Update:** Under the New Regime, resident individuals with income up to **₹12 lakh** effectively pay zero tax after the enhanced Section 87A rebate of ₹60,000. Salaried individuals additionally get a **₹75,000 standard deduction**, pushing the effective zero-tax threshold to ₹12.75 lakh.
+> **Budget 2025 Update:** Under the New Regime, resident individuals with income up to **â‚¹12 lakh** effectively pay zero tax after the enhanced Section 87A rebate of â‚¹60,000. Salaried individuals additionally get a **â‚¹75,000 standard deduction**, pushing the effective zero-tax threshold to â‚¹12.75 lakh.
 
 ---
 
@@ -110,11 +110,11 @@ The New Regime offers lower slab rates but **removes most deductions and exempti
 
 All income in India is classified under five heads for tax purposes:
 
-1. **Income from Salaries** – Salary, allowances, perquisites from an employer
-2. **Income from House Property** – Rental income or deemed rent from property
-3. **Profits and Gains from Business or Profession** – Net income from a business, freelancing, or professional practice
-4. **Capital Gains** – Profits from selling capital assets (stocks, mutual funds, land, jewellery)
-5. **Income from Other Sources** – Interest on savings/FDs, dividends, lottery winnings, gifts above ₹50,000
+1. **Income from Salaries** â€“ Salary, allowances, perquisites from an employer
+2. **Income from House Property** â€“ Rental income or deemed rent from property
+3. **Profits and Gains from Business or Profession** â€“ Net income from a business, freelancing, or professional practice
+4. **Capital Gains** â€“ Profits from selling capital assets (stocks, mutual funds, land, jewellery)
+5. **Income from Other Sources** â€“ Interest on savings/FDs, dividends, lottery winnings, gifts above â‚¹50,000
 
 ---
 
@@ -127,9 +127,9 @@ List and total income from all five heads above to arrive at your **Gross Total 
 ### Step 2: Claim Deductions (Old Regime Only)
 
 Under the Old Regime, subtract eligible deductions:
-- **Section 80C**: Up to ₹1,50,000 (PPF, ELSS, LIC premium, home loan principal, tuition fees)
-- **Section 80D**: Up to ₹25,000 for health insurance premiums (₹50,000 for senior citizens)
-- **Section 80TTA**: Up to ₹10,000 on savings account interest
+- **Section 80C**: Up to â‚¹1,50,000 (PPF, ELSS, LIC premium, home loan principal, tuition fees)
+- **Section 80D**: Up to â‚¹25,000 for health insurance premiums (â‚¹50,000 for senior citizens)
+- **Section 80TTA**: Up to â‚¹10,000 on savings account interest
 - **HRA Exemption**: Based on rent paid, salary, and city of residence
 
 After deductions you get your **Total Taxable Income**.
@@ -142,10 +142,10 @@ Apply the applicable slab rates (from the tables above) to your total taxable in
 
 | Income Range | Surcharge Rate |
 |---|---|
-| ₹50 lakh – ₹1 crore | 10% of tax |
-| ₹1 crore – ₹2 crore | 15% of tax |
-| ₹2 crore – ₹5 crore | 25% of tax |
-| Above ₹5 crore | 37% of tax (25% under New Regime) |
+| â‚¹50 lakh â€“ â‚¹1 crore | 10% of tax |
+| â‚¹1 crore â€“ â‚¹2 crore | 15% of tax |
+| â‚¹2 crore â€“ â‚¹5 crore | 25% of tax |
+| Above â‚¹5 crore | 37% of tax (25% under New Regime) |
 
 ### Step 5: Add Health & Education Cess
 
@@ -159,7 +159,7 @@ Subtract any **Tax Deducted at Source (TDS)** already deducted by your employer 
 
 ## Key Tax-Saving Deductions (Old Regime)
 
-### Section 80C — ₹1,50,000 Limit
+### Section 80C â€” â‚¹1,50,000 Limit
 - Public Provident Fund (PPF)
 - Employee Provident Fund (EPF)
 - Equity Linked Saving Scheme (ELSS)
@@ -169,12 +169,12 @@ Subtract any **Tax Deducted at Source (TDS)** already deducted by your employer 
 - Home loan principal repayment
 - Children's tuition fees
 
-### Section 80D — Health Insurance
-- Up to ₹25,000 for self, spouse, and children
-- Additional ₹25,000 for parents (₹50,000 if parents are senior citizens)
+### Section 80D â€” Health Insurance
+- Up to â‚¹25,000 for self, spouse, and children
+- Additional â‚¹25,000 for parents (â‚¹50,000 if parents are senior citizens)
 
-### Section 24(b) — Home Loan Interest
-- Up to ₹2,00,000 deduction on home loan interest for a self-occupied property
+### Section 24(b) â€” Home Loan Interest
+- Up to â‚¹2,00,000 deduction on home loan interest for a self-occupied property
 
 ### Other Notable Deductions
 - **80E**: Education loan interest (no upper limit, up to 8 years)
@@ -205,21 +205,21 @@ Yes, if your income exceeds the exemption limit or you meet any other criteria (
 Salaried individuals can switch every year at the time of filing. Business owners can switch from the New Regime to the Old Regime only once.
 
 **Q: What happens if I don't file my ITR?**
-Late filing attracts a penalty of ₹5,000 (₹1,000 if income is below ₹5 lakh). Additionally, you may face interest under Sections 234A, 234B, and 234C on unpaid tax.`,
+Late filing attracts a penalty of â‚¹5,000 (â‚¹1,000 if income is below â‚¹5 lakh). Additionally, you may face interest under Sections 234A, 234B, and 234C on unpaid tax.`,
     },
 
-    // ─── 2. How to e-File ITR Online ──────────────────────────────────────
+    // â”€â”€â”€ 2. How to e-File ITR Online â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     {
       title: "How to e-File ITR Online in India: Step-by-Step Guide (AY 2026-27)",
       slug: "how-to-efile-itr-online-india",
       excerpt:
         "A complete step-by-step guide to filing your Income Tax Return online on the Income Tax e-Filing portal for AY 2026-27. Covers prerequisites, documents needed, and the entire filing process.",
-      featuredImage: "💻",
+      featuredImage: "ðŸ’»",
       readTime: "10 min read",
       tags: JSON.stringify(["ITR Filing", "e-Filing", "Income Tax Portal", "AY 2026-27", "Online Filing"]),
       content: `## What Is e-Filing of ITR?
 
-e-Filing means submitting your **Income Tax Return (ITR)** electronically through the Income Tax Department's official portal at **incometax.gov.in**. It replaced the old paper-based filing system and is now mandatory for most taxpayers, including individuals with income above ₹5 lakh and companies.
+e-Filing means submitting your **Income Tax Return (ITR)** electronically through the Income Tax Department's official portal at **incometax.gov.in**. It replaced the old paper-based filing system and is now mandatory for most taxpayers, including individuals with income above â‚¹5 lakh and companies.
 
 Filing your ITR accurately and on time ensures you:
 - Comply with tax law and avoid penalties
@@ -255,7 +255,7 @@ Collect the following documents before starting:
 - **Form 16** (Part A and Part B) issued by your employer
 - Salary slips for the full financial year
 - Form 26AS (Annual Information Statement from income tax portal)
-- AIS (Annual Information Statement) — download from the portal
+- AIS (Annual Information Statement) â€” download from the portal
 
 **For Investment Income:**
 - Capital Gains statement from your broker or mutual fund platform
@@ -303,8 +303,8 @@ Based on your income type, select the appropriate ITR form (see our detailed gui
 ### Step 4: Choose Tax Regime
 
 When prompted, select either:
-- **Old Tax Regime** — if you have significant deductions (80C, HRA, home loan, etc.)
-- **New Tax Regime** — if you prefer lower rates without tracking deductions
+- **Old Tax Regime** â€” if you have significant deductions (80C, HRA, home loan, etc.)
+- **New Tax Regime** â€” if you prefer lower rates without tracking deductions
 
 > **Tip:** The portal may show you a comparison to help you decide. If in doubt, compute your tax both ways using an online calculator before choosing.
 
@@ -322,12 +322,12 @@ This is the most critical step. Enter income under each applicable head:
 
 **Salary Income:**
 - Enter figures from Form 16: Gross Salary, allowances, perquisites
-- The portal auto-fills a ₹50,000 standard deduction (₹75,000 under New Regime)
+- The portal auto-fills a â‚¹50,000 standard deduction (â‚¹75,000 under New Regime)
 
 **House Property:**
 - Enter annual rental income received
 - Deduct municipal taxes paid
-- Claim 30% standard deduction and home loan interest (up to ₹2 lakh for self-occupied)
+- Claim 30% standard deduction and home loan interest (up to â‚¹2 lakh for self-occupied)
 
 **Capital Gains:**
 - Enter short-term and long-term capital gains from stocks, mutual funds, and property
@@ -342,11 +342,11 @@ If you opted for the Old Regime, navigate to the **Deductions** section and ente
 
 | Section | What You Can Claim |
 |---|---|
-| 80C | PPF, ELSS, LIC, EPF, home loan principal (max ₹1.5L) |
-| 80D | Health insurance premiums (max ₹25,000 – ₹1L) |
+| 80C | PPF, ELSS, LIC, EPF, home loan principal (max â‚¹1.5L) |
+| 80D | Health insurance premiums (max â‚¹25,000 â€“ â‚¹1L) |
 | 80E | Education loan interest |
 | 80G | Donations |
-| 24(b) | Home loan interest (max ₹2L for self-occupied) |
+| 24(b) | Home loan interest (max â‚¹2L for self-occupied) |
 
 ### Step 8: Review Tax Computation
 
@@ -368,11 +368,11 @@ The portal will flag any errors (missing mandatory fields, mismatches). Resolve 
 
 Once validated, click **Submit**. After submission, you must **e-Verify** within **30 days** to complete the process. Verification options:
 
-- **Aadhaar OTP** (fastest — instant)
+- **Aadhaar OTP** (fastest â€” instant)
 - **Net Banking** (through your bank's portal)
 - **Demat Account** (via CDSL/NSDL)
 - **Bank ATM** (some banks)
-- **DSC (Digital Signature Certificate)** — for companies and audit cases
+- **DSC (Digital Signature Certificate)** â€” for companies and audit cases
 - **Sending signed ITR-V by post** to CPC Bengaluru (within 30 days)
 
 > **Important:** Your return is NOT complete until it is e-verified. An unverified return is treated as if it was never filed.
@@ -385,8 +385,8 @@ After successful e-verification, download your **ITR-V / Acknowledgement** from 
 
 ## Common Mistakes to Avoid
 
-- Filing under the wrong AY (always double-check: FY 2025-26 → AY 2026-27)
-- Not reconciling Form 26AS/AIS before filing — mismatches trigger notices
+- Filing under the wrong AY (always double-check: FY 2025-26 â†’ AY 2026-27)
+- Not reconciling Form 26AS/AIS before filing â€” mismatches trigger notices
 - Forgetting to report bank interest and dividend income
 - Missing the e-verification deadline (30 days)
 - Not reporting income from previous employer's Form 16 if you changed jobs mid-year
@@ -395,24 +395,24 @@ After successful e-verification, download your **ITR-V / Acknowledgement** from 
 
 ## What Happens After Filing?
 
-After e-verification, the Income Tax Department processes your return, usually within **15–45 days**. You will receive:
+After e-verification, the Income Tax Department processes your return, usually within **15â€“45 days**. You will receive:
 - A processing intimation under **Section 143(1)** by email/SMS
 - A **refund** (if applicable) directly to your pre-validated bank account
-- A notice (if discrepancies are found) — respond online through the portal`,
+- A notice (if discrepancies are found) â€” respond online through the portal`,
     },
 
-    // ─── 3. Which ITR Form to File ────────────────────────────────────────
+    // â”€â”€â”€ 3. Which ITR Form to File â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     {
       title: "Which ITR Form Should You File? Complete Guide to ITR-1 Through ITR-7 (AY 2026-27)",
       slug: "which-itr-form-to-file-guide",
       excerpt:
-        "Confused about which ITR form applies to you? This guide breaks down ITR-1 to ITR-7 — who should use each form, applicable income types, and key restrictions to help you file the right return.",
-      featuredImage: "📋",
+        "Confused about which ITR form applies to you? This guide breaks down ITR-1 to ITR-7 â€” who should use each form, applicable income types, and key restrictions to help you file the right return.",
+      featuredImage: "ðŸ“‹",
       readTime: "9 min read",
       tags: JSON.stringify(["ITR Form", "ITR-1", "ITR-2", "ITR-3", "ITR-4", "Which ITR to File", "AY 2026-27"]),
       content: `## Why Choosing the Right ITR Form Matters
 
-Filing your Income Tax Return using the **wrong form** is not a minor technicality — the Income Tax Department can treat it as a **defective return**, which you will need to refile. In some cases, it can even trigger a scrutiny notice.
+Filing your Income Tax Return using the **wrong form** is not a minor technicality â€” the Income Tax Department can treat it as a **defective return**, which you will need to refile. In some cases, it can even trigger a scrutiny notice.
 
 India has **seven ITR forms** (ITR-1 through ITR-7), each designed for a specific taxpayer category and type of income. This guide helps you identify the correct one for AY 2026-27 (income earned in FY 2025-26).
 
@@ -432,29 +432,29 @@ India has **seven ITR forms** (ITR-1 through ITR-7), each designed for a specifi
 
 ---
 
-## ITR-1 (Sahaj) — For Simple Salaried Taxpayers
+## ITR-1 (Sahaj) â€” For Simple Salaried Taxpayers
 
 **Who can file ITR-1?**
 
-ITR-1 is the simplest form, designed for resident individuals whose total income does not exceed **₹50 lakh** and comes only from:
+ITR-1 is the simplest form, designed for resident individuals whose total income does not exceed **â‚¹50 lakh** and comes only from:
 - **Salary or pension** from one employer
-- **One house property** (self-occupied or let out — but no brought-forward loss)
+- **One house property** (self-occupied or let out â€” but no brought-forward loss)
 - **Other sources**: Savings account interest, FD interest, family pension, dividends
-- Agricultural income up to **₹5,000**
+- Agricultural income up to **â‚¹5,000**
 
 **Who CANNOT use ITR-1?**
-- Non-Resident Indians (NRIs) — they must use ITR-2
+- Non-Resident Indians (NRIs) â€” they must use ITR-2
 - Individuals who are directors of a company
 - Those who have invested in unlisted equity shares
 - Those with foreign assets or income
 - Those with capital gains of any kind
 - Those with more than one house property
 - Those with business or professional income
-- Those with total income above ₹50 lakh
+- Those with total income above â‚¹50 lakh
 
 ---
 
-## ITR-2 — For Those With Capital Gains or Multiple Properties
+## ITR-2 â€” For Those With Capital Gains or Multiple Properties
 
 **Who should file ITR-2?**
 
@@ -466,7 +466,7 @@ ITR-2 is for individuals and HUFs who have income from:
 - **Dividend income** (any amount)
 - Income from outside India
 - Being a **director** in a company or holding **unlisted equity shares**
-- Agricultural income exceeding ₹5,000
+- Agricultural income exceeding â‚¹5,000
 
 **ITR-2 does NOT cover** business or professional income. If you have that, move to ITR-3 or ITR-4.
 
@@ -474,7 +474,7 @@ ITR-2 is for individuals and HUFs who have income from:
 
 ---
 
-## ITR-3 — For Business Owners and Professionals
+## ITR-3 â€” For Business Owners and Professionals
 
 **Who should file ITR-3?**
 
@@ -484,11 +484,11 @@ ITR-3 is for individuals and HUFs who earn income from:
 - **Partner's salary/interest from a partnership firm**
 - Any income also covered under ITR-1 or ITR-2
 
-ITR-3 is the most comprehensive form for individuals. It requires a full **P&L account and balance sheet** if turnover exceeds ₹25 lakh (for professionals) or ₹2.5 crore (for businesses).
+ITR-3 is the most comprehensive form for individuals. It requires a full **P&L account and balance sheet** if turnover exceeds â‚¹25 lakh (for professionals) or â‚¹2.5 crore (for businesses).
 
 ---
 
-## ITR-4 (Sugam) — For Presumptive Taxation Filers
+## ITR-4 (Sugam) â€” For Presumptive Taxation Filers
 
 **Who should file ITR-4?**
 
@@ -496,21 +496,21 @@ ITR-4 is for resident individuals, HUFs, and firms (other than LLPs) who opt for
 
 | Section | Applicable To | Presumptive Income |
 |---|---|---|
-| **44AD** | Small businesses with turnover up to ₹3 crore (digital receipts) or ₹2 crore (cash) | 8% or 6% of turnover |
-| **44ADA** | Professionals (doctors, CAs, lawyers etc.) with receipts up to ₹75 lakh | 50% of gross receipts |
+| **44AD** | Small businesses with turnover up to â‚¹3 crore (digital receipts) or â‚¹2 crore (cash) | 8% or 6% of turnover |
+| **44ADA** | Professionals (doctors, CAs, lawyers etc.) with receipts up to â‚¹75 lakh | 50% of gross receipts |
 | **44AE** | Transport operators with up to 10 goods vehicles | Fixed amount per vehicle per month |
 
 Under presumptive taxation, you declare a deemed profit without maintaining detailed books of accounts.
 
 **Who CANNOT use ITR-4?**
-- Those with income above ₹50 lakh (individuals)
+- Those with income above â‚¹50 lakh (individuals)
 - Those with capital gains
 - Those with foreign assets or directorship in a company
 - Those with more than one house property
 
 ---
 
-## ITR-5 — For Firms, LLPs, and Other Associations
+## ITR-5 â€” For Firms, LLPs, and Other Associations
 
 **Who should file ITR-5?**
 
@@ -522,11 +522,11 @@ Under presumptive taxation, you declare a deemed profit without maintaining deta
 - Cooperative societies
 - Local authorities
 
-Note: Individual partners do NOT use ITR-5 — they use ITR-3 to report their share of partnership income.
+Note: Individual partners do NOT use ITR-5 â€” they use ITR-3 to report their share of partnership income.
 
 ---
 
-## ITR-6 — For Companies
+## ITR-6 â€” For Companies
 
 **Who should file ITR-6?**
 
@@ -539,7 +539,7 @@ Companies claiming Section 11 exemption should file **ITR-7** instead.
 
 ---
 
-## ITR-7 — For Trusts, NGOs, and Political Parties
+## ITR-7 â€” For Trusts, NGOs, and Political Parties
 
 **Who should file ITR-7?**
 
@@ -553,34 +553,34 @@ Entities that are required to file returns under specific sections:
 
 ## Frequently Asked Questions
 
-**Q: I am salaried and also earned ₹5,000 from a YouTube channel. Which form?**
+**Q: I am salaried and also earned â‚¹5,000 from a YouTube channel. Which form?**
 If the YouTube income is classified as business/professional income, use ITR-3. If it is very small and can be reported under "other sources," discuss this with a CA as the Income Tax Department may question the classification.
 
 **Q: I am a freelancer working from home. Which ITR form do I use?**
-If you opt for the presumptive scheme under 44ADA (gross receipts ≤ ₹75 lakh), use **ITR-4**. Otherwise, use **ITR-3** with proper books.
+If you opt for the presumptive scheme under 44ADA (gross receipts â‰¤ â‚¹75 lakh), use **ITR-4**. Otherwise, use **ITR-3** with proper books.
 
 **Q: My employer deducted TDS and I have no other income. Can I still file ITR-1?**
-Yes, provided your income is only from salary, one house property, and other sources — and the total does not exceed ₹50 lakh.
+Yes, provided your income is only from salary, one house property, and other sources â€” and the total does not exceed â‚¹50 lakh.
 
 **Q: I sold shares during the year. Can I use ITR-1?**
 No. Any capital gains (even a small amount) disqualify you from ITR-1. Use **ITR-2** instead.`,
     },
 
-    // ─── 4. Section 80C and 80D Deductions ───────────────────────────────
+    // â”€â”€â”€ 4. Section 80C and 80D Deductions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     {
       title: "Section 80C and 80D Deductions: The Complete Guide for FY 2025-26",
       slug: "section-80c-80d-deductions-complete-guide",
       excerpt:
-        "Maximize your tax savings with a complete guide to Section 80C and 80D deductions — eligible investments, limits, sub-limits, and exactly how to claim them in your ITR for FY 2025-26.",
-      featuredImage: "💰",
+        "Maximize your tax savings with a complete guide to Section 80C and 80D deductions â€” eligible investments, limits, sub-limits, and exactly how to claim them in your ITR for FY 2025-26.",
+      featuredImage: "ðŸ’°",
       readTime: "11 min read",
       tags: JSON.stringify(["Section 80C", "Section 80D", "Tax Deductions", "Tax Savings", "FY 2025-26", "PPF", "ELSS"]),
       content: `## Overview: What Are Tax Deductions?
 
 Tax deductions reduce your **taxable income**, which in turn reduces the amount of tax you owe. Under the **Old Tax Regime**, deductions are the primary tool for tax planning. The two most widely used deduction sections are:
 
-- **Section 80C** — for savings and investments (up to ₹1,50,000 per year)
-- **Section 80D** — for health insurance premiums
+- **Section 80C** â€” for savings and investments (up to â‚¹1,50,000 per year)
+- **Section 80D** â€” for health insurance premiums
 
 > **Important:** Deductions under Chapter VI-A (which includes 80C and 80D) are available **only under the Old Tax Regime**. If you have opted for the New Tax Regime, you cannot claim these deductions.
 
@@ -590,7 +590,7 @@ Tax deductions reduce your **taxable income**, which in turn reduces the amount 
 
 ### What Is Section 80C?
 
-Section 80C of the Income Tax Act allows individual taxpayers and HUFs to deduct up to **₹1,50,000** per financial year from their gross total income for specified investments and expenditures. This is a combined limit — it is not ₹1.5 lakh for each item listed below, but ₹1.5 lakh in total across all eligible options.
+Section 80C of the Income Tax Act allows individual taxpayers and HUFs to deduct up to **â‚¹1,50,000** per financial year from their gross total income for specified investments and expenditures. This is a combined limit â€” it is not â‚¹1.5 lakh for each item listed below, but â‚¹1.5 lakh in total across all eligible options.
 
 ### Eligible Investments and Expenditures Under 80C
 
@@ -600,33 +600,33 @@ Section 80C of the Income Tax Act allows individual taxpayers and HUFs to deduct
 |---|---|---|---|
 | Public Provident Fund (PPF) | 15 years | ~7.1% p.a. (tax-free) | Government-backed, safest option |
 | Employee Provident Fund (EPF) | Till retirement | ~8.25% p.a. | Employee contribution qualifies |
-| National Pension System (NPS) | Till age 60 | Market-linked | Additional ₹50K under 80CCD(1B) |
+| National Pension System (NPS) | Till age 60 | Market-linked | Additional â‚¹50K under 80CCD(1B) |
 | National Savings Certificate (NSC) | 5 years | ~7.7% p.a. | Post office scheme, interest taxable |
 | Sukanya Samriddhi Yojana (SSY) | Till daughter turns 21 | ~8.2% p.a. | Only for girl child below 10 years |
 | Senior Citizens Savings Scheme (SCSS) | 5 years | ~8.2% p.a. | For individuals aged 60+ |
-| 5-Year Tax Saving FD | 5 years | 6.5%–7.5% p.a. | Premature withdrawal not allowed |
+| 5-Year Tax Saving FD | 5 years | 6.5%â€“7.5% p.a. | Premature withdrawal not allowed |
 | Equity Linked Saving Scheme (ELSS) | 3 years (shortest) | Market-linked | Potential for highest returns; LTCG tax applies |
 
 **Expenditure-Based**
 
 | Expenditure | Details |
 |---|---|
-| Life Insurance Premium | For self, spouse, and children; sum assured must be ≥ 10× premium |
-| Home Loan Principal Repayment | Principal portion of EMI on a housing loan (not interest — that is Section 24) |
+| Life Insurance Premium | For self, spouse, and children; sum assured must be â‰¥ 10Ã— premium |
+| Home Loan Principal Repayment | Principal portion of EMI on a housing loan (not interest â€” that is Section 24) |
 | Children's Tuition Fees | School/college fees for up to 2 children; full-time education only |
 | Stamp Duty and Registration Charges | For purchase of house property (can be claimed only in the year paid) |
 | Unit Linked Insurance Plans (ULIPs) | Premium paid for ULIPs |
 
-### Additional Deduction Under 80CCD(1B) — NPS
+### Additional Deduction Under 80CCD(1B) â€” NPS
 
-Over and above the ₹1.5 lakh 80C limit, you can claim an **additional deduction of ₹50,000** for contributions to the National Pension System (NPS) under Section **80CCD(1B)**. This brings your potential total deduction to **₹2 lakh** through 80C + NPS.
+Over and above the â‚¹1.5 lakh 80C limit, you can claim an **additional deduction of â‚¹50,000** for contributions to the National Pension System (NPS) under Section **80CCD(1B)**. This brings your potential total deduction to **â‚¹2 lakh** through 80C + NPS.
 
 ### Strategy: How to Optimise Your 80C
 
-1. **Start with EPF** — Your mandatory EPF contribution already counts toward 80C. Check your salary slip first.
-2. **Fill the gap with PPF** — Safe, tax-free returns, flexible contributions.
-3. **Consider ELSS** for the growth potential — shortest lock-in (3 years) among all 80C options, with equity returns.
-4. **Do not over-invest just for 80C** — Avoid locking money in low-yield products (like NSC or LIC endowment) solely to save tax. Compare post-tax returns.
+1. **Start with EPF** â€” Your mandatory EPF contribution already counts toward 80C. Check your salary slip first.
+2. **Fill the gap with PPF** â€” Safe, tax-free returns, flexible contributions.
+3. **Consider ELSS** for the growth potential â€” shortest lock-in (3 years) among all 80C options, with equity returns.
+4. **Do not over-invest just for 80C** â€” Avoid locking money in low-yield products (like NSC or LIC endowment) solely to save tax. Compare post-tax returns.
 
 ---
 
@@ -640,14 +640,14 @@ Section 80D allows deduction for **premiums paid on health (medical) insurance p
 
 | Who Is Covered | Maximum Deduction |
 |---|---|
-| Self, spouse, and dependent children | ₹25,000 |
-| Parents (below 60 years) | ₹25,000 |
-| Parents (senior citizens, 60+) | ₹50,000 |
-| Self (senior citizen, 60+) | ₹50,000 |
+| Self, spouse, and dependent children | â‚¹25,000 |
+| Parents (below 60 years) | â‚¹25,000 |
+| Parents (senior citizens, 60+) | â‚¹50,000 |
+| Self (senior citizen, 60+) | â‚¹50,000 |
 
 **The maximum possible deduction under 80D in a single year:**
-- If you are below 60 and parents are senior citizens: ₹25,000 + ₹50,000 = **₹75,000**
-- If both you and your parents are senior citizens: ₹50,000 + ₹50,000 = **₹1,00,000**
+- If you are below 60 and parents are senior citizens: â‚¹25,000 + â‚¹50,000 = **â‚¹75,000**
+- If both you and your parents are senior citizens: â‚¹50,000 + â‚¹50,000 = **â‚¹1,00,000**
 
 ### What Is Eligible Under Section 80D?
 
@@ -658,7 +658,7 @@ Section 80D allows deduction for **premiums paid on health (medical) insurance p
 - Top-up and super top-up plans
 
 **Preventive health check-ups** (included within the overall limit):
-- Up to **₹5,000** per year for self, spouse, children, and parents
+- Up to **â‚¹5,000** per year for self, spouse, children, and parents
 - This can be paid in cash (unlike insurance premiums, which must be paid via cheque/card/digital mode)
 
 **What is NOT eligible under 80D:**
@@ -668,34 +668,34 @@ Section 80D allows deduction for **premiums paid on health (medical) insurance p
 
 ### Section 80D for Senior Citizen Parents Without Insurance
 
-If your parents are senior citizens (60+) and **do not have a health insurance policy**, you can claim a deduction of up to **₹50,000** for **medical expenses actually incurred** on their treatment. This is particularly useful if insuring elderly parents is difficult or prohibitively expensive.
+If your parents are senior citizens (60+) and **do not have a health insurance policy**, you can claim a deduction of up to **â‚¹50,000** for **medical expenses actually incurred** on their treatment. This is particularly useful if insuring elderly parents is difficult or prohibitively expensive.
 
 ---
 
 ## Other Related Deductions You Should Know
 
-### 80E — Education Loan Interest
+### 80E â€” Education Loan Interest
 - Deduction on interest paid on an education loan taken for higher studies
 - **No upper limit** on the deduction amount
 - Available for a **maximum of 8 consecutive years** starting from the year repayment begins
 - Loan must be taken from a financial institution or approved charitable institution (not from family)
 
-### 80G — Donations to Charitable Institutions
+### 80G â€” Donations to Charitable Institutions
 - Donations to approved funds (PM Relief Fund, National Defence Fund) are eligible for **100% deduction**
 - Donations to other approved institutions may be eligible for **50% deduction**
 - Some donations have a qualifying limit (10% of adjusted gross total income)
-- Cash donations above **₹2,000** are not eligible
+- Cash donations above **â‚¹2,000** are not eligible
 
-### 80TTA and 80TTB — Interest on Deposits
-- **80TTA**: Deduction up to **₹10,000** on savings account interest for individuals below 60
-- **80TTB**: Deduction up to **₹50,000** on all interest income (savings account + FD) for **senior citizens** — replaces 80TTA for those above 60
+### 80TTA and 80TTB â€” Interest on Deposits
+- **80TTA**: Deduction up to **â‚¹10,000** on savings account interest for individuals below 60
+- **80TTB**: Deduction up to **â‚¹50,000** on all interest income (savings account + FD) for **senior citizens** â€” replaces 80TTA for those above 60
 
 ---
 
 ## How to Claim These Deductions in Your ITR
 
-1. **Keep all documents** — premium receipts, investment proofs, passbook entries
-2. **Submit Form 12BB to your employer** — this is the investment declaration form employers use for TDS computation. Submit it at the start of the year and provide actual proofs before March 31
+1. **Keep all documents** â€” premium receipts, investment proofs, passbook entries
+2. **Submit Form 12BB to your employer** â€” this is the investment declaration form employers use for TDS computation. Submit it at the start of the year and provide actual proofs before March 31
 3. **In ITR**: Navigate to the **Deductions** section and enter the amounts under the corresponding section heads
 4. **Cross-check with AIS**: Your tax-saving investment data may be pre-filled from AIS; verify it matches your records
 
@@ -706,8 +706,8 @@ If your parents are senior citizens (60+) and **do not have a health insurance p
 **Q: Can I claim 80C for my spouse's PPF contribution?**
 No. You can only claim 80C for contributions you make to your own PPF account, or for life insurance premiums you pay for your spouse.
 
-**Q: I invested ₹2 lakh in ELSS. Can I claim the full ₹2 lakh under 80C?**
-No. The 80C limit is capped at ₹1.5 lakh regardless of how much you invest. You cannot claim the excess ₹50,000 under 80C.
+**Q: I invested â‚¹2 lakh in ELSS. Can I claim the full â‚¹2 lakh under 80C?**
+No. The 80C limit is capped at â‚¹1.5 lakh regardless of how much you invest. You cannot claim the excess â‚¹50,000 under 80C.
 
 **Q: Is the employer's contribution to NPS tax-free?**
 Yes. The employer's contribution to NPS (up to 10% of salary) is deductible under Section 80CCD(2), which has no cap and is available under both the Old and New Tax Regime.
@@ -716,13 +716,13 @@ Yes. The employer's contribution to NPS (up to 10% of salary) is deductible unde
 No. Section 80D only covers premiums paid for yourself, your spouse, dependent children, and your parents.`,
     },
 
-    // ─── 5. PF Balance Check ─────────────────────────────────────────────
+    // â”€â”€â”€ 5. PF Balance Check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     {
       title: "PF Balance Check: 5 Ways to Check Your EPF Balance Online (2025)",
       slug: "pf-balance-check-epf-online-methods",
       excerpt:
-        "Learn how to check your EPF (Provident Fund) balance in 2025 using the EPFO portal, UMANG app, missed call service, SMS, and passbook — with step-by-step instructions for each method.",
-      featuredImage: "📱",
+        "Learn how to check your EPF (Provident Fund) balance in 2025 using the EPFO portal, UMANG app, missed call service, SMS, and passbook â€” with step-by-step instructions for each method.",
+      featuredImage: "ðŸ“±",
       readTime: "8 min read",
       tags: JSON.stringify(["PF Balance", "EPF Balance Check", "EPFO", "UMANG App", "Provident Fund", "UAN"]),
       content: `## What Is EPF and Why Check Your Balance?
@@ -775,7 +775,7 @@ This is the most detailed method, giving you access to your full **passbook** wi
    - Opening and closing balance
    - Interest credited
 
-> **Note:** The passbook is updated with the previous year's interest around **December–January** each year. Monthly contributions may show a 2–3 month lag before appearing in the passbook.
+> **Note:** The passbook is updated with the previous year's interest around **Decemberâ€“January** each year. Monthly contributions may show a 2â€“3 month lag before appearing in the passbook.
 
 ---
 
@@ -804,12 +804,12 @@ The **UMANG app** is the most convenient mobile method and offers several EPFO s
 
 ## Method 3: Missed Call Service (No Internet Needed)
 
-This is the quickest way to get your **current EPF balance** — no internet, no app needed. Just a feature phone.
+This is the quickest way to get your **current EPF balance** â€” no internet, no app needed. Just a feature phone.
 
 **Steps:**
 1. Give a **missed call** (it rings twice and disconnects automatically) to:
 
-   **📞 011-22901406**
+   **ðŸ“ž 011-22901406**
 
 2. Call from the **mobile number registered with your UAN** (the number linked in the EPFO system)
 3. Within a few minutes, you will receive an **SMS** from EPFO showing:
@@ -820,7 +820,7 @@ This is the quickest way to get your **current EPF balance** — no internet, no
 **Conditions:**
 - UAN must be activated
 - Mobile number must be registered and KYC-linked with EPFO
-- Works only for the **most recent contribution data** — not a detailed passbook
+- Works only for the **most recent contribution data** â€” not a detailed passbook
 
 ---
 
@@ -860,7 +860,7 @@ Similar to the missed call method, you can request your balance via SMS.
 
 ## Method 5: Through the EPFO Portal's e-Passbook
 
-The EPFO's main member portal also has an e-passbook feature — different from the passbook portal mentioned in Method 1.
+The EPFO's main member portal also has an e-passbook feature â€” different from the passbook portal mentioned in Method 1.
 
 **Steps:**
 1. Go to **[epfindia.gov.in](https://www.epfindia.gov.in)**
@@ -877,8 +877,8 @@ This is especially useful for downloading a PDF copy of your passbook for submis
 
 If you do not know your UAN or have not activated it:
 
-1. **Ask your HR department** — they are required to provide your UAN
-2. **Use the EPFO portal**: Go to [unifiedportal-mem.epfindia.gov.in](https://unifiedportal-mem.epfindia.gov.in) → **Know Your UAN** → enter your PAN / Aadhaar / member ID to find your UAN
+1. **Ask your HR department** â€” they are required to provide your UAN
+2. **Use the EPFO portal**: Go to [unifiedportal-mem.epfindia.gov.in](https://unifiedportal-mem.epfindia.gov.in) â†’ **Know Your UAN** â†’ enter your PAN / Aadhaar / member ID to find your UAN
 3. **Call EPFO helpline**: 1800-118-005 (toll-free)
 
 ---
@@ -890,12 +890,12 @@ When you view your passbook, here is what the columns mean:
 | Column | Meaning |
 |---|---|
 | Employee Share | Your 12% contribution |
-| Employer Share | Employer's contribution — **3.67%** goes to EPF, **8.33%** goes to EPS (Pension Scheme) |
+| Employer Share | Employer's contribution â€” **3.67%** goes to EPF, **8.33%** goes to EPS (Pension Scheme) |
 | VPF | Voluntary Provident Fund (if you contribute extra) |
 | EDLI | Employees' Deposit Linked Insurance (usually negligible) |
 | Interest | Annual interest credited on your balance |
 
-> **Note on EPS:** The 8.33% employer contribution (on ₹15,000 ceiling = ₹1,250/month) goes to the **Employees' Pension Scheme (EPS)** — this is not shown in your EPF passbook as withdrawable balance. It is paid as a pension after retirement.
+> **Note on EPS:** The 8.33% employer contribution (on â‚¹15,000 ceiling = â‚¹1,250/month) goes to the **Employees' Pension Scheme (EPS)** â€” this is not shown in your EPF passbook as withdrawable balance. It is paid as a pension after retirement.
 
 ---
 
@@ -917,7 +917,7 @@ When you view your passbook, here is what the columns mean:
 Check your passbook to confirm the missing deposits. Then file a complaint with EPFO through the **EPFiGMS** portal (epfigms.gov.in) or call the helpline. Non-deposit of PF by an employer is a criminal offence under the EPF Act.
 
 **Q: I changed jobs. How do I see all my PF accounts in one place?**
-All PF accounts are linked under your single UAN. Log in to the EPFO portal and select each Member ID separately to view each employer's account. For convenience, transfer old accounts to your current employer's account using the **One Member – One EPF Account** transfer facility.
+All PF accounts are linked under your single UAN. Log in to the EPFO portal and select each Member ID separately to view each employer's account. For convenience, transfer old accounts to your current employer's account using the **One Member â€“ One EPF Account** transfer facility.
 
 **Q: How many times can I check my balance per day?**
 There is no limit on portal or app checks. The missed call service allows one balance query per day.
@@ -927,9 +927,9 @@ The withdrawable amount depends on your reason for withdrawal, years of service,
     },
   ];
 
-  // ─────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // INSERT BLOGS
-  // ─────────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   for (const blog of taxBlogs) {
     const existing = await adminDb.collection("blog_posts").where("slug", "==", blog.slug).limit(1).get();
 

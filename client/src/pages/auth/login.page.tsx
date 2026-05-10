@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { AlertCircle, Loader2, Lock, Mail, ShieldCheck, UserCog, UserRound, UsersRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ const reasonCopy: Record<string, { title: string; message: string }> = {
   },
   admin_required: {
     title: 'Admin sign in required',
-    message: 'Use your Clerk administrator or team-member account to continue.',
+    message: 'Use your Supabase administrator or team-member account to continue.',
   },
 };
 

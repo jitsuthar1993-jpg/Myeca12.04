@@ -1,4 +1,4 @@
-import { adminDb } from "../neon-admin.js";
+﻿import { adminDb } from "../data-admin.js";
 import { blogPosts } from "../../client/src/data/blogPosts.js";
 import { buildBlogPostWriteData, getCategoryLookup } from "../services/blog.js";
 import { estimateReadingTimeMinutes, slugifyHeading } from "../../shared/blog.js";

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * One-time migration: re-upload local /uploads/blog/ images to Vercel Blob
  * and update blog_posts records in the database.
  *
@@ -7,7 +7,7 @@
 import fs from "fs";
 import path from "path";
 import { put } from "@vercel/blob";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 
 const UPLOAD_DIR = "public/uploads/blog";
 

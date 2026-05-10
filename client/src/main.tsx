@@ -1,10 +1,8 @@
 import { createRoot } from "react-dom/client";
-import { ClerkProvider } from "@clerk/clerk-react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { clerkPublishableKey, isClerkEnabled } from "./lib/clerk-config";
 import { addPerformanceHints } from "./utils/performance-hints";
 import "./utils/safe-dom";
 import "./index.css";
@@ -50,24 +48,9 @@ const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
     <ErrorBoundary>
-      {isClerkEnabled ? (
-        <ClerkProvider
-          publishableKey={clerkPublishableKey.trim()}
-          signInUrl="/auth/login"
-          signUpUrl="/auth/register"
-          afterSignOutUrl="/"
-        >
-          <App />
-          <Analytics />
-          <SpeedInsights />
-        </ClerkProvider>
-      ) : (
-        <>
-          <App />
-          <Analytics />
-          <SpeedInsights />
-        </>
-      )}
+      <App />
+      <Analytics />
+      <SpeedInsights />
     </ErrorBoundary>,
   );
 } else {

@@ -33,50 +33,6 @@ const defaultRequiredDocuments = [
   'Deduction proofs',
 ];
 
-export const clerkAuthAppearance = {
-  elements: {
-    rootBox: 'w-full max-w-full min-w-0 overflow-visible',
-    card: 'w-full max-w-full min-w-0 overflow-visible border-0 bg-transparent p-0 shadow-none',
-    header: 'hidden',
-    main: 'w-full max-w-full min-w-0 overflow-visible gap-3',
-    socialButtons: 'w-full max-w-full min-w-0',
-    socialButtonsBlockButton:
-      'box-border h-10 w-full max-w-full rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-950 shadow-none transition hover:border-[#315efb] hover:bg-[#f4f8ff]',
-    socialButtonsBlockButtonText: 'font-bold',
-    dividerLine: 'bg-slate-200',
-    dividerText: 'text-xs font-bold uppercase text-slate-500',
-    form: 'w-full max-w-full min-w-0',
-    formField: 'w-full max-w-full min-w-0',
-    formFieldLabel: 'block overflow-visible text-sm font-bold leading-5 text-slate-800',
-    formFieldInput:
-      'box-border h-10 w-full max-w-full rounded-lg border-slate-300 bg-white px-3 text-sm text-slate-950 shadow-none focus:border-[#315efb] focus:ring-[#315efb]/20',
-    formButtonPrimary:
-      'box-border h-10 w-full rounded-lg bg-[#315efb] text-sm font-black text-white shadow-none transition hover:bg-[#06439f] focus:ring-2 focus:ring-[#315efb]/25',
-    footer: 'hidden',
-    footerAction: 'hidden',
-    footerActionText: 'hidden',
-    footerActionLink: 'hidden',
-    footerPages: 'hidden',
-    footerPagesLink: 'hidden',
-    badge: 'hidden',
-    badge__developmentMode: 'hidden',
-    identityPreviewText: 'text-slate-700',
-    formFieldAction: 'font-bold text-[#315efb]',
-    otpCodeFieldInput: 'rounded-lg border-slate-300',
-    alert: 'rounded-lg border border-rose-200 bg-rose-50 text-rose-900',
-  },
-  variables: {
-    colorPrimary: '#315efb',
-    colorText: '#0f172a',
-    colorTextSecondary: '#475569',
-    colorBackground: '#ffffff',
-    colorInputBackground: '#ffffff',
-    colorInputText: '#0f172a',
-    borderRadius: '0.5rem',
-    fontFamily: 'Inter, Plus Jakarta Sans, system-ui, sans-serif',
-  },
-};
-
 export function AuthFormSkeleton() {
   return (
     <div

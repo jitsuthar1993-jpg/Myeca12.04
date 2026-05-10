@@ -1,11 +1,11 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 /**
- * Reads blog JSON from the path passed as $1, inserts/updates in Neon.
+ * Reads blog JSON from the path passed as $1, inserts/updates in Supabase.
  * Usage: npx dotenv -e .env -- tsx server/scripts/publish-blog.ts <path-to-blog.json>
  */
 import "dotenv/config";
 import { readFileSync } from "fs";
-import { adminDb } from "../neon-admin.js";
+import { adminDb } from "../data-admin.js";
 
 async function main() {
   const jsonPath = process.argv[2];
@@ -23,7 +23,7 @@ async function main() {
     excerpt = null,
     category = "General",
     tags = [],
-    featuredImage = "📝",
+    featuredImage = "ðŸ“",
     readingTimeMinutes = null,
     seoTitle = null,
     seoDescription = null,
@@ -76,8 +76,8 @@ async function main() {
       status,
       updatedAt: now,
     });
-    console.log(`✅ Updated existing post: ${slug}`);
-    console.log(`🔗 https://myeca.in/blog/${slug}`);
+    console.log(`âœ… Updated existing post: ${slug}`);
+    console.log(`ðŸ”— https://myeca.in/blog/${slug}`);
   } else {
     await adminDb.collection("blog_posts").add({
       title,
@@ -98,14 +98,14 @@ async function main() {
       publishedAt: now,
       updatedAt: now,
     });
-    console.log(`✅ Published new post: ${slug}`);
-    console.log(`🔗 https://myeca.in/blog/${slug}`);
+    console.log(`âœ… Published new post: ${slug}`);
+    console.log(`ðŸ”— https://myeca.in/blog/${slug}`);
   }
 
   process.exit(0);
 }
 
 main().catch((err) => {
-  console.error("❌ Upload failed:", err.message);
+  console.error("âŒ Upload failed:", err.message);
   process.exit(1);
 });

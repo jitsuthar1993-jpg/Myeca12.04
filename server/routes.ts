@@ -1,8 +1,8 @@
-import express, { type Express, type Request, type Response } from "express";
+﻿import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
 import fs from "fs";
 import path from "path";
-import { adminDb } from "./neon-admin.js";
+import { adminDb } from "./data-admin.js";
 import { authLimiter, adminLimiter, uploadLimiter } from "./middleware/rate-limits.js";
 import { apiRateLimiter } from "./middleware/security.js";
 import documentsRouter from "./routes/documents.js";
@@ -220,7 +220,7 @@ Allow: /`;
     res.status(200).json({ status: "logged" });
   });
   
-  // Auth endpoints for User management (Clerk + Neon)
+  // Auth endpoints for User management (Supabase + Supabase)
   const authRouter = (await import("./routes/auth")).default;
   app.use("/api/v1/auth", authLimiter, authRouter);
 
