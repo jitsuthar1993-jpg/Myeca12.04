@@ -239,7 +239,7 @@ export default async function handler(req: any, res: any) {
       email: body.email || user.email || null,
       firstName: body.firstName || user.firstName || "User",
       lastName: body.lastName || user.lastName || "",
-      phoneNumber: body.phoneNumber ?? (user as any).phoneNumber ?? null,
+      phoneNumber: body.phoneNumber?.trim?.() || (user as any).phoneNumber || null,
       role,
       status: user.status || "active",
       isVerified: (user as any).isVerified ?? true,

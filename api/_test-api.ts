@@ -1,5 +1,6 @@
 import { adminDb } from "../server/data-admin.js";
 import { getPublicSupabaseAuthClient, getSupabaseAuthClient } from "../server/lib/supabase.js";
+import { displayNameParts } from "../server/services/user-accounts.js";
 import { getTemporaryTestUserByToken, type TemporaryTestRole } from "../shared/temporary-test-users.js";
 
 type ApiUser = {
@@ -30,11 +31,18 @@ async function findOrCreateApiUser(authUser: any) {
   let snapshot = await userRef.get();
 
   if (!snapshot.exists) {
+    const { firstName, lastName } = displayNameParts(authUser.user_metadata);
+
     await userRef.set({
       id: authUser.id,
       email: authUser.email ?? null,
-      firstName: authUser.user_metadata?.firstName || authUser.user_metadata?.first_name || "User",
-      lastName: authUser.user_metadata?.lastName || authUser.user_metadata?.last_name || "",
+      firstName: firstName || "User",
+      lastName,
+      phoneNumber:
+        authUser.user_metadata?.phoneNumber ||
+        authUser.user_metadata?.phone_number ||
+        authUser.phone ||
+        null,
       role: roleFromSupabaseUser(authUser),
       status: "active",
       isVerified: Boolean(authUser.email_confirmed_at || authUser.confirmed_at),

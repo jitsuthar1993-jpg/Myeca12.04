@@ -18,10 +18,10 @@ import { logAuditEvent } from "@/lib/audit";
 import { Layout } from "@/components/admin/Layout";
 
 const profileSchema = z.object({
-  first_name: z.string().min(2, "First name must be at least 2 characters"),
-  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address").optional(),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phoneNumber: z.string().trim().max(20).optional(),
 });
 
 const passwordSchema = z.object({
@@ -41,10 +41,10 @@ export default function AccountSettingsPage() {
   const profileForm = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
+      firstName: "",
+      lastName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
     },
   });
 
@@ -69,18 +69,17 @@ export default function AccountSettingsPage() {
   useEffect(() => {
     if (profileData) {
       profileForm.reset({
-        first_name: profileData.first_name || "",
-        last_name: profileData.last_name || "",
+        firstName: profileData.firstName || "",
+        lastName: profileData.lastName || "",
         email: profileData.email || "",
-        phone: profileData.phone || "",
+        phoneNumber: profileData.phoneNumber || "",
       });
     } else if (user) {
-      const names = (user.username || "").split(" ");
       profileForm.reset({
-        first_name: names[0] || "",
-        last_name: names.slice(1).join(" ") || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
         email: user.email || "",
-        phone: "",
+        phoneNumber: user.phoneNumber || "",
       });
     }
   }, [profileData, user, profileForm]);
@@ -166,7 +165,7 @@ export default function AccountSettingsPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                           control={profileForm.control}
-                          name="first_name"
+                          name="firstName"
                           render={({ field }) => (
                             <FormItem className="space-y-2">
                               <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">First Name</FormLabel>
@@ -179,7 +178,7 @@ export default function AccountSettingsPage() {
                         />
                         <FormField
                           control={profileForm.control}
-                          name="last_name"
+                          name="lastName"
                           render={({ field }) => (
                             <FormItem className="space-y-2">
                               <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Last Name</FormLabel>
@@ -209,7 +208,7 @@ export default function AccountSettingsPage() {
 
                       <FormField
                         control={profileForm.control}
-                        name="phone"
+                        name="phoneNumber"
                         render={({ field }) => (
                           <FormItem className="space-y-2">
                             <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Phone Number</FormLabel>

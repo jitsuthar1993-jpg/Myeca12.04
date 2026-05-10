@@ -86,7 +86,7 @@ router.post("/sync", requireAuth, validateRequest(syncUserSchema), async (req: A
         email: email || currentData.email,
         firstName: firstName || currentData.firstName,
         lastName: lastName || currentData.lastName,
-        phoneNumber: phoneNumber || currentData.phoneNumber,
+        phoneNumber: phoneNumber?.trim() || currentData.phoneNumber || null,
         role,
         updatedAt: new Date(),
       };

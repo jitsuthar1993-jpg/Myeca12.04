@@ -10,6 +10,7 @@ const router = Router();
 const updateProfileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
   lastName: z.string().trim().min(1).max(100),
+  phoneNumber: z.string().trim().max(20).optional().nullable(),
 });
 
 const createUserServiceSchema = z.object({
@@ -86,12 +87,13 @@ router.put("/profile", requireAnyAuth, validateRequest(updateProfileSchema), asy
     if (!authUser) {
       return res.status(401).json({ success: false, message: "Not authenticated" });
     }
-    const { firstName, lastName } = req.body;
+    const { firstName, lastName, phoneNumber } = req.body;
 
     const userRef = adminDb.collection("users").doc(authUser.id);
     await userRef.update({
       firstName,
       lastName,
+      phoneNumber: phoneNumber?.trim() || null,
       updatedAt: new Date()
     });
 

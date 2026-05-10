@@ -6,7 +6,9 @@ import {
   getTemporaryTestUserByEmail,
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
 } from "@/lib/temporary-test-users";
-import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
+import { getAuthToken, setAuthToken } from "@/lib/authToken";
+import { clearTemporaryAuthState } from "@/lib/auth-session-state";
+import { authUserToSyncPayload } from "@/lib/auth-user-sync";
 import { isGoogleAuthEnabled, isSupabaseEnabled, supabase } from "@/lib/supabase";
 
 type LogoutReason = "manual" | "timeout" | "session_expired";
@@ -50,11 +52,6 @@ function writeTemporaryUserToSession(user: AppUser) {
   window.sessionStorage.setItem(TEMPORARY_TEST_AUTH_STORAGE_KEY, JSON.stringify(user));
 }
 
-function clearTemporaryUserFromSession() {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.removeItem(TEMPORARY_TEST_AUTH_STORAGE_KEY);
-}
-
 function localMockUser(email: string): AppUser {
   let role = "user";
   const lowerEmail = email.toLowerCase();
@@ -84,16 +81,7 @@ async function fetchAppUser(token: string, authUser?: SupabaseUser | null) {
         Authorization: `Bearer ${token}`,
       },
       credentials: "include",
-      body: JSON.stringify({
-        email: authUser.email,
-        firstName:
-          authUser.user_metadata?.firstName ||
-          authUser.user_metadata?.first_name ||
-          authUser.user_metadata?.name?.split(" ")?.[0] ||
-          "User",
-        lastName: authUser.user_metadata?.lastName || authUser.user_metadata?.last_name || "",
-        phoneNumber: authUser.phone || null,
-      }),
+      body: JSON.stringify(authUserToSyncPayload(authUser)),
     }).catch(() => null);
   }
 
@@ -202,8 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    clearTemporaryUserFromSession();
-    clearAuthToken();
+    clearTemporaryAuthState();
 
     if (!isSupabaseEnabled) {
       setAppUser(localMockUser(email));
@@ -217,7 +204,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password: password ?? "",
     });
 
-    if (error) throw error;
+    if (error) {
+      setIsLoading(false);
+      throw error;
+    }
     if (!data.session?.access_token) throw new Error("Supabase did not return a session.");
 
     setAuthUser(data.user);
@@ -225,8 +215,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (email: string, password: string, userData: Partial<AppUser>) => {
+    clearTemporaryAuthState();
+    setAuthUser(null);
+    setAppUser(null);
+    setIsLoading(true);
+
     if (!isSupabaseEnabled) {
-      await login(email, password);
+      setAppUser(localMockUser(email));
+      setIsLoading(false);
       return;
     }
 
@@ -250,12 +246,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthUser(data.user);
       setAppUser(await fetchAppUser(data.session.access_token, data.user));
     }
+    setIsLoading(false);
   };
 
   const loginWithGoogle = async () => {
     if (!isGoogleAuthEnabled) {
       throw new Error("Google sign in is not enabled for this project yet. Use email and password to continue.");
     }
+
+    clearTemporaryAuthState();
+    setAuthUser(null);
+    setAppUser(null);
 
     if (!isSupabaseEnabled) {
       await login("user@gmail.com", "local_mock");
@@ -286,8 +287,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }).catch(() => null);
     }
 
-    clearTemporaryUserFromSession();
-    clearAuthToken();
+    clearTemporaryAuthState();
     if (isSupabaseEnabled) {
       await supabase.auth.signOut();
     }

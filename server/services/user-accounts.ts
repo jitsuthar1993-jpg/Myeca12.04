@@ -40,10 +40,19 @@ function invitationDocId(email: string) {
   return `admin_invitation_${Buffer.from(email).toString("base64url")}`;
 }
 
-function displayNameParts(userMetadata: Record<string, any> | null | undefined) {
-  const firstName = userMetadata?.firstName ?? userMetadata?.first_name ?? userMetadata?.name?.split(" ")?.[0] ?? "";
-  const lastName = userMetadata?.lastName ?? userMetadata?.last_name ?? "";
-  return { firstName, lastName };
+export function displayNameParts(userMetadata: Record<string, any> | null | undefined) {
+  const fullName =
+    userMetadata?.full_name ??
+    userMetadata?.name ??
+    userMetadata?.display_name ??
+    "";
+  const nameParts = typeof fullName === "string" ? fullName.trim().split(/\s+/).filter(Boolean) : [];
+  const firstName = userMetadata?.firstName ?? userMetadata?.first_name ?? nameParts[0] ?? "";
+  const lastName = userMetadata?.lastName ?? userMetadata?.last_name ?? nameParts.slice(1).join(" ") ?? "";
+  return {
+    firstName: typeof firstName === "string" ? firstName.trim() : "",
+    lastName: typeof lastName === "string" ? lastName.trim() : "",
+  };
 }
 
 export function getBootstrapRoleForEmail(email?: string | null): Role | null {
@@ -211,26 +220,40 @@ export async function findOrCreateUserProfile(auth: AuthIdentity) {
   const userRef = adminDb.collection("users").doc(auth.userId);
   let userDoc = await userRef.get();
   let email = normalizeEmail(auth.email);
+  let supabaseUser: SupabaseUser | null = null;
 
-  if (!email) {
+  const loadSupabaseUser = async () => {
+    if (supabaseUser) return supabaseUser;
     try {
       const { data, error } = await getSupabaseAdminClient().auth.admin.getUserById(auth.userId);
-      if (!error) {
-        email = normalizeEmail(data.user?.email);
+      if (!error && data.user) {
+        supabaseUser = data.user as SupabaseUser;
+        email = email ?? normalizeEmail(data.user.email);
       }
     } catch (error) {
       console.warn("[AUTH] Could not load Supabase user email:", error);
     }
+    return supabaseUser;
+  };
+
+  if (!email || !userDoc.exists) {
+    await loadSupabaseUser();
   }
 
   if (!userDoc.exists) {
     const role = (await getProvisionedRoleForEmail(email)) ?? getBootstrapRoleForEmail(email) ?? "user";
+    const { firstName, lastName } = displayNameParts(supabaseUser?.user_metadata);
+    const metadataPhone =
+      supabaseUser?.user_metadata?.phoneNumber ||
+      supabaseUser?.user_metadata?.phone_number ||
+      null;
 
     const newUser = {
       id: auth.userId,
       email,
-      firstName: "User",
-      lastName: "",
+      firstName: firstName || "User",
+      lastName,
+      phoneNumber: metadataPhone || supabaseUser?.phone || null,
       role,
       status: "active",
       isVerified: true,
