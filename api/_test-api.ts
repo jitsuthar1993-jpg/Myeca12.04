@@ -29,45 +29,54 @@ export function readTemporaryAuth(req: any) {
 }
 
 export async function requireApiUser(req: any, res: any, roles: TemporaryTestRole[]) {
-  const authUser = readTemporaryAuth(req);
-  if (authUser) {
-    if (!roles.includes(authUser.role)) {
+  try {
+    const authUser = readTemporaryAuth(req);
+    if (authUser) {
+      if (!roles.includes(authUser.role)) {
+        sendJson(res, 403, { error: "Access denied. Insufficient permissions." });
+        return null;
+      }
+
+      const snapshot = await adminDb.collection("users").doc(authUser.id).get();
+      if (!snapshot.exists) {
+        sendJson(res, 403, { error: "Temporary test user not found in database." });
+        return null;
+      }
+
+      return { id: snapshot.id, ...(snapshot.data() as ApiUser) };
+    }
+
+    const token = readBearerToken(req);
+    if (!token) {
+      sendJson(res, 401, { error: "Unauthorized" });
+      return null;
+    }
+
+    const { data, error } = await getSupabaseAdminClient().auth.getUser(token);
+    if (error || !data.user?.id) {
+      sendJson(res, 401, { error: "Invalid or expired session." });
+      return null;
+    }
+
+    const userDoc = await findOrCreateUserProfile({
+      userId: data.user.id,
+      email: data.user.email ?? undefined,
+    });
+    const user = { id: userDoc.id, ...(userDoc.data() as ApiUser) };
+    if (!roles.includes(user.role as TemporaryTestRole)) {
       sendJson(res, 403, { error: "Access denied. Insufficient permissions." });
       return null;
     }
 
-    const snapshot = await adminDb.collection("users").doc(authUser.id).get();
-    if (!snapshot.exists) {
-      sendJson(res, 403, { error: "Temporary test user not found in database." });
-      return null;
-    }
-
-    return { id: snapshot.id, ...(snapshot.data() as ApiUser) };
-  }
-
-  const token = readBearerToken(req);
-  if (!token) {
-    sendJson(res, 401, { error: "Unauthorized" });
+    return user;
+  } catch (error: any) {
+    console.error("[API_AUTH] Supabase auth/database check failed:", error);
+    sendJson(res, 500, {
+      error: "Auth database check failed",
+      message: error?.message || "Unknown auth database error",
+    });
     return null;
   }
-
-  const { data, error } = await getSupabaseAdminClient().auth.getUser(token);
-  if (error || !data.user?.id) {
-    sendJson(res, 401, { error: "Invalid or expired session." });
-    return null;
-  }
-
-  const userDoc = await findOrCreateUserProfile({
-    userId: data.user.id,
-    email: data.user.email ?? undefined,
-  });
-  const user = { id: userDoc.id, ...(userDoc.data() as ApiUser) };
-  if (!roles.includes(user.role as TemporaryTestRole)) {
-    sendJson(res, 403, { error: "Access denied. Insufficient permissions." });
-    return null;
-  }
-
-  return user;
 }
 
 export async function requireTemporaryRole(req: any, res: any, roles: TemporaryTestRole[]) {
