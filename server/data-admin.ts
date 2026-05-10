@@ -1,5 +1,6 @@
 ﻿import crypto from "crypto";
-import { getSql } from "./db.js";
+import { getDatabaseUrl, getSql } from "./db.js";
+import { getSupabaseAuthClient } from "./lib/supabase.js";
 
 type JsonRecord = Record<string, any>;
 type WhereClause = { field: string; op: string; value: unknown };
@@ -73,6 +74,67 @@ function fromRow(row: any) {
 async function queryRows<T = any>(text: string, params: unknown[] = []): Promise<T[]> {
   const result = await getSql().query(text, params);
   return Array.isArray(result) ? (result as T[]) : (result.rows as T[]);
+}
+
+function hasDatabaseUrl() {
+  return Boolean(getDatabaseUrl());
+}
+
+function applySupabaseFilters(query: any, clauses: WhereClause[]) {
+  return clauses.reduce((current, clause) => {
+    if (clause.op !== "==") {
+      throw new Error(`Unsupported query operator '${clause.op}'`);
+    }
+
+    assertJsonField(clause.field);
+
+    if (clause.field === "id") {
+      return current.eq("id", String(clause.value));
+    }
+
+    return current.contains("data", { [clause.field]: sanitizeForJson(clause.value) });
+  }, query);
+}
+
+async function getRowFromSupabase(table: string, id: string) {
+  const { data, error } = await getSupabaseAuthClient()
+    .from(table)
+    .select("id,data")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+async function selectRowsFromSupabase(
+  table: string,
+  clauses: WhereClause[],
+  maxRows?: number,
+  offsetRows?: number,
+) {
+  let query = getSupabaseAuthClient().from(table).select("id,data");
+  query = applySupabaseFilters(query, clauses);
+
+  if (maxRows && offsetRows) {
+    query = query.range(offsetRows, offsetRows + maxRows - 1);
+  } else if (maxRows) {
+    query = query.limit(maxRows);
+  } else if (offsetRows) {
+    query = query.range(offsetRows, offsetRows + 999);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data ?? [];
+}
+
+async function countRowsFromSupabase(table: string, clauses: WhereClause[]) {
+  let query = getSupabaseAuthClient().from(table).select("id", { count: "exact", head: true });
+  query = applySupabaseFilters(query, clauses);
+  const { count, error } = await query;
+  if (error) throw error;
+  return Number(count ?? 0);
 }
 
 function buildWhere(clauses: WhereClause[], params: unknown[]) {
@@ -159,6 +221,11 @@ export class DataDocumentRef {
 
   async get() {
     const table = tableFor(this.collectionName);
+    if (!hasDatabaseUrl()) {
+      const row = await getRowFromSupabase(table, this.id);
+      return new DataDocumentSnapshot(this.id, row ? fromRow(row) : null, this);
+    }
+
     const rows = await queryRows(`SELECT id, data FROM ${table} WHERE id = $1 LIMIT 1`, [this.id]);
     const row = rows[0];
     return new DataDocumentSnapshot(this.id, row ? fromRow(row) : null, this);
@@ -174,6 +241,15 @@ export class DataDocumentRef {
         ...data,
       }) as JsonRecord,
     );
+
+    if (!hasDatabaseUrl()) {
+      const { error } = await getSupabaseAuthClient()
+        .from(table)
+        .upsert({ id: this.id, data: payload }, { onConflict: "id" });
+
+      if (error) throw error;
+      return;
+    }
 
     await queryRows(
       `INSERT INTO ${table} (id, data, created_at, updated_at)
@@ -194,6 +270,12 @@ export class DataDocumentRef {
 
   async delete() {
     const table = tableFor(this.collectionName);
+    if (!hasDatabaseUrl()) {
+      const { error } = await getSupabaseAuthClient().from(table).delete().eq("id", this.id);
+      if (error) throw error;
+      return;
+    }
+
     await queryRows(`DELETE FROM ${table} WHERE id = $1`, [this.id]);
   }
 }
@@ -236,6 +318,14 @@ class DataQuery {
 
   async get() {
     const table = tableFor(this.collectionName);
+
+    if (!hasDatabaseUrl()) {
+      const rows = await selectRowsFromSupabase(table, this.clauses, this.maxRows, this.offsetRows);
+      return new DataQuerySnapshot(
+        rows.map((row: any) => new DataDocumentSnapshot(row.id, fromRow(row), new DataDocumentRef(this.collectionName, row.id))),
+      );
+    }
+
     const params: unknown[] = [];
     const whereSql = buildWhere(this.clauses, params);
     const orderSql = buildOrder(this.order);
@@ -251,6 +341,10 @@ class DataQuery {
     return {
       get: async () => {
         const table = tableFor(this.collectionName);
+        if (!hasDatabaseUrl()) {
+          return new DataCountSnapshot(await countRowsFromSupabase(table, this.clauses));
+        }
+
         const params: unknown[] = [];
         const whereSql = buildWhere(this.clauses, params);
         const rows = await queryRows(`SELECT COUNT(*)::int AS count FROM ${table}${whereSql}`, params);
