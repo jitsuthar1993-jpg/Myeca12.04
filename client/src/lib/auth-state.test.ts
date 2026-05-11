@@ -1,10 +1,25 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
   TEMPORARY_TEST_AUTH_TOKEN_KEY,
 } from "@/lib/temporary-test-users";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
+import { getAuthToken } from "@/lib/authToken";
+
+vi.mock("@/lib/supabase", () => ({
+  supabase: {
+    auth: {
+      getSession: async () => ({
+        data: {
+          session: {
+            access_token: "supabase-token",
+          },
+        },
+      }),
+    },
+  },
+}));
 
 describe("auth session state", () => {
   it("clears stale temporary test auth before real auth flows", () => {
@@ -42,5 +57,12 @@ describe("auth session state", () => {
       lastName: "Filing User",
       phoneNumber: "9876543210",
     });
+  });
+
+  it("ignores stale generic tokens when a Supabase session exists", async () => {
+    sessionStorage.setItem(TEMPORARY_TEST_AUTH_TOKEN_KEY, "stale-token");
+
+    await expect(getAuthToken()).resolves.toBe("supabase-token");
+    expect(sessionStorage.getItem(TEMPORARY_TEST_AUTH_TOKEN_KEY)).toBeNull();
   });
 });

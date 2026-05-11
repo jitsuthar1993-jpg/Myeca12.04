@@ -39,8 +39,26 @@ function getLoginErrorMessage(error: any) {
   return message || 'Unable to sign in. Check your details and try again.';
 }
 
+function getSafeRedirectUrl(rawRedirectUrl: string | null) {
+  if (!rawRedirectUrl) return '/dashboard';
+
+  try {
+    const parsedUrl = new URL(rawRedirectUrl, window.location.origin);
+    if (parsedUrl.origin !== window.location.origin) return '/dashboard';
+
+    const target = `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+    if (parsedUrl.pathname === '/auth/login' || parsedUrl.pathname === '/login') {
+      return '/dashboard';
+    }
+
+    return target.startsWith('/') ? target : '/dashboard';
+  } catch {
+    return '/dashboard';
+  }
+}
+
 export default function LoginPage() {
-  const { login, loginWithGoogle } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, login, loginWithGoogle } = useAuth();
   const [, setLocation] = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,15 +66,21 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const params = new URLSearchParams(window.location.search);
-  const redirectUrl = params.get('redirect_url') || params.get('next') || '/dashboard';
+  const redirectUrl = getSafeRedirectUrl(params.get('redirect_url') || params.get('next'));
   const reason = params.get('reason');
   const reasonState = reason ? reasonCopy[reason] : null;
   const signUpUrl = `/auth/register?redirect_url=${encodeURIComponent(redirectUrl)}`;
   const mockEmail = params.get('mock_email');
   const showTemporaryLogin = params.get('test_login') === '1';
   const reloadAfterLogin = (target: string) => {
-    window.location.replace(target);
+    setLocation(target);
   };
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      setLocation(redirectUrl);
+    }
+  }, [authLoading, isAuthenticated, redirectUrl, setLocation]);
 
   useEffect(() => {
     if (mockEmail) {

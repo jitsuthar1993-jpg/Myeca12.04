@@ -3,6 +3,7 @@ export {
   getTemporaryTestUserByEmail,
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
   TEMPORARY_TEST_AUTH_TOKEN_KEY,
+  TEMPORARY_TEST_AUTH_TOKEN_PREFIX,
   TEMPORARY_TEST_USERS,
   type TemporaryTestRole,
   type TemporaryTestUser,
