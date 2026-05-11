@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'wouter';
+import { Link } from 'wouter';
 import { AlertCircle, Loader2, Lock, Mail, ShieldCheck, UserCog, UserRound, UsersRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,7 +59,6 @@ function getSafeRedirectUrl(rawRedirectUrl: string | null) {
 
 export default function LoginPage() {
   const { isAuthenticated, isLoading: authLoading, login, loginWithGoogle } = useAuth();
-  const [, setLocation] = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -73,26 +72,26 @@ export default function LoginPage() {
   const mockEmail = params.get('mock_email');
   const showTemporaryLogin = params.get('test_login') === '1';
   const reloadAfterLogin = (target: string) => {
-    setLocation(target);
+    window.location.replace(target);
   };
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      setLocation(redirectUrl);
+      reloadAfterLogin(redirectUrl);
     }
-  }, [authLoading, isAuthenticated, redirectUrl, setLocation]);
+  }, [authLoading, isAuthenticated, redirectUrl]);
 
   useEffect(() => {
     if (mockEmail) {
       setLoading(true);
       login(mockEmail, 'mock_password').then(() => {
-        setLocation(redirectUrl);
+        reloadAfterLogin(redirectUrl);
       }).catch(err => {
         setError(err?.message || 'Mock login failed');
         setLoading(false);
       });
     }
-  }, [mockEmail, login, redirectUrl, setLocation]);
+  }, [mockEmail, login, redirectUrl]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -127,7 +126,7 @@ export default function LoginPage() {
 
     try {
       await login(testUser.email, 'temporary_test_login');
-      setLocation(testUser.redirectTo);
+      reloadAfterLogin(testUser.redirectTo);
     } catch (err: any) {
       setError(err?.message || `Unable to sign in as ${testUser.label}.`);
       setLoading(false);

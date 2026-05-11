@@ -148,6 +148,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!active) return;
       setIsLoading(true);
+
+      const temporaryUser = readTemporaryUserFromSession();
+      if (temporaryUser) {
+        setAppUser(temporaryUser);
+        setAuthUser(null);
+        setIsLoading(false);
+        return;
+      }
+
       if (!session?.access_token) {
         setAppUser(null);
         setAuthUser(null);
