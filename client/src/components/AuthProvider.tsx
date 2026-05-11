@@ -218,6 +218,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      setAuthToken(session.access_token);
       setAuthUser(session.user);
       if (session.user) {
         setAppUser(appUserFromAuthUser(session.user));

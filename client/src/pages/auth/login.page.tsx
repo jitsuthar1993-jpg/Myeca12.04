@@ -76,10 +76,10 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
+    if (!authLoading && !loading && !googleLoading && isAuthenticated) {
       reloadAfterLogin(redirectUrl);
     }
-  }, [authLoading, isAuthenticated, redirectUrl]);
+  }, [authLoading, googleLoading, isAuthenticated, loading, redirectUrl]);
 
   useEffect(() => {
     if (mockEmail) {
