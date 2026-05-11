@@ -6,7 +6,7 @@ import {
   getTemporaryTestUserByEmail,
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
 } from "@/lib/temporary-test-users";
-import { getAuthToken, setAuthToken } from "@/lib/authToken";
+import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
 import { isGoogleAuthEnabled, isSupabaseEnabled, supabase } from "@/lib/supabase";
@@ -259,6 +259,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     clearTemporaryAuthState();
+    clearAuthToken();
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
@@ -279,6 +280,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       if (!data.session?.access_token) throw new Error("Supabase did not return a session.");
 
+      setAuthToken(data.session.access_token);
       setAuthUser(data.user);
       if (data.user) {
         setAppUser(appUserFromAuthUser(data.user));
@@ -292,6 +294,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, password: string, userData: Partial<AppUser>) => {
     clearTemporaryAuthState();
+    clearAuthToken();
     setAuthUser(null);
     setAppUser(null);
     setIsLoading(true);
@@ -320,6 +323,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data.session?.access_token) {
+        setAuthToken(data.session.access_token);
         setAuthUser(data.user);
         if (data.user) {
           setAppUser(appUserFromAuthUser(data.user));
@@ -341,6 +345,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     clearTemporaryAuthState();
+    clearAuthToken();
     setAuthUser(null);
     setAppUser(null);
 
@@ -374,6 +379,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     clearTemporaryAuthState();
+    clearAuthToken();
     if (isSupabaseEnabled) {
       await supabase.auth.signOut();
     }
