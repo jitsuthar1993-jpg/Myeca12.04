@@ -212,9 +212,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (!session?.access_token) {
-        setAppUser(null);
-        setAuthUser(null);
-        setIsLoading(false);
+        refreshUser(null).catch((error) => {
+          if (!active) return;
+          console.error("Auth session recovery failed:", error);
+          setAppUser(null);
+          setAuthUser(null);
+          setIsLoading(false);
+        });
         return;
       }
 
