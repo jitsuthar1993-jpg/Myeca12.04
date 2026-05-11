@@ -264,7 +264,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
-      setAppUser(localMockUser(email));
+      const user = localMockUser(email);
+      writeTemporaryUserToSession(user);
+      setAppUser(user);
       setAuthUser(null);
       setIsLoading(false);
       return;
@@ -301,7 +303,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
-      setAppUser(localMockUser(email));
+      const user = localMockUser(email);
+      writeTemporaryUserToSession(user);
+      setAppUser(user);
       setIsLoading(false);
       return { needsEmailConfirmation: false };
     }
