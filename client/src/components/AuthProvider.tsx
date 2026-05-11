@@ -72,6 +72,39 @@ function localMockUser(email: string): AppUser {
   } as AppUser;
 }
 
+function appUserFromAuthUser(authUser: SupabaseUser): AppUser {
+  const syncPayload = authUserToSyncPayload(authUser);
+  const metadataRole =
+    authUser.app_metadata?.role ||
+    authUser.user_metadata?.role ||
+    authUser.user_metadata?.userRole ||
+    "user";
+
+  return {
+    id: authUser.id,
+    email: authUser.email || syncPayload.email || "",
+    firstName: syncPayload.firstName || "User",
+    lastName: syncPayload.lastName || "",
+    phoneNumber: syncPayload.phoneNumber || null,
+    role: metadataRole,
+    status: "active",
+    isVerified: Boolean(authUser.email_confirmed_at || authUser.confirmed_at),
+    createdAt: new Date(authUser.created_at || Date.now()),
+    updatedAt: new Date(),
+  } as AppUser;
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeout = window.setTimeout(() => reject(new Error(message)), timeoutMs);
+
+    promise
+      .then(resolve)
+      .catch(reject)
+      .finally(() => window.clearTimeout(timeout));
+  });
+}
+
 async function fetchAppUser(token: string, authUser?: SupabaseUser | null) {
   if (authUser?.email) {
     await fetch("/api/v1/auth/sync", {
@@ -96,6 +129,22 @@ async function fetchAppUser(token: string, authUser?: SupabaseUser | null) {
 
   const data = await response.json();
   return data.user as AppUser;
+}
+
+async function fetchAppUserOrFallback(token: string, authUser?: SupabaseUser | null) {
+  try {
+    return await withTimeout(
+      fetchAppUser(token, authUser),
+      8000,
+      "Profile sync timed out.",
+    );
+  } catch (error) {
+    console.error("Auth profile sync failed:", error);
+    if (authUser) {
+      return appUserFromAuthUser(authUser);
+    }
+    throw error;
+  }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -130,7 +179,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data } = await supabase.auth.getUser(token);
     const resolvedAuthUser = nextAuthUser ?? data.user ?? null;
     setAuthUser(resolvedAuthUser);
-    setAppUser(await fetchAppUser(token, resolvedAuthUser));
+
+    if (resolvedAuthUser) {
+      setAppUser(appUserFromAuthUser(resolvedAuthUser));
+    }
+
+    setAppUser(await fetchAppUserOrFallback(token, resolvedAuthUser));
     setIsLoading(false);
   }, []);
 
@@ -164,7 +218,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      fetchAppUser(session.access_token, session.user)
+      setAuthUser(session.user);
+      if (session.user) {
+        setAppUser(appUserFromAuthUser(session.user));
+      }
+
+      fetchAppUserOrFallback(session.access_token, session.user)
         .then((user) => {
           if (!active) return;
           setAuthUser(session.user);
@@ -173,8 +232,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .catch((error) => {
           if (!active) return;
           console.error("Auth profile sync failed:", error);
-          setAppUser(null);
-          setAuthUser(null);
+          setAuthUser(session.user);
+          setAppUser(session.user ? appUserFromAuthUser(session.user) : null);
         })
         .finally(() => {
           if (active) setIsLoading(false);
@@ -221,7 +280,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!data.session?.access_token) throw new Error("Supabase did not return a session.");
 
       setAuthUser(data.user);
-      setAppUser(await fetchAppUser(data.session.access_token, data.user));
+      if (data.user) {
+        setAppUser(appUserFromAuthUser(data.user));
+      }
+
+      setAppUser(await fetchAppUserOrFallback(data.session.access_token, data.user));
     } finally {
       setIsLoading(false);
     }
@@ -258,7 +321,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.session?.access_token) {
         setAuthUser(data.user);
-        setAppUser(await fetchAppUser(data.session.access_token, data.user));
+        if (data.user) {
+          setAppUser(appUserFromAuthUser(data.user));
+        }
+
+        setAppUser(await fetchAppUserOrFallback(data.session.access_token, data.user));
         return { needsEmailConfirmation: false };
       }
 
