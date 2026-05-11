@@ -5,6 +5,7 @@ import { requireAnyAuth, AuthRequest } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
 import { setCachedUser } from "../utils/user-cache.js";
+import { recordBelongsToUser } from "../utils/access-control.js";
 
 const router = Router();
 const updateProfileSchema = z.object({
@@ -17,9 +18,11 @@ const createUserServiceSchema = z.object({
   serviceId: z.string().trim().min(1).max(100),
   serviceTitle: z.string().trim().min(1).max(255),
   serviceCategory: z.string().trim().min(1).max(100),
+  profileId: z.string().trim().min(1).optional().nullable(),
   paymentAmount: z.union([z.number(), z.string().trim().min(1)]).optional(),
   paymentStatus: z.string().trim().max(50).optional(),
   status: z.string().trim().max(50).optional(),
+  assignedCaId: z.string().trim().min(1).optional().nullable(),
   metadata: z.record(z.unknown()).optional(),
 });
 
@@ -44,17 +47,22 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
       return res.status(401).json({ success: false, message: "User not found in request" });
     }
 
-    const returnsSnapshot = await adminDb.collection("tax_returns")
-      .where("profileId", "==", user.id)
-      .get();
+    const [returnsSnapshot, docsSnapshot, servicesSnapshot, profilesSnapshot] = await Promise.all([
+      adminDb.collection("tax_returns")
+        .where("userId", "==", user.id)
+        .get(),
+      adminDb.collection("documents")
+        .where("userId", "==", user.id)
+        .where("status", "==", "active")
+        .get(),
+      adminDb.collection("user_services")
+        .where("userId", "==", user.id)
+        .get(),
+      adminDb.collection("profiles")
+        .where("userId", "==", user.id)
+        .get(),
+    ]);
 
-    const docsSnapshot = await adminDb.collection("documents")
-      .where("userId", "==", user.id)
-      .get();
-
-    const servicesSnapshot = await adminDb.collection("user_services")
-      .where("userId", "==", user.id)
-      .get();
     const activeServices = servicesSnapshot.docs.map(normalizeUserService);
 
     const recentActivity = [
@@ -69,6 +77,7 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
       stats: {
         totalReturns: returnsSnapshot.size,
         documentsUploaded: docsSnapshot.size,
+        profiles: profilesSnapshot.size,
         pendingTasks: 1,
         savedAmount: 0,
       },
@@ -146,15 +155,21 @@ router.post("/user-services", requireAnyAuth, validateRequest(createUserServiceS
     const user = req.user;
     if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const { serviceId, serviceTitle, serviceCategory, paymentAmount, paymentStatus, status, metadata } = req.body;
+    const { serviceId, serviceTitle, serviceCategory, profileId, paymentAmount, paymentStatus, status, assignedCaId, metadata } = req.body;
+
+    if (profileId && !(await recordBelongsToUser("profiles", profileId, user.id))) {
+      return res.status(400).json({ success: false, message: "Linked profile does not belong to this user." });
+    }
 
     const newService = {
       userId: user.id,
       serviceId,
       serviceTitle,
       serviceCategory,
+      profileId: profileId || null,
       paymentAmount: paymentAmount ?? null,
       paymentStatus: paymentStatus ?? null,
+      assignedCaId: assignedCaId || user.assignedCaId || null,
       status: status || "pending",
       metadata: metadata || {},
       createdAt: new Date(),

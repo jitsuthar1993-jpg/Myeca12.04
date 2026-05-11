@@ -1,370 +1,289 @@
-import { Request, Response, Router } from "express";
-import { authenticateToken } from "../middleware/auth.js";
+import { Response, Router } from "express";
+import crypto from "crypto";
+import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
+import { adminDb } from "../data-admin.js";
+import { isAdmin } from "../utils/access-control.js";
 import { z } from "zod";
 
 const router = Router();
 
-// Team schemas
 const createTeamSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().optional(),
-  type: z.enum(["tax_filing", "compliance", "consulting", "general"])
+  type: z.enum(["tax_filing", "compliance", "consulting", "general"]),
 });
 
 const inviteMemberSchema = z.object({
   email: z.string().email(),
   role: z.enum(["admin", "member", "viewer"]),
-  message: z.string().optional()
+  message: z.string().optional(),
 });
 
 const taskSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().optional(),
-  assigneeId: z.number().optional(),
-  clientId: z.number().optional(),
+  assigneeId: z.string().optional(),
+  clientId: z.string().optional(),
   dueDate: z.string().optional(),
   priority: z.enum(["low", "medium", "high", "urgent"]),
-  type: z.enum(["tax_filing", "document_review", "compliance_check", "client_meeting", "other"])
+  type: z.enum(["tax_filing", "document_review", "compliance_check", "client_meeting", "other"]),
 });
 
-// Mock storage
-const teams = new Map<number, any>();
-const teamMembers = new Map<number, any[]>();
-const teamTasks = new Map<number, any[]>();
-const teamNotes = new Map<number, any[]>();
+function requireUser(req: AuthRequest, res: Response) {
+  if (!req.user?.id) {
+    res.status(401).json({ error: "Unauthorized" });
+    return null;
+  }
+  return req.user;
+}
 
-// Initialize demo team
-teams.set(1, {
-  id: 1,
-  name: "Tax Experts Team",
-  description: "Main tax filing team",
-  type: "tax_filing",
-  createdBy: 1,
-  createdAt: new Date(),
-  memberCount: 3
+function memberFor(team: any, userId: string) {
+  return (team.members || []).find((member: any) => member.userId === userId);
+}
+
+async function getTeamForUser(teamId: string, user: any): Promise<any | null> {
+  const doc = await adminDb.collection("teams").doc(teamId).get();
+  if (!doc.exists) return null;
+  const team = { id: doc.id, ...(doc.data() as Record<string, any>) };
+  if (isAdmin(user) || memberFor(team, user.id)) return team;
+  return null;
+}
+
+function canAdminTeam(team: any, user: any) {
+  if (isAdmin(user)) return true;
+  return memberFor(team, user.id)?.role === "admin";
+}
+
+router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const snapshot = await adminDb.collection("teams").get();
+  const userTeams = snapshot.docs
+    .map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, any>) }))
+    .filter((team: any) => team.status !== "deleted" && (isAdmin(user) || memberFor(team, user.id)))
+    .map((team: any) => ({
+      ...team,
+      memberCount: (team.members || []).length,
+      userRole: memberFor(team, user.id)?.role ?? (isAdmin(user) ? "admin" : "viewer"),
+    }));
+
+  res.json({ success: true, teams: userTeams });
 });
 
-teamMembers.set(1, [
-  { userId: 1, role: "admin", joinedAt: new Date() },
-  { userId: 2, role: "member", joinedAt: new Date() },
-  { userId: 3, role: "viewer", joinedAt: new Date() }
-]);
-
-// Get user's teams
-router.get("/", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  
-  // Get all teams where user is a member
-  const userTeams: any[] = [];
-  teams.forEach((team, teamId) => {
-    const members = teamMembers.get(teamId) || [];
-    if (members.some(m => m.userId === userId)) {
-      userTeams.push({
-        ...team,
-        memberCount: members.length,
-        userRole: members.find(m => m.userId === userId)?.role
-      });
-    }
-  });
-  
-  res.json({
-    success: true,
-    teams: userTeams
-  });
-});
-
-// Create team
-router.post("/", authenticateToken, async (req: Request, res: Response) => {
+router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const user = requireUser(req, res);
+    if (!user) return;
+
     const teamData = createTeamSchema.parse(req.body);
-    
-    const teamId = teams.size + 1;
+    const now = new Date();
     const team = {
-      id: teamId,
       ...teamData,
-      createdBy: userId,
-      createdAt: new Date(),
-      memberCount: 1
+      createdBy: user.id,
+      createdAt: now,
+      updatedAt: now,
+      status: "active",
+      members: [{ userId: user.id, role: "admin", joinedAt: now }],
+      invitations: [],
+      tasks: [],
+      notes: [],
+      activity: [{
+        id: crypto.randomUUID(),
+        type: "team_created",
+        userId: user.id,
+        action: "created team",
+        timestamp: now,
+      }],
     };
-    
-    teams.set(teamId, team);
-    teamMembers.set(teamId, [{
-      userId,
-      role: "admin",
-      joinedAt: new Date()
-    }]);
-    
-    res.json({
-      success: true,
-      team
-    });
+
+    const ref = await adminDb.collection("teams").add(team);
+    res.json({ success: true, team: { id: ref.id, ...team, memberCount: 1 } });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
-    }
+    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to create team" });
   }
 });
 
-// Get team details
-router.get("/:teamId", authenticateToken, (req: Request, res: Response) => {
-  const teamId = parseInt(req.params.teamId);
-  const team = teams.get(teamId);
-  
-  if (!team) {
-    return res.status(404).json({ error: "Team not found" });
-  }
-  
-  const members = teamMembers.get(teamId) || [];
-  const tasks = teamTasks.get(teamId) || [];
-  const notes = teamNotes.get(teamId) || [];
-  
-  // Mock user details
-  const memberDetails = members.map(m => ({
-    ...m,
-    user: {
-      id: m.userId,
-      name: `User ${m.userId}`,
-      email: `user${m.userId}@myeca.in`,
-      avatar: null
-    }
-  }));
-  
+router.get("/:teamId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const team = await getTeamForUser(req.params.teamId, user);
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
   res.json({
     success: true,
     team: {
       ...team,
-      members: memberDetails,
+      memberCount: (team.members || []).length,
       stats: {
-        totalTasks: tasks.length,
-        activeTasks: tasks.filter(t => t.status !== "completed").length,
-        totalNotes: notes.length,
-        recentActivity: new Date()
-      }
-    }
+        totalTasks: (team.tasks || []).length,
+        activeTasks: (team.tasks || []).filter((task: any) => task.status !== "completed").length,
+        totalNotes: (team.notes || []).length,
+        recentActivity: team.updatedAt,
+      },
+    },
   });
 });
 
-// Invite team member
-router.post("/:teamId/invite", authenticateToken, async (req: Request, res: Response) => {
+router.post("/:teamId/invite", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const teamId = parseInt(req.params.teamId);
-    const userId = (req as any).user.id;
+    const user = requireUser(req, res);
+    if (!user) return;
+
+    const team = await getTeamForUser(req.params.teamId, user);
+    if (!team) return res.status(404).json({ error: "Team not found" });
+    if (!canAdminTeam(team, user)) return res.status(403).json({ error: "Only team admins can invite members" });
+
     const inviteData = inviteMemberSchema.parse(req.body);
-    
-    // Check if user is admin
-    const members = teamMembers.get(teamId) || [];
-    const userMember = members.find(m => m.userId === userId);
-    
-    if (!userMember || userMember.role !== "admin") {
-      return res.status(403).json({ error: "Only team admins can invite members" });
-    }
-    
-    // Mock invite - in real app would send email
     const invitation = {
-      id: Date.now(),
-      teamId,
-      email: inviteData.email,
-      role: inviteData.role,
-      invitedBy: userId,
+      id: crypto.randomUUID(),
+      teamId: req.params.teamId,
+      ...inviteData,
+      invitedBy: user.id,
       invitedAt: new Date(),
-      status: "pending"
+      status: "pending",
     };
-    
-    res.json({
-      success: true,
-      invitation,
-      message: `Invitation sent to ${inviteData.email}`
+
+    await adminDb.collection("teams").doc(req.params.teamId).update({
+      invitations: [...(team.invitations || []), invitation],
+      updatedAt: new Date(),
     });
+
+    res.json({ success: true, invitation, message: `Invitation sent to ${inviteData.email}` });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
-    }
+    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to send invitation" });
   }
 });
 
-// Create team task
-router.post("/:teamId/tasks", authenticateToken, async (req: Request, res: Response) => {
+router.post("/:teamId/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const teamId = parseInt(req.params.teamId);
-    const userId = (req as any).user.id;
+    const user = requireUser(req, res);
+    if (!user) return;
+
+    const team = await getTeamForUser(req.params.teamId, user);
+    if (!team) return res.status(404).json({ error: "Team not found" });
+
     const taskData = taskSchema.parse(req.body);
-    
-    if (!teamTasks.has(teamId)) {
-      teamTasks.set(teamId, []);
-    }
-    
-    const tasks = teamTasks.get(teamId)!;
     const task = {
-      id: tasks.length + 1,
-      teamId,
+      id: crypto.randomUUID(),
+      teamId: req.params.teamId,
       ...taskData,
-      createdBy: userId,
+      createdBy: user.id,
       createdAt: new Date(),
+      updatedAt: new Date(),
       status: "pending",
-      completedAt: null
+      completedAt: null,
     };
-    
-    tasks.push(task);
-    
-    res.json({
-      success: true,
-      task
+
+    await adminDb.collection("teams").doc(req.params.teamId).update({
+      tasks: [...(team.tasks || []), task],
+      updatedAt: new Date(),
     });
+
+    res.json({ success: true, task });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
-    }
+    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to create task" });
   }
 });
 
-// Get team tasks
-router.get("/:teamId/tasks", authenticateToken, (req: Request, res: Response) => {
-  const teamId = parseInt(req.params.teamId);
+router.get("/:teamId/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const team = await getTeamForUser(req.params.teamId, user);
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
   const { status, assigneeId, priority } = req.query;
-  
-  let tasks = teamTasks.get(teamId) || [];
-  
-  // Filter tasks
-  if (status) {
-    tasks = tasks.filter(t => t.status === status);
-  }
-  if (assigneeId) {
-    tasks = tasks.filter(t => t.assigneeId === parseInt(assigneeId as string));
-  }
-  if (priority) {
-    tasks = tasks.filter(t => t.priority === priority);
-  }
-  
-  res.json({
-    success: true,
-    tasks
-  });
+  let tasks = team.tasks || [];
+  if (status) tasks = tasks.filter((task: any) => task.status === status);
+  if (assigneeId) tasks = tasks.filter((task: any) => task.assigneeId === assigneeId);
+  if (priority) tasks = tasks.filter((task: any) => task.priority === priority);
+
+  res.json({ success: true, tasks });
 });
 
-// Update task status
-router.patch("/:teamId/tasks/:taskId", authenticateToken, async (req: Request, res: Response) => {
-  const teamId = parseInt(req.params.teamId);
-  const taskId = parseInt(req.params.taskId);
-  const { status } = req.body;
-  
-  const tasks = teamTasks.get(teamId) || [];
-  const taskIndex = tasks.findIndex(t => t.id === taskId);
-  
-  if (taskIndex === -1) {
-    return res.status(404).json({ error: "Task not found" });
-  }
-  
+router.patch("/:teamId/tasks/:taskId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const team = await getTeamForUser(req.params.teamId, user);
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
+  const tasks = team.tasks || [];
+  const taskIndex = tasks.findIndex((task: any) => task.id === req.params.taskId);
+  if (taskIndex === -1) return res.status(404).json({ error: "Task not found" });
+
   tasks[taskIndex] = {
     ...tasks[taskIndex],
-    status,
-    completedAt: status === "completed" ? new Date() : null,
-    updatedAt: new Date()
+    status: req.body.status ?? tasks[taskIndex].status,
+    completedAt: req.body.status === "completed" ? new Date() : tasks[taskIndex].completedAt,
+    updatedAt: new Date(),
   };
-  
-  res.json({
-    success: true,
-    task: tasks[taskIndex]
-  });
+
+  await adminDb.collection("teams").doc(req.params.teamId).update({ tasks, updatedAt: new Date() });
+  res.json({ success: true, task: tasks[taskIndex] });
 });
 
-// Create team note
-router.post("/:teamId/notes", authenticateToken, async (req: Request, res: Response) => {
-  const teamId = parseInt(req.params.teamId);
-  const userId = (req as any).user.id;
-  const { title, content, clientId, tags } = req.body;
-  
-  if (!teamNotes.has(teamId)) {
-    teamNotes.set(teamId, []);
-  }
-  
-  const notes = teamNotes.get(teamId)!;
+router.post("/:teamId/notes", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const team = await getTeamForUser(req.params.teamId, user);
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
   const note = {
-    id: notes.length + 1,
-    teamId,
-    title,
-    content,
-    clientId,
-    tags: tags || [],
-    createdBy: userId,
+    id: crypto.randomUUID(),
+    teamId: req.params.teamId,
+    title: req.body.title,
+    content: req.body.content,
+    clientId: req.body.clientId ?? null,
+    tags: req.body.tags || [],
+    createdBy: user.id,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
-  
-  notes.push(note);
-  
-  res.json({
-    success: true,
-    note
+
+  await adminDb.collection("teams").doc(req.params.teamId).update({
+    notes: [...(team.notes || []), note],
+    updatedAt: new Date(),
   });
+
+  res.json({ success: true, note });
 });
 
-// Get team notes
-router.get("/:teamId/notes", authenticateToken, (req: Request, res: Response) => {
-  const teamId = parseInt(req.params.teamId);
+router.get("/:teamId/notes", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const team = await getTeamForUser(req.params.teamId, user);
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
   const { clientId, search } = req.query;
-  
-  let notes = teamNotes.get(teamId) || [];
-  
-  // Filter notes
-  if (clientId) {
-    notes = notes.filter(n => n.clientId === parseInt(clientId as string));
-  }
+  let notes = team.notes || [];
+  if (clientId) notes = notes.filter((note: any) => note.clientId === clientId);
   if (search) {
     const searchTerm = search.toString().toLowerCase();
-    notes = notes.filter(n => 
-      n.title.toLowerCase().includes(searchTerm) ||
-      n.content.toLowerCase().includes(searchTerm)
+    notes = notes.filter((note: any) =>
+      note.title?.toLowerCase().includes(searchTerm) ||
+      note.content?.toLowerCase().includes(searchTerm),
     );
   }
-  
-  res.json({
-    success: true,
-    notes
-  });
+
+  res.json({ success: true, notes });
 });
 
-// Get team activity
-router.get("/:teamId/activity", authenticateToken, (req: Request, res: Response) => {
-  const teamId = parseInt(req.params.teamId);
-  
-  // Mock activity feed
-  const activities = [
-    {
-      id: 1,
-      type: "task_created",
-      userId: 1,
-      userName: "Admin User",
-      action: "created task",
-      target: "ITR Filing for Client ABC",
-      timestamp: new Date()
-    },
-    {
-      id: 2,
-      type: "member_joined",
-      userId: 2,
-      userName: "CA Expert",
-      action: "joined the team",
-      timestamp: new Date(Date.now() - 3600000)
-    },
-    {
-      id: 3,
-      type: "note_added",
-      userId: 1,
-      userName: "Admin User",
-      action: "added a note",
-      target: "Tax optimization strategies",
-      timestamp: new Date(Date.now() - 7200000)
-    }
-  ];
-  
-  res.json({
-    success: true,
-    activities
-  });
+router.get("/:teamId/activity", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const team = await getTeamForUser(req.params.teamId, user);
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
+  res.json({ success: true, activities: team.activity || [] });
 });
 
 export default router;

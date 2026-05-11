@@ -4,6 +4,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption.js";
 import { safeError } from "../utils/error-response.js";
+import { assertCanAccessUserData, canAccessUserData } from "../utils/access-control.js";
 
 const router = Router();
 const profileCreateSchema = z.object({
@@ -44,6 +45,19 @@ function omitUndefined<T extends Record<string, any>>(value: T) {
   ) as Partial<T>;
 }
 
+function normalizeUserId(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+async function resolveTargetUserId(req: AuthRequest) {
+  const authUserId = req.auth?.userId;
+  if (!authUserId) return null;
+  const requestedUserId = normalizeUserId(req.body?.userId ?? req.query?.userId);
+  if (!requestedUserId || requestedUserId === authUserId) return authUserId;
+  await assertCanAccessUserData(req.user, requestedUserId);
+  return requestedUserId;
+}
+
 router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   const auth = req.auth;
   if (!auth?.userId) {
@@ -51,8 +65,9 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   }
 
   try {
+    const userId = await resolveTargetUserId(req);
     const snapshot = await adminDb.collection("profiles")
-      .where("userId", "==", auth.userId)
+      .where("userId", "==", userId)
       .get();
 
     const profiles = snapshot.docs.map((doc) => serializeProfile(doc.id, doc.data() as Record<string, any>));
@@ -69,11 +84,13 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    const userId = await resolveTargetUserId(req);
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
     const data = profileCreateSchema.parse(req.body);
     const profileRef = adminDb.collection("profiles").doc();
     const newProfile = {
       ...data,
-      userId: auth.userId,
+      userId,
       pan: data.pan ? encryptPII(data.pan) : null,
       aadhaar: data.aadhaar ? encryptPII(data.aadhaar) : null,
       dateOfBirth: normalizeOptionalString(data.dateOfBirth),
@@ -103,7 +120,7 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
     const profileRef = adminDb.collection("profiles").doc(id);
     const doc = await profileRef.get();
 
-    if (!doc.exists || doc.data()?.userId !== auth.userId) {
+    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
       return res.status(404).json({ error: "Profile not found" });
     }
 

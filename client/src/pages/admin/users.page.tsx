@@ -48,6 +48,8 @@ interface User {
   role: string;
   status: string;
   isVerified: boolean;
+  assignedCaId?: string | null;
+  assignedCaName?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -60,6 +62,13 @@ export default function UsersManagementPage() {
   const [page, setPage] = useState(1);
   const limit = 10;
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteForm, setInviteForm] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    role: "ca",
+  });
   
   const queryClient = useQueryClient();
 
@@ -84,7 +93,7 @@ export default function UsersManagementPage() {
       return res.json();
     },
     onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      queryClient.invalidateQueries({ predicate: (query) => String(query.queryKey[0]).startsWith("/api/admin/users") });
       toast({ title: "Success", description: data.message || "Role updated successfully" });
     },
     onError: (error: any) => {
@@ -105,7 +114,7 @@ export default function UsersManagementPage() {
       return res.json();
     },
     onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      queryClient.invalidateQueries({ predicate: (query) => String(query.queryKey[0]).startsWith("/api/admin/users") });
       toast({ title: "Success", description: data.message || "CA assignment updated" });
     },
     onError: (error: any) => {
@@ -115,6 +124,29 @@ export default function UsersManagementPage() {
         variant: "destructive"
       });
     }
+  });
+
+  const inviteMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("/api/admin/invitations", {
+        method: "POST",
+        body: JSON.stringify(inviteForm),
+      });
+      return res.json();
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ predicate: (query) => String(query.queryKey[0]).startsWith("/api/admin/users") });
+      toast({ title: "Invitation sent", description: data.message || "The user can now complete signup from their email." });
+      setInviteOpen(false);
+      setInviteForm({ email: "", firstName: "", lastName: "", role: "ca" });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Invitation failed",
+        description: error.message || "Could not invite this user.",
+        variant: "destructive",
+      });
+    },
   });
 
   // Get list of CAs for assignment dropdown
@@ -176,7 +208,10 @@ export default function UsersManagementPage() {
              </p>
           </div>
           <div className="flex items-center gap-3">
-             <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-widest shadow-sm">
+             <Button
+               className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-widest shadow-sm"
+               onClick={() => setInviteOpen(true)}
+             >
                <UserPlus className="h-4 w-4 mr-2" />
                New Account
              </Button>
@@ -348,6 +383,27 @@ export default function UsersManagementPage() {
                                </SelectContent>
                              </Select>
 
+                             {user.role === "user" && (
+                               <Select
+                                 value={user.assignedCaId || "unassigned"}
+                                 onValueChange={(caId) => {
+                                   assignCaMutation.mutate({ userId: user.id, caId: caId === "unassigned" ? null : caId });
+                                 }}
+                               >
+                                 <SelectTrigger className="w-[130px] h-8 text-[9px] font-bold uppercase tracking-widest rounded-lg border-slate-100">
+                                   <SelectValue placeholder="Assign CA" />
+                                 </SelectTrigger>
+                                 <SelectContent className="rounded-lg shadow-xl border-slate-100">
+                                   <SelectItem value="unassigned">No CA</SelectItem>
+                                   {caUsers.map((ca: User) => (
+                                     <SelectItem key={ca.id} value={ca.id}>
+                                       {ca.firstName} {ca.lastName}
+                                     </SelectItem>
+                                   ))}
+                                 </SelectContent>
+                               </Select>
+                             )}
+
                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50">
                                <Eye className="h-4 w-4" />
                              </Button>
@@ -389,6 +445,53 @@ export default function UsersManagementPage() {
              </CardContent>
            </Card>
         </div>
+
+        <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+          <DialogContent className="rounded-2xl">
+            <DialogHeader>
+              <DialogTitle>Invite real user</DialogTitle>
+              <DialogDescription>
+                Send a Supabase invitation and provision the app role before first login.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <Input
+                placeholder="Email"
+                value={inviteForm.email}
+                onChange={(event) => setInviteForm((form) => ({ ...form, email: event.target.value }))}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  placeholder="First name"
+                  value={inviteForm.firstName}
+                  onChange={(event) => setInviteForm((form) => ({ ...form, firstName: event.target.value }))}
+                />
+                <Input
+                  placeholder="Last name"
+                  value={inviteForm.lastName}
+                  onChange={(event) => setInviteForm((form) => ({ ...form, lastName: event.target.value }))}
+                />
+              </div>
+              <Select value={inviteForm.role} onValueChange={(role) => setInviteForm((form) => ({ ...form, role }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ca">CA Expert</SelectItem>
+                  <SelectItem value="team_member">Team Member</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                className="w-full"
+                onClick={() => inviteMutation.mutate()}
+                disabled={inviteMutation.isPending || !inviteForm.email}
+              >
+                {inviteMutation.isPending ? "Sending..." : "Send invitation"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );

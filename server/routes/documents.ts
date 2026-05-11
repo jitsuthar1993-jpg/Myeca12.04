@@ -6,6 +6,11 @@ import { del, get, put } from "@vercel/blob";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { safeError } from "../utils/error-response.js";
+import {
+  assertCanAccessUserData,
+  canAccessUserData,
+  recordBelongsToUser,
+} from "../utils/access-control.js";
 
 const router = Router();
 
@@ -39,13 +44,21 @@ const documentSchema = z.object({
   category: z.string(),
   tags: z.array(z.string()).optional(),
   description: z.string().nullable().optional(),
-  year: z.string().nullable().optional()
+  year: z.string().nullable().optional(),
+  profileId: z.string().trim().min(1).nullable().optional(),
+  serviceId: z.string().trim().min(1).nullable().optional(),
+  userServiceId: z.string().trim().min(1).nullable().optional(),
+  taxReturnId: z.string().trim().min(1).nullable().optional(),
 });
 
 function serializeDocument(docId: string, data: Record<string, any>) {
   return {
     id: docId,
     userId: data.userId,
+    profileId: data.profileId ?? null,
+    serviceId: data.serviceId ?? null,
+    userServiceId: data.userServiceId ?? null,
+    taxReturnId: data.taxReturnId ?? null,
     fileName: data.fileName ?? null,
     originalName: data.originalName ?? data.name ?? "document",
     name: data.name,
@@ -81,25 +94,80 @@ async function streamToBuffer(stream: ReadableStream<Uint8Array>) {
   return Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
 }
 
+function normalizeLink(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+async function validateDocumentLinks(userId: string, links: {
+  profileId?: string | null;
+  userServiceId?: string | null;
+  taxReturnId?: string | null;
+}) {
+  const checks = [
+    { collection: "profiles", id: links.profileId, label: "profile" },
+    { collection: "user_services", id: links.userServiceId, label: "service" },
+    { collection: "tax_returns", id: links.taxReturnId, label: "tax return" },
+  ];
+
+  for (const check of checks) {
+    if (check.id && !(await recordBelongsToUser(check.collection, check.id, userId))) {
+      if (check.collection === "tax_returns") {
+        const taxReturn = await adminDb.collection("tax_returns").doc(check.id).get();
+        const profileId = taxReturn.data()?.profileId;
+        if (taxReturn.exists && typeof profileId === "string" && await recordBelongsToUser("profiles", profileId, userId)) {
+          continue;
+        }
+      }
+      const error = new Error(`Linked ${check.label} does not belong to this user.`);
+      (error as Error & { status?: number }).status = 400;
+      throw error;
+    }
+  }
+}
+
+async function resolveTargetUserId(req: AuthRequest) {
+  const authUserId = req.auth?.userId;
+  if (!authUserId) return null;
+
+  const requestedUserId = normalizeLink(req.body?.userId ?? req.query?.userId);
+  if (!requestedUserId || requestedUserId === authUserId) return authUserId;
+
+  await assertCanAccessUserData(req.user, requestedUserId);
+  return requestedUserId;
+}
+
+function documentRouteError(res: Response, error: unknown, fallback: string) {
+  const status = typeof (error as any)?.status === "number" ? (error as any).status : undefined;
+  if (status) {
+    return res.status(status).json({ error: (error as Error).message || fallback });
+  }
+  return safeError(res, error, fallback);
+}
+
 router.post("/upload", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const userId = req.auth?.userId;
+    const userId = await resolveTargetUserId(req);
     if (!userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    const { name, category, tags, description, year } = req.body;
+    const { name, category, tags, description, year, profileId, serviceId, userServiceId, taxReturnId } = req.body;
     const metadata = documentSchema.parse({
       name: name || req.file.originalname,
       category: category || "other",
       tags: tags ? (typeof tags === "string" ? JSON.parse(tags) : tags) : [],
       description,
-      year
+      year,
+      profileId: normalizeLink(profileId),
+      serviceId: normalizeLink(serviceId),
+      userServiceId: normalizeLink(userServiceId || serviceId),
+      taxReturnId: normalizeLink(taxReturnId),
     });
+    await validateDocumentLinks(userId, metadata);
 
     let fileBuffer = req.file.buffer;
     let finalSize = req.file.size;
@@ -132,6 +200,10 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
       originalName: req.file.originalname,
       mimeType,
       size: finalSize,
+      profileId: metadata.profileId ?? null,
+      serviceId: metadata.serviceId ?? null,
+      userServiceId: metadata.userServiceId ?? null,
+      taxReturnId: metadata.taxReturnId ?? null,
       uploadPath: blob.pathname,
       blobUrl: blob.url,
       downloadUrl: blob.downloadUrl,
@@ -155,13 +227,13 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
     }
-    return safeError(res, error, "Failed to upload document");
+    return documentRouteError(res, error, "Failed to upload document");
   }
 });
 
 router.post("/register", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
+    const userId = await resolveTargetUserId(req);
     if (!userId || !req.auth) return res.status(401).json({ error: "Unauthorized" });
 
     const schema = z.object({
@@ -176,11 +248,20 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
       year: z.string().optional().nullable(),
       description: z.string().optional().nullable(),
       storagePath: z.string().optional(),
+      profileId: z.string().optional().nullable(),
+      serviceId: z.string().optional().nullable(),
+      userServiceId: z.string().optional().nullable(),
+      taxReturnId: z.string().optional().nullable(),
       size: z.number().optional(),
       mimeType: z.string().optional()
     });
 
     const data = schema.parse(req.body);
+    await validateDocumentLinks(userId, {
+      profileId: normalizeLink(data.profileId),
+      userServiceId: normalizeLink(data.userServiceId || data.serviceId),
+      taxReturnId: normalizeLink(data.taxReturnId),
+    });
     const docId = adminDb.collection("documents").doc().id;
     const newDoc = {
       userId,
@@ -189,6 +270,10 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
       category: data.category,
       year: data.year || null,
       description: data.description || null,
+      profileId: normalizeLink(data.profileId),
+      serviceId: normalizeLink(data.serviceId),
+      userServiceId: normalizeLink(data.userServiceId || data.serviceId),
+      taxReturnId: normalizeLink(data.taxReturnId),
       storagePath: data.storagePath || data.url,
       blobUrl: data.url,
       size: data.size || 0,
@@ -204,13 +289,13 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
     res.json({ success: true, document: serializeDocument(docId, newDoc) });
   } catch (error) {
     if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
-    return safeError(res, error, "Failed to register document");
+    return documentRouteError(res, error, "Failed to register document");
   }
 });
 
 router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
+    const userId = await resolveTargetUserId(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
     const { category, year, search } = req.query;
@@ -243,13 +328,13 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       total: docs.length
     });
   } catch (error) {
-    return safeError(res, error, "Failed to fetch documents");
+    return documentRouteError(res, error, "Failed to fetch documents");
   }
 });
 
 router.get("/stats/summary", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
+    const userId = await resolveTargetUserId(req);
     const snapshot = await adminDb.collection("documents")
       .where("userId", "==", userId)
       .where("status", "==", "active")
@@ -275,13 +360,12 @@ router.get("/stats/summary", authenticateToken, async (req: AuthRequest, res: Re
 
     res.json({ success: true, stats });
   } catch (error) {
-    return safeError(res, error, "Failed to fetch statistics");
+    return documentRouteError(res, error, "Failed to fetch statistics");
   }
 });
 
 router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
     const { id } = req.params;
     const docRef = adminDb.collection("documents").doc(id);
     const doc = await docRef.get();
@@ -291,7 +375,7 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
     }
 
     const documentData = doc.data()!;
-    if (documentData.userId !== userId) {
+    if (!(await canAccessUserData(req.user, documentData.userId))) {
       return res.status(403).json({ error: "Access denied" });
     }
 
@@ -314,18 +398,17 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
     const file = await streamToBuffer(blob.stream);
     return res.send(file);
   } catch (error) {
-    return safeError(res, error, "Failed to download document");
+    return documentRouteError(res, error, "Failed to download document");
   }
 });
 
 router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
     const { id } = req.params;
     const docRef = adminDb.collection("documents").doc(id);
     const doc = await docRef.get();
 
-    if (!doc.exists || doc.data()?.userId !== userId) {
+    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
       return res.status(404).json({ error: "Document not found" });
     }
 
@@ -334,22 +417,27 @@ router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) =>
       document: serializeDocument(doc.id, doc.data() as Record<string, any>)
     });
   } catch (error) {
-    return safeError(res, error, "Failed to fetch document");
+    return documentRouteError(res, error, "Failed to fetch document");
   }
 });
 
 router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
     const { id } = req.params;
     const docRef = adminDb.collection("documents").doc(id);
     const doc = await docRef.get();
 
-    if (!doc.exists || doc.data()?.userId !== userId) {
+    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
       return res.status(404).json({ error: "Document not found" });
     }
 
     const updateData = documentSchema.partial().parse(req.body);
+    const documentUserId = doc.data()?.userId;
+    await validateDocumentLinks(documentUserId, {
+      profileId: updateData.profileId,
+      userServiceId: updateData.userServiceId || updateData.serviceId,
+      taxReturnId: updateData.taxReturnId,
+    });
     const finalUpdate = {
       ...updateData,
       updatedAt: new Date()
@@ -364,18 +452,17 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
     }
-    return safeError(res, error, "Failed to update document");
+    return documentRouteError(res, error, "Failed to update document");
   }
 });
 
 router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.auth?.userId;
     const { id } = req.params;
     const docRef = adminDb.collection("documents").doc(id);
     const doc = await docRef.get();
 
-    if (!doc.exists || doc.data()?.userId !== userId) {
+    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
       return res.status(404).json({ error: "Document not found" });
     }
 
@@ -397,7 +484,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
       message: "Document deleted successfully"
     });
   } catch (error) {
-    return safeError(res, error, "Failed to delete document");
+    return documentRouteError(res, error, "Failed to delete document");
   }
 });
 

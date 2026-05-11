@@ -1,238 +1,159 @@
-import { Request, Response, Router } from "express";
-import { authenticateToken } from "../middleware/auth.js";
+import { Response, Router } from "express";
+import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
+import { adminDb } from "../data-admin.js";
 import { z } from "zod";
 
 const router = Router();
 
-// Report schema
 const reportRequestSchema = z.object({
   type: z.enum(["tax_summary", "refund_status", "compliance", "business_overview", "client_activity"]),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   format: z.enum(["pdf", "excel", "csv"]).default("pdf"),
-  filters: z.record(z.any()).optional()
+  filters: z.record(z.any()).optional(),
 });
 
-// Generate report
-router.post("/generate", authenticateToken, async (req: Request, res: Response) => {
+const templates = [
+  {
+    id: "tax_summary",
+    name: "Tax Summary Report",
+    description: "Comprehensive tax filing summary with deductions and refunds",
+    icon: "FileText",
+    color: "blue",
+  },
+  {
+    id: "refund_status",
+    name: "Refund Status Report",
+    description: "Track all pending and processed refunds",
+    icon: "DollarSign",
+    color: "green",
+  },
+  {
+    id: "compliance",
+    name: "Compliance Report",
+    description: "Monthly compliance status and upcoming deadlines",
+    icon: "Shield",
+    color: "purple",
+  },
+  {
+    id: "business_overview",
+    name: "Business Overview",
+    description: "Complete business performance metrics and insights",
+    icon: "TrendingUp",
+    color: "orange",
+  },
+  {
+    id: "client_activity",
+    name: "Client Activity Report",
+    description: "Detailed client engagement and service usage",
+    icon: "Users",
+    color: "yellow",
+  },
+];
+
+function requireUser(req: AuthRequest, res: Response) {
+  if (!req.user?.id) {
+    res.status(401).json({ error: "Unauthorized" });
+    return null;
+  }
+  return req.user;
+}
+
+router.post("/generate", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
+    const user = requireUser(req, res);
+    if (!user) return;
+
     const { type, startDate, endDate, format, filters } = reportRequestSchema.parse(req.body);
-    const userId = (req as any).user.id;
-    
-    // Generate report based on type
-    let reportData: any = {
-      id: `report_${Date.now()}`,
+    const now = new Date();
+    const reportData = {
       type,
-      generatedAt: new Date(),
-      userId,
-      status: "generating"
+      name: `${templates.find((template) => template.id === type)?.name ?? type} - ${now.toISOString().slice(0, 10)}`,
+      generatedAt: now,
+      userId: user.id,
+      status: "completed",
+      format,
+      filters: filters ?? {},
+      startDate: startDate ?? null,
+      endDate: endDate ?? null,
+      data: await generateReportData(user.id, type, { startDate, endDate, filters }),
+      createdAt: now,
+      updatedAt: now,
     };
-    
-    switch (type) {
-      case "tax_summary":
-        reportData.data = generateTaxSummaryReport(userId, { startDate, endDate });
-        break;
-      case "refund_status":
-        reportData.data = generateRefundStatusReport(userId);
-        break;
-      case "compliance":
-        reportData.data = generateComplianceReport(userId, { filters });
-        break;
-      case "business_overview":
-        reportData.data = generateBusinessOverviewReport(userId, { startDate, endDate });
-        break;
-      case "client_activity":
-        reportData.data = generateClientActivityReport(userId, { filters });
-        break;
-    }
-    
-    reportData.status = "completed";
-    
-    res.json({
-      success: true,
-      report: reportData
-    });
+
+    const ref = await adminDb.collection("reports").add(reportData);
+    res.json({ success: true, report: { id: ref.id, ...reportData } });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
-    }
+    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to generate report" });
   }
 });
 
-// Get available reports
-router.get("/templates", authenticateToken, (req: Request, res: Response) => {
-  const templates = [
-    {
-      id: "tax_summary",
-      name: "Tax Summary Report",
-      description: "Comprehensive tax filing summary with deductions and refunds",
-      icon: "FileText",
-      color: "blue"
-    },
-    {
-      id: "refund_status",
-      name: "Refund Status Report",
-      description: "Track all pending and processed refunds",
-      icon: "DollarSign",
-      color: "green"
-    },
-    {
-      id: "compliance",
-      name: "Compliance Report",
-      description: "Monthly compliance status and upcoming deadlines",
-      icon: "Shield",
-      color: "purple"
-    },
-    {
-      id: "business_overview",
-      name: "Business Overview",
-      description: "Complete business performance metrics and insights",
-      icon: "TrendingUp",
-      color: "orange"
-    },
-    {
-      id: "client_activity",
-      name: "Client Activity Report",
-      description: "Detailed client engagement and service usage",
-      icon: "Users",
-      color: "yellow"
-    }
-  ];
-  
-  res.json({
-    success: true,
-    templates
-  });
+router.get("/templates", authenticateToken, (_req: AuthRequest, res: Response) => {
+  res.json({ success: true, templates });
 });
 
-// Get report history
-router.get("/history", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  
-  // Mock report history
-  const history = [
-    {
-      id: "report_1",
-      type: "tax_summary",
-      name: "Tax Summary Report - FY 2025-26",
-      generatedAt: new Date("2025-01-20"),
-      size: "245 KB",
-      format: "pdf"
-    },
-    {
-      id: "report_2",
-      type: "compliance",
-      name: "Compliance Report - January 2025",
-      generatedAt: new Date("2025-01-15"),
-      size: "189 KB",
-      format: "excel"
-    }
-  ];
-  
-  res.json({
-    success: true,
-    reports: history
-  });
+router.get("/history", authenticateToken, async (req: AuthRequest, res: Response) => {
+  const user = requireUser(req, res);
+  if (!user) return;
+
+  const snapshot = await adminDb.collection("reports")
+    .where("userId", "==", user.id)
+    .get();
+
+  const reports = snapshot.docs
+    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .sort((a: any, b: any) => new Date(b.generatedAt ?? b.createdAt ?? 0).getTime() - new Date(a.generatedAt ?? a.createdAt ?? 0).getTime());
+
+  res.json({ success: true, reports });
 });
 
-// Helper functions to generate report data
-function generateTaxSummaryReport(userId: number, options: any) {
-  return {
-    summary: {
-      totalIncome: 1500000,
-      totalDeductions: 200000,
-      taxableIncome: 1300000,
-      taxPaid: 195000,
-      refundDue: 15000
-    },
-    deductions: {
-      section80C: 150000,
-      section80D: 25000,
-      hra: 180000,
-      professionalTax: 2500
-    },
-    filingHistory: [
-      { year: "2024-25", status: "Filed", refund: 15000 },
-      { year: "2023-24", status: "Filed", refund: 12000 },
-      { year: "2022-23", status: "Filed", refund: 8000 }
-    ]
-  };
-}
+async function generateReportData(userId: string, type: string, options: any) {
+  const [returnsSnapshot, docsSnapshot, servicesSnapshot] = await Promise.all([
+    adminDb.collection("tax_returns").where("userId", "==", userId).get(),
+    adminDb.collection("documents").where("userId", "==", userId).where("status", "==", "active").get(),
+    adminDb.collection("user_services").where("userId", "==", userId).get(),
+  ]);
 
-function generateRefundStatusReport(userId: number) {
-  return {
-    totalRefunds: 35000,
-    pending: 15000,
-    processed: 20000,
-    refunds: [
-      { year: "2024-25", amount: 15000, status: "Processing", expectedDate: "2025-03-15" },
-      { year: "2023-24", amount: 12000, status: "Credited", creditedDate: "2024-08-20" },
-      { year: "2022-23", amount: 8000, status: "Credited", creditedDate: "2023-09-10" }
-    ]
-  };
-}
+  const returns = returnsSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, any>) }));
+  const documents = docsSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, any>) }));
+  const services = servicesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, any>) }));
 
-function generateComplianceReport(userId: number, options: any) {
-  return {
-    upcomingDeadlines: [
-      { type: "GST Return", dueDate: "2025-02-10", status: "Pending" },
-      { type: "TDS Return", dueDate: "2025-01-31", status: "In Progress" },
-      { type: "Advance Tax", dueDate: "2025-03-15", status: "Not Started" }
-    ],
-    completedFilings: [
-      { type: "ITR Filing", completedDate: "2024-07-20", status: "Verified" },
-      { type: "GST Annual Return", completedDate: "2024-12-31", status: "Filed" }
-    ],
-    complianceScore: 92
-  };
-}
+  if (type === "refund_status") {
+    return {
+      refunds: returns.map((entry: any) => ({
+        id: entry.id,
+        assessmentYear: entry.assessmentYear,
+        refundAmount: entry.refundAmount ?? 0,
+        status: entry.status ?? "draft",
+      })),
+    };
+  }
 
-function generateBusinessOverviewReport(userId: number, options: any) {
-  return {
-    revenue: {
-      total: 5000000,
-      growth: 15,
-      monthlyTrend: [
-        { month: "Jan", revenue: 400000 },
-        { month: "Feb", revenue: 420000 },
-        { month: "Mar", revenue: 450000 }
-      ]
-    },
-    expenses: {
-      total: 3500000,
-      categories: {
-        salaries: 2000000,
-        rent: 500000,
-        utilities: 200000,
-        others: 800000
-      }
-    },
-    profitability: {
-      grossProfit: 1500000,
-      netProfit: 1200000,
-      margin: 24
-    }
-  };
-}
+  if (type === "compliance") {
+    return {
+      activeServices: services.filter((service: any) => service.status !== "completed" && service.status !== "cancelled"),
+      documentsUploaded: documents.length,
+      filters: options.filters ?? {},
+    };
+  }
 
-function generateClientActivityReport(userId: number, options: any) {
+  if (type === "client_activity") {
+    return {
+      servicesUsed: services.length,
+      documentsUploaded: documents.length,
+      filings: returns.length,
+    };
+  }
+
   return {
-    totalClients: 150,
-    activeClients: 120,
-    newClients: 25,
-    servicesUsed: {
-      itrFiling: 120,
-      gstReturns: 80,
-      compliance: 60,
-      consulting: 45
+    returns,
+    documentsUploaded: documents.length,
+    activeServices: services,
+    period: {
+      startDate: options.startDate ?? null,
+      endDate: options.endDate ?? null,
     },
-    clientSatisfaction: 4.8,
-    topClients: [
-      { name: "ABC Corp", revenue: 150000, services: 5 },
-      { name: "XYZ Ltd", revenue: 120000, services: 4 },
-      { name: "Tech Solutions", revenue: 100000, services: 3 }
-    ]
   };
 }
 

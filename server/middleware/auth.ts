@@ -47,6 +47,25 @@ async function readAuth(req: Request) {
   return null;
 }
 
+async function attachAuthUser(req: Request, auth: { userId: string; email?: string }) {
+  (req as AuthRequest).auth = auth;
+
+  let userData = getCachedUser(auth.userId);
+  if (!userData) {
+    const userDoc = await findOrCreateUserProfile(auth);
+    if (userDoc.exists) {
+      userData = { id: userDoc.id, ...(userDoc.data() as any) };
+      setCachedUser(auth.userId, userData);
+    }
+  }
+
+  if (userData) {
+    (req as AuthRequest).user = userData;
+  }
+
+  return userData;
+}
+
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
     const auth = await readAuth(req);
@@ -54,7 +73,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    (req as AuthRequest).auth = auth;
+    await attachAuthUser(req, auth);
     next();
   } catch (error) {
     return safeError(res, error, "Authentication failed");
@@ -71,15 +90,9 @@ export function requireRole(allowedRoles: string[]) {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
-      let userData = getCachedUser(auth.userId);
-
+      const userData = await attachAuthUser(req, auth);
       if (!userData) {
-        const userDoc = await findOrCreateUserProfile(auth);
-        if (!userDoc.exists) {
-          return res.status(403).json({ error: "Access denied. Profile not found." });
-        }
-        userData = { id: userDoc.id, ...(userDoc.data() as any) };
-        setCachedUser(auth.userId, userData);
+        return res.status(403).json({ error: "Access denied. Profile not found." });
       }
 
       const userRole = userData.role || "user";
@@ -89,9 +102,6 @@ export function requireRole(allowedRoles: string[]) {
           error: "Access denied. Insufficient permissions.",
         });
       }
-
-      (req as AuthRequest).auth = auth;
-      (req as AuthRequest).user = userData;
 
       next();
     } catch (error) {

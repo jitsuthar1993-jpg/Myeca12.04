@@ -26,7 +26,7 @@ export type User = z.infer<typeof userSchema>;
 export type InsertUser = User;
 
 export const profileSchema = z.object({
-  id: z.number().optional(),
+  id: z.union([z.string(), z.number()]).optional(),
   userId: z.string(),
   name: z.string(),
   relation: z.string().default('self'),
@@ -42,8 +42,9 @@ export type Profile = z.infer<typeof profileSchema>;
 export type InsertProfile = Profile;
 
 export const taxReturnSchema = z.object({
-  id: z.number().optional(),
-  profileId: z.number(),
+  id: z.union([z.string(), z.number()]).optional(),
+  userId: z.string(),
+  profileId: z.union([z.string(), z.number()]),
   assessmentYear: z.string(),
   itrType: z.string().default('ITR1'),
   status: z.string().default('draft'),
@@ -59,9 +60,12 @@ export const taxReturnSchema = z.object({
 export type TaxReturn = z.infer<typeof taxReturnSchema>;
 
 export const documentSchema = z.object({
-  id: z.number().optional(),
+  id: z.union([z.string(), z.number()]).optional(),
   userId: z.string(),
-  profileId: z.number().optional().nullable(),
+  profileId: z.union([z.string(), z.number()]).optional().nullable(),
+  serviceId: z.string().optional().nullable(),
+  userServiceId: z.string().optional().nullable(),
+  taxReturnId: z.string().optional().nullable(),
   fileName: z.string(),
   originalName: z.string(),
   name: z.string(),
@@ -212,8 +216,10 @@ export const taxSlabSchema = z.object({
 export type TaxSlab = z.infer<typeof taxSlabSchema>;
 
 export const userServiceSchema = z.object({
-  id: z.number().optional(),
+  id: z.union([z.string(), z.number()]).optional(),
   userId: z.string(),
+  profileId: z.union([z.string(), z.number()]).optional().nullable(),
+  assignedCaId: z.string().optional().nullable(),
   serviceType: z.string(),
   status: z.string().default('active'),
   metadata: z.string().optional().nullable(),

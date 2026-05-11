@@ -74,6 +74,8 @@ export default function DocumentsPage() {
     category: "form16",
     year: "2025-26",
     description: "",
+    profileId: "none",
+    userServiceId: "none",
   });
 
   const { data, isLoading } = useQuery<{ documents: Document[] }>({
@@ -88,6 +90,16 @@ export default function DocumentsPage() {
     retry: 0,
   });
 
+  const { data: profiles = [] } = useQuery<any[]>({
+    queryKey: ["/api/profiles"],
+    retry: 0,
+  });
+
+  const { data: userServices = [] } = useQuery<any[]>({
+    queryKey: ["/api/user-services"],
+    retry: 0,
+  });
+
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const preparedFile = await prepareDocumentForUpload(file);
@@ -99,6 +111,8 @@ export default function DocumentsPage() {
       formData.append("category", uploadData.category);
       formData.append("year", uploadData.year);
       formData.append("description", uploadData.description);
+      if (uploadData.profileId !== "none") formData.append("profileId", uploadData.profileId);
+      if (uploadData.userServiceId !== "none") formData.append("userServiceId", uploadData.userServiceId);
 
       const response = await fetch("/api/documents/upload", {
         method: "POST",
@@ -421,6 +435,36 @@ export default function DocumentsPage() {
                         <SelectContent>
                           {vaultFolders.map(f => <SelectItem key={f.key} value={f.key}>{f.label}</SelectItem>)}
                           <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Taxpayer Profile</Label>
+                      <Select value={uploadData.profileId} onValueChange={(profileId) => setUploadData(p => ({...p, profileId}))}>
+                        <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Current user</SelectItem>
+                          {profiles.map((profile: any) => (
+                            <SelectItem key={profile.id} value={String(profile.id)}>{profile.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Linked Service</Label>
+                      <Select value={uploadData.userServiceId} onValueChange={(userServiceId) => setUploadData(p => ({...p, userServiceId}))}>
+                        <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No service</SelectItem>
+                          {userServices.map((service: any) => (
+                            <SelectItem key={service.id} value={String(service.id)}>
+                              {service.serviceTitle || service.serviceId || "Service"}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
