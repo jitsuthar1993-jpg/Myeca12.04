@@ -22,6 +22,18 @@ Set these in Vercel and in `.env` for local development:
 - `SECURITY_EXTERNAL_NAME`, `SECURITY_EXTERNAL_ORGANIZATION`, `SECURITY_EXTERNAL_CONTACT` - optional external incident-response provider details.
 - `APP_URL` and `VITE_APP_URL` - deployed or local app URL.
 
+Run the local readiness check before deploying. It reports only variable names
+and validation errors; it never prints secret values.
+
+```bash
+npm run check:env
+npm run check:env -- --strict
+```
+
+Use `--strict` when preparing production. Strict mode fails on both required and
+recommended missing values, including admin bootstrapping and incident-response
+contacts.
+
 ## Local Development
 ```bash
 npm install
@@ -52,6 +64,7 @@ vercel build
 ```
 
 ## Verification Checklist
+- `npm run check:env -- --strict`.
 - Supabase sign-in, sign-up, sign-out, `/api/v1/auth/me`, and `/api/v1/auth/sync`.
 - Role-protected admin, CA, team, and user routes.
 - Document upload, private download, delete, and listing via Vercel Blob plus Supabase metadata.

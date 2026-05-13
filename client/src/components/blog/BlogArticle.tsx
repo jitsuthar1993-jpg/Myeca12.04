@@ -279,7 +279,7 @@ function RightSidebar({
                         <img src={rel.coverImage ?? ""} alt={rel.title} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-lg opacity-40">
-                          {rel.coverImage || "ðŸ“"}
+                          {rel.coverImage || <FileText className="h-5 w-5" aria-hidden="true" />}
                         </div>
                       )}
                     </div>

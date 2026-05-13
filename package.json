@@ -11,6 +11,7 @@
     "test:unit": "vitest run",
     "test:smoke": "tsx scripts/smoke-routes.ts",
     "test:e2e": "npm.cmd run build && playwright test",
+    "check:env": "tsx scripts/check-env.ts",
     "db:generate": "dotenv -e .env -- drizzle-kit generate",
     "db:generate:preview": "dotenv -e .env -e .vercel/.env.preview.local -- drizzle-kit generate",
     "db:migrate": "dotenv -e .env -- drizzle-kit migrate",
