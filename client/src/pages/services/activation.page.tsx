@@ -39,6 +39,7 @@ export default function ActivationPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [uploadedDocs, setUploadedDocs] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [activationReference, setActivationReference] = useState<string>("Pending assignment");
 
   if (!service) {
     return (
@@ -75,7 +76,10 @@ export default function ActivationPage() {
       });
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data: { id?: string }) => {
+      if (data?.id) {
+        setActivationReference(`MyeCA-${data.id.slice(0, 10).toUpperCase()}`);
+      }
       queryClient.invalidateQueries({ queryKey: ['/api/user-services'] });
       setCurrentStep(totalSteps - 1); // Go to success step
     },
@@ -370,7 +374,7 @@ export default function ActivationPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                     <span className="text-slate-500 font-bold">Service ID</span>
-                    <span className="font-black text-slate-900">MyeCA-{Math.floor(Math.random() * 900000 + 100000)}</span>
+                    <span className="font-black text-slate-900">{activationReference}</span>
                   </div>
                   <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                     <span className="text-slate-500 font-bold">Documents</span>

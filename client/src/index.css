@@ -1,9 +1,9 @@
 @import "./styles/design-tokens.css";
 @import "./styles/typography.css";
 @import "./styles/print.css";
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
 /* Professional button styles and layout fixes */

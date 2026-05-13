@@ -33,16 +33,25 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/components/AuthProvider";
 import { Loader2, Star, CheckCircle } from "lucide-react";
-import { m, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "@/lib/framer-motion-lite";
+
+const optionalText = (maxLength: number) =>
+  z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().trim().max(maxLength).optional(),
+  );
 
 const feedbackSchema = z.object({
   type: z.enum(["bug", "feature", "general", "complaint"]),
-  category: z.string().optional(),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(20, "Message must be at least 20 characters"),
+  category: optionalText(80),
+  subject: z.string().trim().min(5, "Subject must be at least 5 characters"),
+  message: z.string().trim().min(20, "Message must be at least 20 characters"),
   rating: z.number().min(1).max(5).optional(),
-  email: z.string().email().optional(),
-  name: z.string().optional(),
+  email: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().trim().email("Enter a valid email address").optional(),
+  ),
+  name: optionalText(120),
 });
 
 type FeedbackFormData = z.infer<typeof feedbackSchema>;
@@ -54,7 +63,6 @@ interface FeedbackDialogProps {
 
 export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const [rating, setRating] = useState(0);
-  const [hoveredRating, setHoveredRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -63,7 +71,6 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
       type: "general",
-      rating: 0,
       email: user?.email || "",
       name: user ? `${user.firstName} ${user.lastName}` : "",
     },
@@ -109,7 +116,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   });
 
   const onSubmit = (data: FeedbackFormData) => {
-    submitFeedback.mutate({ ...data, rating });
+    submitFeedback.mutate({ ...data, rating: rating || undefined });
   };
 
   const getCategoryOptions = (type: string) => {
@@ -166,10 +173,10 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="bug">🐛 Report a Bug</SelectItem>
-                            <SelectItem value="feature">✨ Feature Request</SelectItem>
-                            <SelectItem value="general">💬 General Feedback</SelectItem>
-                            <SelectItem value="complaint">⚠️ Complaint</SelectItem>
+                            <SelectItem value="bug">Report a Bug</SelectItem>
+                            <SelectItem value="feature">Feature Request</SelectItem>
+                            <SelectItem value="general">General Feedback</SelectItem>
+                            <SelectItem value="complaint">Complaint</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

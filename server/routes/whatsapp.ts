@@ -7,7 +7,7 @@ import { clearPublicBlogCaches } from "./public.js";
 
 const router = Router();
 
-// â”€â”€ Conversation state (in-memory, keyed by WhatsApp sender number) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Conversation state, keyed by WhatsApp sender number.
 type ConvState =
   | { phase: "idle" }
   | { phase: "generating"; topic: string }
@@ -16,7 +16,7 @@ type ConvState =
 
 const sessions = new Map<string, ConvState>();
 
-// â”€â”€ Twilio client (lazy â€” only constructed when env vars are present) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Twilio client, constructed only when env vars are present.
 function getTwilioClient() {
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
@@ -28,7 +28,7 @@ function twilioNumber() {
   return process.env.TWILIO_WHATSAPP_NUMBER ?? "whatsapp:+14155238886";
 }
 
-// â”€â”€ Send a WhatsApp message (splits >4000 chars across multiple messages) â”€â”€â”€â”€â”€
+// Send a WhatsApp message, splitting long bodies across multiple messages.
 async function sendWA(to: string, text: string) {
   const client = getTwilioClient();
   const chunks: string[] = [];
@@ -48,34 +48,34 @@ async function sendWA(to: string, text: string) {
   }
 }
 
-// â”€â”€ Format blog preview for WhatsApp (plain text, not markdown) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Format blog preview for WhatsApp.
 function formatPreview(blog: GeneratedBlog): string {
   const tags = blog.tags.join(", ");
-  const preview = blog.content.slice(0, 800) + (blog.content.length > 800 ? "â€¦" : "");
+  const preview = blog.content.slice(0, 800) + (blog.content.length > 800 ? "..." : "");
 
   return [
     `${blog.featuredImage} *${blog.title}*`,
     ``,
-    `ðŸ“‚ Category: ${blog.category}`,
-    `ðŸ· Tags: ${tags}`,
-    `â± Read time: ${blog.readingTimeMinutes} min`,
+    `Category: ${blog.category}`,
+    `Tags: ${tags}`,
+    `Read time: ${blog.readingTimeMinutes} min`,
     ``,
-    `ðŸ“ _Excerpt_`,
+    `_Excerpt_`,
     blog.excerpt,
     ``,
-    `ðŸ“„ _Content preview_`,
+    `_Content preview_`,
     preview,
     ``,
-    `â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€`,
+    `------------------------`,
     `Reply with:`,
-    `  *upload* â€” publish to myeca.in`,
-    `  *edit: [your notes]* â€” revise and resend`,
-    `  *full* â€” see the full blog text`,
-    `  *cancel* â€” discard this draft`,
+    `  *upload* - publish to myeca.in`,
+    `  *edit: [your notes]* - revise and resend`,
+    `  *full* - see the full blog text`,
+    `  *cancel* - discard this draft`,
   ].join("\n");
 }
 
-// â”€â”€ Publish blog via blog webhook (reuses existing auth + cache-clear logic) â”€â”€
+// Publish blog via the blog write path, reusing cache clearing.
 async function publishBlog(blog: GeneratedBlog): Promise<string> {
   const lookup = await getCategoryLookup();
 
@@ -139,7 +139,7 @@ async function publishBlog(blog: GeneratedBlog): Promise<string> {
   return `https://myeca.in/blog/${blog.slug}`;
 }
 
-// â”€â”€ Validate Twilio signature (optional but recommended in production) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Validate Twilio signature. Optional, but recommended in production.
 function validateTwilioSignature(req: Request): boolean {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   if (!authToken) return true; // Skip validation if not configured
@@ -151,7 +151,7 @@ function validateTwilioSignature(req: Request): boolean {
   return twilio.validateRequest(authToken, signature, url, req.body as Record<string, string>);
 }
 
-// â”€â”€ Main webhook POST handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Main webhook POST handler.
 router.post("/webhook", async (req: Request, res: Response) => {
   // Twilio expects a 200 TwiML response; we send empty TwiML and reply async
   res.set("Content-Type", "text/xml");
@@ -172,35 +172,31 @@ router.post("/webhook", async (req: Request, res: Response) => {
   const state = sessions.get(from) ?? { phase: "idle" };
 
   try {
-    // â”€â”€ CANCEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (lower === "cancel") {
       sessions.delete(from);
-      await sendWA(from, "âŒ Draft discarded. Send a new topic anytime to write another blog.");
+      await sendWA(from, "Draft discarded. Send a new topic anytime to write another blog.");
       return;
     }
 
-    // â”€â”€ FULL PREVIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (lower === "full" && state.phase === "review") {
       await sendWA(from, state.blog.content);
       return;
     }
 
-    // â”€â”€ UPLOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (lower === "upload" && state.phase === "review") {
       sessions.set(from, { phase: "publishing" });
-      await sendWA(from, "â³ Publishing to myeca.in...");
+      await sendWA(from, "Publishing to myeca.in...");
 
       const url = await publishBlog(state.blog);
 
       sessions.delete(from);
       await sendWA(
         from,
-        `âœ… *Published!*\n\n${url}\n\nThe post will appear on the blog index within ~5 minutes (cache refreshes automatically).\n\nSend another topic to write a new blog!`
+        `*Published!*\n\n${url}\n\nThe post will appear on the blog index within ~5 minutes (cache refreshes automatically).\n\nSend another topic to write a new blog!`
       );
       return;
     }
 
-    // â”€â”€ EDIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (lower.startsWith("edit:") && state.phase === "review") {
       const notes = body.slice(5).trim();
       if (!notes) {
@@ -208,30 +204,27 @@ router.post("/webhook", async (req: Request, res: Response) => {
         return;
       }
 
-      await sendWA(from, "âœï¸ Revising the blog...");
+      await sendWA(from, "Revising the blog...");
       const revised = await refineBlog(state.blog, notes);
       sessions.set(from, { phase: "review", blog: revised });
       await sendWA(from, formatPreview(revised));
       return;
     }
 
-    // â”€â”€ UPLOAD/EDIT sent but no draft in session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if ((lower === "upload" || lower.startsWith("edit:")) && state.phase !== "review") {
       await sendWA(from, "No draft in progress. Send a blog topic first e.g.\n*Section 87A rebate FY 2025-26*");
       return;
     }
 
-    // â”€â”€ STILL GENERATING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (state.phase === "generating" || state.phase === "publishing") {
-      await sendWA(from, "â³ Still working on the previous request, please wait...");
+      await sendWA(from, "Still working on the previous request, please wait...");
       return;
     }
 
-    // â”€â”€ NEW TOPIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     sessions.set(from, { phase: "generating", topic: body });
     await sendWA(
       from,
-      `âœï¸ Writing a blog on:\n*"${body}"*\n\nThis usually takes 20-30 seconds...`
+      `Writing a blog on:\n*"${body}"*\n\nThis usually takes 20-30 seconds...`
     );
 
     const blog = await generateBlog(body);
@@ -243,7 +236,7 @@ router.post("/webhook", async (req: Request, res: Response) => {
     sessions.delete(from);
     await sendWA(
       from,
-      "âŒ Something went wrong while generating the blog. Please try again.\n\nIf the issue persists, check that OPENAI_API_KEY is set in the server environment."
+      "Something went wrong while generating the blog. Please try again.\n\nIf the issue persists, check that OPENAI_API_KEY is set in the server environment."
     ).catch(() => {});
   }
 });

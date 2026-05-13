@@ -32,6 +32,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
+import { CONTACT } from "@/config/contact";
 import {
   AY_2026_27_NEW_REGIME_SLABS,
   DEFAULT_ASSESSMENT_YEAR,
@@ -185,7 +186,7 @@ export default function ITRForSalariedPage() {
     },
     {
       q: "Is it safe to share my documents with MyeCA?",
-      a: "Absolutely. We use bank-grade encryption and strict privacy protocols to ensure your data is always secure. Your documents are only accessed by the assigned tax expert for filing purposes."
+      a: "We use secure transport, access controls, and privacy workflows to protect your documents. Filing documents are accessed only by the assigned tax expert or authorized support team for the service."
     }
   ];
 
@@ -310,9 +311,15 @@ export default function ITRForSalariedPage() {
           </div>
 
           <Tabs defaultValue="new" className="max-w-4xl mx-auto">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="new" className="text-base py-3">New Tax Regime (Default)</TabsTrigger>
-              <TabsTrigger value="old" className="text-base py-3">Old Tax Regime</TabsTrigger>
+            <TabsList className="grid h-auto w-full grid-cols-2 mb-8">
+              <TabsTrigger value="new" className="min-h-12 whitespace-normal px-2 py-3 text-sm leading-tight sm:text-base">
+                <span className="sm:hidden">New Regime</span>
+                <span className="hidden sm:inline">New Tax Regime (Default)</span>
+              </TabsTrigger>
+              <TabsTrigger value="old" className="min-h-12 whitespace-normal px-2 py-3 text-sm leading-tight sm:text-base">
+                <span className="sm:hidden">Old Regime</span>
+                <span className="hidden sm:inline">Old Tax Regime</span>
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="new">
               <Card>
@@ -736,7 +743,7 @@ export default function ITRForSalariedPage() {
                       <Input 
                         id="lead-phone" 
                         type="tel" 
-                        placeholder="+91 98765 43210" 
+                        placeholder={CONTACT.phonePlaceholder}
                         required
                         value={leadForm.phone}
                         onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
@@ -773,8 +780,8 @@ export default function ITRForSalariedPage() {
                       <Phone className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Call Experts</p>
-                      <p className="text-base font-semibold text-gray-900">+91 98765 43210</p>
+                      <p className="text-sm font-medium text-gray-500">Expert Support</p>
+                      <p className="text-base font-semibold text-gray-900">Request a callback</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">

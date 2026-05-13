@@ -131,17 +131,17 @@ export default function Header() {
 
   return (
     <>
-      {/* Nano Banana Urgency Banner */}
+      {/* Time-sensitive promo banner. Kept disabled until backed by live, verifiable data. */}
       {!promoDismissed && (
         <div className="fixed top-0 left-0 right-0 z-[60] bg-[#FDE047] text-black h-[36px] flex items-center shadow-sm">
           <div className="max-w-7xl mx-auto px-4 w-full flex items-center justify-center relative">
             <div className="text-[11px] font-normal uppercase tracking-wider flex items-center justify-center gap-3">
               <span className="flex items-center text-sm">⏰</span>
-              <span className="hidden sm:inline">ITR DEADLINE: 31 JULY 2026</span>
+              <span className="hidden sm:inline">ITR filing support for AY 2026-27</span>
               <span className="hidden sm:inline opacity-30">|</span>
               <span className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
-                2,847 PEOPLE FILED TODAY
+                Guided filing and CA review available
               </span>
               <Link href="/itr/filing" onMouseEnter={() => preloadOnHover('/itr/filing')} className="bg-black text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-slate-800 transition-colors ml-2">
                 FILE NOW →

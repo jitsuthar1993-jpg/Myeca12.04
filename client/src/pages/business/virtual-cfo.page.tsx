@@ -12,7 +12,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from "@/components/charts/lightweight-recharts";
 import {
   AlertTriangle,
   ArrowRight,
@@ -210,7 +210,7 @@ export default function VirtualCFOPage() {
         </div>
       </section>
 
-      {/* Live Platform Demo Section - Light Theme */}
+      {/* Platform Preview Section - Light Theme */}
       <section className="py-24 bg-blue-50/50 border-y border-blue-100 overflow-hidden relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.05),transparent_50%)]" />
         
@@ -219,14 +219,14 @@ export default function VirtualCFOPage() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-700 text-xs font-black uppercase tracking-widest mb-6">
                 <Zap className="h-3 w-3 fill-blue-600" />
-                Live Platform Preview
+                Platform Preview
               </div>
               <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-8 leading-tight tracking-tight">
                 Finance Telemetry at Your <span className="text-blue-600">Fingertips</span>
               </h2>
               <p className="text-lg text-slate-600 mb-10 leading-relaxed">
-                Our proprietary platform gives you instant access to your business vitals. 
-                Track every rupee with AI-driven anomaly detection and CA-verified reporting.
+                Our platform view is designed to give teams faster access to business vitals,
+                reconciliation signals, and CA-reviewed reporting workflows.
               </p>
 
               <div className="space-y-6">
@@ -254,7 +254,7 @@ export default function VirtualCFOPage() {
               </div>
             </div>
 
-            {/* Mock Dashboard UI - Light Version */}
+            {/* Illustrative Dashboard UI - Light Version */}
             <m.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -267,16 +267,16 @@ export default function VirtualCFOPage() {
                 <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-4">
                   <div>
                     <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">P&L Velocity</h3>
-                    <p className="text-2xl font-black text-slate-900 mt-1">₹4.2 Cr <span className="text-xs text-emerald-600 font-bold ml-2">+18.4% vs PY</span></p>
+                    <p className="text-2xl font-black text-slate-900 mt-1">Rs 4.2 Cr <span className="text-xs text-emerald-600 font-bold ml-2">Example trend</span></p>
                   </div>
-                  <Badge className="bg-blue-50 text-blue-600 border-blue-100">Live Telemetry</Badge>
+                  <Badge className="bg-blue-50 text-blue-600 border-blue-100">Illustrative Data</Badge>
                 </div>
                 
                 <div className="h-[240px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={monthlyRevenueData}>
                       <defs>
-                        <linearGradient id="demoRevenueLight" x1="0" x2="0" y1="0" y2="1">
+                        <linearGradient id="revenueTrendLight" x1="0" x2="0" y1="0" y2="1">
                           <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
                           <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                         </linearGradient>
@@ -288,7 +288,7 @@ export default function VirtualCFOPage() {
                         contentStyle={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }}
                         itemStyle={{ color: "#0f172a" }}
                       />
-                      <Area type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={3} fill="url(#demoRevenueLight)" />
+                      <Area type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={3} fill="url(#revenueTrendLight)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -318,7 +318,7 @@ export default function VirtualCFOPage() {
                 <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500 w-full" />
                 </div>
-                <p className="text-[9px] text-emerald-600 font-bold mt-2">100% Verified</p>
+                <p className="text-[9px] text-emerald-600 font-bold mt-2">Review Ready</p>
               </m.div>
 
               {/* Floating Element 2 */}
@@ -351,7 +351,7 @@ export default function VirtualCFOPage() {
               <h3 className="text-2xl font-black text-slate-900 mb-8">Traditional CFO</h3>
               <ul className="space-y-6">
                 {[
-                  "Expensive: ₹25L - ₹60L per annum salary",
+                  "Expensive: Rs 25L - Rs 60L per annum salary",
                   "Single person risk & limited bandwidth",
                   "Fragmented toolsets and spreadsheets",
                   "Slow manual reporting cycles",
@@ -374,11 +374,11 @@ export default function VirtualCFOPage() {
               <h3 className="text-2xl font-black mb-8 relative z-10">MyeCA Virtual CFO</h3>
               <ul className="space-y-6 relative z-10">
                 {[
-                  "Affordable: Starting at ₹49k per month",
+                  "Affordable: Starting at Rs 49k per month",
                   "Team of Experts: Dedicated CA + Tech stack",
-                  "Unified Tech: Real-time finance dashboard",
-                  "Instant Data: Live telemetry 24/7",
-                  "Cross-Industry: Insights from 500+ scale-ups"
+                  "Unified Tech: Finance dashboard workflow",
+                  "Faster Reporting: Shared monthly operating view",
+                  "Cross-Industry: Advisory patterns for growing businesses"
                 ].map((text, i) => (
                   <li key={i} className="flex gap-4 items-center font-bold">
                     <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">

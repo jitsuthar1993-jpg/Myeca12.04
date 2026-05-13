@@ -57,7 +57,7 @@ export default function AuditLogsPage() {
   };
 
   const formatTimestamp = (ts?: string) => {
-    if (!ts) return "—";
+    if (!ts) return "-";
     try {
       return new Date(ts).toLocaleString();
     } catch {
@@ -151,13 +151,13 @@ export default function AuditLogsPage() {
                             </Badge>
                           </td>
                           <td className="py-3 px-4 text-slate-700">
-                            {log.email || log.userId || "—"}
+                            {log.email || log.userId || "-"}
                           </td>
                           <td className="py-3 px-4 text-slate-500 max-w-xs truncate">
                             {Object.entries(log)
                               .filter(([k]) => !["action", "userId", "email", "timestamp", "ip", "userAgent"].includes(k))
                               .map(([k, v]) => `${k}: ${typeof v === "object" ? JSON.stringify(v) : v}`)
-                              .join(", ") || "—"}
+                              .join(", ") || "-"}
                           </td>
                         </tr>
                       ))}

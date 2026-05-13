@@ -16,6 +16,10 @@ Set these in Vercel and in `.env` for local development:
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase server secret key.
 - `BLOB_READ_WRITE_TOKEN` - Vercel Blob read/write token.
 - `ADMIN_EMAILS` - comma-separated emails promoted to `admin` on auth sync.
+- `SESSION_SECRET` - strong random secret used for server session signing.
+- `PII_ENCRYPTION_KEY` - at least 32 characters; required before enabling encrypted PII flows and two-factor authentication.
+- `SECURITY_LEAD_PHONE`, `SECURITY_ADMIN_PHONE`, `SECURITY_BACKUP_PHONE` - incident-response escalation contact numbers.
+- `SECURITY_EXTERNAL_NAME`, `SECURITY_EXTERNAL_ORGANIZATION`, `SECURITY_EXTERNAL_CONTACT` - optional external incident-response provider details.
 - `APP_URL` and `VITE_APP_URL` - deployed or local app URL.
 
 ## Local Development

@@ -1,6 +1,6 @@
 import { Switch, Route } from "wouter";
 import { Suspense, lazy } from 'react';
-import { lazyWithRetry } from '@/utils/bundle-optimization';
+import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import HomePage from "@/pages/home.page";
 const MobileAppScreensPage = lazyWithRetry(() => import("@/pages/mobile-app-screens.page"));
@@ -242,10 +242,10 @@ export default function Routes() {
         <Route path="/services/selection" component={ServiceSelectionPage} />
         <Route path="/services/activate/:serviceId" component={ServiceActivationPage} />
         <Route path="/services/marketplace" component={ServicesMarketplacePage} />
-        <Route path="/documents/generator" component={DocumentGeneratorRegistry} />
-        <Route path="/documents/generator_page" component={DocumentGeneratorRegistry} />
-        <Route path="/documents/generator/:type" component={DocumentGeneratorPage} />
-        <Route path="/business/dashboard" component={BusinessDashboardPage} />
+        <Route path="/documents/generator" component={() => <RequireAuth><DocumentGeneratorRegistry /></RequireAuth>} />
+        <Route path="/documents/generator_page" component={() => <RequireAuth><DocumentGeneratorRegistry /></RequireAuth>} />
+        <Route path="/documents/generator/:type" component={() => <RequireAuth><DocumentGeneratorPage /></RequireAuth>} />
+        <Route path="/business/dashboard" component={() => <RequireAuth><BusinessDashboardPage /></RequireAuth>} />
         <Route path="/business/virtual-cfo" component={VirtualCFOPage} />
 
         <Route path="/services/notice-compliance" component={NoticeCompliancePage} />
@@ -410,7 +410,7 @@ export default function Routes() {
         <Route path="/search" component={SearchPage} />
         <Route path="/blog" component={BlogIndexPage} />
         <Route path="/blog/:slug" component={BlogDetailPage} />
-        <Route path="/analytics" component={AnalyticsPage} />
+        <Route path="/analytics" component={() => <RequireAuth><AnalyticsPage /></RequireAuth>} />
         <Route path="/legal/privacy-policy" component={PrivacyPolicyPage} />
         <Route path="/legal/terms-of-service" component={TermsOfServicePage} />
         <Route path="/legal/refund-policy" component={RefundPolicyPage} />
@@ -425,16 +425,16 @@ export default function Routes() {
         <Route path="/help/user-guide" component={UserGuidePage} />
         <Route path="/help/knowledge-base" component={KnowledgeBasePage} />
         <Route path="/advanced-features" component={AdvancedFeaturesPage} />
-        <Route path="/analytics-dashboard" component={AnalyticsDashboardPage} />
+        <Route path="/analytics-dashboard" component={() => <RequireAuth><AnalyticsDashboardPage /></RequireAuth>} />
         <Route path="/compare" component={ComparisonToolsPage} />
         <Route path="/compare/:slug" component={CompetitorComparisonPage} />
         <Route path="/api-docs" component={ApiDocsPage} />
-        <Route path="/export" component={ExportCenterPage} />
-        <Route path="/integrations" component={IntegrationsPage} />
-        <Route path="/reports" component={ReportsPage} />
-        <Route path="/workflows" component={WorkflowsPage} />
-        <Route path="/teams" component={TeamsPage} />
-        <Route path="/referrals" component={ReferralsPage} />
+        <Route path="/export" component={() => <RequireAuth><ExportCenterPage /></RequireAuth>} />
+        <Route path="/integrations" component={() => <RequireAuth><IntegrationsPage /></RequireAuth>} />
+        <Route path="/reports" component={() => <RequireAuth><ReportsPage /></RequireAuth>} />
+        <Route path="/workflows" component={() => <RequireAuth><WorkflowsPage /></RequireAuth>} />
+        <Route path="/teams" component={() => <RequireAuth><TeamsPage /></RequireAuth>} />
+        <Route path="/referrals" component={() => <RequireAuth><ReferralsPage /></RequireAuth>} />
         <Route path="/500" component={ServerErrorPage} />
         <Route component={NotFound} />
       </Switch>

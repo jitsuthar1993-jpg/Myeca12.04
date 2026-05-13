@@ -135,7 +135,7 @@ export default function CityLandingPage() {
                   `Local Office visits available in ${city.landmark}`,
                   "Deep understanding of state-specific stamp duty",
                   "Fast-track processing with local authorities",
-                  "Trusted by 500+ businesses in the region"
+                  "Guidance tailored to local authority requirements"
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />

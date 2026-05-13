@@ -12,12 +12,13 @@ import { Suspense, lazy } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { SafeAuthProvider } from '@/components/AuthProvider';
 import Routes from './Routes';
 import { LazyMotion, domAnimation } from 'framer-motion';
+import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 
+const Header = lazy(() => import('@/components/layout/Header'));
+const Footer = lazy(() => import('@/components/layout/Footer'));
 const UnifiedFAB = lazy(() =>
   import('@/components/UnifiedFAB').then((m) => ({ default: m.UnifiedFAB }))
 );
@@ -92,12 +93,20 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <ScrollToTop />
-      {showLayoutComponents && <Header />}
+      {showLayoutComponents && (
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
+      )}
       {showLayoutComponents && <div className="h-[60px] md:h-[74px]"></div>}
       <main className="flex-1 bg-white">
         <Routes />
       </main>
-      {showLayoutComponents && !hideFooter && <Footer />}
+      {showLayoutComponents && !hideFooter && (
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      )}
     </div>
   );
 }
@@ -108,6 +117,7 @@ function AppContent() {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const isAuthScreen = isAuthLayoutPath(location);
   const isTaxAssistantPage = location === '/tax-assistant';
+  const loadProductionTelemetry = shouldLoadProductionTelemetry();
 
   useAnalyticsInitialization();
   usePageTracking();
@@ -169,7 +179,7 @@ function AppContent() {
       <ErrorBoundary>
         <Router />
       </ErrorBoundary>
-      {import.meta.env.PROD && (
+      {loadProductionTelemetry && (
         <Suspense fallback={null}>
           <ProdOnlyComponents />
         </Suspense>

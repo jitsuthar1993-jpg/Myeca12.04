@@ -311,15 +311,15 @@ export default function LabourLawCompliancePage() {
               <div className="flex flex-wrap gap-6 mt-6 text-sm">
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  25+ Years Expertise
+                  Expert-led compliance review
                 </div>
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  10,000+ Companies Compliant
+                  PF, ESI and register support
                 </div>
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  Zero Penalty Track Record
+                  Deadline tracking and reminders
                 </div>
               </div>
             </div>
@@ -339,7 +339,7 @@ export default function LabourLawCompliancePage() {
                   </li>
                   <li className="flex items-start">
                     <BookOpen className="w-4 h-4 mr-2 text-indigo-600 mt-0.5" />
-                    Maintain digital registers (Forms A–D) for audits.
+                    Maintain digital registers (Forms A-D) for audits.
                   </li>
                   <li className="flex items-start">
                     <Factory className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
@@ -692,13 +692,13 @@ export default function LabourLawCompliancePage() {
               </h3>
               <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
                 Our labour law experts ensure complete PF, ESI, Contract Labour Act, and Factory Act 
-                compliance with latest 2025 updates. Zero penalty guarantee with proactive management.
+                compliance with latest 2025 updates, deadline tracking and proactive management.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 px-8 shadow-lg">
                   <Users className="w-5 h-5 mr-2" />
-                  Complete Compliance {"₹"}2,999/month
+                  Complete Compliance Rs 2,999/month
                 </Button>
                 <Link href="/expert-consultation?service=labour-law-compliance">
                   <Button size="lg" className="bg-orange-700 hover:bg-orange-800 text-white border-0 px-8 shadow-lg font-semibold">
@@ -711,7 +711,7 @@ export default function LabourLawCompliancePage() {
               <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-orange-100">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Zero Penalty Guarantee</span>
+                  <span>Penalty-risk review</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

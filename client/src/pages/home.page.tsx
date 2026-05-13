@@ -42,7 +42,7 @@ const SectionFallback = () => (
   <div className="py-12">
     <div className="container mx-auto px-4 space-y-4">
       <Skeleton className="h-8 w-64 mx-auto" />
-      <Skeleton className="h-5 w-96 mx-auto" />
+      <Skeleton className="h-5 w-full max-w-96 mx-auto" />
       <div className="grid md:grid-cols-3 gap-6 pt-4">
         {[1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-40 rounded-xl" />

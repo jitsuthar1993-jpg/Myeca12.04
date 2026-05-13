@@ -101,7 +101,10 @@ export function TaxChatbot({
     [context]
   );
   const contextKey = `${pageContext.kind}:${pageContext.path}:${pageContext.title}`;
-  const randomTip = useMemo(() => TAX_TIPS[Math.floor(Math.random() * TAX_TIPS.length)], []);
+  const dailyTip = useMemo(() => {
+    const dayIndex = Math.floor(Date.now() / 86_400_000);
+    return TAX_TIPS[dayIndex % TAX_TIPS.length];
+  }, []);
   const hasUserMessages = useMemo(() => messages.some((message) => message.type === "user"), [messages]);
 
   useEffect(() => {
@@ -143,7 +146,7 @@ export function TaxChatbot({
     setInputValue("");
     setIsTyping(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 800));
+    await new Promise((resolve) => setTimeout(resolve, 650));
 
     const response = generateResponse(trimmedMessage);
     const botMessage: ChatMessage = {
@@ -481,7 +484,7 @@ export function TaxChatbot({
             {!isMinimized && (
               <>
                 <div className="border-b border-slate-100 bg-slate-50 px-4 py-2 text-[11px] font-semibold text-slate-500">
-                  {randomTip}
+                  {dailyTip}
                 </div>
                 {chatContent}
               </>

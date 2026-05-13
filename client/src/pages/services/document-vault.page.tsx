@@ -24,14 +24,13 @@ import { useState, useEffect } from "react";
 
 export default function DocumentVaultServicePage() {
   const { isAuthenticated } = useAuth();
-  const [demoStep, setDemoStep] = useState(0);
-  const [isDemoRunning, setIsDemoRunning] = useState(false);
+  const [previewStep, setPreviewStep] = useState(0);
 
   const features = [
     {
       icon: <Lock className="w-7 h-7 text-[#4f46e5]" />,
-      title: "Bank-Grade Encryption",
-      description: "Every file is encrypted at rest and in transit using industry-standard AES-256 protocols.",
+      title: "Encrypted Storage",
+      description: "Files are protected in transit and at rest using modern encryption controls.",
       bgColor: "bg-[#eef2ff]"
     },
     {
@@ -43,25 +42,23 @@ export default function DocumentVaultServicePage() {
     {
       icon: <Search className="w-7 h-7 text-purple-600" />,
       title: "Smart Organization",
-      description: "Auto-categorization of documents by tax year, category, and importance.",
+      description: "Organize documents by tax year, category, and importance so filing details are easier to find.",
       bgColor: "bg-purple-50"
     },
     {
       icon: <Clock className="w-7 h-7 text-[#c2410c]" />,
       title: "Expiry Alerts",
-      description: "Get notified before your documents expire, so you're always compliant.",
+      description: "Track expiry dates and review documents before they become outdated.",
       bgColor: "bg-[#ffedd5]"
     }
   ];
 
-  const runDemo = () => {
-    setIsDemoRunning(true);
-    setDemoStep(1);
+  const runPreview = () => {
+    setPreviewStep(1);
     const intervals = [2000, 4000, 6000, 8000];
     intervals.forEach((ms, index) => {
       setTimeout(() => {
-        setDemoStep(index + 2);
-        if (index === intervals.length - 1) setIsDemoRunning(false);
+        setPreviewStep(index + 2);
       }, ms);
     });
   };
@@ -79,7 +76,7 @@ export default function DocumentVaultServicePage() {
     <div className="bg-white min-h-screen">
       <SEO 
         title="Secure Document Vault | MyEca" 
-        description="Store and manage your sensitive tax and identity documents with bank-grade encryption."
+        description="Store and manage your sensitive tax and identity documents with secure account-based access."
         keywords="document vault, secure storage, tax documents, identity proof, encryption"
       />
 
@@ -95,8 +92,8 @@ export default function DocumentVaultServicePage() {
             >
               <Shield className="w-4 h-4 text-[var(--color-accent-600)]" />
               <span>CA Assisted Secure Storage</span>
-              <span className="text-[var(--color-primary-400)]">•</span>
-              <span className="text-[var(--color-success-600)] font-semibold">ISO Certified Vault</span>
+              <span className="text-[var(--color-primary-400)]">|</span>
+              <span className="text-[var(--color-success-600)] font-semibold">Controlled Access</span>
             </m.div>
 
             <m.h1 
@@ -116,7 +113,7 @@ export default function DocumentVaultServicePage() {
               transition={{ delay: 0.2 }}
               className="text-lg text-gray-600 max-w-2xl mx-auto"
             >
-              The most secure way to store, organize, and share your critical tax and legal documents. Bank-grade security meets effortless organization.
+              Store, organize, and share your critical tax and legal documents with clear access controls and guided document workflows.
             </m.p>
 
             <m.div 
@@ -145,10 +142,10 @@ export default function DocumentVaultServicePage() {
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     {[
-                      { title: "AES-256 Bit Encryption", desc: "Military grade encryption for all files at rest." },
-                      { title: "Zero Knowledge Architecture", desc: "Only you can access your private keys." },
-                      { title: "Regular Security Audits", desc: "Bi-annual audits by independent security firms." },
-                      { title: "Data Locality", desc: "Your data stays within your sovereign region." }
+                      { title: "Encryption Controls", desc: "Sensitive documents are protected in transit and at rest." },
+                      { title: "Role-Based Access", desc: "Access can be scoped to the user, CA, or assigned team member." },
+                      { title: "Audit Trail Ready", desc: "Document activity can be reviewed through administrative logs." },
+                      { title: "Data Handling Controls", desc: "Production storage should follow the deployment region and retention policy." }
                     ].map((p, i) => (
                       <div key={i} className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
                         <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-slate-400 border border-slate-200 shadow-sm">{i+1}</div>
@@ -252,7 +249,7 @@ export default function DocumentVaultServicePage() {
                          <section>
                             <h3 className="font-bold text-lg text-slate-900">2. Key Management Strategy</h3>
                             <p className="text-slate-600 text-sm leading-relaxed">
-                              We employ AWS KMS (Key Management Service) integrated with local hardware security modules (HSMs). Each user receives a unique Master Key (MK) which is used to generate session-based Data Keys (DKs) for high-performance encryption/decryption cycles.
+                              The production vault should use managed key storage, scoped access policies, and short-lived sessions. Key handling details depend on the configured deployment provider.
                             </p>
                          </section>
                          <div className="flex justify-center py-6">
@@ -344,73 +341,73 @@ export default function DocumentVaultServicePage() {
               </h2>
 
               <p className="text-[19px] text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Join thousands of users who trust MyEca for bank-grade document storage.
+                Keep tax and compliance documents organized with a secure, account-based vault.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <VaultButton className="px-8 w-full sm:w-auto rounded-[14px] h-14 text-[16px] font-semibold bg-[#2563eb] hover:bg-blue-700 shadow-lg shadow-blue-500/25 text-white transition-all hover:-translate-y-0.5" />
                 
-                <Dialog onOpenChange={(open) => !open && setDemoStep(0)}>
+                <Dialog onOpenChange={(open) => !open && setPreviewStep(0)}>
                   <DialogTrigger asChild>
                     <Button size="lg" variant="outline" className="px-8 w-full sm:w-auto rounded-[14px] h-14 text-[16px] font-semibold border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm transition-all hover:-translate-y-0.5">
-                      View Security Demo
+                      Preview Security Flow
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-lg bg-white overflow-hidden">
                     <DialogHeader>
-                      <DialogTitle className="text-2xl font-bold">Interactive Security Demo</DialogTitle>
+                      <DialogTitle className="text-2xl font-bold">Security Flow Preview</DialogTitle>
                       <DialogDescription>
-                        Witness our real-time encryption and integrity check in action.
+                        Review the checks a secure upload flow should complete before a file is accepted.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="py-8 text-center space-y-6">
-                       {demoStep === 0 ? (
+                       {previewStep === 0 ? (
                          <div className="space-y-6">
                             <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto border border-blue-100">
                                <Play className="w-8 h-8 text-blue-600 ml-1" />
                             </div>
-                            <Button onClick={runDemo} className="bg-blue-600">Start Simulation</Button>
+                            <Button onClick={runPreview} className="bg-blue-600">Start Preview</Button>
                          </div>
                        ) : (
                          <div className="space-y-8 px-4">
                             <div className="flex items-center justify-between text-sm font-semibold text-slate-500">
                                <span>Security Status</span>
-                               <span className={demoStep === 5 ? "text-emerald-600" : "text-blue-600"}>
-                                 {demoStep === 1 && "Initializing..."}
-                                 {demoStep === 2 && "Syncing Keys..."}
-                                 {demoStep === 3 && "Verifying Certificates..."}
-                                 {demoStep === 4 && "Finalizing Vault..."}
-                                 {demoStep === 5 && "SECURE"}
+                               <span className={previewStep === 5 ? "text-emerald-600" : "text-blue-600"}>
+                                 {previewStep === 1 && "Initializing..."}
+                                 {previewStep === 2 && "Syncing Keys..."}
+                                 {previewStep === 3 && "Verifying Certificates..."}
+                                 {previewStep === 4 && "Finalizing Vault..."}
+                                 {previewStep === 5 && "SECURE"}
                                </span>
                             </div>
                             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                                <m.div 
                                  initial={{ width: 0 }}
-                                 animate={{ width: `${(demoStep / 5) * 100}%` }}
+                                 animate={{ width: `${(previewStep / 5) * 100}%` }}
                                  className="h-full bg-gradient-to-r from-blue-600 to-indigo-600"
                                />
                             </div>
                             <div className="space-y-4">
                                {[
-                                 "Encryption Tunnel (TLS 1.3)",
-                                 "AES-256 Key Handshake",
-                                 "ISO Compliance Check",
-                                 "Zero-Knowledge Handshake"
+                                 "Secure Transport Check",
+                                 "Key Scope Check",
+                                 "Access Policy Check",
+                                 "Integrity Check"
                                ].map((text, i) => (
                                  <m.div 
                                    key={i}
                                    initial={{ opacity: 0, x: -10 }}
-                                   animate={{ opacity: demoStep > i + 1 ? 1 : 0.3, x: 0 }}
+                                   animate={{ opacity: previewStep > i + 1 ? 1 : 0.3, x: 0 }}
                                    className="flex items-center gap-3 text-[13px] font-medium"
                                  >
-                                   <div className={`w-5 h-5 rounded-full flex items-center justify-center ${demoStep > i + 1 ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
-                                      {demoStep > i + 1 ? <Check className="w-3 h-3" /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                                   <div className={`w-5 h-5 rounded-full flex items-center justify-center ${previewStep > i + 1 ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
+                                      {previewStep > i + 1 ? <Check className="w-3 h-3" /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
                                    </div>
                                    {text}
                                  </m.div>
                                ))}
                             </div>
-                            {demoStep === 5 && (
+                            {previewStep === 5 && (
                               <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                                  <VaultButton className="w-full bg-emerald-600 hover:bg-emerald-700" />
                               </m.div>

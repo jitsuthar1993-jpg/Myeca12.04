@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { m } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +22,7 @@ import { Layout } from "@/components/admin/Layout";
 import { cn } from "@/lib/utils";
 
 interface Workflow {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   trigger: {
@@ -37,12 +36,12 @@ interface Workflow {
   enabled: boolean;
   status: string;
   lastRun?: string;
-  nextRun?: string;
+  nextRun?: unknown;
   runs: number;
 }
 
 interface WorkflowTemplate {
-  id: number;
+  id: string;
   name: string;
   description: string;
   category: string;
@@ -61,28 +60,18 @@ export default function WorkflowsPage() {
   const queryClient = useQueryClient();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  // Fetch workflows
-  const { data: workflowsData = { workflows: [
-    { id: 1, name: "GST Return Reminder", enabled: true, status: "idle", runs: 45, trigger: { type: "schedule" }, nextRun: "2025-05-10T10:00:00Z" },
-    { id: 2, name: "Auto-Archive Documents", enabled: true, status: "running", runs: 128, trigger: { type: "event" }, nextRun: "Live" },
-    { id: 3, name: "ITR Optimization Scan", enabled: false, status: "disabled", runs: 12, trigger: { type: "manual" }, nextRun: "-" }
-  ] }, isLoading } = useQuery<any>({
+  const { data: workflowsData = { workflows: [] }, isLoading } = useQuery<any>({
     queryKey: ["/api/workflows"]
   });
 
-  // Fetch templates
-  const { data: templatesData = { templates: [
-    { id: 1, name: "GST Reminder", category: "Compliance", description: "Send reminders for GST filing", trigger: { type: "schedule", config: { cron: "0 0 1 * *" } }, actions: [{ type: "email", config: { to: "user@example.com" } }] },
-    { id: 2, name: "Invoice Auto-Check", category: "Accounting", description: "Validate invoices on upload", trigger: { type: "event", config: { event: "upload" } }, actions: [{ type: "webhook", config: { url: "https://api.example.com" } }] }
-  ] } } = useQuery<any>({
-    queryKey: ["/api/workflow-templates"]
+  const { data: templatesData = { templates: [] }, isLoading: templatesLoading } = useQuery<any>({
+    queryKey: ["/api/workflows/templates"]
   });
 
   const [selectedTemplate, setSelectedTemplate] = useState<WorkflowTemplate | null>(null);
 
-  // Toggle workflow mutation
   const toggleMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/workflows/${id}/toggle`, {
+    mutationFn: (id: string) => apiRequest(`/api/workflows/${id}/toggle`, {
       method: "POST"
     }),
     onSuccess: () => {
@@ -94,7 +83,6 @@ export default function WorkflowsPage() {
     }
   });
 
-  // Create workflow mutation
   const createMutation = useMutation({
     mutationFn: (workflow: any) => apiRequest("/api/workflows", {
       method: "POST",
@@ -110,9 +98,8 @@ export default function WorkflowsPage() {
     }
   });
 
-  // Delete workflow mutation
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/workflows/${id}`, {
+    mutationFn: (id: string) => apiRequest(`/api/workflows/${id}`, {
       method: "DELETE"
     }),
     onSuccess: () => {
@@ -126,6 +113,12 @@ export default function WorkflowsPage() {
 
   const workflows = workflowsData?.workflows || [];
   const templates = templatesData?.templates || [];
+  const workflowStats = {
+    healthy: workflows.filter((workflow: Workflow) => workflow.enabled && workflow.status !== "failed").length,
+    warning: workflows.filter((workflow: Workflow) => workflow.status === "warning").length,
+    failed: workflows.filter((workflow: Workflow) => workflow.status === "failed").length,
+    paused: workflows.filter((workflow: Workflow) => !workflow.enabled).length
+  };
 
   const handleCreateFromTemplate = (template: WorkflowTemplate) => {
     setSelectedTemplate(template);
@@ -153,7 +146,20 @@ export default function WorkflowsPage() {
   const actionIcons: Record<string, any> = {
     email: Mail,
     webhook: Activity,
-    notification: Bell
+    notification: Bell,
+    compliance_check: Shield,
+    report: FileText,
+    reminder: Bell,
+    document: FileText
+  };
+
+  const formatNextRun = (nextRun?: unknown) => {
+    if (!nextRun) return "Manual";
+    const seconds = typeof nextRun === "object" && nextRun !== null && "_seconds" in nextRun
+      ? Number((nextRun as { _seconds?: unknown })._seconds)
+      : null;
+    const parsedDate = seconds ? new Date(seconds * 1000) : new Date(String(nextRun));
+    return Number.isNaN(parsedDate.getTime()) ? String(nextRun) : parsedDate.toLocaleDateString();
   };
 
   return (
@@ -190,14 +196,14 @@ export default function WorkflowsPage() {
                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Workflow Status</Label>
                    <div className="grid grid-cols-2 gap-3">
                       {[
-                        { label: "Healthy", value: "08", color: "emerald" },
-                        { label: "Warning", value: "01", color: "orange" },
-                        { label: "Failed", value: "00", color: "red" },
-                        { label: "Paused", value: "02", color: "slate" }
+                        { label: "Healthy", value: workflowStats.healthy, color: "emerald" },
+                        { label: "Warning", value: workflowStats.warning, color: "orange" },
+                        { label: "Failed", value: workflowStats.failed, color: "red" },
+                        { label: "Paused", value: workflowStats.paused, color: "slate" }
                       ].map((stat, i) => (
                         <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
-                           <span className={cn("text-sm font-black leading-none", `text-${stat.color}-600`)}>{stat.value}</span>
+                           <span className={cn("text-sm font-black leading-none", `text-${stat.color}-600`)}>{String(stat.value).padStart(2, "0")}</span>
                         </div>
                       ))}
                    </div>
@@ -251,7 +257,8 @@ export default function WorkflowsPage() {
               ) : (
                 <div className="grid gap-6">
                   {workflows.map((workflow: Workflow) => {
-                    const TriggerIcon = triggerIcons[workflow.trigger.type] || Zap;
+                    const TriggerIcon = triggerIcons[workflow.trigger?.type] || Zap;
+                    const workflowActions = workflow.actions || [];
                     return (
                       <Card key={workflow.id} className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white group hover:shadow-xl transition-all">
                         <CardContent className="p-8">
@@ -278,7 +285,7 @@ export default function WorkflowsPage() {
                                       </div>
                                       <div className="flex flex-col">
                                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Schedule</span>
-                                         <span className="text-[10px] font-black text-slate-700 uppercase">{workflow.nextRun ? new Date(workflow.nextRun).toLocaleDateString() : "Manual"}</span>
+                                         <span className="text-[10px] font-black text-slate-700 uppercase">{formatNextRun(workflow.nextRun)}</span>
                                       </div>
                                    </div>
                                    <div className="flex items-center gap-2">
@@ -304,7 +311,7 @@ export default function WorkflowsPage() {
                                  </div>
                                  
                                  <div className="flex items-center gap-2 pt-2">
-                                   {workflow.actions.map((action, index) => {
+                                   {workflowActions.map((action, index) => {
                                      const ActionIcon = actionIcons[action.type] || Zap;
                                      return (
                                        <div key={index} className="px-4 h-9 bg-slate-50 rounded-xl flex items-center gap-2 border border-slate-100 hover:border-purple-200 transition-colors">
@@ -348,7 +355,21 @@ export default function WorkflowsPage() {
             </TabsContent>
 
             <TabsContent value="templates" className="outline-none">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templatesLoading ? (
+                <div className="py-32 flex flex-col items-center justify-center bg-white rounded-[48px] border border-slate-100">
+                  <Loader2 className="h-10 w-10 animate-spin text-purple-200" />
+                  <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading templates...</p>
+                </div>
+              ) : templates.length === 0 ? (
+                <div className="py-32 text-center bg-white rounded-[48px] border border-dashed border-slate-100">
+                  <FileText className="h-14 w-14 text-slate-100 mx-auto mb-6" />
+                  <h3 className="text-xl font-black text-slate-900 mb-2 tracking-tight">No Templates Available</h3>
+                  <p className="text-slate-400 text-xs font-medium max-w-sm mx-auto leading-relaxed">
+                    Workflow templates will appear here after the automation catalog is configured.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {templates.map((template: WorkflowTemplate) => {
                   const TriggerIcon = triggerIcons[template.trigger.type] || Zap;
                   return (
@@ -383,7 +404,8 @@ export default function WorkflowsPage() {
                     </Card>
                   );
                 })}
-              </div>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

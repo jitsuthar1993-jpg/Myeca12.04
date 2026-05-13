@@ -10,6 +10,7 @@ import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
 import { isGoogleAuthEnabled, isSupabaseEnabled, supabase } from "@/lib/supabase";
+import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
 type LogoutReason = "manual" | "timeout" | "session_expired";
 
@@ -32,6 +33,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function readTemporaryUserFromSession(): AppUser | null {
   if (typeof window === "undefined") return null;
+  if (!allowLocalAuthFallbacks()) {
+    window.sessionStorage.removeItem(TEMPORARY_TEST_AUTH_STORAGE_KEY);
+    return null;
+  }
 
   try {
     const rawUser = window.sessionStorage.getItem(TEMPORARY_TEST_AUTH_STORAGE_KEY);
@@ -52,7 +57,7 @@ function writeTemporaryUserToSession(user: AppUser) {
   window.sessionStorage.setItem(TEMPORARY_TEST_AUTH_STORAGE_KEY, JSON.stringify(user));
 }
 
-function localMockUser(email: string): AppUser {
+function localFallbackUser(email: string): AppUser {
   let role = "user";
   const lowerEmail = email.toLowerCase();
   if (lowerEmail.includes("admin")) role = "admin";
@@ -60,7 +65,7 @@ function localMockUser(email: string): AppUser {
   else if (lowerEmail.includes("team")) role = "team_member";
 
   return {
-    id: "mock_id_" + role,
+    id: "local_test_" + role,
     email: email || "local@example.com",
     firstName: "Test",
     lastName: role.toUpperCase(),
@@ -252,7 +257,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refreshUser]);
 
   const login = async (email: string, password?: string) => {
-    const temporaryTestUser = getTemporaryTestUserByEmail(email);
+    const temporaryTestUser = allowLocalAuthFallbacks() ? getTemporaryTestUserByEmail(email) : null;
     if (temporaryTestUser) {
       const user = createTemporaryAppUser(temporaryTestUser);
       writeTemporaryUserToSession(user);
@@ -268,7 +273,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
-      const user = localMockUser(email);
+      if (!allowLocalAuthFallbacks()) {
+        throw new Error("Authentication is not configured for this deployment.");
+      }
+
+      const user = localFallbackUser(email);
       writeTemporaryUserToSession(user);
       setAppUser(user);
       setAuthUser(null);
@@ -307,7 +316,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
-      const user = localMockUser(email);
+      if (!allowLocalAuthFallbacks()) {
+        throw new Error("Authentication is not configured for this deployment.");
+      }
+
+      const user = localFallbackUser(email);
       writeTemporaryUserToSession(user);
       setAppUser(user);
       setIsLoading(false);
@@ -359,7 +372,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAppUser(null);
 
     if (!isSupabaseEnabled) {
-      await login("user@gmail.com", "local_mock");
+      if (!allowLocalAuthFallbacks()) {
+        throw new Error("Authentication is not configured for this deployment.");
+      }
+
+      await login("user@gmail.com", "local_test");
       return;
     }
 

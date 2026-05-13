@@ -18,12 +18,47 @@ export default function Testimonials() {
             What Our Customers Say
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Join thousands of satisfied users who have simplified their tax filing with MyeCA.in.
+            Read how customers describe their tax filing experience with MyeCA.in.
           </p>
         </m.div>
 
+        <div className="grid gap-4 sm:hidden">
+          {testimonials.slice(0, 3).map((testimonial, index) => (
+            <Card
+              key={testimonial.id}
+              className="w-full bg-white rounded-xl p-5 shadow-sm border border-gray-200"
+            >
+              <div className="flex text-yellow-400 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-current" />
+                ))}
+              </div>
+              <p className="text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed">
+                "{testimonial.content}"
+              </p>
+              <div className="flex items-center">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold shadow-sm ${
+                  index % 4 === 0 ? 'bg-blue-500' :
+                  index % 4 === 1 ? 'bg-green-500' :
+                  index % 4 === 2 ? 'bg-purple-500' : 'bg-red-500'
+                }`}>
+                  {testimonial.avatar}
+                </div>
+                <div className="ml-3 min-w-0">
+                  <div className="font-semibold text-gray-900 text-sm">
+                    {testimonial.name}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {testimonial.role}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
         {/* Testimonials Carousel */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden hidden sm:block">
           <m.div
             className="flex space-x-6 pb-6"
             animate={{ x: [0, -1200] }}

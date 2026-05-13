@@ -86,74 +86,110 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
 
 // Show notification when update is available
 function showUpdateNotification() {
-  // Create notification element
+  document.getElementById('sw-update-notification')?.remove();
+
   const notification = document.createElement('div');
   notification.id = 'sw-update-notification';
-  notification.innerHTML = `
-    <div style="
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      max-width: 400px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      padding: 16px;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideUp 0.3s ease;
-    ">
-      <div style="
-        width: 40px;
-        height: 40px;
-        background: #dbeafe;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      ">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#2563eb">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-      </div>
-      <div style="flex: 1;">
-        <p style="font-weight: 600; color: #1f2937; margin: 0 0 4px;">Update Available</p>
-        <p style="font-size: var(--text-sm); color: #6b7280; margin: 0;">A new version is ready. Refresh to update.</p>
-      </div>
-      <button onclick="window.location.reload()" style="
-        background: #2563eb;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-      ">Refresh</button>
-      <button onclick="if(this.parentElement && this.parentElement.parentElement) this.parentElement.parentElement.remove()" style="
-        background: transparent;
-        border: none;
-        padding: 4px;
-        cursor: pointer;
-        color: #9ca3af;
-      ">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-    <style>
-      @keyframes slideUp {
-        from { transform: translateY(100px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-    </style>
-  `;
+  Object.assign(notification.style, {
+    position: 'fixed',
+    bottom: '20px',
+    left: '20px',
+    right: '20px',
+    maxWidth: '400px',
+    background: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+    padding: '16px',
+    zIndex: '9999',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    transform: 'translateY(0)',
+  });
+
+  const icon = document.createElement('div');
+  Object.assign(icon.style, {
+    width: '40px',
+    height: '40px',
+    background: '#dbeafe',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: '0',
+  });
+  icon.appendChild(createSvgIcon('M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'));
+
+  const text = document.createElement('div');
+  text.style.flex = '1';
+
+  const title = document.createElement('p');
+  Object.assign(title.style, {
+    fontWeight: '600',
+    color: '#1f2937',
+    margin: '0 0 4px',
+  });
+  title.textContent = 'Update Available';
+
+  const body = document.createElement('p');
+  Object.assign(body.style, {
+    fontSize: 'var(--text-sm)',
+    color: '#6b7280',
+    margin: '0',
+  });
+  body.textContent = 'A new version is ready. Refresh to update.';
+  text.append(title, body);
+
+  const refresh = document.createElement('button');
+  refresh.id = 'sw-update-refresh';
+  refresh.type = 'button';
+  Object.assign(refresh.style, {
+    background: '#2563eb',
+    color: 'white',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontWeight: '500',
+    cursor: 'pointer',
+  });
+  refresh.textContent = 'Refresh';
+  refresh.addEventListener('click', () => window.location.reload());
+
+  const dismiss = document.createElement('button');
+  dismiss.id = 'sw-update-dismiss';
+  dismiss.type = 'button';
+  dismiss.setAttribute('aria-label', 'Dismiss update notification');
+  Object.assign(dismiss.style, {
+    background: 'transparent',
+    border: 'none',
+    padding: '4px',
+    cursor: 'pointer',
+    color: '#9ca3af',
+    lineHeight: '0',
+  });
+  dismiss.appendChild(createSvgIcon('M6 18L18 6M6 6l12 12', 'currentColor'));
+  dismiss.addEventListener('click', () => notification.remove());
+
+  notification.append(icon, text, refresh, dismiss);
   
   document.body.appendChild(notification);
+}
+
+function createSvgIcon(pathData: string, stroke = '#2563eb'): SVGSVGElement {
+  const namespace = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(namespace, 'svg');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '20');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('stroke', stroke);
+  const path = document.createElementNS(namespace, 'path');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  path.setAttribute('stroke-width', '2');
+  path.setAttribute('d', pathData);
+  svg.appendChild(path);
+  return svg;
 }
 
 // Unregister service worker
@@ -279,4 +315,3 @@ export function isStandalone(): boolean {
          (navigator as any).standalone === true ||
          document.referrer.includes('android-app://');
 }
-

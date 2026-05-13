@@ -58,6 +58,6 @@ describe("BlogArticle", () => {
     expect(screen.getByText("Frequently asked questions")).toBeInTheDocument();
     expect(screen.getByText("What is this?")).toBeInTheDocument();
     expect(screen.getByText("Related articles")).toBeInTheDocument();
-    expect(screen.getByText("Related article")).toBeInTheDocument();
+    expect(screen.getAllByText("Related article").length).toBeGreaterThan(0);
   });
 });

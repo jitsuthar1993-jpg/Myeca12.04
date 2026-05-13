@@ -93,7 +93,7 @@ const services = [
     longDescription: "Managing GST can be complex with changing rules and filing requirements. Our Business GST service takes the burden off your shoulders, ensuring your monthly and quarterly returns (GSTR-1, GSTR-3B) are filed accurately and on time.",
     benefits: [
       "Accurate Input Tax Credit (ITC) reconciliation",
-      "Zero-penalty guarantee on timely filings",
+      "Deadline tracking to reduce penalty risk",
       "Quarterly/Monthly business health check-up",
       "Priority support for GST department inquiries"
     ],
@@ -242,7 +242,7 @@ export default function OtherServicesSection() {
                                   <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
                                     <div className="flex items-center gap-2 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                       <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                                      Trusted by 5000+ Clients
+                                      Service pricing
                                     </div>
                                     <div className="flex items-baseline gap-2">
                                       <span className="text-3xl font-black text-slate-900">{service.price}</span>

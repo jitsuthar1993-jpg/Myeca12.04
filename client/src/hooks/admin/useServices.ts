@@ -1,14 +1,27 @@
 // Admin Services Hook
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminApi } from '@/lib/admin/api';
 import type { Service, FilterParams } from '@/lib/admin/types';
+
+const isDevelopment = import.meta.env.DEV;
+const servicesEndpointUnavailable = 'Admin services API is not configured yet';
 
 export function useServices(params?: FilterParams) {
   return useQuery({
     queryKey: ['admin', 'services', params],
     queryFn: async () => {
-      // Mock for now - will be implemented when backend endpoint is ready
+      if (!isDevelopment) {
+        return {
+          success: false,
+          error: servicesEndpointUnavailable,
+          data: {
+            services: [],
+            pagination: { page: 1, limit: 10, total: 0, pages: 0 }
+          }
+        };
+      }
+
+      // Development-only empty state until the backend endpoint is implemented.
       return {
         success: true,
         data: {
@@ -27,8 +40,11 @@ export function useCreateService() {
   
   return useMutation({
     mutationFn: async (serviceData: Partial<Service>) => {
-      // Mock for now
-      return { success: true, data: { service_id: Math.floor(Math.random() * 1000) } };
+      if (!isDevelopment) {
+        throw new Error(servicesEndpointUnavailable);
+      }
+
+      return { success: true, data: { service_id: Date.now() } };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'services'] });
@@ -42,7 +58,10 @@ export function useUpdateService() {
   
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<Service> }) => {
-      // Mock for now
+      if (!isDevelopment) {
+        throw new Error(servicesEndpointUnavailable);
+      }
+
       return { success: true };
     },
     onSuccess: (_, variables) => {
@@ -58,7 +77,10 @@ export function useDeleteService() {
   
   return useMutation({
     mutationFn: async (id: number) => {
-      // Mock for now
+      if (!isDevelopment) {
+        throw new Error(servicesEndpointUnavailable);
+      }
+
       return { success: true };
     },
     onSuccess: () => {
@@ -67,4 +89,3 @@ export function useDeleteService() {
     },
   });
 }
-

@@ -39,7 +39,7 @@ async function readAuth(req: Request) {
 
   if (process.env.NODE_ENV !== "production" && process.env.ALLOW_MOCK_AUTH === "true") {
     return {
-      userId: "mock_id",
+      userId: "local_test_user",
       email: "local@example.com",
     };
   }

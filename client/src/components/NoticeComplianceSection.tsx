@@ -183,13 +183,13 @@ export default function NoticeComplianceSection() {
                 <AlertTriangle className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link href="tel:+919876543210">
+            <Link href="/expert-consultation?service=notice-compliance">
               <Button 
                 variant="outline" 
                 size="lg"
                 className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-4"
               >
-                Call Expert Now
+                Request Callback
                 <Phone className="ml-2 h-5 w-5" />
               </Button>
             </Link>

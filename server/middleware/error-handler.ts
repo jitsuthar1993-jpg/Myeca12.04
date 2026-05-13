@@ -1,14 +1,9 @@
 // Error Handling and Logging Middleware
 import { Request, Response, NextFunction } from 'express';
-import fs from 'fs';
-import path from 'path';
 
 const LOGGING_CONFIG = {
   DEVELOPMENT_LOGGING: process.env.NODE_ENV === 'development',
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
-  FILE_PATH: './logs',
-  FILE_ENABLED: false,
-  MAX_FILE_SIZE: 10 * 1024 * 1024,
   CONSOLE_ENABLED: true,
   LOG_REQUESTS: process.env.NODE_ENV === 'development',
   LOG_RESPONSES: process.env.NODE_ENV === 'development',
@@ -59,105 +54,39 @@ export class NotFoundError extends AppError {
 
 // Logging utility
 class Logger {
-  private logDir: string;
-  private logFile: string;
-  private errorFile: string;
-  
-  constructor() {
-    this.logDir = LOGGING_CONFIG.FILE_PATH;
-    this.logFile = path.join(this.logDir, 'app.log');
-    this.errorFile = path.join(this.logDir, 'error.log');
-    
-    this.ensureLogDirectory();
-  }
-  
-  private ensureLogDirectory(): void {
-    if (!LOGGING_CONFIG.FILE_ENABLED) {
-      return;
-    }
-
-    if (!fs.existsSync(this.logDir)) {
-      try {
-        fs.mkdirSync(this.logDir, { recursive: true });
-      } catch (error) {
-        console.warn("File logging disabled: failed to create log directory", error);
-        LOGGING_CONFIG.FILE_ENABLED = false;
-      }
-    }
-  }
-  
-  private formatMessage(level: string, message: string, meta?: any): string {
+  private formatMessage(level: string, message: string, meta?: any) {
     const timestamp = new Date().toISOString();
-    const metaStr = meta ? ` ${JSON.stringify(meta)}` : '';
-    return `[${timestamp}] [${level.toUpperCase()}] ${message}${metaStr}\n`;
-  }
-  
-  private writeToFile(filePath: string, message: string): void {
-    if (LOGGING_CONFIG.FILE_ENABLED) {
-      fs.appendFile(filePath, message, (err) => {
-        if (err) {
-          console.error('Failed to write to log file:', err);
-        }
-      });
-    }
-  }
-  
-  private rotateLogs(): void {
-    // Simple log rotation - in production, use winston or similar
-    const maxSize = LOGGING_CONFIG.MAX_FILE_SIZE;
-    
-    [this.logFile, this.errorFile].forEach(filePath => {
-      if (fs.existsSync(filePath)) {
-        const stats = fs.statSync(filePath);
-        if (stats.size > maxSize) {
-          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          const backupPath = `${filePath}.${timestamp}`;
-          fs.renameSync(filePath, backupPath);
-        }
-      }
-    });
+    return {
+      level,
+      message,
+      timestamp,
+      ...(meta ? { meta } : {}),
+    };
   }
   
   info(message: string, meta?: any): void {
-    const formattedMessage = this.formatMessage('info', message, meta);
-    
     if (LOGGING_CONFIG.CONSOLE_ENABLED) {
-      console.log(`\x1b[36m[INFO]\x1b[0m ${message}`, meta || '');
+      console.info(this.formatMessage('info', message, meta));
     }
-    
-    this.writeToFile(this.logFile, formattedMessage);
   }
   
   warn(message: string, meta?: any): void {
-    const formattedMessage = this.formatMessage('warn', message, meta);
-    
     if (LOGGING_CONFIG.CONSOLE_ENABLED) {
-      console.warn(`\x1b[33m[WARN]\x1b[0m ${message}`, meta || '');
+      console.warn(this.formatMessage('warn', message, meta));
     }
-    
-    this.writeToFile(this.logFile, formattedMessage);
   }
   
   error(message: string, meta?: any): void {
-    const formattedMessage = this.formatMessage('error', message, meta);
-    
     if (LOGGING_CONFIG.CONSOLE_ENABLED) {
-      console.error(`\x1b[31m[ERROR]\x1b[0m ${message}`, meta || '');
+      console.error(this.formatMessage('error', message, meta));
     }
-    
-    this.writeToFile(this.logFile, formattedMessage);
-    this.writeToFile(this.errorFile, formattedMessage);
   }
   
   debug(message: string, meta?: any): void {
     if (LOGGING_CONFIG.LEVEL === 'debug') {
-      const formattedMessage = this.formatMessage('debug', message, meta);
-      
       if (LOGGING_CONFIG.CONSOLE_ENABLED) {
-        console.debug(`\x1b[35m[DEBUG]\x1b[0m ${message}`, meta || '');
+        console.debug(this.formatMessage('debug', message, meta));
       }
-      
-      this.writeToFile(this.logFile, formattedMessage);
     }
   }
 }
@@ -311,40 +240,6 @@ export const asyncHandler = (fn: Function) => {
   };
 };
 
-// Rate limiting helper
-export const createRateLimiter = (windowMs: number, max: number, message: string) => {
-  const requests = new Map<string, { count: number; resetTime: number }>();
-  
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const key = req.ip || 'unknown';
-    const now = Date.now();
-    
-    if (!requests.has(key)) {
-      requests.set(key, { count: 1, resetTime: now + windowMs });
-      return next();
-    }
-    
-    const requestData = requests.get(key)!;
-    
-    if (now > requestData.resetTime) {
-      requests.set(key, { count: 1, resetTime: now + windowMs });
-      return next();
-    }
-    
-    if (requestData.count >= max) {
-      res.status(429).json({
-        success: false,
-        message,
-        retryAfter: Math.ceil((requestData.resetTime - now) / 1000)
-      });
-      return;
-    }
-    
-    requestData.count++;
-    next();
-  };
-};
-
 // Security headers middleware
 export const securityHeaders = (req: Request, res: Response, next: NextFunction): void => {
   // Basic security headers
@@ -408,7 +303,6 @@ export default {
   notFoundHandler,
   validateRequest,
   asyncHandler,
-  createRateLimiter,
   securityHeaders,
   corsMiddleware,
   requestTimeout,

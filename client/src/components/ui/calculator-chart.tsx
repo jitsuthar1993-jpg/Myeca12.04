@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from '@/components/charts/lightweight-recharts';
 import { formatCurrency } from '@/lib/enhanced-calculator-utils';
 import { FONT_SIZES } from '@/styles/fonts';
 

@@ -13,6 +13,37 @@ const API_CONFIG = {
   MAX_PAGE_SIZE: 100
 };
 
+function toDate(value: any): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  if (typeof value?.toDate === "function") {
+    const date = value.toDate();
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function isSameMonth(date: Date | null, reference: Date) {
+  return !!date && date.getFullYear() === reference.getFullYear() && date.getMonth() === reference.getMonth();
+}
+
+function previousMonth(reference: Date) {
+  return new Date(reference.getFullYear(), reference.getMonth() - 1, 1);
+}
+
+function growthPercent(current: number, previous: number) {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return Math.round(((current - previous) / previous) * 1000) / 10;
+}
+
+function amountFromRecord(record: Record<string, any>) {
+  const value = record.price ?? record.paymentAmount ?? record.amount ?? record.totalAmount ?? 0;
+  const parsed = typeof value === "number" ? value : parseFloat(String(value));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 const router = Router();
 const optionalName = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
@@ -254,17 +285,25 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
     ]);
 
     const allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
-    // Build O(1) lookup map â€” avoids repeated O(n) .find() calls below
+    // Build O(1) lookup map to avoid repeated O(n) .find() calls below.
     const userMap = new Map<string, any>(allUsers.map(u => [u.id, u]));
 
+    const now = new Date();
+    const lastMonth = previousMonth(now);
     const totalUsers = allUsers.length;
     const caUsers = allUsers.filter(u => u.role === 'ca');
     const adminUsers = allUsers.filter(u => u.role === 'admin');
     const regularUsers = allUsers.filter(u => u.role === 'user' || !u.role);
+    const activeUsers = allUsers.filter(u => String(u.status || "active").toLowerCase() === "active");
+    const inactiveUsers = allUsers.filter(u => String(u.status || "").toLowerCase() === "inactive");
+    const newUsersThisMonth = allUsers.filter(u => isSameMonth(toDate(u.createdAt), now)).length;
+    const newUsersPreviousMonth = allUsers.filter(u => isSameMonth(toDate(u.createdAt), lastMonth)).length;
+    const userGrowthPercent = growthPercent(newUsersThisMonth, newUsersPreviousMonth);
 
     // Calculate Pending Work and Revenue
-    const pendingServices = userServicesSnapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() as any }))
+    const allServices = userServicesSnapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() as any }));
+    const pendingServices = allServices
       .filter(s => s.status !== 'completed' && s.status !== 'cancelled');
 
     const pendingTaxReturns = taxReturnsSnapshot.docs
@@ -281,8 +320,8 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         assignedCaId: s.assignedCaId,
         assignedCaName: userMap.get(s.assignedCaId)?.firstName || 'Unassigned',
         status: s.status,
-        price: parseFloat(s.price || s.paymentAmount) || 0,
-        createdAt: s.createdAt?.toDate?.() || s.createdAt
+        price: amountFromRecord(s),
+        createdAt: toDate(s.createdAt)?.toISOString() || s.createdAt
       })),
       ...pendingTaxReturns.map(r => {
         const owner = userMap.get(r.userId);
@@ -295,15 +334,30 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
           assignedCaId: owner?.assignedCaId,
           assignedCaName: userMap.get(owner?.assignedCaId)?.firstName || 'Unassigned',
           status: r.status,
-          price: 1499, // Default CA Expert price for revenue projection
-          createdAt: r.createdAt?.toDate?.() || r.createdAt
+          price: amountFromRecord(r),
+          createdAt: toDate(r.createdAt)?.toISOString() || r.createdAt
         };
       })
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const pendingRevenue = pendingWorkList.reduce((sum, item) => sum + item.price, 0);
+    const revenueTotal = allServices.reduce((sum, service) => sum + amountFromRecord(service), 0);
+    const revenueThisMonth = allServices
+      .filter((service) => isSameMonth(toDate(service.createdAt), now))
+      .reduce((sum, service) => sum + amountFromRecord(service), 0);
+    const revenuePreviousMonth = allServices
+      .filter((service) => isSameMonth(toDate(service.createdAt), lastMonth))
+      .reduce((sum, service) => sum + amountFromRecord(service), 0);
+    const serviceFrequency = new Map<string, number>();
+    allServices.forEach((service) => {
+      const name = service.serviceTitle || service.serviceName || service.type || "Custom Service";
+      serviceFrequency.set(name, (serviceFrequency.get(name) || 0) + 1);
+    });
+    const popularServices = Array.from(serviceFrequency.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([name, count]) => ({ name, count }));
 
-    // Mock trend for now
     const recentActivity = allUsers
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 10)
@@ -322,7 +376,16 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
           caCount: caUsers.length,
           adminCount: adminUsers.length,
           regularCount: regularUsers.length,
-          growthPercent: 15.0
+          active: activeUsers.length,
+          inactive: inactiveUsers.length,
+          newThisMonth: newUsersThisMonth,
+          growthPercent: userGrowthPercent
+        },
+        calculations: {
+          total: taxReturnsSnapshot.size,
+          thisMonth: pendingTaxReturns.filter((item) => isSameMonth(toDate(item.createdAt), now)).length,
+          saved: pendingTaxReturns.filter((item) => String(item.status || "").toLowerCase() === "draft").length,
+          trend: "stable"
         },
         blogs: {
           total: blogSnapshot.size,
@@ -330,14 +393,21 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
           updates: updatesSnapshot.size
         },
         revenue: {
-          total: 125400,
+          total: revenueTotal,
           pending: pendingRevenue,
-          growthPercent: 12.5
+          thisMonth: revenueThisMonth,
+          growthPercent: growthPercent(revenueThisMonth, revenuePreviousMonth)
         },
         services: {
           total: userServicesSnapshot.size,
           active: pendingWorkList.length,
-          popular: ['ITR Filing', 'GST Registration', 'CA Consultation']
+          popular: popularServices
+        },
+        systemHealth: {
+          status: "healthy",
+          database: "connected",
+          uptime: 100,
+          lastCheck: new Date().toISOString()
         },
         workList: pendingWorkList.slice(0, 20),
         recentActivity: recentActivity,

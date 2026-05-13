@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { track } from "@vercel/analytics";
 import {
   CheckCircle2,
   Download,
@@ -33,6 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { caseTimelineStages, vaultChecklist } from "@/data/competitive-growth";
+import { shouldLoadProductionTelemetry } from "@/utils/runtime-env";
 
 interface Document {
   id: string;
@@ -57,10 +57,16 @@ const vaultFolders = [
 
 const extractedFields = [
   ["Employer TAN", "BLRT12345A", "High"],
-  ["Gross salary", "₹12,00,000", "High"],
-  ["TDS deducted", "₹86,500", "Medium"],
-  ["80C declared", "₹1,50,000", "High"],
+  ["Gross salary", "Rs 12,00,000", "High"],
+  ["TDS deducted", "Rs 86,500", "Medium"],
+  ["80C declared", "Rs 1,50,000", "High"],
 ];
+
+async function trackDocumentEvent(name: string, properties: Record<string, string>) {
+  if (!shouldLoadProductionTelemetry()) return;
+  const { track } = await import("@vercel/analytics");
+  track(name, properties);
+}
 
 export default function DocumentsPage() {
   const { toast } = useToast();
@@ -127,12 +133,12 @@ export default function DocumentsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
-      track("document_upload_success", { category: uploadData.category });
+      void trackDocumentEvent("document_upload_success", { category: uploadData.category });
       toast({ title: "Document uploaded", description: "Stored securely in your private vault." });
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
     onError: (error) => {
-      track("document_upload_failed", { reason: error instanceof Error ? error.message : "unknown" });
+      void trackDocumentEvent("document_upload_failed", { reason: error instanceof Error ? error.message : "unknown" });
       toast({
         title: "Upload failed",
         description: error instanceof Error ? error.message : "Please try again later.",
@@ -170,7 +176,7 @@ export default function DocumentsPage() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    track("document_private_download", { category: doc.category });
+    void trackDocumentEvent("document_private_download", { category: doc.category });
   };
 
   return (
@@ -319,30 +325,7 @@ export default function DocumentsPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                      {(documents.length ? documents : [
-                        {
-                          id: "demo-form16",
-                          name: "Form 16 - FY 2025-26",
-                          category: "form16",
-                          fileName: "form16.pdf",
-                          originalName: "form16.pdf",
-                          mimeType: "application/pdf",
-                          size: 582000,
-                          createdAt: new Date().toISOString(),
-                          status: "AI Validation",
-                        },
-                        {
-                          id: "demo-ais",
-                          name: "AIS Statement",
-                          category: "ais",
-                          fileName: "ais.pdf",
-                          originalName: "ais.pdf",
-                          mimeType: "application/pdf",
-                          size: 420000,
-                          createdAt: new Date().toISOString(),
-                          status: "In Progress",
-                        },
-                      ]).map((doc) => (
+                      {documents.map((doc) => (
                         <tr key={doc.id} className="group hover:bg-slate-50/50 transition-colors">
                           <td className="px-8 py-4">
                             <div className="flex items-center gap-4">
@@ -367,20 +350,27 @@ export default function DocumentsPage() {
                               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50" onClick={() => setSelectedDoc(doc)}>
                                 <Eye className="h-4 w-4" />
                               </Button>
-                              {!doc.id.startsWith("demo") && (
-                                <>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50" onClick={() => handleDownload(doc)}>
-                                    <Download className="h-4 w-4" />
-                                  </Button>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50" onClick={() => deleteMutation.mutate(doc.id)}>
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </>
-                              )}
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50" onClick={() => handleDownload(doc)}>
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50" onClick={() => deleteMutation.mutate(doc.id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </td>
                         </tr>
                       ))}
+                      {documents.length === 0 && (
+                        <tr>
+                          <td colSpan={3} className="px-8 py-12 text-center">
+                            <FolderOpen className="mx-auto mb-3 h-10 w-10 text-slate-300" />
+                            <p className="text-sm font-bold text-slate-900">No documents uploaded yet</p>
+                            <p className="mt-1 text-xs font-medium text-slate-500">
+                              Upload Form 16, AIS, bank statements, or investment proofs to build your private vault.
+                            </p>
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

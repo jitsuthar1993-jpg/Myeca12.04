@@ -589,23 +589,18 @@ export class ThreatIntelligenceService extends EventEmitter {
 
   // Update behavioral profile
   private async updateBehavioralProfile(ip: string, profile: BehavioralProfile): Promise<void> {
-    // Simulate behavioral data (in production, this would come from actual request logs)
     const hour = new Date().getHours();
-    profile.patterns.requestFrequency[hour] = Math.floor(Math.random() * 100);
-    profile.patterns.errorRate = Math.random() * 20;
-    profile.patterns.uniqueUrls.add(`/api/user/${Math.floor(Math.random() * 1000)}`);
-    profile.patterns.uniqueEndpoints.add('user_profile');
-    profile.patterns.peakActivityHours = [9, 14, 18];
-    profile.patterns.sessionDurations.push(Math.floor(Math.random() * 300));
-    profile.patterns.formSubmissionRate = Math.random() * 5;
-    profile.patterns.apiAbuseScore = Math.random() * 30;
-    profile.patterns.botScore = Math.random() * 40;
+    profile.patterns.requestFrequency[hour] = (profile.patterns.requestFrequency[hour] ?? 0) + 1;
+
+    if (!profile.patterns.peakActivityHours.includes(hour)) {
+      profile.patterns.peakActivityHours = [...profile.patterns.peakActivityHours, hour].slice(-6);
+    }
 
     // Calculate anomalies
     this.calculateBehavioralAnomalies(profile);
     
     profile.lastUpdated = new Date();
-    profile.confidence = Math.min(profile.confidence + 5, 100);
+    profile.confidence = Math.min(profile.confidence + 1, 100);
   }
 
   // Calculate behavioral anomalies

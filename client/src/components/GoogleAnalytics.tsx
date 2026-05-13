@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 
 declare global {
   interface Window {
@@ -8,15 +9,13 @@ declare global {
   }
 }
 
-const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 export default function GoogleAnalytics() {
   const [location] = useLocation();
 
   useEffect(() => {
-    // Only load GA in production
-    if (import.meta.env.MODE !== 'production') {
-      console.log('Google Analytics disabled in development');
+    if (!shouldLoadProductionTelemetry() || !GA_MEASUREMENT_ID) {
       return;
     }
 
@@ -41,7 +40,7 @@ export default function GoogleAnalytics() {
         page_path: location
       });
 
-      // Microsoft Clarity — deferred alongside GA
+      // Microsoft Clarity, deferred alongside GA.
       const clarityId = 'vyw4w3qe7p';
       (window as any).clarity = (window as any).clarity || function(...args: any[]) {
         ((window as any).clarity.q = (window as any).clarity.q || []).push(args);
@@ -61,7 +60,11 @@ export default function GoogleAnalytics() {
 
   // Track page views on route change
   useEffect(() => {
-    if (typeof window.gtag !== 'undefined' && import.meta.env.MODE === 'production') {
+    if (
+      typeof window.gtag !== 'undefined' &&
+      shouldLoadProductionTelemetry() &&
+      GA_MEASUREMENT_ID
+    ) {
       window.gtag('config', GA_MEASUREMENT_ID, {
         page_title: document.title,
         page_location: window.location.href,

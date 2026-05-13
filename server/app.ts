@@ -12,38 +12,45 @@ import { globalErrorHandler } from "./middleware/error-handler.js";
 import { generalRateLimit } from "./middleware/rateLimiting.js";
 
 const app = express();
-const allowedOrigins: (string | RegExp)[] = [
+const productionOrigins: (string | RegExp)[] = [
   "https://myeca.in",
   "https://www.myeca.in",
-  ...(process.env.NODE_ENV !== "production"
-    ? [/^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/]
-    : []),
 ];
+const localOrigins: RegExp[] = [/^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
+
+function isLocalHost(host: string | undefined) {
+  const normalizedHost = host?.split(":")[0] || "";
+  return normalizedHost === "localhost" || normalizedHost === "127.0.0.1" || normalizedHost === "::1";
+}
+
+function isAllowedOrigin(origin: string, allowLocalOrigins: boolean) {
+  const allowedOrigins = allowLocalOrigins ? [...productionOrigins, ...localOrigins] : productionOrigins;
+  return allowedOrigins.some((entry) =>
+    typeof entry === "string" ? entry === origin : entry.test(origin),
+  );
+}
 
 app.use(compress());
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
 
-app.use(
-  cors({
+app.use((req, res, next) => {
+  const allowLocalOrigins = process.env.NODE_ENV !== "production" || isLocalHost(req.hostname || req.headers.host);
+  return cors({
     origin: (origin, callback) => {
       if (!origin) {
         return callback(null, true);
       }
 
-      const allowed = allowedOrigins.some((entry) =>
-        typeof entry === "string" ? entry === origin : entry.test(origin),
-      );
-
-      if (allowed) {
+      if (isAllowedOrigin(origin, allowLocalOrigins)) {
         return callback(null, true);
       }
 
       return callback(new Error(`CORS: origin '${origin}' not allowed`));
     },
     credentials: true,
-  }),
-);
+  })(req, res, next);
+});
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -79,11 +86,7 @@ app.use("/api", (req, res, next) => {
 
   const origin = req.get("origin");
   if (process.env.NODE_ENV === "production" && origin) {
-    const allowed = allowedOrigins.some((entry) =>
-      typeof entry === "string" ? entry === origin : entry.test(origin),
-    );
-
-    if (!allowed) {
+    if (!isAllowedOrigin(origin, isLocalHost(req.hostname || req.headers.host))) {
       return res.status(403).json({ error: "CSRF validation failed" });
     }
   }
@@ -97,7 +100,13 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (req.path.startsWith("/api") && (res.statusCode >= 400 || duration > 1000)) {
-      console.log(`${req.method} ${req.path} ${res.statusCode} in ${duration}ms`);
+      console.info({
+        event: "api_request_observed",
+        method: req.method,
+        path: req.path,
+        statusCode: res.statusCode,
+        durationMs: duration,
+      });
     }
   });
 

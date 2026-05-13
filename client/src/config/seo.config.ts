@@ -48,6 +48,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Manage your tax returns, service orders, documents, and notifications in one secure place.',
     keywords: ['tax dashboard', 'manage ITR', 'service status', 'tax documents'],
     type: 'website',
+    noindex: true,
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Dashboard', url: '/dashboard' }]
   },
 
@@ -555,6 +556,92 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     keywords: ['startup solutions', 'entrepreneur support', 'startup ecosystem India', 'launch business India'],
     type: 'service',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }]
+  },
+  '/pricing': {
+    title: 'Transparent Tax Filing Pricing | ITR, GST & CA Review | MyeCA.in',
+    description: 'Compare MyeCA.in pricing for self-service ITR filing, CA-assisted review, GST, startup, and compliance services.',
+    keywords: ['ITR filing pricing', 'CA assisted filing fees', 'tax filing plans India', 'GST service pricing'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Pricing', url: '/pricing' }]
+  },
+  '/learn': {
+    title: 'Tax Learning Center India | ITR, GST & Compliance Guides | MyeCA.in',
+    description: 'Learn Indian tax filing, GST compliance, deductions, refunds, capital gains, and startup compliance through practical guides.',
+    keywords: ['tax learning India', 'ITR guides', 'GST guides', 'tax education'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Learn', url: '/learn' }]
+  },
+  '/learn/guides': {
+    title: 'Income Tax Guides for Indian Taxpayers | MyeCA.in',
+    description: 'Browse practical guides for ITR forms, AIS/Form 26AS, tax regime choice, deductions, refunds, and notices.',
+    keywords: ['income tax guides', 'ITR guide India', 'AIS Form 26AS guide', 'tax regime guide'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Learn', url: '/learn' }, { name: 'Guides', url: '/learn/guides' }]
+  },
+  '/learn/videos': {
+    title: 'Tax Lesson Outlines | ITR Filing & Compliance | MyeCA.in',
+    description: 'Browse practical tax and compliance lesson outlines for ITR filing, GST, deductions, refunds, and document preparation.',
+    keywords: ['tax lesson outlines', 'ITR filing lessons', 'GST tutorial India'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Learn', url: '/learn' }, { name: 'Lessons', url: '/learn/videos' }]
+  },
+  '/help': {
+    title: 'MyeCA Help Center | Filing, Account & Service Support',
+    description: 'Find help for MyeCA account access, ITR filing, calculators, document uploads, service orders, and support requests.',
+    keywords: ['MyeCA help', 'tax filing support', 'ITR help center', 'MyeCA support'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Help', url: '/help' }]
+  },
+  '/help/faq': {
+    title: 'MyeCA FAQs | Tax Filing and Service Questions',
+    description: 'Answers to common questions about MyeCA.in tax filing, CA review, refunds, GST services, documents, and payments.',
+    keywords: ['MyeCA FAQ', 'ITR filing questions', 'tax filing FAQ India'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Help', url: '/help' }, { name: 'FAQ', url: '/help/faq' }]
+  },
+  '/help/user-guide': {
+    title: 'MyeCA User Guide | How to Use Tax Filing Workflows',
+    description: 'Step-by-step user guide for navigating MyeCA.in, using calculators, uploading documents, and tracking services.',
+    keywords: ['MyeCA user guide', 'tax filing workflow guide', 'document upload guide'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Help', url: '/help' }, { name: 'User Guide', url: '/help/user-guide' }]
+  },
+  '/services/itr-for-salaried': {
+    title: 'ITR Filing for Salaried Employees | AY 2026-27 | MyeCA.in',
+    description: 'File salaried ITR with Form 16 support, regime comparison, deduction review, refund checks, and optional CA assistance.',
+    keywords: ['ITR for salaried employees', 'Form 16 ITR filing', 'salary tax filing India', 'AY 2026-27 ITR'],
+    type: 'service',
+    serviceData: { price: 'Rs 499', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'ITR for Salaried', url: '/services/itr-for-salaried' }]
+  },
+  '/services/tax-planning': {
+    title: 'Tax Planning Services India | Salary, Business & Investments | MyeCA.in',
+    description: 'Plan salary, deductions, capital gains, business income, and regime selection with practical tax planning support.',
+    keywords: ['tax planning services India', 'salary tax planning', 'capital gains tax planning', 'CA tax planning'],
+    type: 'service',
+    serviceData: { price: 'Rs 999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Tax Planning', url: '/services/tax-planning' }]
+  },
+  '/services/document-vault': {
+    title: 'Secure Tax Document Vault | MyeCA.in',
+    description: 'Store and organize tax documents, Form 16, AIS, receipts, certificates, and filing records for easier review.',
+    keywords: ['tax document vault', 'secure document storage', 'Form 16 storage', 'ITR document organizer'],
+    type: 'service',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Document Vault', url: '/services/document-vault' }]
+  },
+  '/startup/registration': {
+    title: 'Startup Registration Guidance India | MyeCA.in',
+    description: 'Get guidance for startup registration, entity setup, DPIIT readiness, GST, MSME, and compliance next steps.',
+    keywords: ['startup registration India', 'DPIIT startup registration', 'startup compliance India'],
+    type: 'service',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }, { name: 'Registration', url: '/startup/registration' }]
+  },
+  '/compare': {
+    title: 'Tax Tool Comparison Hub | MyeCA.in',
+    description: 'Compare tax filing workflows, calculators, services, and support options before choosing the right path.',
+    keywords: ['tax filing comparison', 'ITR platform comparison', 'tax tool comparison'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }]
   }
 };
 

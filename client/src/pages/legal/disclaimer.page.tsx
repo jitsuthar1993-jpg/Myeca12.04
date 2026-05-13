@@ -289,8 +289,8 @@ export default function DisclaimerPage() {
                     <p className="text-gray-600 text-sm">support@myeca.in</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Phone Support</h3>
-                    <p className="text-gray-600 text-sm">+91-9876543210</p>
+                    <h3 className="font-semibold text-gray-900 mb-2">Support</h3>
+                    <p className="text-gray-600 text-sm">Request support by email</p>
                     <p className="text-gray-600 text-sm">Mon-Sat: 9 AM - 7 PM IST</p>
                   </div>
                 </div>

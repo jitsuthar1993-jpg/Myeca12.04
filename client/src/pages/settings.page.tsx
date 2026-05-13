@@ -340,7 +340,7 @@ export default function SettingsPage() {
                         <Monitor className="h-4 w-4 text-slate-400" />
                         <div>
                             <p className="text-sm font-bold text-slate-900">Chrome on Windows</p>
-                            <p className="text-[10px] font-medium text-slate-500">Current Session â€¢ India</p>
+                            <p className="text-[10px] font-medium text-slate-500">Current Session - India</p>
                         </div>
                     </div>
                     <Badge className="bg-emerald-50 text-emerald-600 border-0 font-bold text-[9px] uppercase tracking-widest px-2 py-0.5">Active</Badge>

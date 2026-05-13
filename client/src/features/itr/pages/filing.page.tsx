@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { track } from "@vercel/analytics";
 import {
   ArrowLeft,
   ArrowRight,
@@ -71,6 +70,17 @@ const newRegimeSlabs = [
   "Above ₹24L: 30%",
 ];
 
+const trackProductionEvent = (
+  eventName: string,
+  properties?: Record<string, string | number | boolean | null>,
+) => {
+  if (!import.meta.env.PROD) return;
+
+  void import("@vercel/analytics")
+    .then(({ track }) => track(eventName, properties))
+    .catch(() => undefined);
+};
+
 function estimateNewRegimeTax(income: number) {
   const slabs = [
     [400000, 0],
@@ -135,7 +145,7 @@ export default function ITRFilingPage() {
         }),
       );
       setLastSavedAt(new Date());
-      track("itr_draft_autosaved", { step: steps[currentStep].id });
+      trackProductionEvent("itr_draft_autosaved", { step: steps[currentStep].id });
     }, 600);
     return () => window.clearTimeout(timer);
   }, [currentStep, salaryIncome, deductions, rentAmount]);
@@ -144,7 +154,7 @@ export default function ITRFilingPage() {
     if (currentStep < steps.length - 1) {
       const next = currentStep + 1;
       setCurrentStep(next);
-      track("itr_wizard_step_next", { step: steps[next].id });
+      trackProductionEvent("itr_wizard_step_next", { step: steps[next].id });
     }
   };
 
@@ -153,7 +163,7 @@ export default function ITRFilingPage() {
   };
 
   const submitForReview = () => {
-    track("itr_review_payment_start", { method: "upi_intent", regime: regime.better });
+    trackProductionEvent("itr_review_payment_start", { method: "upi_intent", regime: regime.better });
     window.location.href = "/itr/success";
   };
 

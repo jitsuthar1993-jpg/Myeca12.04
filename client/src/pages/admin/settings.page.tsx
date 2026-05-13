@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { CONTACT } from "@/config/contact";
+import { apiRequest } from "@/lib/queryClient";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   Settings, 
   Globe, 
@@ -37,24 +40,23 @@ import {
 function AdminSettingsContent() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   // General Settings
   const [siteName, setSiteName] = useState("MyeCA.in");
   const [siteDescription, setSiteDescription] = useState("Expert Income Tax Filing & ITR e-Filing in India");
   const [supportEmail, setSupportEmail] = useState("support@myeca.in");
-  const [contactPhone, setContactPhone] = useState("+91-9876543210");
+  const [contactPhone, setContactPhone] = useState("");
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   
   // Email Settings
   const [smtpHost, setSmtpHost] = useState("");
   const [smtpPort, setSmtpPort] = useState("587");
   const [smtpUser, setSmtpUser] = useState("");
-  const [smtpPassword, setSmtpPassword] = useState("");
   const [emailEnabled, setEmailEnabled] = useState(true);
   
   // Payment Settings
   const [razorpayKeyId, setRazorpayKeyId] = useState("");
-  const [razorpayKeySecret, setRazorpayKeySecret] = useState("");
   const [paymentMode, setPaymentMode] = useState("test");
   const [paymentsEnabled, setPaymentsEnabled] = useState(true);
   
@@ -82,40 +84,134 @@ function AdminSettingsContent() {
   const [cacheEnabled, setCacheEnabled] = useState(true);
   const [debugMode, setDebugMode] = useState(false);
 
-  const handleSaveSettings = async (section: string) => {
-    try {
-      // Simulate API call to save settings
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Settings Saved",
-        description: `${section} settings have been updated successfully.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Save Failed",
-        description: "Failed to save settings. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const parseNumber = (value: string, fallback: number) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
   };
 
-  const handleTestConnection = async (type: string) => {
-    try {
-      // Simulate connection test
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Connection Test",
-        description: `${type} connection test successful.`,
+  const { data: systemConfigData } = useQuery({
+    queryKey: ["/api/system/config"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/system/config");
+      return response.json();
+    },
+  });
+
+  useEffect(() => {
+    const config = systemConfigData?.config;
+    if (!config) return;
+
+    setSiteName(config.siteName ?? "MyeCA.in");
+    setSiteDescription(config.siteDescription ?? "Expert Income Tax Filing & ITR e-Filing in India");
+    setSupportEmail(config.supportEmail ?? "support@myeca.in");
+    setContactPhone(config.contactPhone ?? "");
+    setMaintenanceMode(Boolean(config.maintenanceMode));
+    setEmailEnabled(config.email?.enabled ?? true);
+    setSmtpHost(config.email?.smtpHost ?? "");
+    setSmtpPort(config.email?.smtpPort ?? "587");
+    setSmtpUser(config.email?.smtpUser ?? "");
+    setPaymentsEnabled(config.payments?.enabled ?? true);
+    setPaymentMode(config.payments?.mode ?? "test");
+    setRazorpayKeyId(config.payments?.razorpayKeyId ?? "");
+    setPasswordMinLength(String(config.security?.passwordMinLen ?? 8));
+    setTwoFactorAuth(Boolean(config.security?.requirePrivilegedMfa));
+    setSessionTimeout(String(config.security?.sessionTimeoutMinutes ?? 15));
+    setCurrentAssessmentYear(config.tax?.currentAssessmentYear ?? "2025-26");
+    setItrFilingEnabled(config.tax?.itrFilingEnabled ?? true);
+    setMaxFileSize(String(config.tax?.maxFileSizeMb ?? 10));
+    setAutoSaveDrafts(config.tax?.autoSaveDrafts ?? true);
+    setRateLimit(String(config.system?.rateLimitPerMinute ?? 100));
+    setApiTimeout(String(config.system?.apiTimeoutSeconds ?? 30));
+    setCacheEnabled(config.system?.cacheEnabled ?? true);
+    setDebugMode(config.system?.debugMode ?? false);
+    setEmailNotifications(config.system?.emailNotifications ?? true);
+    setSmsNotifications(config.system?.smsNotifications ?? false);
+    setPushNotifications(config.system?.pushNotifications ?? true);
+    setAdminAlerts(config.system?.adminAlerts ?? true);
+  }, [systemConfigData]);
+
+  const buildSystemConfigPayload = () => ({
+    siteName,
+    siteDescription,
+    allowRegistrations: systemConfigData?.config?.allowRegistrations ?? true,
+    maintenanceMode,
+    supportEmail,
+    contactPhone,
+    email: {
+      enabled: emailEnabled,
+      smtpHost,
+      smtpPort,
+      smtpUser,
+    },
+    payments: {
+      enabled: paymentsEnabled,
+      mode: paymentMode === "live" ? "live" as const : "test" as const,
+      razorpayKeyId,
+    },
+    security: {
+      passwordMinLen: parseNumber(passwordMinLength, 8),
+      requirePrivilegedMfa: twoFactorAuth,
+      sessionTimeoutMinutes: 15,
+    },
+    tax: {
+      currentAssessmentYear,
+      itrFilingEnabled,
+      maxFileSizeMb: parseNumber(maxFileSize, 10),
+      autoSaveDrafts,
+    },
+    system: {
+      rateLimitPerMinute: parseNumber(rateLimit, 100),
+      apiTimeoutSeconds: parseNumber(apiTimeout, 30),
+      cacheEnabled,
+      debugMode,
+      emailNotifications,
+      smsNotifications,
+      pushNotifications,
+      adminAlerts,
+    },
+  });
+
+  const saveSettings = useMutation({
+    mutationFn: async ({ section, payload }: { section: string; payload: ReturnType<typeof buildSystemConfigPayload> }) => {
+      const response = await apiRequest("/api/system/config", {
+        method: "PUT",
+        body: JSON.stringify(payload),
       });
-    } catch (error) {
+      return { section, body: await response.json() };
+    },
+    onSuccess: ({ section }) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/system/config"] });
       toast({
-        title: "Connection Failed",
-        description: `${type} connection test failed.`,
+        title: "Settings Saved",
+        description: `${section} settings have been persisted.`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Save Failed",
+        description: error.message || "Failed to save settings. Please try again.",
         variant: "destructive",
       });
-    }
+    },
+  });
+
+  const handleSaveSettings = (section: string) => {
+    saveSettings.mutate({ section, payload: buildSystemConfigPayload() });
+  };
+
+  const handleTestConnection = (type: string) => {
+    toast({
+      title: "Connection Test Not Run",
+      description: `${type} credentials are environment-managed. Use the provider dashboard or deployment logs for live connection verification.`,
+    });
+  };
+
+  const handleRefreshConfig = () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/system/config"] });
+    toast({
+      title: "Configuration Refreshed",
+      description: "The latest persisted settings will be loaded from the server.",
+    });
   };
 
   return (
@@ -188,7 +284,7 @@ function AdminSettingsContent() {
                     id="contactPhone"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
-                    placeholder="+91-9876543210"
+                    placeholder={CONTACT.phonePlaceholder}
                   />
                 </div>
                 <div className="flex items-center space-x-2">
@@ -204,7 +300,7 @@ function AdminSettingsContent() {
                 </div>
               </div>
               
-              <Button onClick={() => handleSaveSettings("General")} className="w-full">
+              <Button onClick={() => handleSaveSettings("General")} className="w-full" disabled={saveSettings.isPending}>
                 <Save className="h-4 w-4 mr-2" />
                 Save General Settings
               </Button>
@@ -277,10 +373,14 @@ function AdminSettingsContent() {
                       <Input
                         id="smtpPassword"
                         type="password"
-                        value={smtpPassword}
-                        onChange={(e) => setSmtpPassword(e.target.value)}
-                        placeholder="App Password"
+                        value=""
+                        onChange={() => undefined}
+                        placeholder="Configured in deployment environment"
+                        disabled
                       />
+                      <p className="text-xs text-muted-foreground">
+                        SMTP secrets are set through deployment environment variables, not stored from this screen.
+                      </p>
                     </div>
                   </div>
                   
@@ -289,7 +389,7 @@ function AdminSettingsContent() {
                       <Activity className="h-4 w-4 mr-2" />
                       Test Connection
                     </Button>
-                    <Button onClick={() => handleSaveSettings("Email")}>
+                    <Button onClick={() => handleSaveSettings("Email")} disabled={saveSettings.isPending}>
                       <Save className="h-4 w-4 mr-2" />
                       Save Email Settings
                     </Button>
@@ -360,10 +460,14 @@ function AdminSettingsContent() {
                       <Input
                         id="razorpayKeySecret"
                         type="password"
-                        value={razorpayKeySecret}
-                        onChange={(e) => setRazorpayKeySecret(e.target.value)}
-                        placeholder="Secret Key"
+                        value=""
+                        onChange={() => undefined}
+                        placeholder="Configured in deployment environment"
+                        disabled
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Payment secrets are environment-managed and never returned to the browser.
+                      </p>
                     </div>
                   </div>
                   
@@ -372,7 +476,7 @@ function AdminSettingsContent() {
                       <Activity className="h-4 w-4 mr-2" />
                       Test Gateway
                     </Button>
-                    <Button onClick={() => handleSaveSettings("Payment")}>
+                    <Button onClick={() => handleSaveSettings("Payment")} disabled={saveSettings.isPending}>
                       <Save className="h-4 w-4 mr-2" />
                       Save Payment Settings
                     </Button>
@@ -457,7 +561,7 @@ function AdminSettingsContent() {
                 </div>
               </div>
               
-              <Button onClick={() => handleSaveSettings("Security")} className="w-full">
+              <Button onClick={() => handleSaveSettings("Security")} className="w-full" disabled={saveSettings.isPending}>
                 <Save className="h-4 w-4 mr-2" />
                 Save Security Settings
               </Button>
@@ -524,7 +628,7 @@ function AdminSettingsContent() {
                 </div>
               </div>
               
-              <Button onClick={() => handleSaveSettings("Tax Filing")} className="w-full">
+              <Button onClick={() => handleSaveSettings("Tax Filing")} className="w-full" disabled={saveSettings.isPending}>
                 <Save className="h-4 w-4 mr-2" />
                 Save Tax Settings
               </Button>
@@ -633,13 +737,13 @@ function AdminSettingsContent() {
               </div>
               
               <div className="flex gap-2">
-                <Button onClick={() => handleSaveSettings("System")} className="flex-1">
+                <Button onClick={() => handleSaveSettings("System")} className="flex-1" disabled={saveSettings.isPending}>
                   <Save className="h-4 w-4 mr-2" />
                   Save System Settings
                 </Button>
-                <Button variant="outline" onClick={() => window.location.reload()}>
+                <Button variant="outline" onClick={handleRefreshConfig}>
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Restart System
+                  Refresh Config
                 </Button>
               </div>
             </CardContent>

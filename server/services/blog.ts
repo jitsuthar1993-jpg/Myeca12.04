@@ -244,15 +244,10 @@ export async function listAllBlogPosts(db: DataAdminDb = adminDb): Promise<Store
     );
     storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
   } catch (error) {
-    console.warn("Falling back to default blog posts:", error);
+    console.warn("Unable to load all blog posts:", error);
   }
 
-  const storedSlugs = new Set(storedPosts.map((post) => post.slug));
-  const fallbackPosts = defaultBlogPosts
-    .filter((post) => !storedSlugs.has(post.slug))
-    .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
-
-  return [...storedPosts, ...fallbackPosts];
+  return storedPosts;
 }
 
 /** Optimized: only fetch published posts from DB instead of all posts */
@@ -267,16 +262,10 @@ export async function listPublishedBlogPosts(db: DataAdminDb = adminDb): Promise
     );
     storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
   } catch (error) {
-    console.warn("Falling back to default blog posts:", error);
+    console.warn("Unable to load published blog posts:", error);
   }
 
-  const storedSlugs = new Set(storedPosts.map((post) => post.slug));
-  const fallbackPosts = defaultBlogPosts
-    .filter((post) => !storedSlugs.has(post.slug))
-    .filter((post) => (post as any).status === "published")
-    .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
-
-  return [...storedPosts, ...fallbackPosts];
+  return storedPosts;
 }
 
 export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
@@ -296,11 +285,10 @@ export async function getBlogPostById(id: string, db: DataAdminDb = adminDb): Pr
     );
     if (doc.exists) return normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
   } catch (error) {
-    console.warn(`Falling back while loading blog post '${id}':`, error);
+    console.warn(`Unable to load blog post '${id}':`, error);
   }
 
-  const fallback = defaultBlogPosts.find((post) => post.id === id || post.slug === id);
-  return fallback ? normalizeStoredBlogPostRecord(fallback.id, fallback as unknown as Record<string, unknown>, lookup) : null;
+  return null;
 }
 
 export async function buildBlogPostWriteData(

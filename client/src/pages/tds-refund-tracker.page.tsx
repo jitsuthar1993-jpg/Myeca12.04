@@ -4,194 +4,142 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Search, 
-  IndianRupee, 
-  CheckCircle, 
-  Clock, 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
   AlertCircle,
-  Building2,
-  RefreshCw,
-  Calendar,
+  AlertTriangle,
   ArrowRight,
-  Info,
-  CreditCard,
   Banknote,
+  Building2,
+  CheckCircle,
+  Clock,
+  ExternalLink,
   FileText,
   HelpCircle,
+  Info,
+  RefreshCw,
+  Search,
+  ShieldCheck,
   XCircle,
-  AlertTriangle
 } from "lucide-react";
-import { m } from "framer-motion";
-import { Progress } from "@/components/ui/progress";
 import EnhancedSEO from "@/components/EnhancedSEO";
 
-interface RefundRecord {
-  assessmentYear: string;
-  refundAmount: number;
-  status: 'pending' | 'processed' | 'sent' | 'credited' | 'failed';
-  statusDate: string;
-  bankAccount?: string;
-  failureReason?: string;
-  interestAmount?: number;
-  processingDate?: string;
-  creditDate?: string;
-}
-
-// Mock data for demonstration
-const mockRefunds: RefundRecord[] = [
+const OFFICIAL_STEPS = [
   {
-    assessmentYear: "2024-25",
-    refundAmount: 45000,
-    status: 'sent',
-    statusDate: "2024-11-15",
-    bankAccount: "HDFC Bank ****4567",
-    interestAmount: 2340,
-    processingDate: "2024-11-10",
+    icon: ShieldCheck,
+    title: "Confirm e-verification",
+    description: "Refund processing normally starts after the return is successfully e-verified.",
   },
   {
-    assessmentYear: "2023-24",
-    refundAmount: 32500,
-    status: 'credited',
-    statusDate: "2023-12-20",
-    bankAccount: "SBI ****1234",
-    interestAmount: 1890,
-    processingDate: "2023-12-01",
-    creditDate: "2023-12-20",
+    icon: FileText,
+    title: "Review processing status",
+    description: "Open View Filed Returns and check whether CPC processing or intimation has been completed.",
   },
   {
-    assessmentYear: "2022-23",
-    refundAmount: 28000,
-    status: 'credited',
-    statusDate: "2022-11-28",
-    bankAccount: "ICICI Bank ****8901",
-    interestAmount: 1456,
+    icon: Building2,
+    title: "Check bank validation",
+    description: "Make sure the refund bank account is pre-validated and linked with the same PAN.",
+  },
+  {
+    icon: Banknote,
+    title: "Track refund or re-issue",
+    description: "Use Refund Status or Refund Re-issue Request on the e-filing portal if the refund failed.",
   },
 ];
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
-
-const getStatusColor = (status: RefundRecord['status']) => {
-  switch (status) {
-    case 'credited': return 'bg-green-500';
-    case 'sent': return 'bg-blue-500';
-    case 'processed': return 'bg-yellow-500';
-    case 'pending': return 'bg-gray-500';
-    case 'failed': return 'bg-red-500';
-    default: return 'bg-gray-500';
-  }
-};
-
-const getStatusLabel = (status: RefundRecord['status']) => {
-  switch (status) {
-    case 'credited': return 'Credited to Bank';
-    case 'sent': return 'Sent to Bank';
-    case 'processed': return 'Refund Processed';
-    case 'pending': return 'Under Processing';
-    case 'failed': return 'Failed';
-    default: return status;
-  }
-};
 
 const COMMON_ISSUES = [
   {
     icon: Building2,
     title: "Incorrect Bank Details",
     description: "Bank account or IFSC code mismatch",
-    solution: "Update your bank details on the e-Filing portal under 'My Profile > My Bank Account'"
+    solution: "Update your bank details on the e-Filing portal under My Profile > My Bank Account.",
   },
   {
     icon: AlertTriangle,
     title: "PAN-Bank Account Mismatch",
-    description: "Bank account is not pre-validated",
-    solution: "Pre-validate your bank account on the e-Filing portal for faster refunds"
+    description: "Bank account is not pre-validated or does not match the return PAN",
+    solution: "Pre-validate your bank account on the e-Filing portal for faster refunds.",
   },
   {
     icon: FileText,
     title: "Pending e-Verification",
-    description: "ITR not verified within 30 days",
-    solution: "Complete e-verification immediately using Aadhaar OTP or net banking"
+    description: "ITR has not been verified after filing",
+    solution: "Complete e-verification immediately using Aadhaar OTP, net banking, or another official method.",
   },
   {
     icon: XCircle,
     title: "Outstanding Demand",
-    description: "Previous tax demands pending",
-    solution: "Clear outstanding demands or file response under 'Pending Actions'"
+    description: "Previous tax demands may be pending",
+    solution: "Check Pending Actions, clear valid demands, or file a response where required.",
   },
+];
+
+const REFUND_DOCUMENTS = [
+  "ITR acknowledgement number",
+  "Latest e-verification status",
+  "Bank account validation status",
+  "Section 143(1) intimation, if issued",
 ];
 
 export default function TDSRefundTrackerPage() {
   const [pan, setPan] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [refunds, setRefunds] = useState<RefundRecord[] | null>(null);
+  const [validatedPan, setValidatedPan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async () => {
-    if (!pan || pan.length !== 10) {
-      setError("Please enter a valid 10-character PAN");
+    const normalizedPan = pan.trim().toUpperCase();
+
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(normalizedPan)) {
+      setError("Please enter a valid PAN in the format ABCDE1234F");
+      setValidatedPan(null);
       return;
     }
 
     setIsSearching(true);
     setError(null);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // For demo, show mock refunds
-    setRefunds(mockRefunds);
+    await new Promise((resolve) => setTimeout(resolve, 350));
+
+    setValidatedPan(normalizedPan);
     setIsSearching(false);
   };
-
-  const totalRefunds = refunds?.reduce((sum, r) => sum + r.refundAmount + (r.interestAmount || 0), 0) || 0;
-  const pendingRefunds = refunds?.filter(r => r.status !== 'credited' && r.status !== 'failed') || [];
-  const creditedRefunds = refunds?.filter(r => r.status === 'credited') || [];
 
   return (
     <>
       <EnhancedSEO
-        title="TDS Refund Tracker - Check Your Refund Status | MyeCA"
-        description="Track your TDS refund status online. Check refund processing status, expected credit date, and resolve refund failures. Get real-time updates on your tax refund."
+        title="TDS Refund Status Guide - Check Refund Readiness | MyeCA"
+        description="Use MyeCA's refund guidance to validate PAN format, understand common refund delays, and verify final refund status on the official income tax e-filing portal."
         keywords={["tds refund status", "income tax refund", "check refund status", "refund tracker", "tds refund not received", "refund failure"]}
       />
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full mb-4">
               <Banknote className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">Refund Tracking</span>
+              <span className="text-sm font-medium text-green-700">Refund guidance</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              TDS Refund Tracker
+              TDS Refund Status Guide
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Track your income tax refund status and get updates on when it will be credited to your bank account
+              Check refund readiness, common failure reasons, and the official steps to verify your income tax refund status.
             </p>
           </div>
 
-          {/* Search Card */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Search className="h-5 w-5 text-blue-600" />
-                Check Refund Status
+                Prepare Refund Status Check
               </CardTitle>
               <CardDescription>
-                Enter your PAN to view refund history and status
+                Validate PAN format before opening the official refund status flow
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1">
                   <Label className="sr-only">PAN Number</Label>
                   <Input
@@ -206,17 +154,17 @@ export default function TDSRefundTrackerPage() {
                   {isSearching ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Checking...
+                      Preparing...
                     </>
                   ) : (
                     <>
                       <Search className="h-4 w-4 mr-2" />
-                      Track Refund
+                      Show Official Steps
                     </>
                   )}
                 </Button>
               </div>
-              
+
               {error && (
                 <Alert variant="destructive" className="mt-4">
                   <AlertCircle className="h-4 w-4" />
@@ -226,173 +174,75 @@ export default function TDSRefundTrackerPage() {
             </CardContent>
           </Card>
 
-          {/* Results */}
-          {refunds && (
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              {/* Summary Cards */}
-              <div className="grid md:grid-cols-3 gap-4">
-                <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-green-100 text-sm">Total Refunds</p>
-                        <p className="text-2xl font-bold">{formatCurrency(totalRefunds)}</p>
-                      </div>
-                      <IndianRupee className="h-8 w-8 text-green-200" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white border-0">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-blue-100 text-sm">In Progress</p>
-                        <p className="text-2xl font-bold">{pendingRefunds.length}</p>
-                      </div>
-                      <Clock className="h-8 w-8 text-blue-200" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white border-0">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-purple-100 text-sm">Credited</p>
-                        <p className="text-2xl font-bold">{creditedRefunds.length}</p>
-                      </div>
-                      <CheckCircle className="h-8 w-8 text-purple-200" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Refund History */}
+          {validatedPan && (
+            <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Refund History</CardTitle>
-                  <CardDescription>Your refunds for the last 3 assessment years</CardDescription>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      PAN Ready for Official Check
+                    </CardTitle>
+                    <Badge className="w-fit bg-blue-600">No live portal data shown</Badge>
+                  </div>
+                  <CardDescription>
+                    Use this PAN on the official portal or your MyeCA filing dashboard.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {refunds.map((refund, index) => (
-                      <m.div
-                        key={refund.assessmentYear}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="p-4 border rounded-xl hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div className="flex items-start gap-4">
-                            <div className={`p-3 rounded-xl ${
-                              refund.status === 'credited' ? 'bg-green-100' :
-                              refund.status === 'failed' ? 'bg-red-100' :
-                              'bg-blue-100'
-                            }`}>
-                              {refund.status === 'credited' ? (
-                                <CheckCircle className="h-6 w-6 text-green-600" />
-                              ) : refund.status === 'failed' ? (
-                                <XCircle className="h-6 w-6 text-red-600" />
-                              ) : (
-                                <Clock className="h-6 w-6 text-blue-600" />
-                              )}
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold">AY {refund.assessmentYear}</h4>
-                                <Badge className={getStatusColor(refund.status)}>
-                                  {getStatusLabel(refund.status)}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-gray-500 mt-1">
-                                {refund.bankAccount && `Account: ${refund.bankAccount}`}
-                              </p>
-                              {refund.failureReason && (
-                                <p className="text-sm text-red-600 mt-1">
-                                  Reason: {refund.failureReason}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          
-                          <div className="text-right">
-                            <p className="text-2xl font-bold text-gray-900">
-                              {formatCurrency(refund.refundAmount)}
-                            </p>
-                            {refund.interestAmount && refund.interestAmount > 0 && (
-                              <p className="text-sm text-green-600">
-                                + {formatCurrency(refund.interestAmount)} interest
-                              </p>
-                            )}
-                            <p className="text-xs text-gray-500 mt-1">
-                              {refund.status === 'credited' ? 'Credited on' : 'Updated'}: {refund.statusDate}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Progress for pending refunds */}
-                        {refund.status !== 'credited' && refund.status !== 'failed' && (
-                          <div className="mt-4">
-                            <div className="flex justify-between text-xs text-gray-500 mb-1">
-                              <span>Processed</span>
-                              <span>Sent to Bank</span>
-                              <span>Credited</span>
-                            </div>
-                            <Progress 
-                              value={
-                                refund.status === 'pending' ? 25 :
-                                refund.status === 'processed' ? 50 :
-                                refund.status === 'sent' ? 75 : 0
-                              } 
-                              className="h-2"
-                            />
-                          </div>
-                        )}
-                      </m.div>
-                    ))}
-                  </div>
+                  <p className="text-sm text-gray-500">Validated PAN</p>
+                  <p className="font-semibold text-gray-900">{validatedPan}</p>
+                  <Alert className="mt-4 border-blue-200 bg-blue-50">
+                    <Info className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800">
+                      MyeCA does not display live refund amounts, bank accounts, or credited dates here. Final refund status must be confirmed from the official Income Tax e-filing portal.
+                    </AlertDescription>
+                  </Alert>
                 </CardContent>
               </Card>
 
-              {/* Expected Timeline */}
+              <div className="grid md:grid-cols-4 gap-4">
+                {OFFICIAL_STEPS.map((step) => (
+                  <Card key={step.title}>
+                    <CardContent className="pt-6">
+                      <step.icon className="h-7 w-7 text-blue-600" />
+                      <h3 className="mt-3 font-semibold text-gray-900">{step.title}</h3>
+                      <p className="mt-2 text-sm text-gray-600">{step.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
               <Card className="bg-blue-50 border-blue-200">
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <Calendar className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Clock className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-blue-900">Expected Refund Timeline</h4>
+                      <h4 className="font-semibold text-blue-900">Typical Refund Timeline</h4>
                       <ul className="mt-2 space-y-1 text-sm text-blue-800">
-                        <li>• After ITR Processing: 1-2 weeks for refund processing</li>
-                        <li>• Refund to Bank: 4-5 business days after processing</li>
-                        <li>• Total Time: Usually 4-6 weeks from e-verification</li>
-                        <li>• Interest: 0.5% per month if delayed beyond due date</li>
+                        <li>- Refunds usually move after CPC processing and bank validation.</li>
+                        <li>- Failed refunds normally require a Refund Re-issue Request.</li>
+                        <li>- Delays can happen when AIS, TDS, bank, or demand records need review.</li>
                       </ul>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </m.div>
+            </div>
           )}
 
-          {/* Common Issues Section */}
           <Card className="mt-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-orange-600" />
-                Common Refund Issues & Solutions
+                Common Refund Issues and Fixes
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
-                {COMMON_ISSUES.map((issue, index) => (
-                  <div 
-                    key={index}
+                {COMMON_ISSUES.map((issue) => (
+                  <div
+                    key={issue.title}
                     className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-start gap-3">
@@ -414,7 +264,28 @@ export default function TDSRefundTrackerPage() {
             </CardContent>
           </Card>
 
-          {/* Refund Re-issue */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-blue-600" />
+                Keep These Details Ready
+              </CardTitle>
+              <CardDescription>
+                These records make refund checks and re-issue requests faster.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-3">
+                {REFUND_DOCUMENTS.map((document) => (
+                  <div key={document} className="flex items-center gap-2 rounded-lg border border-gray-200 p-3 text-sm text-gray-700">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>{document}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -422,31 +293,32 @@ export default function TDSRefundTrackerPage() {
                 Request Refund Re-issue
               </CardTitle>
               <CardDescription>
-                If your refund failed or was sent to wrong account
+                Use this flow if the portal shows that your refund failed or returned.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ol className="space-y-3 text-sm text-gray-600">
                 <li className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex-shrink-0">1</span>
-                  <span>Login to e-Filing portal (incometax.gov.in)</span>
+                  <span>Login to the e-Filing portal.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex-shrink-0">2</span>
-                  <span>Go to Services → Refund Re-issue Request</span>
+                  <span>Go to Services &gt; Refund Re-issue Request.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex-shrink-0">3</span>
-                  <span>Select the failed refund and update bank details</span>
+                  <span>Select the failed refund and choose a pre-validated bank account.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex-shrink-0">4</span>
-                  <span>Submit request and track status</span>
+                  <span>Submit the request and track the updated status from the portal.</span>
                 </li>
               </ol>
               <Button className="w-full mt-4" variant="outline" asChild>
                 <a href="https://eportal.incometax.gov.in" target="_blank" rel="noopener noreferrer">
-                  Go to e-Filing Portal
+                  Open Official e-Filing Portal
+                  <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </Button>
             </CardContent>
@@ -456,4 +328,3 @@ export default function TDSRefundTrackerPage() {
     </>
   );
 }
-

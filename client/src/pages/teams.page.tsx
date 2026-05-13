@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { m } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +36,7 @@ interface TeamMember {
   userId: number;
   role: string;
   joinedAt: string;
-  user: {
+  user?: {
     id: number;
     name: string;
     email: string;
@@ -168,6 +167,10 @@ export default function TeamsPage() {
   const team = teamData?.team;
   const tasks = tasksData?.tasks || [];
   const activities = activityData?.activities || [];
+  const completedTasks = tasks.filter((task: Task) => task.status === "completed").length;
+  const pendingTasks = tasks.filter((task: Task) => task.status !== "completed").length;
+  const latestActivity = activities[0]?.timestamp || team?.stats?.recentActivity;
+  const teamMembers: TeamMember[] = team?.members || [];
 
   return (
     <Layout>
@@ -312,21 +315,21 @@ export default function TeamsPage() {
                    <TabsContent value="overview" className="space-y-10 outline-none">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                          {[
-                           { label: "Tasks Cleared", value: "12", icon: CheckSquare, color: "emerald", trend: "+12%" },
-                           { label: "Pending Reviews", value: "05", icon: Clock, color: "amber", trend: "-2%" },
-                           { label: "Unit Activity", value: "High", icon: Activity, color: "indigo", trend: "Steady" }
+                           { label: "Tasks Cleared", value: completedTasks, icon: CheckSquare, color: "emerald", trend: "Actual" },
+                           { label: "Pending Reviews", value: pendingTasks, icon: Clock, color: "amber", trend: "Queue" },
+                           { label: "Unit Activity", value: activities.length, icon: Activity, color: "indigo", trend: latestActivity ? "Recent" : "None" }
                          ].map((s, i) => (
                            <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-8">
                               <div className="flex items-center justify-between mb-6">
                                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center", `bg-${s.color}-50 text-${s.color}-600`)}>
                                     <s.icon className="h-7 w-7" />
                                  </div>
-                                 <Badge className={cn("border-none font-black text-[8px] uppercase px-2 py-0.5 rounded-full", s.trend.startsWith('+') ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600")}>
+                                 <Badge className="border-none bg-blue-50 px-2 py-0.5 text-[8px] font-black uppercase text-blue-600 rounded-full">
                                     {s.trend}
                                  </Badge>
                               </div>
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
-                              <p className="text-3xl font-black text-slate-900 tracking-tight">{s.value}</p>
+                              <p className="text-3xl font-black text-slate-900 tracking-tight">{String(s.value)}</p>
                            </Card>
                          ))}
                       </div>
@@ -407,23 +410,30 @@ export default function TeamsPage() {
 
                    <TabsContent value="members" className="outline-none">
                       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                        {team?.members.map((member: TeamMember) => {
+                        {teamMembers.length === 0 ? (
+                          <Card className="col-span-full border-none shadow-sm rounded-[40px] bg-white p-12 text-center border border-slate-100/50">
+                            <Users className="h-14 w-14 text-slate-100 mx-auto mb-6" />
+                            <p className="text-base font-black text-slate-400 uppercase tracking-widest">No members found</p>
+                          </Card>
+                        ) : teamMembers.map((member: TeamMember) => {
                           const RoleIcon = roleIcons[member.role] || Users;
+                          const memberName = member.user?.name || `Member ${String(member.userId).slice(0, 8)}`;
+                          const memberEmail = member.user?.email || "Profile details pending";
                           
                           return (
                             <Card key={member.userId} className="border-none shadow-sm rounded-[40px] bg-white p-8 group hover:shadow-xl transition-all border border-slate-100/50">
                                <div className="flex items-center justify-between mb-8">
                                   <Avatar className="h-16 w-16 rounded-[24px] border-4 border-slate-50">
-                                    <AvatarImage src={member.user.avatar} />
-                                    <AvatarFallback className="font-black text-xl bg-indigo-50 text-indigo-600">{member.user.name[0]}</AvatarFallback>
+                                    <AvatarImage src={member.user?.avatar} />
+                                    <AvatarFallback className="font-black text-xl bg-indigo-50 text-indigo-600">{memberName[0]}</AvatarFallback>
                                   </Avatar>
                                   <div className="h-12 w-12 rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                                      <RoleIcon className="h-6 w-6" />
                                   </div>
                                </div>
                                <div>
-                                  <h4 className="text-xl font-black text-slate-900 leading-none mb-2">{member.user.name}</h4>
-                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">{member.user.email}</p>
+                                  <h4 className="text-xl font-black text-slate-900 leading-none mb-2">{memberName}</h4>
+                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">{memberEmail}</p>
                                   <Badge variant="outline" className="h-8 px-4 rounded-xl border-slate-100 font-black text-[9px] uppercase tracking-widest group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
                                     {member.role} Status
                                   </Badge>
@@ -441,6 +451,12 @@ export default function TeamsPage() {
                           <CardDescription className="text-base font-medium text-slate-500">Verifiable history of unit interactions.</CardDescription>
                         </CardHeader>
                         <CardContent className="px-0">
+                          {activities.length === 0 ? (
+                            <div className="py-24 text-center bg-slate-50/20 rounded-[32px]">
+                              <Activity className="h-14 w-14 text-slate-100 mx-auto mb-6" />
+                              <p className="text-base font-black text-slate-400 uppercase tracking-widest">No activity yet</p>
+                            </div>
+                          ) : (
                           <div className="space-y-8 relative before:absolute before:left-7 before:top-2 before:bottom-2 before:w-px before:bg-slate-50">
                             {activities.map((activity: any) => (
                               <div key={activity.id} className="flex items-start gap-8 relative z-10">
@@ -454,12 +470,13 @@ export default function TeamsPage() {
                                     {activity.target && <span className="font-black text-indigo-600"> "{activity.target}"</span>}
                                   </p>
                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    {format(new Date(activity.timestamp), "MMM dd, yyyy • hh:mm a")}
+                                    {format(new Date(activity.timestamp), "MMM dd, yyyy 'at' hh:mm a")}
                                   </p>
                                 </div>
                               </div>
                             ))}
                           </div>
+                          )}
                         </CardContent>
                       </Card>
                    </TabsContent>

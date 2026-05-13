@@ -23,7 +23,7 @@
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://myeca.in/" />
     <meta property="twitter:title" content="MyeCA.in - Expert Income Tax Filing" />
-    <meta property="twitter:description" content="File your income tax return with expert CA assistance. Save up to â‚¹86,500 in taxes. 15L+ happy customers." />
+    <meta property="twitter:description" content="File your income tax return with expert CA assistance. Save up to Rs 86,500 in taxes. 15L+ happy customers." />
     <meta property="twitter:image" content="https://myeca.in/og-image.jpg" />
     <meta property="twitter:site" content="@myecain" />
     
@@ -37,10 +37,10 @@
     
     <!-- PWA Support -->
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="167x167" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-180.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167.png" />
     
     <!-- Browser specific optimizations -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -53,14 +53,14 @@
     <meta name="msapplication-TileColor" content="#2563eb" />
     <meta name="msapplication-tap-highlight" content="no" />
     
-    <!-- Preconnect to font origin only â€” other origins deferred -->
+    <!-- Preconnect to font origin only; other origins deferred -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="dns-prefetch" href="https://vedumlohmacaghuebduy.supabase.co">
     
-    <!-- Font: load non-blocking with system fallback to prevent FOIT -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <!-- Font: system fallback first; stylesheet is promoted after boot without inline handlers. -->
+    <link id="app-font-css" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"></noscript>
     <style>body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif}</style>
 
@@ -70,11 +70,6 @@
       .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:skel 1.5s infinite}
       @media(prefers-reduced-motion:reduce){.skel{animation:none}}
     </style>
-    <!-- Analytics deferred until after first paint -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-    </script>
   </head>
   <body>
     <div id="root">
@@ -94,13 +89,7 @@
         </div>
       </div>
     </div>
-    <script>
-      // Global error handler for uncaught errors
-      window.onerror = function(msg, url, line) {
-        document.getElementById('root').innerHTML = '<div style="padding:20px;background:#fee;border:2px solid red;margin:20px;border-radius:8px;"><h2 style="color:red;">JavaScript Error</h2><p><strong>' + msg + '</strong></p><p style="color:#666;">At: ' + url + ':' + line + '</p><p style="margin-top:15px;"><button onclick="location.reload(true)" style="padding:10px 20px;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;">Reload Page</button></p></div>';
-        return false;
-      };
-    </script>
+    <script src="/app-bootstrap.js" defer></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

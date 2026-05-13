@@ -164,8 +164,8 @@ export default function HeroSection() {
                 <div className="text-xs text-gray-600">Review Add-on</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-[#315efb]">950+</div>
-                <div className="text-xs text-gray-600">Returns Filed</div>
+                <div className="text-lg font-bold text-[#315efb]">ITR</div>
+                <div className="text-xs text-gray-600">Filing Workflow</div>
               </div>
             </div>
           </m.div>

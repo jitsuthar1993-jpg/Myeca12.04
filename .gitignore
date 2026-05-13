@@ -195,6 +195,10 @@ dev_log_new.txt
 server_log.txt
 server_log2.txt
 
+# Test artifacts
+playwright-report/
+test-results/
+
 # Temp files
 button-component-docs.md
 check_logos.js

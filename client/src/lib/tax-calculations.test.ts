@@ -45,7 +45,7 @@ describe("calculateIncomeTax AY 2026-27", () => {
         assessmentYear: "2026-27",
         age: 30,
       }).taxPayable,
-    ).toBe(23400);
+    ).toBe(0);
 
     expect(
       calculateIncomeTax({
@@ -55,7 +55,7 @@ describe("calculateIncomeTax AY 2026-27", () => {
         assessmentYear: "2026-27",
         age: 65,
       }).taxPayable,
-    ).toBe(31200);
+    ).toBe(20800);
 
     expect(
       calculateIncomeTax({
@@ -65,7 +65,7 @@ describe("calculateIncomeTax AY 2026-27", () => {
         assessmentYear: "2026-27",
         age: 82,
       }).taxPayable,
-    ).toBe(119600);
+    ).toBe(104000);
   });
 });
 

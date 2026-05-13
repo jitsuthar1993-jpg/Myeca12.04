@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "@/components/charts/lightweight-recharts";
 import { Slider } from "@/components/ui/slider";
 import { Link, useLocation } from "wouter";
 import { calculateEnhancedSIP, formatCurrency } from "@/lib/enhanced-calculator-utils";

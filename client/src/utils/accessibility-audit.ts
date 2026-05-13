@@ -256,7 +256,11 @@ class AccessibilityAuditService {
           remediation: 'Add visual indicator for required fields',
           automatedFix: () => {
             if (label && !label.textContent?.includes('*')) {
-              label.innerHTML = label.innerHTML + ' <span aria-hidden="true">*</span>';
+              const requiredMarker = document.createElement('span');
+              requiredMarker.setAttribute('aria-hidden', 'true');
+              requiredMarker.textContent = '*';
+              label.appendChild(document.createTextNode(' '));
+              label.appendChild(requiredMarker);
               label.setAttribute('aria-label', label.textContent?.replace('*', 'required') || '');
             }
           }

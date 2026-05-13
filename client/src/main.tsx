@@ -1,11 +1,20 @@
 import { createRoot } from "react-dom/client";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { lazy, Suspense } from "react";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { addPerformanceHints } from "./utils/performance-hints";
+import { shouldLoadProductionTelemetry } from "./utils/runtime-env";
 import "./utils/safe-dom";
 import "./index.css";
+
+const loadProductionTelemetry = shouldLoadProductionTelemetry();
+
+const VercelAnalytics = loadProductionTelemetry
+  ? lazy(() => import("@vercel/analytics/react").then((mod) => ({ default: mod.Analytics })))
+  : null;
+const VercelSpeedInsights = loadProductionTelemetry
+  ? lazy(() => import("@vercel/speed-insights/react").then((mod) => ({ default: mod.SpeedInsights })))
+  : null;
 
 // Initialize performance hints (preconnect, dns-prefetch)
 addPerformanceHints();
@@ -47,11 +56,15 @@ const root = document.getElementById("root");
 
 if (root) {
   createRoot(root).render(
-    <ErrorBoundary>
-      <App />
-      <Analytics />
-      <SpeedInsights />
-    </ErrorBoundary>,
+      <ErrorBoundary>
+        <App />
+        {VercelAnalytics && VercelSpeedInsights && (
+          <Suspense fallback={null}>
+            <VercelAnalytics />
+            <VercelSpeedInsights />
+          </Suspense>
+        )}
+      </ErrorBoundary>,
   );
 } else {
   const fallback = document.createElement('div');

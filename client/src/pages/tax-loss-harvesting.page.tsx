@@ -25,7 +25,7 @@ import {
   Target
 } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
-import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "@/components/charts/lightweight-recharts";
 import { CalculatorExport } from "@/components/ui/calculator-export";
 import MetaSEO from "@/components/seo/MetaSEO";
 
@@ -75,36 +75,38 @@ const isLongTerm = (type: Investment['type'], holdingDays: number) => {
   return holdingDays >= assetConfig.holdingPeriod * 30;
 };
 
+const EXAMPLE_INVESTMENTS: Investment[] = [
+  {
+    id: 'example-1',
+    name: 'Example Equity Holding',
+    type: 'equity',
+    purchaseDate: '2024-01-15',
+    purchasePrice: 2800,
+    currentPrice: 2650,
+    quantity: 50,
+  },
+  {
+    id: 'example-2',
+    name: 'Example Bank Stock',
+    type: 'equity',
+    purchaseDate: '2023-06-10',
+    purchasePrice: 1650,
+    currentPrice: 1720,
+    quantity: 100,
+  },
+  {
+    id: 'example-3',
+    name: 'Example Index Fund',
+    type: 'equity_mf',
+    purchaseDate: '2023-03-01',
+    purchasePrice: 180,
+    currentPrice: 165,
+    quantity: 500,
+  },
+];
+
 export default function TaxLossHarvestingPage() {
-  const [investments, setInvestments] = useState<Investment[]>([
-    {
-      id: '1',
-      name: 'Reliance Industries',
-      type: 'equity',
-      purchaseDate: '2024-01-15',
-      purchasePrice: 2800,
-      currentPrice: 2650,
-      quantity: 50,
-    },
-    {
-      id: '2',
-      name: 'HDFC Bank',
-      type: 'equity',
-      purchaseDate: '2023-06-10',
-      purchasePrice: 1650,
-      currentPrice: 1720,
-      quantity: 100,
-    },
-    {
-      id: '3',
-      name: 'Nifty 50 Index Fund',
-      type: 'equity_mf',
-      purchaseDate: '2023-03-01',
-      purchasePrice: 180,
-      currentPrice: 165,
-      quantity: 500,
-    },
-  ]);
+  const [investments, setInvestments] = useState<Investment[]>([]);
 
   const [newInvestment, setNewInvestment] = useState<Partial<Investment>>({
     type: 'equity',
@@ -117,7 +119,7 @@ export default function TaxLossHarvestingPage() {
     }
 
     const investment: Investment = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: newInvestment.name,
       type: newInvestment.type as Investment['type'],
       purchaseDate: newInvestment.purchaseDate,
@@ -210,7 +212,7 @@ export default function TaxLossHarvestingPage() {
         calculatorData={{
           type: "Tax Management",
           features: ["Portfolio analysis", "STCG/LTCG offset", "Tax savings estimation", "Wash sale alerts"],
-          accuracy: "99.9%",
+          accuracy: "Estimate",
           updates: "FY 2025-26 estimate"
         }}
         breadcrumbs={[
@@ -362,7 +364,7 @@ export default function TaxLossHarvestingPage() {
                           type="number"
                           value={newInvestment.purchasePrice || ''}
                           onChange={(e) => setNewInvestment({ ...newInvestment, purchasePrice: Number(e.target.value) })}
-                          placeholder={"₹"}
+                          placeholder="INR"
                           className="h-9"
                         />
                       </div>
@@ -372,7 +374,7 @@ export default function TaxLossHarvestingPage() {
                           type="number"
                           value={newInvestment.currentPrice || ''}
                           onChange={(e) => setNewInvestment({ ...newInvestment, currentPrice: Number(e.target.value) })}
-                          placeholder={"₹"}
+                          placeholder="INR"
                           className="h-9"
                         />
                       </div>
@@ -386,10 +388,21 @@ export default function TaxLossHarvestingPage() {
                         />
                       </div>
                     </div>
-                    <Button onClick={addInvestment} size="sm" className="w-full">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Investment
-                    </Button>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <Button onClick={addInvestment} size="sm" className="w-full">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Investment
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => setInvestments(EXAMPLE_INVESTMENTS)}
+                      >
+                        Load Example
+                      </Button>
+                    </div>
                   </div>
 
                   {/* Investment List */}

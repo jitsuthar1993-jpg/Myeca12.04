@@ -64,7 +64,7 @@ $env:NODE_ENV='development'; tsx server/index.ts
 | [Database Guide](docs/DatabaseManagement.md) | Database operations |
 | [Product Blueprint](docs/MYECA_PRODUCT_BLUEPRINT.md) | Product and workflow blueprint |
 
-## âš™ï¸ Configuration
+## Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -74,8 +74,13 @@ $env:NODE_ENV='development'; tsx server/index.ts
 | `VITE_SUPABASE_ANON_KEY` |  | Supabase browser publishable key; `SUPABASE_ANON_KEY` is also accepted for Vercel Marketplace compatibility |
 | `SUPABASE_SERVICE_ROLE_KEY` |  | Supabase server secret key |
 | `BLOB_READ_WRITE_TOKEN` |  | Vercel Blob upload/download token |
+| `ADMIN_EMAILS` |  | Comma-separated emails promoted to admin on auth sync |
+| `SESSION_SECRET` |  | Server session signing secret |
+| `PII_ENCRYPTION_KEY` |  | At least 32 characters; required for encrypted PII and MFA secrets |
+| `SECURITY_LEAD_PHONE`, `SECURITY_ADMIN_PHONE`, `SECURITY_BACKUP_PHONE` |  | Incident-response escalation contact numbers |
+| `SECURITY_EXTERNAL_NAME`, `SECURITY_EXTERNAL_ORGANIZATION`, `SECURITY_EXTERNAL_CONTACT` |  | Optional external incident-response contact details |
 
-## ðŸŽ¯ Key Features
+## Key Features
 
 - **Tax Calculators** - Income tax, HRA, TDS, SIP, EMI, Capital gains
 - **ITR Filing** - Step-by-step guided filing with form selection
@@ -84,7 +89,7 @@ $env:NODE_ENV='development'; tsx server/index.ts
 - **Professional Services** - GST, compliance, company registration
 - **Admin Dashboard** - Analytics, user management, content
 
-## ðŸ“ Scripts
+## Scripts
 
 ```bash
 npm run dev      # Start development server

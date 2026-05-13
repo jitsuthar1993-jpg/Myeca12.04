@@ -4,7 +4,7 @@ import {
   Building2, FileText, Calculator, Receipt, PiggyBank, Shield, 
   CreditCard, Award, Home, TrendingUp, Grid, BarChart3, Users,
   HelpCircle, BookOpen, Bot, MessageCircle, AlertTriangle,
-  Search, PlayCircle, Code2, ExternalLink, Activity, TerminalSquare,
+  Search, Code2, ExternalLink, Activity, TerminalSquare,
   KeyRound, CreditCard as CreditCardIcon, FileQuestion, Grid3X3,
   ChevronRight, Sparkles, Building, User
 } from "lucide-react";
@@ -83,8 +83,8 @@ export default function AllServicesPage() {
 
             <div className="flex items-center gap-4 mt-auto">
               <Link href="/learn/videos" className="flex items-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <PlayCircle className="w-4 h-4 mr-1.5" />
-                Watch Demo
+                <BookOpen className="w-4 h-4 mr-1.5" />
+                Lesson Guide
               </Link>
               <Link href="/help" className="flex items-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
                 <Code2 className="w-4 h-4 mr-1.5" />

@@ -582,7 +582,7 @@ export default function ComplianceCalendarPage() {
                 </Link>
                 <div className="flex items-center gap-2 mt-3">
                   <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-xs font-normal text-slate-500">Statutory accuracy guaranteed</span>
+                  <span className="text-xs font-normal text-slate-500">Uses current rule inputs and review notes</span>
                 </div>
               </div>
             </div>

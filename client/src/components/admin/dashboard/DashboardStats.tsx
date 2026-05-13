@@ -106,8 +106,8 @@ export function DashboardStats({ stats, isLoading = false }: DashboardStatsProps
       
       <StatCard
         title="System Health"
-        value={stats.systemHealth.status === 'healthy' ? '99.9%' : 'Warning'}
-        subtitle={`Uptime: ${stats.systemHealth.uptime}%`}
+        value={stats.systemHealth.status === 'healthy' ? `${stats.systemHealth.uptime}%` : 'Warning'}
+        subtitle={`Status: ${stats.systemHealth.status}`}
         icon={Activity}
         iconBg={cn(
           stats.systemHealth.status === 'healthy' 
@@ -118,4 +118,3 @@ export function DashboardStats({ stats, isLoading = false }: DashboardStatsProps
     </div>
   );
 }
-

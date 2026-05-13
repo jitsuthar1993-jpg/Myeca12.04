@@ -20,6 +20,7 @@ export default defineConfig({
   ].filter(Boolean),
   resolve: {
     alias: {
+      "framer-motion": path.resolve(process.cwd(), "client", "src", "lib", "framer-motion-lite.tsx"),
       "@": path.resolve(process.cwd(), "client", "src"),
       "@shared": path.resolve(process.cwd(), "shared"),
       "@assets": path.resolve(process.cwd(), "client", "public", "assets"),
@@ -29,9 +30,20 @@ export default defineConfig({
   root: path.resolve(process.cwd(), "client"),
   envDir: path.resolve(process.cwd()),
   esbuild: {
-    // Strip debugger statements in production; keep console.error/warn for diagnostics
+    // Strip browser-only diagnostics from production chunks; server logging is built separately.
     drop: process.env.NODE_ENV === "production" ? ["debugger"] : [],
-    pure: process.env.NODE_ENV === "production" ? ["console.log", "console.debug", "console.info", "console.trace"] : [],
+    pure: process.env.NODE_ENV === "production"
+      ? [
+          "console.log",
+          "console.debug",
+          "console.info",
+          "console.trace",
+          "console.warn",
+          "console.error",
+          "console.group",
+          "console.groupEnd",
+        ]
+      : [],
   },
   build: {
     outDir: path.resolve(process.cwd(), "dist/public"),
@@ -43,37 +55,40 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // React core â€” must be in one chunk to avoid circular deps
+          // React core stays together to avoid circular dependency issues.
           if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
-            return "vendor";
+            return "react-vendor";
           }
-          // Routing + query â€” small, needed on every page
+          if (id.includes("node_modules/scheduler/")) {
+            return "react-vendor";
+          }
+          // Routing and query clients are needed globally, but do not need to inflate React core.
           if (
             id.includes("node_modules/wouter") ||
             id.includes("node_modules/@tanstack/react-query") ||
             id.includes("node_modules/use-sync-external-store")
           ) {
-            return "vendor";
+            return "app-vendor";
           }
           // Radix UI stays route/component scoped so feature-heavy widgets do not inflate core vendor.
           // Supabase auth client stays separate from the first paint path.
           if (id.includes("node_modules/@supabase/")) {
             return "supabase";
           }
-          // Framer-motion â€” only needed after first paint
-          if (id.includes("node_modules/framer-motion")) {
-            return "motion";
+          // Charting libraries are route-only; keep each family below the per-file budget.
+          if (id.includes("node_modules/d3-")) {
+            return "d3";
           }
-          // Charts â€” only needed on calculator/analytics pages, NOT homepage
-          // Let Vite tree-shake per-route instead of one fat chunk
-          if (id.includes("node_modules/recharts") || id.includes("node_modules/d3-")) {
-            return "charts";
+          if (id.includes("node_modules/lodash")) {
+            return "lodash";
           }
-          // Forms â€” only needed on form-heavy pages
+          if (id.includes("node_modules/lucide-react")) {
+            return "icons";
+          }
+          // Forms are only needed on form-heavy pages.
           if (id.includes("node_modules/react-hook-form") || id.includes("node_modules/@hookform/") || id.includes("node_modules/zod")) {
             return "forms";
           }
-          // Icons â€” let Vite tree-shake per-route; don't bundle all icons together
         },
       },
     },

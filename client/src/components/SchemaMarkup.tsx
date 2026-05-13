@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { CONTACT } from "@/config/contact";
 
 interface SchemaMarkupProps {
   type: "Organization" | "Service" | "Product" | "BreadcrumbList" | "FAQPage" | "HowTo" | "Article";
@@ -27,7 +28,7 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
         },
         contactPoint: {
           "@type": "ContactPoint",
-          telephone: "+91-1800-123-4567",
+          email: CONTACT.supportEmail,
           contactType: "customer support",
           availableLanguage: ["English", "Hindi", "Tamil", "Telugu", "Bengali"]
         },

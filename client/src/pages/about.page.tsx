@@ -42,12 +42,12 @@ export default function AboutPage() {
                 </p>
                 <p>
                   While automated platforms became popular, they lacked the "human touch" and professional liability 
-                  that only a qualified CA can provide. We set out to build a platform that combines the speed of AI 
+                  that only a qualified CA can provide. We set out to build a platform that combines the speed of AI
                   with the accountability of a real expert.
                 </p>
                 <p>
-                  Today, MyeCA.in handles over 950+ active clients and has helped save over ₹15 Lakhs in legal penalties 
-                  and optimized refunds for freelancers, NRIs, and small businesses across India.
+                  Today, MyeCA.in focuses on guided filing workflows, secure document handling, and expert review paths
+                  for freelancers, NRIs, and small businesses across India.
                 </p>
               </div>
             </div>

@@ -1,18 +1,14 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Link } from "wouter";
 import {
   Play,
   Search,
   Clock,
-  Eye,
-  ThumbsUp,
   BookOpen,
   TrendingUp,
   Calculator,
@@ -21,10 +17,8 @@ import {
   Building2,
   PiggyBank,
   FileText,
-  Filter,
   ChevronRight,
-  Star,
-  User
+  Star
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import {
@@ -33,7 +27,7 @@ import {
   VideoTutorial,
   VideoCategory,
   getVideosByCategory,
-  getPopularVideos,
+  getFeaturedVideos,
   getRecentVideos,
   searchVideos,
   getRelatedVideos,
@@ -59,10 +53,6 @@ export default function VideoTutorialsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<VideoCategory | 'all'>('all');
   const [selectedVideo, setSelectedVideo] = useState<VideoTutorial | null>(null);
-  const [watchedVideos, setWatchedVideos] = useState<string[]>(() => {
-    const saved = localStorage.getItem('watchedVideos');
-    return saved ? JSON.parse(saved) : [];
-  });
 
   // Filter videos
   const filteredVideos = useMemo(() => {
@@ -79,52 +69,28 @@ export default function VideoTutorialsPage() {
     return videos;
   }, [searchQuery, selectedCategory]);
 
-  const popularVideos = useMemo(() => getPopularVideos(4), []);
+  const featuredVideos = useMemo(() => getFeaturedVideos(4), []);
   const recentVideos = useMemo(() => getRecentVideos(4), []);
-
-  // Mark video as watched
-  const markAsWatched = (videoId: string) => {
-    if (!watchedVideos.includes(videoId)) {
-      const updated = [...watchedVideos, videoId];
-      setWatchedVideos(updated);
-      localStorage.setItem('watchedVideos', JSON.stringify(updated));
-    }
-  };
-
-  // Format views
-  const formatViews = (views: number) => {
-    if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
-    if (views >= 1000) return `${(views / 1000).toFixed(0)}K`;
-    return views.toString();
-  };
 
   // Video card component
   const VideoCard = ({ video, size = 'normal' }: { video: VideoTutorial; size?: 'normal' | 'small' }) => {
-    const isWatched = watchedVideos.includes(video.id);
     const category = VIDEO_CATEGORIES.find(c => c.id === video.category);
     
     return (
       <Card 
-        className={`group cursor-pointer hover:shadow-lg transition-all duration-300 ${isWatched ? 'opacity-75' : ''} ${size === 'small' ? '' : ''}`}
-        onClick={() => {
-          setSelectedVideo(video);
-          markAsWatched(video.id);
-        }}
+        className="group cursor-pointer hover:shadow-lg transition-all duration-300"
+        onClick={() => setSelectedVideo(video)}
       >
         <div className="relative">
-          {/* Thumbnail placeholder */}
           <div className={`bg-gradient-to-br from-slate-700 to-slate-900 ${size === 'small' ? 'h-32' : 'h-40'} rounded-t-lg flex items-center justify-center relative overflow-hidden`}>
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-            <Play className="h-12 w-12 text-white/80 group-hover:text-white group-hover:scale-110 transition-all" />
-            {/* Duration badge */}
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 transition-colors" />
+            <BookOpen className="h-12 w-12 text-white/80 group-hover:text-white group-hover:scale-110 transition-all" />
             <Badge className="absolute bottom-2 right-2 bg-black/80 text-white text-xs">
               {video.duration}
             </Badge>
-            {isWatched && (
-              <Badge className="absolute top-2 left-2 bg-green-600 text-white text-xs">
-                Watched
-              </Badge>
-            )}
+            <Badge className="absolute top-2 left-2 bg-blue-600 text-white text-xs">
+              Lesson outline
+            </Badge>
           </div>
         </div>
         <CardContent className={`${size === 'small' ? 'p-3' : 'p-4'}`}>
@@ -143,16 +109,10 @@ export default function VideoTutorialsPage() {
             <p className="text-sm text-gray-500 line-clamp-2 mt-1">{video.description}</p>
           )}
           <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <Eye className="h-3 w-3" />
-                {formatViews(video.views)}
-              </span>
-              <span className="flex items-center gap-1">
-                <ThumbsUp className="h-3 w-3" />
-                {formatViews(video.likes)}
-              </span>
-            </div>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {video.duration}
+            </span>
             <span>{video.instructor}</span>
           </div>
         </CardContent>
@@ -180,7 +140,7 @@ export default function VideoTutorialsPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="text-red-300" />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-white">Video Tutorials</BreadcrumbPage>
+                <BreadcrumbPage className="text-white">Lesson Outlines</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -190,9 +150,9 @@ export default function VideoTutorialsPage() {
               <Play className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Video Tutorials</h1>
+              <h1 className="text-3xl font-bold">Lesson Outlines</h1>
               <p className="text-red-200 mt-1">
-                Learn tax filing, savings strategies, and more with expert-led videos
+                Browse expert-prepared lesson outlines for tax filing, savings, and compliance
               </p>
             </div>
           </div>
@@ -202,7 +162,7 @@ export default function VideoTutorialsPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search tutorials..."
+                placeholder="Search lesson topics..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20"
@@ -214,15 +174,15 @@ export default function VideoTutorialsPage() {
           <div className="grid grid-cols-3 gap-4 mt-8 max-w-md">
             <div className="text-center">
               <p className="text-2xl font-bold">{VIDEO_TUTORIALS.length}</p>
-              <p className="text-sm text-red-200">Videos</p>
+              <p className="text-sm text-red-200">Lessons</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold">{VIDEO_CATEGORIES.length}</p>
               <p className="text-sm text-red-200">Categories</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold">{watchedVideos.length}</p>
-              <p className="text-sm text-red-200">Watched</p>
+              <p className="text-2xl font-bold">{recentVideos.length}</p>
+              <p className="text-sm text-red-200">Recent</p>
             </div>
           </div>
         </div>
@@ -236,7 +196,7 @@ export default function VideoTutorialsPage() {
             size="sm"
             onClick={() => setSelectedCategory('all')}
           >
-            All Videos
+            All Lessons
           </Button>
           {VIDEO_CATEGORIES.map((category) => (
             <Button
@@ -256,7 +216,7 @@ export default function VideoTutorialsPage() {
           /* Filtered Results */
           <div>
             <h2 className="text-xl font-semibold mb-4">
-              {filteredVideos.length} {filteredVideos.length === 1 ? 'video' : 'videos'} found
+              {filteredVideos.length} {filteredVideos.length === 1 ? 'lesson' : 'lessons'} found
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredVideos.map((video) => (
@@ -266,7 +226,7 @@ export default function VideoTutorialsPage() {
             {filteredVideos.length === 0 && (
               <div className="text-center py-12">
                 <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No videos found</h3>
+                <h3 className="text-xl font-semibold mb-2">No lessons found</h3>
                 <p className="text-gray-500">Try a different search term or category</p>
               </div>
             )}
@@ -274,19 +234,19 @@ export default function VideoTutorialsPage() {
         ) : (
           /* Default View with Sections */
           <div className="space-y-12">
-            {/* Popular Videos */}
+            {/* Featured Lessons */}
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Star className="h-5 w-5 text-yellow-500" />
-                  Most Popular
+                  Featured Lessons
                 </h2>
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="#all">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
                 </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {popularVideos.map((video) => (
+                {featuredVideos.map((video) => (
                   <VideoCard key={video.id} video={video} />
                 ))}
               </div>
@@ -344,17 +304,16 @@ export default function VideoTutorialsPage() {
         <DialogContent className="max-w-4xl p-0">
           {selectedVideo && (
             <>
-              <div className="aspect-video bg-black">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={selectedVideo.videoUrl}
-                  title={selectedVideo.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="rounded-t-lg"
-                />
+              <div className="aspect-video bg-slate-900 rounded-t-lg flex items-center justify-center px-6 text-center">
+                <div className="max-w-xl">
+                  <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-white/10 flex items-center justify-center">
+                    <BookOpen className="h-7 w-7 text-white" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Lesson video in production</h2>
+                  <p className="text-sm text-slate-300">
+                    This topic is available as a structured lesson outline while the recorded tutorial is being prepared.
+                  </p>
+                </div>
               </div>
               <div className="p-6">
                 <div className="flex items-start gap-2 mb-2">
@@ -368,10 +327,10 @@ export default function VideoTutorialsPage() {
                 <h2 className="text-xl font-bold mb-2">{selectedVideo.title}</h2>
                 <p className="text-gray-600 mb-4">{selectedVideo.description}</p>
                 
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <div className="flex flex-col gap-4 text-sm text-gray-500 mb-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
+                      <BookOpen className="h-4 w-4" />
                       {selectedVideo.instructor}
                     </span>
                     <span className="flex items-center gap-1">
@@ -379,35 +338,30 @@ export default function VideoTutorialsPage() {
                       {selectedVideo.duration}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1">
-                      <Eye className="h-4 w-4" />
-                      {formatViews(selectedVideo.views)} views
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <ThumbsUp className="h-4 w-4" />
-                      {formatViews(selectedVideo.likes)}
-                    </span>
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" asChild>
+                      <Link href="/learn/guides">Browse Guides</Link>
+                    </Button>
+                    <Button size="sm" variant="outline" asChild>
+                      <Link href="/tax-assistant">Ask Tax Assistant</Link>
+                    </Button>
                   </div>
                 </div>
 
                 {/* Related Videos */}
                 {selectedVideo.relatedVideos.length > 0 && (
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3">Related Videos</h3>
+                    <h3 className="font-semibold mb-3">Related Lessons</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {getRelatedVideos(selectedVideo.id).slice(0, 2).map((video) => (
                         <Card 
                           key={video.id}
                           className="cursor-pointer hover:bg-gray-50"
-                          onClick={() => {
-                            setSelectedVideo(video);
-                            markAsWatched(video.id);
-                          }}
+                          onClick={() => setSelectedVideo(video)}
                         >
                           <CardContent className="p-3 flex items-center gap-3">
                             <div className="w-16 h-12 bg-slate-700 rounded flex items-center justify-center flex-shrink-0">
-                              <Play className="h-5 w-5 text-white" />
+                              <BookOpen className="h-5 w-5 text-white" />
                             </div>
                             <div className="min-w-0">
                               <p className="font-medium text-sm line-clamp-2">{video.title}</p>
@@ -427,4 +381,3 @@ export default function VideoTutorialsPage() {
     </div>
   );
 }
-

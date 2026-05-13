@@ -63,8 +63,66 @@ const FormComponent = ({ register, errors }: any) => {
 };
 
 const numberToWords = (num: number) => {
-  // Mock Indian style words converter for the template visual
-  return `Rupees ${num.toLocaleString('en-IN')} Only`;
+  const whole = Math.max(0, Math.floor(num));
+
+  if (whole === 0) return 'Rupees Zero Only';
+
+  const ones = [
+    '',
+    'One',
+    'Two',
+    'Three',
+    'Four',
+    'Five',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'Ten',
+    'Eleven',
+    'Twelve',
+    'Thirteen',
+    'Fourteen',
+    'Fifteen',
+    'Sixteen',
+    'Seventeen',
+    'Eighteen',
+    'Nineteen',
+  ];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+  const belowHundred = (value: number) => {
+    if (value < 20) return ones[value];
+    return [tens[Math.floor(value / 10)], ones[value % 10]].filter(Boolean).join(' ');
+  };
+
+  const belowThousand = (value: number) => {
+    const hundred = Math.floor(value / 100);
+    const rest = value % 100;
+    return [
+      hundred ? `${ones[hundred]} Hundred` : '',
+      rest ? belowHundred(rest) : '',
+    ].filter(Boolean).join(' ');
+  };
+
+  const groups: Array<[number, string]> = [
+    [10000000, 'Crore'],
+    [100000, 'Lakh'],
+    [1000, 'Thousand'],
+    [1, ''],
+  ];
+
+  let remaining = whole;
+  const words: string[] = [];
+
+  for (const [value, label] of groups) {
+    const groupValue = Math.floor(remaining / value);
+    if (!groupValue) continue;
+    words.push([belowThousand(groupValue), label].filter(Boolean).join(' '));
+    remaining %= value;
+  }
+
+  return `Rupees ${words.join(' ')} Only`;
 };
 
 const generateHTML = (data: any) => {
@@ -125,7 +183,7 @@ const generateHTML = (data: any) => {
   `;
 };
 
-const generateMarkdown = (data: any) => `# Rent ReceiptnnGenerated via MyeCA.in`;
+const generateMarkdown = () => `# Rent Receipt\n\nGenerated via MyeCA.in`;
 
 export const RentReceiptGenerator: DocumentGeneratorConfig = {
   id: 'rent-receipt',

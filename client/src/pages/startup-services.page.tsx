@@ -36,7 +36,7 @@ const StartupServicesPage = () => {
     return (
       <span className="inline-flex items-center">
         <IndianRupee className="w-3.5 h-3.5 mr-0.5" />
-        {p.replace(/\₹|₹|â‚¹/g, "")}
+        {p.replace(/₹|Rs\.?/gi, "")}
       </span>
     );
   };
@@ -199,9 +199,9 @@ const StartupServicesPage = () => {
   const ourAdvantages = [
     {
       title: "Expert CA Team",
-      description: "Dedicated CAs with 10+ years startup experience",
-      stat: "50+ Expert CAs",
-      benefit: "Deep industry knowledge",
+      description: "Startup-focused CA review for incorporation, tax, and compliance decisions",
+      stat: "CA-led Review",
+      benefit: "Practical compliance guidance",
       icon: Users,
       color: "emerald"
     },
@@ -215,9 +215,9 @@ const StartupServicesPage = () => {
     },
     {
       title: "Investor Network",
-      description: "Connected with 200+ VCs and angel investors",
-      stat: "200+ VCs",
-      benefit: "Funding connections",
+      description: "Investor-ready finance documents, diligence packs, and scheme application support",
+      stat: "Funding-Ready Docs",
+      benefit: "Cleaner investor conversations",
       icon: Building,
       color: "purple"
     }
@@ -483,7 +483,7 @@ const StartupServicesPage = () => {
               Why Choose MyeCA for Your Startup?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Your trusted partner with deep startup expertise and proven track record
+              Startup-focused finance, tax, and compliance support from incorporation through growth
             </p>
           </div>
 
@@ -532,7 +532,7 @@ const StartupServicesPage = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why 2,500+ Startups Trust MyeCA
+              Why Startups Choose MyeCA
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Comprehensive startup support with proven expertise and innovative solutions
@@ -602,7 +602,7 @@ const StartupServicesPage = () => {
                 Ready to Scale Your Startup?
               </h2>
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                Join 2,500+ successful startups who trust MyeCA for their financial and compliance needs. 
+                Get structured finance and compliance support from early setup through funding readiness.
                 From {"₹"}2,999/month essentials to enterprise solutions - we grow with you.
               </p>
 
@@ -620,15 +620,15 @@ const StartupServicesPage = () => {
               <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  <span>2,500+ Startups Served</span>
+                  <span>Startup Lifecycle Support</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  <span>{"₹"}850+ Cr Funding Facilitated</span>
+                  <span>Funding-Ready Documentation</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  <span>98.5% Success Rate</span>
+                  <span>CA-led Compliance Review</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />

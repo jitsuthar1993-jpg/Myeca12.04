@@ -376,6 +376,30 @@ function writeTextAssets(blogPosts: DefaultBlogPost[]) {
   fs.writeFileSync(path.join(clientPublicDir, "robots.txt"), robots, "utf8");
 }
 
+function pruneUnusedPublicAssets() {
+  const unusedLogoFiles = [
+    "lic.png",
+    "icici.svg",
+    "sbi.png",
+    "asian_paints.png",
+    "infosys.png",
+    "dlf.png",
+    "icici.png",
+    "hdfc.png",
+    "zomato.png",
+    "reliance.png",
+    "paytm.png",
+    "itc.svg",
+    "wipro.svg",
+    "infosys.svg",
+    "phonepe.svg",
+  ];
+
+  unusedLogoFiles.forEach((fileName) => {
+    fs.rmSync(path.join(distDir, "assets", "logos", fileName), { force: true });
+  });
+}
+
 function main() {
   if (!fs.existsSync(distIndexPath)) {
     throw new Error(`Build output not found: ${distIndexPath}`);
@@ -400,6 +424,7 @@ function main() {
 
   PRIVATE_NOINDEX_ROUTES.forEach((route) => writeRouteHtml(template, privateMeta(route)));
   writeTextAssets(blogPosts);
+  pruneUnusedPublicAssets();
 
   console.log(`Generated SEO HTML shells for ${publicRoutes.length} public routes and ${PRIVATE_NOINDEX_ROUTES.length} noindex routes.`);
 }

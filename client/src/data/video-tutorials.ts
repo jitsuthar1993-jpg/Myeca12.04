@@ -1,4 +1,4 @@
-// Video Tutorials Data for Educational Content
+// Lesson outline data for educational content
 
 export interface VideoTutorial {
   id: string;
@@ -8,11 +8,7 @@ export interface VideoTutorial {
   category: VideoCategory;
   tags: string[];
   thumbnail: string;
-  videoUrl: string; // YouTube embed URL
-  youtubeId: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  views: number;
-  likes: number;
   publishedDate: string;
   instructor: string;
   relatedVideos: string[]; // IDs of related videos
@@ -47,11 +43,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'itr-filing',
     tags: ['ITR', 'beginners', 'tax filing', 'income tax'],
     thumbnail: '/images/tutorials/itr-basics.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 125000,
-    likes: 8500,
     publishedDate: '2024-04-15',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['itr-form-selection', 'form16-upload'],
@@ -64,11 +56,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'itr-filing',
     tags: ['ITR forms', 'ITR-1', 'ITR-2', 'ITR-3', 'form selection'],
     thumbnail: '/images/tutorials/itr-forms.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 89000,
-    likes: 6200,
     publishedDate: '2024-04-20',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['itr-basics', 'salaried-itr'],
@@ -81,11 +69,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'itr-filing',
     tags: ['salaried', 'ITR-1', 'Form 16', 'salary income'],
     thumbnail: '/images/tutorials/salaried-itr.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 156000,
-    likes: 11200,
     publishedDate: '2024-05-01',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['form16-upload', 'hra-claim'],
@@ -98,11 +82,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'itr-filing',
     tags: ['Form 16', 'OCR', 'auto-fill', 'PDF upload'],
     thumbnail: '/images/tutorials/form16.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 67000,
-    likes: 4800,
     publishedDate: '2024-05-10',
     instructor: 'Tech Team',
     relatedVideos: ['salaried-itr', 'ais-verification'],
@@ -117,11 +97,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'tax-saving',
     tags: ['80C', 'deductions', 'tax saving', 'PPF', 'ELSS'],
     thumbnail: '/images/tutorials/80c.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 234000,
-    likes: 18500,
     publishedDate: '2024-03-15',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['nps-benefits', 'health-insurance-80d'],
@@ -134,11 +110,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'tax-saving',
     tags: ['NPS', '80CCD', 'pension', 'retirement', 'tax saving'],
     thumbnail: '/images/tutorials/nps.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'intermediate',
-    views: 98000,
-    likes: 7600,
     publishedDate: '2024-03-20',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['tax-saving-80c', 'retirement-planning'],
@@ -151,11 +123,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'tax-saving',
     tags: ['80D', 'health insurance', 'mediclaim', 'deductions'],
     thumbnail: '/images/tutorials/80d.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 76000,
-    likes: 5400,
     publishedDate: '2024-03-25',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['tax-saving-80c', 'home-loan-tax'],
@@ -168,11 +136,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'tax-saving',
     tags: ['HRA', 'house rent', 'exemption', 'rent receipt'],
     thumbnail: '/images/tutorials/hra.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 112000,
-    likes: 8200,
     publishedDate: '2024-04-01',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['salaried-itr', 'tax-saving-80c'],
@@ -187,11 +151,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'calculators',
     tags: ['calculator', 'income tax', 'tax regime', 'comparison'],
     thumbnail: '/images/tutorials/calc-tax.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 89000,
-    likes: 6100,
     publishedDate: '2024-04-05',
     instructor: 'Tech Team',
     relatedVideos: ['regime-comparison', 'sip-calc-guide'],
@@ -204,11 +164,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'calculators',
     tags: ['SIP', 'calculator', 'mutual funds', 'investment'],
     thumbnail: '/images/tutorials/calc-sip.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 67000,
-    likes: 4900,
     publishedDate: '2024-04-10',
     instructor: 'Tech Team',
     relatedVideos: ['income-tax-calc', 'elss-comparison'],
@@ -223,11 +179,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'investments',
     tags: ['ELSS', 'mutual funds', 'tax saving', 'comparison'],
     thumbnail: '/images/tutorials/elss.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'intermediate',
-    views: 145000,
-    likes: 11800,
     publishedDate: '2024-02-20',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['tax-saving-80c', 'sip-calc-guide'],
@@ -240,11 +192,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'investments',
     tags: ['capital gains', 'STCG', 'LTCG', 'equity', 'property'],
     thumbnail: '/images/tutorials/capital-gains.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'intermediate',
-    views: 178000,
-    likes: 14200,
     publishedDate: '2024-02-25',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['tax-loss-harvesting', 'portfolio-tax'],
@@ -257,11 +205,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'investments',
     tags: ['tax loss harvesting', 'capital gains', 'strategy'],
     thumbnail: '/images/tutorials/harvesting.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'advanced',
-    views: 56000,
-    likes: 4200,
     publishedDate: '2024-03-01',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['capital-gains-tax', 'portfolio-tax'],
@@ -276,11 +220,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'gst',
     tags: ['GST', 'basics', 'registration', 'CGST', 'SGST'],
     thumbnail: '/images/tutorials/gst-basics.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 234000,
-    likes: 18900,
     publishedDate: '2024-01-15',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['gst-registration', 'gst-returns'],
@@ -293,11 +233,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'gst',
     tags: ['GST registration', 'GST portal', 'documents'],
     thumbnail: '/images/tutorials/gst-reg.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'beginner',
-    views: 189000,
-    likes: 15400,
     publishedDate: '2024-01-20',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['gst-basics', 'gst-returns'],
@@ -312,11 +248,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'business',
     tags: ['startup', 'tax planning', '80-IAC', 'angel tax'],
     thumbnail: '/images/tutorials/startup-tax.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'advanced',
-    views: 78000,
-    likes: 6100,
     publishedDate: '2024-02-01',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['company-registration', 'gst-basics'],
@@ -331,11 +263,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'compliance',
     tags: ['advance tax', 'due dates', 'quarterly', 'payment'],
     thumbnail: '/images/tutorials/advance-tax.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'intermediate',
-    views: 112000,
-    likes: 8900,
     publishedDate: '2024-03-10',
     instructor: 'CA Priya Sharma',
     relatedVideos: ['income-tax-calc', 'tds-basics'],
@@ -348,11 +276,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     category: 'compliance',
     tags: ['TDS', 'sections', 'rates', 'compliance'],
     thumbnail: '/images/tutorials/tds.jpg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    youtubeId: 'dQw4w9WgXcQ',
     difficulty: 'intermediate',
-    views: 167000,
-    likes: 13200,
     publishedDate: '2024-03-05',
     instructor: 'CA Rajesh Kumar',
     relatedVideos: ['advance-tax', 'salaried-itr'],
@@ -364,8 +288,12 @@ export function getVideosByCategory(category: VideoCategory): VideoTutorial[] {
   return VIDEO_TUTORIALS.filter(v => v.category === category);
 }
 
+export function getFeaturedVideos(limit: number = 5): VideoTutorial[] {
+  return VIDEO_TUTORIALS.slice(0, limit);
+}
+
 export function getPopularVideos(limit: number = 5): VideoTutorial[] {
-  return [...VIDEO_TUTORIALS].sort((a, b) => b.views - a.views).slice(0, limit);
+  return getFeaturedVideos(limit);
 }
 
 export function getRecentVideos(limit: number = 5): VideoTutorial[] {
@@ -388,4 +316,3 @@ export function getRelatedVideos(videoId: string): VideoTutorial[] {
   if (!video) return [];
   return VIDEO_TUTORIALS.filter(v => video.relatedVideos.includes(v.id));
 }
-

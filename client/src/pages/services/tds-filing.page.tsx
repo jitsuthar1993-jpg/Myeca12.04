@@ -222,7 +222,7 @@ export default function TdsFilingPage() {
     },
     {
       title: "Error-Free Returns",
-      description: "99.9% accuracy rate with thorough validation checks",
+      description: "Validation checks before filing to reduce return errors",
       icon: CheckCircle
     },
     {
@@ -305,7 +305,7 @@ export default function TdsFilingPage() {
                   </li>
                   <li className="flex items-start">
                     <AlertCircle className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
-                    Late filing fee is {"â‚¹"}200/day; avoid penalties by timely filing.
+                    Late filing fee is Rs 200/day; avoid penalties by timely filing.
                   </li>
                 </ul>
               </CardContent>
@@ -370,7 +370,7 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Property Buyers</div>
-                      <div className="text-sm text-gray-600">1% TDS on property purchases above {"â‚¹"}50 lakhs</div>
+                      <div className="text-sm text-gray-600">1% TDS on property purchases above Rs 50 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
@@ -384,7 +384,7 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">High-Value Individual/HUF</div>
-                      <div className="text-sm text-gray-600">Business turnover &gt;{"â‚¹"}1 crore or profession &gt;{"â‚¹"}50 lakhs</div>
+                      <div className="text-sm text-gray-600">Business turnover &gt; Rs 1 crore or profession &gt; Rs 50 lakhs</div>
                     </div>
                   </li>
                 </ul>
@@ -408,28 +408,28 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Overseas Remittance Services</div>
-                      <div className="text-sm text-gray-600">5% TCS on foreign remittances via LRS above â‚¹7 lakhs</div>
+                      <div className="text-sm text-gray-600">5% TCS on foreign remittances via LRS above Rs 7 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Motor Vehicle Dealers</div>
-                      <div className="text-sm text-gray-600">1% TCS on vehicle sales above â‚¹10 lakhs</div>
+                      <div className="text-sm text-gray-600">1% TCS on vehicle sales above Rs 10 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Goods/Services Sellers</div>
-                      <div className="text-sm text-gray-600">0.1% TCS on receipts above â‚¹50 lakhs (Section 206C(1H))</div>
+                      <div className="text-sm text-gray-600">0.1% TCS on receipts above Rs 50 lakhs (Section 206C(1H))</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Overseas Tour Packages</div>
-                      <div className="text-sm text-gray-600">5% TCS on tour packages above â‚¹2 lakhs</div>
+                      <div className="text-sm text-gray-600">5% TCS on tour packages above Rs 2 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
@@ -925,7 +925,7 @@ export default function TdsFilingPage() {
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">TDS Filing Service Pricing</h3>
               <div className="flex justify-center items-baseline gap-2 mb-2">
-                <span className="text-4xl font-bold text-indigo-600">â‚¹799</span>
+                <span className="text-4xl font-bold text-indigo-600">Rs 799</span>
                 <span className="text-lg text-gray-600">per quarter</span>
                 <Badge className="bg-green-100 text-green-800">Starting Price</Badge>
               </div>
@@ -967,7 +967,7 @@ export default function TdsFilingPage() {
             </div>
 
             <p className="text-sm text-gray-600 mt-4">
-              Trusted by 10,000+ businesses â€¢ 99.9% filing accuracy â€¢ Expert CA team
+              Review-led filing support - TRACES workflow guidance - Expert CA team
             </p>
           </Card>
         </m.div>

@@ -32,4 +32,18 @@ Repeated heading.
     expect(result.html).not.toContain("<script>");
     expect(estimateReadingTimeMinutes(result.html)).toBe(1);
   });
+
+  it("strips scriptable attributes and javascript urls from rendered html", () => {
+    const result = normalizeBlogContent(`
+      <style>body { display: none; }</style>
+      <h2 onclick=alert(1)>Safe Heading</h2>
+      <img src=x onerror="alert(2)" />
+      <a href="javascript:alert(3)">Unsafe link</a>
+      <a href=' javascript:alert(4)'>Unsafe link 2</a>
+    `);
+
+    expect(result.html).not.toMatch(/<style|onclick|onerror|javascript:/i);
+    expect(result.html).toContain('href="#"');
+    expect(result.toc).toEqual([{ id: "safe-heading", text: "Safe Heading", level: 2 }]);
+  });
 });

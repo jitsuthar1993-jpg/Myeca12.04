@@ -2,6 +2,15 @@
 import crypto from 'crypto';
 import { EventEmitter } from 'events';
 
+const INCIDENT_CONTACTS = {
+  securityLeadPhone: process.env.SECURITY_LEAD_PHONE || '',
+  systemAdminPhone: process.env.SECURITY_ADMIN_PHONE || '',
+  backupSecurityPhone: process.env.SECURITY_BACKUP_PHONE || '',
+  externalName: process.env.SECURITY_EXTERNAL_NAME || '',
+  externalOrganization: process.env.SECURITY_EXTERNAL_ORGANIZATION || '',
+  externalContact: process.env.SECURITY_EXTERNAL_CONTACT || '',
+};
+
 // Security Incident Types
 export type IncidentSeverity = 'low' | 'medium' | 'high' | 'critical' | 'emergency';
 export type IncidentStatus = 'detected' | 'analyzing' | 'contained' | 'eradicated' | 'recovered' | 'closed';
@@ -333,14 +342,14 @@ export class IncidentResponseService extends EventEmitter {
             {
               name: 'Security Team Lead',
               email: 'security-lead@myeca.in',
-              phone: '+91-9876543210',
+              phone: INCIDENT_CONTACTS.securityLeadPhone,
               role: 'incident_commander',
               escalationLevel: 1
             },
             {
               name: 'System Administrator',
               email: 'admin@myeca.in',
-              phone: '+91-9876543211',
+              phone: INCIDENT_CONTACTS.systemAdminPhone,
               role: 'system_admin',
               escalationLevel: 1
             }
@@ -349,20 +358,22 @@ export class IncidentResponseService extends EventEmitter {
             {
               name: 'Backup Security Analyst',
               email: 'backup-security@myeca.in',
-              phone: '+91-9876543212',
+              phone: INCIDENT_CONTACTS.backupSecurityPhone,
               role: 'security_analyst',
               escalationLevel: 2
             }
           ],
-          external: [
-            {
-              name: 'External Security Consultant',
-              organization: 'Security Corp',
-              contact: 'emergency@securitycorp.com',
-              service: '24/7 Security Response',
-              escalationLevel: 3
-            }
-          ]
+          external: INCIDENT_CONTACTS.externalContact
+            ? [
+                {
+                  name: INCIDENT_CONTACTS.externalName || 'External Security Contact',
+                  organization: INCIDENT_CONTACTS.externalOrganization || 'External Security Provider',
+                  contact: INCIDENT_CONTACTS.externalContact,
+                  service: 'Security response support',
+                  escalationLevel: 3
+                }
+              ]
+            : []
         },
         procedures: {
           detection: [

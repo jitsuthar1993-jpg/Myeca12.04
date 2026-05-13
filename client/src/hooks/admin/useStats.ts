@@ -18,6 +18,10 @@ export function useStats() {
     queryKey: ['admin', 'stats'],
     queryFn: async () => {
       const result = await adminApi.getStats();
+      if (!result.success) {
+        throw new Error(result.error || 'Unable to load admin statistics');
+      }
+
       return result.data || defaultStats;
     },
     staleTime: 30000, // 30 seconds
@@ -32,4 +36,3 @@ export function useStats() {
     refetch,
   };
 }
-

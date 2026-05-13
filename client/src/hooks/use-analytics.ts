@@ -2,24 +2,15 @@
 
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import {
-  trackFormStart,
-  trackFormProgress,
-  trackFormSubmit,
-  trackServiceView,
-  trackServiceClick,
-  trackCalculatorUse,
-  trackScrollDepth,
-  trackTimeOnPage,
-  trackExitIntent,
-  trackFeatureUse,
-  initializeEnhancedAnalytics
-} from '@/utils/analytics-enhanced';
+
+const loadAnalytics = () => import('@/utils/analytics-enhanced');
 
 // Initialize enhanced analytics on app load
 export function useAnalyticsInitialization() {
   useEffect(() => {
-    initializeEnhancedAnalytics();
+    void loadAnalytics().then(({ initializeEnhancedAnalytics }) => {
+      initializeEnhancedAnalytics();
+    });
   }, []);
 }
 
@@ -38,7 +29,9 @@ export function usePageTracking() {
       }
 
       // Track in our custom analytics
-      trackFeatureUse('page_view', 'navigation', location);
+      void loadAnalytics().then(({ trackFeatureUse }) => {
+        trackFeatureUse('page_view', 'navigation', location);
+      });
       
       previousLocation.current = location;
     }
@@ -52,20 +45,26 @@ export function useFormTracking(formName: string, formType: string) {
 
   const trackStart = () => {
     if (!hasStarted.current) {
-      trackFormStart(formName, formType);
+      void loadAnalytics().then(({ trackFormStart }) => {
+        trackFormStart(formName, formType);
+      });
       hasStarted.current = true;
     }
   };
 
   const trackProgress = (step: number, totalSteps: number) => {
     if (step > currentStep.current) {
-      trackFormProgress(formName, step, totalSteps);
+      void loadAnalytics().then(({ trackFormProgress }) => {
+        trackFormProgress(formName, step, totalSteps);
+      });
       currentStep.current = step;
     }
   };
 
   const trackSubmit = (success: boolean) => {
-    trackFormSubmit(formName, formType, success);
+    void loadAnalytics().then(({ trackFormSubmit }) => {
+      trackFormSubmit(formName, formType, success);
+    });
     // Reset for potential re-submission
     hasStarted.current = false;
     currentStep.current = 0;
@@ -80,13 +79,17 @@ export function useServiceTracking(serviceName: string, serviceId: string, price
 
   useEffect(() => {
     if (!hasViewed.current) {
-      trackServiceView(serviceName, serviceId, price);
+      void loadAnalytics().then(({ trackServiceView }) => {
+        trackServiceView(serviceName, serviceId, price);
+      });
       hasViewed.current = true;
     }
   }, [serviceName, serviceId, price]);
 
   const trackClick = (action: 'learn_more' | 'buy_now' | 'get_quote') => {
-    trackServiceClick(serviceName, serviceId, action);
+    void loadAnalytics().then(({ trackServiceClick }) => {
+      trackServiceClick(serviceName, serviceId, action);
+    });
   };
 
   return { trackClick };
@@ -95,7 +98,9 @@ export function useServiceTracking(serviceName: string, serviceId: string, price
 // Track calculator usage
 export function useCalculatorTracking(calculatorName: string) {
   const calculateAndTrack = (inputValues: Record<string, any>, result: number) => {
-    trackCalculatorUse(calculatorName, inputValues, result);
+    void loadAnalytics().then(({ trackCalculatorUse }) => {
+      trackCalculatorUse(calculatorName, inputValues, result);
+    });
     return result;
   };
 
@@ -115,7 +120,9 @@ export function useVisibilityTracking(elementName: string, threshold = 0.5) {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasBeenVisible.current) {
-            trackFeatureUse('element_visible', elementName);
+            void loadAnalytics().then(({ trackFeatureUse }) => {
+              trackFeatureUse('element_visible', elementName);
+            });
             hasBeenVisible.current = true;
             observer.disconnect();
           }
@@ -150,7 +157,9 @@ export function useEngagementTracking(pageName: string) {
     const handleBeforeUnload = () => {
       if (isEngaged.current) {
         const timeSpent = Math.floor((Date.now() - startTime.current) / 1000);
-        trackTimeOnPage(timeSpent, pageName);
+        void loadAnalytics().then(({ trackTimeOnPage }) => {
+          trackTimeOnPage(timeSpent, pageName);
+        });
       }
     };
 
@@ -168,7 +177,9 @@ export function useEngagementTracking(pageName: string) {
 // Track click events
 export function useClickTracking(elementName: string, category: string) {
   const trackClick = (label?: string, value?: number) => {
-    trackFeatureUse(elementName, 'click', { label, value });
+    void loadAnalytics().then(({ trackFeatureUse }) => {
+      trackFeatureUse(elementName, 'click', { label, value });
+    });
   };
 
   return trackClick;
@@ -182,7 +193,9 @@ export function useSearchTracking() {
         search_term: searchTerm
       });
     }
-    trackFeatureUse('search', searchType || 'general', { term: searchTerm, results: resultsCount });
+    void loadAnalytics().then(({ trackFeatureUse }) => {
+      trackFeatureUse('search', searchType || 'general', { term: searchTerm, results: resultsCount });
+    });
   };
 
   return trackSearch;

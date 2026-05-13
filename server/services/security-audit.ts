@@ -1,8 +1,6 @@
 // @ts-nocheck
 import crypto from 'crypto';
 import { EventEmitter } from 'events';
-import { writeFileSync, appendFileSync, existsSync, mkdirSync } from 'fs';
-import { join } from 'path';
 
 // Security Event Types
 export type SecurityEventType = 
@@ -266,7 +264,6 @@ export interface SecurityAuditConfig {
 // Security Audit Service
 export class SecurityAuditService extends EventEmitter {
   private config: SecurityAuditConfig;
-  private logsPath: string;
   private threatIntelligence: Map<string, ThreatIntelligence> = new Map();
   private behavioralProfiles: Map<string, BehavioralProfile> = new Map();
   private securityRules: Map<string, SecurityRule> = new Map();
@@ -277,16 +274,10 @@ export class SecurityAuditService extends EventEmitter {
   constructor(config: SecurityAuditConfig) {
     super();
     this.config = config;
-    this.logsPath = join(process.cwd(), 'logs', 'security');
     this.initialize();
   }
 
   private initialize(): void {
-    // Create logs directory
-    if (!existsSync(this.logsPath)) {
-      mkdirSync(this.logsPath, { recursive: true });
-    }
-
     // Load security rules
     this.loadSecurityRules();
 
@@ -351,7 +342,7 @@ export class SecurityAuditService extends EventEmitter {
     // Queue for processing
     this.incidentQueue.push(event);
 
-    // Log to file
+    // Log through the platform logger/collector. Avoid writing security events to local disk.
     await this.writeSecurityLog(event);
 
     // Emit event for real-time monitoring
@@ -723,22 +714,34 @@ export class SecurityAuditService extends EventEmitter {
     return false;
   }
 
-  // Write security log to file
+  // Emit a sanitized security log event for the platform logger.
   private async writeSecurityLog(event: SecurityEvent): Promise<void> {
-    const logFile = join(this.logsPath, `security-${event.timestamp.toISOString().split('T')[0]}.jsonl`);
-    const logEntry = JSON.stringify(event) + '\n';
-    
-    try {
-      appendFileSync(logFile, logEntry);
-    } catch (error) {
-      console.error('Error writing security log:', error);
-    }
+    console.info({
+      event: 'security_audit_event',
+      id: event.id,
+      type: event.type,
+      severity: event.severity,
+      category: event.category,
+      source: event.source,
+      riskScore: event.riskScore,
+      timestamp: event.timestamp.toISOString(),
+      ipAddress: event.ipAddress,
+      userId: event.userId,
+      outcome: event.outcome,
+    });
   }
 
   // Send security alert
   private async sendSecurityAlert(event: SecurityEvent): Promise<void> {
     // Implementation would send alerts via configured channels (email, Slack, webhook, etc.)
-    console.log(`🚨 SECURITY ALERT [${event.severity.toUpperCase()}]: ${event.type} - Risk Score: ${event.riskScore}`);
+    console.warn({
+      event: 'security_alert',
+      id: event.id,
+      type: event.type,
+      severity: event.severity,
+      riskScore: event.riskScore,
+      timestamp: event.timestamp.toISOString(),
+    });
   }
 
   // Load security rules

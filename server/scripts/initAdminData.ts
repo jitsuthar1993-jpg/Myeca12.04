@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { db } from "../db.js";
-import { 
-  blogCategories, blogTags, siteSettings, emailTemplates, pages 
+import {
+  blogCategories, blogTags, siteSettings, emailTemplates as emailTemplatesTable, pages
 } from "../../shared/schema.js";
 
 async function initAdminData() {
@@ -36,7 +36,7 @@ async function initAdminData() {
     // Create additional site settings
     const settings = [
       { key: "site_name", value: "MyeCA.in", category: "general" },
-      { key: "site_tagline", value: "India's Premier Tax Filing Platform", category: "general" },
+      { key: "site_tagline", value: "Tax filing, compliance, and document support", category: "general" },
       { key: "admin_email", value: "admin@myeca.in", category: "general" },
       { key: "support_email", value: "support@myeca.in", category: "general" },
       { key: "max_upload_size", value: "10485760", category: "media" }, // 10MB
@@ -50,7 +50,7 @@ async function initAdminData() {
     }
 
     // Create email templates
-    const emailTemplates = [
+    const seedEmailTemplates = [
       {
         name: "Welcome Email",
         slug: "welcome-email",
@@ -83,19 +83,19 @@ Thank you for joining MyeCA.in. We're excited to help you with your tax filing n
       }
     ];
 
-    for (const template of emailTemplates) {
-      await db.insert(emailTemplates).values(template).onConflictDoNothing();
+    for (const template of seedEmailTemplates) {
+      await db.insert(emailTemplatesTable).values(template).onConflictDoNothing();
     }
 
-    // Create sample pages
-    const samplePages = [
+    // Create baseline CMS pages
+    const seedPages = [
       {
         title: "About Us",
         slug: "about-us",
         content: `<h1>About MyeCA.in</h1>
-<p>MyeCA.in is India's premier digital platform for professional tax filing services.</p>`,
+<p>MyeCA.in provides digital workflows for tax filing, compliance, and document support.</p>`,
         metaTitle: "About Us - MyeCA.in",
-        metaDescription: "Learn about MyeCA.in, India's premier tax filing platform",
+        metaDescription: "Learn about MyeCA.in tax filing and compliance workflows",
         status: "published",
         authorId: 1,
         publishedAt: new Date()
@@ -105,8 +105,7 @@ Thank you for joining MyeCA.in. We're excited to help you with your tax filing n
         slug: "contact-us",
         content: `<h1>Contact Us</h1>
 <p>We're here to help with all your tax filing needs.</p>
-<p>Email: support@myeca.in</p>
-<p>Phone: 1800-123-4567</p>`,
+<p>Email: support@myeca.in</p>`,
         metaTitle: "Contact Us - MyeCA.in",
         metaDescription: "Get in touch with MyeCA.in support team",
         status: "published",
@@ -115,7 +114,7 @@ Thank you for joining MyeCA.in. We're excited to help you with your tax filing n
       }
     ];
 
-    for (const page of samplePages) {
+    for (const page of seedPages) {
       await db.insert(pages).values(page).onConflictDoNothing();
     }
 

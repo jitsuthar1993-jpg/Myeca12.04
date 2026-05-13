@@ -74,13 +74,31 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {error ? (
+          <Card className="rounded-3xl border-red-200 bg-red-50 shadow-sm">
+            <CardContent className="flex flex-col gap-3 p-5 text-sm text-red-800 md:flex-row md:items-center md:justify-between">
+              <p className="font-medium">
+                Admin statistics could not be loaded: {error instanceof Error ? error.message : 'Request failed'}
+              </p>
+              <Button
+                variant="outline"
+                className="h-9 rounded-xl border-red-200 bg-white text-xs font-bold uppercase tracking-widest text-red-700 hover:bg-red-100"
+                onClick={() => refetch()}
+              >
+                <RefreshCw className={cn("mr-2 h-3 w-3", isLoading && "animate-spin")} />
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+
         {/* Quick Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: 'Total Platform Users', value: formatNumber(stats.users.total), icon: Users, color: 'blue' },
             { label: 'Active Compliance Filings', value: formatNumber(stats.services.active), icon: Activity, color: 'emerald' },
             { label: 'Expert CA Applications', value: pendingCAs.length, icon: ShieldCheck, color: 'amber' },
-            { label: 'Monthly Revenue (MTD)', value: formatCurrency(stats.revenue.total), icon: Coins, color: 'indigo' },
+            { label: 'Monthly Revenue (MTD)', value: formatCurrency(stats.revenue.thisMonth), icon: Coins, color: 'indigo' },
           ].map((item, i) => (
             <Card key={i} className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
                <div className="flex justify-between items-start mb-4">
@@ -202,4 +220,3 @@ export default function AdminDashboard() {
     </Layout>
   );
 }
-

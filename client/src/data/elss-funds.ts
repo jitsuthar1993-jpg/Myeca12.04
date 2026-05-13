@@ -1,5 +1,5 @@
 // ELSS (Equity Linked Savings Scheme) Fund Data
-// Note: This is static/mock data for demonstration. In production, use a real API.
+// Note: Static reference data. Review and refresh before making live fund recommendations.
 
 export interface ELSSFund {
   id: string;
@@ -315,4 +315,3 @@ export const RISK_LEVELS: ELSSFund['riskLevel'][] = [
   'High',
   'Very High'
 ];
-

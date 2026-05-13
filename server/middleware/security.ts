@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from "express";
-import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { z } from "zod";
 
@@ -10,13 +9,32 @@ export const securityHeaders = helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'", "https://api.myeca.in"],
+      scriptSrc: [
+        "'self'",
+        "https://www.googletagmanager.com",
+        "https://www.google-analytics.com",
+        "https://va.vercel-scripts.com",
+        "https://www.clarity.ms",
+        "https://scripts.clarity.ms",
+      ],
+      scriptSrcAttr: ["'none'"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: [
+        "'self'",
+        "https://api.myeca.in",
+        "https://*.supabase.co",
+        "https://www.google-analytics.com",
+        "https://www.google.com",
+        "https://analytics.google.com",
+        "https://vitals.vercel-insights.com",
+        "https://va.vercel-scripts.com",
+        "https://*.clarity.ms",
+      ],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],
+      upgradeInsecureRequests: null,
     },
   },
   hsts: {
@@ -38,47 +56,18 @@ export const customSecurityHeaders = (req: Request, res: Response, next: NextFun
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
   
-  // Enforce HTTPS in production
+  const host = req.hostname || req.headers.host?.split(":")[0] || "";
+  const isLocalHost = host === "localhost" || host === "127.0.0.1" || host === "::1";
+
+  // Enforce HTTPS in production, while keeping local production smoke tests usable.
   if (process.env.NODE_ENV === 'production') {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
+    if (!isLocalHost && req.headers['x-forwarded-proto'] !== 'https') {
       return res.redirect(301, `https://${req.headers.host}${req.url}`);
     }
   }
   
   next();
 };
-
-// Enhanced rate limiting with different tiers
-export const apiRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests from this IP, please try again later.',
-    retryAfter: '15 minutes'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) => {
-    res.status(429).json({
-      error: 'Too many requests from this IP, please try again later.',
-      retryAfter: '15 minutes',
-      timestamp: new Date().toISOString()
-    });
-  },
-});
-
-// Stricter rate limiting for auth endpoints
-export const authRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs for auth
-  message: {
-    error: 'Too many authentication attempts, please try again later.',
-    retryAfter: '15 minutes'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: false,
-});
 
 // Input sanitization schema
 const inputSchema = z.object({

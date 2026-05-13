@@ -138,10 +138,10 @@ export default function ReportsPage() {
 
                 <div className="mt-10 grid grid-cols-2 gap-3">
                    {[
-                     { label: "Tax Saved", value: "₹2.5L", icon: DollarSign, color: "emerald" },
-                     { label: "Compliance", value: "92%", icon: Shield, color: "blue" },
-                     { label: "Reports", value: history.length || 12, icon: FileText, color: "indigo" },
-                     { label: "Growth", value: "+24%", icon: TrendingUp, color: "amber" }
+                     { label: "Reports", value: history.length, icon: FileText, color: "indigo" },
+                     { label: "Format", value: exportFormat.toUpperCase(), icon: Download, color: "blue" },
+                     { label: "Filters", value: dateRange.from || dateRange.to ? "Set" : "Open", icon: Filter, color: "amber" },
+                     { label: "Mode", value: "Secure", icon: Shield, color: "emerald" }
                    ].map((stat, i) => (
                      <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                         <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
@@ -353,7 +353,7 @@ export default function ReportsPage() {
                             <div>
                               <h4 className="text-lg font-black text-slate-900 leading-none mb-2">{report.name}</h4>
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                Generated {format(new Date(report.generatedAt), "MMM dd, yyyy")} • {report.size}
+                                Generated {format(new Date(report.generatedAt), "MMM dd, yyyy")} - {report.size}
                               </p>
                             </div>
                           </div>

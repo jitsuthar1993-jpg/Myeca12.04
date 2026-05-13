@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { track } from "@vercel/analytics";
 import {
   ArrowRight,
   BookOpen,
@@ -55,6 +54,17 @@ const quickTools = [
   { title: "Blog Guides", href: "/blog", icon: BookOpen },
 ];
 
+const trackProductionEvent = (
+  eventName: string,
+  properties?: Record<string, string | number | boolean | null>,
+) => {
+  if (!import.meta.env.PROD) return;
+
+  void import("@vercel/analytics")
+    .then(({ track }) => track(eventName, properties))
+    .catch(() => undefined);
+};
+
 export default function TaxAssistantPage() {
   const [externalPrompt, setExternalPrompt] = useState<{ id: number; text: string }>();
   const [showStarters, setShowStarters] = useState(true);
@@ -64,7 +74,7 @@ export default function TaxAssistantPage() {
   );
 
   const sendPrompt = (prompt: string) => {
-    track("tax_assistant_prompt_click", { prompt });
+    trackProductionEvent("tax_assistant_prompt_click", { prompt });
     setShowStarters(false);
     setExternalPrompt({ id: Date.now(), text: prompt });
   };

@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { loadDocumentGenerator } from './generators';
 import { DocumentGeneratorConfig } from './generators/types';
+import { useToast } from '@/hooks/use-toast';
 
 const A4_PAGE_HEIGHT_MM = 297;
 
@@ -146,6 +147,7 @@ export default function DocumentGenerator() {
   const [, params] = useRoute<{ type: string }>('/documents/generator/:type');
   const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const { toast } = useToast();
 
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -281,10 +283,13 @@ export default function DocumentGenerator() {
 
   const onSubmit = async (data: any) => {
     if (!user) {
-      alert("Please login to save your drafts securely in the cloud.");
       // Still save to local storage for guest
       localStorage.setItem(`myeca_doc_latest_${documentType}`, JSON.stringify(data));
       setSaveStatus('saved');
+      toast({
+        title: "Draft saved locally",
+        description: "Sign in to sync document drafts securely to your account.",
+      });
       return;
     }
 
@@ -308,7 +313,11 @@ export default function DocumentGenerator() {
       setLastSaved(new Date());
     } catch (error) {
       console.error('Failed to save document draft:', error);
-      alert('Failed to save document. Please try again.');
+      toast({
+        title: "Save failed",
+        description: "Failed to save document. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -316,7 +325,11 @@ export default function DocumentGenerator() {
 
   const handleExport = async () => {
     if (!config) {
-      alert('Configuration missing for this document.');
+      toast({
+        title: "Export unavailable",
+        description: "Configuration is missing for this document.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -353,10 +366,17 @@ export default function DocumentGenerator() {
           break;
       }
 
-      alert(`Document exported successfully as ${exportFormat.toUpperCase()}!`);
+      toast({
+        title: "Document exported",
+        description: `Exported as ${exportFormat.toUpperCase()}.`,
+      });
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Failed to export document. Please try again.');
+      toast({
+        title: "Export failed",
+        description: "Failed to export document. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsExporting(false);
     }

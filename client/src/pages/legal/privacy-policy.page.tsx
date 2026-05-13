@@ -198,8 +198,8 @@ export default function PrivacyPolicyPage() {
                   <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Lock className="w-6 h-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">256-bit SSL Encryption</h3>
-                  <p className="text-gray-600 text-sm">All data transmission is protected with bank-grade encryption.</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">Encrypted Transmission</h3>
+                  <p className="text-gray-600 text-sm">Sensitive data is protected in transit using secure transport controls.</p>
                 </div>
                 
                 <div className="text-center">
@@ -207,7 +207,7 @@ export default function PrivacyPolicyPage() {
                     <Shield className="w-6 h-6 text-green-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">Secure Document Handling</h3>
-                  <p className="text-gray-600 text-sm">Our security practices meet international standards.</p>
+                  <p className="text-gray-600 text-sm">Document access is limited to authorized workflows and assigned service teams.</p>
                 </div>
                 
                 <div className="text-center">
@@ -287,8 +287,8 @@ export default function PrivacyPolicyPage() {
                 <div className="flex items-start">
                   <Phone className="w-5 h-5 text-blue-600 mr-3 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">+91-9876543210</p>
+                    <h3 className="font-semibold text-gray-900">Support</h3>
+                    <p className="text-gray-600">Request support by email</p>
                     <p className="text-gray-600 text-sm">Mon-Sat: 9 AM - 7 PM IST</p>
                   </div>
                 </div>

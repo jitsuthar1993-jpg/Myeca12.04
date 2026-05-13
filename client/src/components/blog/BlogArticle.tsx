@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight, ArrowUp, BookOpen, BriefcaseBusiness, CalendarDays,
@@ -92,7 +92,7 @@ function scrollToTocTarget(id: string) {
   window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: "smooth" });
 }
 
-/* ──────────────────────────── Reading Progress Bar ──────────────────────────── */
+/* Reading Progress Bar */
 function ReadingProgressBar({ articleRef }: { articleRef: React.RefObject<HTMLElement | null> }) {
   const [progress, setProgress] = useState(0);
 
@@ -181,7 +181,7 @@ function FixedMobileIndex({ toc, activeId }: { toc: BlogTocItem[]; activeId: str
   );
 }
 
-/* ──────────────────────────── Right Sidebar ──────────────────────────── */
+/* Right Sidebar */
 function RightSidebar({
   post,
   toc,
@@ -199,7 +199,7 @@ function RightSidebar({
 }) {
   return (
     <div className="space-y-5">
-      {/* ── "In this article" TOC — always visible ── */}
+      {/* "In this article" TOC, always visible */}
       {toc.length > 0 && (
         <nav aria-label="Table of contents" className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between gap-3">
@@ -237,7 +237,7 @@ function RightSidebar({
         </nav>
       )}
 
-      {/* ── Tabbed section: Related / Info ── */}
+      {/* Tabbed section: Related / Info */}
       <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         {/* Pill tab switcher */}
         <div className="flex items-center gap-1 mb-4 p-1 rounded-xl bg-slate-100 border border-slate-200">
@@ -279,7 +279,7 @@ function RightSidebar({
                         <img src={rel.coverImage ?? ""} alt={rel.title} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-lg opacity-40">
-                          {rel.coverImage || "📝"}
+                          {rel.coverImage || "ðŸ“"}
                         </div>
                       )}
                     </div>
@@ -360,7 +360,7 @@ function RightSidebar({
   );
 }
 
-/* ──────────────────────────── Main Component ──────────────────────────── */
+/* Main Component */
 export default function BlogArticle({ post, isPreview = false }: BlogArticleProps) {
   const articleRef = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState("");
@@ -412,7 +412,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
       <div className="border-y border-blue-100 bg-blue-50/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
-            ⚡ Expert CA review on every ITR — <span className="text-white font-semibold">starting ₹999</span>
+            Expert CA review on every ITR - <span className="text-white font-semibold">starting Rs 999</span>
           </p>
           <Link href="/itr/filing">
             <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
@@ -527,10 +527,10 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
           </section>
         )}
 
-        {/* ── 2-column layout: Full article | Right sidebar ── */}
+        {/* 2-column layout: full article and right sidebar */}
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
 
-          {/* ── ARTICLE (full width left) ── */}
+          {/* Article */}
           <article ref={articleRef} className="min-w-0">
 
             {/* Prose content */}
@@ -557,7 +557,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
               dangerouslySetInnerHTML={{ __html: normalized.html }}
             />
 
-            {/* Mobile info panel — shown lg:hidden */}
+            {/* Mobile info panel, shown lg:hidden */}
             <div className="mt-10 lg:hidden space-y-4">
               <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5 text-slate-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
@@ -639,7 +639,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
               </section>
             )}
 
-            {/* Related articles — mobile fallback (lg:hidden) */}
+            {/* Related articles, mobile fallback */}
             {relatedPosts.length > 0 && (
               <section className="mt-12 lg:hidden">
                 <div className="mb-5 flex items-end justify-between gap-4">
@@ -670,7 +670,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                     Ready to put this into action?
                   </h2>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    Get hands-on help from MyeCA experts — ITR filing, GST, tax planning, and business compliance — without the guesswork.
+                    Get hands-on help from MyeCA experts for ITR filing, GST, tax planning, and business compliance without the guesswork.
                   </p>
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
@@ -692,7 +692,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
             </section>
           </article>
 
-          {/* ── RIGHT SIDEBAR — fixed/sticky, lg+ only ── */}
+          {/* Right sidebar, fixed/sticky on large screens */}
           <aside className="hidden lg:block">
             <div className="sticky top-24">
               <RightSidebar

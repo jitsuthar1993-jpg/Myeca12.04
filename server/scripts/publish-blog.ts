@@ -23,7 +23,7 @@ async function main() {
     excerpt = null,
     category = "General",
     tags = [],
-    featuredImage = "ðŸ“",
+    featuredImage = "Article",
     readingTimeMinutes = null,
     seoTitle = null,
     seoDescription = null,
@@ -76,8 +76,8 @@ async function main() {
       status,
       updatedAt: now,
     });
-    console.log(`âœ… Updated existing post: ${slug}`);
-    console.log(`ðŸ”— https://myeca.in/blog/${slug}`);
+    console.log(`OK: Updated existing post: ${slug}`);
+    console.log(`Link: https://myeca.in/blog/${slug}`);
   } else {
     await adminDb.collection("blog_posts").add({
       title,
@@ -98,14 +98,14 @@ async function main() {
       publishedAt: now,
       updatedAt: now,
     });
-    console.log(`âœ… Published new post: ${slug}`);
-    console.log(`ðŸ”— https://myeca.in/blog/${slug}`);
+    console.log(`OK: Published new post: ${slug}`);
+    console.log(`Link: https://myeca.in/blog/${slug}`);
   }
 
   process.exit(0);
 }
 
 main().catch((err) => {
-  console.error("âŒ Upload failed:", err.message);
+  console.error("Error: Upload failed:", err.message);
   process.exit(1);
 });

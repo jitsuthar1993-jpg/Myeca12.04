@@ -25,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import { CONTACT } from "@/config/contact";
 
 export default function NoticeCompliancePage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -373,9 +374,9 @@ export default function NoticeCompliancePage() {
 
               <div className="mt-6 p-4 bg-white rounded-xl border border-gray-200 text-center">
                 <p className="text-sm text-gray-600 mb-2">Need immediate assistance?</p>
-                <a href="tel:+919876543210" className="text-lg font-bold text-gray-900 flex items-center justify-center gap-2">
+                <a href={CONTACT.callbackHref} className="text-lg font-bold text-gray-900 flex items-center justify-center gap-2">
                   <Phone className="w-4 h-4 text-red-600" />
-                  +91 98765 43210
+                  Request a callback
                 </a>
               </div>
             </div>

@@ -3,13 +3,18 @@ import {
   TEMPORARY_TEST_AUTH_TOKEN_KEY,
   TEMPORARY_TEST_AUTH_TOKEN_PREFIX,
 } from "@/lib/temporary-test-users";
+import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
 const SUPABASE_SESSION_TOKEN_KEY = "myeca:supabase-access-token";
 
 export async function getAuthToken() {
   const temporaryToken = sessionStorage.getItem(TEMPORARY_TEST_AUTH_TOKEN_KEY);
   if (temporaryToken?.startsWith(TEMPORARY_TEST_AUTH_TOKEN_PREFIX)) {
-    return temporaryToken;
+    if (allowLocalAuthFallbacks()) {
+      return temporaryToken;
+    }
+
+    sessionStorage.removeItem(TEMPORARY_TEST_AUTH_TOKEN_KEY);
   }
 
   if (temporaryToken) {
@@ -27,7 +32,9 @@ export async function getAuthToken() {
 
 export function setAuthToken(token: string) {
   if (token.startsWith(TEMPORARY_TEST_AUTH_TOKEN_PREFIX)) {
-    sessionStorage.setItem(TEMPORARY_TEST_AUTH_TOKEN_KEY, token);
+    if (allowLocalAuthFallbacks()) {
+      sessionStorage.setItem(TEMPORARY_TEST_AUTH_TOKEN_KEY, token);
+    }
     return;
   }
 

@@ -17,7 +17,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from '@/components/charts/lightweight-recharts';
 import { TrendingUp } from 'lucide-react';
 import type { DashboardStats } from '@/lib/admin/types';
 import { FONT_SIZES } from '@/styles/fonts';
@@ -40,7 +40,7 @@ export function RevenueChart({ data }: { data: DashboardStats }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-blue-600" />
-          Revenue Trend
+          Calculation Trend
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -80,10 +80,23 @@ export function RevenueChart({ data }: { data: DashboardStats }) {
 
 export function ServiceDistributionChart({ data }: { data: DashboardStats }) {
   const serviceData = data.services.popular.map((service, index) => ({
-    name: service,
-    value: Math.floor(Math.random() * 100) + 20, // Mock data - replace with actual
+    name: service.name,
+    value: service.count,
     color: COLORS[index % COLORS.length],
   }));
+
+  if (serviceData.length === 0) {
+    return (
+      <Card className="h-full bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-indigo-100">
+        <CardHeader>
+          <CardTitle>Service Distribution</CardTitle>
+        </CardHeader>
+        <CardContent className="flex h-[300px] items-center justify-center text-center text-sm text-slate-500">
+          Service distribution will appear after users create service requests.
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="h-full bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-indigo-100">
@@ -137,4 +150,3 @@ export function DashboardCharts({ stats, isLoading = false }: DashboardChartsPro
     </div>
   );
 }
-

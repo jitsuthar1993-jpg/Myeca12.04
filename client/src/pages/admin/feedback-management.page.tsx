@@ -43,7 +43,7 @@ import {
 import { format } from "date-fns";
 
 interface Feedback {
-  id: number;
+  id: string | number;
   name?: string;
   email?: string;
   type: string;
@@ -118,7 +118,7 @@ export default function AdminFeedbackManagement() {
 
   // Delete feedback mutation
   const deleteFeedback = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string | number) => {
       const response = await apiRequest(`/api/admin/feedback/${id}`, {
         method: "DELETE"
       });

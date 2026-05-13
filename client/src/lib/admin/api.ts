@@ -59,7 +59,33 @@ class AdminApi {
   }
 
   async getAnalyticsOverview(): Promise<ApiResponse<AnalyticsOverview>> {
-    return this.request<AnalyticsOverview>('/analytics/overview');
+    try {
+      const token = await getAuthToken();
+      const response = await fetch('/api/analytics/overview', {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`);
+      }
+
+      const payload = await response.json();
+      return {
+        success: true,
+        data: payload.stats as AnalyticsOverview,
+      };
+    } catch (error) {
+      console.error('API Error [/api/analytics/overview]:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Request failed',
+      };
+    }
   }
 
   async getAuditLogs(params?: FilterParams): Promise<ApiResponse<{ logs: AuditLog[]; pagination?: { total: number; page: number; limit: number; totalPages?: number } }>> {

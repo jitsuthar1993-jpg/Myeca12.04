@@ -87,7 +87,8 @@ export default function ReferralsPage() {
    const [shareData, setShareData] = useState({
       referralCode: "",
       referralLink: "",
-      qrCode: ""
+      qrCode: null as string | null,
+      qrCodeAvailable: true
    });
 
    // Fetch referral program overview
@@ -155,7 +156,8 @@ export default function ReferralsPage() {
          setShareData({
             referralCode: response.referralCode || "",
             referralLink: response.referralLink || "",
-            qrCode: response.qrCode || ""
+            qrCode: response.qrCode || null,
+            qrCodeAvailable: response.qrCodeAvailable !== false
          });
          setIsShareDialogOpen(true);
       }

@@ -13,7 +13,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
+} from '@/components/charts/lightweight-recharts';
 import { FONT_SIZES } from '@/styles/fonts';
 
 interface ChartProps {

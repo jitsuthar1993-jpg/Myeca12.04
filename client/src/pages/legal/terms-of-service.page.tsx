@@ -339,7 +339,7 @@ export default function TermsOfServicePage() {
                   <Phone className="w-5 h-5 text-blue-600 mr-3 mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Customer Support</h3>
-                    <p className="text-gray-600">+91-9876543210</p>
+                    <p className="text-gray-600">Request support by email</p>
                     <p className="text-gray-600 text-sm">Mon-Sat: 9 AM - 7 PM IST</p>
                   </div>
                 </div>

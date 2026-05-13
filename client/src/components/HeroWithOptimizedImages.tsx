@@ -131,8 +131,8 @@ export default function HeroWithOptimizedImages() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 pt-4">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">950+</div>
-                  <div className="text-sm text-gray-600">Returns Filed</div>
+                  <div className="text-2xl font-bold text-gray-900">ITR</div>
+                  <div className="text-sm text-gray-600">Filing Workflow</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-gray-900">24 hrs</div>

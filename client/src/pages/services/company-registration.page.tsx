@@ -818,7 +818,7 @@ export default function CompanyRegistrationPage() {
             </div>
 
             <p className="text-sm text-gray-600 mt-4">
-              Trusted by 25,000+ entrepreneurs • 10-15 days completion • Expert guidance
+              MCA filing workflow support - Timeline depends on approvals - Expert guidance
             </p>
           </Card>
         </m.div>

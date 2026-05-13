@@ -5,7 +5,7 @@ import { Link } from "wouter";
 import { Slider } from "@/components/ui/slider";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "@/components/charts/lightweight-recharts";
 import {
   Sparkles,
   Zap,

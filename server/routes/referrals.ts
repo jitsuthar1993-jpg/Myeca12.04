@@ -1,11 +1,13 @@
 import { Request, Response, Router } from "express";
 import { authenticateToken } from "../middleware/auth.js";
 import { z } from "zod";
-import { sendReferralInvitation, sendReferralReminder, sendReferralConversionNotification } from "../services/referral-email.js";
+import { sendReferralInvitation, sendReferralReminder } from "../services/referral-email.js";
+import { adminDb } from "../data-admin.js";
 import multer from "multer";
 import csv from "csv-parser";
 import { Readable } from "stream";
 import QRCode from "qrcode";
+import crypto from "crypto";
 
 const router = Router();
 
@@ -17,15 +19,143 @@ const createReferralSchema = z.object({
   serviceType: z.enum(["itr_filing", "gst_registration", "company_registration", "all_services"]).optional()
 });
 
-const redeemRewardSchema = z.object({
-  rewardId: z.number(),
-  type: z.enum(["discount", "cashback", "service_credit"])
-});
-
-// Mock storage
+// Local development in-memory storage. Production uses the persistent adminDb collections.
 const referrals = new Map<number, any>();
 const rewards = new Map<number, any>();
-const referralStats = new Map<number, any>();
+const usePersistentStore = process.env.NODE_ENV === "production";
+
+function getUserId(req: Request) {
+  return String((req as any).user?.id || "");
+}
+
+function getDefaultStats(userId: string) {
+  return {
+    userId,
+    totalReferrals: 0,
+    successfulReferrals: 0,
+    pendingReferrals: 0,
+    totalRewards: 0,
+    availableRewards: 0,
+    redeemedRewards: 0
+  };
+}
+
+function toTime(value: unknown) {
+  if (!value) return 0;
+  if (value instanceof Date) return value.getTime();
+  const parsed = new Date(String(value));
+  return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+}
+
+function createRecordId(prefix: string) {
+  return usePersistentStore ? `${prefix}_${crypto.randomUUID()}` : undefined;
+}
+
+async function getAllReferrals() {
+  if (!usePersistentStore) return Array.from(referrals.values());
+  const snapshot = await adminDb.collection("referrals").get();
+  return snapshot.docs
+    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .filter((referral: any) => referral.referrerId || referral.recordType === "referral");
+}
+
+async function getUserReferrals(userId: string, status?: unknown, limit = 50) {
+  const source = usePersistentStore
+    ? (await adminDb.collection("referrals").where("referrerId", "==", userId).get()).docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    : Array.from(referrals.values()).filter((referral) => String(referral.referrerId) === userId);
+
+  const filtered = status ? source.filter((referral) => referral.status === status) : source;
+  return filtered
+    .sort((a, b) => toTime(b.createdAt) - toTime(a.createdAt))
+    .slice(0, Math.max(1, limit));
+}
+
+async function findExistingReferral(userId: string, refereeEmail: string) {
+  const normalizedEmail = refereeEmail.trim().toLowerCase();
+  const userReferrals = await getUserReferrals(userId, undefined, 1000);
+  return userReferrals.find((referral) => String(referral.refereeEmail || "").toLowerCase() === normalizedEmail);
+}
+
+async function findReferralByCode(referralCode: string) {
+  if (!usePersistentStore) {
+    const entry = Array.from(referrals.entries()).find(([, referral]) => referral.referralCode === referralCode);
+    return entry ? { key: entry[0], referral: entry[1] } : null;
+  }
+
+  const snapshot = await adminDb.collection("referrals").where("referralCode", "==", referralCode).get();
+  const doc = snapshot.docs[0];
+  return doc ? { key: doc.id, referral: { id: doc.id, ...doc.data() } } : null;
+}
+
+async function getReferralById(referralId: string) {
+  if (!usePersistentStore) {
+    const numericId = Number(referralId);
+    const referral = referrals.get(numericId);
+    return referral ? { key: numericId, referral } : null;
+  }
+
+  const doc = await adminDb.collection("referrals").doc(referralId).get();
+  return doc.exists ? { key: doc.id, referral: { id: doc.id, ...doc.data() } } : null;
+}
+
+async function saveReferral(referral: any) {
+  if (!usePersistentStore) {
+    referrals.set(Number(referral.id), referral);
+    return referral;
+  }
+
+  await adminDb.collection("referrals").doc(String(referral.id)).set({ recordType: "referral", ...referral });
+  return referral;
+}
+
+async function getUserRewards(userId: string, status?: unknown) {
+  const source = usePersistentStore
+    ? (await adminDb.collection("referrals").where("recordType", "==", "referral_reward").where("userId", "==", userId).get()).docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    : Array.from(rewards.values()).filter((reward) => String(reward.userId) === userId);
+
+  const filtered = status && status !== "all" ? source.filter((reward) => reward.status === status) : source;
+  return filtered.sort((a, b) => toTime(b.earnedAt) - toTime(a.earnedAt));
+}
+
+async function getRewardById(rewardId: string) {
+  if (!usePersistentStore) {
+    const numericId = Number(rewardId);
+    const reward = rewards.get(numericId);
+    return reward ? { key: numericId, reward } : null;
+  }
+
+  const doc = await adminDb.collection("referrals").doc(rewardId).get();
+  return doc.exists ? { key: doc.id, reward: { id: doc.id, ...doc.data() } } : null;
+}
+
+async function saveReward(reward: any) {
+  if (!usePersistentStore) {
+    rewards.set(Number(reward.id), reward);
+    return reward;
+  }
+
+  await adminDb.collection("referrals").doc(String(reward.id)).set({ recordType: "referral_reward", ...reward });
+  return reward;
+}
+
+async function getStatsForUser(userId: string) {
+  const [userReferrals, userRewards] = await Promise.all([
+    getUserReferrals(userId, undefined, 1000),
+    getUserRewards(userId)
+  ]);
+  const stats = getDefaultStats(userId);
+  stats.totalReferrals = userReferrals.length;
+  stats.successfulReferrals = userReferrals.filter((referral) => referral.status === "converted").length;
+  stats.pendingReferrals = userReferrals.filter((referral) => referral.status === "pending").length;
+  stats.totalRewards = userRewards.reduce((sum, reward) => sum + Number(reward.amount || 0), 0);
+  stats.availableRewards = userRewards
+    .filter((reward) => reward.status === "available")
+    .reduce((sum, reward) => sum + Number(reward.amount || 0), 0);
+  stats.redeemedRewards = userRewards
+    .filter((reward) => reward.status === "redeemed")
+    .reduce((sum, reward) => sum + Number(reward.amount || 0), 0);
+  return stats;
+}
 
 function getAppBaseUrl() {
   const url =
@@ -36,54 +166,6 @@ function getAppBaseUrl() {
   return url.replace(/\/+$/, "");
 }
 
-// Initialize demo data
-referrals.set(1, {
-  id: 1,
-  referrerId: 1,
-  refereeEmail: "client1@example.com",
-  refereeName: "John Client",
-  referralCode: "REF-MYECA-001",
-  status: "pending",
-  serviceType: "itr_filing",
-  createdAt: new Date("2025-01-20"),
-  rewardEarned: null,
-  conversionDate: null
-});
-
-referrals.set(2, {
-  id: 2,
-  referrerId: 1,
-  refereeEmail: "client2@example.com",
-  refereeName: "Jane Business",
-  referralCode: "REF-MYECA-002",
-  status: "converted",
-  serviceType: "gst_registration",
-  createdAt: new Date("2025-01-15"),
-  rewardEarned: 500,
-  conversionDate: new Date("2025-01-18")
-});
-
-rewards.set(1, {
-  id: 1,
-  userId: 1,
-  type: "cashback",
-  amount: 500,
-  description: "Referral reward for Jane Business conversion",
-  status: "available",
-  expiryDate: new Date("2025-04-18"),
-  earnedAt: new Date("2025-01-18")
-});
-
-referralStats.set(1, {
-  userId: 1,
-  totalReferrals: 5,
-  successfulReferrals: 3,
-  pendingReferrals: 2,
-  totalRewards: 1500,
-  availableRewards: 800,
-  redeemedRewards: 700
-});
-
 // Get referral program overview
 router.get("/overview", authenticateToken, (req: Request, res: Response) => {
   const programDetails = {
@@ -92,22 +174,22 @@ router.get("/overview", authenticateToken, (req: Request, res: Response) => {
     benefits: [
       {
         service: "ITR Filing",
-        referrerReward: "₹300 cashback",
+        referrerReward: "Rs 300 cashback",
         refereeDiscount: "15% off first filing"
       },
       {
         service: "GST Registration",
-        referrerReward: "₹500 cashback",
-        refereeDiscount: "₹1000 discount"
+        referrerReward: "Rs 500 cashback",
+        refereeDiscount: "Rs 1000 discount"
       },
       {
         service: "Company Registration",
-        referrerReward: "₹1000 cashback",
-        refereeDiscount: "₹2000 discount"
+        referrerReward: "Rs 1000 cashback",
+        refereeDiscount: "Rs 2000 discount"
       },
       {
         service: "Business Consultation",
-        referrerReward: "₹800 cashback",
+        referrerReward: "Rs 800 cashback",
         refereeDiscount: "First consultation free"
       }
     ],
@@ -134,18 +216,10 @@ router.get("/overview", authenticateToken, (req: Request, res: Response) => {
 });
 
 // Get user referral stats
-router.get("/stats", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const stats = referralStats.get(userId) || {
-    userId,
-    totalReferrals: 0,
-    successfulReferrals: 0,
-    pendingReferrals: 0,
-    totalRewards: 0,
-    availableRewards: 0,
-    redeemedRewards: 0
-  };
-  
+router.get("/stats", authenticateToken, async (req: Request, res: Response) => {
+  const userId = getUserId(req);
+  const stats = await getStatsForUser(userId);
+
   res.json({
     success: true,
     stats
@@ -153,28 +227,11 @@ router.get("/stats", authenticateToken, (req: Request, res: Response) => {
 });
 
 // Get user's referrals
-router.get("/", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+router.get("/", authenticateToken, async (req: Request, res: Response) => {
+  const userId = getUserId(req);
   const { status, limit = 50 } = req.query;
-  
-  let userReferrals: any[] = [];
-  referrals.forEach(referral => {
-    if (referral.referrerId === userId) {
-      userReferrals.push(referral);
-    }
-  });
-  
-  // Filter by status if provided
-  if (status) {
-    userReferrals = userReferrals.filter(r => r.status === status);
-  }
-  
-  // Sort by creation date (newest first)
-  userReferrals.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  
-  // Limit results
-  userReferrals = userReferrals.slice(0, parseInt(limit as string));
-  
+  const userReferrals = await getUserReferrals(userId, status, parseInt(String(limit), 10) || 50);
+
   res.json({
     success: true,
     referrals: userReferrals,
@@ -185,13 +242,11 @@ router.get("/", authenticateToken, (req: Request, res: Response) => {
 // Create new referral
 router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
     const referralData = createReferralSchema.parse(req.body);
     
     // Check if email already referred by this user
-    const existingReferral = Array.from(referrals.values()).find(r => 
-      r.referrerId === userId && r.refereeEmail === referralData.refereeEmail
-    );
+    const existingReferral = await findExistingReferral(userId, referralData.refereeEmail);
     
     if (existingReferral) {
       return res.status(400).json({ 
@@ -202,7 +257,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
     // Generate unique referral code
     const referralCode = `REF-MYECA-${String(Date.now()).slice(-6)}`;
     
-    const referralId = referrals.size + 1;
+    const referralId = createRecordId("ref") || referrals.size + 1;
     const referral = {
       id: referralId,
       referrerId: userId,
@@ -214,22 +269,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       conversionDate: null
     };
     
-    referrals.set(referralId, referral);
-    
-    // Update user stats
-    const stats = referralStats.get(userId) || {
-      userId,
-      totalReferrals: 0,
-      successfulReferrals: 0,
-      pendingReferrals: 0,
-      totalRewards: 0,
-      availableRewards: 0,
-      redeemedRewards: 0
-    };
-    
-    stats.totalReferrals++;
-    stats.pendingReferrals++;
-    referralStats.set(userId, stats);
+    await saveReferral(referral);
     
     // Send referral invitation emails
     try {
@@ -243,10 +283,10 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       
       // Get discount based on service type
       const discounts: Record<string, string> = {
-        itr_filing: "₹200 OFF",
-        gst_registration: "₹500 OFF",
-        company_registration: "₹1000 OFF",
-        all_services: "Up to ₹1000 OFF"
+        itr_filing: "Rs 200 OFF",
+        gst_registration: "Rs 500 OFF",
+        company_registration: "Rs 1000 OFF",
+        all_services: "Up to Rs 1000 OFF"
       };
       
       await sendReferralInvitation({
@@ -280,25 +320,11 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Get user's rewards
-router.get("/rewards", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+router.get("/rewards", authenticateToken, async (req: Request, res: Response) => {
+  const userId = getUserId(req);
   const { status = "all" } = req.query;
-  
-  let userRewards: any[] = [];
-  rewards.forEach(reward => {
-    if (reward.userId === userId) {
-      userRewards.push(reward);
-    }
-  });
-  
-  // Filter by status
-  if (status !== "all") {
-    userRewards = userRewards.filter(r => r.status === status);
-  }
-  
-  // Sort by earned date (newest first)
-  userRewards.sort((a, b) => new Date(b.earnedAt).getTime() - new Date(a.earnedAt).getTime());
-  
+  const userRewards = await getUserRewards(userId, status);
+
   res.json({
     success: true,
     rewards: userRewards,
@@ -309,10 +335,10 @@ router.get("/rewards", authenticateToken, (req: Request, res: Response) => {
 // Redeem reward
 router.post("/rewards/:rewardId/redeem", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
-    const rewardId = parseInt(req.params.rewardId);
-    
-    const reward = rewards.get(rewardId);
+    const userId = getUserId(req);
+    const rewardId = req.params.rewardId;
+    const rewardRecord = await getRewardById(rewardId);
+    const reward = rewardRecord?.reward;
     
     if (!reward || reward.userId !== userId) {
       return res.status(404).json({ error: "Reward not found" });
@@ -330,20 +356,12 @@ router.post("/rewards/:rewardId/redeem", authenticateToken, async (req: Request,
     // Mark reward as redeemed
     reward.status = "redeemed";
     reward.redeemedAt = new Date();
-    rewards.set(rewardId, reward);
-    
-    // Update user stats
-    const stats = referralStats.get(userId);
-    if (stats) {
-      stats.availableRewards -= reward.amount;
-      stats.redeemedRewards += reward.amount;
-      referralStats.set(userId, stats);
-    }
+    await saveReward(reward);
     
     res.json({
       success: true,
       reward,
-      message: `Reward of ₹${reward.amount} has been redeemed successfully`
+      message: `Reward of Rs ${reward.amount} has been redeemed successfully`
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to redeem reward" });
@@ -360,8 +378,8 @@ router.post("/generate-link", authenticateToken, async (req: Request, res: Respo
   
   const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${serviceType}`;
   
-  // Generate actual QR code
-  let qrCode = "";
+  let qrCode: string | null = null;
+  let qrCodeAvailable = true;
   try {
     qrCode = await QRCode.toDataURL(referralLink, {
       width: 200,
@@ -373,90 +391,51 @@ router.post("/generate-link", authenticateToken, async (req: Request, res: Respo
     });
   } catch (error) {
     console.error('QR Code generation error:', error);
-    // Fallback to placeholder
-    qrCode = `data:image/svg+xml;base64,${Buffer.from(`
-      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-        <rect width="200" height="200" fill="white"/>
-        <text x="100" y="100" text-anchor="middle" font-family="Arial" font-size="12" fill="black">
-          QR Code for: ${referralCode}
-        </text>
-      </svg>
-    `).toString('base64')}`;
+    qrCodeAvailable = false;
   }
   
   res.json({
     success: true,
     referralCode,
     referralLink,
-    qrCode
+    qrCode,
+    qrCodeAvailable
   });
 });
 
 // Leaderboard
-router.get("/leaderboard", authenticateToken, (req: Request, res: Response) => {
+router.get("/leaderboard", authenticateToken, async (req: Request, res: Response) => {
   const { period = "month", limit = 10 } = req.query;
-  
-  // Mock leaderboard data
-  const leaderboard = [
-    {
-      rank: 1,
-      userId: 1,
-      userName: "Admin User",
-      successfulReferrals: 15,
-      totalRewards: 7500,
-      avatar: null
-    },
-    {
-      rank: 2,
-      userId: 2,
-      userName: "CA Expert",
-      successfulReferrals: 12,
-      totalRewards: 6000,
-      avatar: null
-    },
-    {
-      rank: 3,
-      userId: 3,
-      userName: "Tax Consultant",
-      successfulReferrals: 8,
-      totalRewards: 4000,
-      avatar: null
-    }
-  ];
-  
-  res.json({
-    success: true,
-    leaderboard: leaderboard.slice(0, parseInt(limit as string)),
-    period
-  });
-});
+  const statsByUser = new Map<string, { userId: string; successfulReferrals: number; totalRewards: number }>();
+  const allReferrals = await getAllReferrals();
 
-// Referral analytics
-router.get("/analytics", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  
-  const analytics = {
-    monthlyTrends: [
-      { month: "Jan 2025", referrals: 5, conversions: 3, rewards: 1500 },
-      { month: "Dec 2024", referrals: 3, conversions: 2, rewards: 1000 },
-      { month: "Nov 2024", referrals: 4, conversions: 3, rewards: 1200 }
-    ],
-    serviceBreakdown: [
-      { service: "ITR Filing", referrals: 6, conversionRate: 80 },
-      { service: "GST Registration", referrals: 4, conversionRate: 75 },
-      { service: "Company Registration", referrals: 2, conversionRate: 100 }
-    ],
-    conversionFunnel: {
-      invitesSent: 12,
-      signups: 8,
-      serviceBookings: 6,
-      conversionRate: 50
+  allReferrals.forEach((referral) => {
+    const userId = String(referral.referrerId || "");
+    if (!userId) return;
+    const current = statsByUser.get(userId) || { userId, successfulReferrals: 0, totalRewards: 0 };
+    if (referral.status === "converted") {
+      current.successfulReferrals += 1;
+      current.totalRewards += Number(referral.rewardEarned || 0);
     }
-  };
+    statsByUser.set(userId, current);
+  });
+
+  const leaderboard = Array.from(statsByUser.values())
+    .sort((a, b) => (b.successfulReferrals || 0) - (a.successfulReferrals || 0))
+    .slice(0, parseInt(String(limit), 10) || 10)
+    .map((stats, index) => ({
+      rank: index + 1,
+      userId: stats.userId,
+      userName: `Referrer ${stats.userId}`,
+      successfulReferrals: stats.successfulReferrals || 0,
+      totalRewards: stats.totalRewards || 0,
+      avatar: null
+    }));
   
   res.json({
     success: true,
-    analytics
+    leaderboard,
+    period
   });
 });
 
@@ -525,9 +504,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
             }
 
             // Check if already referred
-            const existingReferral = Array.from(referrals.values()).find(r => 
-              r.referrerId === userId && r.refereeEmail === row.email
-            );
+            const existingReferral = await findExistingReferral(String(userId), row.email);
             
             if (existingReferral) {
               errors.push({
@@ -542,10 +519,10 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
             const referralCode = `REF-MYECA-${String(Date.now()).slice(-6)}-${imported.length}`;
             const serviceType = row.service || 'all_services';
             
-            const referralId = referrals.size + 1;
+            const referralId = createRecordId("ref") || referrals.size + 1;
             const referral = {
               id: referralId,
-              referrerId: userId,
+              referrerId: String(userId),
               refereeEmail: row.email,
               refereeName: row.name,
               referralCode,
@@ -557,7 +534,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
               conversionDate: null
             };
             
-            referrals.set(referralId, referral);
+            await saveReferral(referral);
             imported.push(referral);
 
             // Send email if requested
@@ -566,10 +543,10 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
               const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${serviceType}`;
               
               const discounts: Record<string, string> = {
-                itr_filing: "₹200 OFF",
-                gst_registration: "₹500 OFF",
-                company_registration: "₹1000 OFF",
-                all_services: "Up to ₹1000 OFF"
+                itr_filing: "Rs 200 OFF",
+                gst_registration: "Rs 500 OFF",
+                company_registration: "Rs 1000 OFF",
+                all_services: "Up to Rs 1000 OFF"
               };
               
               try {
@@ -598,21 +575,6 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
           }
         }
 
-        // Update user stats
-        const stats = referralStats.get(userId) || {
-          userId,
-          totalReferrals: 0,
-          successfulReferrals: 0,
-          pendingReferrals: 0,
-          totalRewards: 0,
-          availableRewards: 0,
-          redeemedRewards: 0
-        };
-        
-        stats.totalReferrals += imported.length;
-        stats.pendingReferrals += imported.length;
-        referralStats.set(userId, stats);
-
         res.json({
           success: true,
           summary: {
@@ -633,11 +595,9 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
 });
 
 // Get referral analytics
-router.get("/analytics", authenticateToken, (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  
-  // Get user's referrals
-  const userReferrals = Array.from(referrals.values()).filter(r => r.referrerId === userId);
+router.get("/analytics", authenticateToken, async (req: Request, res: Response) => {
+  const userId = getUserId(req);
+  const userReferrals = await getUserReferrals(userId, undefined, 1000);
   
   // Calculate conversion funnel
   const total = userReferrals.length;
@@ -705,20 +665,13 @@ router.get("/analytics", authenticateToken, (req: Request, res: Response) => {
 // Link referral to service purchase
 router.post("/link-service", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const { referralCode, serviceId, purchaseAmount } = req.body;
+    const { referralCode } = req.body;
     
-    // Find referral by code
-    let foundReferral: any = null;
-    let referralId = 0;
+    const referralRecord = await findReferralByCode(referralCode);
+    const foundReferral = referralRecord?.referral;
+    const referralId = referralRecord?.key;
     
-    referrals.forEach((r, id) => {
-      if (r.referralCode === referralCode && r.status === "pending") {
-        foundReferral = r;
-        referralId = id;
-      }
-    });
-    
-    if (!foundReferral) {
+    if (!foundReferral || foundReferral.status !== "pending") {
       return res.status(404).json({ error: "Valid referral not found" });
     }
     
@@ -736,10 +689,10 @@ router.post("/link-service", authenticateToken, async (req: Request, res: Respon
     foundReferral.status = "converted";
     foundReferral.conversionDate = new Date();
     foundReferral.rewardEarned = rewardAmount;
-    referrals.set(referralId, foundReferral);
+    await saveReferral(foundReferral);
     
     // Create reward for referrer
-    const rewardId = rewards.size + 1;
+    const rewardId = createRecordId("reward") || rewards.size + 1;
     const newReward = {
       id: rewardId,
       userId: foundReferral.referrerId,
@@ -751,32 +704,9 @@ router.post("/link-service", authenticateToken, async (req: Request, res: Respon
       expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
       earnedAt: new Date()
     };
-    rewards.set(rewardId, newReward);
+    await saveReward(newReward);
     
-    // Update referrer stats
-    const stats = referralStats.get(foundReferral.referrerId);
-    if (stats) {
-      stats.pendingReferrals--;
-      stats.successfulReferrals++;
-      stats.totalRewards += rewardAmount;
-      stats.availableRewards += rewardAmount;
-      referralStats.set(foundReferral.referrerId, stats);
-    }
-    
-    // Send conversion notification email
-    try {
-      // Get referrer details
-      const referrer = { email: 'user@example.com', firstName: 'User' }; // In real app, fetch from DB
-      await sendReferralConversionNotification(
-        referrer.email,
-        referrer.firstName,
-        foundReferral.refereeName,
-        rewardAmount,
-        foundReferral.serviceType
-      );
-    } catch (emailError) {
-      console.error("Failed to send conversion notification:", emailError);
-    }
+    // Conversion notification needs a persisted referrer profile/email lookup before sending.
     
     res.json({
       success: true,
@@ -791,10 +721,9 @@ router.post("/link-service", authenticateToken, async (req: Request, res: Respon
 // Send reminder email
 router.post("/:referralId/send-reminder", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
-    const referralId = parseInt(req.params.referralId);
-    
-    const referral = referrals.get(referralId);
+    const userId = getUserId(req);
+    const referralRecord = await getReferralById(req.params.referralId);
+    const referral = referralRecord?.referral;
     if (!referral || referral.referrerId !== userId) {
       return res.status(404).json({ error: "Referral not found" });
     }
@@ -811,10 +740,10 @@ router.post("/:referralId/send-reminder", authenticateToken, async (req: Request
     const referralLink = `${baseUrl}/signup?ref=${referral.referralCode}&service=${referral.serviceType}`;
     
     const discounts: Record<string, string> = {
-      itr_filing: "₹200 OFF",
-      gst_registration: "₹500 OFF",
-      company_registration: "₹1000 OFF",
-      all_services: "Up to ₹1000 OFF"
+      itr_filing: "Rs 200 OFF",
+      gst_registration: "Rs 500 OFF",
+      company_registration: "Rs 1000 OFF",
+      all_services: "Up to Rs 1000 OFF"
     };
     
     await sendReferralReminder({

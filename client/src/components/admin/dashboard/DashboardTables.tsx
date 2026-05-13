@@ -125,7 +125,9 @@ export function DashboardTables({ stats, isLoading }: DashboardTablesProps) {
               <div>
                 <p className="text-sm text-gray-600">Popular Services</p>
                 <p className="text-lg font-semibold text-gray-900">
-                  {stats.services.popular.slice(0, 2).join(', ')}
+                  {stats.services.popular.length > 0
+                    ? stats.services.popular.slice(0, 2).map((service) => service.name).join(', ')
+                    : 'No service requests yet'}
                 </p>
               </div>
             </div>
@@ -135,4 +137,3 @@ export function DashboardTables({ stats, isLoading }: DashboardTablesProps) {
     </div>
   );
 }
-

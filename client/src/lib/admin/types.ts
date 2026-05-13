@@ -62,10 +62,29 @@ export interface AuditLog {
 }
 
 export interface AnalyticsOverview {
-  totalUsers?: number;
-  totalRevenue?: number;
-  totalServices?: number;
-  totalBookings?: number;
+  userStats?: {
+    totalUsers: number;
+    activeUsers: number;
+    pendingUsers: number;
+    admins: number;
+    caProfessionals: number;
+  };
+  profileStats?: {
+    totalProfiles: number;
+  };
+  returnStats?: {
+    totalReturns: number;
+    filedReturns: number;
+    draftReturns: number;
+    pendingReturns: number;
+  };
+  docStats?: {
+    totalDocuments: number;
+  };
+  contentStats?: {
+    totalPosts: number;
+    publishedPosts: number;
+  };
   [key: string]: unknown;
 }
 
@@ -109,7 +128,10 @@ export interface DashboardStats {
   services: {
     total: number;
     active: number;
-    popular: string[];
+    popular: Array<{
+      name: string;
+      count: number;
+    }>;
   };
   systemHealth: {
     status: 'healthy' | 'warning' | 'critical';

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import * as RechartsPrimitive from "recharts"
+import * as RechartsPrimitive from "@/components/charts/lightweight-recharts"
 
 import { cn } from "@/lib/utils"
 
@@ -104,8 +104,8 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<"div"> & {
+  RechartsPrimitive.TooltipProps &
+    Omit<React.ComponentProps<"div">, "color" | "content"> & {
       hideLabel?: boolean
       hideIndicator?: boolean
       indicator?: "line" | "dot" | "dashed"
@@ -132,13 +132,19 @@ const ChartTooltipContent = React.forwardRef<
     ref
   ) => {
     const { config } = useChart()
+    const safePayload = Array.isArray(payload)
+      ? (payload as RechartsPrimitive.ChartPayloadItem[])
+      : []
+    const safeLabelFormatter =
+      typeof labelFormatter === "function" ? labelFormatter : undefined
+    const safeFormatter = typeof formatter === "function" ? formatter : undefined
 
     const tooltipLabel = React.useMemo(() => {
-      if (hideLabel || !payload?.length) {
+      if (hideLabel || !safePayload.length) {
         return null
       }
 
-      const [item] = payload
+      const [item] = safePayload
       const key = `${labelKey || item?.dataKey || item?.name || "value"}`
       const itemConfig = getPayloadConfigFromPayload(config, item, key)
       const value =
@@ -146,10 +152,10 @@ const ChartTooltipContent = React.forwardRef<
           ? config[label as keyof typeof config]?.label || label
           : itemConfig?.label
 
-      if (labelFormatter) {
+      if (safeLabelFormatter) {
         return (
           <div className={cn("font-medium", labelClassName)}>
-            {labelFormatter(value, payload)}
+            {safeLabelFormatter(value, safePayload)}
           </div>
         )
       }
@@ -161,7 +167,7 @@ const ChartTooltipContent = React.forwardRef<
       return <div className={cn("font-medium", labelClassName)}>{value}</div>
     }, [
       label,
-      labelFormatter,
+      safeLabelFormatter,
       payload,
       hideLabel,
       labelClassName,
@@ -169,11 +175,11 @@ const ChartTooltipContent = React.forwardRef<
       labelKey,
     ])
 
-    if (!active || !payload?.length) {
+    if (!active || !safePayload.length) {
       return null
     }
 
-    const nestLabel = payload.length === 1 && indicator !== "dot"
+    const nestLabel = safePayload.length === 1 && indicator !== "dot"
 
     return (
       <div
@@ -185,7 +191,7 @@ const ChartTooltipContent = React.forwardRef<
       >
         {!nestLabel ? tooltipLabel : null}
         <div className="grid gap-1.5">
-          {payload.map((item, index) => {
+          {safePayload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
             const indicatorColor = color || item.payload.fill || item.color
@@ -198,8 +204,8 @@ const ChartTooltipContent = React.forwardRef<
                   indicator === "dot" && "items-center"
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                {safeFormatter && item?.value !== undefined && item.name ? (
+                  safeFormatter(item.value, item.name, item, index, item.payload)
                 ) : (
                   <>
                     {itemConfig?.icon ? (
@@ -261,7 +267,7 @@ const ChartLegend = RechartsPrimitive.Legend
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+    RechartsPrimitive.LegendProps & {
       hideIcon?: boolean
       nameKey?: string
     }
@@ -271,8 +277,11 @@ const ChartLegendContent = React.forwardRef<
     ref
   ) => {
     const { config } = useChart()
+    const safePayload = Array.isArray(payload)
+      ? (payload as NonNullable<RechartsPrimitive.LegendProps["payload"]>)
+      : []
 
-    if (!payload?.length) {
+    if (!safePayload.length) {
       return null
     }
 
@@ -285,7 +294,7 @@ const ChartLegendContent = React.forwardRef<
           className
         )}
       >
-        {payload.map((item) => {
+        {safePayload.map((item) => {
           const key = `${nameKey || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
 

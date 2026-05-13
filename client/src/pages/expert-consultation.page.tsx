@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { CONTACT } from "@/config/contact";
 import { useToast } from "@/hooks/use-toast";
 
 type ServiceProfile = {
@@ -67,7 +68,7 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
     painPoints: ["GSTR-1 or 3B pending", "ITC mismatch or blocked credit", "Late fee or interest risk"],
     outcomes: ["GSTR-1 and GSTR-3B review", "ITC reconciliation checklist", "Filing plan with fee quote"],
     stats: [
-      { value: "2 hr", label: "callback window" },
+      { value: "Callback", label: "business hours" },
       { value: "CA", label: "reviewed filing" },
       { value: "GSTR", label: "1 + 3B support" },
     ],
@@ -83,8 +84,8 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
     painPoints: ["Unsure about compliance steps", "Need pricing before starting", "Need expert review"],
     outcomes: ["Right expert matched", "Clear document checklist", "Transparent fee quote"],
     stats: [
-      { value: "2 hr", label: "callback window" },
-      { value: "50+", label: "experts" },
+      { value: "Callback", label: "business hours" },
+      { value: "Expert", label: "matched by need" },
       { value: "Review", label: "focused" },
     ],
   },
@@ -148,7 +149,7 @@ export default function ExpertConsultationPage() {
       await new Promise((resolve) => setTimeout(resolve, 900));
       toast({
         title: "Callback request received",
-        description: "Our expert team will contact you within 2 business hours.",
+        description: "Our expert team will review your request during business hours.",
       });
       setFormData((current) => ({
         ...current,
@@ -162,7 +163,7 @@ export default function ExpertConsultationPage() {
     } catch {
       toast({
         title: "Could not submit request",
-        description: "Please try again or call us directly.",
+        description: "Please try again or request a callback from the contact page.",
         variant: "destructive",
       });
     } finally {
@@ -186,13 +187,13 @@ export default function ExpertConsultationPage() {
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:mt-5 sm:text-lg sm:leading-7">{profile.subtitle}</p>
 
             <div className="mt-4 flex flex-wrap gap-3 sm:mt-6">
-              <a href="tel:+919876543210" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-normal text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-700 sm:h-12 sm:px-5">
+              <a href="#consultation-form" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-normal text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-700 sm:h-12 sm:px-5">
                 <Phone className="h-4 w-4" />
-                Call now
+                Request callback
               </a>
-              <a href="https://wa.me/919876543210" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 text-sm font-normal text-emerald-700 transition hover:bg-emerald-100 sm:h-12 sm:px-5">
+              <a href={CONTACT.whatsappHref} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 text-sm font-normal text-emerald-700 transition hover:bg-emerald-100 sm:h-12 sm:px-5">
                 <MessageCircle className="h-4 w-4" />
-                WhatsApp expert
+                Message expert
               </a>
             </div>
 
@@ -230,7 +231,7 @@ export default function ExpertConsultationPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="phone">Mobile *</Label>
-                  <Input id="phone" value={formData.phone} onChange={(event) => handleInputChange("phone", event.target.value)} placeholder="+91 98765 43210" required className="h-11 rounded-lg" />
+                  <Input id="phone" value={formData.phone} onChange={(event) => handleInputChange("phone", event.target.value)} placeholder={CONTACT.phonePlaceholder} required className="h-11 rounded-lg" />
                 </div>
               </div>
 
@@ -359,9 +360,9 @@ export default function ExpertConsultationPage() {
 
       <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200 bg-white/95 px-4 py-3 shadow-2xl shadow-slate-950/10 backdrop-blur lg:hidden">
         <div className="mx-auto grid max-w-md grid-cols-[0.85fr_1.15fr] gap-3">
-          <a href="tel:+919876543210" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white text-sm font-normal text-slate-800">
+          <a href={CONTACT.callbackHref} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white text-sm font-normal text-slate-800">
             <Phone className="h-4 w-4" />
-            Call
+            Help
           </a>
           <a href="#consultation-form" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-normal text-white shadow-lg shadow-blue-500/20">
             Get callback

@@ -10,6 +10,7 @@ import { isGoogleAuthEnabled } from '@/lib/supabase';
 import {
   AuthPageShell,
 } from '@/components/auth/AuthPageShell';
+import { allowLocalAuthFallbacks as shouldAllowLocalAuthFallbacks } from '@/utils/runtime-env';
 
 const reasonCopy: Record<string, { title: string; message: string }> = {
   timeout: {
@@ -69,8 +70,9 @@ export default function LoginPage() {
   const reason = params.get('reason');
   const reasonState = reason ? reasonCopy[reason] : null;
   const signUpUrl = `/auth/register?redirect_url=${encodeURIComponent(redirectUrl)}`;
-  const mockEmail = params.get('mock_email');
-  const showTemporaryLogin = params.get('test_login') === '1';
+  const allowLocalAuthFallbacks = shouldAllowLocalAuthFallbacks();
+  const testEmail = allowLocalAuthFallbacks ? params.get('test_email') : null;
+  const showTemporaryLogin = allowLocalAuthFallbacks && params.get('test_login') === '1';
   const reloadAfterLogin = (target: string) => {
     window.location.replace(target);
   };
@@ -82,16 +84,16 @@ export default function LoginPage() {
   }, [authLoading, googleLoading, isAuthenticated, loading, redirectUrl]);
 
   useEffect(() => {
-    if (mockEmail) {
+    if (testEmail) {
       setLoading(true);
-      login(mockEmail, 'mock_password').then(() => {
+      login(testEmail, 'temporary_test_login').then(() => {
         reloadAfterLogin(redirectUrl);
       }).catch(err => {
-        setError(err?.message || 'Mock login failed');
+        setError(err?.message || 'Temporary test login failed');
         setLoading(false);
       });
     }
-  }, [mockEmail, login, redirectUrl]);
+  }, [testEmail, login, redirectUrl]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

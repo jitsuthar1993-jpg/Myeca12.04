@@ -63,15 +63,11 @@ const defaultSecurityConfig: SecurityHeadersConfig = {
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'", // Required for some React functionality
-        "https://cdnjs.cloudflare.com",
-        "https://fonts.googleapis.com",
-        "https://www.google.com",
-        "https://www.gstatic.com",
         "https://www.googletagmanager.com",
         "https://www.google-analytics.com",
-        "https://js.stripe.com",
-        "https://checkout.stripe.com"
+        "https://www.clarity.ms",
+        "https://scripts.clarity.ms",
+        "https://va.vercel-scripts.com"
       ],
       styleSrc: [
         "'self'",
@@ -87,18 +83,19 @@ const defaultSecurityConfig: SecurityHeadersConfig = {
         "https://www.google.com",
         "https://www.gstatic.com",
         "https://fonts.gstatic.com",
-        "https://via.placeholder.com",
         "https://trae-api-sg.mchost.guru"
       ],
       connectSrc: [
         "'self'",
         "https://api.tax-calculator.com",
         "https://www.google-analytics.com",
-        "https://js.stripe.com",
-        "https://api.stripe.com",
-        "https://checkout.stripe.com",
+        "https://www.google.com",
+        "https://analytics.google.com",
+        "https://*.clarity.ms",
         "https://api.supabase.io",
         "https://*.supabase.co",
+        "https://vitals.vercel-insights.com",
+        "https://va.vercel-scripts.com",
         "wss://*.supabase.co"
       ],
       fontSrc: [

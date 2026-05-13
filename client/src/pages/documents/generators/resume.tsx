@@ -182,7 +182,7 @@ const FormComponent = ({ register, errors, control }: any) => {
         </Button>
       </div>
 
-      {/* Education & Skills omitted for brevity in demo, implementing minimal working versions */}
+      {/* Compact repeatable controls for education and skills. */}
       <div>
         <h3 className="text-lg font-bold border-b pb-2">Education</h3>
         {eduFields.map((field, index) => (

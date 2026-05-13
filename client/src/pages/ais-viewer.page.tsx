@@ -38,7 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { m } from "framer-motion";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "@/components/charts/lightweight-recharts";
 import {
   ParsedAIS,
   parseAIS,

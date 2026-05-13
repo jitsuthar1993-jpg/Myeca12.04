@@ -13,7 +13,7 @@ import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/
 
 const router = Router();
 
-// Cache at Vercel Edge for 5 min, stale-while-revalidate for 1 hour â€” fast + cheap
+// Cache at Vercel Edge for 5 min, stale-while-revalidate for 1 hour.
 const CACHE_HEADER = "public, s-maxage=300, stale-while-revalidate=3600";
 const DB_FALLBACK_TIMEOUT_MS = 2500;
 

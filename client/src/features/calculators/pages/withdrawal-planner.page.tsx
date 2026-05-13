@@ -7,7 +7,7 @@ import {
   Calendar, PieChart, Info, CheckCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "@/components/charts/lightweight-recharts";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { calculateWithdrawalPlan, WithdrawalFrequency } from "@/lib/withdrawal-planner";

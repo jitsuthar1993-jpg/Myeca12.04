@@ -12,6 +12,7 @@ import {
   Check, AlertCircle, Download, Home, TrendingUp, Briefcase, FileJson
 } from "lucide-react";
 import { ITRGenerator, CompactFormData } from "@/utils/itr-generator";
+import { CONTACT } from "@/config/contact";
 
 export function CompactFilingGuidePage() {
   const { toast } = useToast();
@@ -661,7 +662,7 @@ export function CompactFilingGuidePage() {
             <Alert>
               <Briefcase className="h-4 w-4" />
               <AlertDescription className="text-xs">
-                Need help? Call our CA experts at 1800-123-4567 or use live chat.
+                Need help? Request CA support at {CONTACT.supportEmail} or book a consultation.
               </AlertDescription>
             </Alert>
           </div>

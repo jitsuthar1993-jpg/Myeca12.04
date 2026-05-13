@@ -9,7 +9,6 @@ import {
   Video,
   Newspaper,
   ChevronRight,
-  Star,
   Clock,
   Users,
   TrendingUp,
@@ -19,12 +18,12 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { VIDEO_TUTORIALS, getPopularVideos } from "@/data/video-tutorials";
+import { VIDEO_CATEGORIES, VIDEO_TUTORIALS, getFeaturedVideos } from "@/data/video-tutorials";
 import { TAX_GUIDES } from "@/data/tax-guides";
 import { EXPERTS } from "@/data/experts";
 
 export default function LearnPage() {
-  const popularVideos = getPopularVideos(3);
+  const featuredVideos = getFeaturedVideos(3);
   const popularGuides = TAX_GUIDES.slice(0, 3);
   const featuredExperts = EXPERTS.filter(e => e.featured).slice(0, 3);
 
@@ -89,10 +88,10 @@ export default function LearnPage() {
               className="grid grid-cols-2 gap-4"
             >
               {[
-                { label: "Video Tutorials", value: `${VIDEO_TUTORIALS.length}+`, icon: Play, color: "bg-red-500" },
-                { label: "Tax Guides", value: `${TAX_GUIDES.length}+`, icon: BookOpen, color: "bg-emerald-500" },
+                { label: "Lesson Outlines", value: `${VIDEO_TUTORIALS.length}`, icon: Play, color: "bg-red-500" },
+                { label: "Tax Guides", value: `${TAX_GUIDES.length}`, icon: BookOpen, color: "bg-emerald-500" },
                 { label: "Expert CAs", value: `${EXPERTS.length}`, icon: Users, color: "bg-purple-500" },
-                { label: "Happy Learners", value: "50K+", icon: TrendingUp, color: "bg-blue-500" }
+                { label: "Topic Areas", value: `${VIDEO_CATEGORIES.length}`, icon: TrendingUp, color: "bg-blue-500" }
               ].map((stat, i) => (
                 <div key={i} className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-white/15 transition-colors">
                   <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center mb-4 shadow-lg`}>
@@ -133,14 +132,14 @@ export default function LearnPage() {
                       <Play className="h-8 w-8 text-red-600 fill-red-600" />
                     </div>
                     <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-red-600 transition-colors">
-                      Video Tutorials
+                      Lesson Outlines
                     </h3>
                     <p className="text-gray-600 mb-6 leading-relaxed">
-                      Watch expert-led videos on tax filing, savings, and investments.
+                      Review structured lesson outlines for tax filing, savings, and investments.
                     </p>
                     <div className="flex items-center text-sm font-medium text-red-600 bg-red-50 w-fit px-3 py-1 rounded-full">
                       <Clock className="h-3 w-3 mr-1.5" />
-                      {VIDEO_TUTORIALS.length}+ videos
+                      {VIDEO_TUTORIALS.length} lessons
                     </div>
                   </CardContent>
                 </Card>
@@ -224,7 +223,7 @@ export default function LearnPage() {
           </m.div>
         </section>
 
-        {/* Popular Videos */}
+        {/* Featured Lessons */}
         <section className="mb-24">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -232,22 +231,22 @@ export default function LearnPage() {
                 <div className="p-2 bg-red-100 rounded-lg">
                   <Play className="h-5 w-5 text-red-600 fill-red-600" />
                 </div>
-                Popular Videos
+                Featured Lessons
               </h2>
-              <p className="text-gray-500 mt-1 ml-11">Most watched tutorials this week</p>
+              <p className="text-gray-500 mt-1 ml-11">Curated tax topics to start with</p>
             </div>
             <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" asChild>
               <Link href="/learn/videos">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {popularVideos.map((video) => (
+            {featuredVideos.map((video) => (
               <Card key={video.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
                 <div className="relative aspect-video overflow-hidden">
                   <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/10 transition-colors z-10" />
                   <div className="bg-gradient-to-br from-slate-700 to-slate-900 w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                     <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="h-8 w-8 text-white fill-white" />
+                      <BookOpen className="h-8 w-8 text-white" />
                     </div>
                   </div>
                   <Badge className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md border-none z-20">{video.duration}</Badge>
@@ -343,9 +342,8 @@ export default function LearnPage() {
                     <h3 className="font-bold text-lg text-gray-900">{expert.name}</h3>
                     <p className="text-sm text-purple-600 font-medium">{expert.title}</p>
                     <div className="flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded-full shadow-sm">
-                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-sm font-bold text-gray-700">{expert.rating}</span>
-                      <span className="text-xs text-gray-400">({expert.reviewCount} reviews)</span>
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      <span className="text-sm font-bold text-gray-700">Verified profile</span>
                     </div>
                   </div>
                   <div className="p-6">

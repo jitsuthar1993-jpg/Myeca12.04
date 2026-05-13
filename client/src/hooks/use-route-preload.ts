@@ -1,22 +1,29 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
+import { useAuth } from '@/components/AuthProvider';
 
 const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
-  '/': ['/calculators', '/services', '/auth/login', '/experts'],
+  '/': ['/calculators', '/services', '/experts'],
   '/calculators': ['/calculators/income-tax', '/calculators/sip', '/calculators/hra', '/calculators/emi', '/calculators/hsn-finder'],
   '/services': ['/services/gst-registration', '/services/company-registration', '/services/itr-filing', '/experts'],
-  '/auth/login': ['/auth/register', '/dashboard'],
-  '/auth/register': ['/auth/login', '/dashboard'],
-  '/dashboard': ['/profiles', '/documents', '/settings', '/experts', '/itr/form-selector'],
+  '/auth/login': ['/auth/register'],
+  '/auth/register': ['/auth/login'],
+  '/dashboard': ['/profiles', '/documents', '/settings', '/itr/form-selector'],
   '/itr': ['/itr/filing', '/itr/status-tracker', '/itr/form-selector'],
   '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],
   '/experts': ['/experts/ca-rahul-sharma', '/experts/ca-priya-nair'],
 };
 
 const preloadedRoutes = new Set<string>();
+const PRIVATE_ROUTE_PREFIXES = ['/dashboard', '/profiles', '/documents', '/settings', '/reports', '/workflows', '/teams', '/referrals', '/export'];
 
-const preloadRoute = (path: string) => {
+function isPrivatePreload(path: string) {
+  return PRIVATE_ROUTE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
+
+const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
   if (preloadedRoutes.has(path)) return;
+  if (isPrivatePreload(path) && !canPreloadPrivate) return;
   
   const importMap: Record<string, () => Promise<unknown>> = {
     '/calculators': () => import('@/features/calculators/pages/index.page'),
@@ -57,20 +64,21 @@ const preloadRoute = (path: string) => {
 
 export function useRoutePreload() {
   const [location] = useLocation();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const relatedRoutes = ROUTE_RELATIONSHIPS[location] || [];
     
     const timer = setTimeout(() => {
-      relatedRoutes.forEach(route => preloadRoute(route));
+      relatedRoutes.forEach(route => preloadRoute(route, isAuthenticated));
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [location]);
+  }, [isAuthenticated, location]);
 
   const preloadOnHover = useCallback((path: string) => {
-    preloadRoute(path);
-  }, []);
+    preloadRoute(path, isAuthenticated);
+  }, [isAuthenticated]);
 
   return { preloadOnHover };
 }

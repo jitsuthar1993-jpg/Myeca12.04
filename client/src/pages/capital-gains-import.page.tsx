@@ -44,7 +44,7 @@ import {
   parseCapitalGainsStatement,
   exportForITR,
 } from "@/lib/capital-gains-parser";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "@/components/charts/lightweight-recharts";
 
 const COLORS = ['#22c55e', '#ef4444', '#3b82f6', '#f59e0b'];
 

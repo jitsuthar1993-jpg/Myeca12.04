@@ -162,13 +162,13 @@ export default function GSTNoticeSection() {
                 <FileText className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link href="tel:+919876543210">
+            <Link href="/expert-consultation?service=gst-registration">
               <Button 
                 variant="outline" 
                 size="lg"
                 className="border-purple-600 text-purple-600 hover:bg-purple-50 px-6 py-3"
               >
-                Call GST Expert
+                Request Callback
                 <Phone className="ml-2 h-5 w-5" />
               </Button>
             </Link>

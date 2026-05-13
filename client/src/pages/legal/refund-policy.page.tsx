@@ -324,8 +324,8 @@ export default function RefundPolicyPage() {
                 <div className="flex items-start">
                   <Phone className="w-5 h-5 text-blue-600 mr-3 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-gray-900">Phone Support</h3>
-                    <p className="text-gray-600">+91-9876543210</p>
+                    <h3 className="font-semibold text-gray-900">Refund Support</h3>
+                    <p className="text-gray-600">Request support by email</p>
                     <p className="text-gray-600 text-sm">Mon-Sat: 9 AM - 7 PM IST</p>
                     <p className="text-gray-600 text-sm">Refund Specialist Available</p>
                   </div>

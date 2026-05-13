@@ -115,8 +115,8 @@ export const DEFAULT_BLOG_CTA = {
 const HTML_TAG_RE = /<\/?[a-z][\s\S]*>/i;
 const SCRIPT_TAG_RE = /<\s*script[^>]*>[\s\S]*?<\s*\/\s*script\s*>/gi;
 const STYLE_TAG_RE = /<\s*style[^>]*>[\s\S]*?<\s*\/\s*style\s*>/gi;
-const EVENT_HANDLER_RE = /\son[a-z]+\s*=\s*(['"]).*?\1/gi;
-const JS_PROTOCOL_RE = /(href|src)\s*=\s*(['"])\s*javascript:[^'"]*\2/gi;
+const EVENT_HANDLER_RE = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JS_PROTOCOL_RE = /\s(href|src)\s*=\s*(?:"\s*javascript:[^"]*"|'\s*javascript:[^']*'|[^\s>]*javascript:[^\s>]*)/gi;
 
 export function stripHtml(input: string): string {
   return input
@@ -299,7 +299,7 @@ export function sanitizeHtml(input: string): string {
     .replace(SCRIPT_TAG_RE, "")
     .replace(STYLE_TAG_RE, "")
     .replace(EVENT_HANDLER_RE, "")
-    .replace(JS_PROTOCOL_RE, "$1=$2#$2")
+    .replace(JS_PROTOCOL_RE, ' $1="#"')
     .trim();
 }
 

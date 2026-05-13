@@ -15,7 +15,7 @@ export function validateEnv() {
   }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    warnings.push("BLOB_READ_WRITE_TOKEN not set â€” document uploads will fail until Vercel Blob is connected");
+    warnings.push("BLOB_READ_WRITE_TOKEN not set - document uploads will fail until Vercel Blob is connected");
   }
 
   // Optional but recommended
@@ -24,11 +24,11 @@ export function validateEnv() {
   }
 
   if (!process.env.PII_ENCRYPTION_KEY) {
-    warnings.push("PII_ENCRYPTION_KEY not set â€” PII encryption disabled");
+    warnings.push("PII_ENCRYPTION_KEY not set - PII encryption disabled");
   }
 
   if (!process.env.SESSION_SECRET) {
-    warnings.push("SESSION_SECRET not set â€” using auto-generated value");
+    warnings.push("SESSION_SECRET not set - using auto-generated value");
   }
 
   // Log warnings
@@ -36,7 +36,7 @@ export function validateEnv() {
     console.warn(`[ENV] Warning: ${w}`);
   }
 
-  // Log critical errors but don't crash â€” public routes should still work
+  // Log critical errors but don't crash; public routes should still work.
   for (const e of errors) {
     console.error(`[ENV] Error: ${e}`);
   }

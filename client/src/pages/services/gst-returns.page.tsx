@@ -743,7 +743,7 @@ export default function GSTReturnsPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 shadow-lg">
                   <Receipt className="w-5 h-5 mr-2" />
-                  File GST Returns ₹590/month
+                  File GST Returns Rs 590/month
                 </Button>
                 <Link href="/expert-consultation?service=gst-returns">
                   <Button size="lg" className="bg-blue-700 hover:bg-blue-800 text-white border-0 px-8 shadow-lg font-semibold">
@@ -756,11 +756,11 @@ export default function GSTReturnsPage() {
               <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-blue-100">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>99.9% Accuracy Guarantee</span>
+                  <span>Validation before filing</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Same Day Filing</span>
+                  <span>Timely filing support</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

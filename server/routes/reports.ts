@@ -4,6 +4,9 @@ import { adminDb } from "../data-admin.js";
 import { z } from "zod";
 
 const router = Router();
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+const REPORT_DATA_LIMIT = 500;
 
 const reportRequestSchema = z.object({
   type: z.enum(["tax_summary", "refund_status", "compliance", "business_overview", "client_activity"]),
@@ -59,6 +62,12 @@ function requireUser(req: AuthRequest, res: Response) {
   return req.user;
 }
 
+function parsePagination(query: AuthRequest["query"]) {
+  const page = Math.max(1, parseInt(String(query.page ?? "1"), 10) || 1);
+  const limit = Math.max(1, Math.min(MAX_PAGE_SIZE, parseInt(String(query.limit ?? DEFAULT_PAGE_SIZE), 10) || DEFAULT_PAGE_SIZE));
+  return { page, limit, offset: (page - 1) * limit };
+}
+
 router.post("/generate", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const user = requireUser(req, res);
@@ -94,25 +103,48 @@ router.get("/templates", authenticateToken, (_req: AuthRequest, res: Response) =
 });
 
 router.get("/history", authenticateToken, async (req: AuthRequest, res: Response) => {
-  const user = requireUser(req, res);
-  if (!user) return;
+  try {
+    const user = requireUser(req, res);
+    if (!user) return;
 
-  const snapshot = await adminDb.collection("reports")
-    .where("userId", "==", user.id)
-    .get();
+    const { page, limit, offset } = parsePagination(req.query);
+    const baseQuery = adminDb.collection("reports").where("userId", "==", user.id);
+    let reports: any[];
+    let total: number;
 
-  const reports = snapshot.docs
-    .map((doc) => ({ id: doc.id, ...doc.data() }))
-    .sort((a: any, b: any) => new Date(b.generatedAt ?? b.createdAt ?? 0).getTime() - new Date(a.generatedAt ?? a.createdAt ?? 0).getTime());
+    try {
+      const countSnapshot = await (baseQuery as any).count().get();
+      total = countSnapshot.data().count;
+      const snapshot = await (baseQuery as any)
+        .orderBy("generatedAt", "desc")
+        .offset(offset)
+        .limit(limit)
+        .get();
+      reports = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    } catch {
+      const snapshot = await (baseQuery as any).limit(Math.min(500, offset + limit)).get();
+      const allReports = snapshot.docs
+        .map((doc: any) => ({ id: doc.id, ...doc.data() }))
+        .sort((a: any, b: any) => new Date(b.generatedAt ?? b.createdAt ?? 0).getTime() - new Date(a.generatedAt ?? a.createdAt ?? 0).getTime());
+      total = allReports.length;
+      reports = allReports.slice(offset, offset + limit);
+    }
 
-  res.json({ success: true, reports });
+    res.json({
+      success: true,
+      reports,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch report history" });
+  }
 });
 
 async function generateReportData(userId: string, type: string, options: any) {
   const [returnsSnapshot, docsSnapshot, servicesSnapshot] = await Promise.all([
-    adminDb.collection("tax_returns").where("userId", "==", userId).get(),
-    adminDb.collection("documents").where("userId", "==", userId).where("status", "==", "active").get(),
-    adminDb.collection("user_services").where("userId", "==", userId).get(),
+    adminDb.collection("tax_returns").where("userId", "==", userId).limit(REPORT_DATA_LIMIT).get(),
+    adminDb.collection("documents").where("userId", "==", userId).where("status", "==", "active").limit(REPORT_DATA_LIMIT).get(),
+    adminDb.collection("user_services").where("userId", "==", userId).limit(REPORT_DATA_LIMIT).get(),
   ]);
 
   const returns = returnsSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, any>) }));

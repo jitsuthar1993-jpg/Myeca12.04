@@ -221,17 +221,9 @@ class ResourcePrefetcher {
 
   public prefetchRouteResources(routeName: string) {
     const routeResources = {
-      'dashboard': [
-        '/api/user/dashboard',
-        '/images/dashboard-illustration.svg'
-      ],
       'calculator': [
         '/api/tax/calculations',
         '/images/calculator-illustration.svg'
-      ],
-      'reports': [
-        '/api/reports/summary',
-        '/images/reports-illustration.svg'
       ]
     };
 
@@ -290,10 +282,9 @@ export const initializePredictivePrefetching = () => {
     // Predict next likely route
     const lastRoute = navigationHistory[navigationHistory.length - 1];
     const likelyNextRoutes = {
-      '/': ['dashboard', 'calculator'],
-      '/dashboard': ['calculator', 'reports'],
-      '/calculator': ['dashboard', 'reports'],
-      '/reports': ['dashboard', 'settings']
+      '/': ['calculator'],
+      '/calculators': ['calculator'],
+      '/calculator': ['calculator']
     };
 
     const nextRoutes = likelyNextRoutes[lastRoute as keyof typeof likelyNextRoutes];

@@ -4,6 +4,8 @@ import { adminDb } from "../data-admin.js";
 import { z } from "zod";
 
 const router = Router();
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 
 const workflowSchema = z.object({
   name: z.string().min(1).max(255),
@@ -115,6 +117,12 @@ function requireUser(req: AuthRequest, res: Response) {
   return req.user;
 }
 
+function parsePagination(query: AuthRequest["query"]) {
+  const page = Math.max(1, parseInt(String(query.page ?? "1"), 10) || 1);
+  const limit = Math.max(1, Math.min(MAX_PAGE_SIZE, parseInt(String(query.limit ?? DEFAULT_PAGE_SIZE), 10) || DEFAULT_PAGE_SIZE));
+  return { page, limit, offset: (page - 1) * limit };
+}
+
 async function getOwnedWorkflow(userId: string, workflowId: string): Promise<any | null> {
   const doc = await adminDb.collection("workflows").doc(workflowId).get();
   if (!doc.exists) return null;
@@ -156,14 +164,19 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   const user = requireUser(req, res);
   if (!user) return;
 
-  const snapshot = await adminDb.collection("workflows")
-    .where("userId", "==", user.id)
+  const { page, limit, offset } = parsePagination(req.query);
+  const baseQuery = adminDb.collection("workflows").where("userId", "==", user.id);
+  const countSnapshot = await (baseQuery as any).count().get();
+  const total = countSnapshot.data().count;
+  const snapshot = await (baseQuery as any)
+    .offset(offset)
+    .limit(limit)
     .get();
   const workflows = snapshot.docs
     .map((doc) => ({ id: doc.id, ...doc.data() }))
     .filter((workflow: any) => workflow.status !== "deleted");
 
-  res.json({ success: true, workflows, total: workflows.length });
+  res.json({ success: true, workflows, total, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
 });
 
 router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {

@@ -12,6 +12,7 @@ interface ReviewAndSubmitProps {
 
 export default function ReviewAndSubmit({ formData, onSubmit, isSubmitting }: ReviewAndSubmitProps) {
   const { personalDetails, incomeDetails, deductions, taxCalculation } = formData;
+  const isDemoMode = import.meta.env.DEV;
 
   const formatCurrency = (amount: number | string) => {
     const num = typeof amount === 'string' ? parseFloat(amount) : amount;
@@ -114,19 +115,19 @@ export default function ReviewAndSubmit({ formData, onSubmit, isSubmitting }: Re
             <div className="text-center p-3 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-600">Salary Income</p>
               <p className="text-lg font-semibold text-blue-900">
-                ₹{formatCurrency(incomeDetails?.salaryIncome || "0")}
+                Rs {formatCurrency(incomeDetails?.salaryIncome || "0")}
               </p>
             </div>
             <div className="text-center p-3 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-600">Interest Income</p>
               <p className="text-lg font-semibold text-blue-900">
-                ₹{formatCurrency(incomeDetails?.interestIncome || "0")}
+                Rs {formatCurrency(incomeDetails?.interestIncome || "0")}
               </p>
             </div>
             <div className="text-center p-3 bg-blue-100 rounded-lg">
               <p className="text-sm text-blue-700">Total Income</p>
               <p className="text-xl font-bold text-blue-900">
-                ₹{formatCurrency(getTotalIncome())}
+                Rs {formatCurrency(getTotalIncome())}
               </p>
             </div>
           </div>
@@ -143,25 +144,25 @@ export default function ReviewAndSubmit({ formData, onSubmit, isSubmitting }: Re
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-sm text-green-600">Section 80C</p>
               <p className="text-lg font-semibold text-green-900">
-                ₹{formatCurrency(deductions?.section80C || "0")}
+                Rs {formatCurrency(deductions?.section80C || "0")}
               </p>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-sm text-green-600">Section 80D</p>
               <p className="text-lg font-semibold text-green-900">
-                ₹{formatCurrency(deductions?.section80D || "0")}
+                Rs {formatCurrency(deductions?.section80D || "0")}
               </p>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-sm text-green-600">Standard Deduction</p>
               <p className="text-lg font-semibold text-green-900">
-                ₹{formatCurrency(deductions?.standardDeduction || "50000")}
+                Rs {formatCurrency(deductions?.standardDeduction || "50000")}
               </p>
             </div>
             <div className="text-center p-3 bg-green-100 rounded-lg">
               <p className="text-sm text-green-700">Total Deductions</p>
               <p className="text-xl font-bold text-green-900">
-                ₹{formatCurrency(getTotalDeductions())}
+                Rs {formatCurrency(getTotalDeductions())}
               </p>
             </div>
           </div>
@@ -183,19 +184,19 @@ export default function ReviewAndSubmit({ formData, onSubmit, isSubmitting }: Re
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">Taxable Income</p>
                   <p className="text-xl font-semibold text-gray-900">
-                    ₹{formatCurrency(taxCalculation.calculation.taxableIncome)}
+                    Rs {formatCurrency(taxCalculation.calculation.taxableIncome)}
                   </p>
                 </div>
                 <div className="text-center p-4 bg-red-50 rounded-lg">
                   <p className="text-sm text-red-600">Tax Payable</p>
                   <p className="text-xl font-bold text-red-900">
-                    ₹{formatCurrency(taxCalculation.calculation.taxPayable)}
+                    Rs {formatCurrency(taxCalculation.calculation.taxPayable)}
                   </p>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-600">Net Income</p>
                   <p className="text-xl font-bold text-green-900">
-                    ₹{formatCurrency(taxCalculation.calculation.netIncome)}
+                    Rs {formatCurrency(taxCalculation.calculation.netIncome)}
                   </p>
                 </div>
               </div>
@@ -221,7 +222,7 @@ export default function ReviewAndSubmit({ formData, onSubmit, isSubmitting }: Re
             </div>
             <div>
               <p className="text-sm text-gray-600">Filing Status</p>
-              <Badge variant="secondary">Ready to File</Badge>
+              <Badge variant="secondary">Ready for Review</Badge>
             </div>
           </div>
         </CardContent>
@@ -233,13 +234,22 @@ export default function ReviewAndSubmit({ formData, onSubmit, isSubmitting }: Re
           <CardTitle className="text-orange-900">Important Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <ul className="list-disc list-inside space-y-1 text-orange-800">
-            <li>This is a demo submission. In production, this would generate actual ITR files.</li>
-            <li>Please ensure all information is accurate before submitting.</li>
-            <li>You can save this as a draft and return later to make changes.</li>
-            <li>After submission, you'll receive a mock acknowledgment number.</li>
-            <li>For actual filing, you would need to upload the generated JSON/XML file to the Income Tax portal.</li>
-          </ul>
+          {isDemoMode ? (
+            <ul className="list-disc list-inside space-y-1 text-orange-800">
+              <li>This local development flow prepares a review reference only.</li>
+              <li>Please ensure all information is accurate before submitting.</li>
+              <li>You can save this as a draft and return later to make changes.</li>
+              <li>After submission, development builds may show a generated review reference.</li>
+              <li>For actual filing, a verified return must be filed through the connected filing workflow or official Income Tax portal.</li>
+            </ul>
+          ) : (
+            <ul className="list-disc list-inside space-y-1 text-orange-800">
+              <li>Please ensure all information is accurate before submitting for review.</li>
+              <li>Your return will be routed for CA review and filing workflow completion.</li>
+              <li>A valid acknowledgment is issued only after the return is filed on the Income Tax portal.</li>
+              <li>Keep Form 16, AIS/26AS, challans, and deduction proofs ready for verification.</li>
+            </ul>
+          )}
         </CardContent>
       </Card>
 

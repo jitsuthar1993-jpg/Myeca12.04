@@ -36,7 +36,7 @@ export default function NotificationCenter() {
     queryFn: async () => {
       const response = await apiRequest("/api/notifications");
       const data = await response.json();
-      return data;
+      return Array.isArray(data) ? data : data.notifications ?? [];
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
@@ -45,7 +45,7 @@ export default function NotificationCenter() {
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: string) => {
       const response = await apiRequest(`/api/notifications/${notificationId}/read`, {
-        method: "PUT"
+        method: "PATCH"
       });
       return response.json();
     },
@@ -57,8 +57,8 @@ export default function NotificationCenter() {
   // Mark all as read
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("/api/notifications/mark-all-read", {
-        method: "PUT"
+      const response = await apiRequest("/api/notifications/read-all", {
+        method: "PATCH"
       });
       return response.json();
     },

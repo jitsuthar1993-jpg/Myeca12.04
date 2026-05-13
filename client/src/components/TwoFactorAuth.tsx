@@ -69,7 +69,7 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
     mutationFn: async (code: string) => {
       return await apiRequest("/api/2fa/verify", {
         method: "POST",
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ token: code })
       });
     },
     onSuccess: () => {
@@ -167,8 +167,10 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
                 id="code"
                 placeholder="000000"
                 value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
+                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 maxLength={6}
+                inputMode="numeric"
+                autoComplete="one-time-code"
                 className="text-center text-lg font-mono"
               />
             </div>

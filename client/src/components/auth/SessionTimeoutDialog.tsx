@@ -46,7 +46,7 @@ export function SessionTimeoutDialog({
             <Clock className="h-5 w-5" />
             <div>
               <p className="font-black">Auto logout in {countdownSeconds}s</p>
-              <p className="text-sm">Choose â€œStay signed inâ€ to refresh your Supabase session.</p>
+              <p className="text-sm">Choose "Stay signed in" to refresh your Supabase session.</p>
             </div>
           </div>
         </div>

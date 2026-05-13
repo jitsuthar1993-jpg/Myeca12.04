@@ -6,6 +6,7 @@ import { sanitize } from "../middleware/sanitize.js";
 import multer from "multer";
 import sharp from "sharp";
 import { put, list } from "@vercel/blob";
+import { randomUUID } from "node:crypto";
 import { blogPostEditorSchema, blogPostUpdateSchema, type BlogPostEditorInput } from "../../shared/blog.js";
 import {
   buildBlogPostWriteData,
@@ -196,7 +197,7 @@ router.post("/upload", requireAuth, requireTeamMember, upload.single("image"), a
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const uniqueSuffix = `${Date.now()}-${randomUUID()}`;
 
     // Compress and convert to WebP in memory
     const webpBuffer = await sharp(req.file.buffer)

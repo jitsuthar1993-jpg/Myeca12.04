@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, 
   Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-} from "recharts";
+} from "@/components/charts/lightweight-recharts";
 import { 
   TrendingUp, TrendingDown, Users, FileText, IndianRupee, 
   Calendar, Award, Target, Activity, Download, RefreshCw, Eye, Zap, 
@@ -20,7 +20,7 @@ import { Layout } from "@/components/admin/Layout";
 import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Sample data - In production, this would come from API
+// Local-only reference data for development. Production requires a live analytics source.
 const revenueData = [
   { month: "Jan", revenue: 450000, users: 3200, filings: 2800 },
   { month: "Feb", revenue: 520000, users: 3800, filings: 3400 },
@@ -73,6 +73,33 @@ export default function AnalyticsDashboardPage() {
   useEffect(() => {
     setPageTitle("Analytics Dashboard");
   }, [setPageTitle]);
+
+  if (import.meta.env.PROD) {
+    return (
+      <Layout>
+        <SEO
+          title="Performance Analytics | MyeCA.in"
+          description="Analytics dashboard for platform performance and user metrics."
+        />
+        <div className="mx-auto max-w-3xl p-6">
+          <Card className="border-slate-200">
+            <CardHeader>
+              <CardTitle>Analytics Data Source Required</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-slate-600">
+              <p>
+                Live analytics are not connected for this environment yet, so this dashboard is
+                disabled until a first-party reporting source is configured.
+              </p>
+              <p>
+                Connect a first-party analytics/reporting API before enabling this dashboard.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </Layout>
+    );
+  }
 
   const handleRefresh = () => {
     setIsLoading(true);
@@ -143,10 +170,10 @@ export default function AnalyticsDashboardPage() {
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Core Health</p>
                       <div className="grid grid-cols-2 gap-3">
                          {[
-                           { label: "Rev Yield", value: "₹82.5L", trend: "+15%", color: "blue" },
+                           { label: "Rev Yield", value: "Rs 82.5L", trend: "+15%", color: "blue" },
                            { label: "Active Nodes", value: "15.2K", trend: "+8.7%", color: "emerald" },
                            { label: "Filings", value: "12.8K", trend: "+12%", color: "indigo" },
-                           { label: "Uptime", value: "99.9%", trend: "100%", color: "amber" }
+                           { label: "Uptime", value: "Local only", trend: "Dev", color: "amber" }
                          ].map((m, i) => (
                            <div key={i} className="p-4 rounded-[24px] bg-slate-50 border border-slate-100">
                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{m.label}</p>
@@ -336,7 +363,7 @@ export default function AnalyticsDashboardPage() {
           <div className="space-y-6">
              <div className="flex items-center justify-between ml-4">
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">System Events</h3>
-                <Button variant="ghost" className="font-black text-[10px] uppercase tracking-widest text-blue-600">View History →</Button>
+                <Button variant="ghost" className="font-black text-[10px] uppercase tracking-widest text-blue-600">View History</Button>
              </div>
              <div className="grid grid-cols-1 gap-4">
                 {[
