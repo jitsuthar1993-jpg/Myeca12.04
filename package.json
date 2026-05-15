@@ -10,6 +10,7 @@
     "check": "tsc",
     "test:unit": "vitest run",
     "test:smoke": "tsx scripts/smoke-routes.ts",
+    "test:cloudflare-pages": "npm run build && tsx scripts/check-cloudflare-pages.ts",
     "test:e2e": "npm.cmd run build && playwright test",
     "check:env": "tsx scripts/check-env.ts",
     "db:generate": "dotenv -e .env -- drizzle-kit generate",
