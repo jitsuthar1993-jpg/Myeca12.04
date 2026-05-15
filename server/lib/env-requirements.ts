@@ -4,6 +4,7 @@ export type EnvRequirement = {
   key: string;
   level: EnvRequirementLevel;
   description: string;
+  requiresAnyMissing?: string[];
   validate?: (value: string) => string | null;
 };
 
@@ -116,16 +117,19 @@ export const ENV_REQUIREMENTS: EnvRequirement[] = [
     key: "SECURITY_LEAD_PHONE",
     level: "recommended",
     description: "Primary incident-response escalation phone number.",
+    requiresAnyMissing: ["SECURITY_EXTERNAL_CONTACT"],
   },
   {
     key: "SECURITY_ADMIN_PHONE",
     level: "recommended",
     description: "System-admin incident-response phone number.",
+    requiresAnyMissing: ["SECURITY_EXTERNAL_CONTACT"],
   },
   {
     key: "SECURITY_BACKUP_PHONE",
     level: "recommended",
     description: "Backup incident-response phone number.",
+    requiresAnyMissing: ["SECURITY_EXTERNAL_CONTACT"],
   },
   {
     key: "SECURITY_EXTERNAL_CONTACT",
@@ -170,6 +174,9 @@ export function getEnvReport(env: NodeJS.ProcessEnv = process.env) {
   for (const requirement of ENV_REQUIREMENTS) {
     const value = env[requirement.key]?.trim() ?? "";
     if (!value) {
+      const hasAlternative = requirement.requiresAnyMissing?.some((key) => Boolean(env[key]?.trim()));
+      if (hasAlternative) continue;
+
       if (requirement.level !== "optional") {
         issues.push({
           key: requirement.key,

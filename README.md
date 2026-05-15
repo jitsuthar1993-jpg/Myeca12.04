@@ -80,7 +80,7 @@ dist/                # Production build output
 | `SESSION_SECRET` |  | Server session signing secret |
 | `PII_ENCRYPTION_KEY` |  | At least 32 characters; required for encrypted PII and MFA secrets |
 | `BLOG_IMPORT_SECRET` |  | Secret for blog import and webhook endpoints |
-| `SECURITY_LEAD_PHONE`, `SECURITY_ADMIN_PHONE`, `SECURITY_BACKUP_PHONE` |  | Incident-response escalation contact numbers |
+| `SECURITY_LEAD_PHONE`, `SECURITY_ADMIN_PHONE`, `SECURITY_BACKUP_PHONE` |  | Recommended incident-response phone numbers when no external security contact is configured |
 | `SECURITY_EXTERNAL_NAME`, `SECURITY_EXTERNAL_ORGANIZATION`, `SECURITY_EXTERNAL_CONTACT` |  | Optional external incident-response contact details |
 
 Run `npm run check:env` to validate required environment variables without
