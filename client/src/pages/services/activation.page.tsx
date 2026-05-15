@@ -5,7 +5,6 @@ import {
   ArrowLeft, 
   CheckCircle2, 
   ChevronRight, 
-  Upload, 
   FileText, 
   ShieldCheck, 
   Zap, 
@@ -18,7 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { getServiceById } from "@/data/services";
@@ -38,7 +36,6 @@ export default function ActivationPage() {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [uploadedDocs, setUploadedDocs] = useState<string[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
   const [activationReference, setActivationReference] = useState<string>("Pending assignment");
   const [createdServiceId, setCreatedServiceId] = useState<string | null>(null);
 
@@ -114,16 +111,11 @@ export default function ActivationPage() {
     }
   };
 
-  const handleUpload = (docName: string) => {
-    setIsUploading(true);
-    // Simulate upload delay
-    setTimeout(() => {
-      if (!uploadedDocs.includes(docName)) {
-        setUploadedDocs(prev => [...prev, docName]);
-      }
-      setIsUploading(false);
-      handleNext();
-    }, 1200);
+  const handleDocumentReady = (docName: string) => {
+    if (!uploadedDocs.includes(docName)) {
+      setUploadedDocs(prev => [...prev, docName]);
+    }
+    handleNext();
   };
 
   const progress = (currentStep / (totalSteps - 1)) * 100;
@@ -245,7 +237,7 @@ export default function ActivationPage() {
             </m.div>
           )}
 
-          {/* STEPS 1 to N: DOCUMENT UPLOADS */}
+          {/* STEPS 1 to N: DOCUMENT READINESS */}
           {currentStep > 0 && currentStep <= documents.length && (
             <m.div
               key={`step-upload-${currentStep}`}
@@ -259,62 +251,46 @@ export default function ActivationPage() {
                   Step {currentStep} of {documents.length}
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                  Upload {documents[currentStep - 1]}
+                  Prepare {documents[currentStep - 1]}
                 </h2>
                 <p className="text-slate-500 dark:text-slate-400 font-medium">
-                  Please provide a clear scanned copy of your {documents[currentStep - 1].toLowerCase()}.
+                  Confirm this document is ready. You will upload the actual file inside the service workspace after the case is created.
                 </p>
               </div>
 
               <div 
                 className={cn(
                   "relative p-12 md:p-20 rounded-[48px] border-4 border-dashed transition-all duration-500 flex flex-col items-center justify-center text-center bg-white group",
-                  isUploading ? "border-blue-300 bg-blue-50/10" : "border-slate-200 hover:border-blue-400 hover:bg-slate-50"
+                  uploadedDocs.includes(documents[currentStep - 1])
+                    ? "border-emerald-300 bg-emerald-50/30"
+                    : "border-slate-200 hover:border-blue-400 hover:bg-slate-50"
                 )}
               >
                 <div className={cn(
                   "w-24 h-24 rounded-[32px] flex items-center justify-center mb-8 transition-all duration-500",
-                  isUploading ? "bg-blue-600 scale-110 shadow-xl shadow-blue-500/30" : "bg-slate-100 group-hover:bg-blue-100 text-slate-400 group-hover:text-blue-600"
+                  uploadedDocs.includes(documents[currentStep - 1])
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-slate-100 group-hover:bg-blue-100 text-slate-400 group-hover:text-blue-600"
                 )}>
-                  {isUploading ? (
-                    <m.div 
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                      className="text-white"
-                    >
-                      <Upload className="h-10 w-10" />
-                    </m.div>
-                  ) : (
-                    <Upload className="h-10 w-10" />
-                  )}
+                  {uploadedDocs.includes(documents[currentStep - 1]) ? <CheckCircle2 className="h-10 w-10" /> : <FileText className="h-10 w-10" />}
                 </div>
 
                 <div className="space-y-2">
                   <h3 className="text-xl font-black text-slate-900">
-                    {isUploading ? "Uploading..." : `Drag & Drop your ${documents[currentStep - 1]}`}
+                    {uploadedDocs.includes(documents[currentStep - 1])
+                      ? `${documents[currentStep - 1]} marked ready`
+                      : `Mark ${documents[currentStep - 1]} as ready`}
                   </h3>
-                  <p className="text-slate-500 font-medium">PNG, JPG or PDF up to 5MB</p>
+                  <p className="text-slate-500 font-medium">Actual PDF or image upload happens on the case page.</p>
                 </div>
 
-                {!isUploading && (
-                  <Button 
-                    variant="outline"
-                    className="mt-10 h-14 px-8 rounded-2xl border-2 font-black transition-all hover:bg-white hover:border-blue-600 hover:text-blue-600"
-                    onClick={() => handleUpload(documents[currentStep - 1])}
-                  >
-                    Browse Files
-                  </Button>
-                )}
-
-                {/* Processing Overlay */}
-                {isUploading && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm rounded-[48px] z-10">
-                    <div className="w-64 space-y-4">
-                      <Progress value={80} className="h-2" />
-                      <p className="text-sm font-black text-blue-600 uppercase tracking-widest text-center">Analysing Document Reliability...</p>
-                    </div>
-                  </div>
-                )}
+                <Button
+                  variant="outline"
+                  className="mt-10 h-14 px-8 rounded-2xl border-2 font-black transition-all hover:bg-white hover:border-blue-600 hover:text-blue-600"
+                  onClick={() => handleDocumentReady(documents[currentStep - 1])}
+                >
+                  {uploadedDocs.includes(documents[currentStep - 1]) ? "Continue" : "Mark Ready"}
+                </Button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -370,7 +346,7 @@ export default function ActivationPage() {
               <div className="space-y-4">
                 <h2 className="text-4xl font-black text-slate-900 tracking-tight">Activation Successful!</h2>
                 <p className="text-lg text-slate-500 font-medium max-w-sm mx-auto">
-                  We've received all documents for **{service.title}**. Our experts are reviewing them right now.
+                  We've created your <span className="font-black text-slate-700">{service.title}</span> workspace. Upload the real documents there so our experts can review them.
                 </p>
               </div>
 
@@ -382,12 +358,12 @@ export default function ActivationPage() {
                     <span className="font-black text-slate-900">{activationReference}</span>
                   </div>
                   <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                    <span className="text-slate-500 font-bold">Documents</span>
-                    <span className="font-black text-slate-900">{uploadedDocs.length} Uploaded</span>
+                    <span className="text-slate-500 font-bold">Documents Ready</span>
+                    <span className="font-black text-slate-900">{uploadedDocs.length} Marked</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-bold">Expected Verification</span>
-                    <span className="font-black text-blue-600">Within 24 Hours</span>
+                    <span className="text-slate-500 font-bold">Next Step</span>
+                    <span className="font-black text-blue-600">Upload in workspace</span>
                   </div>
                 </div>
               </div>
