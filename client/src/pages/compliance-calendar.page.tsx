@@ -240,7 +240,7 @@ export default function ComplianceCalendarPage() {
           },
           {
             q: "Can I get notifications for these due dates?",
-            a: "Absolutely! You can use our 'Deadline Alerts' feature to subscribe to automated reminders via Email or WhatsApp. We send alerts 7 days and 2 days before the actual deadline to ensure you have enough time to prepare."
+            a: "Yes. Signed-in users can manage deadline reminder preferences from account settings and use this calendar to review upcoming statutory dates."
           },
           {
             q: "Is this calendar relevant for Private Limited Companies?",
@@ -542,15 +542,17 @@ export default function ComplianceCalendarPage() {
                     </div>
                   </div>
                   <p className="text-slate-600 text-sm font-normal leading-relaxed mb-8 max-w-[280px]">
-                    Never miss a statutory filing again. Get real-time notifications via WhatsApp and Email.
+                    Review upcoming statutory dates and manage in-app deadline reminders from your account settings.
                   </p>
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl h-14 font-normal text-base shadow-md transition-all flex items-center justify-center gap-2">
-                    <BellRing className="w-5 h-5" />
-                    Activate Alerts
-                  </Button>
+                  <Link href="/settings">
+                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl h-14 font-normal text-base shadow-md transition-all flex items-center justify-center gap-2">
+                      <BellRing className="w-5 h-5" />
+                      Manage Reminder Settings
+                    </Button>
+                  </Link>
                   <div className="flex items-center justify-center gap-2 mt-6">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-normal text-slate-500">Free for all active users</span>
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span className="text-xs font-normal text-slate-500">Available for signed-in accounts</span>
                   </div>
                 </div>
                 {/* Decorative element */}

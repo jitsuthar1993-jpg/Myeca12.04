@@ -9,8 +9,8 @@ export interface Feature {
 export const features: Feature[] = [
   {
     id: "security",
-    title: "Bank-Level Security",
-    description: "Your data is protected with 256-bit SSL encryption and secure cloud storage. We never store your banking credentials.",
+    title: "Secure Workflows",
+    description: "Sensitive tax documents are handled through authenticated workflows, private storage, and scoped access controls.",
     icon: "Shield",
     color: "blue"
   },
@@ -44,8 +44,8 @@ export const features: Feature[] = [
   },
   {
     id: "tracking",
-    title: "Real-time Tracking",
-    description: "Track your refund status in real-time and get notifications at every step of the process.",
+    title: "Guided Status Tracking",
+    description: "Use guided trackers and case updates to understand the next step; confirm final refund status on the official portal.",
     icon: "TrendingUp",
     color: "indigo"
   }

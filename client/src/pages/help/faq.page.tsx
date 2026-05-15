@@ -59,7 +59,7 @@ const faqCategories = {
       },
       {
         question: 'What happens after I file my ITR?',
-        answer: 'After filing: 1) E-verify within 120 days (we help with this), 2) Receive acknowledgment (ITR-V), 3) Processing by Income Tax Department (2-6 weeks), 4) Intimation u/s 143(1) sent, 5) Refund processed if applicable. We track your return status throughout.'
+        answer: 'After filing: 1) E-verify within 120 days (we help with this), 2) Receive acknowledgment (ITR-V), 3) Processing by Income Tax Department (2-6 weeks), 4) Intimation u/s 143(1) sent, 5) Refund processed if applicable. We help you monitor the filing case and explain what to verify on the official portal.'
       },
       {
         question: 'Can I revise my ITR after filing?',
@@ -125,7 +125,7 @@ const faqCategories = {
     questions: [
       {
         question: 'How is my data protected on MyeCA.in?',
-        answer: 'We use multiple layers of security: 256-bit SSL encryption for data transmission, encrypted storage with AWS, two-factor authentication option, regular security audits, PCI DSS compliance for payments, and automatic logout on inactivity. Data is stored in secure Indian servers.'
+        answer: 'MyeCA.in uses authenticated access, scoped user workflows, private document storage, and inactivity protection to reduce exposure of sensitive tax records. Share personal and financial information only through the secure dashboard workflow.'
       },
       {
         question: 'Who can access my tax information?',

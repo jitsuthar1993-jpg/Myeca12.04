@@ -276,8 +276,8 @@ export default function SettingsPage() {
 
           <TabsContent value="notifications" className="space-y-6">
             <SettingsSection
-              title="Push Alerts"
-              description="Stay updated with real-time notifications"
+              title="Notification Preferences"
+              description="Choose which account and deadline alerts you want in the app"
               icon={Bell}
               iconColor="text-amber-600"
               bgColor="bg-amber-50"
