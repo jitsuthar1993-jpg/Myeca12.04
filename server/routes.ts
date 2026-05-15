@@ -1066,8 +1066,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 paymentStatus: { type: "string", nullable: true },
                 assignedCaId: { type: "string", nullable: true },
                 assignedCaName: { type: "string", nullable: true },
+                assignedCaEmail: { type: "string", nullable: true },
+                metadata: { type: "object", additionalProperties: true },
                 createdAt: { type: "string", format: "date-time" },
                 updatedAt: { type: "string", format: "date-time" }
+              }
+            },
+            UserServiceCreateMetadata: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                requestDescription: { type: "string", maxLength: 3000 },
+                source: { type: "string", maxLength: 120 },
+                requestedAt: { type: "string", maxLength: 80 },
+                originalServicePath: { type: "string", maxLength: 300, nullable: true },
+                businessName: { type: "string", maxLength: 160 },
+                contactNumber: { type: "string", maxLength: 30 }
               }
             },
             UserServiceCreateRequest: {
@@ -1079,16 +1093,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 serviceCategory: { type: "string" },
                 profileId: { type: "string", nullable: true },
                 paymentAmount: { oneOf: [{ type: "number" }, { type: "string" }] },
-                paymentStatus: { type: "string" },
-                status: { type: "string" },
-                assignedCaId: { type: "string", nullable: true },
-                metadata: { type: "object", additionalProperties: true }
+                metadata: openApiRef("UserServiceCreateMetadata")
               }
             },
             UserServiceMetadataUpdateRequest: {
               type: "object",
               properties: {
-                metadata: { type: "object", additionalProperties: true }
+                metadata: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    userNote: { type: "string", maxLength: 3000 }
+                  }
+                }
               }
             },
             UserServiceResponse: {
