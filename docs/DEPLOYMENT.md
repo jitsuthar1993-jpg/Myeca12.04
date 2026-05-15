@@ -63,6 +63,14 @@ npm run build
 vercel build
 ```
 
+## Cloudflare Pages Build
+Cloudflare Pages should use the same frontend build output as Vercel:
+
+- Build command: `npm run build`
+- Build output directory: `dist/public`
+
+The repository includes `wrangler.toml` with `pages_build_output_dir = "./dist/public"` so the output directory is explicit for Pages deployments.
+
 ## Verification Checklist
 - `npm run check:env -- --strict`.
 - Supabase sign-in, sign-up, sign-out, `/api/v1/auth/me`, and `/api/v1/auth/sync`.
