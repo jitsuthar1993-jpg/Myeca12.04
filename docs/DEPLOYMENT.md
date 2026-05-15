@@ -69,8 +69,9 @@ Cloudflare Pages should use the same frontend build output as Vercel:
 - Build command: `npm run build`
 - Build output directory: `dist/public`
 
-The repository includes `wrangler.toml` with `pages_build_output_dir = "./dist/public"` so the output directory is explicit for Pages deployments.
+The repository includes `wrangler.toml` with `pages_build_output_dir = "./dist/public"` and a required `compatibility_date` so the output directory is explicit for Pages deployments.
 The repository also pins the hosted build runtime with `.node-version`.
+The Cloudflare `_redirects` file avoids a catch-all rewrite because Pages automatically serves `index.html` for SPA routes when no top-level `404.html` exists.
 
 ## Verification Checklist
 - `npm run check:env -- --strict`.
