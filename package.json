@@ -7,7 +7,7 @@
     "node": "22.16.0"
   },
   "scripts": {
-    "dev": "set NODE_ENV=development&& npx tsx --watch server/index.ts",
+    "dev": "set NODE_ENV=development&& npx tsx server/index.ts",
     "build": "tsx scripts/build-production.ts",
     "start": "set NODE_ENV=production&& tsx server/index.ts",
     "check": "tsc",

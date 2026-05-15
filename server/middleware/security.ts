@@ -2,6 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { z } from "zod";
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 // Enhanced security headers with CSP
 export const securityHeaders = helmet({
   contentSecurityPolicy: {
@@ -11,6 +13,7 @@ export const securityHeaders = helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       scriptSrc: [
         "'self'",
+        ...(isDevelopment ? ["'unsafe-inline'"] : []),
         "https://www.googletagmanager.com",
         "https://www.google-analytics.com",
         "https://va.vercel-scripts.com",
@@ -21,6 +24,9 @@ export const securityHeaders = helmet({
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       connectSrc: [
         "'self'",
+        ...(isDevelopment
+          ? ["ws:", "http://localhost:*", "http://127.0.0.1:*", "ws://localhost:*", "ws://127.0.0.1:*"]
+          : []),
         "https://api.myeca.in",
         "https://*.supabase.co",
         "https://www.google-analytics.com",
