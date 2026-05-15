@@ -12,6 +12,7 @@ export function shouldLoadProductionTelemetry() {
 }
 
 export function allowLocalAuthFallbacks() {
+  if (import.meta.env.PROD) return false;
   if (!isLocalRuntime()) return false;
 
   return import.meta.env.DEV || import.meta.env.VITE_ALLOW_LOCAL_AUTH_FALLBACKS === "true";
