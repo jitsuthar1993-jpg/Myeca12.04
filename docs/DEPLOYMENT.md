@@ -73,6 +73,16 @@ The repository includes `wrangler.toml` with `pages_build_output_dir = "./dist/p
 The repository also pins the hosted build runtime with `.node-version`.
 The Cloudflare `_redirects` file avoids a catch-all rewrite because Pages automatically serves `index.html` for SPA routes when no top-level `404.html` exists.
 
+Validate the Cloudflare Pages output from GitHub Actions or locally:
+
+```bash
+npm run test:cloudflare-pages
+```
+
+This command runs the production build, starts `wrangler pages dev` against `dist/public`, checks for invalid redirect rules, and verifies that a deep SPA route plus a built asset return 2xx.
+
+If the external Cloudflare Pages GitHub App check fails instantly while `Cloudflare Pages Validate` passes, inspect the Cloudflare dashboard deployment log for account-side settings that are not visible in GitHub, especially project build command/output directory, preview branch controls, GitHub App installation access, environment-variable requirements, and Pages project connection state.
+
 ## Verification Checklist
 - `npm run check:env -- --strict`.
 - Supabase sign-in, sign-up, sign-out, `/api/v1/auth/me`, and `/api/v1/auth/sync`.
