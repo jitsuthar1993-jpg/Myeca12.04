@@ -436,7 +436,7 @@ export default function DocumentsPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] font-medium text-slate-400">Choose a case so this upload moves that service forward.</p>
+                      <p className="text-[10px] font-medium text-slate-400">Use this when the document belongs to a saved taxpayer or family profile.</p>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Linked Service</Label>
@@ -445,14 +445,19 @@ export default function DocumentsPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">No service</SelectItem>
+                          <SelectItem value="none">Keep in vault only</SelectItem>
                           {userServices.map((service: any) => (
                             <SelectItem key={service.id} value={String(service.id)}>
-                              {service.serviceTitle || service.serviceId || "Service"}
+                              {service.serviceTitle || service.serviceId || "Service"} · {String(service.status || "pending").replace(/_/g, " ")}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <p className="text-[10px] font-medium text-slate-400">
+                        {userServices.length
+                          ? "Attach this file to an active case so it appears in that service workspace."
+                          : "No service cases yet. Start a service first if this file should move a case forward."}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
