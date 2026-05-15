@@ -68,9 +68,12 @@ Cloudflare Pages should use the same frontend build output as Vercel:
 
 - Build command: `npm run build`
 - Build output directory: `dist/public`
+- Root directory: repository root
+- Build system version: latest/v3 build image
+- Node.js version: `22.16.0`
 
 The repository includes `wrangler.toml` with `pages_build_output_dir = "./dist/public"` and a required `compatibility_date` so the output directory is explicit for Pages deployments.
-The repository also pins the hosted build runtime with `.node-version`.
+The repository also pins the hosted build runtime with `.node-version`, `.nvmrc`, and `package.json` `engines.node`.
 The Cloudflare `_redirects` file avoids a catch-all rewrite because Pages automatically serves `index.html` for SPA routes when no top-level `404.html` exists.
 
 Validate the Cloudflare Pages output from GitHub Actions or locally:
@@ -81,7 +84,7 @@ npm run test:cloudflare-pages
 
 This command runs the production build, starts `wrangler pages dev` against `dist/public`, checks for invalid redirect rules, and verifies that a deep SPA route plus a built asset return 2xx.
 
-If the external Cloudflare Pages GitHub App check fails instantly while `Cloudflare Pages Validate` passes, inspect the Cloudflare dashboard deployment log for account-side settings that are not visible in GitHub, especially project build command/output directory, preview branch controls, GitHub App installation access, environment-variable requirements, and Pages project connection state.
+If the external Cloudflare Pages GitHub App check fails instantly while `Cloudflare Pages Validate` passes, inspect the Cloudflare dashboard deployment log for account-side settings that are not visible in GitHub, especially project build command/output directory, root directory, build system version, preview branch controls, GitHub App installation access, environment-variable requirements, and Pages project connection state.
 
 ## Verification Checklist
 - `npm run check:env -- --strict`.
