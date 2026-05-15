@@ -251,7 +251,7 @@ export default function LabourLawCompliancePage() {
         "Use integrated payroll software for automated calculations",
         "Implement digital attendance systems with biometric verification",
         "Maintain cloud-based records with daily backup protocols",
-        "Enable real-time compliance monitoring and alert systems"
+        "Review compliance dashboards and reminder logs regularly"
       ]
     },
     {

@@ -130,10 +130,10 @@ const integrationCategories = [
     integrations: [
       {
         id: "whatsapp",
-        name: "WhatsApp Updates",
-        description: "Case-stage notifications for pending documents, CA review and filing completion.",
-        features: ["Status alerts", "Document reminders", "Callback capture"],
-        status: "available" as const,
+        name: "Communication Updates",
+        description: "Roadmap channel for case-stage updates, pending documents, CA review and filing completion.",
+        features: ["Status updates", "Document reminders", "Callback capture"],
+        status: "planned" as const,
         priority: "Conversion",
       },
       {
@@ -200,7 +200,7 @@ export default function IntegrationsPage() {
       <SEO
         title="Integration Roadmap | MyeCA.in"
         description="MyeCA integration roadmap for tax data, capital gains imports, GST workflows, payments and customer notifications."
-        keywords="MyeCA integrations, AIS import, capital gains import, GST workflow, WhatsApp tax updates"
+        keywords="MyeCA integrations, AIS import, capital gains import, GST workflow, tax case updates"
       />
 
       <div className="space-y-8 pb-12">
@@ -213,7 +213,7 @@ export default function IntegrationsPage() {
               </h1>
               <p className="mt-4 text-base leading-7 text-slate-600">
                 The roadmap prioritizes high-intent competitor gaps: AIS/26AS mismatch detection,
-                broker P&L uploads, GST status tracking, payments and WhatsApp case updates.
+                broker P&L uploads, GST status tracking, payments and case communication updates.
               </p>
             </div>
             <div className="relative w-full max-w-sm">

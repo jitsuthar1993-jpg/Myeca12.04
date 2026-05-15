@@ -139,7 +139,7 @@ export default function UnifiedLoanCalculatorPage() {
     <>
       <MetaSEO 
         title={seo?.title || "Loan EMI Calculator 2025 | MyeCA.in"}
-        description={seo?.description || "Professional EMI planning with real-time affordability analysis and tax benefit insights."}
+        description={seo?.description || "Professional EMI planning with affordability estimates and tax benefit insights."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -148,7 +148,7 @@ export default function UnifiedLoanCalculatorPage() {
 
       <CalcHero 
         title={`${loanConfig[activeTab].title} Calculator`}
-        description="Professional EMI planning with real-time affordability analysis and tax benefit insights."
+        description="Professional EMI planning with affordability estimates and tax benefit insights."
         category="Planning Tools"
         icon={<ActiveIcon className="w-6 h-6" />}
         variant={loanConfig[activeTab].variant}

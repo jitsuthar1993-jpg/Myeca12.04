@@ -295,7 +295,7 @@ export default function EnhancedFDCalculator() {
             title: "Enhanced FD Math",
             description: "Our planner uses the official banking compounding formula with integrated tax slab processing.",
             steps: [
-              { title: "Select Your Bank", desc: "Start with real-time rates or enter your own custom rate for precision." },
+              { title: "Select Your Bank", desc: "Start with listed bank rates or enter your own custom rate for precision." },
               { title: "Configure Compounding", desc: "Select the frequency at which your bank calculates interest (standard is quarterly)." },
               { title: "Review Net Returns", desc: "Check the final post-tax maturity value to understand your real wealth growth." }
             ]

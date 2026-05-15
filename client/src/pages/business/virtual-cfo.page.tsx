@@ -108,7 +108,7 @@ export default function VirtualCFOPage() {
     <div className="min-h-screen bg-white font-sans selection:bg-blue-100">
       <MetaSEO
         title="Virtual CFO Services for Startups & SMEs | Strategic Financial Leadership"
-        description="Scale your business with MyeCA.in's Virtual CFO services. Get expert financial planning, real-time telemetry, and strategic leadership at a fraction of the cost."
+        description="Scale your business with MyeCA.in's Virtual CFO services. Get expert financial planning, structured reporting, and strategic leadership at a fraction of the cost."
       />
 
       {/* Hero Section */}

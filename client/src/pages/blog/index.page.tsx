@@ -76,7 +76,7 @@ export default function BlogIndexPage() {
     <div className="min-h-screen bg-white pb-20">
       <MetaSEO
         title="Knowledge Hub | Expert Tax Guides & Finance Insights MyeCA.in"
-        description="Master your finances with expert-led tax guides, ITR filing tips, and real-time regulatory updates."
+        description="Master your finances with expert-led tax guides, ITR filing tips, and practical regulatory explainers."
         keywords={["tax regime comparison", "ITR filing 2025", "income tax guide", "GST updates India"]}
       />
 

@@ -292,7 +292,7 @@ export default function TaxRegimeComparison() {
             Tax Regime Comparison
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Compare old vs new tax regimes with real-time tax rates. Select your assessment year and get personalized recommendations.
+            Compare old vs new tax regimes with assessment-year rules. Select your year and get a personalized estimate.
           </p>
         </m.div>
 

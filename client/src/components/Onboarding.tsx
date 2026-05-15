@@ -71,7 +71,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     tips: [
       'ITR-1 filing starts at just ₹499',
       'Upload Form 16 and we handle the rest',
-      'Track your refund status in real-time'
+      'Follow your filing case and verification steps'
     ]
   },
   {
@@ -322,4 +322,3 @@ export function WelcomeBanner() {
 }
 
 export default OnboardingModal;
-

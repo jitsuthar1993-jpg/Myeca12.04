@@ -673,7 +673,7 @@ export default function GSTReturnsPage() {
               {
                 id: 2,
                 question: "What are the key changes in GST filing for 2025?",
-                answer: "Major 2025 updates include: 3-year filing limit (returns older than 3 years cannot be filed), hard locking system (no amendments after deadline), real-time ITC matching for instant verification, and AI-powered validation to detect errors before filing."
+                answer: "Key GST filing changes include stricter time limits for delayed returns, tighter amendment windows, and stronger portal validations. Review your GST data before filing and confirm the applicable rules on the GST portal or with your advisor."
               },
               {
                 id: 3,

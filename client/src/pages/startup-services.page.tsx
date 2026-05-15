@@ -549,7 +549,7 @@ const StartupServicesPage = () => {
               },
               {
                 title: "Technology First",
-                description: "AI-powered platform for real-time compliance monitoring and automated financial reporting",
+                description: "Digital workflows for compliance reviews, document tracking, and financial reporting",
                 icon: Zap,
                 color: "blue"
               },
