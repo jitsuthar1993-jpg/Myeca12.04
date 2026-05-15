@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build and run tests
-        working-directory: android
+        working-directory: mye-ca-android
         run: |
           chmod +x ./gradlew || true
           ./gradlew clean build test --stacktrace
