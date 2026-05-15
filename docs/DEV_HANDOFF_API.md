@@ -263,6 +263,9 @@ Base path: `/api`
 ### `POST /user-services`
 - Auth: `requireAnyAuth`
 - Purpose: create a service activation / work item
+- Notes:
+  - The server owns operational state. Do not send `paymentStatus`, `status`, or `assignedCaId`; new requests are created as pending and assigned from the signed-in user context.
+  - `metadata` is intentionally limited to user-entered request details such as `requestDescription`, `source`, `requestedAt`, `originalServicePath`, `businessName`, and `contactNumber`.
 - Body:
 
 ```json
@@ -271,10 +274,9 @@ Base path: `/api`
   "serviceTitle": "Income Tax Return",
   "serviceCategory": "individual",
   "paymentAmount": 999,
-  "paymentStatus": "pending",
-  "status": "pending",
   "metadata": {
-    "source": "service_selection_page"
+    "source": "dashboard_services",
+    "requestDescription": "Need help filing a salaried return"
   }
 }
 ```
