@@ -20,9 +20,6 @@ const createUserServiceSchema = z.object({
   serviceCategory: z.string().trim().min(1).max(100),
   profileId: z.string().trim().min(1).optional().nullable(),
   paymentAmount: z.union([z.number(), z.string().trim().min(1)]).optional().nullable(),
-  paymentStatus: z.string().trim().max(50).optional(),
-  status: z.string().trim().max(50).optional(),
-  assignedCaId: z.string().trim().min(1).optional().nullable(),
   metadata: z.object({
     requestDescription: z.string().trim().max(3000).optional(),
     source: z.string().trim().max(120).optional(),
@@ -31,7 +28,7 @@ const createUserServiceSchema = z.object({
     businessName: z.string().trim().max(160).optional(),
     contactNumber: z.string().trim().max(30).optional(),
   }).strict().optional(),
-});
+}).strict();
 
 const updateUserServiceMetadataSchema = z.object({
   metadata: z.object({

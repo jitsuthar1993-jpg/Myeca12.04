@@ -28,8 +28,6 @@ describe('service workflow helpers', () => {
       serviceTitle: 'GST Registration',
       serviceCategory: 'Tax & Filing Services',
       paymentAmount: 'Rs 999',
-      paymentStatus: 'pending',
-      status: 'pending',
       metadata: {
         requestDescription: 'Need GST for a new firm',
         source: 'dashboard_services',
@@ -45,7 +43,8 @@ describe('service workflow helpers', () => {
     expect(payload.serviceId).toBe('custom-request');
     expect(payload.serviceTitle).toBe('Bespoke Consultation');
     expect(payload.serviceCategory).toBe('Custom Service');
-    expect(payload.paymentStatus).toBe('not_required');
+    expect(payload).not.toHaveProperty('paymentStatus');
+    expect(payload).not.toHaveProperty('status');
   });
 
   it('identifies payment states that still need action', () => {

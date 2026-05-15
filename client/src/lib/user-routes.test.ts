@@ -182,7 +182,7 @@ describe("user service routes", () => {
     });
   });
 
-  it("does not trust user-submitted operational service state", async () => {
+  it("rejects user-submitted operational service state", async () => {
     const { response, json } = await request("/api/user-services", {
       method: "POST",
       body: JSON.stringify({
@@ -196,12 +196,12 @@ describe("user service routes", () => {
       }),
     });
 
-    expect(response.status).toBe(200);
-    expect(json.service).toMatchObject({
-      paymentStatus: "pending",
-      status: "pending",
-      assignedCaId: "ca_1",
-    });
+    expect(response.status).toBe(400);
+    expect(json.error).toBe("Validation failed");
+    expect(json.details[0].message).toContain("paymentStatus");
+    expect(json.details[0].message).toContain("status");
+    expect(json.details[0].message).toContain("assignedCaId");
+    expect(readCollection("user_services")).toHaveLength(0);
   });
 
   it("rejects operational metadata during service request creation", async () => {

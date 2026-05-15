@@ -5,8 +5,6 @@ export type ServiceRequestPayload = {
   serviceTitle: string;
   serviceCategory: string;
   paymentAmount?: number | string | null;
-  paymentStatus: string;
-  status: string;
   metadata: {
     requestDescription: string;
     source: string;
@@ -27,8 +25,6 @@ export function buildDashboardServiceRequestPayload(
     serviceTitle: isCustom ? 'Bespoke Consultation' : service?.title || 'Service request',
     serviceCategory: isCustom ? 'Custom Service' : service?.category || 'General service',
     paymentAmount: service?.price || null,
-    paymentStatus: service?.price ? 'pending' : 'not_required',
-    status: 'pending',
     metadata: {
       requestDescription: requestDescription.trim(),
       source: 'dashboard_services',

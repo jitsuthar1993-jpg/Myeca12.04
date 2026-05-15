@@ -56,9 +56,12 @@ export function ServiceCheckoutModal({
           serviceTitle,
           serviceCategory: category,
           paymentAmount: priceAmount,
-          paymentStatus: "pending",
-          status: "pending",
-          metadata: requirementData
+          metadata: {
+            ...requirementData,
+            source: "service_checkout",
+            requestedAt: new Date().toISOString(),
+            requestDescription: `Service checkout request for ${serviceTitle}`,
+          }
         }),
       });
 
@@ -71,7 +74,7 @@ export function ServiceCheckoutModal({
       setSuccess(true);
       setTimeout(() => {
         onClose();
-        setLocation("/dashboard");
+        setLocation(data.id ? `/dashboard/services/${data.id}` : "/dashboard");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");

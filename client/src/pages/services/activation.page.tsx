@@ -40,6 +40,7 @@ export default function ActivationPage() {
   const [uploadedDocs, setUploadedDocs] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [activationReference, setActivationReference] = useState<string>("Pending assignment");
+  const [createdServiceId, setCreatedServiceId] = useState<string | null>(null);
 
   if (!service) {
     return (
@@ -59,6 +60,7 @@ export default function ActivationPage() {
   const activateMutation = useMutation({
     mutationFn: async () => {
       const priceNum = parseInt(service.price.replace(/[^0-9]/g, '')) || 0;
+      const requestedAt = new Date().toISOString();
       const response = await apiRequest('/api/user-services', {
         method: 'POST',
         body: JSON.stringify({
@@ -66,11 +68,13 @@ export default function ActivationPage() {
           serviceTitle: service.title,
           serviceCategory: service.category,
           paymentAmount: priceNum,
-          paymentStatus: 'pending',
-          status: 'pending',
           metadata: {
-            documentsUploaded: uploadedDocs,
-            activationDate: new Date().toISOString()
+            requestDescription: uploadedDocs.length
+              ? `Activation started after confirming documents: ${uploadedDocs.join(", ")}`
+              : "Activation started from the guided service flow.",
+            source: "service_activation",
+            requestedAt,
+            originalServicePath: `/services/activate/${service.id}`,
           }
         })
       });
@@ -78,6 +82,7 @@ export default function ActivationPage() {
     },
     onSuccess: (data: { id?: string }) => {
       if (data?.id) {
+        setCreatedServiceId(data.id);
         setActivationReference(`MyeCA-${data.id.slice(0, 10).toUpperCase()}`);
       }
       queryClient.invalidateQueries({ queryKey: ['/api/user-services'] });
@@ -389,10 +394,10 @@ export default function ActivationPage() {
 
               <div className="flex flex-col gap-4 max-w-md mx-auto">
                 <Button 
-                   onClick={() => setLocation("/dashboard")}
+                   onClick={() => setLocation(createdServiceId ? `/dashboard/services/${createdServiceId}` : "/dashboard")}
                    className="h-16 rounded-[22px] bg-slate-900 hover:bg-black text-white font-black text-lg gap-3"
                 >
-                  Go to Dashboard
+                  Open Service Workspace
                   <ArrowRight className="h-5 w-5" />
                 </Button>
                 <Button 
