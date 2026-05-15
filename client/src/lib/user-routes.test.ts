@@ -204,6 +204,43 @@ describe("user service routes", () => {
     });
   });
 
+  it("rejects operational metadata during service request creation", async () => {
+    const rejected = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "itr-filing",
+        serviceTitle: "ITR Filing",
+        serviceCategory: "Tax Filing",
+        metadata: {
+          requestDescription: "Need help filing return",
+          assignedCaName: "Spoofed CA",
+          paymentLink: "https://pay.example.com/tampered",
+        },
+      }),
+    });
+
+    expect(rejected.response.status).toBe(400);
+
+    const accepted = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "gst-returns",
+        serviceTitle: "GST Returns",
+        serviceCategory: "GST",
+        metadata: {
+          businessName: "Asha Traders",
+          contactNumber: "9999999999",
+        },
+      }),
+    });
+
+    expect(accepted.response.status).toBe(200);
+    expect(accepted.json.service.metadata).toMatchObject({
+      businessName: "Asha Traders",
+      contactNumber: "9999999999",
+    });
+  });
+
   it("allows access only to the signed-in user's service case", async () => {
     seed("user_services", "owned_service", {
       userId: "user_1",
