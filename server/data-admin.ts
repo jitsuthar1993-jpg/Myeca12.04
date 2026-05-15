@@ -25,6 +25,8 @@ const COLLECTION_TABLES: Record<string, string> = {
   chat_sessions: "chat_sessions",
   chat_messages: "chat_messages",
   document_drafts: "document_drafts",
+  consultation_requests: "consultation_requests",
+  payment_link_requests: "payment_link_requests",
   site_settings: "site_settings",
   email_templates: "email_templates",
   pages: "pages",

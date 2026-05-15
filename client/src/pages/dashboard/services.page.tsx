@@ -38,6 +38,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { useLocation } from 'wouter';
+import { buildDashboardServiceRequestPayload } from '@/lib/service-workflow';
 
 const iconMap: Record<string, any> = {
   FileText,
@@ -67,6 +71,8 @@ export default function DashboardServicesPage() {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [requestDescription, setRequestDescription] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(allServices.map(s => s.category)));
@@ -82,19 +88,44 @@ export default function DashboardServicesPage() {
     });
   }, [searchTerm, activeCategory]);
 
+  const requestMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedServiceId) throw new Error('Choose a service first.');
+      const service = allServices.find(s => s.id === selectedServiceId);
+      const response = await apiRequest('/api/user-services', {
+        method: 'POST',
+        body: JSON.stringify(buildDashboardServiceRequestPayload(selectedServiceId, service, requestDescription)),
+      });
+      return response.json();
+    },
+    onSuccess: async (data) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['/api/user/dashboard'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/user-services'] }),
+      ]);
+      toast({
+        title: 'Request created',
+        description: 'Your service case is ready. Continue from the case workspace.',
+      });
+      setIsRequestModalOpen(false);
+      setSelectedServiceId(null);
+      setRequestDescription('');
+      if (data?.id) {
+        setLocation(`/dashboard/services/${data.id}`);
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Could not create request',
+        description: error?.message || 'Please try again in a moment.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const handleRaiseRequest = () => {
     if (!selectedServiceId) return;
-    
-    const service = allServices.find(s => s.id === selectedServiceId);
-    
-    toast({
-      title: "Request Raised Successfully",
-      description: `Your request for ${service?.title} has been submitted. A CA will contact you shortly.`,
-    });
-    
-    setIsRequestModalOpen(false);
-    setSelectedServiceId(null);
-    setRequestDescription("");
+    requestMutation.mutate();
   };
 
   const renderServiceCard = (service: Service) => {
@@ -333,9 +364,10 @@ export default function DashboardServicesPage() {
             </Button>
             <Button 
               onClick={handleRaiseRequest}
+              disabled={requestMutation.isPending}
               className="h-14 px-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-100 hover:-translate-y-1"
             >
-              Submit Engagement Request
+              {requestMutation.isPending ? 'Creating Case...' : 'Submit Engagement Request'}
             </Button>
           </DialogFooter>
         </DialogContent>

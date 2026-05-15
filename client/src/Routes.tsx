@@ -133,6 +133,7 @@ const AuditLogsPage = lazyWithRetry(() => import("@/pages/admin/audit-logs.page"
 const ServiceActivationPage = lazyWithRetry(() => import("@/pages/services/activation.page"));
 const AdminCreateAdmin = lazyWithRetry(() => import("@/pages/admin/create-admin.page"));
 const AdminFeedbackManagement = lazyWithRetry(() => import("@/pages/admin/feedback-management.page"));
+const AdminRequestsPage = lazyWithRetry(() => import("@/pages/admin/requests.page"));
 const AdminSettings = lazyWithRetry(() => import("@/pages/admin/settings.page"));
 const CategoriesManagementPage = lazyWithRetry(() => import("@/pages/admin/categories-management.page"));
 const UpdatesManagementPage = lazyWithRetry(() => import("@/pages/admin/updates-management.page"));
@@ -167,6 +168,7 @@ const HelpCenterPage = lazyWithRetry(() => import("@/pages/help/help-center.page
 const FAQPage = lazyWithRetry(() => import("@/pages/help/faq.page"));
 const UserGuidePage = lazyWithRetry(() => import("@/pages/help/user-guide.page"));
 const DashboardServicesPage = lazyWithRetry(() => import("@/pages/dashboard/services.page"));
+const ServiceDetailPage = lazyWithRetry(() => import("@/pages/dashboard/service-detail.page"));
 const UnifiedAccountPage = lazyWithRetry(() => import("@/pages/dashboard/account.page"));
 const KnowledgeBasePage = lazyWithRetry(() => import("@/pages/help/knowledge-base.page"));
 const CompetitorComparisonPage = lazyWithRetry(() => import("@/pages/compare/competitor-comparison.page"));
@@ -291,6 +293,7 @@ export default function Routes() {
         <Route path="/register" component={RegisterPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/logout" component={LogoutPage} />
+        <Route path="/dashboard/services/:id" component={() => <RequireAuth><ServiceDetailPage /></RequireAuth>} />
         <Route path="/dashboard/services" component={() => <RequireAuth><DashboardServicesPage /></RequireAuth>} />
         <Route path="/dashboard" component={() => <RequireAuth><UserDashboard /></RequireAuth>} />
 
@@ -378,6 +381,11 @@ export default function Routes() {
         <Route path="/admin/feedback" component={() => (
           <RequireAdmin>
             <AdminFeedbackManagement />
+          </RequireAdmin>
+        )} />
+        <Route path="/admin/requests" component={() => (
+          <RequireAdmin>
+            <AdminRequestsPage />
           </RequireAdmin>
         )} />
         <Route path="/admin/settings" component={() => (

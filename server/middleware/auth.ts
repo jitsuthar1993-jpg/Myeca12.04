@@ -66,6 +66,18 @@ async function attachAuthUser(req: Request, auth: { userId: string; email?: stri
   return userData;
 }
 
+export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+  try {
+    const auth = await readAuth(req);
+    if (auth) {
+      await attachAuthUser(req, auth);
+    }
+    next();
+  } catch {
+    next();
+  }
+}
+
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
     const auth = await readAuth(req);

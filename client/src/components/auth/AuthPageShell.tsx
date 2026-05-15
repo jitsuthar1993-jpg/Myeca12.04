@@ -78,11 +78,11 @@ export function AuthPageShell({
   const items: PanelItem[] = panelItems || defaultRequiredDocuments.map(d => ({ label: d }));
 
   return (
-    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-white p-0 text-slate-950 sm:bg-[#dbe8ff] sm:p-2 lg:h-screen">
-      <div className="mx-auto grid min-h-screen w-full min-w-0 max-w-[1080px] overflow-hidden bg-white shadow-none sm:min-h-[calc(100vh-1rem)] sm:rounded-lg sm:shadow-[0_30px_90px_-70px_rgba(0,48,135,0.75)] lg:h-full lg:min-h-0 lg:grid-cols-[minmax(360px,1.1fr)_minmax(0,0.9fr)]">
-        <section className="flex min-h-screen w-full min-w-0 items-start justify-center overflow-y-auto bg-white px-4 py-4 sm:min-h-[calc(100vh-1rem)] sm:px-6 lg:h-full lg:min-h-0 lg:px-10 xl:px-14">
-          <div className="w-full min-w-0 max-w-[420px] py-0 sm:py-2">
-            <header className="mb-5 flex items-center justify-between gap-3">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-100 p-0 text-slate-950 sm:p-3 lg:h-screen">
+      <div className="mx-auto grid min-h-screen w-full min-w-0 max-w-[1120px] overflow-hidden bg-white shadow-none sm:min-h-[calc(100vh-1.5rem)] sm:rounded-xl sm:shadow-[0_30px_90px_-70px_rgba(15,23,42,0.7)] lg:h-full lg:min-h-0 lg:grid-cols-[minmax(380px,1.05fr)_minmax(0,0.95fr)]">
+        <section className="flex min-h-screen w-full min-w-0 items-start justify-center overflow-y-auto bg-white px-4 py-5 sm:min-h-[calc(100vh-1.5rem)] sm:px-6 lg:h-full lg:min-h-0 lg:px-10 xl:px-14">
+          <div className="w-full min-w-0 max-w-[430px] py-0 sm:py-2">
+            <header className="mb-6 flex items-center justify-between gap-3">
               <Link
                 href="/"
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#315efb] hover:text-[#315efb]"
@@ -111,7 +111,7 @@ export function AuthPageShell({
               />
             </div>
 
-            <div className="mb-5 sm:mb-8">
+            <div className="mb-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:mb-8">
               <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#315efb] sm:text-xs">
                 {eyebrow}
               </p>
@@ -149,17 +149,12 @@ export function AuthPageShell({
           </div>
         </section>
 
-        <aside className="relative hidden min-h-screen overflow-hidden bg-[#315efb] px-8 py-6 text-white sm:min-h-[calc(100vh-1rem)] lg:block lg:h-full lg:min-h-0">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-x-0 top-0 h-48 -skew-y-12 bg-white" />
-            <div className="absolute bottom-0 left-0 h-96 w-[150%] -rotate-12 bg-white" />
-          </div>
-
+        <aside className="relative hidden min-h-screen overflow-hidden bg-slate-950 px-8 py-6 text-white sm:min-h-[calc(100vh-1.5rem)] lg:block lg:h-full lg:min-h-0">
           <div className="relative z-10 flex h-full min-h-0 flex-col justify-center">
             <div className="mx-auto w-full max-w-[420px]">
-              <div className="rounded-2xl bg-white/10 p-8 text-white shadow-2xl backdrop-blur-xl border border-white/20">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-8 text-white shadow-2xl">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500 text-white">
                     <FileText className="h-6 w-6" />
                   </div>
                   <div>
@@ -184,6 +179,22 @@ export function AuthPageShell({
                       </div>
                     );
                   })}
+                </div>
+
+                <div className="mt-8 rounded-2xl border border-white/10 bg-slate-900 p-5">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-blue-200">
+                    Workflow
+                  </p>
+                  <div className="mt-4 grid gap-3">
+                    {['Sign in securely', 'Review your workspace', 'Continue filing or service work'].map((step, index) => (
+                      <div key={step} className="flex items-center gap-3">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-xs font-black text-slate-950">
+                          {index + 1}
+                        </div>
+                        <span className="text-sm font-bold text-slate-100">{step}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

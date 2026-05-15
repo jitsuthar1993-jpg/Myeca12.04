@@ -191,10 +191,12 @@ export default function UserDashboard() {
                         </Badge>
                       </td>
                       <td className="px-8 py-6 text-right">
-                        <Button variant="outline" className="h-11 rounded-xl border-slate-200 px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-blue-600 hover:bg-blue-600 hover:text-white">
-                          {serviceStatus(service)}
-                          <ChevronRight className="ml-2 h-3.5 w-3.5" />
-                        </Button>
+                        <Link href={`/dashboard/services/${service.id}`}>
+                          <Button variant="outline" className="h-11 rounded-xl border-slate-200 px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-blue-600 hover:bg-blue-600 hover:text-white">
+                            {serviceStatus(service)}
+                            <ChevronRight className="ml-2 h-3.5 w-3.5" />
+                          </Button>
+                        </Link>
                       </td>
                     </tr>
                   ))

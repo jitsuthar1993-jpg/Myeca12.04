@@ -5,7 +5,7 @@ import { Link, useLocation } from 'wouter';
 import { 
   Menu, X, Home, Users, BarChart3, FileText, Settings, 
   LogOut, Image as ImageIcon, Briefcase, User, FolderOpen, 
-  Search, Bell, LayoutGrid, 
+  Search, LayoutGrid,
   Database, HelpCircle, Command, BookOpen, 
   ShieldCheck, PieChart, Layers, Globe, Zap, History,
   ClipboardList, CreditCard, MessageSquare
@@ -17,11 +17,9 @@ import { useAuth } from '@/components/AuthProvider';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from "@/components/ui/tooltip";
+import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 interface LayoutProps {
   children: ReactNode;
@@ -36,6 +34,7 @@ const navGroups = {
       items: [
         { icon: LayoutGrid, label: 'Control Center', href: '/admin' },
         { icon: Users, label: 'User Registry', href: '/admin/users' },
+        { icon: MessageSquare, label: 'Customer Requests', href: '/admin/requests' },
         { icon: ShieldCheck, label: 'CA Authorization', href: '/admin/dashboard' }, // Link to CA queue
       ]
     },
@@ -116,11 +115,18 @@ const navGroups = {
 
 export function Layout({ children, title = 'Control Center' }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
   
   // Get groups based on role, fallback to 'user'
   const roleGroups = navGroups[user?.role as keyof typeof navGroups] || navGroups.user;
+  const submitSearch = () => {
+    const query = searchTerm.trim();
+    if (query) {
+      setLocation(`/search?q=${encodeURIComponent(query)}`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] flex font-sans selection:bg-blue-100 selection:text-blue-900">
@@ -199,11 +205,13 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
                       <span className="text-[13px]">Knowledge Base</span>
                     </div>
                   </Link>
-                  <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer group">
-                    <MessageSquare className="h-[17px] w-[17px] text-slate-400 group-hover:text-slate-900" />
-                    <span className="text-[13px]">Direct Support</span>
-                    <Badge variant="outline" className="ml-auto text-[9px] border-slate-100 bg-slate-50">Online</Badge>
-                  </div>
+                  <Link href="/expert-consultation">
+                    <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer group">
+                      <MessageSquare className="h-[17px] w-[17px] text-slate-400 group-hover:text-slate-900" />
+                      <span className="text-[13px]">Direct Support</span>
+                      <Badge variant="outline" className="ml-auto text-[9px] border-slate-100 bg-slate-50">Online</Badge>
+                    </div>
+                  </Link>
                 </div>
               </div>
             </ScrollArea>
@@ -255,6 +263,14 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                 <Input 
                   placeholder="Search filings, documents or help..." 
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      submitSearch();
+                    }
+                  }}
                   className="w-full bg-slate-50/50 border-none focus-visible:ring-1 focus-visible:ring-blue-100 pl-11 h-11 rounded-xl text-[13px] transition-all hover:bg-slate-100/80"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 opacity-40 group-focus-within:opacity-0 transition-opacity">
@@ -266,14 +282,7 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
             </div>
             
             <div className="flex items-center gap-3">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-slate-500 hover:bg-slate-50">
-                    <Bell className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Notifications</TooltipContent>
-              </Tooltip>
+              <NotificationCenter />
 
               <div className="h-10 w-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:scale-105 transition-transform">
                 {user?.firstName?.[0] || 'U'}

@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { CONTACT } from "@/config/contact";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 type ServiceProfile = {
   eyebrow: string;
@@ -146,7 +147,13 @@ export default function ExpertConsultationPage() {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 900));
+      await apiRequest("/api/consultation-requests", {
+        method: "POST",
+        body: JSON.stringify({
+          ...formData,
+          source: `expert_consultation:${serviceKey}`,
+        }),
+      });
       toast({
         title: "Callback request received",
         description: "Our expert team will review your request during business hours.",

@@ -283,6 +283,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
               responses: { "200": openApiJsonResponse("Service request created", openApiRef("CreatedResponse")), "401": { description: "Unauthorized" } }
             }
           },
+          "/api/user-services/{id}": {
+            get: {
+              tags: ["user", "services"],
+              summary: "Get a service case owned by the current user",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Service case detail", openApiRef("UserServiceDetailResponse")), "401": { description: "Unauthorized" }, "404": { description: "Service not found" } }
+            },
+            patch: {
+              tags: ["user", "services"],
+              summary: "Update current user's editable service metadata",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              requestBody: openApiJsonRequest(openApiRef("UserServiceMetadataUpdateRequest")),
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Service case updated", openApiRef("UserServiceResponse")), "400": { description: "Invalid metadata" }, "401": { description: "Unauthorized" }, "404": { description: "Service not found" } }
+            }
+          },
+          "/api/consultation-requests": {
+            post: {
+              tags: ["consultation"],
+              summary: "Create a consultation callback request",
+              requestBody: openApiJsonRequest(openApiRef("ConsultationRequestCreateRequest")),
+              responses: { "200": openApiJsonResponse("Consultation request created", openApiRef("CreatedResponse")), "400": { description: "Invalid request" } }
+            }
+          },
+          "/api/payments/request-link": {
+            post: {
+              tags: ["payments", "services"],
+              summary: "Request a payment link for a user service",
+              requestBody: openApiJsonRequest(openApiRef("PaymentLinkRequestCreateRequest")),
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Payment link request recorded", openApiRef("CreatedResponse")), "400": { description: "Invalid request" }, "401": { description: "Unauthorized" }, "404": { description: "Service not found" } }
+            }
+          },
           "/api/profiles": {
             get: {
               tags: ["profiles"],
@@ -841,6 +875,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
               responses: { "200": openApiJsonResponse("System configuration updated", openApiRef("SystemConfigResponse")), "400": { description: "Invalid configuration" }, "401": { description: "Unauthorized" }, "403": { description: "Forbidden" } }
             }
           },
+          "/api/admin/requests/consultations": {
+            get: {
+              tags: ["admin", "consultation"],
+              summary: "List consultation callback requests",
+              parameters: [
+                { name: "status", in: "query", required: false, schema: { type: "string", enum: ["all", "new", "contacted", "converted", "closed"] } },
+                { name: "limit", in: "query", required: false, schema: { type: "integer", minimum: 1, maximum: 100, default: 50 } }
+              ],
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Consultation requests", openApiRef("AdminConsultationRequestListResponse")), "401": { description: "Unauthorized" }, "403": { description: "Forbidden" } }
+            }
+          },
+          "/api/admin/requests/consultations/{id}": {
+            patch: {
+              tags: ["admin", "consultation"],
+              summary: "Update a consultation request status or note",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              requestBody: openApiJsonRequest(openApiRef("AdminConsultationRequestUpdateRequest")),
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Consultation request updated", openApiRef("AdminConsultationRequestResponse")), "400": { description: "Invalid update" }, "401": { description: "Unauthorized" }, "403": { description: "Forbidden" }, "404": { description: "Request not found" } }
+            }
+          },
+          "/api/admin/requests/payment-links": {
+            get: {
+              tags: ["admin", "payments"],
+              summary: "List payment-link requests",
+              parameters: [
+                { name: "status", in: "query", required: false, schema: { type: "string", enum: ["all", "requested", "link_sent", "paid", "cancelled"] } },
+                { name: "limit", in: "query", required: false, schema: { type: "integer", minimum: 1, maximum: 100, default: 50 } }
+              ],
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Payment-link requests", openApiRef("AdminPaymentLinkRequestListResponse")), "401": { description: "Unauthorized" }, "403": { description: "Forbidden" } }
+            }
+          },
+          "/api/admin/requests/payment-links/{id}": {
+            patch: {
+              tags: ["admin", "payments"],
+              summary: "Update a payment-link request and linked service payment status",
+              parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+              requestBody: openApiJsonRequest(openApiRef("AdminPaymentLinkRequestUpdateRequest")),
+              security: [{ bearerAuth: [] }],
+              responses: { "200": openApiJsonResponse("Payment-link request updated", openApiRef("AdminPaymentLinkRequestResponse")), "400": { description: "Invalid update" }, "401": { description: "Unauthorized" }, "403": { description: "Forbidden" }, "404": { description: "Request not found" } }
+            }
+          },
           "/api/admin/feedback": {
             get: {
               tags: ["admin", "feedback"],
@@ -1005,6 +1083,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 status: { type: "string" },
                 assignedCaId: { type: "string", nullable: true },
                 metadata: { type: "object", additionalProperties: true }
+              }
+            },
+            UserServiceMetadataUpdateRequest: {
+              type: "object",
+              properties: {
+                metadata: { type: "object", additionalProperties: true }
+              }
+            },
+            UserServiceResponse: {
+              type: "object",
+              properties: {
+                success: { type: "boolean" },
+                service: openApiRef("UserService")
+              }
+            },
+            UserServiceDetailResponse: {
+              type: "object",
+              properties: {
+                success: { type: "boolean" },
+                service: openApiRef("UserService"),
+                documents: openApiArray(openApiRef("Document"))
+              }
+            },
+            ConsultationRequestCreateRequest: {
+              type: "object",
+              required: ["name", "phone", "service", "message"],
+              properties: {
+                name: { type: "string", minLength: 1, maxLength: 120 },
+                phone: { type: "string", minLength: 1, maxLength: 30 },
+                email: { type: "string", format: "email" },
+                gstin: { type: "string", maxLength: 20 },
+                company: { type: "string", maxLength: 160 },
+                service: { type: "string", minLength: 1, maxLength: 160 },
+                turnover: { type: "string", maxLength: 80 },
+                preferredTime: { type: "string", maxLength: 80 },
+                message: { type: "string", minLength: 1, maxLength: 3000 },
+                source: { type: "string", maxLength: 120 }
+              }
+            },
+            PaymentLinkRequestCreateRequest: {
+              type: "object",
+              required: ["userServiceId"],
+              properties: {
+                userServiceId: { type: "string", minLength: 1 },
+                note: { type: "string", maxLength: 1000 }
+              }
+            },
+            AdminConsultationRequest: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                userId: { type: "string", nullable: true },
+                name: { type: "string" },
+                phone: { type: "string" },
+                email: { type: "string", nullable: true },
+                service: { type: "string" },
+                preferredTime: { type: "string" },
+                message: { type: "string" },
+                status: { type: "string", enum: ["new", "contacted", "converted", "closed"] },
+                internalNote: { type: "string" },
+                createdAt: { type: "string", format: "date-time" },
+                updatedAt: { type: "string", format: "date-time" }
+              }
+            },
+            AdminConsultationRequestUpdateRequest: {
+              type: "object",
+              properties: {
+                status: { type: "string", enum: ["new", "contacted", "converted", "closed"] },
+                internalNote: { type: "string", maxLength: 2000 }
+              }
+            },
+            AdminConsultationRequestResponse: {
+              type: "object",
+              properties: {
+                success: { type: "boolean" },
+                request: openApiRef("AdminConsultationRequest")
+              }
+            },
+            AdminConsultationRequestListResponse: {
+              type: "object",
+              properties: {
+                success: { type: "boolean" },
+                requests: openApiArray(openApiRef("AdminConsultationRequest")),
+                total: { type: "integer", minimum: 0 }
+              }
+            },
+            AdminPaymentLinkRequest: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                userId: { type: "string" },
+                userServiceId: { type: "string" },
+                serviceTitle: { type: "string" },
+                paymentAmount: { oneOf: [{ type: "number" }, { type: "string" }], nullable: true },
+                status: { type: "string", enum: ["requested", "link_sent", "paid", "cancelled"] },
+                note: { type: "string", nullable: true },
+                adminNote: { type: "string" },
+                paymentLink: { type: "string", format: "uri" },
+                createdAt: { type: "string", format: "date-time" },
+                updatedAt: { type: "string", format: "date-time" }
+              }
+            },
+            AdminPaymentLinkRequestUpdateRequest: {
+              type: "object",
+              properties: {
+                status: { type: "string", enum: ["requested", "link_sent", "paid", "cancelled"] },
+                adminNote: { type: "string", maxLength: 2000 },
+                paymentLink: { type: "string", format: "uri", maxLength: 1000 }
+              }
+            },
+            AdminPaymentLinkRequestResponse: {
+              type: "object",
+              properties: {
+                success: { type: "boolean" },
+                request: openApiRef("AdminPaymentLinkRequest")
+              }
+            },
+            AdminPaymentLinkRequestListResponse: {
+              type: "object",
+              properties: {
+                success: { type: "boolean" },
+                requests: openApiArray(openApiRef("AdminPaymentLinkRequest")),
+                total: { type: "integer", minimum: 0 }
               }
             },
             SavedProfile: {

@@ -25,6 +25,8 @@ export const reports = pgTable("reports", documentColumns());
 export const chatSessions = pgTable("chat_sessions", documentColumns());
 export const chatMessages = pgTable("chat_messages", documentColumns());
 export const documentDrafts = pgTable("document_drafts", documentColumns());
+export const consultationRequests = pgTable("consultation_requests", documentColumns());
+export const paymentLinkRequests = pgTable("payment_link_requests", documentColumns());
 export const siteSettings = pgTable("site_settings", documentColumns());
 export const emailTemplates = pgTable("email_templates", documentColumns());
 export const pages = pgTable("pages", documentColumns());
@@ -61,6 +63,8 @@ export const schema = {
   chatSessions,
   chatMessages,
   documentDrafts,
+  consultationRequests,
+  paymentLinkRequests,
   siteSettings,
   emailTemplates,
   pages,

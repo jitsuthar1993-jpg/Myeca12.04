@@ -62,7 +62,187 @@ const invitePrivilegedUserSchema = z.object({
   role: z.enum(["admin", "team_member", "ca"]),
 });
 
+const optionalAdminNote = z.preprocess(
+  (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+  z.string().trim().max(2000).optional(),
+);
+
+const updateConsultationRequestSchema = z.object({
+  status: z.enum(["new", "contacted", "converted", "closed"]).optional(),
+  internalNote: optionalAdminNote,
+});
+
+const updatePaymentLinkRequestSchema = z.object({
+  status: z.enum(["requested", "link_sent", "paid", "cancelled"]).optional(),
+  adminNote: optionalAdminNote,
+  paymentLink: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().trim().url().max(1000).optional(),
+  ),
+});
+
+function normalizeRequestRecord(doc: any): Record<string, any> & { id: string; createdAt: unknown; updatedAt: unknown } {
+  const data = doc.data() as Record<string, any>;
+  return {
+    id: doc.id,
+    ...data,
+    createdAt: convertTimestamp(data.createdAt),
+    updatedAt: convertTimestamp(data.updatedAt),
+  };
+}
+
+async function listRequestRecords(collection: "consultation_requests" | "payment_link_requests", status?: string) {
+  const snapshot = await adminDb.collection(collection).get();
+  return snapshot.docs
+    .map(normalizeRequestRecord)
+    .filter((request) => !status || request.status === status)
+    .sort((a, b) => {
+      const bTime = new Date((b.createdAt as any) || 0).getTime();
+      const aTime = new Date((a.createdAt as any) || 0).getTime();
+      return bTime - aTime;
+    });
+}
+
+function parseRequestLimit(value: unknown) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 50;
+  return Math.min(API_CONFIG.MAX_PAGE_SIZE, Math.max(1, Math.floor(parsed)));
+}
+
+async function appendAdminAudit(req: AuthRequest, action: string, metadata: Record<string, any>) {
+  await adminDb.collection("audit_logs").doc().set({
+    userId: req.auth?.userId ?? null,
+    action,
+    category: "admin",
+    status: "success",
+    metadata,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+}
+
 // ==================== USER MANAGEMENT ====================
+
+router.get("/requests/consultations", requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const status = typeof req.query.status === "string" && req.query.status !== "all" ? req.query.status : undefined;
+    const limit = parseRequestLimit(req.query.limit);
+    const requests = await listRequestRecords("consultation_requests", status);
+
+    res.json({
+      success: true,
+      requests: requests.slice(0, limit),
+      total: requests.length,
+    });
+  } catch (error) {
+    return safeError(res, error, "Failed to load consultation requests");
+  }
+});
+
+router.patch(
+  "/requests/consultations/:id",
+  requireAuth,
+  requireAdmin,
+  validateRequest(updateConsultationRequestSchema),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const ref = adminDb.collection("consultation_requests").doc(req.params.id);
+      const doc = await ref.get();
+      if (!doc.exists) {
+        return res.status(404).json({ success: false, message: "Consultation request not found" });
+      }
+
+      const updates = updateConsultationRequestSchema.parse(req.body);
+      const payload = {
+        ...updates,
+        updatedAt: new Date(),
+        updatedBy: req.auth?.userId ?? null,
+      };
+
+      await ref.update(payload);
+      await appendAdminAudit(req, "consultation_request_updated", {
+        requestId: req.params.id,
+        status: updates.status ?? null,
+      });
+
+      res.json({ success: true, request: normalizeRequestRecord(await ref.get()) });
+    } catch (error) {
+      return safeError(res, error, "Failed to update consultation request");
+    }
+  },
+);
+
+router.get("/requests/payment-links", requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const status = typeof req.query.status === "string" && req.query.status !== "all" ? req.query.status : undefined;
+    const limit = parseRequestLimit(req.query.limit);
+    const requests = await listRequestRecords("payment_link_requests", status);
+
+    res.json({
+      success: true,
+      requests: requests.slice(0, limit),
+      total: requests.length,
+    });
+  } catch (error) {
+    return safeError(res, error, "Failed to load payment link requests");
+  }
+});
+
+router.patch(
+  "/requests/payment-links/:id",
+  requireAuth,
+  requireAdmin,
+  validateRequest(updatePaymentLinkRequestSchema),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const ref = adminDb.collection("payment_link_requests").doc(req.params.id);
+      const doc = await ref.get();
+      if (!doc.exists) {
+        return res.status(404).json({ success: false, message: "Payment link request not found" });
+      }
+
+      const current = doc.data() as Record<string, any>;
+      const updates = updatePaymentLinkRequestSchema.parse(req.body);
+      const payload = {
+        ...updates,
+        updatedAt: new Date(),
+        updatedBy: req.auth?.userId ?? null,
+      };
+
+      await ref.update(payload);
+
+      if (current.userServiceId) {
+        const serviceRef = adminDb.collection("user_services").doc(current.userServiceId);
+        const serviceDoc = await serviceRef.get();
+        if (serviceDoc.exists) {
+          const service = serviceDoc.data() as Record<string, any>;
+          const metadata = {
+            ...(service.metadata || {}),
+            ...(updates.adminNote ? { paymentAdminNote: updates.adminNote } : {}),
+            ...(updates.paymentLink ? { paymentLink: updates.paymentLink, paymentLinkSharedAt: new Date() } : {}),
+          };
+          const serviceUpdates: Record<string, any> = { metadata, updatedAt: new Date() };
+          if (updates.status === "link_sent") serviceUpdates.paymentStatus = "link_sent";
+          if (updates.status === "paid") serviceUpdates.paymentStatus = "paid";
+          if (updates.status === "cancelled" && service.paymentStatus === "link_requested") {
+            serviceUpdates.paymentStatus = "pending";
+          }
+          await serviceRef.update(serviceUpdates);
+        }
+      }
+
+      await appendAdminAudit(req, "payment_link_request_updated", {
+        requestId: req.params.id,
+        userServiceId: current.userServiceId ?? null,
+        status: updates.status ?? null,
+      });
+
+      res.json({ success: true, request: normalizeRequestRecord(await ref.get()) });
+    } catch (error) {
+      return safeError(res, error, "Failed to update payment link request");
+    }
+  },
+);
 
 router.post(
   "/invitations",

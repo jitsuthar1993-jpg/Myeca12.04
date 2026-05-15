@@ -6,7 +6,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -212,24 +211,6 @@ export default function NotificationCenter() {
           )}
         </ScrollArea>
         
-        {notifications.length > 0 && (
-          <>
-            <DropdownMenuSeparator />
-            <div className="p-2">
-              <Button 
-                variant="ghost" 
-                className="w-full justify-center"
-                onClick={() => {
-                  setIsOpen(false);
-                  // Navigate to notifications page
-                  window.location.href = "/notifications";
-                }}
-              >
-                View all notifications
-              </Button>
-            </div>
-          </>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -55,12 +55,7 @@ const vaultFolders = [
   { key: "bank_statement", label: "Bank statements", prompt: "Interest and income checks", status: "filed" as const },
 ];
 
-const extractedFields = [
-  ["Employer TAN", "BLRT12345A", "High"],
-  ["Gross salary", "Rs 12,00,000", "High"],
-  ["TDS deducted", "Rs 86,500", "Medium"],
-  ["80C declared", "Rs 1,50,000", "High"],
-];
+const extractedFields: Array<[string, string, string]> = [];
 
 async function trackDocumentEvent(name: string, properties: Record<string, string>) {
   if (!shouldLoadProductionTelemetry()) return;
@@ -211,10 +206,10 @@ export default function DocumentsPage() {
 
                 <div className="mt-10 grid grid-cols-2 gap-3">
                    {[
-                     { label: "Storage", value: formatFileSize(totalSize || 2480000), icon: LockKeyhole, color: "blue" },
-                     { label: "Files", value: documents.length || 8, icon: FileText, color: "indigo" },
-                     { label: "OCR Checks", value: "04", icon: FileCheck2, color: "emerald" },
-                     { label: "Vaults", value: "04", icon: FolderOpen, color: "purple" }
+                     { label: "Storage", value: formatFileSize(totalSize), icon: LockKeyhole, color: "blue" },
+                     { label: "Files", value: documents.length, icon: FileText, color: "indigo" },
+                     { label: "OCR Checks", value: "Preview", icon: FileCheck2, color: "emerald" },
+                     { label: "Vaults", value: vaultFolders.length, icon: FolderOpen, color: "purple" }
                    ].map((stat, i) => (
                      <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                         <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
@@ -245,8 +240,8 @@ export default function DocumentsPage() {
              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all group-hover:scale-150" />
              <ShieldCheck className="h-8 w-8 text-blue-500 mb-6" />
              <h3 className="font-black text-xl leading-tight mb-3 text-slate-900">AI Verification</h3>
-             <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">Automated OCR detects mismatches in Form 16 vs 26AS data.</p>
-             <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-blue-100 border-none transition-all">Scan Documents</Button>
+             <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">OCR extraction will appear only after a real document scan is available for a file.</p>
+             <Button disabled className="w-full bg-slate-100 text-slate-400 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl border-none">Scan Preview</Button>
           </div>
 
           <Card className="border-none shadow-sm rounded-[32px] bg-white">
@@ -441,6 +436,7 @@ export default function DocumentsPage() {
                           ))}
                         </SelectContent>
                       </Select>
+                      <p className="text-[10px] font-medium text-slate-400">Choose a case so this upload moves that service forward.</p>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Linked Service</Label>
@@ -490,9 +486,9 @@ export default function DocumentsPage() {
 
           <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-slate-950 text-white">
             <CardHeader className="p-8 border-b border-white/10">
-              <CardTitle className="text-xl font-black">Linked case timeline</CardTitle>
+              <CardTitle className="text-xl font-black">Case workflow preview</CardTitle>
               <CardDescription className="text-slate-400">
-                Documents are not just stored; they move the filing or service case forward.
+                When a file is linked to a service, it appears on that case workspace and helps the team move the case forward.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -514,16 +510,17 @@ export default function DocumentsPage() {
                <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-6 border border-white/10">
                   <FileText className="h-10 w-10 text-blue-400" />
                </div>
-               <h3 className="text-xl font-bold text-white mb-2">OCR Smart Preview</h3>
-               <p className="text-slate-400 text-sm max-w-xs font-medium">AI-driven extraction of fields from your uploaded document for verification.</p>
+               <h3 className="text-xl font-bold text-white mb-2">Document Preview</h3>
+               <p className="text-slate-400 text-sm max-w-xs font-medium">Verified extraction fields will appear here after OCR metadata is available.</p>
             </div>
             <div className="p-8 space-y-6">
                <div>
-                  <h2 className="text-lg font-bold text-slate-900">Verify Extraction</h2>
-                  <p className="text-xs font-medium text-slate-500">Please confirm the AI-extracted values before proceeding.</p>
+                  <h2 className="text-lg font-bold text-slate-900">Extraction Status</h2>
+                  <p className="text-xs font-medium text-slate-500">This file is stored securely. OCR verification is not available for this document yet.</p>
                </div>
                
-               <div className="space-y-4">
+               {extractedFields.length ? (
+                <div className="space-y-4">
                   {extractedFields.map(([label, value, confidence]) => (
                     <div key={label} className="space-y-1.5">
                       <div className="flex items-center justify-between px-1">
@@ -535,11 +532,19 @@ export default function DocumentsPage() {
                       <Input defaultValue={value} className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold" />
                     </div>
                   ))}
-               </div>
+                </div>
+               ) : (
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                  <p className="text-sm font-black text-slate-900">{selectedDoc?.name}</p>
+                  <p className="mt-2 text-xs font-medium leading-relaxed text-slate-500">
+                    Download the original file or wait for OCR metadata to be generated before confirming extracted values.
+                  </p>
+                </div>
+               )}
 
                <Button className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-lg shadow-blue-100 transition-all mt-4" onClick={() => setSelectedDoc(null)}>
                   <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Confirm & Sync
+                  Close Preview
                </Button>
             </div>
           </div>

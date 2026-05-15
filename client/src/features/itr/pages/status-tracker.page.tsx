@@ -147,14 +147,14 @@ export default function ITRStatusTrackerPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full mb-4">
               <Search className="h-4 w-4 text-green-600" />
               <span className="text-sm font-medium text-green-700">
-                Official portal reference
+                Guide, not live portal data
               </span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              ITR Filing Status Guide
+              ITR Status Guide
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Validate your details and follow the official steps to check ITR filing, e-verification, and refund status
+              Prepare your details and follow the official steps to check filing, e-verification, and refund status on the Income Tax portal.
             </p>
           </div>
 
@@ -162,10 +162,10 @@ export default function ITRStatusTrackerPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Search className="h-5 w-5 text-blue-600" />
-                Prepare Your Status Check
+                Prepare Official Portal Check
               </CardTitle>
               <CardDescription>
-                Validate your PAN and acknowledgement number before checking the official e-filing portal
+                Validate the format of your PAN and acknowledgement number before opening the official e-filing portal.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -207,12 +207,12 @@ export default function ITRStatusTrackerPage() {
                 {isSearching ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Preparing Steps...
+                    Preparing Official Steps...
                   </>
                 ) : (
                   <>
                     <Search className="h-4 w-4 mr-2" />
-                    Show Official Steps
+                    Show Official Portal Steps
                   </>
                 )}
               </Button>
