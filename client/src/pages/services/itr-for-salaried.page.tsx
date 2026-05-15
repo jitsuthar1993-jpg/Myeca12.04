@@ -21,7 +21,8 @@ import {
   HelpCircle,
   PieChart,
   Scale,
-  Users
+  Users,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
 import { CONTACT } from "@/config/contact";
+import { apiRequest } from "@/lib/queryClient";
 import {
   AY_2026_27_NEW_REGIME_SLABS,
   DEFAULT_ASSESSMENT_YEAR,
@@ -60,12 +62,33 @@ export default function ITRForSalariedPage() {
 
   const [leadForm, setLeadForm] = useState({ name: "", email: "", phone: "" });
   const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadError, setLeadError] = useState<string | null>(null);
 
-  const handleLeadSubmit = (e: React.FormEvent) => {
+  const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(leadForm.name && leadForm.email && leadForm.phone) {
-      setLeadSubmitted(true);
-      // Lead logic can be integrated here
+    if (leadForm.name && leadForm.email && leadForm.phone) {
+      setLeadSubmitting(true);
+      setLeadError(null);
+      try {
+        await apiRequest("/api/consultation-requests", {
+          method: "POST",
+          body: JSON.stringify({
+            name: leadForm.name,
+            email: leadForm.email,
+            phone: leadForm.phone,
+            service: "ITR Filing for Salaried",
+            preferredTime: "Call now",
+            source: "itr_salaried_free_draft",
+            message: "Requested a free preliminary tax draft from the ITR for salaried service page.",
+          }),
+        });
+        setLeadSubmitted(true);
+      } catch (error) {
+        setLeadError(error instanceof Error ? error.message : "Could not submit your request. Please try again.");
+      } finally {
+        setLeadSubmitting(false);
+      }
     }
   };
 
@@ -717,6 +740,11 @@ export default function ITRForSalariedPage() {
                 ) : (
                   <form onSubmit={handleLeadSubmit} className="space-y-4">
                     <h3 className="text-xl font-semibold text-gray-900 mb-4">Claim Your Free Draft</h3>
+                    {leadError && (
+                      <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                        {leadError}
+                      </div>
+                    )}
                     <div className="space-y-2">
                       <Label htmlFor="lead-name">Full Name</Label>
                       <Input 
@@ -749,8 +777,15 @@ export default function ITRForSalariedPage() {
                         onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg mt-2 shadow-lg shadow-blue-200">
-                      Get Free Tax Draft
+                    <Button type="submit" disabled={leadSubmitting} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg mt-2 shadow-lg shadow-blue-200">
+                      {leadSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Sending Request...
+                        </>
+                      ) : (
+                        "Get Free Tax Draft"
+                      )}
                     </Button>
                     <p className="text-xs text-center text-gray-500 mt-4">
                       By submitting this form, you agree to our terms and privacy policy.
