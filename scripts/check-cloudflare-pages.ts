@@ -21,6 +21,25 @@ function findBuiltCssAsset() {
   return `/assets/${cssAsset}`;
 }
 
+function assertProductionBundle() {
+  const assetsDir = path.join(distDir, "assets");
+  const javascriptAssets = fs.readdirSync(assetsDir).filter((file) => file.endsWith(".js"));
+  const developmentMarkers = [
+    { label: "React development JSX transform", pattern: /\bjsxDEV\b/ },
+    { label: "Vite dev client", pattern: /@vite\/client/ },
+  ];
+
+  for (const file of javascriptAssets) {
+    const contents = fs.readFileSync(path.join(assetsDir, file), "utf8");
+    const marker = developmentMarkers.find(({ pattern }) => pattern.test(contents));
+    if (marker) {
+      throw new Error(
+        `Cloudflare build produced a development bundle: ${marker.label} found in dist/public/assets/${file}.`,
+      );
+    }
+  }
+}
+
 async function waitForReady(output: () => string, timeoutMs = 45_000) {
   const startedAt = Date.now();
   while (Date.now() - startedAt < timeoutMs) {
@@ -86,6 +105,7 @@ async function main() {
   }
 
   const cssAssetPath = findBuiltCssAsset();
+  assertProductionBundle();
   let output = "";
   const child = spawn(command, commandArgs, {
     cwd: rootDir,
