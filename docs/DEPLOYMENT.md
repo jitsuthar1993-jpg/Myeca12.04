@@ -70,6 +70,7 @@ Cloudflare Pages should use the same frontend build output as Vercel:
 - Build output directory: `dist/public`
 
 The repository includes `wrangler.toml` with `pages_build_output_dir = "./dist/public"` so the output directory is explicit for Pages deployments.
+The repository also pins the hosted build runtime with `.node-version`.
 
 ## Verification Checklist
 - `npm run check:env -- --strict`.
