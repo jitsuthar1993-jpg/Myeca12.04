@@ -182,6 +182,28 @@ describe("user service routes", () => {
     });
   });
 
+  it("does not trust user-submitted operational service state", async () => {
+    const { response, json } = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "itr-filing",
+        serviceTitle: "ITR Filing",
+        serviceCategory: "Tax Filing",
+        paymentAmount: 5000,
+        paymentStatus: "paid",
+        status: "completed",
+        assignedCaId: "ca_attacker",
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json.service).toMatchObject({
+      paymentStatus: "pending",
+      status: "pending",
+      assignedCaId: "ca_1",
+    });
+  });
+
   it("allows access only to the signed-in user's service case", async () => {
     seed("user_services", "owned_service", {
       userId: "user_1",

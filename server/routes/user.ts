@@ -213,7 +213,7 @@ router.post("/user-services", requireAnyAuth, validateRequest(createUserServiceS
     const user = req.user;
     if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const { serviceId, serviceTitle, serviceCategory, profileId, paymentAmount, paymentStatus, status, assignedCaId, metadata } = req.body;
+    const { serviceId, serviceTitle, serviceCategory, profileId, paymentAmount, metadata } = req.body;
 
     if (profileId && !(await recordBelongsToUser("profiles", profileId, user.id))) {
       return res.status(400).json({ success: false, message: "Linked profile does not belong to this user." });
@@ -226,9 +226,9 @@ router.post("/user-services", requireAnyAuth, validateRequest(createUserServiceS
       serviceCategory,
       profileId: profileId || null,
       paymentAmount: paymentAmount ?? null,
-      paymentStatus: paymentStatus ?? null,
-      assignedCaId: assignedCaId || user.assignedCaId || null,
-      status: status || "pending",
+      paymentStatus: "pending",
+      assignedCaId: user.assignedCaId || null,
+      status: "pending",
       metadata: metadata || {},
       createdAt: new Date(),
       updatedAt: new Date()
