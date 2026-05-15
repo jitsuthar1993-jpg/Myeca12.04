@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   Shield,
   Rocket,
-  Download,
   Play,
   FileSearch,
   Check
@@ -47,8 +46,8 @@ export default function DocumentVaultServicePage() {
     },
     {
       icon: <Clock className="w-7 h-7 text-[#c2410c]" />,
-      title: "Expiry Alerts",
-      description: "Track expiry dates and review documents before they become outdated.",
+      title: "Review Cues",
+      description: "Keep document categories and case links clear so review needs are easier to spot.",
       bgColor: "bg-[#ffedd5]"
     }
   ];
@@ -127,25 +126,25 @@ export default function DocumentVaultServicePage() {
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 rounded-xl h-12 text-[15px] font-semibold border-slate-200 hover:bg-slate-50 text-slate-700 transition-all">
-                    Learn Security Protocols
+                    Review Security Practices
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl bg-white">
                   <DialogHeader>
                     <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                        <ShieldCheck className="text-emerald-600 w-6 h-6" />
-                       Our Security Protocols
+                       Vault Security Practices
                     </DialogTitle>
                     <DialogDescription className="text-slate-500">
-                      Standard operating procedures for maximum data protection.
+                      Practical controls used to keep document access scoped and understandable.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     {[
                       { title: "Encryption Controls", desc: "Sensitive documents are protected in transit and at rest." },
                       { title: "Role-Based Access", desc: "Access can be scoped to the user, CA, or assigned team member." },
-                      { title: "Audit Trail Ready", desc: "Document activity can be reviewed through administrative logs." },
-                      { title: "Data Handling Controls", desc: "Production storage should follow the deployment region and retention policy." }
+                      { title: "Audit Trail Ready", desc: "Operational activity can be reviewed where administrative logging is enabled." },
+                      { title: "Data Handling Controls", desc: "Production storage and retention follow the configured deployment provider and policy." }
                     ].map((p, i) => (
                       <div key={i} className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
                         <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-slate-400 border border-slate-200 shadow-sm">{i+1}</div>
@@ -199,7 +198,7 @@ export default function DocumentVaultServicePage() {
             <div className="flex-1 space-y-8 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">
                 <ShieldCheck className="w-4 h-4" />
-                Security Protocol
+                Security Practices
               </div>
               <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
                 Safety isn't a feature.<br className="hidden sm:block" />
@@ -208,12 +207,12 @@ export default function DocumentVaultServicePage() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
                 {[
-                  "256-bit AES Encryption",
-                  "TLS 1.3 Secure Tunnels",
-                  "Multi-Factor Auth",
-                  "Zero-Trust Access",
-                  "Regional Data Residency",
-                  "Automated Audit Trails"
+                  "Authenticated vault access",
+                  "Private document download flow",
+                  "Role-aware document handling",
+                  "Case-linked uploads",
+                  "Operational audit readiness",
+                  "Provider-backed storage controls"
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
@@ -226,38 +225,38 @@ export default function DocumentVaultServicePage() {
                  <Dialog>
                    <DialogTrigger asChild>
                      <Button className="rounded-xl h-12 px-8 text-sm font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all shadow-sm">
-                       Read Security Whitepaper
+                       Read Security Overview
                      </Button>
                    </DialogTrigger>
                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white">
                       <DialogHeader>
                         <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                            <FileSearch className="text-blue-600 w-6 h-6" />
-                           Technical Whitepaper: MyEca Vault Architecture
+                           MyEca Vault Security Overview
                         </DialogTitle>
                         <DialogDescription>
-                          A deep dive into our multi-layered encryption approach.
+                          How document access, case links, and storage controls work together.
                         </DialogDescription>
                       </DialogHeader>
                       <div className="prose prose-slate mt-4 max-w-none border-t pt-6 space-y-6">
                          <section>
-                            <h3 className="font-bold text-lg text-slate-900">1. Architectural Overview</h3>
+                            <h3 className="font-bold text-lg text-slate-900">1. Access Model</h3>
                             <p className="text-slate-600 text-sm leading-relaxed">
-                              MyEca uses a decentralized storage pattern where file metadata is stored in ACID-compliant databases while actual binary data is fragmented and encrypted before reaching the object store. This ensures that even in the case of a primary database breach, no readable documents are exposed.
+                              The vault is account-based. Signed-in users can upload, download, and manage their own files, and files can be linked to service cases so the relevant team can review them in context.
                             </p>
                          </section>
                          <section>
-                            <h3 className="font-bold text-lg text-slate-900">2. Key Management Strategy</h3>
+                            <h3 className="font-bold text-lg text-slate-900">2. Storage and Review</h3>
                             <p className="text-slate-600 text-sm leading-relaxed">
-                              The production vault should use managed key storage, scoped access policies, and short-lived sessions. Key handling details depend on the configured deployment provider.
+                              Document files are handled through the configured private storage provider, while metadata such as category, year, profile, and service case links keeps the workflow organized.
                             </p>
                          </section>
-                         <div className="flex justify-center py-6">
-                            <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
-                               <Download className="w-4 h-4" />
-                               Download Full PDF (820 KB)
-                            </Button>
-                         </div>
+                         <section>
+                            <h3 className="font-bold text-lg text-slate-900">3. Operational Notes</h3>
+                            <p className="text-slate-600 text-sm leading-relaxed">
+                              Any additional retention, region, encryption, or audit policy depends on the production environment configuration. The in-app copy avoids promising a specific unpublished compliance certificate or downloadable report.
+                            </p>
+                         </section>
                       </div>
                    </DialogContent>
                  </Dialog>
