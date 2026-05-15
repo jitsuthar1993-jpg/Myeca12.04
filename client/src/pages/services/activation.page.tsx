@@ -382,7 +382,7 @@ export default function ActivationPage() {
                    onClick={() => window.print()}
                 >
                   <Download className="h-5 w-5 mr-3" />
-                  Download Receipt
+                  Print Summary
                 </Button>
               </div>
             </m.div>

@@ -68,7 +68,7 @@ export function ServiceCheckoutModal({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to activate service");
+        throw new Error(data.message || "Failed to create service request");
       }
 
       setSuccess(true);
@@ -91,17 +91,17 @@ export function ServiceCheckoutModal({
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Service Activated!</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Service Request Created</h2>
             <p className="text-slate-500 mb-6 max-w-[280px]">
-              You have successfully subscribed to {serviceTitle}. Redirecting you to your dashboard...
+              Your {serviceTitle} workspace is ready. Redirecting you to the case page...
             </p>
           </div>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl">Activate Service</DialogTitle>
+              <DialogTitle className="text-xl">Start Service Request</DialogTitle>
               <DialogDescription>
-                Complete the details below to start your <span className="font-semibold text-slate-900">{serviceTitle}</span> subscription.
+                Complete the details below to create your <span className="font-semibold text-slate-900">{serviceTitle}</span> case. Payment is handled from the case workspace once the team confirms the scope.
               </DialogDescription>
             </DialogHeader>
 
@@ -137,7 +137,7 @@ export function ServiceCheckoutModal({
 
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 mt-4">
                 <div className="flex justify-between items-center mb-2 text-sm">
-                  <span className="text-slate-500">Service Fee</span>
+                  <span className="text-slate-500">Estimated Service Fee</span>
                   <span className="font-medium text-slate-900">{formatINR(priceAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm mb-4 pb-4 border-b border-slate-200">
@@ -145,7 +145,7 @@ export function ServiceCheckoutModal({
                   <span className="font-medium text-slate-900">{formatINR(Math.round(priceAmount * 0.18))}</span>
                 </div>
                 <div className="flex justify-between items-center font-bold">
-                  <span className="text-slate-900">Total Payable</span>
+                  <span className="text-slate-900">Estimated Total</span>
                   <span className="text-indigo-600 text-lg">{formatINR(Math.round(priceAmount * 1.18))}</span>
                 </div>
               </div>
@@ -164,7 +164,7 @@ export function ServiceCheckoutModal({
                   ) : (
                     <>
                       <CreditCard className="mr-2 h-4 w-4" />
-                      {isAuthenticated ? `Pay ${formatINR(Math.round(priceAmount * 1.18))} & Activate` : "Login to Activate"}
+                      {isAuthenticated ? "Create Service Request" : "Login to Continue"}
                     </>
                   )}
                 </Button>
