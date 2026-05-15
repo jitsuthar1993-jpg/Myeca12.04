@@ -458,4 +458,46 @@ describe("admin request routes", () => {
     });
     expect(readCollection("audit_logs")).toHaveLength(1);
   });
+
+  it("resets linked service payment status when a sent payment link is cancelled", async () => {
+    seed("payment_link_requests", "pay_1", {
+      userId: "user_1",
+      userServiceId: "service_1",
+      serviceTitle: "Notice Compliance",
+      paymentAmount: 2500,
+      status: "link_sent",
+      paymentLink: "https://pay.example.com/checkout/service-1",
+      createdAt: new Date("2026-05-15T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-15T08:00:00.000Z"),
+    });
+    seed("user_services", "service_1", {
+      userId: "user_1",
+      serviceTitle: "Notice Compliance",
+      paymentStatus: "link_sent",
+      metadata: {
+        paymentLink: "https://pay.example.com/checkout/service-1",
+      },
+    });
+
+    const updated = await request("/api/admin/requests/payment-links/pay_1", {
+      method: "PATCH",
+      body: JSON.stringify({
+        status: "cancelled",
+        adminNote: "Cancelled because the customer requested a revised quote.",
+      }),
+    });
+
+    expect(updated.response.status).toBe(200);
+    expect(updated.json.request).toMatchObject({
+      id: "pay_1",
+      status: "cancelled",
+    });
+    expect(collectionStore("user_services").get("service_1")).toMatchObject({
+      paymentStatus: "pending",
+      metadata: {
+        paymentLink: "https://pay.example.com/checkout/service-1",
+        paymentAdminNote: "Cancelled because the customer requested a revised quote.",
+      },
+    });
+  });
 });

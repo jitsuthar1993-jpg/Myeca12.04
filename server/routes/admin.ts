@@ -224,7 +224,10 @@ router.patch(
           const serviceUpdates: Record<string, any> = { metadata, updatedAt: new Date() };
           if (updates.status === "link_sent") serviceUpdates.paymentStatus = "link_sent";
           if (updates.status === "paid") serviceUpdates.paymentStatus = "paid";
-          if (updates.status === "cancelled" && service.paymentStatus === "link_requested") {
+          if (
+            updates.status === "cancelled" &&
+            ["link_requested", "link_sent"].includes(service.paymentStatus)
+          ) {
             serviceUpdates.paymentStatus = "pending";
           }
           await serviceRef.update(serviceUpdates);
