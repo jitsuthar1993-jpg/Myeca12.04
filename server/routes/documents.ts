@@ -438,8 +438,12 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
       userServiceId: updateData.userServiceId || updateData.serviceId,
       taxReturnId: updateData.taxReturnId,
     });
+    const hasUserServiceId = Object.prototype.hasOwnProperty.call(updateData, "userServiceId");
+    const hasServiceId = Object.prototype.hasOwnProperty.call(updateData, "serviceId");
+    const normalizedUserServiceId = hasUserServiceId ? updateData.userServiceId : updateData.serviceId;
     const finalUpdate = {
       ...updateData,
+      ...(hasUserServiceId || hasServiceId ? { userServiceId: normalizedUserServiceId ?? null } : {}),
       updatedAt: new Date()
     };
 
