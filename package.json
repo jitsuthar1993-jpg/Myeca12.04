@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
+  "engines": {
+    "node": "22.16.0"
+  },
   "scripts": {
     "dev": "set NODE_ENV=development&& npx tsx --watch server/index.ts",
     "build": "tsx scripts/build-production.ts",
