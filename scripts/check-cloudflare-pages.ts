@@ -54,9 +54,23 @@ async function stopProcessTree(child: ReturnType<typeof spawn>) {
   }
 
   child.kill("SIGTERM");
+  if (child.pid) {
+    try {
+      process.kill(-child.pid, "SIGTERM");
+    } catch {
+      // Process groups are only available when the child starts detached.
+    }
+  }
   await new Promise<void>((resolve) => {
     const timeout = setTimeout(() => {
       child.kill("SIGKILL");
+      if (child.pid) {
+        try {
+          process.kill(-child.pid, "SIGKILL");
+        } catch {
+          // The process may already be gone.
+        }
+      }
       resolve();
     }, 2_000);
     child.on("close", () => {
@@ -76,6 +90,7 @@ async function main() {
   const child = spawn(command, commandArgs, {
     cwd: rootDir,
     env: { ...process.env, CI: "1" },
+    detached: process.platform !== "win32",
     stdio: ["ignore", "pipe", "pipe"],
   });
 
@@ -100,7 +115,11 @@ async function main() {
   console.log("Cloudflare Pages local validation passed.");
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
