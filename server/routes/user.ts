@@ -27,7 +27,9 @@ const createUserServiceSchema = z.object({
 });
 
 const updateUserServiceMetadataSchema = z.object({
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.object({
+    userNote: z.string().trim().max(3000).optional(),
+  }).strict().optional(),
 });
 
 const consultationRequestSchema = z.object({

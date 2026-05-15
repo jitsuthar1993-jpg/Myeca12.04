@@ -208,6 +208,49 @@ describe("user service routes", () => {
     expect(other.response.status).toBe(404);
   });
 
+  it("limits user service metadata updates to user-editable fields", async () => {
+    seed("user_services", "service_1", {
+      userId: "user_1",
+      serviceId: "gst-returns",
+      serviceTitle: "GST Returns",
+      serviceCategory: "GST",
+      paymentStatus: "pending",
+      metadata: {
+        paymentLink: "https://pay.example.com/original",
+      },
+    });
+
+    const forbidden = await request("/api/user-services/service_1", {
+      method: "PATCH",
+      body: JSON.stringify({
+        metadata: {
+          userNote: "Please call after 4 PM.",
+          paymentLink: "https://pay.example.com/tampered",
+        },
+      }),
+    });
+
+    expect(forbidden.response.status).toBe(400);
+    expect(collectionStore("user_services").get("service_1")?.metadata).toMatchObject({
+      paymentLink: "https://pay.example.com/original",
+    });
+
+    const allowed = await request("/api/user-services/service_1", {
+      method: "PATCH",
+      body: JSON.stringify({
+        metadata: {
+          userNote: "Please call after 4 PM.",
+        },
+      }),
+    });
+
+    expect(allowed.response.status).toBe(200);
+    expect(allowed.json.service.metadata).toMatchObject({
+      paymentLink: "https://pay.example.com/original",
+      userNote: "Please call after 4 PM.",
+    });
+  });
+
   it("validates and persists consultation requests with optional signed-in linkage", async () => {
     const invalid = await request("/api/consultation-requests", {
       method: "POST",
