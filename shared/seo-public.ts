@@ -147,6 +147,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/startup-services",
   "/tax-assistant",
   "/tax-loss-harvesting",
+  "/tax-optimizer",
   "/tds-refund-tracker",
 ] as const;
 

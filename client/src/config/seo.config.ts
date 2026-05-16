@@ -563,6 +563,19 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'AI Tax Assistant', url: '/tax-assistant' }]
   },
+  '/tax-optimizer': {
+    title: 'Tax Optimizer India | Personalized Deduction Planner | MyeCA.in',
+    description: 'Get personalized tax-saving recommendations across Section 80C, 80D, NPS, HRA, home loan interest, and regime selection.',
+    keywords: ['tax optimizer India', 'tax saving planner', 'deduction optimizer', 'section 80C planner', 'income tax saving'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Tax Optimizer',
+      features: ['Deduction recommendations', 'Regime comparison guidance', 'Tax-saving checklist'],
+      accuracy: 'Estimate based on entered profile data',
+      updates: 'AY 2026-27 planning inputs'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Tax Optimizer', url: '/tax-optimizer' }]
+  },
   '/startup-services': {
     title: 'Complete Startup Solutions India | Launch & Scale | MyeCA.in',
     description: 'All-in-one startup services including DPIIT recognition, funding support, and compliance management. Launch your dream venture with MyeCA.',
