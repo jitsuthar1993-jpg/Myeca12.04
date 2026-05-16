@@ -243,7 +243,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     tags: ['capital gains', 'stocks', 'mutual funds', 'STCG', 'LTCG'],
     lastUpdated: '2024-06-01',
     author: 'CA Rajesh Kumar',
-    relatedCalculators: ['/calculators/capital-gains', '/portfolio-dashboard'],
+    relatedCalculators: ['/calculators/capital-gains', '/capital-gains-import'],
     steps: [
       {
         id: 'understand-types',
