@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { z } from "zod";
+import { getRequestId } from "./request-id.js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -106,7 +107,9 @@ export const sanitizeInput = (req: Request, res: Response, next: NextFunction) =
   } catch (error) {
     console.error('Input sanitization error:', error);
     res.status(400).json({ 
+      success: false,
       error: 'Invalid input data',
+      requestId: getRequestId(req, res),
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
@@ -170,7 +173,11 @@ export const validateCSRFToken = (req: Request, res: Response, next: NextFunctio
   }
   
   if (!req.session) {
-    return res.status(403).json({ error: 'Session required' });
+    return res.status(403).json({
+      success: false,
+      error: 'Session required',
+      requestId: getRequestId(req, res),
+    });
   }
   
   const token = req.headers['x-csrf-token'] || req.body._csrf;
@@ -178,7 +185,11 @@ export const validateCSRFToken = (req: Request, res: Response, next: NextFunctio
   const expectedToken = csrfTokens.get(sessionId);
   
   if (!token || !expectedToken || token !== expectedToken) {
-    return res.status(403).json({ error: 'Invalid CSRF token' });
+    return res.status(403).json({
+      success: false,
+      error: 'Invalid CSRF token',
+      requestId: getRequestId(req, res),
+    });
   }
   
   next();
@@ -201,7 +212,9 @@ export const validateRequest = (schema: z.ZodSchema) => {
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({
+          success: false,
           error: 'Validation failed',
+          requestId: getRequestId(req, res),
           details: error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message

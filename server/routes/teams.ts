@@ -68,7 +68,7 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       userRole: memberFor(team, user.id)?.role ?? (isAdmin(user) ? "admin" : "viewer"),
     }));
 
-  res.json({ success: true, teams: userTeams });
+  res.json({ success: true, backendStatus: "mixed", teams: userTeams });
 });
 
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
@@ -98,7 +98,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     };
 
     const ref = await adminDb.collection("teams").add(team);
-    res.json({ success: true, team: { id: ref.id, ...team, memberCount: 1 } });
+    res.json({ success: true, backendStatus: "mixed", team: { id: ref.id, ...team, memberCount: 1 } });
   } catch (error) {
     if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to create team" });
@@ -114,6 +114,7 @@ router.get("/:teamId", authenticateToken, async (req: AuthRequest, res: Response
 
   res.json({
     success: true,
+    backendStatus: "mixed",
     team: {
       ...team,
       memberCount: (team.members || []).length,

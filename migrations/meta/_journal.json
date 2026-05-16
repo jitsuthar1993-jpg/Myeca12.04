@@ -15,6 +15,13 @@
       "when": 1776425400000,
       "tag": "0001_feature_depth_request_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776511800000,
+      "tag": "0002_backend_hardening_indexes",
+      "breakpoints": true
     }
   ]
 }

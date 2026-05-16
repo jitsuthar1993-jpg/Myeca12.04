@@ -5,10 +5,11 @@ import sharp from "sharp";
 import { del, get, put } from "@vercel/blob";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
-import { safeError } from "../utils/error-response.js";
+import { errorResponse, safeError } from "../utils/error-response.js";
 import {
   assertCanAccessUserData,
   canAccessUserData,
+  getAccessibleSnapshot,
   recordBelongsToUser,
 } from "../utils/access-control.js";
 
@@ -139,7 +140,7 @@ async function resolveTargetUserId(req: AuthRequest) {
 function documentRouteError(res: Response, error: unknown, fallback: string) {
   const status = typeof (error as any)?.status === "number" ? (error as any).status : undefined;
   if (status) {
-    return res.status(status).json({ error: (error as Error).message || fallback });
+    return errorResponse(res, status, (error as Error).message || fallback);
   }
   return safeError(res, error, fallback);
 }
@@ -147,12 +148,12 @@ function documentRouteError(res: Response, error: unknown, fallback: string) {
 router.post("/upload", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
+      return errorResponse(res, 400, "No file uploaded");
     }
 
     const userId = await resolveTargetUserId(req);
     if (!userId) {
-      return res.status(401).json({ error: "Not authenticated" });
+      return errorResponse(res, 401, "Not authenticated");
     }
 
     const { name, category, tags, description, year, profileId, serviceId, userServiceId, taxReturnId } = req.body;
@@ -225,7 +226,7 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
+      return errorResponse(res, 400, error.errors[0].message);
     }
     return documentRouteError(res, error, "Failed to upload document");
   }
@@ -234,7 +235,7 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
 router.post("/register", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = await resolveTargetUserId(req);
-    if (!userId || !req.auth) return res.status(401).json({ error: "Unauthorized" });
+    if (!userId || !req.auth) return errorResponse(res, 401, "Unauthorized");
 
     const schema = z.object({
       name: z.string(),
@@ -288,7 +289,7 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
     await adminDb.collection("documents").doc(docId).set(newDoc);
     res.json({ success: true, document: serializeDocument(docId, newDoc) });
   } catch (error) {
-    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
+    if (error instanceof z.ZodError) return errorResponse(res, 400, error.errors[0].message);
     return documentRouteError(res, error, "Failed to register document");
   }
 });
@@ -296,7 +297,7 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
 router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = await resolveTargetUserId(req);
-    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    if (!userId) return errorResponse(res, 401, "Unauthorized");
 
     const { category, year, search } = req.query;
     let query: any = adminDb.collection("documents")
@@ -371,12 +372,12 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
     const doc = await docRef.get();
 
     if (!doc.exists) {
-      return res.status(404).json({ error: "Document not found" });
+      return errorResponse(res, 404, "Document not found");
     }
 
     const documentData = doc.data()!;
     if (!(await canAccessUserData(req.user, documentData.userId))) {
-      return res.status(403).json({ error: "Access denied" });
+      return errorResponse(res, 403, "Access denied");
     }
 
     res.setHeader(
@@ -387,12 +388,12 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
 
     const blobUrl = documentData.blobUrl || documentData.url;
     if (!blobUrl) {
-      return res.status(404).json({ error: "Document file not found" });
+      return errorResponse(res, 404, "Document file not found");
     }
 
     const blob = await get(blobUrl, { access: "private" });
     if (!blob || blob.statusCode !== 200 || !blob.stream) {
-      return res.status(404).json({ error: "Document file not found" });
+      return errorResponse(res, 404, "Document file not found");
     }
 
     const file = await streamToBuffer(blob.stream);
@@ -405,11 +406,10 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
 router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const docRef = adminDb.collection("documents").doc(id);
-    const doc = await docRef.get();
+    const doc = await getAccessibleSnapshot("documents", id, req.user);
 
-    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
-      return res.status(404).json({ error: "Document not found" });
+    if (!doc) {
+      return errorResponse(res, 404, "Document not found");
     }
 
     res.json({
@@ -425,10 +425,10 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
   try {
     const { id } = req.params;
     const docRef = adminDb.collection("documents").doc(id);
-    const doc = await docRef.get();
+    const doc = await getAccessibleSnapshot("documents", id, req.user);
 
-    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
-      return res.status(404).json({ error: "Document not found" });
+    if (!doc) {
+      return errorResponse(res, 404, "Document not found");
     }
 
     const updateData = documentSchema.partial().parse(req.body);
@@ -454,7 +454,7 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
+      return errorResponse(res, 400, error.errors[0].message);
     }
     return documentRouteError(res, error, "Failed to update document");
   }
@@ -464,10 +464,10 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
   try {
     const { id } = req.params;
     const docRef = adminDb.collection("documents").doc(id);
-    const doc = await docRef.get();
+    const doc = await getAccessibleSnapshot("documents", id, req.user);
 
-    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
-      return res.status(404).json({ error: "Document not found" });
+    if (!doc) {
+      return errorResponse(res, 404, "Document not found");
     }
 
     const documentData = doc.data()!;

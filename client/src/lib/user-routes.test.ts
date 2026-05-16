@@ -150,6 +150,61 @@ afterEach(() => {
 });
 
 describe("user service routes", () => {
+  it("derives dashboard pending tasks and recent activity from real records", async () => {
+    seed("user_services", "service_1", {
+      userId: "user_1",
+      serviceId: "itr-filing",
+      serviceTitle: "ITR Filing",
+      serviceCategory: "Tax",
+      status: "pending",
+      paymentStatus: "pending",
+      createdAt: new Date("2026-05-15T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-15T09:00:00.000Z"),
+      metadata: {},
+    });
+    seed("user_services", "service_2", {
+      userId: "user_1",
+      serviceId: "gst-returns",
+      serviceTitle: "GST Returns",
+      serviceCategory: "GST",
+      status: "completed",
+      paymentStatus: "paid",
+      createdAt: new Date("2026-05-14T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-14T09:00:00.000Z"),
+      metadata: {},
+    });
+    seed("tax_returns", "return_1", {
+      userId: "user_1",
+      status: "draft",
+      createdAt: new Date("2026-05-13T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-13T09:00:00.000Z"),
+    });
+    seed("documents", "doc_1", {
+      userId: "user_1",
+      status: "active",
+    });
+    seed("profiles", "profile_1", {
+      userId: "user_1",
+    });
+
+    const { response, json } = await request("/api/user/dashboard");
+
+    expect(response.status).toBe(200);
+    expect(json.stats).toMatchObject({
+      totalReturns: 1,
+      documentsUploaded: 1,
+      profiles: 1,
+      pendingTasks: 2,
+    });
+    expect(json.recentActivity).toHaveLength(3);
+    expect(json.recentActivity[0]).toMatchObject({
+      id: "service-service_1",
+      type: "service",
+    });
+    expect(json.recentActivity.map((entry: any) => entry.action)).not.toContain("Logged in");
+    expect(json.recentActivity.map((entry: any) => entry.action)).not.toContain("Viewed dashboard");
+  });
+
   it("creates a signed-in service request with dashboard metadata", async () => {
     const { response, json } = await request("/api/user-services", {
       method: "POST",

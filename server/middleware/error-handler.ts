@@ -1,5 +1,6 @@
 // Error Handling and Logging Middleware
 import { Request, Response, NextFunction } from 'express';
+import { getRequestId } from './request-id.js';
 
 const LOGGING_CONFIG = {
   DEVELOPMENT_LOGGING: process.env.NODE_ENV === 'development',
@@ -102,6 +103,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
     logger.info(`${req.method} ${req.originalUrl}`, {
       method: req.method,
       url: req.originalUrl,
+      requestId: getRequestId(req, res),
       ip: req.ip,
       userAgent: req.get('User-Agent'),
       timestamp: new Date().toISOString()
@@ -113,6 +115,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
       logger.info(`${req.method} ${req.originalUrl} - ${res.statusCode} (${duration}ms)`, {
         method: req.method,
         url: req.originalUrl,
+        requestId: getRequestId(req, res),
         statusCode: res.statusCode,
         duration,
         timestamp: new Date().toISOString()
@@ -135,6 +138,7 @@ export const errorLogger = (error: Error, req: Request, res: Response, next: Nex
       method: req.method,
       url: req.originalUrl,
       ip: req.ip,
+      requestId: getRequestId(req, res),
       userAgent: req.get('User-Agent'),
       body: LOGGING_CONFIG.LOG_RESPONSES ? req.body : undefined,
       params: req.params,
@@ -161,6 +165,7 @@ export const globalErrorHandler = (err: Error, req: Request, res: Response, next
   if (LOGGING_CONFIG.ENABLED) {
     logger.error(`Error: ${appError.name} - ${appError.message}`, {
       statusCode: appError.statusCode,
+      requestId: getRequestId(req, res),
       stack: appError.stack,
       request: {
         method: req.method,
@@ -173,7 +178,9 @@ export const globalErrorHandler = (err: Error, req: Request, res: Response, next
   // Send error response
   const response: any = {
     success: false,
+    error: appError.message,
     message: appError.message,
+    requestId: getRequestId(req, res),
     statusCode: appError.statusCode
   };
   
@@ -209,7 +216,9 @@ export const globalErrorHandler = (err: Error, req: Request, res: Response, next
 export const notFoundHandler = (req: Request, res: Response): void => {
   res.status(404).json({
     success: false,
+    error: 'Resource not found',
     message: 'Resource not found',
+    requestId: getRequestId(req, res),
     statusCode: 404,
     help: 'The requested resource was not found. Please check the URL and try again.'
   });
@@ -282,7 +291,9 @@ export const requestTimeout = (timeoutMs: number = 30000) => {
       if (!res.headersSent) {
         res.status(408).json({
           success: false,
+          error: 'Request timeout',
           message: 'Request timeout',
+          requestId: getRequestId(req, res),
           help: 'The request took too long to process. Please try again.'
         });
       }

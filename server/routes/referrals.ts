@@ -23,6 +23,14 @@ const createReferralSchema = z.object({
 const referrals = new Map<number, any>();
 const rewards = new Map<number, any>();
 const usePersistentStore = process.env.NODE_ENV === "production";
+const referralBackendStatus = usePersistentStore ? "mixed" : "demo";
+
+function withBackendStatus<T extends Record<string, unknown>>(payload: T) {
+  return {
+    backendStatus: referralBackendStatus,
+    ...payload
+  };
+}
 
 function getUserId(req: Request) {
   return String((req as any).user?.id || "");
@@ -209,10 +217,10 @@ router.get("/overview", authenticateToken, (req: Request, res: Response) => {
     ]
   };
   
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     program: programDetails
-  });
+  }));
 });
 
 // Get user referral stats
@@ -220,10 +228,10 @@ router.get("/stats", authenticateToken, async (req: Request, res: Response) => {
   const userId = getUserId(req);
   const stats = await getStatsForUser(userId);
 
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     stats
-  });
+  }));
 });
 
 // Get user's referrals
@@ -232,11 +240,11 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
   const { status, limit = 50 } = req.query;
   const userReferrals = await getUserReferrals(userId, status, parseInt(String(limit), 10) || 50);
 
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     referrals: userReferrals,
     total: userReferrals.length
-  });
+  }));
 });
 
 // Create new referral
@@ -306,11 +314,11 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       // Continue even if email fails
     }
     
-    res.json({
+    res.json(withBackendStatus({
       success: true,
       referral,
       message: "Referral created successfully. Share your referral code with the client."
-    });
+    }));
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
@@ -325,11 +333,11 @@ router.get("/rewards", authenticateToken, async (req: Request, res: Response) =>
   const { status = "all" } = req.query;
   const userRewards = await getUserRewards(userId, status);
 
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     rewards: userRewards,
     total: userRewards.length
-  });
+  }));
 });
 
 // Redeem reward
@@ -358,11 +366,11 @@ router.post("/rewards/:rewardId/redeem", authenticateToken, async (req: Request,
     reward.redeemedAt = new Date();
     await saveReward(reward);
     
-    res.json({
+    res.json(withBackendStatus({
       success: true,
       reward,
       message: `Reward of Rs ${reward.amount} has been redeemed successfully`
-    });
+    }));
   } catch (error) {
     res.status(500).json({ error: "Failed to redeem reward" });
   }
@@ -394,13 +402,13 @@ router.post("/generate-link", authenticateToken, async (req: Request, res: Respo
     qrCodeAvailable = false;
   }
   
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     referralCode,
     referralLink,
     qrCode,
     qrCodeAvailable
-  });
+  }));
 });
 
 // Leaderboard
@@ -432,11 +440,11 @@ router.get("/leaderboard", authenticateToken, async (req: Request, res: Response
       avatar: null
     }));
   
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     leaderboard,
     period
-  });
+  }));
 });
 
 // Configure multer for CSV file uploads
@@ -575,7 +583,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
           }
         }
 
-        res.json({
+        res.json(withBackendStatus({
           success: true,
           summary: {
             total: results.length,
@@ -584,7 +592,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
           },
           imported,
           errors
-        });
+        }));
       })
       .on('error', (error) => {
         res.status(500).json({ error: "Failed to parse CSV file" });
@@ -642,7 +650,7 @@ router.get("/analytics", authenticateToken, async (req: Request, res: Response) 
     }
   });
   
-  res.json({
+  res.json(withBackendStatus({
     success: true,
     analytics: {
       conversionFunnel: {
@@ -659,7 +667,7 @@ router.get("/analytics", authenticateToken, async (req: Request, res: Response) 
         .slice(0, 3)
         .map(([service, data]) => ({ service, ...data }))
     }
-  });
+  }));
 });
 
 // Link referral to service purchase
@@ -708,11 +716,11 @@ router.post("/link-service", authenticateToken, async (req: Request, res: Respon
     
     // Conversion notification needs a persisted referrer profile/email lookup before sending.
     
-    res.json({
+    res.json(withBackendStatus({
       success: true,
       message: "Referral linked to service successfully",
       reward: newReward
-    });
+    }));
   } catch (error) {
     res.status(500).json({ error: "Failed to link referral to service" });
   }
@@ -759,10 +767,10 @@ router.post("/:referralId/send-reminder", authenticateToken, async (req: Request
       expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     });
     
-    res.json({
+    res.json(withBackendStatus({
       success: true,
       message: "Reminder email sent successfully"
-    });
+    }));
   } catch (error) {
     res.status(500).json({ error: "Failed to send reminder email" });
   }

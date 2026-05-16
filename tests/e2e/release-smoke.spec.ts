@@ -198,6 +198,12 @@ test.describe("release smoke", () => {
       expect(openapiJson.paths?.[path], `/openapi.json is missing ${path}`).toBeTruthy();
     }
 
+    for (const path of ["/api/chat", "/api/email", "/api/advanced-features"]) {
+      expect(openapiJson.paths?.[path], `/openapi.json should not advertise unmounted ${path}`).toBeFalsy();
+    }
+
+    expect(openapiJson.paths?.["/api/workflows/templates"]?.get?.["x-backend-status"]).toBe("demo");
+
     for (const [path, method] of [
       ["/api/v1/auth/me", "get"],
       ["/api/documents", "get"],
@@ -210,6 +216,22 @@ test.describe("release smoke", () => {
     ] as const) {
       expect(openapiJson.paths?.[path]?.[method]?.security, `${method.toUpperCase()} ${path} must document bearer auth`).toEqual([{ bearerAuth: [] }]);
     }
+
+    const health = await request.get("/api/health");
+    expect(health.ok()).toBeTruthy();
+    expect(health.headers()["x-request-id"]).toBeTruthy();
+
+    for (const route of ["/api/v1/auth/me", "/api/documents", "/api/admin/users"]) {
+      const unauthorized = await request.get(route);
+      expect(unauthorized.status(), `${route} should reject anonymous requests`).toBe(401);
+      expect(unauthorized.headers()["x-request-id"]).toBeTruthy();
+      const body = await unauthorized.json();
+      expect(body).toMatchObject({ success: false });
+      expect(body.requestId).toBeTruthy();
+    }
+
+    const publicBlogs = await request.get("/api/public/blogs");
+    expect(publicBlogs.headers()["cache-control"]).toMatch(/public, max-age=300/);
   });
 
   test("public route shells render without placeholder claims", async ({ page }) => {

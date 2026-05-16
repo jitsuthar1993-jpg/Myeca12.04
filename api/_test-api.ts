@@ -14,6 +14,16 @@ type ApiUser = {
 
 export function sendJson(res: any, status: number, payload: unknown) {
   res.setHeader("Content-Type", "application/json");
+  const requestId = res.getHeader?.("X-Request-Id") || res.locals?.requestId;
+  if (status >= 400 && payload && typeof payload === "object") {
+    const errorPayload = payload as Record<string, unknown>;
+    return res.status(status).json({
+      success: false,
+      ...errorPayload,
+      error: errorPayload.error || errorPayload.message || "Request failed",
+      requestId,
+    });
+  }
   return res.status(status).json(payload);
 }
 
@@ -69,6 +79,7 @@ async function getSupabaseUserFromToken(token: string) {
 }
 
 export function readTemporaryAuth(req: any) {
+  if (process.env.NODE_ENV === "production") return null;
   const token = readBearerToken(req);
   if (!token) return null;
   return getTemporaryTestUserByToken(token);

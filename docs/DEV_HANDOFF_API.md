@@ -107,7 +107,7 @@ These are the routes actually mounted in `server/routes.ts`.
 - Auth: rate-limited, no user auth requirement
 - Purpose: client-side error ingestion
 - Body: raw text or JSON payload
-- Behavior: appends to `debug-ac3226.log`
+- Behavior: writes a sanitized structured warning to backend logs
 - Response:
 
 ```json
@@ -116,8 +116,13 @@ These are the routes actually mounted in `server/routes.ts`.
 
 ### `GET /openapi.json`
 - Auth: none
-- Purpose: extremely minimal public API descriptor
-- Status: placeholder only, not a full spec
+- Purpose: maintained descriptor for the mounted API surface
+- Status: route-surface contract with `x-backend-status` markers for `production`, `mixed`, and `demo` modules
+
+### Error and request tracing
+- API responses include `X-Request-Id`.
+- Standard backend error JSON includes `success: false`, `error`, and `requestId`.
+- Successful response bodies remain endpoint-specific for frontend compatibility.
 
 ## 5.2 Auth API
 
@@ -231,7 +236,7 @@ Base path: `/api`
   "stats": {
     "totalReturns": 0,
     "documentsUploaded": 0,
-    "pendingTasks": 1,
+    "pendingTasks": 0,
     "savedAmount": 0
   },
   "activeServices": [],
@@ -591,10 +596,9 @@ Base path: `/api/system`
 Base path: `/api/analytics`
 
 ### `GET /overview`
-- Auth: none
-- Purpose: dashboard stats payload
-- Current state: mock data only
-- Action: should be treated as placeholder, not source of truth
+- Auth: `requireAdmin`
+- Purpose: database-backed dashboard stats payload
+- Current state: production-backed aggregate counts over users, profiles, returns, documents, and blog posts
 
 ## 5.13 Notifications API
 
@@ -605,11 +609,9 @@ Base path: `/api/notifications`
 - `PATCH /:id/read`
 - `PATCH /read-all`
 - `DELETE /:id`
-- `POST /test`
 
 Current state:
-- mock in-memory notification store
-- not database-backed
+- database-backed through the `notifications` collection/table
 
 ## 5.14 Teams API
 
@@ -628,7 +630,8 @@ Base path: `/api/teams`
 - `GET /:teamId/activity`
 
 Current state:
-- mock in-memory team, member, task, and note storage
+- persisted team records with embedded members, tasks, notes, and activity
+- marked as `mixed` because it is not yet a full fulfillment workbench
 
 Key request bodies:
 
@@ -675,7 +678,8 @@ Base path: `/api/workflows`
 - `GET /:id/history`
 
 Current state:
-- mock in-memory workflow store
+- persisted workflow definitions and static templates
+- marked as `mixed`/`demo` because scheduled execution is not implemented
 
 Create/update body:
 
@@ -713,7 +717,7 @@ Base path: `/api/reports`
 
 Current state:
 - request validation is real
-- report payloads are mock/generated in memory
+- generated report records are persisted, but report contents are still lightweight/generated
 
 Generate report body:
 
@@ -753,10 +757,10 @@ Base path: `/api/referrals`
 - `POST /:referralId/send-reminder`
 
 Current state:
-- mostly mock in-memory referral storage
+- persisted referral/reward records in production, with local in-memory fallback behavior for development
+- successful responses include `backendStatus: "mixed"` in production and `backendStatus: "demo"` in local fallback mode
 - includes email and QR-code related logic
 - file upload for CSV import exists
-- endpoint duplication exists for `/analytics` in the route file and should be cleaned up
 
 Core create referral body:
 
@@ -773,13 +777,11 @@ Core create referral body:
 
 These route files exist in `server/routes/` but are not mounted in `server/routes.ts` right now, so frontend or integration work should not depend on them unless they are explicitly registered:
 
-- `2fa.ts`
 - `two-factor.ts`
 - `chat.ts`
 - `email.ts`
 - `advanced-features.ts`
 - `ai-optimizer.ts`
-- `feedback.ts`
 
 This matters because some frontend routes/pages appear to assume these capabilities exist, but the backend currently does not expose them through the mounted app router.
 
@@ -796,37 +798,37 @@ This matters because some frontend routes/pages appear to assume these capabilit
 - CMS content operations
 - Audit logging
 - System config
+- Analytics overview
+- Notifications
 
 ### Mixed / partially real
 - User dashboard
 - Admin stats
-
-These use real collections but still contain placeholder values or simplistic aggregation logic.
-
-### Mock or demo-backed
-- Analytics overview
-- Notifications
 - Teams
 - Workflows
 - Reports
 - Referrals
+
+These use real collections but still contain simplistic aggregation, embedded records, generated outputs, or unimplemented execution paths.
+
+### Mock or demo-backed
+- Workflow templates and generated report contents
 
 ## 8. Recommended Next API Work
 
 ### Priority 1
 - Normalize `tax_returns` into first-class server APIs.
 - Add service request detail endpoints instead of only `user-services` list/create.
-- Remove frontend reliance on hardcoded dashboard data.
+- Continue replacing mixed-module placeholder behavior with real fulfillment state.
 - Register or delete dead backend route files so the surface is unambiguous.
 
 ### Priority 2
 - Add structured task/comment/milestone APIs for filings and services.
-- Replace mock notifications with database-backed notifications.
-- Replace mock workflows with real scheduled workflow records.
+- Replace workflow definitions with real scheduled workflow execution.
 
 ### Priority 3
 - Build report generation on top of real entities.
-- Normalize referrals into persisted storage.
+- Normalize referrals out of the shared JSONB adapter into dedicated typed tables.
 - Add expert case timelines and internal notes.
 
 ## 9. Suggested Target REST Surface

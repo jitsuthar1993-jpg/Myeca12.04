@@ -8,12 +8,26 @@ let supabaseAdminClient: SupabaseClient | null = null;
 let supabaseAuthClient: SupabaseClient | null = null;
 let publicSupabaseAuthClient: SupabaseClient | null = null;
 
+function isProduction() {
+  return process.env.NODE_ENV === "production";
+}
+
 export function getSupabaseUrl() {
-  return process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || PUBLIC_SUPABASE_URL;
+  const configured = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  if (configured) return configured;
+  if (isProduction()) {
+    throw new Error("SUPABASE_URL or VITE_SUPABASE_URL is required in production");
+  }
+  return PUBLIC_SUPABASE_URL;
 }
 
 export function getSupabaseAnonKey() {
-  return process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || PUBLIC_SUPABASE_ANON_KEY;
+  const configured = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  if (configured) return configured;
+  if (isProduction()) {
+    throw new Error("SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY is required in production");
+  }
+  return PUBLIC_SUPABASE_ANON_KEY;
 }
 
 export function getSupabaseServiceRoleKey() {
@@ -42,7 +56,7 @@ export function getSupabaseAuthClient() {
 
 export function getPublicSupabaseAuthClient() {
   if (!publicSupabaseAuthClient) {
-    publicSupabaseAuthClient = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    publicSupabaseAuthClient = createClient(getSupabaseUrl(), getSupabaseAnonKey(), {
       auth: {
         autoRefreshToken: false,
         persistSession: false,

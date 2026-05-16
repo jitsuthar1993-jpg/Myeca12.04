@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import crypto from "node:crypto";
 import path from "node:path";
 import multer from "multer";
 import sharp from "sharp";
@@ -25,6 +26,7 @@ import {
   setPublicCache,
 } from "./_public-blog.js";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { buildOpenApiSpec } from "../server/openapi.js";
 import { getIncomeTaxFormAsset } from "../shared/income-tax-form-assets.js";
 import {
   buildRobotsTxt,
@@ -61,6 +63,15 @@ const documentUpload = multer({
     }
   },
 });
+
+function ensureRequestId(req: any, res: any) {
+  const incoming = String(req.headers?.["x-request-id"] || "");
+  const requestId = incoming && incoming.length <= 120 ? incoming : crypto.randomUUID();
+  res.locals ??= {};
+  res.locals.requestId = requestId;
+  res.setHeader("X-Request-Id", requestId);
+  return requestId;
+}
 
 function routeFor(req: any) {
   const url = requestUrl(req);
@@ -152,6 +163,17 @@ function normalizeUserService(id: string, data: Record<string, any>) {
     assignedCaName: data.assignedCaName || metadata.assignedCaName || assignedCa.name || null,
     assignedCaEmail: data.assignedCaEmail || metadata.assignedCaEmail || assignedCa.email || null,
   };
+}
+
+function isPendingStatus(status: unknown) {
+  const normalized = String(status || "").toLowerCase();
+  return ["draft", "pending", "in_progress", "link_requested", "requested", "new"].includes(normalized);
+}
+
+function asTime(value: unknown) {
+  const date = value instanceof Date ? value : typeof value === "string" ? new Date(value) : null;
+  const time = date?.getTime() ?? 0;
+  return Number.isNaN(time) ? 0 : time;
 }
 
 function serializeDocument(docId: string, data: Record<string, any>) {
@@ -249,262 +271,6 @@ function robotsTxt() {
   return buildRobotsTxt();
 }
 
-const openApiRequiredPaths = [
-  "/api/health",
-  "/api/errors/log",
-  "/api/feedback",
-  "/api/public/updates/active",
-  "/api/public/blogs",
-  "/api/public/blogs/{slug}",
-  "/api/public/categories",
-  "/api/v1/auth/me",
-  "/api/v1/auth/sync",
-  "/api/v1/auth/logout-event",
-  "/api/2fa/status",
-  "/api/2fa/enable",
-  "/api/2fa/verify",
-  "/api/2fa/disable",
-  "/api/user/dashboard",
-  "/api/profile",
-  "/api/user-services",
-  "/api/profiles",
-  "/api/profiles/{id}",
-  "/api/documents",
-  "/api/documents/upload",
-  "/api/documents/register",
-  "/api/documents/stats/summary",
-  "/api/documents/{id}",
-  "/api/reports/history",
-  "/api/reports/generate",
-  "/api/reports/templates",
-  "/api/referrals",
-  "/api/referrals/stats",
-  "/api/referrals/overview",
-  "/api/notifications",
-  "/api/notifications/{id}/read",
-  "/api/notifications/read-all",
-  "/api/notifications/{id}",
-  "/api/admin/users",
-  "/api/admin/stats",
-  "/api/admin/feedback",
-  "/api/admin/feedback/stats",
-  "/api/admin/feedback/{id}",
-  "/api/system/config",
-  "/api/teams",
-  "/api/teams/{teamId}",
-  "/api/workflows",
-  "/api/workflows/templates",
-  "/api/workflows/{id}",
-  "/api/analytics/overview",
-  "/api/cms/posts",
-  "/api/cms/posts/{id}",
-  "/api/cms/upload",
-  "/api/cms/categories",
-  "/api/cms/media",
-  "/api/cms/updates",
-  "/api/cms/updates/{id}",
-  "/api/audit/logs",
-];
-
-const openApiSchemaNames = [
-  "HealthResponse",
-  "CreatedResponse",
-  "MessageResponse",
-  "Pagination",
-  "User",
-  "UserResponse",
-  "UserDashboardResponse",
-  "ProfileResponse",
-  "ProfileUpdateRequest",
-  "UserService",
-  "UserServiceCreateRequest",
-  "SavedProfile",
-  "SavedProfileCreateRequest",
-  "SavedProfileUpdateRequest",
-  "TwoFactorStatusResponse",
-  "TwoFactorEnableResponse",
-  "TwoFactorVerifyRequest",
-  "BlogPost",
-  "BlogListResponse",
-  "BlogPostResponse",
-  "Category",
-  "CategoryCreateRequest",
-  "CategoryResponse",
-  "CategoryListResponse",
-  "CmsPostWriteRequest",
-  "CmsPostUpdateRequest",
-  "CmsPostResponse",
-  "CmsPostListResponse",
-  "CmsImageUploadRequest",
-  "CmsImageUploadResponse",
-  "MediaFile",
-  "MediaListResponse",
-  "Document",
-  "DocumentCreateRequest",
-  "DocumentFileUploadRequest",
-  "DocumentRegisterRequest",
-  "DocumentUpdateRequest",
-  "DocumentResponse",
-  "DocumentListResponse",
-  "DocumentStatsResponse",
-  "Report",
-  "ReportTemplate",
-  "ReportTemplateListResponse",
-  "ReportGenerateRequest",
-  "ReportResponse",
-  "ReportHistoryResponse",
-  "Team",
-  "TeamCreateRequest",
-  "TeamResponse",
-  "TeamListResponse",
-  "Workflow",
-  "WorkflowTemplate",
-  "WorkflowCreateRequest",
-  "WorkflowUpdateRequest",
-  "WorkflowResponse",
-  "WorkflowListResponse",
-  "WorkflowTemplateListResponse",
-  "AnalyticsOverviewResponse",
-  "AdminStatsResponse",
-  "AdminUserListResponse",
-  "AuditLog",
-  "AuditLogCreateRequest",
-  "AuditLogListResponse",
-  "Feedback",
-  "FeedbackCreateRequest",
-  "FeedbackCreateResponse",
-  "FeedbackResponse",
-  "FeedbackListResponse",
-  "FeedbackStatsResponse",
-  "FeedbackUpdateRequest",
-  "PublicUpdate",
-  "PublicUpdateCreateRequest",
-  "PublicUpdateUpdateRequest",
-  "PublicUpdateResponse",
-  "PublicUpdateListResponse",
-  "Notification",
-  "NotificationListResponse",
-  "SystemConfig",
-  "SystemConfigResponse",
-  "SystemConfigUpdateRequest",
-];
-
-const openApiSchemaBackedResponses = [
-  ["/api/documents", "get", "200", "DocumentListResponse"],
-  ["/api/documents", "post", "200", "DocumentResponse"],
-  ["/api/documents/upload", "post", "200", "DocumentResponse"],
-  ["/api/documents/register", "post", "200", "DocumentResponse"],
-  ["/api/documents/stats/summary", "get", "200", "DocumentStatsResponse"],
-  ["/api/feedback", "post", "201", "FeedbackCreateResponse"],
-  ["/api/public/updates/active", "get", "200", "PublicUpdateListResponse"],
-  ["/api/2fa/status", "get", "200", "TwoFactorStatusResponse"],
-  ["/api/2fa/enable", "post", "200", "TwoFactorEnableResponse"],
-  ["/api/2fa/verify", "post", "200", "MessageResponse"],
-  ["/api/profile", "get", "200", "ProfileResponse"],
-  ["/api/profile", "put", "200", "ProfileResponse"],
-  ["/api/profiles", "get", "200", "SavedProfile"],
-  ["/api/profiles", "post", "200", "SavedProfile"],
-  ["/api/profiles/{id}", "patch", "200", "SavedProfile"],
-  ["/api/user/dashboard", "get", "200", "UserDashboardResponse"],
-  ["/api/user-services", "get", "200", "UserService"],
-  ["/api/user-services", "post", "200", "CreatedResponse"],
-  ["/api/notifications", "get", "200", "NotificationListResponse"],
-  ["/api/reports/history", "get", "200", "ReportHistoryResponse"],
-  ["/api/reports/generate", "post", "200", "ReportResponse"],
-  ["/api/reports/templates", "get", "200", "ReportTemplateListResponse"],
-  ["/api/admin/users", "get", "200", "AdminUserListResponse"],
-  ["/api/admin/feedback", "get", "200", "FeedbackListResponse"],
-  ["/api/admin/feedback/stats", "get", "200", "FeedbackStatsResponse"],
-  ["/api/cms/posts", "get", "200", "CmsPostListResponse"],
-  ["/api/cms/posts", "post", "200", "CmsPostResponse"],
-  ["/api/cms/posts/{id}", "get", "200", "CmsPostResponse"],
-  ["/api/cms/posts/{id}", "put", "200", "CmsPostResponse"],
-  ["/api/cms/upload", "post", "200", "CmsImageUploadResponse"],
-  ["/api/cms/categories", "get", "200", "CategoryListResponse"],
-  ["/api/cms/categories", "post", "200", "CategoryResponse"],
-  ["/api/cms/media", "get", "200", "MediaListResponse"],
-  ["/api/cms/updates", "get", "200", "PublicUpdateListResponse"],
-  ["/api/cms/updates", "post", "200", "PublicUpdateResponse"],
-  ["/api/cms/updates/{id}", "put", "200", "PublicUpdateResponse"],
-  ["/api/teams", "get", "200", "TeamListResponse"],
-  ["/api/teams", "post", "201", "TeamResponse"],
-  ["/api/workflows", "get", "200", "WorkflowListResponse"],
-  ["/api/workflows", "post", "201", "WorkflowResponse"],
-  ["/api/analytics/overview", "get", "200", "AnalyticsOverviewResponse"],
-] as const;
-
-function openApiJsonResponse(description: string, schemaName: string) {
-  return {
-    description,
-    content: {
-      "application/json": {
-        schema: { $ref: `#/components/schemas/${schemaName}` },
-      },
-    },
-  };
-}
-
-function openApiOperation(summary: string, status: string, schemaName: string, secured = true) {
-  return {
-    summary,
-    ...(secured ? { security: [{ bearerAuth: [] }] } : {}),
-    responses: {
-      [status]: openApiJsonResponse("Successful response", schemaName),
-    },
-  };
-}
-
-function openApiSpec() {
-  const paths: Record<string, any> = {
-    "/api/health": {
-      get: openApiOperation("Health check", "200", "HealthResponse", false),
-    },
-    "/api/errors/log": {
-      post: openApiOperation("Accept sanitized client-side error logs", "200", "MessageResponse", false),
-    },
-  };
-
-  for (const [pathKey, method, status, schemaName] of openApiSchemaBackedResponses) {
-    paths[pathKey] ||= {};
-    paths[pathKey][method] = openApiOperation(`${method.toUpperCase()} ${pathKey}`, status, schemaName, !pathKey.startsWith("/api/public/") && pathKey !== "/api/feedback");
-  }
-
-  for (const pathKey of openApiRequiredPaths) {
-    paths[pathKey] ||= {
-      get: openApiOperation(`GET ${pathKey}`, "200", "MessageResponse", !pathKey.startsWith("/api/public/")),
-    };
-  }
-
-  return {
-    openapi: "3.0.0",
-    info: {
-      title: "MyeCA API",
-      version: "1.0.0",
-      description: "Public API for MyeCA.in technical integrations",
-    },
-    paths,
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-      schemas: Object.fromEntries(
-        openApiSchemaNames.map((name) => [
-          name,
-          {
-            type: "object",
-            additionalProperties: true,
-          },
-        ]),
-      ),
-    },
-    servers: [{ url: "https://myeca.in" }],
-  };
-}
-
 function llmsText(full = false) {
   const fileName = full ? "llms-full.txt" : "llms.txt";
   const filePath = path.resolve(process.cwd(), "client", "public", fileName);
@@ -512,6 +278,7 @@ function llmsText(full = false) {
 }
 
 export default async function handler(req: any, res: any) {
+  ensureRequestId(req, res);
   const { name, url } = routeFor(req);
 
   if (name === "health") {
@@ -526,7 +293,7 @@ export default async function handler(req: any, res: any) {
 
   if (name === "sitemap") return sendText(res, 200, sitemapXml(), "application/xml", "public, s-maxage=86400");
   if (name === "robots") return sendText(res, 200, robotsTxt(), "text/plain", "public, s-maxage=86400");
-  if (name === "openapi") return sendJson(res, 200, openApiSpec());
+  if (name === "openapi") return sendJson(res, 200, buildOpenApiSpec());
   if (name === "llms") return sendText(res, 200, llmsText(false), "text/plain", "public, s-maxage=3600");
   if (name === "llms-full") return sendText(res, 200, llmsText(true), "text/plain", "public, s-maxage=3600");
   if (name === "income-tax-form-download") return redirectToIncomeTaxForm(req, res, url);
@@ -797,18 +564,39 @@ export default async function handler(req: any, res: any) {
     if (!user) return;
 
     const [returnsSnapshot, docsSnapshot, servicesSnapshot] = await Promise.all([
-      adminDb.collection("tax_returns").where("profileId", "==", user.id).get(),
+      adminDb.collection("tax_returns").where("userId", "==", user.id).get(),
       adminDb.collection("documents").where("userId", "==", user.id).where("status", "==", "active").get(),
       adminDb.collection("user_services").where("userId", "==", user.id).get(),
     ]);
     const services = servicesSnapshot.docs.map((doc: any) => normalizeUserService(doc.id, doc.data()));
+    const returns = returnsSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    const pendingTasks =
+      services.filter((service: any) => isPendingStatus(service.status) || isPendingStatus(service.paymentStatus)).length +
+      returns.filter((entry: any) => isPendingStatus(entry.status)).length;
+    const recentActivity = [
+      ...services.map((service: any) => ({
+        id: `service-${service.id}`,
+        action: `Service ${service.serviceTitle || service.serviceId || "request"} is ${service.status || "pending"}`,
+        timestamp: service.updatedAt || service.createdAt || null,
+        type: "service",
+      })),
+      ...returns.map((entry: any) => ({
+        id: `return-${entry.id}`,
+        action: `Tax return ${entry.status || "updated"}`,
+        timestamp: entry.updatedAt || entry.createdAt || null,
+        type: "tax_return",
+      })),
+    ]
+      .filter((entry) => entry.timestamp)
+      .sort((a, b) => asTime(b.timestamp) - asTime(a.timestamp))
+      .slice(0, 5);
 
     return sendJson(res, 200, {
       success: true,
-      stats: { totalReturns: returnsSnapshot.size, documentsUploaded: docsSnapshot.size, pendingTasks: 0, savedAmount: 0 },
+      stats: { totalReturns: returnsSnapshot.size, documentsUploaded: docsSnapshot.size, pendingTasks, savedAmount: 0 },
       activeServices: services,
-      recentActivity: [],
-      taxReturns: [],
+      recentActivity,
+      taxReturns: returns.slice(0, 5),
     });
   }
 

@@ -3,8 +3,8 @@ import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { decryptPII, encryptPII, maskAadhaar, maskPan } from "../utils/encryption.js";
-import { safeError } from "../utils/error-response.js";
-import { assertCanAccessUserData, canAccessUserData } from "../utils/access-control.js";
+import { errorResponse, safeError } from "../utils/error-response.js";
+import { assertCanAccessUserData, getAccessibleSnapshot, getUserOwnedRecords } from "../utils/access-control.js";
 
 const router = Router();
 const profileCreateSchema = z.object({
@@ -61,16 +61,14 @@ async function resolveTargetUserId(req: AuthRequest) {
 router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   const auth = req.auth;
   if (!auth?.userId) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return errorResponse(res, 401, "Unauthorized");
   }
 
   try {
     const userId = await resolveTargetUserId(req);
-    const snapshot = await adminDb.collection("profiles")
-      .where("userId", "==", userId)
-      .get();
-
-    const profiles = snapshot.docs.map((doc) => serializeProfile(doc.id, doc.data() as Record<string, any>));
+    if (!userId) return errorResponse(res, 401, "Unauthorized");
+    const records = await getUserOwnedRecords("profiles", userId);
+    const profiles = records.map((profile) => serializeProfile(String(profile.id), profile));
     res.json(profiles);
   } catch (error) {
     return safeError(res, error, "Failed to fetch profiles");
@@ -81,11 +79,11 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
     if (!auth?.userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return errorResponse(res, 401, "Unauthorized");
     }
 
     const userId = await resolveTargetUserId(req);
-    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    if (!userId) return errorResponse(res, 401, "Unauthorized");
     const data = profileCreateSchema.parse(req.body);
     const profileRef = adminDb.collection("profiles").doc();
     const newProfile = {
@@ -103,7 +101,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     res.json(serializeProfile(profileRef.id, newProfile));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
+      return errorResponse(res, 400, error.errors[0].message);
     }
     return safeError(res, error, "Failed to create profile");
   }
@@ -113,15 +111,15 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
   try {
     const auth = req.auth;
     if (!auth?.userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return errorResponse(res, 401, "Unauthorized");
     }
 
     const { id } = req.params;
     const profileRef = adminDb.collection("profiles").doc(id);
-    const doc = await profileRef.get();
+    const doc = await getAccessibleSnapshot("profiles", id, req.user);
 
-    if (!doc.exists || !(await canAccessUserData(req.user, doc.data()?.userId))) {
-      return res.status(404).json({ error: "Profile not found" });
+    if (!doc) {
+      return errorResponse(res, 404, "Profile not found");
     }
 
     const updateData = profileUpdateSchema.parse(req.body);
@@ -154,7 +152,7 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
     res.json(serializeProfile(updatedDoc.id, updatedDoc.data() as Record<string, any>));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
+      return errorResponse(res, 400, error.errors[0].message);
     }
     return safeError(res, error, "Failed to update profile");
   }

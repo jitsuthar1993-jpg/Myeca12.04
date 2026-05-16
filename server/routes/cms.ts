@@ -15,6 +15,7 @@ import {
   type StoredBlogPost,
 } from "../services/blog.js";
 import { clearPublicBlogCaches } from "./public.js";
+import { errorResponse, safeError } from "../utils/error-response.js";
 
 const router = Router();
 
@@ -95,8 +96,7 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
 
     res.json({ success: true, posts });
   } catch (error) {
-    console.error("CMS list posts error:", error);
-    res.status(500).json({ error: "Failed to fetch posts" });
+    return safeError(res, error, "Failed to fetch posts");
   }
 });
 
@@ -105,13 +105,12 @@ router.get("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequest
   try {
     const { id } = req.params;
     const doc = await adminDb.collection("blog_posts").doc(id).get();
-    if (!doc.exists) return res.status(404).json({ error: "Post not found" });
+    if (!doc.exists) return errorResponse(res, 404, "Post not found");
     const lookup = await getCategoryLookup();
     const post = normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
     res.json({ success: true, post });
   } catch (error) {
-    console.error("CMS get post error:", error);
-    res.status(500).json({ error: "Failed to fetch post" });
+    return safeError(res, error, "Failed to fetch post");
   }
 });
 
@@ -132,10 +131,9 @@ router.post("/posts", requireAuth, requireTeamMember, sanitize, async (req: Auth
     res.json({ success: true, post });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
+      return errorResponse(res, 400, error.errors[0].message);
     }
-    console.error("CMS create post error:", error);
-    res.status(500).json({ error: "Failed to create post" });
+    return safeError(res, error, "Failed to create post");
   }
 });
 
@@ -147,7 +145,7 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
 
     const postRef = adminDb.collection("blog_posts").doc(id);
     const doc = await postRef.get();
-    if (!doc.exists) return res.status(404).json({ error: "Post not found" });
+    if (!doc.exists) return errorResponse(res, 404, "Post not found");
 
     const lookup = await getCategoryLookup();
     const existing = normalizeStoredBlogPostRecord(id, doc.data() as Record<string, unknown>, lookup);
@@ -168,10 +166,9 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
     res.json({ success: true, post });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
+      return errorResponse(res, 400, error.errors[0].message);
     }
-    console.error("CMS update post error:", error);
-    res.status(500).json({ error: "Failed to update post" });
+    return safeError(res, error, "Failed to update post");
   }
 });
 
@@ -181,21 +178,20 @@ router.delete("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequ
     const { id } = req.params;
     const postRef = adminDb.collection("blog_posts").doc(id);
     const doc = await postRef.get();
-    if (!doc.exists) return res.status(404).json({ error: "Post not found" });
+    if (!doc.exists) return errorResponse(res, 404, "Post not found");
 
     await postRef.delete();
     clearPublicBlogCaches();
     res.json({ success: true });
   } catch (error) {
-    console.error("CMS delete post error:", error);
-    res.status(500).json({ error: "Failed to delete post" });
+    return safeError(res, error, "Failed to delete post");
   }
 });
 
 // --- Upload (Vercel Blob) ---
 router.post("/upload", requireAuth, requireTeamMember, upload.single("image"), async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    if (!req.file) return errorResponse(res, 400, "No file uploaded");
 
     const uniqueSuffix = `${Date.now()}-${randomUUID()}`;
 
@@ -228,8 +224,7 @@ router.post("/upload", requireAuth, requireTeamMember, upload.single("image"), a
       thumbnailUrl: thumbBlob.url,
     });
   } catch (error: any) {
-    console.error("CMS upload error:", error);
-    res.status(500).json({ error: error.message || "Failed to upload image" });
+    return safeError(res, error, error.message || "Failed to upload image");
   }
 });
 
@@ -257,8 +252,7 @@ router.get("/media", requireAuth, requireTeamMember, async (_req: AuthRequest, r
 
     res.json({ success: true, files });
   } catch (error) {
-    console.error("CMS media list error:", error);
-    res.status(500).json({ error: "Failed to list media files" });
+    return safeError(res, error, "Failed to list media files");
   }
 });
 
@@ -274,8 +268,7 @@ router.get("/categories", requireAuth, requireTeamMember, async (req: AuthReques
     const allCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json({ success: true, categories: allCategories });
   } catch (error) {
-    console.error("CMS list categories error:", error);
-    res.status(500).json({ error: "Failed to fetch categories" });
+    return safeError(res, error, "Failed to fetch categories");
   }
 });
 
@@ -287,9 +280,8 @@ router.post("/categories", requireAuth, requireTeamMember, sanitize, async (req:
     clearPublicBlogCaches();
     res.json({ success: true, category: { id: catRef.id, ...payload } });
   } catch (error) {
-    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
-    console.error("CMS create category error:", error);
-    res.status(500).json({ error: "Failed to create category" });
+    if (error instanceof z.ZodError) return errorResponse(res, 400, error.errors[0].message);
+    return safeError(res, error, "Failed to create category");
   }
 });
 
@@ -311,8 +303,7 @@ router.get("/updates", requireAuth, requireTeamMember, async (req: AuthRequest, 
     const allUpdates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json({ success: true, updates: allUpdates });
   } catch (error) {
-    console.error("CMS list updates error:", error);
-    res.status(500).json({ error: "Failed to fetch updates" });
+    return safeError(res, error, "Failed to fetch updates");
   }
 });
 
@@ -327,9 +318,8 @@ router.post("/updates", requireAuth, requireTeamMember, sanitize, async (req: Au
     await updateRef.set(newUpdate);
     res.json({ success: true, update: { id: updateRef.id, ...newUpdate } });
   } catch (error) {
-    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
-    console.error("CMS create update error:", error);
-    res.status(500).json({ error: "Failed to create update" });
+    if (error instanceof z.ZodError) return errorResponse(res, 400, error.errors[0].message);
+    return safeError(res, error, "Failed to create update");
   }
 });
 
@@ -339,14 +329,13 @@ router.put("/updates/:id", requireAuth, requireTeamMember, sanitize, async (req:
     const payload = updateDailyUpdateSchema.parse(req.body);
     const updateRef = adminDb.collection("daily_updates").doc(id);
     const doc = await updateRef.get();
-    if (!doc.exists) return res.status(404).json({ error: "Update not found" });
+    if (!doc.exists) return errorResponse(res, 404, "Update not found");
 
     await updateRef.update(payload);
     res.json({ success: true, update: { id, ...doc.data(), ...payload } });
   } catch (error) {
-    if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
-    console.error("CMS update update error:", error);
-    res.status(500).json({ error: "Failed to update" });
+    if (error instanceof z.ZodError) return errorResponse(res, 400, error.errors[0].message);
+    return safeError(res, error, "Failed to update");
   }
 });
 
@@ -356,8 +345,7 @@ router.delete("/updates/:id", requireAuth, requireTeamMember, async (req: AuthRe
     await adminDb.collection("daily_updates").doc(id).delete();
     res.json({ success: true });
   } catch (error) {
-    console.error("CMS delete update error:", error);
-    res.status(500).json({ error: "Failed to delete update" });
+    return safeError(res, error, "Failed to delete update");
   }
 });
 

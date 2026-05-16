@@ -67,6 +67,35 @@ export async function recordBelongsToUser(collectionName: string, id: string | n
   return record.userId === userId;
 }
 
+export async function getUserOwnedSnapshot(collectionName: string, id: string | null | undefined, userId: string) {
+  if (!id) return null;
+  const doc = await adminDb.collection(collectionName).doc(id).get();
+  if (!doc.exists) return null;
+  return doc.data()?.userId === userId ? doc : null;
+}
+
+export async function getAccessibleSnapshot(
+  collectionName: string,
+  id: string | null | undefined,
+  actor: AppUserRecord | null | undefined,
+) {
+  if (!id) return null;
+  const doc = await adminDb.collection(collectionName).doc(id).get();
+  if (!doc.exists) return null;
+  return (await canAccessUserData(actor, doc.data()?.userId)) ? doc : null;
+}
+
+export async function getUserOwnedRecords(collectionName: string, userId: string, extraFilters: Record<string, unknown> = {}) {
+  let query: any = adminDb.collection(collectionName).where("userId", "==", userId);
+
+  for (const [field, value] of Object.entries(extraFilters)) {
+    query = query.where(field, "==", value);
+  }
+
+  const snapshot = await query.get();
+  return snapshot.docs.map((doc: any) => ({ id: doc.id, ...(doc.data() as Record<string, unknown>) }));
+}
+
 export function ownerIdFromRecord(record: Record<string, unknown> | null | undefined) {
   const userId = record?.userId;
   return typeof userId === "string" ? userId : null;

@@ -85,7 +85,8 @@ dist/                # Production build output
 
 Run `npm run check:env` to validate required environment variables without
 printing secret values. Use `npm run check:env -- --strict` before production
-deployments.
+deployments. Production startup fails fast when required backend env values are
+missing.
 
 ## Key Features
 

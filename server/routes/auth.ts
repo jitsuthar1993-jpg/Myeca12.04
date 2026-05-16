@@ -9,7 +9,7 @@ import {
   getProvisionedRoleForEmail,
   syncRoleClaims,
 } from "../services/user-accounts.js";
-import { safeError } from "../utils/error-response.js";
+import { errorResponse, safeError } from "../utils/error-response.js";
 import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
 const router = Router();
@@ -28,7 +28,7 @@ router.get("/me", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
     const auth = req.auth;
     if (!auth?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
+      return errorResponse(res, 401, "Not authenticated");
     }
 
     let userData = getCachedUser(auth.userId);
@@ -43,7 +43,7 @@ router.get("/me", requireAuth, async (req: AuthRequest, res: Response) => {
     }
 
     if (!userData) {
-      return res.status(404).json({ error: "User profile not found" });
+      return errorResponse(res, 404, "User profile not found");
     }
 
     const user: any = { ...userData };
@@ -66,7 +66,7 @@ router.post("/sync", requireAuth, validateRequest(syncUserSchema), async (req: A
   try {
     const auth = req.auth;
     if (!auth?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
+      return errorResponse(res, 401, "Not authenticated");
     }
 
     const userId = auth.userId;
@@ -127,7 +127,7 @@ router.post("/logout-event", requireAuth, validateRequest(logoutEventSchema), as
   try {
     const auth = req.auth;
     if (!auth?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
+      return errorResponse(res, 401, "Not authenticated");
     }
 
     const { reason } = req.body;

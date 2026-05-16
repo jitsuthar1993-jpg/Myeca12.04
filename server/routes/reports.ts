@@ -91,7 +91,7 @@ router.post("/generate", authenticateToken, async (req: AuthRequest, res: Respon
     };
 
     const ref = await adminDb.collection("reports").add(reportData);
-    res.json({ success: true, report: { id: ref.id, ...reportData } });
+    res.json({ success: true, backendStatus: "mixed", report: { id: ref.id, ...reportData } });
   } catch (error) {
     if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to generate report" });
@@ -99,7 +99,7 @@ router.post("/generate", authenticateToken, async (req: AuthRequest, res: Respon
 });
 
 router.get("/templates", authenticateToken, (_req: AuthRequest, res: Response) => {
-  res.json({ success: true, templates });
+  res.json({ success: true, backendStatus: "demo", templates });
 });
 
 router.get("/history", authenticateToken, async (req: AuthRequest, res: Response) => {
@@ -132,6 +132,7 @@ router.get("/history", authenticateToken, async (req: AuthRequest, res: Response
 
     res.json({
       success: true,
+      backendStatus: "mixed",
       reports,
       pagination: { page, limit, total, pages: Math.ceil(total / limit) },
     });

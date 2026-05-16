@@ -12,6 +12,7 @@
 Set these in Vercel and in `.env` for local development:
 
 - `DATABASE_URL` - Supabase Postgres connection string for Drizzle.
+- `VITE_SUPABASE_URL` - Supabase project URL. `SUPABASE_URL` is also accepted for server-side compatibility.
 - `VITE_SUPABASE_ANON_KEY` - Supabase browser publishable key. `SUPABASE_ANON_KEY` is also accepted for Vercel Marketplace compatibility.
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase server secret key.
 - `BLOB_READ_WRITE_TOKEN` - Vercel Blob read/write token.
@@ -33,6 +34,10 @@ npm run check:env -- --strict
 Use `--strict` when preparing production. Strict mode fails on both required and
 recommended missing values, including admin bootstrapping and incident-response
 contacts.
+
+In `NODE_ENV=production`, the server fails startup when any required env var is
+missing. The backend also refuses to use hardcoded Supabase fallback values in
+production, so Vercel env values must be present before deployment.
 
 ## Local Development
 ```bash
@@ -88,6 +93,7 @@ If the external Cloudflare Pages GitHub App check fails instantly while `Cloudfl
 
 ## Verification Checklist
 - `npm run check:env -- --strict`.
+- Confirm production API responses include `X-Request-Id`, and backend error JSON includes `requestId`.
 - Supabase sign-in, sign-up, sign-out, `/api/v1/auth/me`, and `/api/v1/auth/sync`.
 - Role-protected admin, CA, team, and user routes.
 - Document upload, private download, delete, and listing via Vercel Blob plus Supabase metadata.

@@ -5,7 +5,7 @@ import { optionalAuth, requireAnyAuth, AuthRequest } from "../middleware/auth.js
 import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
 import { setCachedUser } from "../utils/user-cache.js";
-import { recordBelongsToUser } from "../utils/access-control.js";
+import { getUserOwnedSnapshot, recordBelongsToUser } from "../utils/access-control.js";
 
 const router = Router();
 const updateProfileSchema = z.object({
@@ -54,7 +54,7 @@ const paymentLinkRequestSchema = z.object({
   note: z.string().trim().max(1000).optional(),
 });
 
-function normalizeUserService(doc: any) {
+function normalizeUserService(doc: any): Record<string, any> & { id: string } {
   const data = doc.data() as Record<string, any>;
   const metadata = (data.metadata || {}) as Record<string, any>;
   const assignedCa = metadata.assignedCa || {};
@@ -68,12 +68,19 @@ function normalizeUserService(doc: any) {
   };
 }
 
+function asTime(value: unknown) {
+  const date = value instanceof Date ? value : typeof value === "string" ? new Date(value) : null;
+  const time = date?.getTime() ?? 0;
+  return Number.isNaN(time) ? 0 : time;
+}
+
+function isPendingStatus(status: unknown) {
+  const normalized = String(status || "").toLowerCase();
+  return ["draft", "pending", "in_progress", "link_requested", "requested", "new"].includes(normalized);
+}
+
 async function getOwnedUserService(serviceId: string, userId: string) {
-  const doc = await adminDb.collection("user_services").doc(serviceId).get();
-  if (!doc.exists) return null;
-  const data = doc.data() as Record<string, any>;
-  if (data.userId !== userId) return null;
-  return doc;
+  return getUserOwnedSnapshot("user_services", serviceId, userId);
 }
 
 router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Response) => {
@@ -100,13 +107,27 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
     ]);
 
     const activeServices = servicesSnapshot.docs.map(normalizeUserService);
-
+    const userReturns = returnsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const pendingTasks =
+      activeServices.filter((service) => isPendingStatus(service.status) || isPendingStatus(service.paymentStatus)).length +
+      userReturns.filter((entry: any) => isPendingStatus(entry.status)).length;
     const recentActivity = [
-      { id: 1, action: "Logged in", timestamp: new Date(), type: "auth" },
-      { id: 2, action: "Viewed dashboard", timestamp: new Date(), type: "view" }
-    ];
-
-    const userReturns = returnsSnapshot.docs.slice(0, 5).map(doc => ({ id: doc.id, ...doc.data() }));
+      ...activeServices.map((service) => ({
+        id: `service-${service.id}`,
+        action: `Service ${service.serviceTitle || service.serviceId || "request"} is ${service.status || "pending"}`,
+        timestamp: service.updatedAt || service.createdAt || null,
+        type: "service",
+      })),
+      ...userReturns.map((entry: any) => ({
+        id: `return-${entry.id}`,
+        action: `Tax return ${entry.status || "updated"}`,
+        timestamp: entry.updatedAt || entry.createdAt || null,
+        type: "tax_return",
+      })),
+    ]
+      .filter((entry) => entry.timestamp)
+      .sort((a, b) => asTime(b.timestamp) - asTime(a.timestamp))
+      .slice(0, 5);
 
     res.json({
       success: true,
@@ -114,12 +135,12 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
         totalReturns: returnsSnapshot.size,
         documentsUploaded: docsSnapshot.size,
         profiles: profilesSnapshot.size,
-        pendingTasks: 1,
+        pendingTasks,
         savedAmount: 0,
       },
       activeServices,
       recentActivity,
-      taxReturns: userReturns
+      taxReturns: userReturns.slice(0, 5)
     });
   } catch (error) {
     return safeError(res, error, "Failed to retrieve dashboard data.");

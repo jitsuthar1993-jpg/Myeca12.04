@@ -10,6 +10,7 @@ import { registerRoutes } from "./routes.js";
 import { customSecurityHeaders, securityHeaders } from "./middleware/security.js";
 import { globalErrorHandler } from "./middleware/error-handler.js";
 import { generalRateLimit } from "./middleware/rateLimiting.js";
+import { getRequestId, requestIdMiddleware } from "./middleware/request-id.js";
 
 const app = express();
 const productionOrigins: (string | RegExp)[] = [
@@ -30,6 +31,7 @@ function isAllowedOrigin(origin: string, allowLocalOrigins: boolean) {
   );
 }
 
+app.use(requestIdMiddleware);
 app.use(compress());
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
@@ -87,7 +89,11 @@ app.use("/api", (req, res, next) => {
   const origin = req.get("origin");
   if (process.env.NODE_ENV === "production" && origin) {
     if (!isAllowedOrigin(origin, isLocalHost(req.hostname || req.headers.host))) {
-      return res.status(403).json({ error: "CSRF validation failed" });
+      return res.status(403).json({
+        success: false,
+        error: "CSRF validation failed",
+        requestId: getRequestId(req, res),
+      });
     }
   }
 
@@ -102,6 +108,7 @@ app.use((req, res, next) => {
     if (req.path.startsWith("/api") && (res.statusCode >= 400 || duration > 1000)) {
       console.info({
         event: "api_request_observed",
+        requestId: getRequestId(req, res),
         method: req.method,
         path: req.path,
         statusCode: res.statusCode,

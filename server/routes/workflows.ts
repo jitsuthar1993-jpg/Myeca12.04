@@ -131,7 +131,11 @@ async function getOwnedWorkflow(userId: string, workflowId: string): Promise<any
 }
 
 router.get("/templates", authenticateToken, (_req: AuthRequest, res: Response) => {
-  res.json({ success: true, templates });
+  res.json({
+    success: true,
+    backendStatus: "demo",
+    templates,
+  });
 });
 
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
@@ -153,7 +157,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     };
 
     const ref = await adminDb.collection("workflows").add(workflow);
-    res.json({ success: true, workflow: { id: ref.id, ...workflow } });
+    res.json({ success: true, backendStatus: "mixed", workflow: { id: ref.id, ...workflow } });
   } catch (error) {
     if (error instanceof z.ZodError) return res.status(400).json({ error: error.errors[0].message });
     res.status(500).json({ error: "Failed to create workflow" });
@@ -176,7 +180,7 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     .map((doc) => ({ id: doc.id, ...doc.data() }))
     .filter((workflow: any) => workflow.status !== "deleted");
 
-  res.json({ success: true, workflows, total, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
+  res.json({ success: true, backendStatus: "mixed", workflows, total, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
 });
 
 router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {

@@ -4,6 +4,7 @@ import { safeError } from "../utils/error-response.js";
 import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 import { getTemporaryTestUserByToken } from "../../shared/temporary-test-users.js";
 import { getSupabaseAuthClient } from "../lib/supabase.js";
+import { getRequestId } from "./request-id.js";
 
 export { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
@@ -66,6 +67,14 @@ async function attachAuthUser(req: Request, auth: { userId: string; email?: stri
   return userData;
 }
 
+function authError(res: Response, status: number, error: string) {
+  return res.status(status).json({
+    success: false,
+    error,
+    requestId: getRequestId(undefined, res),
+  });
+}
+
 export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   try {
     const auth = await readAuth(req);
@@ -82,7 +91,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   try {
     const auth = await readAuth(req);
     if (!auth) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return authError(res, 401, "Unauthorized");
     }
 
     await attachAuthUser(req, auth);
@@ -99,20 +108,18 @@ export function requireRole(allowedRoles: string[]) {
     try {
       const auth = await readAuth(req);
       if (!auth) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return authError(res, 401, "Unauthorized");
       }
 
       const userData = await attachAuthUser(req, auth);
       if (!userData) {
-        return res.status(403).json({ error: "Access denied. Profile not found." });
+        return authError(res, 403, "Access denied. Profile not found.");
       }
 
       const userRole = userData.role || "user";
 
       if (!allowedRoles.includes(userRole)) {
-        return res.status(403).json({
-          error: "Access denied. Insufficient permissions.",
-        });
+        return authError(res, 403, "Access denied. Insufficient permissions.");
       }
 
       next();

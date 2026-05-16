@@ -597,13 +597,8 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         recentCalculations: []
       }
     });
-  } catch (error: any) {
-    console.error('Get dashboard stats error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve dashboard statistics.',
-      error: error.message
-    });
+  } catch (error) {
+    return safeError(res, error, "Failed to retrieve dashboard statistics.");
   }
 });
 
