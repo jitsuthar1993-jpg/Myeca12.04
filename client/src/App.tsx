@@ -77,7 +77,6 @@ function Router() {
     '/workflows',
     '/teams',
     '/referrals',
-    '/experts',
     '/export'
   ];
 

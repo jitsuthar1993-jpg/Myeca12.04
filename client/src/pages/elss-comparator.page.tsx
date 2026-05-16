@@ -50,7 +50,7 @@ const PERIOD_KEYS = ["1Y", "3Y", "5Y", "10Y"] as const;
 const CHART_COLORS = ["#315efb", "#10b981", "#f59e0b", "#ef4444"];
 
 export default function ELSSCalculatorPage() {
-  const seo = getSEOConfig("/calculators/sip");
+  const seo = getSEOConfig("/elss-comparator");
   const [monthly, setMonthly] = useState(12500);
   const [years, setYears] = useState(10);
   const [period, setPeriod] = useState<typeof PERIOD_KEYS[number]>("3Y");
