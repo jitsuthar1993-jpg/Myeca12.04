@@ -22,6 +22,7 @@ import {
   Calendar
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import MetaSEO from "@/components/seo/MetaSEO";
 import { getGuideBySlug, GUIDE_CATEGORIES, TaxGuide } from "@/data/tax-guides";
 
 const DIFFICULTY_COLORS = {
@@ -102,6 +103,24 @@ export default function GuidePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <MetaSEO
+        title={`${guide.title} | MyeCA.in Tax Guides`}
+        description={guide.description}
+        keywords={guide.tags}
+        type="article"
+        expertAuthor={guide.author}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: "Learn", url: "/learn" },
+          { name: "Guides", url: "/learn/guides" },
+          { name: guide.title, url: `/learn/guide/${guide.slug}` },
+        ]}
+        jsonLd={{
+          dateModified: guide.lastUpdated,
+          about: [category?.name, ...guide.tags].filter(Boolean),
+        }}
+      />
+
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

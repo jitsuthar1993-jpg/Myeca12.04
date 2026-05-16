@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SEO_CONFIG, type SEOConfigItem } from "../client/src/config/seo.config.js";
+import { TAX_GUIDES, type TaxGuide } from "../client/src/data/tax-guides.js";
 import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
 import {
   DEFAULT_LOGO,
@@ -244,6 +245,54 @@ function blogMeta(post: DefaultBlogPost): RouteMeta {
   };
 }
 
+function guideMeta(guide: TaxGuide): RouteMeta {
+  const route = `/learn/guide/${guide.slug}`;
+  const title = `${guide.title} | MyeCA.in Tax Guides`;
+  const jsonLd = [
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "Learn", url: "/learn" },
+      { name: "Guides", url: "/learn/guides" },
+      { name: guide.title, url: route },
+    ], route),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "@id": `${toAbsoluteUrl(route)}#guide`,
+      headline: guide.title,
+      name: title,
+      description: guide.description,
+      url: toAbsoluteUrl(route),
+      image: DEFAULT_OG_IMAGE,
+      dateModified: guide.lastUpdated,
+      author: {
+        "@type": "Person",
+        name: guide.author,
+        jobTitle: "Tax Consultant",
+      },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      isAccessibleForFree: true,
+      inLanguage: "en-IN",
+      about: guide.tags,
+      mainEntityOfPage: { "@type": "WebPage", "@id": toAbsoluteUrl(route) },
+    },
+  ];
+
+  return {
+    path: route,
+    title,
+    description: guide.description,
+    keywords: guide.tags,
+    type: "article",
+    canonicalUrl: toAbsoluteUrl(route),
+    image: DEFAULT_OG_IMAGE,
+    robots: "index, follow",
+    jsonLd,
+    aiSummary: `${guide.title}: ${guide.description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
+  };
+}
+
 function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
   const config = SEO_CONFIG[pathName];
@@ -355,16 +404,20 @@ function writeTextAssets(blogPosts: DefaultBlogPost[]) {
       route: `/blog/${post.slug}`,
       lastmod: new Date(post.updatedAt || post.publishedAt || now).toISOString().split("T")[0],
     }));
+  const guideEntries = TAX_GUIDES.map((guide) => ({
+    route: `/learn/guide/${guide.slug}`,
+    lastmod: guide.lastUpdated,
+  }));
   const routes = getIndexablePublicRoutes(
     Object.entries(SEO_CONFIG)
       .filter(([, config]) => !config.noindex)
       .map(([route]) => route),
-    blogEntries.map((entry) => entry.route),
+    [...blogEntries, ...guideEntries].map((entry) => entry.route),
   );
-  const blogDateMap = new Map(blogEntries.map((entry) => [normalizePublicPath(entry.route), entry.lastmod]));
+  const dynamicDateMap = new Map([...blogEntries, ...guideEntries].map((entry) => [normalizePublicPath(entry.route), entry.lastmod]));
   const sitemap = buildSitemapXml(routes.map((route) => ({
     loc: toAbsoluteUrl(route),
-    lastmod: blogDateMap.get(route) || now,
+    lastmod: dynamicDateMap.get(route) || now,
     changefreq: route === "/" ? "daily" : route.startsWith("/blog/") ? "monthly" : "weekly",
     priority: routePriority(route),
   })));
@@ -408,18 +461,22 @@ function main() {
   const template = fs.readFileSync(distIndexPath, "utf8");
   const blogPosts = defaultBlogPosts.filter((post) => post.status === "published");
   const blogRoutes = blogPosts.map((post) => `/blog/${post.slug}`);
+  const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const publicRoutes = getIndexablePublicRoutes(
     Object.entries(SEO_CONFIG)
       .filter(([, config]) => !config.noindex)
       .map(([route]) => route),
-    blogRoutes,
+    [...blogRoutes, ...guideRoutes],
   );
 
   publicRoutes.forEach((route) => {
     const post = route.startsWith("/blog/")
       ? blogPosts.find((candidate) => `/blog/${candidate.slug}` === route)
       : undefined;
-    writeRouteHtml(template, post ? blogMeta(post) : routeMeta(route));
+    const guide = route.startsWith("/learn/guide/")
+      ? TAX_GUIDES.find((candidate) => `/learn/guide/${candidate.slug}` === route)
+      : undefined;
+    writeRouteHtml(template, post ? blogMeta(post) : guide ? guideMeta(guide) : routeMeta(route));
   });
 
   PRIVATE_NOINDEX_ROUTES.forEach((route) => writeRouteHtml(template, privateMeta(route)));
