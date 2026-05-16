@@ -79,6 +79,19 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Capital Gains', url: '/calculators/capital-gains' }]
   },
+  '/capital-gains-import': {
+    title: 'Capital Gains Statement Import Tool | Broker Tax P&L Parser | MyeCA.in',
+    description: 'Upload broker capital gains statements from Zerodha, Groww, ICICI Direct, HDFC Securities, or CSV files to estimate STCG, LTCG, and ITR-ready tax summaries.',
+    keywords: ['capital gains import', 'broker tax P&L parser', 'Zerodha capital gains', 'Groww capital gains statement', 'ITR capital gains report'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Capital Gains Import Tool',
+      features: ['Broker statement upload', 'STCG/LTCG summary', 'ITR export support'],
+      accuracy: 'Estimate based on imported statement data',
+      updates: 'AY 2026-27 capital gains rates'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Capital Gains Import', url: '/capital-gains-import' }]
+  },
   '/calculators/advance-tax': {
     title: 'Advance Tax Calculator 2026 | Installment Due Dates | MyeCA.in',
     description: 'Estimate advance tax liability and view installment due dates by selected financial year. Avoid Section 234B & 234C interest with timely planning.',

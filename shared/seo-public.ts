@@ -55,6 +55,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/calculators",
   "/calculators/advance-tax",
   "/calculators/capital-gains",
+  "/capital-gains-import",
   "/calculators/car-loan",
   "/calculators/education-loan",
   "/calculators/emi",

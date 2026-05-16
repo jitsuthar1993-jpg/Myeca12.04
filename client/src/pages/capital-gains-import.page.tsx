@@ -30,6 +30,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import MetaSEO from "@/components/seo/MetaSEO";
 import {
   Table,
   TableBody,
@@ -45,8 +46,10 @@ import {
   exportForITR,
 } from "@/lib/capital-gains-parser";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "@/components/charts/lightweight-recharts";
+import { getSEOConfig } from "@/config/seo.config";
 
 const COLORS = ['#22c55e', '#ef4444', '#3b82f6', '#f59e0b'];
+const seoConfig = getSEOConfig('/capital-gains-import');
 
 export default function CapitalGainsImportPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -131,6 +134,17 @@ export default function CapitalGainsImportPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {seoConfig && (
+        <MetaSEO
+          title={seoConfig.title}
+          description={seoConfig.description}
+          keywords={seoConfig.keywords}
+          type={seoConfig.type}
+          breadcrumbs={seoConfig.breadcrumbs}
+          calculatorData={seoConfig.calculatorData}
+        />
+      )}
+
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
