@@ -57,6 +57,23 @@ const specialists: Record<string, any> = {
       { label: "Funding Rounds Assisted", value: "45+" },
       { label: "Client Satisfaction", value: "98%" }
     ]
+  },
+  "ca-amit-verma": {
+    name: "CA Amit Verma",
+    role: "Direct Tax Specialist",
+    fullRole: "Senior Consultant - Direct Tax & Notices",
+    exp: "15+ Years",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
+    bio: "CA Amit Verma specializes in income tax scrutiny, notice handling, appeals, and direct tax advisory. He focuses on helping taxpayers respond accurately to notices and claim legitimate refunds with proper documentation.",
+    rating: 5.0,
+    reviews: 1200,
+    education: ["FCA from ICAI", "B.Com in Accounting and Finance", "Advanced certification in direct tax litigation"],
+    expertise: ["ITR Filing", "Tax Scrutiny", "Notice Handling", "Tax Advisory"],
+    statistics: [
+      { label: "ITR Cases Reviewed", value: "3,500+" },
+      { label: "Notice Responses Filed", value: "900+" },
+      { label: "Client Rating", value: "5.0/5" }
+    ]
   }
 };
 
