@@ -4,6 +4,7 @@ export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 export const DEFAULT_LOGO = `${SITE_URL}/favicon.svg`;
 
 export const PRIVATE_ROUTE_PREFIXES = [
+  "/account",
   "/admin",
   "/analytics",
   "/analytics-dashboard",
@@ -19,6 +20,7 @@ export const PRIVATE_ROUTE_PREFIXES = [
   "/integrations",
   "/login",
   "/logout",
+  "/payments",
   "/profile",
   "/referrals",
   "/register",
@@ -31,16 +33,28 @@ export const PRIVATE_ROUTE_PREFIXES = [
 ] as const;
 
 export const PRIVATE_NOINDEX_ROUTES = [
+  "/account",
   "/admin",
+  "/analytics",
+  "/analytics-dashboard",
   "/auth/login",
   "/auth/register",
+  "/business/dashboard",
   "/ca",
   "/dashboard",
+  "/dashboard/services",
   "/documents",
+  "/documents/generator",
+  "/documents/generator_page",
+  "/export",
+  "/integrations",
   "/login",
+  "/payments",
   "/profile",
+  "/referrals",
   "/reports",
   "/settings",
+  "/settings/account",
   "/team",
   "/teams",
   "/user",
