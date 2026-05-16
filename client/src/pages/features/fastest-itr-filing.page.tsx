@@ -7,7 +7,7 @@ const steps = [
   {
     num: "01",
     title: "Upload Your Documents",
-    desc: "Upload Form 16, bank statements, and investment proofs. Our system reads them automatically — no manual data entry.",
+    desc: "Upload Form 16, bank statements, and investment proofs. The workflow can assist extraction where supported, with review before filing.",
     icon: Upload,
     color: "bg-blue-600",
   },
@@ -36,9 +36,9 @@ const steps = [
 
 const whyPoints = [
   "All ITR forms supported: ITR-1 through ITR-4",
-  "Auto-import from Form 16 and AIS",
-  "CA reviews every return — not just an algorithm",
-  "Average turnaround: 24 hours",
+  "Assisted extraction from supported documents",
+  "CA review available on eligible assisted plans",
+  "Timeline depends on document readiness",
   "E-verification included",
   "Post-filing support for notices & refund tracking",
 ];
@@ -46,20 +46,20 @@ const whyPoints = [
 export default function FastestITRFilingPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Breadcrumb items={[{ name: "Features", href: "/" }, { name: "Fastest ITR Filing" }]} />
+      <Breadcrumb items={[{ name: "Features", href: "/" }, { name: "Guided ITR Filing" }]} />
 
       {/* Hero */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-6">
             <Clock className="w-4 h-4" />
-            24-Hour Turnaround
+            Guided filing workflow
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
             File Your ITR in <span className="text-[#315efb]">4 Simple Steps</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
-            Upload your documents, let our system pre-fill the form, get a CA review, and file — all in one place.
+            Upload your documents, review assisted extraction where available, choose CA review when needed, and file from one guided workflow.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/itr/form-selector">
@@ -79,7 +79,7 @@ export default function FastestITRFilingPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">How It Works</h2>
-            <p className="text-slate-500 mt-3 text-lg">Four steps, handled mostly by us.</p>
+            <p className="text-slate-500 mt-3 text-lg">Four steps with document checks and review points.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {steps.map((step) => (
@@ -107,7 +107,7 @@ export default function FastestITRFilingPage() {
                 What's included in every filing
               </h2>
               <p className="text-slate-500 mb-8">
-                Whether you have a single salary or multiple income sources, capital gains, or business income — we handle it.
+                Whether you have a single salary or multiple income sources, capital gains, or business income, the workflow shows the documents and review scope before filing.
               </p>
               <ul className="space-y-3">
                 {whyPoints.map((point) => (
@@ -124,15 +124,15 @@ export default function FastestITRFilingPage() {
                   <Shield className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900">CA-Reviewed Filing</div>
-                  <div className="text-sm text-slate-500">Every return, no exceptions</div>
+                  <div className="font-bold text-slate-900">CA Review Available</div>
+                  <div className="text-sm text-slate-500">Scope shown before checkout</div>
                 </div>
               </div>
               <div className="space-y-4 mb-6">
                 {[
-                  { label: "ITR-1 (Salary)", price: "₹499" },
-                  { label: "ITR-2 (Capital Gains)", price: "₹999" },
-                  { label: "ITR-3 / ITR-4 (Business)", price: "₹1,499" },
+                  { label: "ITR-1 (Salary)", price: "₹499 excluding GST" },
+                  { label: "ITR-2 (Capital Gains)", price: "₹999 excluding GST" },
+                  { label: "ITR-3 / ITR-4 (Business)", price: "₹1,499 excluding GST" },
                 ].map((plan) => (
                   <div key={plan.label} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
                     <span className="text-slate-700 font-medium">{plan.label}</span>

@@ -87,7 +87,7 @@ export default function NoticeCompliancePage() {
     {
       step: 1,
       title: "Analysis",
-      description: "Expert review of notice within 24 hours.",
+      description: "Expert review of notice after document intake.",
       icon: SearchIcon,
       color: "blue"
     },
@@ -196,7 +196,7 @@ export default function NoticeCompliancePage() {
                 <ul className="space-y-2.5 text-sm text-gray-600">
                   <li className="flex items-start gap-2">
                     <Clock className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                    <span>Check the <strong>DIN Number</strong> on the notice instantly.</span>
+                    <span>Check the <strong>DIN Number</strong> against the notice format before responding.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <FileText className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
@@ -305,7 +305,7 @@ export default function NoticeCompliancePage() {
                  <CardContent className="p-4 flex items-start gap-3">
                    <Shield className="w-5 h-5 text-blue-600 mt-1" />
                    <div>
-                     <h4 className="font-semibold text-blue-900 text-sm">100% Confidential</h4>
+                     <h4 className="font-semibold text-blue-900 text-sm">Secure Handling</h4>
                      <p className="text-xs text-blue-700 mt-1">Your data is encrypted and handled only by assigned experts.</p>
                    </div>
                  </CardContent>
@@ -331,7 +331,7 @@ export default function NoticeCompliancePage() {
                     <FileText className="w-5 h-5 text-red-600" />
                     Get Expert Help
                   </h3>
-                  <p className="text-red-600/70 text-xs font-medium mt-1 uppercase tracking-wider">Upload notice for instant analysis</p>
+                  <p className="text-red-600/70 text-xs font-medium mt-1 uppercase tracking-wider">Upload notice for document-based review</p>
                 </div>
                 <CardContent className="p-5 space-y-4">
                   <div className="space-y-2">

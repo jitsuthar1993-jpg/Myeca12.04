@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
       panelDescription="If you're having trouble accessing your account, our team is here to assist you."
       panelItems={[
         { label: "Official recovery links", icon: ShieldQuestion },
-        { label: "24/7 technical support", icon: CheckCircle2 },
+        { label: "Business-hours technical support", icon: CheckCircle2 },
         { label: "Secure encrypted reset", icon: CheckCircle2 },
       ]}
       primaryLink={{

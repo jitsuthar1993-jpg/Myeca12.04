@@ -41,7 +41,7 @@ export function ServiceCheckoutModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      setLocation("/auth/login?redirect=" + encodeURIComponent(window.location.pathname));
+      setLocation("/auth/login?next=" + encodeURIComponent(window.location.pathname));
       return;
     }
 

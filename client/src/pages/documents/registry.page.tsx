@@ -144,7 +144,7 @@ const documentGenerators = [
     icon: <HomeIcon className="w-5 h-5" />,
     status: 'active',
     validity: 'All India',
-    features: ['Aadhaar/Passport App', 'Standard Legal Format', 'Instant Export'],
+    features: ['Aadhaar/Passport App', 'Standard Legal Format', 'Downloadable Export'],
   },
   {
     id: 'poa-general',

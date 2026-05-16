@@ -410,7 +410,7 @@ export default function ServicesMarketplacePage() {
         <section className="mt-24 pt-24 border-t border-slate-200">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
             {[
-              { icon: Shield,  label: "100% Secure",   sub: "Bank-grade encryption" },
+              { icon: Shield,  label: "Secure workflow",   sub: "Protected document handling" },
               { icon: Award,   label: "Expert CAs",    sub: "Certified professionals" },
               { icon: Clock,   label: "Quick Delivery", sub: "Never miss deadlines" },
               { icon: TrendingUp, label: "Best Prices",   sub: "Transparent pricing" },

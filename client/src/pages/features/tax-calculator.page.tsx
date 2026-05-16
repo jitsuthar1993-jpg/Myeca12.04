@@ -137,7 +137,7 @@ export default function TaxCalculatorFeaturePage() {
                 { icon: TrendingDown, label: "Old vs. New Regime", desc: "Side-by-side tax liability comparison so you pick the regime that saves more." },
                 { icon: PieChart, label: "Section-wise Breakdown", desc: "See exactly which deductions are applied and how each one reduces your tax." },
                 { icon: RefreshCw, label: "AY Updated Annually", desc: "Rates, slabs, and limits are updated every year when the Finance Bill is passed." },
-                { icon: Zap, label: "Instant Results", desc: "Calculations run in the browser — no form submission, no waiting." },
+                { icon: Zap, label: "Browser-Based Results", desc: "Calculations run in the browser with no form submission required." },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex gap-4 p-4 bg-white rounded-xl border border-slate-100">
                   <div className="w-9 h-9 shrink-0 rounded-lg bg-[#315efb]/8 flex items-center justify-center">

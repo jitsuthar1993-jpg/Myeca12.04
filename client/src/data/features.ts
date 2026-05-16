@@ -17,7 +17,7 @@ export const features: Feature[] = [
   {
     id: "ai-assistant",
     title: "AI Tax Assistant",
-    description: "Get instant answers to tax queries and personalized guidance throughout your filing process with our intelligent AI assistant.",
+    description: "Get quick answers to common tax questions and review important cases with an expert before filing.",
     icon: "Bot",
     color: "green"
   },
@@ -31,14 +31,14 @@ export const features: Feature[] = [
   {
     id: "speed",
     title: "Quick Filing",
-    description: "File your ITR in under 10 minutes with our streamlined process and auto-fill technology.",
+    description: "Start your ITR with a structured workflow, document checklist, and review steps before submission.",
     icon: "Clock",
     color: "purple"
   },
   {
     id: "mobile",
     title: "Mobile Friendly",
-    description: "File taxes anywhere, anytime with our responsive design optimized for all devices.",
+    description: "Use the filing workflow on mobile or desktop with responsive screens for common tasks.",
     icon: "Smartphone",
     color: "red"
   },

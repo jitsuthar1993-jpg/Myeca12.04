@@ -609,7 +609,7 @@ export const blogPosts = [
       <ul>
         <li><strong>Pre-filled Information:</strong> 90% data auto-populated from AIS</li>
         <li><strong>Simplified Navigation:</strong> Tab-based interface for easy filing</li>
-        <li><strong>Real-time Validation:</strong> Instant error detection and correction</li>
+        <li><strong>Real-time Validation:</strong> Browser-based error checks and correction prompts</li>
         <li><strong>Mobile Compatibility:</strong> Responsive design for smartphone filing</li>
         <li><strong>Multi-language Support:</strong> Available in 7 regional languages</li>
       </ul>
@@ -693,7 +693,7 @@ export const blogPosts = [
         <li><strong>Express Filing:</strong> 15-minute filing for simple returns</li>
         <li><strong>Save Draft:</strong> Auto-save every 2 minutes</li>
         <li><strong>Bulk Upload:</strong> Excel import for multiple entries</li>
-        <li><strong>Instant Processing:</strong> CPC processes in 24 hours</li>
+        <li><strong>Faster Processing:</strong> CPC processing timelines depend on verification and case checks</li>
         <li><strong>Mobile App:</strong> Complete filing via smartphone</li>
       </ul>
 
@@ -867,7 +867,7 @@ export const blogPosts = [
 
       <h3>Top 5 Benefits of Startup India Recognition</h3>
       <ol>
-        <li><strong>Tax Holiday:</strong> 100% tax exemption for 3 consecutive years under Section 80-IAC</li>
+        <li><strong>Tax Holiday:</strong> Eligible profit deduction for 3 consecutive years under Section 80-IAC</li>
         <li><strong>Capital Gains Exemption:</strong> Under Section 54EE and 54GB</li>
         <li><strong>Faster Exit:</strong> 90-day wind-up process under Insolvency and Bankruptcy Code</li>
         <li><strong>Patent Rebate:</strong> Up to 80% discount on patent filing costs</li>

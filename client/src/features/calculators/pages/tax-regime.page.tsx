@@ -537,7 +537,7 @@ export default function TaxRegimeCalculator() {
                       <Scale className="w-10 h-10 text-slate-300" />
                     </div>
                     <h3 className="text-xl font-normal text-slate-900 tracking-tight mb-2">Compare Regimes</h3>
-                    <p className="text-slate-500 font-normal max-w-sm">Enter your income and deductions to instantly see which tax regime works best for you.</p>
+                    <p className="text-slate-500 font-normal max-w-sm">Enter your income and deductions to compare which tax regime may work better for you.</p>
                   </m.div>
                 )}
               </AnimatePresence>

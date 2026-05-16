@@ -35,7 +35,8 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
         sameAs: [
           "https://www.facebook.com/myecain",
           "https://twitter.com/myecain",
-          "https://www.linkedin.com/company/myecain"
+          "https://www.linkedin.com/company/myecain",
+          "https://www.instagram.com/myecain"
         ],
         ...data
       };

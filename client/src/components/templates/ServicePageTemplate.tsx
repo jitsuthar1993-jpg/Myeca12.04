@@ -348,7 +348,7 @@ export function ServicePageTemplate({
             <div className="flex flex-wrap justify-center gap-8 text-center text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-green-500" />
-                <span>100% Secure</span>
+                <span>Secure workflow</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-blue-500" />

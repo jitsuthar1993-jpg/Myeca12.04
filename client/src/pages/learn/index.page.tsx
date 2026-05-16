@@ -377,7 +377,7 @@ export default function LearnPage() {
                 Still Have Questions?
               </h2>
               <p className="text-indigo-100 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-                Can't find what you're looking for? Our AI Tax Assistant can help you with instant answers,
+                Can't find what you're looking for? Our AI Tax Assistant can help you with guided answers,
                 or book a consultation with our expert CAs for personalized advice.
               </p>
               <div className="flex flex-wrap justify-center gap-6">

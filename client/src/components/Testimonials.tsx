@@ -18,7 +18,7 @@ export default function Testimonials() {
             What Our Customers Say
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Read how customers describe their tax filing experience with MyeCA.in.
+            Anonymized filing feedback focused on workflow clarity, documents, and review scope.
           </p>
         </m.div>
 
@@ -50,6 +50,9 @@ export default function Testimonials() {
                   </div>
                   <div className="text-xs text-gray-500">
                     {testimonial.role}
+                  </div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    Anonymized feedback
                   </div>
                 </div>
               </div>
@@ -99,6 +102,9 @@ export default function Testimonials() {
                     </div>
                     <div className="text-xs text-gray-500">
                       {testimonial.role}
+                    </div>
+                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                      Anonymized feedback
                     </div>
                   </div>
                 </div>

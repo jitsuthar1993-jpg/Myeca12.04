@@ -148,20 +148,20 @@ export default function CityLandingPage() {
             <div className="grid grid-cols-2 gap-6">
               <Card className="bg-blue-50 border-blue-100">
                 <CardContent className="pt-8">
-                  <div className="text-4xl font-black text-blue-600 mb-2">99%</div>
-                  <div className="text-sm font-bold text-slate-600">Approval Rate in {city.name}</div>
+                  <div className="text-4xl font-black text-blue-600 mb-2">Local</div>
+                  <div className="text-sm font-bold text-slate-600">Authority Guidance in {city.name}</div>
                 </CardContent>
               </Card>
               <Card className="bg-purple-50 border-purple-100">
                 <CardContent className="pt-8">
-                  <div className="text-4xl font-black text-purple-600 mb-2">24h</div>
-                  <div className="text-sm font-bold text-slate-600">Local Expert Callback</div>
+                  <div className="text-4xl font-black text-purple-600 mb-2">9-7</div>
+                  <div className="text-sm font-bold text-slate-600">Business-Hours Callback</div>
                 </CardContent>
               </Card>
               <Card className="bg-orange-50 border-orange-100">
                 <CardContent className="pt-8">
-                  <div className="text-4xl font-black text-orange-600 mb-2">500+</div>
-                  <div className="text-sm font-bold text-slate-600">Local Clients Served</div>
+                  <div className="text-4xl font-black text-orange-600 mb-2">Docs</div>
+                  <div className="text-sm font-bold text-slate-600">Document-Based Review</div>
                 </CardContent>
               </Card>
               <Card className="bg-emerald-50 border-emerald-100">

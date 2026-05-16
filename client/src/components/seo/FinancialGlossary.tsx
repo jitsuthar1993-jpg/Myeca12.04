@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const glossaryTerms = [
-  { term: "ITR-1 (Sahaj)", category: "Compliance", definition: "The simplest income tax return form for residents with total income up to ₹50 lakh from salary, one house property, and other sources.", href: "/itr/filing" },
+  { term: "ITR-1 (Sahaj)", category: "Compliance", definition: "The simplest income tax return form for residents with total income up to ₹50 lakh from salary, one house property, and other sources.", href: "/itr/form-selector" },
   { term: "Section 80C", category: "Deductions", definition: "A popular tax deduction section allowing individuals to save up to ₹1.5 lakh by investing in PPF, ELSS, Insurance, etc.", href: "/calculators/income-tax" },
   { term: "TDS", category: "Direct Tax", definition: "Tax Deducted at Source is a means of collecting direct tax by the government at the very source of income.", href: "/calculators/tds" },
   { term: "SIP", category: "Investment", definition: "Systematic Investment Plan is a disciplined way of investing fixed amounts in mutual funds at regular intervals.", href: "/calculators/sip" },
@@ -45,7 +45,7 @@ const glossaryTerms = [
   { term: "Assessment Year", category: "General", definition: "The year immediately following the financial year in which the income of the financial year is assessed.", href: "/calculators/income-tax" },
   { term: "Financial Year", category: "General", definition: "The period from April 1 to March 31 of the following year during which you earn your income.", href: "/calculators/income-tax" },
   { term: "EPF", category: "Payroll", definition: "Employee Provident Fund is a retirement benefit scheme for salaried employees.", href: "/calculators/epf" },
-  { term: "Form 10E", category: "Relief", definition: "A form required to claim tax relief under Section 89(1) on salary arrears or advance salary.", href: "/itr/filing" },
+  { term: "Form 10E", category: "Relief", definition: "A form required to claim tax relief under Section 89(1) on salary arrears or advance salary.", href: "/itr/form-selector" },
   { term: "LUT", category: "GST", definition: "Letter of Undertaking for exporting goods or services without payment of integrated tax.", href: "/services/gst-registration" },
   { term: "ROC Filing", category: "Corporate", definition: "Annual filing of financial statements and returns by companies with the Registrar of Companies.", href: "/services/company-registration" },
   { term: "Section 80G", category: "Deductions", definition: "Tax deduction for donations made to specified charitable institutions and relief funds.", href: "/calculators/income-tax" },

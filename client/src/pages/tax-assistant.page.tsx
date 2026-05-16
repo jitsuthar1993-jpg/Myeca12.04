@@ -49,7 +49,7 @@ const starterCards = [
 const quickTools = [
   { title: "Income Tax", href: "/calculators/income-tax", icon: Calculator },
   { title: "Regime Compare", href: "/calculators/regime-comparator", icon: PiggyBank },
-  { title: "ITR Filing", href: "/itr/filing", icon: FileText },
+  { title: "ITR Filing", href: "/itr/form-selector", icon: FileText },
   { title: "Document Vault", href: "/documents", icon: ClipboardList },
   { title: "Blog Guides", href: "/blog", icon: BookOpen },
 ];

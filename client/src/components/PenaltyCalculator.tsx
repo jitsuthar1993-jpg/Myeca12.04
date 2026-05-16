@@ -77,7 +77,7 @@ const penaltySections = {
         rate: 5000,
         flat: true,
         frequency: "flat fee",
-        description: "Late filing fee under Section 234F (Up to Rs. 5,000)."
+        description: "Late filing fee under Section 234F (up to ₹5,000)."
       }
     }
   },

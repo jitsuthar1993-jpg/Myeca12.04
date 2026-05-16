@@ -239,7 +239,7 @@ export default function StartupIndiaRegistrationPage() {
               <div className="flex flex-wrap gap-6 mt-6 text-sm">
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  100% Free DPIIT Registration
+                  Free DPIIT Registration Workflow
                 </div>
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />

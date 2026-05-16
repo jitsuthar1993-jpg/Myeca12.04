@@ -235,7 +235,7 @@ export default function RefundPolicyPage() {
                         We offer a service guarantee for certain services:
                       </p>
                       <ul className="text-blue-700 text-sm space-y-1">
-                        <li>• 100% refund if we fail to file ITR within promised timeline</li>
+                        <li>• Refund eligibility if we fail to file ITR within the promised timeline</li>
                         <li>• Full refund if business registration is not processed due to our error</li>
                         <li>• Rework at no cost for any errors in our service delivery</li>
                       </ul>
@@ -317,7 +317,7 @@ export default function RefundPolicyPage() {
                     <h3 className="font-semibold text-gray-900">Email Support</h3>
                     <p className="text-gray-600">refunds@myeca.in</p>
                     <p className="text-gray-600">support@myeca.in</p>
-                    <p className="text-gray-600 text-sm mt-1">Response within 24 hours</p>
+                    <p className="text-gray-600 text-sm mt-1">Reviewed during Mon-Sat business hours</p>
                   </div>
                 </div>
                 

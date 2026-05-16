@@ -11,12 +11,12 @@ const features = [
     color: "bg-[var(--color-accent-600)]",
     shadowColor: "shadow-[var(--color-accent-500)]/40",
     icon: Zap,
-    href: "/itr/filing"
+    href: "/itr/form-selector"
   },
   {
     id: "tax-calculators", 
     title: "Tax Estimate Calculator",
-    description: "Estimate tax instantly, compare old vs new regime, and review assumptions before filing.",
+    description: "Estimate tax, compare old vs new regime, and review assumptions before filing.",
     color: "bg-[var(--color-success-600)]",
     shadowColor: "shadow-[var(--color-success-500)]/40",
     icon: Calculator,
@@ -24,8 +24,8 @@ const features = [
   },
   {
     id: "document-vault",
-    title: "Smart Document Scanner", 
-    description: "Auto-extract data from Form 16, bank statements, and certificates. No manual typing needed.",
+    title: "Document Upload & Review",
+    description: "Upload Form 16, AIS, bank statements, and certificates so extracted details can be checked before filing.",
     color: "bg-purple-600",
     shadowColor: "shadow-purple-500/40",
     icon: Scan,
@@ -57,7 +57,7 @@ export default function EverythingSection() {
             Everything You Need for Tax Filing
           </h2>
           <p className="text-sm md:text-[19px] text-[var(--color-primary-500)] max-w-2xl md:mx-auto font-medium leading-relaxed">
-            Calculators, CA filing, GST services, and startup registration — built specifically for Indian tax compliance.
+            Calculators, CA filing, GST services, and startup registration - built specifically for Indian tax compliance.
           </p>
         </m.div>
 

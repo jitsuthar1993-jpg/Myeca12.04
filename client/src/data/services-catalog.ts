@@ -61,7 +61,7 @@ export const SERVICES: Service[] = [
       'CA assisted filing'
     ],
     deliverables: ['ITR-V acknowledgment', 'Computation sheet', 'Tax summary report'],
-    timeline: '24-48 hours',
+    timeline: 'After document review',
     documents: ['Form 16', 'PAN Card', 'Aadhaar', 'Bank statements'],
     popular: true,
     badge: 'Most Popular',
@@ -124,7 +124,7 @@ export const SERVICES: Service[] = [
       'Written action plan'
     ],
     deliverables: ['Tax planning report', 'Investment checklist', 'Monthly action items'],
-    timeline: 'Same day booking',
+    timeline: 'Scheduled booking',
     documents: ['Recent salary slips', 'Current investments', 'Previous ITR'],
     icon: 'Lightbulb'
   },
@@ -516,4 +516,3 @@ export function formatPrice(pricing: Service['pricing']): string {
       return amount;
   }
 }
-

@@ -837,7 +837,7 @@ export default function CompanyRegistrationPage() {
                   <h3 className="text-xl font-bold text-slate-900">Startup India & DPIIT Benefits</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
                     Once registered as a Private Limited Company, you can apply for <span className="font-bold">DPIIT Recognition</span>. 
-                    This unlocks 3 years of 100% income tax exemption and easy access to government funding and procurement tenders. Only Private Limited Companies and LLPs are eligible for these schemes.
+                    This may unlock eligible income tax exemption benefits and access to government funding and procurement tenders. Only Private Limited Companies and LLPs are eligible for these schemes.
                   </p>
                </div>
                <div className="space-y-4">

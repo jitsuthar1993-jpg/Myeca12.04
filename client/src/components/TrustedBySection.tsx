@@ -24,8 +24,8 @@ const supportedProfiles = [
 const stats = [
   {
     label: "Filing Year",
-    val: "AY 2026",
-    sub: "FY 2025-26 Support",
+    val: "AY 2026-27",
+    sub: "FY 2025-26 support",
     icon: FileCheck,
     color: "text-blue-600",
     bgColor: "bg-blue-50"
@@ -48,7 +48,7 @@ const stats = [
   },
   {
     label: "Pricing",
-    val: "Rs 499",
+    val: "₹499",
     sub: "Simple Filing From",
     icon: Star,
     color: "text-amber-600",
@@ -69,7 +69,7 @@ export default function TrustedBySection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Production-Ready Filing</span>
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Filing workflow</span>
           </div>
           <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
             Built for Common Indian <br />
@@ -133,7 +133,7 @@ export default function TrustedBySection() {
               </div>
               <div className="h-8 w-px bg-slate-200 mx-1" />
               <div className="text-left">
-                 <div className="text-xs font-black text-slate-900 leading-none">2026-27 Ready</div>
+                 <div className="text-xs font-black text-slate-900 leading-none">AY 2026-27 Ready</div>
                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Review before filing</div>
               </div>
            </div>

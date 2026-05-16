@@ -97,7 +97,7 @@ const calculatorCategories: CalculatorCategory[] = [
       { name: "Income Tax Calculator", href: "/calculators/income-tax", icon: IndianRupee, isPopular: true, description: "AY 2026-27 tax estimate" },
       { name: "Tax Regime Comparator", href: "/calculators/regime-comparator", icon: Zap, isNew: true, description: "Old vs new regime side by side" },
       { name: "HRA Calculator", href: "/calculators/hra", icon: Home, description: "House rent allowance benefits" },
-      { name: "GST Calculator", href: "/calculators/gst", icon: FileText, isNew: true, isPopular: true, description: "Add or remove GST instantly" },
+      { name: "GST Calculator", href: "/calculators/gst", icon: FileText, isNew: true, isPopular: true, description: "Add or remove GST with clear tax split" },
       { name: "Salary Calculator", href: "/calculators/salary", icon: Wallet, isNew: true, description: "CTC to in-hand salary" },
       { name: "TDS Calculator", href: "/calculators/tds", icon: Shield, description: "Tax deducted at source" },
       { name: "Capital Gains Calculator", href: "/calculators/capital-gains", icon: BarChart3, description: "LTCG and STCG computation" },
@@ -466,7 +466,7 @@ export default function CalculatorsPage() {
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row md:gap-3">
-              <Link href="/itr/filing">
+              <Link href="/itr/form-selector">
                 <Button className="h-11 w-full rounded-lg bg-blue-600 px-5 text-white hover:bg-blue-700 sm:w-auto">
                   Start ITR Filing
                 </Button>

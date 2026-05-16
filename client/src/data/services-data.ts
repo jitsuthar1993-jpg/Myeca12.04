@@ -31,9 +31,9 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "itr-filing-individual",
         name: "ITR Filing for Individuals",
-        price: "₹999",
-        originalPrice: "₹1,499",
-        duration: "24-48 hours",
+        price: "₹999 excluding GST",
+        originalPrice: "₹1,499 excluding GST",
+        duration: "After document review",
         description: "Expert CA-assisted ITR filing for salary and other income sources",
         category: "tax-services",
         popular: true,
@@ -56,8 +56,8 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "itr-filing-business",
         name: "ITR Filing for Business",
-        price: "₹2,999",
-        originalPrice: "₹4,999",
+        price: "₹2,999 excluding GST",
+        originalPrice: "₹4,999 excluding GST",
         duration: "3-5 business days",
         description: "Complete ITR filing for businesses with balance sheet and P&L",
         category: "tax-services",
@@ -80,7 +80,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "tds-return-filing",
         name: "TDS Return Filing",
-        price: "₹1,499",
+        price: "₹1,499 excluding GST",
         duration: "2-3 business days",
         description: "TDS return filing for all quarters with form correction",
         category: "tax-services",
@@ -111,8 +111,8 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "gst-registration",
         name: "GST Registration",
-        price: "₹1,999",
-        originalPrice: "₹2,999",
+        price: "₹1,999 excluding GST",
+        originalPrice: "₹2,999 excluding GST",
         duration: "7-10 business days",
         description: "Complete GST registration for new businesses and proprietorships",
         category: "gst-services",
@@ -136,8 +136,8 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "gst-return-filing",
         name: "Monthly GST Return Filing",
-        price: "₹799",
-        duration: "Same day filing",
+        price: "₹799 excluding GST",
+        duration: "Document-ready filing",
         description: "Complete monthly GST return filing (GSTR-1, GSTR-3B)",
         category: "gst-services",
         features: [
@@ -159,7 +159,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "gst-annual-return",
         name: "GST Annual Return (GSTR-9)",
-        price: "₹2,499",
+        price: "₹2,499 excluding GST",
         duration: "5-7 business days", 
         description: "Annual GST return filing with reconciliation and compliance check",
         category: "gst-services",
@@ -190,8 +190,8 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "company-incorporation",
         name: "Private Limited Company",
-        price: "₹6,999",
-        originalPrice: "₹12,999",
+        price: "₹6,999 excluding GST",
+        originalPrice: "₹12,999 excluding GST",
         duration: "15-20 business days",
         description: "Complete private limited company incorporation with digital signature",
         category: "company-services",
@@ -216,8 +216,8 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "llp-incorporation",
         name: "LLP Incorporation", 
-        price: "₹4,999",
-        originalPrice: "₹8,999",
+        price: "₹4,999 excluding GST",
+        originalPrice: "₹8,999 excluding GST",
         duration: "12-15 business days",
         description: "Limited Liability Partnership registration with compliance setup",
         category: "company-services",
@@ -241,7 +241,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "proprietorship-registration",
         name: "Proprietorship Registration",
-        price: "₹2,499",
+        price: "₹2,499 excluding GST",
         duration: "5-7 business days",
         description: "Complete proprietorship registration with trade license",
         category: "company-services", 
@@ -272,8 +272,8 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "trademark-registration",
         name: "Trademark Registration",
-        price: "₹4,999",
-        originalPrice: "₹7,999", 
+        price: "₹4,999 excluding GST",
+        originalPrice: "₹7,999 excluding GST",
         duration: "12-18 months",
         description: "Complete trademark registration with search and filing",
         category: "trademark-services",
@@ -297,7 +297,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "copyright-registration",
         name: "Copyright Registration",
-        price: "₹2,999",
+        price: "₹2,999 excluding GST",
         duration: "4-6 months",
         description: "Copyright registration for creative works and software",
         category: "trademark-services",
@@ -329,7 +329,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "roc-annual-filing",
         name: "ROC Annual Filing",
-        price: "₹3,499",
+        price: "₹3,499 excluding GST",
         duration: "7-10 business days",
         description: "Annual ROC compliance filing (AOC-4, MGT-7) for companies",
         category: "compliance-services",
@@ -351,7 +351,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "pf-esi-registration",
         name: "PF & ESI Registration",
-        price: "₹2,999",
+        price: "₹2,999 excluding GST",
         duration: "10-15 business days", 
         description: "Employee Provident Fund and ESI registration for companies",
         category: "compliance-services",
@@ -382,7 +382,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "bookkeeping-monthly",
         name: "Monthly Bookkeeping",
-        price: "₹2,999",
+        price: "₹2,999 excluding GST",
         duration: "Monthly service",
         description: "Complete monthly bookkeeping and financial reporting",
         category: "accounting-services",
@@ -406,7 +406,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: "financial-audit",
         name: "Financial Statement Audit",
-        price: "₹15,999",
+        price: "₹15,999 excluding GST",
         duration: "15-20 business days",
         description: "Statutory audit of financial statements by qualified CA",
         category: "accounting-services",
@@ -481,67 +481,67 @@ export const serviceTestimonials: ServiceTestimonial[] = [
   // Income Tax Services Testimonials
   {
     id: "1",
-    name: "Rajesh Kumar",
+    name: "Anonymized taxpayer",
     location: "Mumbai, Maharashtra", 
     rating: 5,
-    comment: "MyeCA.in made my ITR filing so simple! Their expert CA guidance saved me ₹15,000 in taxes through proper deductions. Highly professional service.",
+    comment: "The ITR workflow made form selection and document review easier to follow.",
     serviceType: "income-tax"
   },
   {
     id: "2", 
-    name: "Priya Sharma",
+    name: "Anonymized taxpayer",
     location: "Delhi, NCR",
     rating: 5,
-    comment: "Outstanding service for individual tax filing. They handled everything from form selection to e-filing. Got my refund in just 3 weeks!",
+    comment: "The individual filing workflow helped me move from form selection to e-filing with clearer next steps.",
     serviceType: "income-tax"
   },
   {
     id: "3",
-    name: "Amit Patel", 
+    name: "Anonymized taxpayer",
     location: "Ahmedabad, Gujarat",
     rating: 5,
-    comment: "Best CA service in India! They helped me with complex capital gains calculation and saved thousands. Very knowledgeable team.",
+    comment: "The capital gains review helped organize the calculation inputs before filing.",
     serviceType: "income-tax"
   },
   
   // Labour Law Services Testimonials
   {
     id: "4",
-    name: "Deepak Industries",
+    name: "Anonymized business",
     location: "Pune, Maharashtra",
     rating: 5, 
-    comment: "Excellent PF and ESI registration service. They completed everything within 10 days and provided ongoing compliance support. Very reliable!",
+    comment: "The PF and ESI checklist made the registration documents easier to prepare.",
     serviceType: "labour-law"
   },
   {
     id: "5",
-    name: "Sunita Manufacturing",
+    name: "Anonymized business",
     location: "Chennai, Tamil Nadu", 
     rating: 5,
-    comment: "MyeCA.in handled our complete labor compliance setup. From PF registration to monthly returns, everything was managed professionally.",
+    comment: "The labour compliance workflow helped us track PF registration and monthly return tasks.",
     serviceType: "labour-law"
   },
   {
     id: "6",
-    name: "Vikram Enterprises", 
+    name: "Anonymized business",
     location: "Bangalore, Karnataka",
     rating: 5,
-    comment: "Great service for ESI and PF compliance. They saved us from penalties and ensured all employee benefits were properly setup.",
+    comment: "The compliance review clarified employee benefit setup documents and filing steps.",
     serviceType: "labour-law"
   },
 
   // Company Services Testimonials  
   {
     id: "7",
-    name: "TechStart Solutions",
+    name: "Anonymized startup",
     location: "Hyderabad, Telangana",
     rating: 5,
-    comment: "Amazing company registration service! Got our Private Limited Company incorporated in just 7 days. All documentation was perfect.",
+    comment: "The company registration checklist helped us understand the required documents and approval stages.",
     serviceType: "company-services"
   },
   {
     id: "8",
-    name: "GreenTech Pvt Ltd",
+    name: "Anonymized company",
     location: "Kolkata, West Bengal", 
     rating: 5,
     comment: "Handled our company registration and GST setup together. The CA team knew exactly what documents we needed and kept us updated throughout.",
@@ -549,10 +549,10 @@ export const serviceTestimonials: ServiceTestimonial[] = [
   },
   {
     id: "9",
-    name: "RetailMax India",
+    name: "Anonymized company",
     location: "Jaipur, Rajasthan",
     rating: 5,
-    comment: "Excellent GST registration and monthly return filing service. Their accounting team keeps our books perfectly maintained. Highly recommended!",
+    comment: "The GST registration and return workflow kept documents, reminders, and review steps in one place.",
     serviceType: "company-services"
   }
 ];

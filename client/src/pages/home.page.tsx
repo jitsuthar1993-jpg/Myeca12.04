@@ -70,7 +70,7 @@ const HomePage = () => {
     <>
       <MetaSEO
         title={seo?.title || "Income Tax Filing & ITR e-Filing Services India AY 2026-27"}
-        description={seo?.description || "File ITR online with MyeCA.in using guided workflows, tax calculators, and optional CA-assisted review. ITR filing starts at Rs 499 for AY 2026-27."}
+        description={seo?.description || "File ITR online with MyeCA.in using guided workflows, tax calculators, and optional CA-assisted review. ITR filing starts at ₹499 for AY 2026-27."}
         keywords={seo?.keywords}
         aiSummary="MyeCA.in offers guided ITR filing, GST compliance, startup registration, AY 2026-27 tax calculators, Form 16 parsing, and optional expert support for eligible plans."
         localBusinessData={{
@@ -82,11 +82,11 @@ const HomePage = () => {
             "addressRegion": "Maharashtra",
             "addressCountry": "IN"
           },
-          "priceRange": "Rs 499-Rs 9,999"
+          "priceRange": "₹499-₹9,999"
         }}
         faqPageData={[
           {
-            question: "What is the fastest way to file ITR in India?",
+            question: "How can I file ITR online with guidance?",
             answer: "MyeCA.in offers a guided ITR filing process where you can enter details, use Form 16 support where available, and choose CA-assisted review on eligible plans."
           },
           {
@@ -95,7 +95,7 @@ const HomePage = () => {
           },
           {
             question: "How much does it cost to file ITR online?",
-            answer: "ITR filing starts at Rs 499 for simple self-service cases, with CA-assisted package levels such as Rs 999 and Rs 1,499 depending on the return type and support required."
+            answer: "ITR filing starts at ₹499 for simple self-service cases, with CA-assisted package levels such as ₹999 and ₹1,499 depending on the return type and support required."
           },
           {
             question: "Can I get a refund for my income tax through MyeCA.in?",
@@ -121,7 +121,7 @@ const HomePage = () => {
               <h1 className="text-[30px] font-bold leading-tight text-[var(--color-primary-900)] md:text-3xl lg:text-5xl">
                 File Your <span className="text-[var(--color-accent-600)]">AY 2026-27 ITR</span>
                 <br className="hidden sm:block" />
-                Guided Filing from Rs 499
+                Guided Filing from ₹499
               </h1>
 
               <p className="max-w-2xl text-sm leading-6 text-gray-600 md:mx-auto md:text-lg">
@@ -130,7 +130,7 @@ const HomePage = () => {
 
               {/* CTA Buttons */}
               <MobileActionBar className="pt-1 md:justify-center md:pt-2" primary={
-                <Link href="/auth/login">
+                <Link href="/itr/form-selector">
                   <Button variant="brand" size="lg" className="h-11 w-full rounded-lg px-6 shadow-sm shadow-brand-600/20 transition-all sm:w-auto md:px-8">
                     <Rocket className="w-4 h-4 mr-2" />
                     Start Filing Now
@@ -149,16 +149,37 @@ const HomePage = () => {
               <div className="grid gap-2 pt-1 text-sm text-gray-600 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center md:gap-6 md:pt-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  ERI Registered with Govt.
+                  ERI filing workflow
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  Simple Document Flow
+                  Document checklist before filing
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  CA-Assisted Plans Available
+                  Optional CA review plans
                 </div>
+              </div>
+
+              <div className="grid gap-2 pt-2 text-left sm:grid-cols-2 md:mx-auto md:max-w-3xl md:pt-3">
+                {[
+                  { icon: Shield, title: "ERI workflow", text: "Filing steps are designed around the official income-tax portal process." },
+                  { icon: Users, title: "CA review scope", text: "Assisted plans show what the expert reviews before work starts." },
+                  { icon: FileText, title: "Document handling", text: "You see the required documents and missing items before submission." },
+                  { icon: Award, title: "Price clarity", text: "Starting price, plan scope, and GST treatment stay visible before checkout." },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-blue-600">
+                        <item.icon className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-900">{item.title}</p>
+                        <p className="mt-1 text-xs leading-5 text-slate-500">{item.text}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -191,8 +212,8 @@ const HomePage = () => {
                   href: "/features/tax-calculator",
                 },
                 {
-                  title: "Smart Document Scanner",
-                  description: "Auto-extract data from Form 16, bank statements, and certificates. No manual typing needed.",
+                  title: "Document Upload & Review",
+                  description: "Upload Form 16, AIS, bank statements, and proofs so extracted details can be reviewed before filing.",
                   icon: SmartDocumentScannerLogo,
                   bgColor: "bg-purple-50",
                   textColor: "text-purple-600",
@@ -201,7 +222,7 @@ const HomePage = () => {
                   href: "/features/document-scanner",
                 },
                 {
-                  title: "Expert Tax Review",
+                  title: "Optional Expert Review",
                   description: "Choose CA-assisted review for complex returns, deductions, capital gains, or business income.",
                   icon: ExpertTaxReviewLogo,
                   bgColor: "bg-orange-50",
@@ -340,7 +361,7 @@ const HomePage = () => {
                       <h3 className="text-base font-bold tracking-tight text-[var(--color-primary-900)] md:text-[22px]">AI Tax Assistant</h3>
                       <span className="px-2 py-0.5 bg-[var(--color-warning-100)] text-[var(--color-warning-700)] text-xs font-bold rounded-full uppercase tracking-tighter">BETA</span>
                     </div>
-                    <p className="text-[var(--color-primary-500)] text-sm">Tax help, Form 16 support & document review workflows</p>
+                    <p className="text-[var(--color-primary-500)] text-sm">Tax help, Form 16 support, and document review workflows</p>
                   </div>
                 </div>
                 <Button variant="brand" className="h-11 w-full rounded-lg px-6 transition-all sm:w-auto md:h-12 md:px-8">
@@ -385,8 +406,8 @@ const HomePage = () => {
             <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 text-center md:grid-cols-4 md:gap-8">
               {[
                 { value: "AY 2026", label: "Filing Support" },
-                { value: "Rs 499", label: "Simple Filing From" },
-                { value: "Rs 999", label: "Assisted Filing From" },
+                { value: "₹499", label: "Simple Filing From" },
+                { value: "₹999", label: "Assisted Filing From" },
                 { value: "Add-on", label: "CA Review Available" },
               ].map((stat, idx) => (
                 <div key={stat.label} className={cn("rounded-lg border border-slate-100 bg-white p-4 shadow-sm transition-transform duration-300 md:rounded-[24px] md:p-8 md:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] md:hover:-translate-y-1", idx > 1 && "hidden md:block")}>
@@ -432,7 +453,7 @@ const HomePage = () => {
               <div className="relative z-10">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100/50 bg-blue-50/50 px-3 py-2 text-xs font-semibold text-brand-600 md:mb-8 md:rounded-full md:px-5">
                   <Award className="w-4 h-4" />
-                  ERI Registered · CA Review Available · Official Portal Workflow
+                  ERI workflow · CA review available · Official portal guidance
                 </div>
 
                 <h2 className="mb-3 text-2xl font-extrabold tracking-tight text-slate-900 md:mb-6 md:text-4xl lg:text-5xl">
@@ -444,7 +465,7 @@ const HomePage = () => {
                 </p>
 
                 <div className="flex flex-col gap-2 sm:flex-row md:justify-center md:gap-4">
-                  <Link href="/auth/register">
+                  <Link href="/itr/form-selector">
                     <Button variant="brand" size="xl" className="h-11 w-full rounded-lg px-6 shadow-sm shadow-brand-500/25 transition-all sm:w-auto md:px-8 md:hover:-translate-y-0.5">
                       <Rocket className="mr-2 h-5 w-5" />
                       Start Filing Now

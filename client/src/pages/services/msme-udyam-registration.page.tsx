@@ -190,7 +190,7 @@ export default function MSMEUdyamRegistrationPage() {
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <MetaSEO
         title="MSME Udyam Registration Online India | Benefits for Small Businesses"
-        description="Register your business as an MSME on the official Udyam portal. Unlock bank loans, government subsidies, and priority in tenders. 100% online and paperless."
+        description="Register your business as an MSME on the official Udyam portal. Understand bank loan, subsidy, and tender benefits with an online documentation workflow."
         keywords={[
           "MSME registration India", "Udyam registration online", "SSI registration", 
           "MSME benefits", "Udyam portal registration", "startup benefits India",
@@ -199,8 +199,8 @@ export default function MSMEUdyamRegistrationPage() {
         type="service"
         serviceData={{
           price: "0",
-          rating: "4.9",
-          reviews: "45000",
+          rating: "Unrated",
+          reviews: "0",
           availability: "https://schema.org/InStock"
         }}
         breadcrumbs={[
@@ -557,7 +557,7 @@ export default function MSMEUdyamRegistrationPage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Instant Online Process</span>
+                  <span>Online Documentation Process</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

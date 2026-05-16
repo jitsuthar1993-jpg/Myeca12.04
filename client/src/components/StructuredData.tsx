@@ -16,7 +16,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           "alternateName": "MyeCA - Expert Income Tax Filing",
           "url": "https://myeca.in",
           "logo": "https://myeca.in/favicon.svg",
-          "description": "India's premier digital platform for professional tax filing services with expert CA assistance",
+          "description": "Guided and CA-assisted tax filing workflows for Indian taxpayers and businesses",
           "founder": {
             "@type": "Person",
             "name": "MyeCA Team"

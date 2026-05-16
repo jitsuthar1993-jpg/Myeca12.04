@@ -6,8 +6,6 @@ export interface Expert {
   title: string;
   specializations: string[];
   experience: number; // years
-  rating: number;
-  reviewCount: number;
   languages: string[];
   image: string;
   bio: string;
@@ -74,16 +72,14 @@ export const CONSULTATION_TYPES: ConsultationType[] = [
 
 export const EXPERTS: Expert[] = [
   {
-    id: 'ca-rajesh-kumar',
-    name: 'CA Rajesh Kumar',
-    title: 'Chartered Accountant',
+    id: 'tax-review-team',
+    name: 'Tax Review Team',
+    title: 'Credential-checked tax professionals',
     specializations: ['Income Tax', 'Tax Planning', 'ITR Filing', 'Capital Gains'],
     experience: 15,
-    rating: 4.9,
-    reviewCount: 523,
     languages: ['English', 'Hindi'],
     image: '/images/experts/rajesh.jpg',
-    bio: 'CA Rajesh Kumar is a seasoned tax professional with over 15 years of experience in income tax planning and compliance. He has helped over 5000+ clients optimize their taxes and has expertise in complex ITR filings including capital gains.',
+    bio: 'Credential-checked professionals review income tax planning and compliance cases using the documents shared for the consultation.',
     qualifications: ['FCA', 'B.Com (Hons)', 'DISA'],
     consultationFee: 999,
     availability: {
@@ -93,16 +89,14 @@ export const EXPERTS: Expert[] = [
     featured: true,
   },
   {
-    id: 'ca-priya-sharma',
-    name: 'CA Priya Sharma',
-    title: 'Chartered Accountant',
+    id: 'gst-startup-team',
+    name: 'GST And Startup Team',
+    title: 'Business compliance professionals',
     specializations: ['GST', 'Business Tax', 'Startup Advisory', 'Compliance'],
     experience: 12,
-    rating: 4.8,
-    reviewCount: 412,
     languages: ['English', 'Hindi', 'Gujarati'],
     image: '/images/experts/priya.jpg',
-    bio: 'CA Priya Sharma specializes in GST compliance and startup taxation. She has advised numerous startups on tax-efficient structures and has deep expertise in business tax planning.',
+    bio: 'Business compliance professionals help with GST, startup taxation, and compliance questions based on your business profile.',
     qualifications: ['ACA', 'B.Com', 'CS (Executive)'],
     consultationFee: 1199,
     availability: {
@@ -112,16 +106,14 @@ export const EXPERTS: Expert[] = [
     featured: true,
   },
   {
-    id: 'ca-amit-jain',
-    name: 'CA Amit Jain',
-    title: 'Chartered Accountant',
+    id: 'nri-tax-team',
+    name: 'NRI Tax Team',
+    title: 'NRI and international tax professionals',
     specializations: ['NRI Taxation', 'International Tax', 'FEMA', 'Transfer Pricing'],
     experience: 18,
-    rating: 4.9,
-    reviewCount: 287,
     languages: ['English', 'Hindi'],
     image: '/images/experts/amit.jpg',
-    bio: 'CA Amit Jain is an expert in NRI taxation and international tax matters. He has helped hundreds of NRIs with their India tax compliance and FEMA regulations.',
+    bio: 'NRI tax professionals support India tax compliance and FEMA-related questions where specialist review is requested.',
     qualifications: ['FCA', 'MBA (Finance)', 'DISA'],
     consultationFee: 1499,
     availability: {
@@ -131,16 +123,14 @@ export const EXPERTS: Expert[] = [
     featured: true,
   },
   {
-    id: 'ca-sneha-patel',
-    name: 'CA Sneha Patel',
-    title: 'Chartered Accountant',
+    id: 'salary-tax-team',
+    name: 'Salary Tax Team',
+    title: 'Salary tax review professionals',
     specializations: ['Salary Tax', 'HRA Claims', 'Investment Planning', '80C Deductions'],
     experience: 8,
-    rating: 4.7,
-    reviewCount: 356,
     languages: ['English', 'Hindi', 'Marathi'],
     image: '/images/experts/sneha.jpg',
-    bio: 'CA Sneha Patel focuses on salaried individuals and helps them maximize tax savings through smart investment planning and proper claim documentation.',
+    bio: 'Salary tax professionals help review HRA, deductions, Form 16, and investment proofs for eligible claims.',
     qualifications: ['ACA', 'B.Com (Hons)'],
     consultationFee: 799,
     availability: {
@@ -150,16 +140,14 @@ export const EXPERTS: Expert[] = [
     featured: false,
   },
   {
-    id: 'ca-vikram-singh',
-    name: 'CA Vikram Singh',
-    title: 'Chartered Accountant',
+    id: 'notice-response-team',
+    name: 'Notice Response Team',
+    title: 'Tax notice review professionals',
     specializations: ['Tax Notices', 'Assessments', 'Appeals', 'Scrutiny'],
     experience: 20,
-    rating: 4.9,
-    reviewCount: 189,
     languages: ['English', 'Hindi', 'Punjabi'],
     image: '/images/experts/vikram.jpg',
-    bio: 'CA Vikram Singh has 20 years of experience handling income tax notices, assessments, and appeals. He has successfully represented clients in numerous scrutiny cases.',
+    bio: 'Tax notice professionals help review notice sections, deadlines, documents, and draft response positions.',
     qualifications: ['FCA', 'LLB', 'DISA'],
     consultationFee: 1999,
     availability: {
@@ -194,4 +182,3 @@ export function getAvailableSlots(expertId: string, date: Date): string[] {
   
   return expert.availability.slots;
 }
-

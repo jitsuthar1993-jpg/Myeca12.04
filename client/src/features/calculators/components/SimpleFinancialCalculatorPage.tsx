@@ -131,7 +131,7 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     slug: "gst",
     title: "GST Calculator",
     eyebrow: "Indirect Tax",
-    description: "Add or remove GST and split tax into CGST/SGST or IGST instantly.",
+    description: "Add or remove GST and split tax into CGST/SGST or IGST with clear assumptions.",
     icon: Receipt,
     accent: "blue",
     inputs: { amount: 10000, rate: 18, mode: "exclusive", supplyType: "intra" },

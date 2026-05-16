@@ -38,8 +38,8 @@ const updateUserServiceMetadataSchema = z.object({
 
 const consultationRequestSchema = z.object({
   name: z.string().trim().min(1).max(120),
-  phone: z.string().trim().min(1).max(30),
-  email: z.string().trim().email().optional().or(z.literal("")),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  email: z.string().trim().email(),
   gstin: z.string().trim().max(20).optional().or(z.literal("")),
   company: z.string().trim().max(160).optional().or(z.literal("")),
   service: z.string().trim().min(1).max(160),
@@ -304,6 +304,7 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
     const request = consultationRequestSchema.parse(req.body);
     const newRequest = {
       ...request,
+      phone: request.phone || null,
       email: request.email || null,
       gstin: request.gstin || null,
       company: request.company || null,

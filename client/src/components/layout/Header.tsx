@@ -143,7 +143,7 @@ export default function Header() {
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 Guided filing and CA review available
               </span>
-              <Link href="/itr/filing" onMouseEnter={() => preloadOnHover('/itr/filing')} className="bg-black text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-slate-800 transition-colors ml-2">
+              <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="bg-black text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-slate-800 transition-colors ml-2">
                 FILE NOW →
               </Link>
             </div>
@@ -260,7 +260,7 @@ export default function Header() {
                                 { href: "/services/tds-filing", icon: Receipt, title: "TDS Filing", desc: "Quarterly returns & certificates", color: "blue" },
                                 { href: "/services/gst-returns", icon: Calculator, title: "GST Returns", desc: "GSTR-1, 3B & Annual filing", color: "emerald" },
                                 { href: "/services/notice-compliance", icon: Shield, title: "Notice Management", desc: "Expert reply drafting", color: "orange" },
-                                { href: "/services/reliable-storage", icon: Lock, title: "Secure Vault", desc: "Bank-grade storage", color: "indigo" }
+                                { href: "/services/document-vault", icon: Lock, title: "Document Vault", desc: "Secure document workflow", color: "indigo" }
                               ].map((item, idx) => {
                                 const Icon = item.icon as any;
                                 return (
@@ -345,7 +345,7 @@ export default function Header() {
                             </div>
                             <ul className="space-y-4">
                               {[
-                                { href: "/business/dashboard", icon: LayoutDashboard, title: "Business HQ", desc: "Compliance & deadines", color: "emerald" },
+                                { href: "/business/dashboard", icon: LayoutDashboard, title: "Business HQ", desc: "Compliance & deadlines", color: "emerald" },
                                 { href: "/business/virtual-cfo", icon: BarChart3, title: "Virtual CFO", desc: "P&L & Runway tracking", color: "blue" },
                                 { href: "/services/tax-planning", icon: TrendingUp, title: "Tax Planning", desc: "Expert advisory", color: "orange" }
                               ].map((item, idx) => {
@@ -917,7 +917,7 @@ export default function Header() {
 
                 {!isLoading && !isAuthenticated && (
                   <div className="hidden lg:flex items-center gap-3">
-                    <Link href="/login">
+                    <Link href="/auth/login">
                       <Button className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-normal text-sm rounded-xl px-7 h-11 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5">
                         <User className="w-[18px] h-[18px]" />
                         <span>Log in / Join</span>
@@ -1107,7 +1107,7 @@ export default function Header() {
                       </Button>
                       {!isLoading && !isAuthenticated && (
                         <div className="grid gap-3">
-                          <Link href="/login" onTouchStart={() => preloadOnHover("/login")} onClick={() => setMobileMenuOpen(false)}>
+                          <Link href="/auth/login" onTouchStart={() => preloadOnHover("/auth/login")} onClick={() => setMobileMenuOpen(false)}>
                             <Button className="h-11 w-full justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-200 hover:bg-blue-700">
                               Join / Sign in
                             </Button>

@@ -13,8 +13,8 @@ const TaxPlanningPage = () => {
   const startupTaxBenefits = [
     {
       title: "Section 80-IAC Benefits",
-      description: "100% profit deduction for 3 consecutive years out of first 10 years",
-      savings: "Up to ₹25L annually",
+      description: "Eligible profit deduction for 3 consecutive years out of first 10 years",
+      savings: "Eligibility-based benefit",
       eligibility: "DPIIT recognized startups",
       icon: Shield,
       color: "blue"
@@ -95,8 +95,8 @@ const TaxPlanningPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO
-        title="Startup Tax Planning & Benefits - Save up to 100% Tax | MyeCA.in"
-        description="Maximize tax savings for your startup with Section 80-IAC benefits, angel tax exemption, R&D incentives, and expert CA guidance. Save up to ₹25L annually."
+        title="Startup Tax Planning & Benefits | MyeCA.in"
+        description="Review startup tax benefits such as Section 80-IAC, angel tax exemption, R&D incentives, and expert CA guidance based on eligibility and documents."
         keywords="startup tax benefits, section 80-IAC, angel tax exemption, startup tax planning, DPIIT tax benefits, R&D tax incentives"
       />
 
@@ -114,7 +114,7 @@ const TaxPlanningPage = () => {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Save up to 100% tax with government schemes and expert strategies.
+                Understand eligible startup tax benefits with document-led CA guidance.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold">

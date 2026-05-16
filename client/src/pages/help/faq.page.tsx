@@ -55,7 +55,7 @@ const faqCategories = {
       },
       {
         question: 'How long does it take to file ITR through MyeCA.in?',
-        answer: 'With all documents ready, filing takes 15-30 minutes for simple returns and 30-60 minutes for complex cases. Our CA-assisted service includes document review, filing, and e-verification, typically completed within 24-48 hours of document submission.'
+        answer: 'Filing time depends on case complexity and document readiness. CA-assisted service includes document review, filing support, and e-verification guidance before submission.'
       },
       {
         question: 'What happens after I file my ITR?',
@@ -103,7 +103,7 @@ const faqCategories = {
       },
       {
         question: 'Is there a refund policy?',
-        answer: '100% refund if service not used within 7 days of purchase. For CA-assisted plans, refund available before document upload. After filing initiation, refunds are case-specific. Technical issues from our end guarantee full refund. No refund on government fees.'
+        answer: 'Refunds are available if the service has not been used within 7 days of purchase. For CA-assisted plans, refund eligibility applies before document upload. After filing initiation, refunds are case-specific. No refund applies to government fees.'
       },
       {
         question: 'When will I receive my income tax refund?',

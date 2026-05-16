@@ -41,7 +41,7 @@ const ComplianceManagementPage = () => {
         title: "Labour Law Compliance",
         description: "PF, ESI, PT, LWF registrations and returns",
         frequency: "Monthly",
-        penalty: "Up to 100% of dues",
+        penalty: "Can equal unpaid dues",
         icon: Briefcase,
         critical: false
       }
@@ -85,7 +85,7 @@ const ComplianceManagementPage = () => {
         "Income tax compliance",
         "Basic labour law compliance",
         "Monthly compliance calendar",
-        "24/7 support"
+        "Business-hours support"
       ],
       recommended: false
     },

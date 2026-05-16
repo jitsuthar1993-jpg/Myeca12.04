@@ -1,4 +1,5 @@
 import { m } from "framer-motion";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 
 export default function CTASection() {
@@ -22,7 +23,7 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          CA-reviewed ITR filing — accurate, on time, and handled start to finish.
+          CA-reviewed ITR filing with document-led checks and clear status updates.
         </m.p>
         
         <m.div
@@ -32,12 +33,12 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <Button size="lg">
-            Start Filing Now
-          </Button>
-          <Button variant="outline" size="lg">
-            Book Consultation
-          </Button>
+          <Link href="/itr/form-selector">
+            <Button size="lg">Start Filing Now</Button>
+          </Link>
+          <Link href="/expert-consultation?service=itr-filing">
+            <Button variant="outline" size="lg">Book Consultation</Button>
+          </Link>
         </m.div>
       </div>
     </section>

@@ -207,7 +207,7 @@ export default function ActivationPage() {
                   </div>
                   <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-slate-500">
                     <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                    100% Secure Transaction & Data Privacy
+                    Secure Transaction & Data Privacy
                   </div>
                 </Card>
               </div>
@@ -313,7 +313,7 @@ export default function ActivationPage() {
                     <HelpCircle className="h-5 w-5 text-indigo-600" />
                   </div>
                   <h4 className="font-black text-slate-900 text-sm mb-1">Need help?</h4>
-                  <p className="text-[11px] text-slate-600 font-bold leading-relaxed">Instantly connect with our support team using the chatbot below.</p>
+                  <p className="text-[11px] text-slate-600 font-bold leading-relaxed">Connect with our support team using the chatbot below.</p>
                 </div>
               </div>
             </m.div>

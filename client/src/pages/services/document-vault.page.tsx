@@ -34,7 +34,7 @@ export default function DocumentVaultServicePage() {
     },
     {
       icon: <Zap className="w-7 h-7 text-[#15803d]" />,
-      title: "Instant Access",
+      title: "Anytime Access",
       description: "Access your PAN, Aadhaar, and ITR documents from any device, anywhere in the world.",
       bgColor: "bg-[#dcfce7]"
     },
@@ -63,7 +63,7 @@ export default function DocumentVaultServicePage() {
   };
 
   const VaultButton = ({ className }: { className?: string }) => (
-    <Link href={isAuthenticated ? "/documents" : "/login"}>
+    <Link href={isAuthenticated ? "/documents" : "/auth/login?next=/documents"}>
       <Button size="lg" className={className}>
         <Rocket className="w-4 h-4 mr-2" />
         {isAuthenticated ? "Access Your Vault" : "Login to Access Vault"}

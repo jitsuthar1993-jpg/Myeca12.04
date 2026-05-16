@@ -18,7 +18,7 @@ import { searchItems, highlightText, SearchHistory, popularSearches, SearchResul
 // Search data - In production, this would come from API
 const searchableContent = [
   // Services
-  { id: 1, title: "ITR Filing", type: "service", url: "/services/itr-filing", description: "File your income tax return with expert CA assistance", keywords: ["income tax", "return", "filing", "itr"] },
+  { id: 1, title: "ITR Filing", type: "service", url: "/itr/form-selector", description: "Start income tax return filing with guided form selection", keywords: ["income tax", "return", "filing", "itr"] },
   { id: 2, title: "GST Registration", type: "service", url: "/services/gst-registration", description: "Register for GST and start your business compliance", keywords: ["gst", "registration", "business", "tax"] },
   { id: 3, title: "Company Registration", type: "service", url: "/services/company-registration", description: "Register your company with complete legal compliance", keywords: ["company", "registration", "incorporation", "business"] },
   { id: 4, title: "GST Returns", type: "service", url: "/services/gst-returns", description: "File monthly and quarterly GST returns on time", keywords: ["gst", "returns", "filing", "compliance"] },

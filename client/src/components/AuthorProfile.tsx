@@ -71,7 +71,7 @@ const AuthorProfile: React.FC<AuthorProfileProps> = ({
                 </a>
               )}
               <a 
-                href="/about-us#experts" 
+                href="/experts"
                 className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1"
               >
                 View Full Profile

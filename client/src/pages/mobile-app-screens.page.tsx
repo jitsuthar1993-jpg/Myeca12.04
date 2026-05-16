@@ -193,7 +193,7 @@ const calculatorCards = [
 ] as const;
 
 const serviceRows = [
-  { title: "ITR Filing", desc: "CA-reviewed return in 4 steps", price: "From ₹999", tone: "bg-blue-50 text-[#315efb]" },
+  { title: "ITR Filing", desc: "CA-reviewed return in 4 steps", price: "From ₹999 excluding GST", tone: "bg-blue-50 text-[#315efb]" },
   { title: "GST Registration", desc: "Documents, filing, activation", price: "₹2,999", tone: "bg-emerald-50 text-emerald-700" },
   { title: "Company Setup", desc: "Pvt Ltd, LLP, OPC", price: "₹7,999", tone: "bg-indigo-50 text-indigo-600" },
   { title: "Notice Help", desc: "Draft the response with a CA", price: "₹2,999", tone: "bg-amber-50 text-amber-700" },
@@ -505,7 +505,7 @@ export default function MobileAppScreensPage() {
                       The app can keep the filing flow concise while still showing CA review status and missing items.
                     </p>
                     <Button asChild className="mt-4 h-11 w-full rounded-2xl bg-[#315efb] font-normal text-white hover:bg-[#2040d8]">
-                      <Link href="/itr/filing">Continue filing</Link>
+                      <Link href="/itr/form-selector">Continue filing</Link>
                     </Button>
                   </div>
                 </div>

@@ -97,7 +97,7 @@ const StartupServicesPage = () => {
         "International Compliance Support",
         "Strategic Business Advisory",
         "Quarterly Business Reviews",
-        "24/7 Priority Support & Site Visits"
+        "Priority Support & Site Visits"
       ]
     }
   ];
@@ -208,8 +208,8 @@ const StartupServicesPage = () => {
     {
       title: "Technology First", 
       description: "AI-powered compliance and automated reporting",
-      stat: "24/7 Platform",
-      benefit: "Real-time updates",
+      stat: "Workflow Platform",
+      benefit: "Status updates",
       icon: Zap,
       color: "blue"
     },

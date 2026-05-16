@@ -182,7 +182,7 @@ export default function PPFCalculatorPage() {
               <div>
                 <h3 className="text-lg font-normal text-[#101828]">EEE Tax Status</h3>
                 <p className="text-sm text-[#667085] leading-relaxed">
-                  Your <span className="font-normal text-[#101828]">Investment</span>, <span className="font-normal text-[#101828]">Interest</span>, and <span className="font-normal text-[#101828]">Maturity</span> are 100% tax-free under current laws.
+                  Your <span className="font-normal text-[#101828]">Investment</span>, <span className="font-normal text-[#101828]">Interest</span>, and <span className="font-normal text-[#101828]">Maturity</span> are generally tax-exempt under current PPF rules.
                 </p>
               </div>
             </div>
@@ -271,7 +271,7 @@ export default function PPFCalculatorPage() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Plan your 80C deductions" },
-            { icon: <Award className="w-5 h-5" />, label: "Sovereign Guarantee", desc: "Government backed returns" },
+            { icon: <Award className="w-5 h-5" />, label: "Government Backed", desc: "PPF scheme returns" },
             { icon: <Lock className="w-5 h-5" />, label: "Private & Local", desc: "Zero data collection" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Tax-Free Maturity", desc: "EEE status verified" }
           ].map((item, i) => (
@@ -294,8 +294,8 @@ export default function PPFCalculatorPage() {
               {
                 icon: <ShieldCheck className="w-5 h-5" />,
                 iconBg: "bg-emerald-50 text-emerald-600",
-                title: "100% Capital Safety",
-                desc: "PPF is one of the safest investments as it is backed by the Government of India."
+                title: "Government-Backed Capital",
+                desc: "PPF is backed by the Government of India, subject to scheme rules."
               },
               {
                 icon: <Zap className="w-5 h-5" />,

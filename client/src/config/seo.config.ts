@@ -112,7 +112,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'calculator',
     calculatorData: {
       type: 'HRA Calculator',
-      features: ['Metro/Non-metro calculation', 'Section 10(13A) compliance', 'Instant results'],
+      features: ['Metro/Non-metro calculation', 'Section 10(13A) compliance', 'Browser-based estimate'],
       accuracy: 'Rule-based estimate',
       updates: 'FY 2025-26 compliant'
     },
@@ -159,7 +159,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/calculators/gst': {
     title: 'GST Calculator 2026 | Add or Remove GST | CGST SGST IGST | MyeCA.in',
-    description: 'Calculate GST on invoices instantly. Add or remove GST and split tax into CGST, SGST or IGST with current and legacy rate chips.',
+    description: 'Calculate GST on invoices. Add or remove GST and split tax into CGST, SGST or IGST with current and legacy rate chips.',
     keywords: ['GST calculator', 'add GST calculator', 'remove GST calculator', 'CGST SGST IGST calculator'],
     type: 'calculator',
     calculatorData: {
@@ -217,7 +217,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'RD Calculator',
       features: ['Monthly deposit planning', 'Quarterly compounding', 'Interest earned'],
-      accuracy: '99%',
+      accuracy: 'Projection estimate',
       updates: 'Bank-style compounding model'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'RD Calculator', url: '/calculators/rd' }]
@@ -297,7 +297,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Enhanced SIP Calculator',
       features: ['Year-wise growth chart', 'Wealth multiple', 'Compound return projection'],
-      accuracy: '100%',
+      accuracy: 'Projection estimate',
       updates: 'FY 2025 projection model'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Enhanced SIP Calculator', url: '/calculators/sip-enhanced' }]
@@ -317,14 +317,14 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/calculators/fd': {
     title: 'Fixed Deposit (FD) Calculator 2025 | FD Interest Rates | MyeCA.in',
-    description: 'Calculate your FD maturity amount and interest earned. Compare latest FD rates from top Indian banks and optimize your savings.',
+    description: 'Calculate your FD maturity amount and interest earned. Compare rate assumptions and review post-tax returns before planning.',
     keywords: ['fd calculator', 'fixed deposit calculator', 'fd interest rates 2025', 'maturity amount calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'FD Calculator',
       features: ['Quarterly compounding', 'Senior citizen rates', 'TDS analysis'],
-      accuracy: '100%',
-      updates: 'Latest 2025 bank rates'
+      accuracy: 'Projection estimate',
+      updates: '2025 bank rate assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'FD Calculator', url: '/calculators/fd' }]
   },
@@ -336,8 +336,8 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Enhanced FD Calculator',
       features: ['Bank rate comparison', 'Post-tax returns', 'Compounding frequency options'],
-      accuracy: '100%',
-      updates: 'Latest 2025 bank rate assumptions'
+      accuracy: 'Projection estimate',
+      updates: '2025 bank rate assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Enhanced FD Calculator', url: '/calculators/fd-enhanced' }]
   },
@@ -349,7 +349,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'PPF Calculator',
       features: ['15-year projection', 'Extension options', 'Section 80C tracking'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: 'Q1 2025 interest rates'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'PPF Calculator', url: '/calculators/ppf' }]
@@ -361,7 +361,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Get GST registration support online with document preparation, portal filing guidance, query support, and transparent pricing.',
     keywords: ['GST registration', 'new GST connection', 'GST certificate online', 'apply for GST India'],
     type: 'service',
-    serviceData: { price: '₹2999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹2999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'GST Registration', url: '/services/gst-registration' }]
   },
   '/services/company-registration': {
@@ -369,7 +369,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Register your company online with ease. Includes DSC, DIN, MOA, AOA, and PAN/TAN. Startup friendly pricing and expert support.',
     keywords: ['company registration', 'register pvt ltd', 'company incorporation', 'startup registration India'],
     type: 'service',
-    serviceData: { price: '₹6999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹6999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Company Registration', url: '/services/company-registration' }]
   },
   '/services/trademark-registration': {
@@ -377,7 +377,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Apply for trademark registration and protect your brand identity. Search, filing, and tracking by expert IP attorneys.',
     keywords: ['trademark registration', 'register brand name', 'TM filing India', 'trademark consultant'],
     type: 'service',
-    serviceData: { price: '₹12999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹12999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Trademark Registration', url: '/services/trademark-registration' }]
   },
   '/services/notice-compliance': {
@@ -385,15 +385,15 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Received an income tax notice? Get expert CA assistance to draft and file accurate replies for Section 143(1), 139(9), etc.',
     keywords: ['income tax notice reply', 'respond to tax notice', '143(1) notice help', 'tax compliance services'],
     type: 'service',
-    serviceData: { price: '₹2999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹2999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Notice Compliance', url: '/services/notice-compliance' }]
   },
   '/services/msme-udyam-registration': {
     title: 'MSME Udyam Registration Online | Govt Certificate | MyeCA.in',
-    description: 'Get your MSME / Udyam registration certificate instantly. Avail government benefits, loans, and subsidies for your business.',
+    description: 'Get MSME / Udyam registration support with document guidance and official portal process notes.',
     keywords: ['MSME registration', 'udyam registration', 'msme certificate online', 'udyam portal India'],
     type: 'service',
-    serviceData: { price: '₹999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'MSME Registration', url: '/services/msme-udyam-registration' }]
   },
   '/about': {
@@ -405,7 +405,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/contact': {
     title: 'Contact Us | MyeCA.in Support & Consultation',
-    description: 'Get in touch with MyeCA.in for expert tax consultation, support, and business inquiries. We are here to help you 24/7.',
+    description: 'Get in touch with MyeCA.in for tax consultation, support, and business inquiries during business hours.',
     keywords: ['contact tax expert', 'myeca support', 'tax helpline India', 'CA consultation online'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Contact Us', url: '/contact' }]
@@ -429,18 +429,18 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Get recognized by DPIIT under the Startup India initiative. Avail tax exemptions, patent benefits, and easy self-certification.',
     keywords: ['startup india registration', 'dpiit recognition', 'startup tax benefits', 'register startup india'],
     type: 'service',
-    serviceData: { price: '₹4999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹4999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Startup India', url: '/services/startup-india-registration' }]
   },
   '/calculators/emi': {
     title: 'EMI Calculator 2025 | Home, Car & Personal Loan EMI | MyeCA.in',
-    description: 'Calculate your loan EMIs instantly. Plan your repayments for home loans, car loans, and personal loans with our easy-to-use tool.',
+    description: 'Calculate your loan EMIs. Plan repayments for home loans, car loans, and personal loans with an estimate tool.',
     keywords: ['emi calculator', 'loan calculator', 'home loan emi', 'car loan emi calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'EMI Calculator',
       features: ['Amortization schedule', 'Total interest calculation', 'Repayment breakdown'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: '2025 loan rates supported'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'EMI Calculator', url: '/calculators/emi' }]
@@ -453,7 +453,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Car Loan Calculator',
       features: ['Amortization chart', 'Processing fee inclusion', 'Prepayment analysis'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: '2025 vehicle loan rates'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Car Loan', url: '/calculators/car-loan' }]
@@ -466,7 +466,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Home Loan Calculator',
       features: ['Part-payment analysis', 'Tax benefit (Sec 24/80EEA)', 'Detailed amortization'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: '2025 mortgage rates'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Home Loan', url: '/calculators/home-loan' }]
@@ -479,7 +479,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Personal Loan Calculator',
       features: ['EMI calculation', 'EMI-to-income ratio', 'Total interest estimate'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: '2025 personal loan assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Personal Loan', url: '/calculators/personal-loan' }]
@@ -492,7 +492,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'Education Loan Calculator',
       features: ['Moratorium interest', 'Post-study EMI', 'Section 80E tax context'],
-      accuracy: '100%',
+      accuracy: 'Rule-based estimate',
       updates: '2025 education loan assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Education Loan', url: '/calculators/education-loan' }]
@@ -538,27 +538,27 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     calculatorData: {
       type: 'ELSS Comparator',
       features: ['Return analysis', 'Risk metrics', 'Direct vs Regular comparison'],
-      accuracy: '100%',
+      accuracy: 'Projection estimate',
       updates: 'Current market data'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'ELSS Comparator', url: '/elss-comparator' }]
   },
   '/form16-parser': {
-    title: 'Free Form 16 Parser Online | Instant ITR Pre-fill | MyeCA.in',
-    description: 'Upload your Form 16 PDF and instantly parse your salary, deductions, and tax details for easy ITR filing. Secure and private.',
+    title: 'Free Form 16 Parser Online | Assisted ITR Pre-fill | MyeCA.in',
+    description: 'Upload or paste Form 16 details to extract salary, deductions, and tax fields for review before ITR filing.',
     keywords: ['form 16 parser', 'upload form 16', 'salary tax details', 'itr pre-fill tool'],
     type: 'calculator',
     calculatorData: {
       type: 'Form 16 Parser',
       features: ['PDF parsing', 'Auto-deduction mapping', 'Private & Secure'],
-      accuracy: '99%',
+      accuracy: 'Document-assisted workflow',
       updates: 'AY 2026-27 supported'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Form 16 Parser', url: '/form16-parser' }]
   },
   '/tax-assistant': {
-    title: 'AI Tax Assistant | Instant Tax Answers & Support | MyeCA.in',
-    description: 'Ask our AI Tax Assistant any question about ITR filing, GST, or business compliance. Get instant, expert-backed financial advice.',
+    title: 'AI Tax Assistant | Guided Tax Answers & Support | MyeCA.in',
+    description: 'Ask the AI Tax Assistant common questions about ITR filing, GST, or business compliance and review important cases with an expert.',
     keywords: ['ai tax assistant', 'tax help bot', 'expert tax answers', 'chat with tax expert'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'AI Tax Assistant', url: '/tax-assistant' }]
@@ -637,7 +637,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'File salaried ITR with Form 16 support, regime comparison, deduction review, refund checks, and optional CA assistance.',
     keywords: ['ITR for salaried employees', 'Form 16 ITR filing', 'salary tax filing India', 'AY 2026-27 ITR'],
     type: 'service',
-    serviceData: { price: 'Rs 499', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'ITR for Salaried', url: '/services/itr-for-salaried' }]
   },
   '/services/tax-planning': {
@@ -645,7 +645,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     description: 'Plan salary, deductions, capital gains, business income, and regime selection with practical tax planning support.',
     keywords: ['tax planning services India', 'salary tax planning', 'capital gains tax planning', 'CA tax planning'],
     type: 'service',
-    serviceData: { price: 'Rs 999', rating: 'Not publicly verified', reviews: '0', availability: 'InStock' },
+    serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Tax Planning', url: '/services/tax-planning' }]
   },
   '/services/document-vault': {

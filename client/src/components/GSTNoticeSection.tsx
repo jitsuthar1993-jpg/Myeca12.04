@@ -178,11 +178,11 @@ export default function GSTNoticeSection() {
             <div className="flex items-center justify-center space-x-4">
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>Quick Filing</span>
+                <span>Document Checklist</span>
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                <span>Review Required</span>
+                <span>Review Before Filing</span>
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-1" />

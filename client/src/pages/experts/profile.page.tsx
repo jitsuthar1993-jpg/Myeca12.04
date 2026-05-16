@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Briefcase,
   GraduationCap,
-  Star,
   Globe,
   Mail,
   Linkedin
@@ -25,54 +24,48 @@ import { LazyImage } from "@/components/ui/lazy-image";
 
 const specialists: Record<string, any> = {
   "ca-rahul-sharma": {
-    name: "CA Rahul Sharma",
-    role: "Senior Tax Consultant",
-    fullRole: "Senior Managing Consultant - Taxation",
+    name: "Tax Review Team",
+    role: "Senior tax consultants",
+    fullRole: "Taxation And GST Review",
     exp: "12+ Years",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
-    bio: "CA Rahul Sharma brings over 12 years of experience in taxation, audit, and financial consulting. An ex-Big4 consultant, he has represented clients in over 500+ GST appeals and is recognized as a thought leader in NRI taxation matters.",
-    rating: 4.9,
-    reviews: 840,
+    bio: "Credential-checked professionals support taxation, audit, GST, and cross-border tax compliance matters where specialist review is requested.",
     education: ["FCA from ICAI", "B.Com from Shri Ram College of Commerce", "Diploma in International Taxation"],
     expertise: ["GST Litigation", "Corporate Tax Planning", "International Tax Treaties", "FEMA Compliance"],
     statistics: [
-      { label: "Assessments Handled", value: "1,200+" },
-      { label: "Successful Appeals", value: "94%" },
-      { label: "Direct Consultations", value: "5,000+" }
+      { label: "Review Type", value: "GST" },
+      { label: "Support Mode", value: "Assisted" },
+      { label: "Documents", value: "Required" }
     ]
   },
   "ca-priya-nair": {
-    name: "CA Priya Nair",
-    role: "Corporate Secretary",
-    fullRole: "Expert in Corporate Law & Governance",
+    name: "Startup Compliance Team",
+    role: "Company law advisors",
+    fullRole: "Startup Compliance And Company Law",
     exp: "8 Years",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
-    bio: "CA Priya Nair leads our Corporate Secretarial department. With a deep passion for the Indian startup ecosystem, she has guided hundreds of founders through various stages of incorporation, funding compliance, and ESOP structuring.",
-    rating: 4.8,
-    reviews: 620,
+    bio: "Advisors help founders understand incorporation, funding compliance, ROC filings, shareholder documentation, and ESOP workflows.",
     education: ["ACA from ICAI", "CS from ICSI", "LLB from Delhi University"],
     expertise: ["Startup Funding", "ROC Filings", "Shareholder Agreements", "Intellectual Property"],
     statistics: [
-      { label: "Companies Incorporated", value: "850+" },
-      { label: "Funding Rounds Assisted", value: "45+" },
-      { label: "Client Satisfaction", value: "98%" }
+      { label: "Review Type", value: "ROC" },
+      { label: "Support Mode", value: "Advisory" },
+      { label: "Documents", value: "Required" }
     ]
   },
   "ca-amit-verma": {
-    name: "CA Amit Verma",
-    role: "Direct Tax Specialist",
-    fullRole: "Senior Consultant - Direct Tax & Notices",
+    name: "Direct Tax Team",
+    role: "ITR and notice specialists",
+    fullRole: "Direct Tax And Notice Review",
     exp: "15+ Years",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-    bio: "CA Amit Verma specializes in income tax scrutiny, notice handling, appeals, and direct tax advisory. He focuses on helping taxpayers respond accurately to notices and claim legitimate refunds with proper documentation.",
-    rating: 5.0,
-    reviews: 1200,
+    bio: "Specialists help taxpayers respond accurately to notices, prepare filing positions, and claim eligible refunds with supporting documentation.",
     education: ["FCA from ICAI", "B.Com in Accounting and Finance", "Advanced certification in direct tax litigation"],
     expertise: ["ITR Filing", "Tax Scrutiny", "Notice Handling", "Tax Advisory"],
     statistics: [
-      { label: "ITR Cases Reviewed", value: "3,500+" },
-      { label: "Notice Responses Filed", value: "900+" },
-      { label: "Client Rating", value: "5.0/5" }
+      { label: "Review Type", value: "ITR" },
+      { label: "Support Mode", value: "Review" },
+      { label: "Documents", value: "Required" }
     ]
   }
 };
@@ -134,10 +127,6 @@ export default function ExpertProfilePage() {
                   <ShieldCheck className="w-4 h-4 mr-2" />
                   Verified Professional
                 </Badge>
-                <div className="flex items-center gap-1 text-yellow-500 font-bold">
-                  <Star className="w-4 h-4 fill-current" />
-                  {expert.rating} ({expert.reviews} reviews)
-                </div>
               </div>
               
               <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-2 leading-tight">
@@ -150,7 +139,7 @@ export default function ExpertProfilePage() {
               
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-14 px-8 rounded-xl shadow-lg">
-                  Consult with {expert.name.split(' ')[1]}
+                  Request a Consultation
                 </Button>
                 <div className="flex gap-2">
                   <Button variant="outline" size="icon" className="h-14 w-14 rounded-xl">

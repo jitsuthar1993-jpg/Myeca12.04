@@ -38,8 +38,8 @@ const SERVICES_DATA = [
     title: 'Income Tax Return',
     category: 'individual',
     description: 'Expert filing for salaried, professional, and business income.',
-    price: '₹999',
-    features: ['Precision Review', 'Tax Optimization', '24/7 Expert Support'],
+    price: '₹999 excluding GST',
+    features: ['Precision Review', 'Tax Optimization', 'Business-hours Expert Support'],
     color: 'blue',
     popular: true
   },
@@ -48,7 +48,7 @@ const SERVICES_DATA = [
     title: 'GST Registration',
     category: 'business',
     description: 'Get your GSTIN quickly with complete documentation.',
-    price: '₹1,499',
+    price: '₹1,499 excluding GST',
     features: ['ARN Generation', 'Certificate Download', 'Expert Consulting'],
     color: 'emerald',
     popular: true
@@ -58,7 +58,7 @@ const SERVICES_DATA = [
     title: 'Company Incorporation',
     category: 'startup',
     description: 'End-to-end support for PVT LTD, LLP, or One Person Company.',
-    price: '₹5,999',
+    price: '₹5,999 excluding GST',
     features: ['DIN & DSC Included', 'MOA/AOA Drafting', 'PAN/TAN Support'],
     color: 'violet',
     popular: true
@@ -68,8 +68,8 @@ const SERVICES_DATA = [
     title: 'TDS Return Filing',
     category: 'tax-compliance',
     description: 'Quarterly compliance for salary and non-salary payments.',
-    price: '₹1,999',
-    features: ['FVU Generation', '24Q/26Q Support', 'Zero Error Filing'],
+    price: '₹1,999 excluding GST',
+    features: ['FVU Generation', '24Q/26Q Support', 'Validation Checks'],
     color: 'amber'
   },
   {
@@ -77,8 +77,8 @@ const SERVICES_DATA = [
     title: 'MSME Registration',
     category: 'business',
     description: 'Udyam registration to unlock government benefits and subsidies.',
-    price: '₹499',
-    features: ['Instant Certificate', 'Government Perks', 'Priority Lending'],
+    price: '₹499 excluding GST',
+    features: ['Portal Certificate', 'Government Perks', 'Priority Lending Documents'],
     color: 'cyan'
   },
   {
@@ -86,7 +86,7 @@ const SERVICES_DATA = [
     title: 'Trademark Filing',
     category: 'startup',
     description: 'Protect your brand name, logo, and identity legally.',
-    price: '₹2,499',
+    price: '₹2,499 excluding GST',
     features: ['Brand Protection', 'Search Report', 'Expert Drafting'],
     color: 'rose'
   }
@@ -324,7 +324,7 @@ export default function ServiceSelectionPage() {
                 <Scale className="h-7 w-7 text-violet-600" />
               </div>
               <h3 className="text-xl font-black tracking-tight text-slate-900 mb-4">Legal Compliance</h3>
-              <p className="text-slate-500 font-medium text-sm leading-relaxed">Every document is verified by expert professionals ensuring 100% legal accuracy and zero notice risk.</p>
+              <p className="text-slate-500 font-medium text-sm leading-relaxed">Documents are reviewed by professionals to reduce filing errors and identify items that need expert attention.</p>
             </div>
           </div>
         </m.div>

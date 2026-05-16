@@ -109,7 +109,7 @@ export default function IncomeTaxCalculator() {
               Rule-based estimate
             </div>
             <div className="w-px h-4 bg-[#D0D5DD]" />
-            <div className="text-[13px] font-normal text-[#475467]">100% Secure</div>
+            <div className="text-[13px] font-normal text-[#475467]">Secure workflow</div>
             <div className="w-px h-4 bg-[#D0D5DD]" />
             <div className="text-[13px] font-normal text-[#475467]">Review before filing</div>
           </div>

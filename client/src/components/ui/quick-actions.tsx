@@ -19,7 +19,7 @@ const quickActions = [
   {
     id: "calculate-tax",
     title: "Calculate Tax",
-    description: "Instantly calculate your tax liability",
+    description: "Estimate your tax liability",
     icon: Calculator,
     href: "/calculators/income-tax",
     color: "bg-blue-500",
@@ -52,7 +52,7 @@ const quickActions = [
   {
     id: "ai-assistant",
     title: "Ask AI Assistant",
-    description: "Get instant tax guidance",
+    description: "Get guided tax support",
     icon: Bot,
     href: "/advanced-features",
     color: "bg-orange-500",

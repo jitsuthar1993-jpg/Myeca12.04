@@ -164,7 +164,7 @@ const metricCards = [
   { label: "Connected", value: "03", icon: Check },
   { label: "Ready next", value: "04", icon: Zap },
   { label: "Roadmap", value: "05", icon: Cloud },
-  { label: "Guardrails", value: "100%", icon: Shield },
+  { label: "Guardrails", value: "Policy", icon: Shield },
 ];
 
 const typedIntegrationCategories: Array<{

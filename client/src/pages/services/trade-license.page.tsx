@@ -168,7 +168,7 @@ export default function TradeLicensePage() {
       step: 7,
       title: "License Issuance",
       description: "Download digital trade license certificate",
-      duration: "Same day after approval",
+      duration: "After approval",
       icon: Award
     }
   ];

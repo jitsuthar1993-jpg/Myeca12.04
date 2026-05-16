@@ -5,7 +5,6 @@ import {
   Award, 
   CheckCircle2, 
   Linkedin, 
-  Star, 
   MessageSquare, 
   ShieldCheck,
   Briefcase,
@@ -21,38 +20,32 @@ import { LazyImage } from "@/components/ui/lazy-image";
 const specialists = [
   {
     id: "ca-rahul-sharma",
-    name: "CA Rahul Sharma",
-    role: "Senior Tax Consultant",
+    name: "Tax Review Team",
+    role: "Senior tax consultants",
     specialty: "International Taxation & GST",
     exp: "12+ Years",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
-    bio: "Ex-Big4 consultant specializing in complex GST litigation and cross-border tax compliance.",
-    rating: 4.9,
-    reviews: 840,
+    bio: "Credential-checked professionals support complex GST and cross-border tax compliance cases.",
     tags: ["GST Expert", "NRI Taxation", "Corporate Advisory"]
   },
   {
     id: "ca-priya-nair",
-    name: "CA Priya Nair",
-    role: "Corporate Secretary",
+    name: "Startup Compliance Team",
+    role: "Company law advisors",
     specialty: "Company Law & Startup Funding",
     exp: "8 Years",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
-    bio: "Passionate about the Indian startup ecosystem. Helped 200+ startups raise seed and Series A funding.",
-    rating: 4.8,
-    reviews: 620,
+    bio: "Advisors help founders understand incorporation, funding compliance, and ESOP documentation.",
     tags: ["Startup Registration", "Funding", "Compliance"]
   },
   {
     id: "ca-amit-verma",
-    name: "CA Amit Verma",
-    role: "Direct Tax Specialist",
+    name: "Direct Tax Team",
+    role: "ITR and notice specialists",
     specialty: "ITR Filing & Notice Handling",
     exp: "15+ Years",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-    bio: "Expert in Income Tax scrutiny handling and appeals. Dedicated to maximizing legit tax refunds for clients.",
-    rating: 5.0,
-    reviews: 1200,
+    bio: "Specialists help taxpayers respond accurately to notices and claim eligible refunds with documentation.",
     tags: ["ITR Expert", "Tax Scrutiny", "Tax Advisory"]
   }
 ];
@@ -62,8 +55,8 @@ export default function ExpertsIndexPage() {
     <>
       <div className="min-h-screen bg-slate-50">
       <MetaSEO
-        title="Meet Our Expert CAs | Certified Tax & Legal Specialists MyeCA.in"
-        description="Verify the credentials of our licensed Chartered Accountants and Corporate Secretaries. Professional guidance from India's top financial experts."
+        title="Expert CA Review And Tax Advisory | MyeCA.in"
+        description="Understand the review scope available from credential-checked tax, GST, and compliance professionals through MyeCA.in."
         keywords={["CA profiles", "tax experts India", "startup consultants", "certified chartered accountants"]}
         breadcrumbs={[
           { name: "Home", url: "/" },
@@ -118,10 +111,6 @@ export default function ExpertsIndexPage() {
                         <h3 className="text-xl font-bold text-white mb-0">{expert.name}</h3>
                         <p className="text-blue-300 text-xs font-bold uppercase tracking-widest">{expert.role}</p>
                       </div>
-                      <div className="flex items-center gap-1 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg border border-white/20">
-                        <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                        <span className="text-xs font-bold text-white">{expert.rating}</span>
-                      </div>
                     </div>
                   </div>
 
@@ -169,8 +158,8 @@ export default function ExpertsIndexPage() {
             <h2 className="text-3xl font-black mb-6 text-slate-900">Our Experts are Your Advantage</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: ShieldCheck, title: "100% Licensed", desc: "ICAI/ICSI certified" },
-                { icon: Award, title: "Top 1%", desc: "Selected after rigorous testing" },
+                { icon: ShieldCheck, title: "Credential Checked", desc: "Qualification details reviewed" },
+                { icon: Award, title: "Scope-Led Review", desc: "Matched to the service need" },
                 { icon: MessageSquare, title: "Direct Contact", desc: "Consult directly with the pro" }
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center">

@@ -107,13 +107,13 @@ export default function HeroWithOptimizedImages() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/auth/login">
+                <Link href="/itr/form-selector">
                   <m.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
                   >
-                    Login & Start Filing
+                    Start Filing
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </m.button>
                 </Link>

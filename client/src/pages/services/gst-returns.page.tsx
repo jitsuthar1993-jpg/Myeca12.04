@@ -262,7 +262,7 @@ export default function GSTReturnsPage() {
     },
     {
       feature: "Real-time ITC Matching",
-      description: "Instant verification of input tax credits",
+      description: "Input tax credit verification checks",
       impact: "Faster refund processing",
       icon: Zap
     },
@@ -348,10 +348,10 @@ export default function GSTReturnsPage() {
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              GST Returns Filing with 2025 Updates
+              GST Returns Filing Guidance
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Complete guide to all GST returns with latest 2025 changes and compliance requirements
+              Complete guide to GST return types, compliance requirements, and update checks
             </p>
           </div>
 
@@ -534,7 +534,7 @@ export default function GSTReturnsPage() {
               New GST Portal Features 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Latest technology enhancements for improved GST compliance
+              Technology enhancements for improved GST compliance
             </p>
           </div>
 

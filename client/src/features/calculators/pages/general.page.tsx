@@ -123,7 +123,7 @@ export default function GeneralCalculatorPage() {
     <>
       <MetaSEO
         title={seo?.title || "General Calculator 2025 | Free Online Calculator | MyeCA.in"}
-        description={seo?.description || "Free online general calculator with keyboard support, calculation history, and scientific functions. Clean, professional, and instant calculations."}
+        description={seo?.description || "Free online general calculator with keyboard support, calculation history, and scientific functions. Clean, professional, and responsive calculations."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         breadcrumbs={seo?.breadcrumbs}
@@ -318,7 +318,7 @@ export default function GeneralCalculatorPage() {
                 icon: <History className="w-5 h-5" />,
                 iconBg: "bg-indigo-50 text-indigo-600",
                 title: "Calculation History",
-                desc: "The history panel stores your last 10 calculations. Click on any previous result to instantly load it into the display for use in your next calculation.",
+                desc: "The history panel stores your last 10 calculations. Click on any previous result to load it into the display for your next calculation.",
               },
               {
                 icon: <Zap className="w-5 h-5" />,
@@ -337,7 +337,7 @@ export default function GeneralCalculatorPage() {
               steps: [
                 { title: "Enter a Number", desc: "Click the digit buttons or use your keyboard numpad. The display shows your current input in real time." },
                 { title: "Choose an Operation", desc: "Click +, −, ×, ÷ to select an arithmetic operation. For functions, use the top row (√, x², 1/x, %)." },
-                { title: "View Result", desc: "Press = or Enter to compute. The result appears instantly and is saved to your History panel automatically." },
+                { title: "View Result", desc: "Press = or Enter to compute. The result appears in the display and is saved to your History panel automatically." },
               ],
             }}
             faqs={[

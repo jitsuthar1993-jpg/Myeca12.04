@@ -12,7 +12,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Link } from "wouter";
 import {
   Video,
-  Star,
   Clock,
   MessageSquare,
   FileText,
@@ -65,22 +64,7 @@ export default function ConsultationsPage() {
   };
 
   // Format price
-  const formatPrice = (price: number) => `₹${price.toLocaleString('en-IN')}`;
-
-  // Render stars
-  const renderStars = (rating: number) => {
-    return (
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            className={`h-4 w-4 ${star <= Math.round(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-          />
-        ))}
-        <span className="ml-1 text-sm font-medium">{rating}</span>
-      </div>
-    );
-  };
+  const formatPrice = (price: number) => `₹${price.toLocaleString('en-IN')} excluding GST`;
 
   // Expert card
   const ExpertCard = ({ expert }: { expert: Expert }) => (
@@ -103,10 +87,7 @@ export default function ConsultationsPage() {
               )}
             </div>
             
-            <div className="flex items-center gap-4 mt-2">
-              {renderStars(expert.rating)}
-              <span className="text-sm text-gray-500">({expert.reviewCount} reviews)</span>
-            </div>
+            <p className="mt-2 text-sm text-gray-500">Credential and scope checked before booking</p>
             
             <div className="flex flex-wrap gap-1 mt-3">
               {expert.specializations.slice(0, 4).map((spec, index) => (
@@ -270,8 +251,8 @@ export default function ConsultationsPage() {
                   <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
                     <CheckCircle className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold">Satisfaction Guaranteed</h3>
-                  <p className="text-sm text-gray-600 mt-1">100% refund if not satisfied</p>
+                  <h3 className="font-semibold">Clear Scope</h3>
+                  <p className="text-sm text-gray-600 mt-1">Refund eligibility shown before payment</p>
                 </div>
               </div>
             </CardContent>
@@ -477,4 +458,3 @@ export default function ConsultationsPage() {
     </div>
   );
 }
-

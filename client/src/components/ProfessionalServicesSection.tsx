@@ -40,11 +40,11 @@ const services = [
     href: "/services/marketplace",
     color: "blue",
     badge: "30+ Services",
-    features: ["Transparent Pricing", "Expert CAs", "Quick Turnaround"]
+    features: ["Transparent Pricing", "Expert Support", "Clear Timelines"]
   },
   {
     title: "Document Generator",
-    description: "Generate rent receipts, salary slips, invoices and more - completely free!",
+    description: "Generate rent receipts, salary slips, invoices and more with a free account.",
     icon: FileText,
     href: "/documents/generator",
     color: "teal",
@@ -142,4 +142,3 @@ export default function ProfessionalServicesSection() {
     </section>
   );
 }
-

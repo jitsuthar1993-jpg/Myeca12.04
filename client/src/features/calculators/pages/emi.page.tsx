@@ -94,7 +94,7 @@ export default function EMICalculator() {
                 </div>
                 <div>
                   <h2 className="text-lg font-normal text-[#101828]">Loan Configuration</h2>
-                  <p className="text-xs text-[#667085]">Adjust parameters to see instant EMI impact</p>
+                  <p className="text-xs text-[#667085]">Adjust parameters to review EMI impact</p>
                 </div>
               </div>
 

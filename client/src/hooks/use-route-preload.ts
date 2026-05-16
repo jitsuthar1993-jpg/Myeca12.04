@@ -5,11 +5,11 @@ import { useAuth } from '@/components/AuthProvider';
 const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
   '/': ['/calculators', '/services', '/experts'],
   '/calculators': ['/calculators/income-tax', '/calculators/sip', '/calculators/hra', '/calculators/emi', '/calculators/hsn-finder'],
-  '/services': ['/services/gst-registration', '/services/company-registration', '/services/itr-filing', '/experts'],
+  '/services': ['/services/gst-registration', '/services/company-registration', '/itr/form-selector', '/experts'],
   '/auth/login': ['/auth/register'],
   '/auth/register': ['/auth/login'],
   '/dashboard': ['/profiles', '/documents', '/settings', '/itr/form-selector'],
-  '/itr': ['/itr/filing', '/itr/status-tracker', '/itr/form-selector'],
+  '/itr': ['/itr/form-selector', '/itr/status-tracker'],
   '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],
   '/experts': ['/experts/ca-rahul-sharma', '/experts/ca-priya-nair'],
 };

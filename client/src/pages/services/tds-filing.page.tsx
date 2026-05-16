@@ -189,7 +189,7 @@ export default function TdsFilingPage() {
     {
       step: 2,
       title: "Return Preparation",
-      description: "Prepare accurate TDS returns using latest RPU/FVU utilities with error-free filing",
+      description: "Prepare TDS returns using current RPU/FVU utilities with validation checks",
       icon: Calculator,
       color: "green"
     },
@@ -638,7 +638,7 @@ export default function TdsFilingPage() {
                 TDS Rates FY 2025-26 - Key Sections
               </CardTitle>
               <CardDescription>
-                Latest TDS rates and threshold limits effective for current financial year
+                TDS rates and threshold limits effective for the current financial year
               </CardDescription>
             </CardHeader>
             <CardContent>

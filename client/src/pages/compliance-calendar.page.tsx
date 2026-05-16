@@ -571,7 +571,7 @@ export default function ComplianceCalendarPage() {
                 <div>
                   <h3 className="text-2xl font-normal text-slate-900 tracking-tight">Missed a Statutory Deadline?</h3>
                   <p className="text-sm font-normal text-amber-700 mt-2 max-w-lg">
-                    Don't guess your late fees. Use our Penalty Calculator to instantly compute exact late fees, interest, and statutory penalties for GST, IT, and MCA.
+                    Don't guess your late fees. Use our Penalty Calculator to estimate late fees, interest, and statutory penalties for GST, IT, and MCA.
                   </p>
                 </div>
               </div>
@@ -600,7 +600,7 @@ export default function ComplianceCalendarPage() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-normal text-slate-900 tracking-tight">Recent Compliance Activity</h3>
-                  <p className="text-sm font-normal text-slate-500 mt-1">Audit log of latest statutory filings</p>
+                  <p className="text-sm font-normal text-slate-500 mt-1">Audit log of recent statutory filings</p>
                 </div>
               </div>
               <Link href="#" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center gap-2 group transition-colors">

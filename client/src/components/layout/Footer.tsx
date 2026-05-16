@@ -16,7 +16,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <BrandLockup logoSize="sm" wordmarkSize="sm" compact />
-              <span className="text-sm font-medium">&copy; 2025 MyeCA.in</span>
+              <span className="text-sm font-medium">&copy; 2026 MyeCA.in</span>
               <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 border-l border-slate-300 pl-4">
                  <span>🇮🇳 Made in India</span>
                  <span className="mx-2">•</span>
@@ -92,7 +92,7 @@ export default function Footer() {
             <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700">Refunds</Link>
             <Link href="/contact" onMouseEnter={() => preloadOnHover("/contact")} className="hover:text-slate-700">Support</Link>
           </div>
-          <p className="mt-3 text-center text-xs text-slate-500">&copy; 2025 MyeCA.in. Made in India.</p>
+          <p className="mt-3 text-center text-xs text-slate-500">&copy; 2026 MyeCA.in. Made in India.</p>
         </div>
       </div>
 
@@ -165,19 +165,19 @@ export default function Footer() {
               <div>
                 <h4 className="text-xs font-semibold text-slate-800 mb-3">Connect With Us</h4>
                 <div className="flex gap-2">
-                  <a href="https://facebook.com/myeca" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook"
+                  <a href="https://www.facebook.com/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook"
                      className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
                     <Facebook className="h-4 w-4" />
                   </a>
-                  <a href="https://twitter.com/myeca" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter"
+                  <a href="https://twitter.com/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter"
                      className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-sky-500 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
                     <Twitter className="h-4 w-4" />
                   </a>
-                  <a href="https://linkedin.com/company/myeca" target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn"
+                  <a href="https://www.linkedin.com/company/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn"
                      className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-blue-700 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
                     <Linkedin className="h-4 w-4" />
                   </a>
-                  <a href="https://instagram.com/myeca.in" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram"
+                  <a href="https://www.instagram.com/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram"
                      className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
                     <Instagram className="h-4 w-4" />
                   </a>
@@ -232,7 +232,7 @@ export default function Footer() {
                 <li><Link href="/blog" onMouseEnter={() => preloadOnHover("/blog")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Tax Guides & Blog</Link></li>
                 <li><Link href="/experts" onMouseEnter={() => preloadOnHover("/experts")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Meet our Experts</Link></li>
                 <li><Link href="/pricing" onMouseEnter={() => preloadOnHover("/pricing")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Pricing & Plans</Link></li>
-                <li><Link href="/search" onMouseEnter={() => preloadOnHover("/search")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Help Center</Link></li>
+                <li><Link href="/help" onMouseEnter={() => preloadOnHover("/help")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Help Center</Link></li>
                 <li><Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Privacy Policy</Link></li>
                 <li><Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Terms of Service</Link></li>
               </ul>
@@ -251,13 +251,13 @@ export default function Footer() {
                     <div className="w-5 h-5 bg-green-100 rounded flex items-center justify-center">
                       <Phone className="h-2.5 w-2.5 text-green-600" />
                     </div>
-                    <span className="text-slate-600">support@myeca.in</span>
+                    <span className="text-slate-600">Request callback</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
                       <Clock className="h-2.5 w-2.5 text-blue-600" />
                     </div>
-                    <span className="text-slate-600">24/7 Support</span>
+                    <span className="text-slate-600">Mon-Sat, 9 AM-7 PM</span>
                   </div>
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function Footer() {
           <div className="mt-8 pt-6 border-t border-slate-200">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
               <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                <span className="text-slate-600 text-sm">&copy; 2025 MyeCA.in. All rights reserved.</span>
+                <span className="text-slate-600 text-sm">&copy; 2026 MyeCA.in. All rights reserved.</span>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-full">
                     <span>🇮🇳</span>

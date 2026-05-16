@@ -136,7 +136,7 @@ export default function TermsOfServicePage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Expert Support</h3>
                   <ul className="text-gray-600 space-y-1 text-sm">
                     <li>• CA-assisted filing services</li>
-                    <li>• 24/7 customer support</li>
+                    <li>• Business-hours customer support</li>
                     <li>• Document review and verification</li>
                     <li>• Professional consultations</li>
                   </ul>

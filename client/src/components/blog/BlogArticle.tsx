@@ -412,9 +412,9 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
       <div className="border-y border-blue-100 bg-blue-50/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
-            Expert CA review on every ITR - <span className="text-white font-semibold">starting Rs 999</span>
+            Optional CA review for eligible ITR plans - <span className="text-white font-semibold">starting ₹999</span>
           </p>
-          <Link href="/itr/filing">
+          <Link href="/itr/form-selector">
             <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
               File Now <ArrowRight className="w-3 h-3" />
             </span>

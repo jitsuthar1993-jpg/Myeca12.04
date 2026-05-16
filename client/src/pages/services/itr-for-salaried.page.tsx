@@ -720,7 +720,7 @@ export default function ITRForSalariedPage() {
                   <CheckCircle className="w-5 h-5 text-green-400" /> Secure Document Handling
                 </li>
                 <li className="flex items-center gap-3 text-blue-50">
-                  <CheckCircle className="w-5 h-5 text-green-400" /> 100% Free Initial Draft
+                  <CheckCircle className="w-5 h-5 text-green-400" /> Free Preliminary Draft
                 </li>
               </ul>
             </div>

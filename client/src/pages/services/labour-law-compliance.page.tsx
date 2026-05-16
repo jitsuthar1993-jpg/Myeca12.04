@@ -692,13 +692,13 @@ export default function LabourLawCompliancePage() {
               </h3>
               <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
                 Our labour law experts ensure complete PF, ESI, Contract Labour Act, and Factory Act 
-                compliance with latest 2025 updates, deadline tracking and proactive management.
+                compliance with update checks, deadline tracking and proactive management.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 px-8 shadow-lg">
                   <Users className="w-5 h-5 mr-2" />
-                  Complete Compliance Rs 2,999/month
+                  Complete Compliance ₹2,999/month excluding GST
                 </Button>
                 <Link href="/expert-consultation?service=labour-law-compliance">
                   <Button size="lg" className="bg-orange-700 hover:bg-orange-800 text-white border-0 px-8 shadow-lg font-semibold">
@@ -715,7 +715,7 @@ export default function LabourLawCompliancePage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Latest 2025 Updates</span>
+                  <span>Update Checks</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

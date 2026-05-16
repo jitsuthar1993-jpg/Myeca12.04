@@ -75,13 +75,6 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
   }, [location, title, currentUrl]);
 
   const keywordStr = Array.isArray(keywords) ? keywords.join(", ") : keywords;
-  const serviceRatingValue = serviceData ? Number(serviceData.rating) : NaN;
-  const serviceReviewCount = serviceData ? Number(serviceData.reviews) : NaN;
-  const hasVerifiedServiceRating =
-    Number.isFinite(serviceRatingValue) &&
-    serviceRatingValue > 0 &&
-    Number.isFinite(serviceReviewCount) &&
-    serviceReviewCount > 0;
   const servicePrice = serviceData?.price
     ? serviceData.price.replace(/,/g, "").match(/\d+(?:\.\d+)?/)?.[0]
     : undefined;
@@ -164,7 +157,7 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
           "Saturday"
         ],
         "opens": "09:00",
-        "closes": "20:00"
+        "closes": "19:00"
       },
       ...localBusinessData,
     });
@@ -192,9 +185,10 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
         url: "https://myeca.in/favicon.svg"
       },
       sameAs: [
+        "https://www.facebook.com/myecain",
         "https://twitter.com/myecain",
         "https://www.linkedin.com/company/myecain",
-        "https://www.facebook.com/myecain"
+        "https://www.instagram.com/myecain"
       ]
     },
     author: {
@@ -244,11 +238,6 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
         priceCurrency: "INR",
         availability: serviceData.availability || "https://schema.org/InStock",
       },
-      ...(hasVerifiedServiceRating ? { aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: serviceRatingValue,
-        reviewCount: serviceReviewCount,
-      } } : {}),
     });
   }
 

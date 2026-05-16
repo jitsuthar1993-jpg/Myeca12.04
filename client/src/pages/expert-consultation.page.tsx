@@ -94,7 +94,7 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
 
 const services = Object.values(SERVICE_LABELS);
 const timeSlots = ["Call now", "Today before 1 PM", "Today 2 PM - 4 PM", "Today 4 PM - 6 PM", "Tomorrow morning"];
-const turnoverBands = ["Under Rs. 20 lakh", "Rs. 20 lakh - Rs. 1 crore", "Rs. 1 crore - Rs. 5 crore", "Above Rs. 5 crore"];
+const turnoverBands = ["Under ₹20 lakh", "₹20 lakh - ₹1 crore", "₹1 crore - ₹5 crore", "Above ₹5 crore"];
 
 export default function ExpertConsultationPage() {
   const [location] = useLocation();

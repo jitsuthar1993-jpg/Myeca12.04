@@ -54,9 +54,6 @@ const SEO: React.FC<SEOProps> = ({
   const [location] = useLocation();
   const currentUrl = `https://myeca.in${location}`;
   const siteName = 'MyeCA.in - Expert Tax Filing Services';
-  const serviceRatingValue = serviceData ? Number(serviceData.rating) : NaN;
-  const serviceReviewCount = serviceData ? Number(serviceData.reviews) : NaN;
-  const hasVerifiedServiceRating = Number.isFinite(serviceRatingValue) && serviceRatingValue > 0 && Number.isFinite(serviceReviewCount) && serviceReviewCount > 0;
   const servicePrice = serviceData?.price ? serviceData.price.replace(/,/g, '').match(/\d+(?:\.\d+)?/)?.[0] : undefined;
 
   // Track page view for Google Analytics
@@ -86,9 +83,10 @@ const SEO: React.FC<SEOProps> = ({
         url: "https://myeca.in",
         logo: "https://myeca.in/favicon.svg",
         sameAs: [
+          "https://www.facebook.com/myecain",
           "https://twitter.com/myecain",
-          "https://facebook.com/myecain",
-          "https://linkedin.com/company/myecain"
+          "https://www.linkedin.com/company/myecain",
+          "https://www.instagram.com/myecain"
         ]
       },
       publisher: {
@@ -134,11 +132,6 @@ const SEO: React.FC<SEOProps> = ({
           priceCurrency: "INR",
           availability: serviceData.availability || "https://schema.org/InStock"
         },
-        ...(hasVerifiedServiceRating ? { aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: serviceData.rating,
-          reviewCount: serviceData.reviews
-        } } : {})
       };
     }
 
@@ -257,8 +250,6 @@ const SEO: React.FC<SEOProps> = ({
       {type === 'service' && serviceData && (
         <>
           <meta property="service:price" content={serviceData.price} />
-          <meta property="service:rating" content={serviceData.rating} />
-          <meta property="service:reviews" content={serviceData.reviews} />
           <meta property="service:availability" content={serviceData.availability} />
         </>
       )}
@@ -283,9 +274,9 @@ const SEO: React.FC<SEOProps> = ({
               "@type": "OpeningHoursSpecification",
               dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
               opens: "09:00",
-              closes: "18:00"
+              closes: "19:00"
             },
-            priceRange: "Rs 499-Rs 9,999"
+            priceRange: "₹499-₹9,999 excluding GST"
           })}
         </script>
       )}

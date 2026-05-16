@@ -13,63 +13,70 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [
   {
     id: "1",
-    name: "Arjun M., Mumbai",
+    name: "Salaried user, Mumbai",
     role: "ITR-2 (Dual Salaries)",
-    content: "Switched jobs twice this year and had two Form 16s. MyeCA's CA handled both automatically — I didn't upload a single document. Got my ₹42,000 refund in just 9 days.",
+    content: "I had two Form 16s after switching jobs. The checklist made it clear what to upload and what the CA would review before filing.",
     rating: 5,
-    avatar: "AM"
+    avatar: "SU",
+    verified: false,
   },
   {
     id: "2",
-    name: "Priya K., Bangalore",
+    name: "Investor user, Bengaluru",
     role: "Capital Gains Filing",
-    content: "My Zerodha P&L was auto-imported and the CA calculated my capital gains to the rupee. Saved ₹22,000 on taxes compared to filing alone. Genuinely impressed.",
+    content: "The capital gains workflow helped me organize broker reports, AIS details, and questions for review before I chose an assisted plan.",
     rating: 5,
-    avatar: "PK"
+    avatar: "IU",
+    verified: false,
   },
   {
     id: "3",
-    name: "Rajesh I., Dubai/Chennai",
+    name: "NRI user",
     role: "NRI Tax Advisory",
-    content: "Filed my Indian return sitting in Dubai. The CA called me on WhatsApp to clarify my DTAA claim. Never expected this level of personal attention. Saved ₹1.2L in overseas tax credits.",
+    content: "The consultation request captured my NRI tax questions and gave me a clearer document list before speaking with an expert.",
     rating: 5,
-    avatar: "RI"
+    avatar: "NU",
+    verified: false,
   },
   {
     id: "4",
-    name: "Sneha A., Delhi",
+    name: "First-time filer, Delhi",
     role: "First-time ITR-1",
-    content: "I was scared of filing taxes. MyeCA walked me through everything — the AI assistant answered all my questions, and the CA filed it in under a day. Got ₹11,200 refund!",
+    content: "The guided filing flow helped me understand the difference between self-service filing and optional CA review.",
     rating: 5,
-    avatar: "SA"
+    avatar: "FF",
+    verified: false,
   },
   {
     id: "5",
-    name: "Vikram G., Pune",
+    name: "Business-income user, Pune",
     role: "F&O & Business Audit",
-    content: "F&O filing is complicated and most CAs charge a fortune. MyeCA's team understood my speculative losses immediately and filed everything correctly. Saved ₹35k in penalty fees.",
+    content: "The service scope made it easier to separate ordinary filing work from items that needed specialist review.",
     rating: 5,
-    avatar: "VG"
-  }
+    avatar: "BU",
+    verified: false,
+  },
 ];
 
 export const companyTestimonials: Testimonial[] = [
   {
     id: "c1",
-    name: "Meera Singh",
+    name: "Company HR user",
     role: "HR Director",
-    company: "TechCorp",
-    content: "Our HR team loves how easy it is to track employee tax filings. The bulk upload feature saves us hours every filing season.",
+    company: "Private technology company",
+    content: "The dashboard-style filing view makes it easier to understand employee document readiness and follow-up items.",
     rating: 5,
-    avatar: "MS"
+    avatar: "HR",
+    verified: false,
   },
   {
     id: "c2",
-    name: "Rajesh Jain",
+    name: "Finance team user",
     role: "Finance Head",
-    company: "InnovateLabs",
-    content: "MyeCA.in's corporate dashboard gives us complete visibility into our employees' filing status. Excellent tool for payroll planning.",
+    company: "Private services company",
+    content: "The service scope and document checklist helped our finance team plan the filing work before committing to a paid workflow.",
     rating: 5,
-    avatar: "RJ"
-  }
+    avatar: "FT",
+    verified: false,
+  },
 ];

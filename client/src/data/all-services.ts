@@ -22,8 +22,8 @@ export const allServices: Service[] = [
     category: "Tax & Filing Services",
     section: "Services",
     icon: "FileText",
-    path: "/itr/filing",
-    price: "₹499 - ₹2,999",
+    path: "/itr/form-selector",
+    price: "₹499 - ₹2,999 excluding GST",
     popular: true
   },
   {
@@ -34,7 +34,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "Receipt",
     path: "/services/gst-registration",
-    price: "₹999"
+    price: "₹999 excluding GST"
   },
   {
     id: "tds-filing",
@@ -44,7 +44,7 @@ export const allServices: Service[] = [
     section: "Services", 
     icon: "PiggyBank",
     path: "/services/tds-filing",
-    price: "₹799"
+    price: "₹799 excluding GST"
   },
   {
     id: "tax-audit",
@@ -54,7 +54,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "Shield",
     path: "/services/audit-services",
-    price: "₹4,999"
+    price: "₹4,999 excluding GST"
   },
   {
     id: "advance-tax",
@@ -64,7 +64,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "CreditCard",
     path: "/calculators/advance-tax",
-    price: "₹299"
+    price: "₹299 excluding GST"
   },
   {
     id: "notice-compliance",
@@ -74,7 +74,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "AlertTriangle",
     path: "/services/notice-compliance",
-    price: "₹1,999",
+    price: "₹1,999 excluding GST",
     popular: true
   },
 
@@ -87,7 +87,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "Building2",
     path: "/services/company-registration", 
-    price: "₹6,999",
+    price: "₹6,999 excluding GST",
     popular: true
   },
   {
@@ -98,7 +98,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "Award",
     path: "/services/trademark-registration",
-    price: "₹3,999"
+    price: "₹3,999 excluding GST"
   },
   {
     id: "msme-registration",
@@ -108,7 +108,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "Award",
     path: "/services/msme-udyam-registration",
-    price: "₹999"
+    price: "₹999 excluding GST"
   },
   {
     id: "partnership-deed",
@@ -118,7 +118,7 @@ export const allServices: Service[] = [
     section: "Services",
     icon: "FileText",
     path: "/services/activate/partnership-deed",
-    price: "₹2,999"
+    price: "₹2,999 excluding GST"
   },
   {
     id: "annual-compliance",
@@ -128,7 +128,7 @@ export const allServices: Service[] = [
     section: "Services", 
     icon: "Shield",
     path: "/services/compliance-management",
-    price: "₹8,999"
+    price: "₹8,999 excluding GST"
   },
 
   // SERVICES SECTION - Tools & Calculators
@@ -255,7 +255,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "Building2", 
     path: "/services/company-registration",
-    price: "₹6,999",
+    price: "₹6,999 excluding GST",
     popular: true
   },
   {
@@ -266,7 +266,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "FileText",
     path: "/services/activate/legal-documentation",
-    price: "₹2,999"
+    price: "₹2,999 excluding GST"
   },
   {
     id: "compliance-setup",
@@ -276,7 +276,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "Shield",
     path: "/services/compliance-management",
-    price: "₹4,999"
+    price: "₹4,999 excluding GST"
   },
 
   // STARTUP SECTION - Financial Services
@@ -288,7 +288,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "Calculator",
     path: "/startup/accounting",
-    price: "₹3,999"
+    price: "₹3,999 excluding GST"
   },
   {
     id: "banking-solutions",
@@ -298,7 +298,7 @@ export const allServices: Service[] = [
     section: "Startup", 
     icon: "CreditCard",
     path: "/services/activate/banking-solutions",
-    price: "₹1,999"
+    price: "₹1,999 excluding GST"
   },
   {
     id: "investment-guidance",
@@ -308,7 +308,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "TrendingUp",
     path: "/services/activate/investment-guidance",
-    price: "₹5,999"
+    price: "₹5,999 excluding GST"
   },
 
   // STARTUP SECTION - Support & Growth
@@ -320,7 +320,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "MessageCircle",
     path: "/expert-consultation",
-    price: "₹2,999"
+    price: "₹2,999 excluding GST"
   },
   {
     id: "business-planning",
@@ -330,7 +330,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "BookOpen",
     path: "/startup/planning",
-    price: "₹4,999"
+    price: "₹4,999 excluding GST"
   },
   {
     id: "growth-strategies",
@@ -340,7 +340,7 @@ export const allServices: Service[] = [
     section: "Startup",
     icon: "Award",
     path: "/startup/growth",
-    price: "₹7,999"
+    price: "₹7,999 excluding GST"
   },
 
   // CALCULATORS SECTION - Tax Calculators

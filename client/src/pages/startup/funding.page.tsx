@@ -232,7 +232,7 @@ const FundingPage = () => {
       focus: "Internet, Software, Consumer",
       stage: "Growth Stage",
       portfolio: "Meesho, Infra.Market, Captain Fresh",
-      aum: "$2.2B latest fund",
+      aum: "$2.2B reported fund",
       website: "https://www.tigerglobal.com",
       logo: "🐅"
     },

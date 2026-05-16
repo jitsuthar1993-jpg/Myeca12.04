@@ -51,7 +51,7 @@ export default function NoticeComplianceSection() {
     {
       step: "4",
       title: "Follow-up Support",
-      description: "Continuous support until notice is resolved completely"
+      description: "Follow-up support according to the agreed response scope"
     }
   ];
 
@@ -75,7 +75,7 @@ export default function NoticeComplianceSection() {
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Expert assistance for income tax notices. Professional response
-            preparation for quick notice resolution.
+            preparation based on your notice, records, and filing history.
           </p>
         </m.div>
 
@@ -88,15 +88,15 @@ export default function NoticeComplianceSection() {
           className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-16"
         >
           <div className="text-center">
-            <div className="text-3xl font-bold text-red-600">24hr</div>
-            <div className="text-sm text-gray-600">Response Time</div>
+            <div className="text-3xl font-bold text-red-600">Business</div>
+            <div className="text-sm text-gray-600">Hours Callback</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-red-600">100+</div>
-            <div className="text-sm text-gray-600">Notices Resolved</div>
+            <div className="text-3xl font-bold text-red-600">Document</div>
+            <div className="text-sm text-gray-600">Based Review</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-red-600">Expert</div>
+            <div className="text-3xl font-bold text-red-600">CA</div>
             <div className="text-sm text-gray-600">CA Support</div>
           </div>
         </m.div>
@@ -140,7 +140,7 @@ export default function NoticeComplianceSection() {
           className="mb-16"
         >
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-            Our 4-Step Notice Resolution Process
+            Our 4-Step Notice Support Process
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {complianceProcess.map((process, index) => (
