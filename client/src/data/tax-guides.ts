@@ -506,7 +506,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         tips: [
           'Presumptive is simpler - no books maintenance required',
           'If expenses > 50%, regular scheme may be better',
-          'Once opted out of presumptive, cant come back for 5 years',
+          "Once opted out of presumptive, can't come back for 5 years",
         ],
       },
       {
