@@ -1,4 +1,5 @@
 import { lazy, type ComponentType } from "react";
+import { recoverFromStaleChunk } from "@/utils/chunk-recovery";
 
 export const lazyWithRetry = <T extends ComponentType<any>>(
   importFunc: () => Promise<{ default: T }>,
@@ -13,6 +14,7 @@ export const lazyWithRetry = <T extends ComponentType<any>>(
         return await importFunc();
       } catch (error) {
         lastError = error as Error;
+        await recoverFromStaleChunk(error);
         if (attempt < maxRetries) {
           await new Promise((resolve) => setTimeout(resolve, retryDelay));
         }

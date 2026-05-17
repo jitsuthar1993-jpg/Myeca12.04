@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { recoverFromStaleChunk } from '@/utils/chunk-recovery';
 
 interface Props {
   children: ReactNode;
@@ -34,6 +35,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
+    void recoverFromStaleChunk(error);
     
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
