@@ -14,7 +14,7 @@ import {
   Bot
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { lazy, Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -24,19 +24,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/components/AuthProvider";
 import { getSEOConfig } from "@/config/seo.config";
 import { MobileActionBar } from "@/components/mobile";
+import { lazyWithRetry } from "@/utils/lazy-with-retry";
 
 
-const FeaturesSection = lazy(() => import("@/components/FeaturesSection"));
-const PricingSection = lazy(() => import("@/components/PricingSection"));
-const Testimonials = lazy(() => import("@/components/Testimonials"));
-const TrustedBySection = lazy(() => import("@/components/TrustedBySection"));
-const EverythingSection = lazy(() => import("@/components/EverythingSection"));
-const NoticeComplianceSection = lazy(() => import("@/components/NoticeComplianceSection"));
-const GSTNoticeSection = lazy(() => import("@/components/GSTNoticeSection"));
-const ProfessionalServicesSection = lazy(() => import("@/components/ProfessionalServicesSection"));
-const OtherServicesSection = lazy(() => import("@/components/OtherServicesSection"));
-const FinancialGlossary = lazy(() => import("@/components/seo/FinancialGlossary"));
-const FeaturedResources = lazy(() => import("@/components/seo/FeaturedResources"));
+const FeaturesSection = lazyWithRetry(() => import("@/components/FeaturesSection"));
+const PricingSection = lazyWithRetry(() => import("@/components/PricingSection"));
+const Testimonials = lazyWithRetry(() => import("@/components/Testimonials"));
+const TrustedBySection = lazyWithRetry(() => import("@/components/TrustedBySection"));
+const EverythingSection = lazyWithRetry(() => import("@/components/EverythingSection"));
+const NoticeComplianceSection = lazyWithRetry(() => import("@/components/NoticeComplianceSection"));
+const GSTNoticeSection = lazyWithRetry(() => import("@/components/GSTNoticeSection"));
+const ProfessionalServicesSection = lazyWithRetry(() => import("@/components/ProfessionalServicesSection"));
+const OtherServicesSection = lazyWithRetry(() => import("@/components/OtherServicesSection"));
+const FinancialGlossary = lazyWithRetry(() => import("@/components/seo/FinancialGlossary"));
+const FeaturedResources = lazyWithRetry(() => import("@/components/seo/FeaturedResources"));
 
 const SectionFallback = () => (
   <div className="py-12">

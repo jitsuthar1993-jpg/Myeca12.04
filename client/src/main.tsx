@@ -1,8 +1,10 @@
 import { createRoot } from "react-dom/client";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { addPerformanceHints } from "./utils/performance-hints";
+import { recoverFromStaleChunk } from "./utils/chunk-recovery";
+import { lazyWithRetry } from "./utils/lazy-with-retry";
 import { shouldLoadProductionTelemetry } from "./utils/runtime-env";
 import "./utils/safe-dom";
 import "./index.css";
@@ -10,10 +12,10 @@ import "./index.css";
 const loadProductionTelemetry = shouldLoadProductionTelemetry();
 
 const VercelAnalytics = loadProductionTelemetry
-  ? lazy(() => import("@vercel/analytics/react").then((mod) => ({ default: mod.Analytics })))
+  ? lazyWithRetry(() => import("@vercel/analytics/react").then((mod) => ({ default: mod.Analytics })))
   : null;
 const VercelSpeedInsights = loadProductionTelemetry
-  ? lazy(() => import("@vercel/speed-insights/react").then((mod) => ({ default: mod.SpeedInsights })))
+  ? lazyWithRetry(() => import("@vercel/speed-insights/react").then((mod) => ({ default: mod.SpeedInsights })))
   : null;
 
 // Initialize performance hints (preconnect, dns-prefetch)
@@ -31,6 +33,7 @@ if ('scrollRestoration' in window.history) {
 
 // Lightweight error logging via sendBeacon (non-blocking)
 window.addEventListener('error', (e) => {
+  void recoverFromStaleChunk(e.error || e.message);
   try {
     navigator.sendBeacon?.('/api/errors/log', JSON.stringify({
       kind: 'window_error',
@@ -43,6 +46,7 @@ window.addEventListener('error', (e) => {
 });
 
 window.addEventListener('unhandledrejection', (e) => {
+  void recoverFromStaleChunk(e.reason);
   try {
     navigator.sendBeacon?.('/api/errors/log', JSON.stringify({
       kind: 'unhandled_rejection',

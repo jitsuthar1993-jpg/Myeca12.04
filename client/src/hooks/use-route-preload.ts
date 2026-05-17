@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/components/AuthProvider';
+import { recoverFromStaleChunk } from '@/utils/chunk-recovery';
 
 const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
   '/': ['/calculators', '/services', '/experts'],
@@ -54,10 +55,17 @@ const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
   const loader = importMap[path];
   if (loader) {
     preloadedRoutes.add(path);
+    const loadSafely = () => {
+      loader().catch((error) => {
+        void recoverFromStaleChunk(error);
+        preloadedRoutes.delete(path);
+      });
+    };
+
     if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => loader(), { timeout: 5000 });
+      requestIdleCallback(loadSafely, { timeout: 5000 });
     } else {
-      setTimeout(() => loader(), 100);
+      setTimeout(loadSafely, 100);
     }
   }
 };

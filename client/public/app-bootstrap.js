@@ -1,4 +1,41 @@
 (function () {
+  var CHUNK_RECOVERY_KEY = "myeca:bootstrap-chunk-recovery";
+
+  function isRecoverableChunkError(value) {
+    return /ChunkLoadError|Loading chunk \d+ failed|Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed|Failed to load module script|MIME type.*text\/html/i.test(String(value || ""));
+  }
+
+  function recoverFromStaleChunk(value) {
+    if (!isRecoverableChunkError(value)) return false;
+
+    try {
+      if (sessionStorage.getItem(CHUNK_RECOVERY_KEY)) return false;
+      sessionStorage.setItem(CHUNK_RECOVERY_KEY, String(Date.now()));
+    } catch (_) {
+      return false;
+    }
+
+    var cleanup = Promise.resolve();
+    if ("caches" in window) {
+      cleanup = cleanup.then(function () {
+        return caches.keys().then(function (names) {
+          return Promise.all(names.map(function (name) { return caches.delete(name); }));
+        });
+      });
+    }
+
+    if ("serviceWorker" in navigator) {
+      cleanup = cleanup.then(function () {
+        return navigator.serviceWorker.getRegistrations().then(function (registrations) {
+          return Promise.all(registrations.map(function (registration) { return registration.unregister(); }));
+        });
+      });
+    }
+
+    cleanup.catch(function () {}).then(function () { location.reload(); });
+    return true;
+  }
+
   var fontLink = document.getElementById("app-font-css");
   if (fontLink) {
     window.setTimeout(function () {
@@ -7,6 +44,8 @@
   }
 
   window.onerror = function (msg, url, line) {
+    if (recoverFromStaleChunk(msg)) return true;
+
     var root = document.getElementById("root");
     if (!root) return false;
 
@@ -45,4 +84,8 @@
 
     return false;
   };
+
+  window.addEventListener("unhandledrejection", function (event) {
+    recoverFromStaleChunk(event.reason && (event.reason.message || event.reason));
+  });
 })();

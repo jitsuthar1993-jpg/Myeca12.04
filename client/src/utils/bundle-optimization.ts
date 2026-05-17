@@ -1,5 +1,6 @@
 // Advanced bundle optimization utilities
 import { lazy, Suspense, ComponentType } from 'react';
+import { recoverFromStaleChunk } from '@/utils/chunk-recovery';
 
 // Lazy loading with fast retry mechanism
 export const lazyWithRetry = <T extends ComponentType<any>>(
@@ -16,6 +17,7 @@ export const lazyWithRetry = <T extends ComponentType<any>>(
         return module;
       } catch (error) {
         lastError = error as Error;
+        await recoverFromStaleChunk(error);
         if (attempt < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, retryDelay));
         }
@@ -45,11 +47,13 @@ export const lazyWithPreload = <T extends ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
   componentName: string
 ) => {
-  const LazyComponent = lazy(factory);
+  const LazyComponent = lazyWithRetry(factory);
   
   // Manual preload function - only called explicitly, not automatically
   const preload = () => {
-    factory();
+    factory().catch((error) => {
+      void recoverFromStaleChunk(error);
+    });
   };
 
   return Object.assign(LazyComponent, { preload });
@@ -75,7 +79,10 @@ export const createPriorityLoader = () => {
       
       // High priority: load immediately
       if (priority === 'high') {
-        const result = await loader();
+        const result = await loader().catch(async (error) => {
+          await recoverFromStaleChunk(error);
+          throw error;
+        });
         trackBundleLoad(name, startTime);
         return result;
       }
@@ -84,9 +91,15 @@ export const createPriorityLoader = () => {
       if (priority === 'medium' && typeof requestIdleCallback !== 'undefined') {
         return new Promise((resolve) => {
           requestIdleCallback(async () => {
-            const result = await loader();
-            trackBundleLoad(name, startTime);
-            resolve(result);
+            loader()
+              .then((result) => {
+                trackBundleLoad(name, startTime);
+                resolve(result);
+              })
+              .catch(async (error) => {
+                await recoverFromStaleChunk(error);
+                resolve(null);
+              });
           }, { timeout: 3000 });
         });
       }
@@ -94,12 +107,18 @@ export const createPriorityLoader = () => {
       // Low priority: load with delay
       if (priority === 'low') {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        const result = await loader();
+        const result = await loader().catch(async (error) => {
+          await recoverFromStaleChunk(error);
+          throw error;
+        });
         trackBundleLoad(name, startTime);
         return result;
       }
       
-      const result = await loader();
+      const result = await loader().catch(async (error) => {
+        await recoverFromStaleChunk(error);
+        throw error;
+      });
       trackBundleLoad(name, startTime);
       return result;
     }
@@ -125,9 +144,9 @@ export const routeComponents = {
   Analytics: lazyWithPreload(() => import('@/pages/analytics.page'), 'AnalyticsPage'),
   
   // Admin routes (lower priority)
-  AdminDashboard: lazy(() => import('@/pages/admin/index.page')),
-  AdminUsers: lazy(() => import('@/pages/admin/users.page')),
-  AdminSettings: lazy(() => import('@/pages/admin/settings.page')),
+  AdminDashboard: lazyWithRetry(() => import('@/pages/admin/index.page')),
+  AdminUsers: lazyWithRetry(() => import('@/pages/admin/users.page')),
+  AdminSettings: lazyWithRetry(() => import('@/pages/admin/settings.page')),
 };
 
 // Component-based code splitting for heavy components - simplified for performance

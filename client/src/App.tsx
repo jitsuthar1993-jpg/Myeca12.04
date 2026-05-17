@@ -8,23 +8,24 @@ import { HelmetProvider } from 'react-helmet-async';
 import { useAnalyticsInitialization, usePageTracking } from '@/hooks/use-analytics';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider';
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import { SafeAuthProvider } from '@/components/AuthProvider';
 import Routes from './Routes';
 import { LazyMotion, domAnimation } from 'framer-motion';
+import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 
-const Header = lazy(() => import('@/components/layout/Header'));
-const Footer = lazy(() => import('@/components/layout/Footer'));
-const UnifiedFAB = lazy(() =>
+const Header = lazyWithRetry(() => import('@/components/layout/Header'));
+const Footer = lazyWithRetry(() => import('@/components/layout/Footer'));
+const UnifiedFAB = lazyWithRetry(() =>
   import('@/components/UnifiedFAB').then((m) => ({ default: m.UnifiedFAB }))
 );
-const GlobalSearch = lazy(() => import('@/components/search/GlobalSearch'));
-const KeyboardShortcutsModal = lazy(() => import('@/components/keyboard/KeyboardShortcutsModal'));
-const ProdOnlyComponents = lazy(() => import('@/components/ProdOnlyComponents'));
+const GlobalSearch = lazyWithRetry(() => import('@/components/search/GlobalSearch'));
+const KeyboardShortcutsModal = lazyWithRetry(() => import('@/components/keyboard/KeyboardShortcutsModal'));
+const ProdOnlyComponents = lazyWithRetry(() => import('@/components/ProdOnlyComponents'));
 
 const AppLoading = () => <PageSkeleton />;
 const authLayoutRoutes = ['/login', '/register', '/forgot-password'];
