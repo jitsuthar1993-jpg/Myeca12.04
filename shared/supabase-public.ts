@@ -1,0 +1,4 @@
+export const PUBLIC_SUPABASE_URL = "https://vedumlohmacaghuebduy.supabase.co";
+
+export const PUBLIC_SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZHVtbG9obWFjYWdodWViZHV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MTI1NjksImV4cCI6MjA5Mzk4ODU2OX0.4bwcKGKY4xA4faPL9-PXzEy63qFZo7pj3elxYkVMd40";
