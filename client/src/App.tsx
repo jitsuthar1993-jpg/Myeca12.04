@@ -17,6 +17,7 @@ import Routes from './Routes';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
+import { useRouteScrollManager } from '@/hooks/use-route-scroll-manager';
 
 const Header = lazyWithRetry(() => import('@/components/layout/Header'));
 const Footer = lazyWithRetry(() => import('@/components/layout/Footer'));
@@ -34,34 +35,9 @@ function isAuthLayoutPath(path: string) {
   return path.startsWith('/auth/') || authLayoutRoutes.includes(path);
 }
 
-function ScrollToTop() {
-  const [location] = useLocation();
-
-  useEffect(() => {
-    // Scroll to top on location change, unless there's a hash (anchor link)
-    if (!window.location.hash) {
-      const scroll = () => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-        // Fallback for document.documentElement just in case
-        document.documentElement.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant' as ScrollBehavior,
-        });
-      };
-
-      // Execute immediately and then after a small delay to handle content popping in
-      scroll();
-      const timer = setTimeout(scroll, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [location]);
-
-  return null;
-}
-
 function Router() {
   const [currentPath] = useLocation();
+  useRouteScrollManager(currentPath);
   
   // Define paths that should NOT show the global site header and footer
   // These are typically dashboard, admin, and account-related pages
@@ -92,7 +68,6 @@ function Router() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <ScrollToTop />
       {showLayoutComponents && (
         <Suspense fallback={null}>
           <Header />

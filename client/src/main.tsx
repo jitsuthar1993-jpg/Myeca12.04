@@ -26,11 +26,6 @@ import { registerServiceWorker, setupInstallPrompt } from "./utils/registerSW";
 registerServiceWorker();
 setupInstallPrompt();
 
-// Prevent browser from restoring scroll position on refresh/navigation
-if ('scrollRestoration' in window.history) {
-  window.history.scrollRestoration = 'manual';
-}
-
 // Lightweight error logging via sendBeacon (non-blocking)
 window.addEventListener('error', (e) => {
   void recoverFromStaleChunk(e.error || e.message);

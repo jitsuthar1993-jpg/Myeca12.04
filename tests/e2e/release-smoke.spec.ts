@@ -157,6 +157,24 @@ async function expectResponsiveLayout(page: Page, route: string) {
   expect(result.incoherentFixedElements, `${route} has fixed elements outside viewport: ${JSON.stringify(result.incoherentFixedElements)}`).toEqual([]);
 }
 
+async function expectNavigationResetsScroll(page: Page, route: string) {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => document.body.scrollHeight > window.innerHeight * 2);
+  await page.waitForTimeout(450);
+
+  await page.evaluate(() => window.scrollTo(0, 1400));
+  await expect.poll(() => page.evaluate(() => window.scrollY), {
+    message: `home page did not scroll before navigating to ${route}`,
+  }).toBeGreaterThan(200);
+
+  await page.locator(`a[href="${route}"]`).filter({ visible: true }).first().click();
+  await page.waitForURL(route, { waitUntil: "domcontentloaded" });
+
+  await expect.poll(() => page.evaluate(() => window.scrollY), {
+    message: `${route} did not reset to the top after client-side navigation`,
+  }).toBeLessThanOrEqual(5);
+}
+
 test.describe("release smoke", () => {
   test("serves core SEO and PWA assets", async ({ request }) => {
     const manifest = await request.get("/manifest.json");
@@ -231,7 +249,7 @@ test.describe("release smoke", () => {
     }
 
     const publicBlogs = await request.get("/api/public/blogs");
-    expect(publicBlogs.headers()["cache-control"]).toMatch(/public, max-age=300/);
+    expect(publicBlogs.headers()["cache-control"]).toMatch(/public, s-maxage=300/);
   });
 
   test("public route shells render without placeholder claims", async ({ page }) => {
@@ -277,5 +295,30 @@ test.describe("release smoke", () => {
 
       await expectResponsiveLayout(page, route);
     }
+  });
+
+  test("route navigation starts at the top and preserves hash anchors", async ({ page }) => {
+    for (const route of [
+      "/pricing",
+      "/services/gst-registration",
+      "/calculators/income-tax",
+      "/itr/form-selector",
+    ]) {
+      await expectNavigationResetsScroll(page, route);
+    }
+
+    await page.goto("/learn/videos", { waitUntil: "domcontentloaded" });
+    await page.waitForFunction(() => Boolean(document.getElementById("all")));
+
+    await page.locator('a[href="#all"]').filter({ visible: true }).first().click();
+    await expect(page).toHaveURL(/#all$/);
+    await expect.poll(() => page.evaluate(() => {
+      const target = document.getElementById("all");
+      if (!target) return false;
+      const rect = target.getBoundingClientRect();
+      return rect.top >= 0 && rect.top < window.innerHeight;
+    }), {
+      message: "hash target should remain visible after navigation",
+    }).toBeTruthy();
   });
 });
