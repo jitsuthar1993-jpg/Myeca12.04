@@ -2,8 +2,8 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Slider } from "@/components/ui/slider";
-import { calculateIncomeTax } from "@/lib/tax-calculations";
-import { IncomeTaxInputs } from "@/types/calculator";
+import { computeIndividualIncomeTax, type ResidentialStatus } from "@/lib/income-tax-engine";
+import type { TaxCalculationResult } from "@/types/calculator";
 import { 
   TrendingUp, IndianRupee, 
   Zap, Star, 
@@ -16,7 +16,7 @@ import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
 import { SectionReferenceBadge } from "@/components/tax/SectionReferenceBadge";
-import { DEFAULT_ASSESSMENT_YEAR, TAX_TRANSITION_NOTE } from "@/lib/tax-law-reference";
+import { DEFAULT_ASSESSMENT_YEAR, TAX_TRANSITION_NOTE, type AgeCategory } from "@/lib/tax-law-reference";
 
 // Atomic Components
 import CalcLayout from "@/features/calculators/components/CalcLayout";
@@ -31,59 +31,214 @@ export default function IncomeTaxCalculator() {
   const [rentalIncome, setRentalIncome] = useState<number>(0);
   const [savingInterest, setSavingInterest] = useState<number>(10000);
   const [otherIncome, setOtherIncome] = useState<number>(50000);
+  const [stcg111a, setStcg111a] = useState<number>(0);
+  const [ltcg112a, setLtcg112a] = useState<number>(0);
+  const [ltcg112, setLtcg112] = useState<number>(0);
+  const [cryptoAndWinnings, setCryptoAndWinnings] = useState<number>(0);
+  const [dividendSurchargeCapIncome, setDividendSurchargeCapIncome] = useState<number>(0);
   
   const [deductions80C, setDeductions80C] = useState<number>(150000);
   const [deductions80D, setDeductions80D] = useState<number>(25000);
   const [otherDeductions, setOtherDeductions] = useState<number>(50000);
+  const [taxCredits, setTaxCredits] = useState<number>(0);
   
   const [regime, setRegime] = useState<'old' | 'new'>('new');
   const [assessmentYear, setAssessmentYear] = useState('2026-27');
-  const [age, setAge] = useState(30);
+  const [ageCategory, setAgeCategory] = useState<AgeCategory>("regular");
+  const [residentialStatus, setResidentialStatus] = useState<ResidentialStatus>("resident");
 
   // Derived totals
-  const totalIncome = basicSalary + rentalIncome + otherIncome + savingInterest;
-  
-  // Apply 80TTA deduction automatically for Old Regime (up to 10k)
-  const auto80TTA = regime === 'old' ? Math.min(savingInterest, 10000) : 0;
-  const totalDeductions = deductions80C + deductions80D + otherDeductions + auto80TTA;
+  const auto80TTA = Math.min(savingInterest, 10000);
+  const age = ageCategory === "superSenior" ? 80 : ageCategory === "senior" ? 60 : 30;
 
-  const inputs: IncomeTaxInputs & { assessmentYear: string; age: number; salaryIncome: number } = {
-    income: totalIncome,
-    regime,
-    deductions: totalDeductions,
+  const { newRegimeTax, oldRegimeTax } = useMemo(() => {
+    const sharedInputs = {
+      assessmentYear,
+      profile: { age, ageCategory, residentialStatus },
+      income: {
+        salary: basicSalary,
+        rentalIncome,
+        savingsInterest: savingInterest,
+        otherIncome,
+        stcg111a,
+        ltcg112a,
+        ltcg112,
+        cryptoAndWinnings,
+        dividendSurchargeCapIncome,
+      },
+      deductions: {
+        section80C: deductions80C,
+        section80D: deductions80D,
+        otherDeductions,
+        section80TTA: auto80TTA,
+      },
+      taxCredits: {
+        tdsTcs: taxCredits,
+      },
+    };
+
+    return {
+      newRegimeTax: computeIndividualIncomeTax({ ...sharedInputs, regime: 'new' }),
+      oldRegimeTax: computeIndividualIncomeTax({ ...sharedInputs, regime: 'old' }),
+    };
+  }, [
     assessmentYear,
     age,
-    salaryIncome: basicSalary,
-  };
-
-  const { result, otherResult, comparison } = useMemo(() => {
-    const calculationResult = calculateIncomeTax(inputs);
-    const otherRegimeType = regime === 'old' ? 'new' : 'old';
-    const otherCalculation = calculateIncomeTax({ ...inputs, regime: otherRegimeType });
-    
-    const savings = otherCalculation.taxPayable - calculationResult.taxPayable;
-    let comparisonData = null;
-    
-    if (savings > 0) {
-      comparisonData = { recommended: regime, savings };
-    } else if (savings < 0) {
-      comparisonData = { recommended: otherRegimeType, savings: Math.abs(savings) };
-    }
-
-    return { result: calculationResult, otherResult: otherCalculation, comparison: comparisonData };
-  }, [totalIncome, totalDeductions, regime, assessmentYear, age]);
+    ageCategory,
+    residentialStatus,
+    basicSalary,
+    rentalIncome,
+    savingInterest,
+    otherIncome,
+    stcg111a,
+    ltcg112a,
+    ltcg112,
+    cryptoAndWinnings,
+    dividendSurchargeCapIncome,
+    deductions80C,
+    deductions80D,
+    otherDeductions,
+    auto80TTA,
+    taxCredits,
+  ]);
 
   const seo = getSEOConfig('/calculators/income-tax');
 
   const fmt = (n: number) => n.toLocaleString("en-IN");
   const fmtCurrency = (n: number) => `₹ ${fmt(n)}`;
+  const readMoney = (value: string) => Math.max(0, Number(value) || 0);
 
-  const newRegimeTax = regime === 'new' ? result : otherResult;
-  const oldRegimeTax = regime === 'old' ? result : otherResult;
+  const taxDifference = newRegimeTax.grossTaxLiability - oldRegimeTax.grossTaxLiability;
+  const savingsValue = Math.abs(newRegimeTax.grossTaxLiability - oldRegimeTax.grossTaxLiability);
+  const betterRegime = taxDifference < 0 ? "New Regime" : taxDifference > 0 ? "Old Regime" : "Both Regimes";
+  const savingsPercent = Math.round((savingsValue / Math.max(newRegimeTax.grossTaxLiability, oldRegimeTax.grossTaxLiability)) * 100) || 0;
 
-  const savingsValue = Math.abs(newRegimeTax.taxPayable - oldRegimeTax.taxPayable);
-  const betterRegime = newRegimeTax.taxPayable < oldRegimeTax.taxPayable ? "New Regime" : "Old Regime";
-  const savingsPercent = Math.round((savingsValue / Math.max(newRegimeTax.taxPayable, oldRegimeTax.taxPayable)) * 100) || 0;
+  const renderAmountRow = (
+    label: string,
+    amount: number,
+    options: { negative?: boolean; strong?: boolean } = {},
+  ) => (
+    <div className={cn(
+      "flex items-center justify-between gap-4 py-2 text-sm",
+      options.strong && "border-t border-[#EAECF0] pt-3 font-normal text-[#101828]",
+    )}>
+      <span className="min-w-0 text-[#667085]">{label}</span>
+      <span className={cn(
+        "shrink-0 tabular-nums text-[#101828]",
+        options.negative && amount > 0 && "text-[#B42318]",
+        options.strong && "text-base",
+      )}>
+        {options.negative && amount > 0 ? "-" : ""}{fmtCurrency(amount)}
+      </span>
+    </div>
+  );
+
+  const renderComputationCard = (
+    title: "New Regime" | "Old Regime",
+    calculation: TaxCalculationResult,
+    isRecommended: boolean,
+  ) => {
+    const isOldRegime = title === "Old Regime";
+    const oldDeductionAmount = isOldRegime
+      ? calculation.deductionBreakdown.section80C
+        + calculation.deductionBreakdown.section80D
+        + calculation.deductionBreakdown.otherDeductions
+      : 0;
+    const auto80TTAAmount = calculation.deductionBreakdown.section80TTA;
+    const visibleSlabBreakdown = calculation.slabBreakdown.filter((slab) => slab.taxableAmount > 0);
+    const visibleSpecialBreakdown = calculation.specialRateBreakdown.filter((item) => item.taxableAmount > 0);
+
+    return (
+      <div className={cn(
+        "min-w-0 rounded-[28px] border bg-white p-5 shadow-sm md:p-6",
+        isRecommended ? "border-[#ABEFC6] bg-[#F6FEF9]" : "border-[#EAECF0]",
+      )}>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-normal text-[#101828]">{title}</h3>
+            <p className="mt-1 text-xs text-[#667085]">
+              {isOldRegime ? "Deductions and old-regime slabs applied" : "Default slabs with limited deductions"}
+            </p>
+          </div>
+          {isRecommended && (
+            <span className="rounded-full bg-[#ECFDF3] px-3 py-1 text-[10px] font-normal uppercase tracking-wider text-[#027A48]">
+              {savingsValue > 0 ? "Lower tax" : "Same tax"}
+            </span>
+          )}
+        </div>
+
+        <div className="mt-6 grid gap-5">
+          <div className="rounded-[20px] border border-[#EAECF0] bg-white p-4">
+            <div className="mb-3 flex items-center gap-2 text-sm font-normal text-[#101828]">
+              <Wallet className="h-4 w-4 text-[#444CE7]" />
+              Computation of Income
+            </div>
+            <div className="space-y-1">
+              {renderAmountRow("Annual salary", basicSalary)}
+              {renderAmountRow("Rental income", rentalIncome)}
+              {renderAmountRow("Savings interest", savingInterest)}
+              {renderAmountRow("Other income", otherIncome)}
+              {renderAmountRow("Dividend income", dividendSurchargeCapIncome)}
+              {renderAmountRow("Special-rate income", calculation.specialRateIncome)}
+              {renderAmountRow("Gross total income", calculation.grossIncome, { strong: true })}
+              {renderAmountRow("Standard deduction", calculation.standardDeduction, { negative: true })}
+              {renderAmountRow("80C, 80D and other deductions", oldDeductionAmount, { negative: true })}
+              {renderAmountRow("Section 80TTA savings interest", auto80TTAAmount, { negative: true })}
+              {renderAmountRow("Taxable income", calculation.taxableIncome, { strong: true })}
+            </div>
+          </div>
+
+          <div className="rounded-[20px] border border-[#EAECF0] bg-white p-4">
+            <div className="mb-3 flex items-center gap-2 text-sm font-normal text-[#101828]">
+              <Receipt className="h-4 w-4 text-[#444CE7]" />
+              Computation of Income Tax
+            </div>
+            <div className="space-y-2">
+              {visibleSlabBreakdown.length > 0 ? (
+                visibleSlabBreakdown.map((slab) => (
+                  <div key={`${title}-${slab.min}-${slab.max}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 rounded-xl bg-[#F9FAFB] px-3 py-2">
+                    <div className="min-w-0">
+                      <p className="break-words text-xs text-[#475467]">{slab.label} ({Math.round(slab.rate * 100)}%)</p>
+                      <p className="mt-0.5 text-[11px] text-[#98A2B3]">Taxable: {fmtCurrency(slab.taxableAmount)}</p>
+                    </div>
+                    <span className="text-right text-sm tabular-nums text-[#101828]">{fmtCurrency(slab.tax)}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-xl bg-[#F9FAFB] px-3 py-2 text-xs text-[#667085]">
+                  No taxable slab applies for this income.
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 space-y-1">
+              {renderAmountRow("Normal slab tax", calculation.normalSlabTax)}
+              {visibleSpecialBreakdown.map((item) => (
+                <div key={`${title}-${item.key}`} className="flex items-center justify-between gap-4 py-2 text-sm">
+                  <span className="min-w-0 text-[#667085]">{item.label} ({item.rate * 100}%)</span>
+                  <span className="shrink-0 tabular-nums text-[#101828]">{fmtCurrency(item.tax)}</span>
+                </div>
+              ))}
+              {renderAmountRow("Special-rate tax", calculation.specialRateTax)}
+              {renderAmountRow("Tax before rebate", calculation.taxBeforeRebate)}
+              {renderAmountRow("Section 87A rebate", calculation.rebate87A, { negative: true })}
+              {calculation.marginalRelief > 0 && renderAmountRow("87A marginal relief", calculation.marginalRelief, { negative: true })}
+              {renderAmountRow("Tax after rebate", calculation.taxAfterRebate)}
+              {calculation.surchargeBeforeRelief > 0 && renderAmountRow("Surcharge before relief", calculation.surchargeBeforeRelief)}
+              {calculation.surchargeMarginalRelief > 0 && renderAmountRow("Surcharge marginal relief", calculation.surchargeMarginalRelief, { negative: true })}
+              {renderAmountRow("Surcharge", calculation.surcharge)}
+              {renderAmountRow("Health & Education Cess @ 4%", calculation.cess)}
+              {renderAmountRow("Gross tax liability", calculation.grossTaxLiability, { strong: true })}
+              {renderAmountRow("Tax credits", calculation.taxCredits, { negative: true })}
+              {renderAmountRow("Final tax payable", calculation.taxPayable, { strong: true })}
+              {calculation.refundDue > 0 && renderAmountRow("Refund due", calculation.refundDue, { strong: true })}
+              {renderAmountRow("Net income after tax", calculation.netIncome, { strong: true })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#F8F9FD]">
@@ -146,6 +301,56 @@ export default function IncomeTaxCalculator() {
                       AY {year}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              <div className="mb-6 grid grid-cols-1 gap-4 border-b border-[#F2F4F7] pb-6 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-normal text-[#344054]">Residential Status</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: "resident", label: "Resident" },
+                      { id: "nonResident", label: "Non-resident" },
+                    ].map((status) => (
+                      <button
+                        key={status.id}
+                        type="button"
+                        onClick={() => setResidentialStatus(status.id as ResidentialStatus)}
+                        className={cn(
+                          "rounded-xl border px-3 py-2 text-xs transition-all",
+                          residentialStatus === status.id
+                            ? "border-[#444CE7] bg-[#F5F8FF] text-[#444CE7]"
+                            : "border-[#EAECF0] bg-white text-[#667085] hover:text-[#101828]",
+                        )}
+                      >
+                        {status.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-normal text-[#344054]">Age Category</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: "regular", label: "Below 60" },
+                      { id: "senior", label: "60-79" },
+                      { id: "superSenior", label: "80+" },
+                    ].map((category) => (
+                      <button
+                        key={category.id}
+                        type="button"
+                        onClick={() => setAgeCategory(category.id as AgeCategory)}
+                        className={cn(
+                          "rounded-xl border px-2 py-2 text-xs transition-all",
+                          ageCategory === category.id
+                            ? "border-[#444CE7] bg-[#F5F8FF] text-[#444CE7]"
+                            : "border-[#EAECF0] bg-white text-[#667085] hover:text-[#101828]",
+                        )}
+                      >
+                        {category.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -277,6 +482,38 @@ export default function IncomeTaxCalculator() {
                     <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
                       <span>Other sources</span>
                     </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[24px] border border-[#EAECF0] bg-[#FCFCFD] p-4">
+                  <div className="mb-4 flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-[#444CE7]" />
+                    <div>
+                      <h3 className="text-sm font-normal text-[#101828]">Special-rate income</h3>
+                      <p className="text-xs text-[#667085]">Capital gains, winnings, and dividend surcharge-cap categories</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {[
+                      { label: "STCG u/s 111A", value: stcg111a, setter: setStcg111a },
+                      { label: "LTCG u/s 112A", value: ltcg112a, setter: setLtcg112a },
+                      { label: "Other LTCG u/s 112", value: ltcg112, setter: setLtcg112 },
+                      { label: "Crypto / winnings", value: cryptoAndWinnings, setter: setCryptoAndWinnings },
+                      { label: "Dividend surcharge-cap income", value: dividendSurchargeCapIncome, setter: setDividendSurchargeCapIncome },
+                    ].map((field) => (
+                      <div key={field.label} className="flex items-center justify-between gap-3 rounded-2xl bg-white px-3 py-2 ring-1 ring-[#EAECF0]">
+                        <span className="min-w-0 text-xs text-[#475467]">{field.label}</span>
+                        <div className="flex min-w-[118px] items-center gap-1.5">
+                          <span className="text-xs text-[#667085]">₹</span>
+                          <input
+                            type="number"
+                            value={field.value}
+                            onChange={(e) => field.setter(readMoney(e.target.value))}
+                            className="w-full bg-transparent text-right text-sm text-[#101828] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -419,6 +656,36 @@ export default function IncomeTaxCalculator() {
                     <span>NPS, HRA, etc.</span>
                   </div>
                 </div>
+
+                {/* Tax Credits */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-normal text-[#344054]">Tax Credits</span>
+                      <Info className="w-3.5 h-3.5 text-[#98A2B3] cursor-pointer" />
+                    </div>
+                    <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
+                      <span className="text-xs font-normal text-[#667085]">₹</span>
+                      <input
+                        type="number"
+                        value={taxCredits}
+                        onChange={(e) => setTaxCredits(readMoney(e.target.value))}
+                        className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
+                  </div>
+                  <Slider
+                    value={[taxCredits]}
+                    onValueChange={(v) => setTaxCredits(v[0])}
+                    max={2000000}
+                    min={0}
+                    step={5000}
+                    colorTheme="slate"
+                  />
+                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                    <span>TDS, TCS, advance/self-assessment tax</span>
+                  </div>
+                </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#F2F4F7]">
@@ -459,11 +726,11 @@ export default function IncomeTaxCalculator() {
                 {/* New Regime Box */}
                 <div className={cn(
                   "p-4 rounded-[20px] border-2",
-                  betterRegime === "New Regime" ? "border-[#ECFDF3] bg-[#F6FEF9]" : "border-[#EAECF0] bg-white"
+                  betterRegime !== "Old Regime" ? "border-[#ECFDF3] bg-[#F6FEF9]" : "border-[#EAECF0] bg-white"
                 )}>
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">New Regime</span>
                   <span className="text-[10px] text-[#667085] block mb-2">Lower tax rates</span>
-                  <span className={cn("text-2xl font-normal block mb-0.5", betterRegime === "New Regime" ? "text-[#027A48]" : "text-[#344054]")}>
+                  <span className={cn("text-2xl font-normal block mb-0.5", betterRegime !== "Old Regime" ? "text-[#027A48]" : "text-[#344054]")}>
                     ₹ {fmt(newRegimeTax.taxPayable)}
                   </span>
                   <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Total Tax</span>
@@ -472,11 +739,11 @@ export default function IncomeTaxCalculator() {
                 {/* Old Regime Box */}
                 <div className={cn(
                   "p-4 rounded-[20px] border-2",
-                  betterRegime === "Old Regime" ? "border-[#ECFDF3] bg-[#F6FEF9]" : "border-[#EAECF0] bg-white"
+                  betterRegime !== "New Regime" ? "border-[#ECFDF3] bg-[#F6FEF9]" : "border-[#EAECF0] bg-white"
                 )}>
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">Old Regime</span>
                   <span className="text-[10px] text-[#667085] block mb-2">With deductions</span>
-                  <span className={cn("text-2xl font-normal block mb-0.5", betterRegime === "Old Regime" ? "text-[#027A48]" : "text-[#B42318]")}>
+                  <span className={cn("text-2xl font-normal block mb-0.5", betterRegime !== "New Regime" ? "text-[#027A48]" : "text-[#B42318]")}>
                     ₹ {fmt(oldRegimeTax.taxPayable)}
                   </span>
                   <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Total Tax</span>
@@ -494,8 +761,14 @@ export default function IncomeTaxCalculator() {
                     <span className="text-2xl font-normal text-[#027A48]">₹ {fmt(savingsValue)}</span>
                   </div>
                   <p className="text-xs text-[#667085] leading-relaxed">
-                    by choosing <span className="font-normal text-[#101828]">{betterRegime}</span>. 
-                    That's <span className="font-normal text-[#027A48]">{savingsPercent}%</span> savings!
+                    {savingsValue > 0 ? (
+                      <>
+                        by choosing <span className="font-normal text-[#101828]">{betterRegime}</span>. 
+                        That's <span className="font-normal text-[#027A48]">{savingsPercent}%</span> savings!
+                      </>
+                    ) : (
+                      <>Both regimes are equal for these inputs.</>
+                    )}
                   </p>
                 </div>
               </div>
@@ -504,15 +777,22 @@ export default function IncomeTaxCalculator() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-normal text-[#667085]">Tax Before Cess</span>
                   <div className="flex gap-8">
-                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(Math.round(newRegimeTax.taxPayable / 1.04))}</span>
-                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(Math.round(oldRegimeTax.taxPayable / 1.04))}</span>
+                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(newRegimeTax.taxBeforeCess)}</span>
+                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(oldRegimeTax.taxBeforeCess)}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-normal text-[#667085]">Education Cess</span>
+                  <span className="text-xs font-normal text-[#667085]">Health & Education Cess @ 4%</span>
                   <div className="flex gap-8">
-                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(newRegimeTax.taxPayable - Math.round(newRegimeTax.taxPayable / 1.04))}</span>
-                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(oldRegimeTax.taxPayable - Math.round(oldRegimeTax.taxPayable / 1.04))}</span>
+                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(newRegimeTax.cess)}</span>
+                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(oldRegimeTax.cess)}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-normal text-[#667085]">Credits / Refund</span>
+                  <div className="flex gap-8">
+                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(newRegimeTax.taxCredits)} / ₹ {fmt(newRegimeTax.refundDue)}</span>
+                    <span className="text-xs font-normal text-[#101828] min-w-[70px] text-right">₹ {fmt(oldRegimeTax.taxCredits)} / ₹ {fmt(oldRegimeTax.refundDue)}</span>
                   </div>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
@@ -543,6 +823,28 @@ export default function IncomeTaxCalculator() {
             </div>
           </div>
         </div>
+
+        {/* Detailed Computation */}
+        <section className="mt-12" aria-labelledby="income-tax-computation">
+          <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 id="income-tax-computation" className="text-2xl font-normal tracking-tight text-[#101828]">
+                Computation of Income and Income Tax
+              </h2>
+              <p className="mt-1 text-sm text-[#667085]">
+                Complete working for both regimes based on your current calculator inputs. EC and SHEC are not separately levied for AY {assessmentYear}; Health & Education Cess @ 4% is applied.
+              </p>
+            </div>
+            <div className="rounded-full border border-[#D0D5DD] bg-white px-4 py-2 text-xs text-[#475467]">
+              AY {assessmentYear}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {renderComputationCard("New Regime", newRegimeTax, betterRegime !== "Old Regime")}
+            {renderComputationCard("Old Regime", oldRegimeTax, betterRegime !== "New Regime")}
+          </div>
+        </section>
 
         {/* Bottom Trust Bar */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">

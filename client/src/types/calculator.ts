@@ -4,9 +4,55 @@ export interface TaxSlabs {
   rate: number;
 }
 
+export interface TaxSlabBreakdown {
+  label: string;
+  min: number;
+  max: number;
+  rate: number;
+  taxableAmount: number;
+  tax: number;
+}
+
+export interface SpecialRateTaxBreakdown {
+  key: string;
+  label: string;
+  taxableAmount: number;
+  rate: number;
+  tax: number;
+  surchargeCapRate?: number;
+}
+
 export interface TaxCalculationResult {
   grossIncome: number;
+  normalGrossIncome: number;
+  specialRateIncome: number;
+  standardDeduction: number;
+  eligibleDeductions: number;
+  deductionBreakdown: {
+    section80C: number;
+    section80D: number;
+    otherDeductions: number;
+    section80TTA: number;
+  };
   taxableIncome: number;
+  normalTaxableIncome: number;
+  specialRateTaxableIncome: number;
+  slabBreakdown: TaxSlabBreakdown[];
+  specialRateBreakdown: SpecialRateTaxBreakdown[];
+  normalSlabTax: number;
+  specialRateTax: number;
+  taxBeforeRebate: number;
+  rebate87A: number;
+  marginalRelief: number;
+  taxAfterRebate: number;
+  surchargeBeforeRelief: number;
+  surchargeMarginalRelief: number;
+  surcharge: number;
+  cess: number;
+  taxBeforeCess: number;
+  grossTaxLiability: number;
+  taxCredits: number;
+  refundDue: number;
   taxPayable: number;
   netIncome: number;
   breakdown: {

@@ -1,17 +1,13 @@
 import { TaxCalculationResult, IncomeTaxInputs } from "@/types/calculator";
 import { tdsRulesByAY, assessmentYears, type AssessmentYear, type TDSIncomeType } from "@/data/tds-rules";
-import {
-  DEFAULT_ASSESSMENT_YEAR,
-  HEALTH_AND_EDUCATION_CESS_RATE,
-  REBATE_87A_BY_REGIME,
-  STANDARD_DEDUCTION_BY_REGIME,
-  getSlabsForRegime,
-} from "@/lib/tax-law-reference";
+import { DEFAULT_ASSESSMENT_YEAR } from "@/lib/tax-law-reference";
+import { computeIndividualIncomeTax, type ResidentialStatus } from "@/lib/income-tax-engine";
 
 export function calculateIncomeTax(inputs: IncomeTaxInputs & {
   age?: number;
   assessmentYear?: string;
   salaryIncome?: number;
+  residentialStatus?: ResidentialStatus;
 }): TaxCalculationResult {
   const {
     income,
@@ -20,100 +16,24 @@ export function calculateIncomeTax(inputs: IncomeTaxInputs & {
     age = 30,
     assessmentYear = DEFAULT_ASSESSMENT_YEAR,
     salaryIncome,
+    residentialStatus = "resident",
   } = inputs;
 
-  const eligibleSalaryIncome = Math.max(0, salaryIncome ?? income);
-  const standardDeduction = Math.min(
-    eligibleSalaryIncome,
-    STANDARD_DEDUCTION_BY_REGIME[regime],
-  );
-  
-  // Calculate taxable income
-  const taxableIncome = regime === 'new'
-    ? Math.max(0, income - standardDeduction)
-    : Math.max(0, income - deductions - standardDeduction);
-  
-  const slabs = getSlabsForRegime(regime, assessmentYear, age);
-  
-  let tax = 0;
-  const breakdown = { slab1: 0, slab2: 0, slab3: 0, slab4: 0 };
-  
-  // Calculate tax for each slab
-  slabs.forEach((slab, index) => {
-    if (taxableIncome > slab.min) {
-      const taxableInThisSlab = Math.min(taxableIncome, slab.max) - slab.min;
-      const taxForThisSlab = taxableInThisSlab * slab.rate;
-      tax += taxForThisSlab;
-      
-      // Store breakdown (limit to 4 slabs for display)
-      if (index < 4) {
-        (breakdown as any)[`slab${index + 1}`] = taxForThisSlab;
-      }
-    }
-  });
-  
-  // Apply rebate under Section 87A and marginal relief for AY 2026-27.
-  if (regime === 'new') {
-    const { incomeLimit: threshold, maxRebate } = assessmentYear === DEFAULT_ASSESSMENT_YEAR
-      ? REBATE_87A_BY_REGIME.new
-      : { incomeLimit: 700000, maxRebate: 25000 };
+  const salary = Math.max(0, salaryIncome ?? income);
+  const otherIncome = Math.max(0, income - salary);
 
-    if (taxableIncome <= threshold) {
-       const rebate = Math.min(tax, maxRebate);
-       tax = Math.max(0, tax - rebate);
-    } else {
-       // Marginal Relief:
-       // Ensure tax payable does not exceed the income earned above the threshold.
-       // This prevents the "cliff effect" where earning ₹1 extra costs ₹60,000 in tax.
-       const excessIncome = taxableIncome - threshold;
-       if (tax > excessIncome) {
-          tax = excessIncome;
-       }
-    }
-  } else if (regime === 'old' && taxableIncome <= REBATE_87A_BY_REGIME.old.incomeLimit) {
-    const rebate = Math.min(tax, REBATE_87A_BY_REGIME.old.maxRebate);
-    tax = Math.max(0, tax - rebate);
-  }
-  
-  // Calculate surcharge using common individual surcharge bands.
-  // Surcharge slabs:
-  // 50L - 1Cr: 10%
-  // 1Cr - 2Cr: 15%
-  // 2Cr - 5Cr: 25%
-  // Above 5Cr: 37% (old regime) / 25% (new regime - capped)
-  let surcharge = 0;
-  if (income > 50000000) {
-    // Above 5 crore
-    surcharge = tax * (regime === 'new' ? 0.25 : 0.37);
-  } else if (income > 20000000) {
-    // 2 crore to 5 crore
-    surcharge = tax * 0.25;
-  } else if (income > 10000000) {
-    // 1 crore to 2 crore
-    surcharge = tax * 0.15;
-  } else if (income > 5000000) {
-    // 50 lakh to 1 crore
-    surcharge = tax * 0.10;
-  }
-  
-  tax += surcharge;
-  
-  tax = tax * (1 + HEALTH_AND_EDUCATION_CESS_RATE);
-  
-  const netIncome = income - tax;
-  
-  return {
-    grossIncome: income,
-    taxableIncome,
-    taxPayable: Math.round(tax),
-    netIncome: Math.round(netIncome),
-    breakdown: {
-      slab1: Math.round(breakdown.slab1),
-      slab2: Math.round(breakdown.slab2),
-      slab3: Math.round(breakdown.slab3),
-      slab4: Math.round(breakdown.slab4)
-    }
-  };
+  return computeIndividualIncomeTax({
+    assessmentYear,
+    regime,
+    profile: { age, residentialStatus },
+    income: {
+      salary,
+      otherIncome,
+    },
+    deductions: {
+      oldRegimeDeductions: deductions,
+    },
+  });
 }
 
 export function calculateHRA(salary: number, hra: number, rent: number, city: 'metro' | 'non-metro'): {
