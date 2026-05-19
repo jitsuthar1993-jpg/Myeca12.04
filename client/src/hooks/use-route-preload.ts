@@ -1,12 +1,18 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/components/AuthProvider';
+import {
+  prefetchPublicBlogDetail,
+  prefetchPublicBlogIndex,
+} from '@/lib/public-blog-data';
+import { queryClient } from '@/lib/queryClient';
 import { recoverFromStaleChunk } from '@/utils/chunk-recovery';
 
 const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
   '/': ['/calculators', '/services', '/experts'],
   '/calculators': ['/calculators/income-tax', '/calculators/sip', '/calculators/hra', '/calculators/emi', '/calculators/hsn-finder'],
   '/services': ['/services/gst-registration', '/services/company-registration', '/itr/form-selector', '/experts'],
+  '/blog': ['/blog/:slug'],
   '/auth/login': ['/auth/register'],
   '/auth/register': ['/auth/login'],
   '/dashboard': ['/profiles', '/documents', '/settings', '/itr/form-selector'],
@@ -22,11 +28,36 @@ function isPrivatePreload(path: string) {
   return PRIVATE_ROUTE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
+function getImportPath(path: string) {
+  return /^\/blog\/[^/?#]+$/.test(path) ? '/blog/:slug' : path;
+}
+
+function getBlogSlug(path: string) {
+  const match = /^\/blog\/([^/?#]+)$/.exec(path);
+  if (!match || match[1].startsWith(':')) return null;
+  return decodeURIComponent(match[1]);
+}
+
+function preloadRouteData(path: string) {
+  if (path === '/blog') {
+    void prefetchPublicBlogIndex(queryClient).catch(() => undefined);
+    return;
+  }
+
+  const blogSlug = getBlogSlug(path);
+  if (blogSlug) {
+    void prefetchPublicBlogDetail(queryClient, blogSlug).catch(() => undefined);
+  }
+}
+
 const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
-  if (preloadedRoutes.has(path)) return;
   if (isPrivatePreload(path) && !canPreloadPrivate) return;
+  preloadRouteData(path);
+  if (preloadedRoutes.has(path)) return;
   
   const importMap: Record<string, () => Promise<unknown>> = {
+    '/blog': () => import('@/pages/blog.page'),
+    '/blog/:slug': () => import('@/pages/blog/[slug].page'),
     '/calculators': () => import('@/features/calculators/pages/index.page'),
     '/calculators/income-tax': () => import('@/features/calculators/pages/income-tax.page'),
     '/calculators/sip': () => import('@/features/calculators/pages/sip.page'),
@@ -52,7 +83,7 @@ const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
     '/calculators/hsn-finder': () => import('@/features/calculators/pages/hsn-finder.page'),
   };
 
-  const loader = importMap[path];
+  const loader = importMap[getImportPath(path)];
   if (loader) {
     preloadedRoutes.add(path);
     const loadSafely = () => {

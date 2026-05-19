@@ -23,45 +23,20 @@ import {
 } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
 import MetaSEO from "@/components/seo/MetaSEO";
+import {
+  fetchPublicBlogDetail,
+  fetchPublicBlogs,
+  publicBlogQueryKeys,
+  type PublicBlogDetailCompat as BlogDetail,
+  type PublicBlogSummaryCompat as BlogSummary,
+} from "@/lib/public-blog-data";
 import { cn } from "@/lib/utils";
 import {
   normalizeBlogContent,
   type BlogFaqItem,
   type BlogTocItem,
-  type PublicBlogDetail,
   type PublicBlogSummary,
 } from "@shared/blog";
-
-type LegacyAuthor = {
-  firstName?: string | null;
-  lastName?: string | null;
-  name?: string | null;
-  role?: string | null;
-};
-
-type BlogDetail = PublicBlogDetail & {
-  featuredImage?: string | null;
-  image?: string | null;
-  categoryName?: string | null;
-  createdAt?: string | null;
-  readTime?: string | null;
-  author?: LegacyAuthor | null;
-};
-
-type BlogSummary = PublicBlogSummary & {
-  categoryName?: string | null;
-  createdAt?: string | null;
-  readTime?: string | null;
-  author?: LegacyAuthor | null;
-};
-
-type BlogDetailResponse = {
-  post: BlogDetail | null;
-};
-
-type BlogListResponse = {
-  posts: BlogSummary[];
-};
 
 function isImageUrl(value: string | null | undefined) {
   return Boolean(value && /^(https?:\/\/|\/)/.test(value));
@@ -284,25 +259,16 @@ export default function BlogPostPage() {
   const [isCtaVisible, setIsCtaVisible] = useState(true);
 
   const { data: postData, isLoading } = useQuery({
-    queryKey: ["public-blog", slug],
-    queryFn: async () => {
-      const res = await fetch(`/api/public/blogs?slug=${encodeURIComponent(slug ?? "")}`);
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error("Failed to fetch blog post");
-      const data = await res.json() as BlogDetailResponse;
-      return data.post;
-    },
+    queryKey: publicBlogQueryKeys.detail(slug),
+    queryFn: () => fetchPublicBlogDetail(slug ?? ""),
     enabled: Boolean(slug),
   });
 
+  const shouldFetchFallbackPosts = Boolean(postData && postData.relatedPosts.length === 0);
   const { data: allPostsData } = useQuery({
-    queryKey: ["public-blogs-for-sidebar"],
-    queryFn: async () => {
-      const res = await fetch("/api/public/blogs?limit=24");
-      if (!res.ok) return { posts: [] };
-      return await res.json() as BlogListResponse;
-    },
-    enabled: Boolean(postData),
+    queryKey: publicBlogQueryKeys.list({ page: 1, limit: 24 }),
+    queryFn: () => fetchPublicBlogs({ page: 1, limit: 24 }),
+    enabled: shouldFetchFallbackPosts,
   });
 
   const post = postData;
@@ -323,7 +289,7 @@ export default function BlogPostPage() {
   }, [allPostsData?.posts, post]);
 
   const topicLinks = useMemo(() => {
-    const allPosts = allPostsData?.posts ?? [];
+    const allPosts = post?.relatedPosts.length ? post.relatedPosts : (allPostsData?.posts ?? []);
     const fromPosts = allPosts
       .filter((candidate) => candidate.slug !== slug)
       .slice(0, 10)

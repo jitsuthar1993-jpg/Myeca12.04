@@ -167,7 +167,14 @@ async function expectNavigationResetsScroll(page: Page, route: string) {
     message: `home page did not scroll before navigating to ${route}`,
   }).toBeGreaterThan(200);
 
-  await page.locator(`a[href="${route}"]`).filter({ visible: true }).first().click();
+  const visibleRouteLink = page.locator(`a[href="${route}"]`).filter({ visible: true }).first();
+  if (await visibleRouteLink.count()) {
+    await visibleRouteLink.click();
+  } else {
+    // Mobile keeps some route links inside collapsed navigation accordions; this
+    // helper is focused on SPA scroll reset rather than menu choreography.
+    await page.locator(`a[href="${route}"]`).first().evaluate((link) => (link as HTMLAnchorElement).click());
+  }
   await page.waitForURL(route, { waitUntil: "domcontentloaded" });
 
   await expect.poll(() => page.evaluate(() => window.scrollY), {
@@ -257,6 +264,45 @@ test.describe("release smoke", () => {
       await expectUsablePage(page, route);
       await expectNoHorizontalOverflow(page, route);
     }
+  });
+
+  test("blog pages keep content visible and avoid redundant detail fetches", async ({ page }) => {
+    const blogRequests: string[] = [];
+    page.on("request", (request) => {
+      const url = request.url();
+      if (url.includes("/api/public/blogs")) blogRequests.push(url);
+    });
+
+    await page.goto("/blog", { waitUntil: "domcontentloaded" });
+    const blogLinks = page.locator("a[href^='/blog/']");
+    await expect(blogLinks.first()).toBeVisible();
+    await expect(page.getByText("Loading expert guides...")).toBeHidden();
+    await expect.poll(() => blogLinks.count(), { message: "blog index should render initial posts" }).toBeGreaterThanOrEqual(10);
+    await page.waitForTimeout(1200);
+    expect(
+      blogRequests.some((url) => url.includes("%3Aslug") || url.includes(":slug")),
+      `Unexpected placeholder blog prefetch: ${JSON.stringify(blogRequests)}`,
+    ).toBeFalsy();
+
+    const searchResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/public/blogs") &&
+        response.url().includes("search=gst") &&
+        response.status() === 200,
+    );
+    await page.locator("#blog-search").fill("gst");
+    await expect(page.getByText("Loading expert guides...")).toBeHidden();
+    await searchResponse;
+    await expect(blogLinks.first()).toBeVisible();
+    await expect(page.getByText("Loading expert guides...")).toBeHidden();
+
+    blogRequests.length = 0;
+    await page.goto("/blog/when-will-itr-filing-start-ay-2026-27", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("article header h1")).toContainText("When Will ITR Filing Start for AY 2026-27?");
+    await page.waitForTimeout(1000);
+
+    expect(blogRequests.some((url) => url.includes("/api/public/blogs/when-will-itr-filing-start-ay-2026-27"))).toBeTruthy();
+    expect(blogRequests.some((url) => url.includes("limit=24")), `Unexpected blog list request: ${JSON.stringify(blogRequests)}`).toBeFalsy();
   });
 
   test("private routes block anonymous users", async ({ page }) => {

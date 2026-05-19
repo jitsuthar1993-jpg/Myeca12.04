@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import {
   ArrowRight,
@@ -15,51 +15,18 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import MetaSEO from '@/components/seo/MetaSEO';
+import {
+  DEFAULT_PUBLIC_BLOG_CATEGORIES,
+  fetchPublicBlogCategories,
+  fetchPublicBlogs,
+  prefetchPublicBlogDetail,
+  publicBlogQueryKeys,
+  type PublicBlogCategoryResponse,
+  type PublicBlogSummaryCompat as BlogSummary,
+} from '@/lib/public-blog-data';
+import { queryClient } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
-import type { BlogCategory, PublicBlogSummary } from '@shared/blog';
-
-type BlogSummary = PublicBlogSummary & {
-  featuredImage?: string | null;
-  image?: string | null;
-  categoryName?: string | null;
-  createdAt?: string | null;
-  readTime?: string | null;
-  author?: {
-    firstName?: string | null;
-    lastName?: string | null;
-    name?: string | null;
-    role?: string | null;
-  } | null;
-};
-
-type BlogListResponse = {
-  posts: BlogSummary[];
-  total?: number;
-  page?: number;
-  hasMore?: boolean;
-};
-
-type CategoryResponse = {
-  categories: Array<
-    BlogCategory | { id?: string; name?: string; slug?: string; description?: string | null }
-  >;
-};
-
-const DEFAULT_CATEGORIES = [
-  { id: 'itr-filing', name: 'ITR Filing', slug: 'itr-filing' },
-  { id: 'income-tax', name: 'Income Tax', slug: 'income-tax' },
-  { id: 'tax-regime', name: 'Tax Regime', slug: 'tax-regime' },
-  { id: 'tax-planning', name: 'Tax Planning', slug: 'tax-planning' },
-  { id: 'capital-gains', name: 'Capital Gains', slug: 'capital-gains' },
-  {
-    id: 'foreign-assets-nri-tax',
-    name: 'Foreign Assets & NRI Tax',
-    slug: 'foreign-assets-nri-tax',
-  },
-  { id: 'refunds-notices', name: 'Refunds & Notices', slug: 'refunds-notices' },
-  { id: 'business-freelancers', name: 'Business & Freelancers', slug: 'business-freelancers' },
-  { id: 'gst', name: 'GST', slug: 'gst' },
-];
+import type { BlogCategory } from '@shared/blog';
 
 const AUDIENCE_FILTERS = [
   { key: 'all', label: 'All readers', description: 'Tax, GST, filing, and compliance guides' },
@@ -171,7 +138,7 @@ function getInitials(name: string) {
 
 function normalizeCategories(
   posts: BlogSummary[],
-  apiCategories: CategoryResponse['categories'] | undefined
+  apiCategories: PublicBlogCategoryResponse['categories'] | undefined
 ) {
   const seen = new Set<string>();
   const categories: Array<Pick<BlogCategory, 'id' | 'name' | 'slug'>> = [];
@@ -189,9 +156,32 @@ function normalizeCategories(
 
   apiCategories?.forEach(addCategory);
   posts.forEach((post) => addCategory(getCategory(post)));
-  DEFAULT_CATEGORIES.forEach(addCategory);
+  DEFAULT_PUBLIC_BLOG_CATEGORIES.forEach(addCategory);
 
   return categories;
+}
+
+function useDebouncedValue<T>(value: T, delayMs: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delayMs);
+    return () => clearTimeout(timer);
+  }, [delayMs, value]);
+
+  return debouncedValue;
+}
+
+let blogArticleRoutePreloaded = false;
+
+function preloadBlogArticle(slug: string) {
+  void prefetchPublicBlogDetail(queryClient, slug).catch(() => undefined);
+  if (!blogArticleRoutePreloaded) {
+    blogArticleRoutePreloaded = true;
+    void import('@/pages/blog/[slug].page').catch(() => {
+      blogArticleRoutePreloaded = false;
+    });
+  }
 }
 
 function ArticleCard({ post, compact = false }: { post: BlogSummary; compact?: boolean }) {
@@ -199,7 +189,12 @@ function ArticleCard({ post, compact = false }: { post: BlogSummary; compact?: b
   const authorName = getAuthorName(post);
 
   return (
-    <Link href={`/blog/${post.slug}`} className="block">
+    <Link
+      href={`/blog/${post.slug}`}
+      className="block"
+      onMouseEnter={() => preloadBlogArticle(post.slug)}
+      onFocus={() => preloadBlogArticle(post.slug)}
+    >
       <article
         className={cn(
           'group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg',
@@ -283,35 +278,38 @@ export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAudience, setSelectedAudience] = useState('all');
   const [page, setPage] = useState(1);
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
 
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, selectedCategory, selectedAudience]);
+  const blogListParams = useMemo(
+    () => ({
+      page,
+      limit: 13,
+      search: debouncedSearchQuery,
+      category: selectedCategory,
+      audience: selectedAudience,
+    }),
+    [debouncedSearchQuery, page, selectedAudience, selectedCategory]
+  );
 
-  const { data: postsData, isLoading: isLoadingPosts } = useQuery({
-    queryKey: ['public-blogs', searchQuery, selectedCategory, selectedAudience, page],
-    queryFn: async () => {
-      const params = new URLSearchParams({ page: String(page), limit: '13' });
-      if (searchQuery.trim()) params.set('search', searchQuery.trim());
-      if (selectedCategory !== 'all') params.set('category', selectedCategory);
-      if (selectedAudience !== 'all') params.set('audience', selectedAudience);
-      const res = await fetch(`/api/public/blogs?${params.toString()}`);
-      if (!res.ok) throw new Error('Failed to fetch blogs');
-      return (await res.json()) as BlogListResponse;
-    },
+  const {
+    data: postsData,
+    isFetching: isFetchingPosts,
+    isLoading: isLoadingPosts,
+  } = useQuery({
+    queryKey: publicBlogQueryKeys.list(blogListParams),
+    queryFn: () => fetchPublicBlogs(blogListParams),
+    placeholderData: keepPreviousData,
   });
 
   const { data: categoriesData } = useQuery({
-    queryKey: ['public-categories'],
-    queryFn: async () => {
-      const res = await fetch('/api/public/categories');
-      if (!res.ok) throw new Error('Failed to fetch categories');
-      return (await res.json()) as CategoryResponse;
-    },
+    queryKey: publicBlogQueryKeys.categories,
+    queryFn: fetchPublicBlogCategories,
   });
 
   const posts = postsData?.posts ?? [];
   const totalPosts = postsData?.total ?? posts.length;
+  const showPostsLoader = isLoadingPosts && posts.length === 0;
+  const isRefreshingPosts = isFetchingPosts && !showPostsLoader;
   const categories = useMemo(
     () => normalizeCategories(posts, categoriesData?.categories),
     [posts, categoriesData?.categories]
@@ -422,7 +420,10 @@ export default function BlogPage() {
                 className="w-full bg-transparent text-[15px] font-bold text-slate-950 outline-none placeholder:text-slate-400"
                 placeholder="Search tax, GST, ITR, deductions..."
                 value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                  setPage(1);
+                }}
               />
             </div>
 
@@ -433,7 +434,10 @@ export default function BlogPage() {
                   <button
                     key={audience.key}
                     type="button"
-                    onClick={() => setSelectedAudience(audience.key)}
+                    onClick={() => {
+                      setSelectedAudience(audience.key);
+                      setPage(1);
+                    }}
                     className={cn(
                       'rounded-xl px-2 py-3 text-left transition sm:px-3',
                       active
@@ -467,7 +471,10 @@ export default function BlogPage() {
         <div className="mb-7 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button
             type="button"
-            onClick={() => setSelectedCategory('all')}
+            onClick={() => {
+              setSelectedCategory('all');
+              setPage(1);
+            }}
             className={cn(
               'shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition',
               selectedCategory === 'all'
@@ -483,7 +490,10 @@ export default function BlogPage() {
               <button
                 key={key}
                 type="button"
-                onClick={() => setSelectedCategory(key)}
+                onClick={() => {
+                  setSelectedCategory(key);
+                  setPage(1);
+                }}
                 className={cn(
                   'shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition',
                   selectedCategory === key
@@ -497,7 +507,7 @@ export default function BlogPage() {
           })}
         </div>
 
-        {isLoadingPosts ? (
+        {showPostsLoader ? (
           <div className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-blue-100 bg-white">
             <Loader2 className="mb-4 h-8 w-8 animate-spin text-blue-600" />
             <p className="text-sm font-semibold text-slate-500">Loading expert guides...</p>
@@ -515,6 +525,7 @@ export default function BlogPage() {
                 setSearchQuery('');
                 setSelectedCategory('all');
                 setSelectedAudience('all');
+                setPage(1);
               }}
               className="mt-6 rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
             >
@@ -527,7 +538,15 @@ export default function BlogPage() {
               <h2 className="border-b-2 border-blue-600 pb-2 text-2xl font-black tracking-tight text-slate-950">
                 Latest Posts
               </h2>
-              <span className="pb-3 text-sm font-black text-blue-700">{totalPosts} guides</span>
+              <div className="flex items-center gap-3 pb-3">
+                {isRefreshingPosts && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-slate-500">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />
+                    Updating
+                  </span>
+                )}
+                <span className="text-sm font-black text-blue-700">{totalPosts} guides</span>
+              </div>
             </div>
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
