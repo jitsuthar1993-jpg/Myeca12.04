@@ -342,10 +342,10 @@ export default function BlogPage() {
           <div className="grid gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(320px,0.42fr)] lg:items-center">
             <div>
               <div className="relative mb-3">
-                <span className="absolute -left-1 -top-4 select-none text-5xl font-black tracking-tight text-slate-100 sm:text-6xl">
+                <span className="absolute -left-1 -top-4 select-none text-[46px] font-black tracking-tight text-slate-100 sm:text-[58px]">
                   Blogs
                 </span>
-                <h1 className="relative text-3xl font-black tracking-tight text-blue-700 sm:text-4xl">
+                <h1 className="relative text-[28px] font-black tracking-tight text-blue-700 sm:text-[34px]">
                   Blogs
                 </h1>
               </div>

@@ -445,7 +445,7 @@ export default function BlogPostPage() {
               )}
             </div>
 
-            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+            <h1 className="text-[34px] font-bold leading-[1.1] tracking-tight text-slate-950 sm:text-[46px] lg:text-[58px]">
               {post.title}
             </h1>
 
