@@ -24,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
+import { normalizeAppRole } from "@shared/app-roles";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -74,6 +75,8 @@ const categories = [
 
 export default function ServicesManagementPage() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
+  const role = normalizeAppRole(currentUser?.role);
+  const isAdmin = !!currentUser && role === "admin";
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -90,10 +93,10 @@ export default function ServicesManagementPage() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (!authLoading && (!currentUser || currentUser.role !== 'admin')) {
+    if (!authLoading && !isAdmin) {
       window.location.href = '/auth/login';
     }
-  }, [currentUser, authLoading]);
+  }, [authLoading, isAdmin]);
 
   // Form setup
   const form = useForm<ServiceFormData>({
@@ -114,7 +117,7 @@ export default function ServicesManagementPage() {
   // Fetch services
   const { data: services = [], isLoading, error } = useQuery<Service[]>({
     queryKey: ["/api/admin/services"],
-    enabled: !!currentUser && currentUser.role === 'admin',
+    enabled: isAdmin,
   });
 
   // Create service mutation
@@ -316,7 +319,7 @@ export default function ServicesManagementPage() {
     );
   }
 
-  if (!currentUser || currentUser.role !== 'admin') {
+  if (!isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
