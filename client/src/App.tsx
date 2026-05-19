@@ -29,6 +29,32 @@ const KeyboardShortcutsModal = lazyWithRetry(() => import('@/components/keyboard
 const ProdOnlyComponents = lazyWithRetry(() => import('@/components/ProdOnlyComponents'));
 
 const AppLoading = () => <PageSkeleton />;
+const HeaderLoadingShell = () => (
+  <header
+    aria-hidden="true"
+    className="fixed left-0 right-0 top-0 z-50 border-b border-slate-100 bg-white/95 shadow-sm backdrop-blur-lg"
+  >
+    <div className="mx-auto flex h-[60px] max-w-7xl items-center justify-between px-4 sm:px-6 md:h-[74px] lg:px-8">
+      <div className="flex items-center gap-2">
+        <div className="h-9 w-9 rounded-xl bg-slate-100" />
+        <div className="space-y-1.5">
+          <div className="h-4 w-24 rounded bg-slate-100" />
+          <div className="hidden h-2 w-28 rounded bg-slate-100 md:block" />
+        </div>
+      </div>
+      <div className="hidden items-center gap-4 lg:flex">
+        <div className="h-9 w-24 rounded-full bg-slate-100" />
+        <div className="h-9 w-28 rounded-full bg-slate-100" />
+        <div className="h-9 w-24 rounded-full bg-slate-100" />
+        <div className="h-9 w-10 rounded-lg bg-slate-100" />
+      </div>
+      <div className="flex items-center gap-2 lg:hidden">
+        <div className="h-10 w-10 rounded-lg bg-slate-100" />
+        <div className="h-10 w-10 rounded-lg bg-slate-100" />
+      </div>
+    </div>
+  </header>
+);
 const authLayoutRoutes = ['/login', '/register', '/forgot-password'];
 
 function isAuthLayoutPath(path: string) {
@@ -69,7 +95,7 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {showLayoutComponents && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<HeaderLoadingShell />}>
           <Header />
         </Suspense>
       )}
