@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { Layout } from "@/components/admin/Layout";
-import { getRoleLabel } from "@shared/app-roles";
+import { getRoleLabel, normalizeAppRole } from "@shared/app-roles";
 
 const formatDate = (date: any, includeTime: boolean = false) => {
   if (!date) return "N/A";
@@ -57,6 +57,8 @@ interface User {
 
 export default function UsersManagementPage() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
+  const currentRole = normalizeAppRole(currentUser?.role);
+  const isAdmin = !!currentUser && currentRole === "admin";
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -79,7 +81,7 @@ export default function UsersManagementPage() {
     data: { users: User[]; pagination: { total: number; pages: number; page: number; limit: number } };
   }>({
     queryKey: [`/api/admin/users?page=${page}&limit=${limit}&search=${searchTerm}`],
-    enabled: !!currentUser && currentUser.role === 'admin',
+    enabled: isAdmin,
   });
 
   const users = response?.data?.users || [];
