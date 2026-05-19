@@ -17,17 +17,18 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { PRIVILEGED_APP_ROLES, type PrivilegedAppRole } from "@shared/app-roles";
 
 const inviteAdminSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   firstName: z.string().trim().max(100, "First name is too long").optional(),
   lastName: z.string().trim().max(100, "Last name is too long").optional(),
-  role: z.enum(["admin", "team_member", "ca"]),
+  role: z.enum(PRIVILEGED_APP_ROLES),
 });
 
 type InviteAdminForm = z.infer<typeof inviteAdminSchema>;
 
-const roleCopy: Record<InviteAdminForm["role"], string> = {
+const roleCopy: Record<PrivilegedAppRole, string> = {
   admin: "Full platform administration, user management, settings, and content controls.",
   team_member: "Operational back-office access for customer support and compliance workflows.",
   ca: "CA workspace access for assigned filings, reviews, documents, and service timelines.",
@@ -93,14 +94,14 @@ export default function CreateAdminPage() {
     <div className="space-y-6">
       <div>
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#0050b5]">Supabase provisioning</p>
-        <h1 className="mt-2 text-3xl font-black text-slate-950">Invite Admin, CA, or Team Member</h1>
+        <h1 className="mt-2 text-2xl font-bold text-slate-950">Invite Admin, CA, or Team Member</h1>
         <p className="mt-2 max-w-3xl text-slate-600">
           Passwords are no longer created inside MyeCA. Enter the person&apos;s email and role,
           then Supabase handles the secure invite or reset flow.
         </p>
       </div>
 
-      <Card className="border-amber-200 bg-amber-50">
+      <Card className="rounded-lg border-amber-200 bg-amber-50 shadow-none">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-600" />
@@ -116,10 +117,10 @@ export default function CreateAdminPage() {
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_0.72fr]">
-        <Card className="border-blue-100 shadow-[0_24px_80px_-60px_rgba(0,48,135,0.8)]">
+        <Card className="rounded-lg border-slate-200 shadow-none">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#315efb] text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#315efb] text-white">
                 <MailPlus className="h-5 w-5" />
               </div>
               <div>
@@ -185,7 +186,7 @@ export default function CreateAdminPage() {
               </div>
 
               {successMessage && (
-                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
                   <CheckCircle2 className="mt-0.5 h-5 w-5" />
                   <p>{successMessage}</p>
                 </div>
@@ -209,9 +210,9 @@ export default function CreateAdminPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 bg-slate-50">
+        <Card className="rounded-lg border-slate-200 bg-slate-50 shadow-none">
           <CardHeader>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315efb] shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#315efb]">
               <Shield className="h-6 w-6" />
             </div>
             <CardTitle>What changed?</CardTitle>
