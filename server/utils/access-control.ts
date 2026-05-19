@@ -1,25 +1,24 @@
 import { adminDb } from "../data-admin.js";
-
-export type AppRole = "admin" | "team_member" | "ca" | "user";
+import { normalizeAppRole, type AppRole } from "../../shared/app-roles.js";
 
 export type AppUserRecord = {
   id: string;
-  role?: string | null;
+  role?: AppRole | string | null;
   assignedCaId?: string | null;
   status?: string | null;
   [key: string]: unknown;
 };
 
 export function isAdmin(user?: AppUserRecord | null) {
-  return user?.role === "admin";
+  return normalizeAppRole(user?.role) === "admin";
 }
 
 export function isTeamMember(user?: AppUserRecord | null) {
-  return user?.role === "team_member";
+  return normalizeAppRole(user?.role) === "team_member";
 }
 
 export function isCa(user?: AppUserRecord | null) {
-  return user?.role === "ca";
+  return normalizeAppRole(user?.role) === "ca";
 }
 
 export function isPrivileged(user?: AppUserRecord | null) {

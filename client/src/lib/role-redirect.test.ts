@@ -25,6 +25,29 @@ describe("role redirect rules", () => {
     expect(getSafeRedirectPath("/dashboard/services?x=1#case", "https://myeca.in")).toBe("/dashboard/services?x=1#case");
   });
 
+  it("constrains role-specific route families", () => {
+    expect(isRoleAllowedPath("admin", "/admin/users")).toBe(true);
+    expect(isRoleAllowedPath("admin", "/ca/dashboard")).toBe(true);
+    expect(isRoleAllowedPath("admin", "/team/dashboard")).toBe(true);
+
+    expect(isRoleAllowedPath("team_member", "/team/dashboard")).toBe(true);
+    expect(isRoleAllowedPath("team_member", "/admin/blog-management/edit/post-1")).toBe(true);
+    expect(isRoleAllowedPath("team_member", "/admin/media-management")).toBe(true);
+    expect(isRoleAllowedPath("team_member", "/admin/users")).toBe(false);
+    expect(isRoleAllowedPath("team_member", "/ca/dashboard")).toBe(false);
+
+    expect(isRoleAllowedPath("ca", "/ca/dashboard")).toBe(true);
+    expect(isRoleAllowedPath("ca", "/profiles")).toBe(true);
+    expect(isRoleAllowedPath("ca", "/admin/blog-management")).toBe(false);
+    expect(isRoleAllowedPath("ca", "/team/dashboard")).toBe(false);
+
+    expect(isRoleAllowedPath("user", "/documents")).toBe(true);
+    expect(isRoleAllowedPath("user", "/payments")).toBe(true);
+    expect(isRoleAllowedPath("user", "/admin/dashboard")).toBe(false);
+    expect(isRoleAllowedPath("user", "/ca/dashboard")).toBe(false);
+    expect(isRoleAllowedPath("user", "team/dashboard")).toBe(false);
+  });
+
   it("keeps business dashboard as an authenticated module, not a role", () => {
     expect(isRoleAllowedPath("user", "/business/dashboard")).toBe(true);
     expect(isRoleAllowedPath("ca", "/business/dashboard")).toBe(true);
