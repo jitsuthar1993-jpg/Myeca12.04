@@ -286,7 +286,7 @@ export default function MediaManagementPage() {
                   />
                   
                   {/* Overlay Controls */}
-                  <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 flex items-center justify-center gap-2 ${
+                  <div className={`absolute inset-0 bg-blue-900/40 transition-opacity duration-200 flex items-center justify-center gap-2 ${
                     selectedFiles.includes(file.name) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   }`}>
                     <Button 

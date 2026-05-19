@@ -1,4 +1,6 @@
-export type TemporaryTestRole = "user" | "admin" | "ca" | "team_member";
+import type { AppRole } from "./app-roles";
+
+export type TemporaryTestRole = AppRole;
 
 export type TemporaryTestUser = {
   label: string;
@@ -49,7 +51,7 @@ export const TEMPORARY_TEST_USERS: TemporaryTestUser[] = [
     id: "temporary_test_team_member",
     role: "team_member",
     token: `${TEMPORARY_TEST_AUTH_TOKEN_PREFIX}team_member`,
-    redirectTo: "/admin/blog-management",
+    redirectTo: "/team/dashboard",
   },
 ];
 

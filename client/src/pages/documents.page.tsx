@@ -489,7 +489,7 @@ export default function DocumentsPage() {
             </div>
           </div>
 
-          <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-slate-950 text-white">
+          <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-blue-700 text-white">
             <CardHeader className="p-8 border-b border-white/10">
               <CardTitle className="text-xl font-black">Case workflow preview</CardTitle>
               <CardDescription className="text-slate-400">
@@ -511,7 +511,7 @@ export default function DocumentsPage() {
       <Dialog open={!!selectedDoc} onOpenChange={(open) => !open && setSelectedDoc(null)}>
         <DialogContent className="max-w-4xl rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="bg-slate-900 p-8 flex flex-col justify-center items-center text-center">
+            <div className="bg-blue-700 p-8 flex flex-col justify-center items-center text-center">
                <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-6 border border-white/10">
                   <FileText className="h-10 w-10 text-blue-400" />
                </div>

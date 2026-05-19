@@ -158,7 +158,7 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
   };
 
   return (
-    <Card className="border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+    <Card className="border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-blue-800/40 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Upload className="h-5 w-5 text-blue-600" />

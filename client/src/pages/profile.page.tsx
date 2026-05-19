@@ -151,7 +151,7 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className="mt-8 flex justify-end">
-                  <Button className="rounded-xl bg-slate-900 hover:bg-black px-6 h-11 font-bold text-sm shadow-sm">
+                  <Button className="rounded-xl bg-blue-700 hover:bg-blue-700 px-6 h-11 font-bold text-sm shadow-sm">
                     Update Profile
                   </Button>
                 </div>

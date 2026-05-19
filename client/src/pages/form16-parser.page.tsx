@@ -1,665 +1,492 @@
-import { useState, useCallback, useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
-  Upload,
-  FileText,
   AlertCircle,
+  ArrowRight,
   CheckCircle,
-  Download,
-  RefreshCcw,
-  Info,
-  Building2,
-  User,
-  Wallet,
-  PiggyBank,
-  Calendar,
-  Edit,
+  Clipboard,
   Copy,
-  Eye,
+  Download,
   FileImage,
+  FileText,
+  Info,
+  RefreshCcw,
   Scan,
-  AlertTriangle
+  Shield,
+  Upload,
+  Wallet,
 } from "lucide-react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { m } from "framer-motion";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { MobilePageHeader } from "@/components/mobile";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
   Form16Data,
+  exportForm16ForITR,
   parseForm16Text,
   validateForm16Data,
-  exportForm16ForITR,
 } from "@/lib/form16-ocr";
 
+const SAMPLE_FORM16_TEXT = `Assessment Year: 2026-27
+Financial Year: 2025-26
+Employer Name: MyeCA Digital Services Private Limited
+TAN: DELM12345A
+Employee Name: AARAV SHARMA
+Employee PAN: ABCDE1234F
+Gross Salary: Rs. 12,50,000
+House Rent Allowance: Rs. 1,20,000
+Standard Deduction: Rs. 75,000
+Professional Tax: Rs. 2,400
+Section 80C: Rs. 1,50,000
+Section 80D: Rs. 25,000
+Total Taxable Income: Rs. 8,77,600
+Tax on Total Income: Rs. 62,020
+Health and Education Cess: Rs. 2,481
+Net Tax Payable: Rs. 64,501
+Total TDS Deducted: Rs. 70,000`;
+
+type ValidationState = { isValid: boolean; errors: string[] };
+type InputMode = "upload" | "text";
+
+const formatCurrency = (amount: number) => `Rs. ${Math.round(amount || 0).toLocaleString("en-IN")}`;
+
+function DetailRow({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div className="flex items-start justify-between gap-4 border-b border-slate-100 py-2.5 last:border-0">
+      <span className="text-sm leading-5 text-slate-600">{label}</span>
+      <span className={cn("text-right text-sm leading-5 text-slate-900", strong && "font-bold")}>{value}</span>
+    </div>
+  );
+}
+
 export default function Form16ParserPage() {
-  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("");
   const [parsedData, setParsedData] = useState<Form16Data | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [ocrProgress, setOcrProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [rawText, setRawText] = useState("");
-  const [inputMode, setInputMode] = useState<'upload' | 'text'>('upload');
-  const [validationResult, setValidationResult] = useState<{ isValid: boolean; errors: string[] } | null>(null);
+  const [inputMode, setInputMode] = useState<InputMode>("text");
+  const [validationResult, setValidationResult] = useState<ValidationState | null>(null);
+  const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle file upload with OCR
-  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = e.target.files?.[0];
-    if (!uploadedFile) return;
+  const runParse = useCallback((text: string, sourceName?: string) => {
+    const cleanText = text.trim();
+    if (!cleanText) {
+      setError("Paste Form 16 text or upload a readable image/text file first.");
+      return;
+    }
 
-    setFile(uploadedFile);
     setError(null);
+    setCopied(false);
     setIsLoading(true);
-    setOcrProgress(10);
 
     try {
-      // Check if it's an image file that needs OCR
-      const isImage = uploadedFile.type.startsWith('image/');
-      const isPDF = uploadedFile.type === 'application/pdf';
+      const data = parseForm16Text(cleanText);
+      const validation = validateForm16Data(data);
 
-      if (isImage) {
-        // Dynamic import of Tesseract.js for OCR
-        setOcrProgress(20);
-        const Tesseract = await import('tesseract.js');
-        
-        setOcrProgress(30);
-        const result = await Tesseract.recognize(
-          uploadedFile,
-          'eng',
-          {
-            logger: (info) => {
-              if (info.status === 'recognizing text') {
-                setOcrProgress(30 + (info.progress * 60));
-              }
-            },
-          }
-        );
-
-        setOcrProgress(95);
-        const text = result.data.text;
-        setRawText(text);
-        
-        const data = parseForm16Text(text);
-        const validation = validateForm16Data(data);
-        
-        setParsedData(data);
-        setValidationResult(validation);
-      } else if (isPDF) {
-        // For PDF, we need to inform user to convert to image first
-        // or use a different library (pdf.js + tesseract)
-        setError("PDF files require conversion. Please take a screenshot of your Form 16 and upload as an image (JPG/PNG).");
-      } else {
-        // Try to read as text file
-        const text = await uploadedFile.text();
-        setRawText(text);
-        
-        const data = parseForm16Text(text);
-        const validation = validateForm16Data(data);
-        
-        setParsedData(data);
-        setValidationResult(validation);
-      }
+      setRawText(cleanText);
+      setParsedData(data);
+      setValidationResult(validation);
+      if (sourceName) setFileName(sourceName);
     } catch (err) {
-      console.error('OCR Error:', err);
-      setError(err instanceof Error ? err.message : "Failed to process file. Please try the manual text input option.");
+      setError(err instanceof Error ? err.message : "Could not parse this Form 16 text.");
     } finally {
       setIsLoading(false);
       setOcrProgress(100);
     }
   }, []);
 
-  // Handle manual text input
-  const handleTextSubmit = () => {
-    if (!rawText.trim()) {
-      setError("Please paste the Form 16 text");
-      return;
-    }
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = event.target.files?.[0];
+    if (!uploadedFile) return;
 
+    setFileName(uploadedFile.name);
     setError(null);
+    setCopied(false);
+    setParsedData(null);
+    setValidationResult(null);
     setIsLoading(true);
+    setOcrProgress(10);
 
     try {
-      const data = parseForm16Text(rawText);
-      const validation = validateForm16Data(data);
-      
-      setParsedData(data);
-      setValidationResult(validation);
+      const isImage = uploadedFile.type.startsWith("image/");
+      const isText =
+        uploadedFile.type.startsWith("text/") ||
+        uploadedFile.name.toLowerCase().endsWith(".txt");
+      const isPDF = uploadedFile.type === "application/pdf" || uploadedFile.name.toLowerCase().endsWith(".pdf");
+
+      if (isImage) {
+        setOcrProgress(20);
+        const Tesseract = await import("tesseract.js");
+        const result = await Tesseract.recognize(uploadedFile, "eng", {
+          logger: (info) => {
+            if (info.status === "recognizing text") {
+              setOcrProgress(25 + info.progress * 65);
+            }
+          },
+        });
+
+        runParse(result.data.text, uploadedFile.name);
+        return;
+      }
+
+      if (isText) {
+        const text = await uploadedFile.text();
+        runParse(text, uploadedFile.name);
+        return;
+      }
+
+      if (isPDF) {
+        setError("For PDF Form 16 files, open the PDF, select/copy the text, and paste it here. You can also upload a clear screenshot image for OCR.");
+        return;
+      }
+
+      setError("Unsupported file type. Use JPG, PNG, WEBP, or TXT.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to parse text");
+      setError(err instanceof Error ? err.message : "Failed to process the file. Try the paste text option.");
     } finally {
       setIsLoading(false);
     }
+  }, [runParse]);
+
+  const handleTextSubmit = () => runParse(rawText, "Pasted Form 16 text");
+
+  const handleSample = () => {
+    setInputMode("text");
+    runParse(SAMPLE_FORM16_TEXT, "Sample Form 16");
   };
 
-  // Export data
   const handleExport = () => {
     if (!parsedData) return;
-
     const content = exportForm16ForITR(parsedData);
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "form16-extracted-data.txt";
-    document.body.appendChild(a);
-    a.click();
-    if (a.parentNode) a.remove();
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "form16-extracted-data.txt";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
     URL.revokeObjectURL(url);
   };
 
-  // Copy to clipboard
   const handleCopy = async () => {
     if (!parsedData) return;
-    const content = exportForm16ForITR(parsedData);
-    await navigator.clipboard.writeText(content);
+    await navigator.clipboard.writeText(exportForm16ForITR(parsedData));
+    setCopied(true);
   };
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return `₹${amount.toLocaleString('en-IN')}`;
-  };
-
-  // Reset
   const handleReset = () => {
-    setFile(null);
+    setFileName("");
     setParsedData(null);
     setRawText("");
     setError(null);
     setValidationResult(null);
+    setCopied(false);
     setOcrProgress(0);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="text-emerald-200 hover:text-white">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-emerald-300" />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-white">Form 16 Parser</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+  const summaryCards = useMemo(() => {
+    if (!parsedData) return [];
+    return [
+      { label: "Gross salary", value: formatCurrency(parsedData.partB.grossSalary), tone: "bg-blue-50 text-blue-700 border-blue-100" },
+      { label: "Taxable income", value: formatCurrency(parsedData.partB.totalTaxableIncome), tone: "bg-slate-50 text-slate-900 border-slate-200" },
+      { label: "TDS deducted", value: formatCurrency(parsedData.partA.totalTDSDeducted), tone: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+      { label: "Net tax payable", value: formatCurrency(parsedData.partB.netTaxPayable), tone: "bg-amber-50 text-amber-700 border-amber-100" },
+    ];
+  }, [parsedData]);
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-              <Scan className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                Form 16 Parser
-                <Badge variant="secondary" className="bg-white/20 text-white">AI-Powered</Badge>
-              </h1>
-              <p className="text-emerald-200 mt-1">
-                Extract salary and TDS details from your Form 16 automatically
-              </p>
+  const confidenceTone =
+    !parsedData || parsedData.extractionConfidence >= 70
+      ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+      : parsedData.extractionConfidence >= 45
+        ? "bg-amber-50 text-amber-700 border-amber-100"
+        : "bg-red-50 text-red-700 border-red-100";
+
+  return (
+    <>
+      <MetaSEO
+        title="Free Form 16 Parser Online | Extract Salary & TDS | MyeCA.in"
+        description="Paste Form 16 text or upload a readable image to extract salary, TDS, deductions, and taxable income before ITR filing."
+        keywords={["form 16 parser", "form 16 OCR", "salary TDS extractor", "ITR prefill"]}
+        type="calculator"
+      />
+
+      <main className="min-h-screen bg-slate-50">
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 md:py-10 lg:px-8">
+            <MobilePageHeader
+              eyebrow="Form 16 utility"
+              icon={<Scan className="h-4 w-4" />}
+              title="Extract salary and TDS before filing."
+              description="Paste Form 16 text or upload a readable image. Review every value before using it for tax calculation or ITR filing."
+              action={
+                <div className="grid gap-2 sm:grid-cols-2 md:flex">
+                  <Button onClick={handleSample} className="h-11 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                    Try sample parser
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  <Link href="/itr/form-selector">
+                    <Button variant="outline" className="h-11 w-full rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-50 md:w-auto">
+                      Start ITR after review
+                    </Button>
+                  </Link>
+                </div>
+              }
+            />
+
+            <div className="mt-5 grid grid-cols-3 gap-2 text-center md:max-w-xl">
+              {[
+                ["OCR", "Image/text"],
+                ["Review", "Editable source"],
+                ["Export", "ITR notes"],
+              ].map(([value, label]) => (
+                <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
+                  <p className="text-sm font-black text-slate-950">{value}</p>
+                  <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">{label}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Input Section */}
-        {!parsedData && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Upload or Paste Form 16</CardTitle>
-              <CardDescription>
-                Upload an image of your Form 16 or paste the text content
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={inputMode} onValueChange={(v) => setInputMode(v as 'upload' | 'text')} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2 max-w-md">
-                  <TabsTrigger value="upload" className="flex items-center gap-2">
-                    <FileImage className="h-4 w-4" />
-                    Upload Image
-                  </TabsTrigger>
-                  <TabsTrigger value="text" className="flex items-center gap-2">
-                    <Edit className="h-4 w-4" />
-                    Paste Text
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="upload">
-                  <div
-                    className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
-                      isLoading ? 'border-emerald-400 bg-emerald-50' : 'border-gray-300 hover:border-emerald-400 hover:bg-emerald-50/50'
-                    }`}
-                  >
-                    {isLoading ? (
-                      <div className="space-y-4">
-                        <Scan className="h-12 w-12 mx-auto text-emerald-500 animate-pulse" />
-                        <p className="text-gray-600">Processing your Form 16...</p>
-                        <div className="w-64 mx-auto">
-                          <Progress value={ocrProgress} className="h-2" />
-                          <p className="text-sm text-gray-500 mt-2">
-                            {ocrProgress < 30 ? 'Loading OCR engine...' :
-                             ocrProgress < 90 ? 'Extracting text...' :
-                             'Parsing data...'}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <Upload className="h-12 w-12 mx-auto text-gray-400" />
-                        <div>
-                          <p className="text-lg font-medium text-gray-700">
-                            Upload Form 16 Image
-                          </p>
-                          <p className="text-gray-500 mt-1">JPG, PNG, or screenshot</p>
-                        </div>
-                        <Label htmlFor="form16-upload">
-                          <Input
-                            ref={fileInputRef}
-                            id="form16-upload"
-                            type="file"
-                            accept="image/*,.txt"
-                            className="hidden"
-                            onChange={handleFileUpload}
-                          />
-                          <Button variant="outline" className="mt-2" asChild>
-                            <span>Select Image</span>
-                          </Button>
-                        </Label>
-                      </div>
-                    )}
+        <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 sm:px-6 md:grid-cols-[0.95fr_1.05fr] md:py-8 lg:px-8">
+          <div className="space-y-4">
+            <Card className="rounded-lg border-slate-200 shadow-sm">
+              <CardHeader className="p-4 pb-2 md:p-6 md:pb-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <CardTitle className="text-lg font-bold text-slate-950">Add Form 16 data</CardTitle>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">Fastest path: copy all text from the PDF and paste it here.</p>
                   </div>
+                  <Badge className="shrink-0 border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50">No login</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-4 md:p-6 md:pt-2">
+                <Tabs value={inputMode} onValueChange={(value) => setInputMode(value as InputMode)}>
+                  <TabsList className="grid h-11 w-full grid-cols-2 rounded-lg bg-slate-100 p-1">
+                    <TabsTrigger value="text" className="rounded-md text-sm">
+                      <Clipboard className="mr-2 h-4 w-4" />
+                      Paste text
+                    </TabsTrigger>
+                    <TabsTrigger value="upload" className="rounded-md text-sm">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload
+                    </TabsTrigger>
+                  </TabsList>
 
-                  <Alert className="mt-4 bg-blue-50 border-blue-200">
-                    <Info className="h-4 w-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800">
-                      For best results, take a clear screenshot of your Form 16. Make sure all text is readable.
-                      Both Part A and Part B are supported.
-                    </AlertDescription>
-                  </Alert>
-                </TabsContent>
-
-                <TabsContent value="text">
-                  <div className="space-y-4">
+                  <TabsContent value="text" className="mt-4 space-y-3">
                     <Textarea
                       value={rawText}
-                      onChange={(e) => setRawText(e.target.value)}
-                      placeholder="Paste your Form 16 text content here...
-
-Example content:
-Assessment Year: 2025-26
-Employer: ABC Company Ltd
-TAN: DELA12345B
-Employee PAN: ABCDE1234F
-Gross Salary: 10,00,000
-Standard Deduction: 75,000
-..."
-                      className="min-h-[300px] font-mono text-sm"
+                      onChange={(event) => setRawText(event.target.value)}
+                      placeholder={`Paste Form 16 text here...\n\nExample:\nAssessment Year: 2026-27\nGross Salary: Rs. 12,50,000\nTotal TDS Deducted: Rs. 70,000`}
+                      className="min-h-[240px] resize-y rounded-lg border-slate-200 bg-white font-mono text-sm leading-6"
                     />
-                    <Button 
-                      onClick={handleTextSubmit} 
-                      disabled={!rawText.trim() || isLoading}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <Button onClick={handleTextSubmit} disabled={!rawText.trim() || isLoading} className="h-11 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                        {isLoading ? <RefreshCcw className="mr-2 h-4 w-4 animate-spin" /> : <Scan className="mr-2 h-4 w-4" />}
+                        Parse text
+                      </Button>
+                      <Button type="button" variant="outline" onClick={handleSample} className="h-11 rounded-lg border-slate-200">
+                        Use sample data
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="upload" className="mt-4 space-y-3">
+                    <Label
+                      htmlFor="form16-upload"
+                      className={cn(
+                        "flex min-h-[190px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-5 text-center transition-colors",
+                        isLoading ? "border-blue-200 bg-blue-50" : "border-slate-200 bg-slate-50 hover:border-blue-200 hover:bg-blue-50"
+                      )}
                     >
                       {isLoading ? (
-                        <>
-                          <RefreshCcw className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
+                        <div className="w-full max-w-xs space-y-4">
+                          <Scan className="mx-auto h-9 w-9 animate-pulse text-blue-600" />
+                          <div>
+                            <p className="text-sm font-bold text-slate-950">Reading Form 16 image</p>
+                            <p className="mt-1 text-xs text-slate-500">{fileName || "OCR in progress"}</p>
+                          </div>
+                          <Progress value={ocrProgress} className="h-2" />
+                        </div>
                       ) : (
                         <>
-                          <Scan className="mr-2 h-4 w-4" />
-                          Parse Form 16
+                          <FileImage className="h-10 w-10 text-blue-600" />
+                          <p className="mt-3 text-sm font-bold text-slate-950">Upload screenshot or text file</p>
+                          <p className="mt-1 max-w-xs text-xs leading-5 text-slate-500">JPG, PNG, WEBP, or TXT. For PDF, copy text from the PDF and paste it.</p>
                         </>
                       )}
-                    </Button>
-                  </div>
+                    </Label>
+                    <Input ref={fileInputRef} id="form16-upload" type="file" accept="image/*,.txt,.pdf" className="hidden" onChange={handleFileUpload} />
+                    <Alert className="border-blue-100 bg-blue-50 text-blue-900">
+                      <Shield className="h-4 w-4 text-blue-700" />
+                      <AlertDescription className="text-sm leading-6">
+                        Image OCR runs in the browser tool. Review extracted figures against Form 16, AIS, and Form 26AS before filing.
+                      </AlertDescription>
+                    </Alert>
+                  </TabsContent>
+                </Tabs>
 
-                  <Alert className="mt-4 bg-amber-50 border-amber-200">
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
-                    <AlertDescription className="text-amber-800">
-                      Copy all text from your Form 16 PDF/document. You can use Ctrl+A to select all, then Ctrl+C to copy.
-                    </AlertDescription>
+                {error && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Action needed</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
                   </Alert>
-                </TabsContent>
-              </Tabs>
+                )}
+              </CardContent>
+            </Card>
 
-              {error && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Results */}
-        {parsedData && (
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            {/* Confidence & Validation */}
-            <div className="flex flex-wrap gap-4 items-center">
-              <Badge 
-                variant={parsedData.extractionConfidence >= 70 ? 'default' : parsedData.extractionConfidence >= 50 ? 'secondary' : 'destructive'}
-                className={`text-sm py-1 px-3 ${
-                  parsedData.extractionConfidence >= 70 ? 'bg-green-500' : 
-                  parsedData.extractionConfidence >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-              >
-                Extraction Confidence: {parsedData.extractionConfidence}%
-              </Badge>
-              
-              {validationResult && (
-                validationResult.isValid ? (
-                  <Badge className="bg-green-500">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    Validation Passed
-                  </Badge>
-                ) : (
-                  <Badge variant="destructive">
-                    <AlertCircle className="h-3 w-3 mr-1" />
-                    {validationResult.errors.length} Issues Found
-                  </Badge>
-                )
-              )}
-            </div>
-
-            {/* Warnings */}
-            {parsedData.warnings.length > 0 && (
-              <Alert className="bg-amber-50 border-amber-200">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-                <AlertTitle className="text-amber-800">Review Required</AlertTitle>
-                <AlertDescription className="text-amber-700">
-                  <ul className="list-disc list-inside mt-2">
-                    {parsedData.warnings.map((warning, i) => (
-                      <li key={i}>{warning}</li>
-                    ))}
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-80">Gross Salary</p>
-                      <p className="text-2xl font-bold">{formatCurrency(parsedData.partB.grossSalary)}</p>
-                    </div>
-                    <Wallet className="h-8 w-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-80">TDS Deducted</p>
-                      <p className="text-2xl font-bold">{formatCurrency(parsedData.partA.totalTDSDeducted)}</p>
-                    </div>
-                    <PiggyBank className="h-8 w-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-80">Total Deductions</p>
-                      <p className="text-2xl font-bold">{formatCurrency(parsedData.partB.deductions.totalDeductions)}</p>
-                    </div>
-                    <FileText className="h-8 w-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-80">Taxable Income</p>
-                      <p className="text-2xl font-bold">{formatCurrency(parsedData.partB.totalTaxableIncome)}</p>
-                    </div>
-                    <Calendar className="h-8 w-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-wrap gap-3">
-              <Button onClick={handleExport} className="bg-green-600 hover:bg-green-700">
-                <Download className="mr-2 h-4 w-4" />
-                Export for ITR
-              </Button>
-              <Button variant="outline" onClick={handleCopy}>
-                <Copy className="mr-2 h-4 w-4" />
-                Copy Data
-              </Button>
-              <Button variant="outline" onClick={handleReset}>
-                <RefreshCcw className="mr-2 h-4 w-4" />
-                Parse Another
-              </Button>
-              <Link href="/calculators/income-tax">
-                <Button variant="outline">
-                  <Wallet className="mr-2 h-4 w-4" />
-                  Calculate Tax
-                </Button>
-              </Link>
-            </div>
-
-            {/* Detailed Data */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Employer & Employee Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-blue-600" />
-                    Employer & Employee Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium text-blue-800 mb-2">Employer</h4>
-                    <div className="space-y-1 text-sm">
-                      <p><span className="text-blue-600">Name:</span> {parsedData.employer.name}</p>
-                      <p><span className="text-blue-600">TAN:</span> {parsedData.employer.tan || 'Not Found'}</p>
+            <Card className="rounded-lg border-slate-200 bg-white shadow-sm">
+              <CardContent className="p-4 md:p-5">
+                <div className="flex items-start gap-3">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                  <div>
+                    <p className="text-sm font-bold text-slate-950">What this tool can extract</p>
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700">
+                      {["PAN/TAN", "Gross salary", "TDS", "80C/80D", "Taxable income", "Cess/tax payable"].map((item) => (
+                        <span key={item} className="rounded-md bg-slate-50 px-2 py-2">{item}</span>
+                      ))}
                     </div>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <h4 className="font-medium text-green-800 mb-2">Employee</h4>
-                    <div className="space-y-1 text-sm">
-                      <p><span className="text-green-600">Name:</span> {parsedData.employee.name}</p>
-                      <p><span className="text-green-600">PAN:</span> {parsedData.employee.pan || 'Not Found'}</p>
-                    </div>
-                  </div>
-                  <div className="p-4 bg-purple-50 rounded-lg">
-                    <h4 className="font-medium text-purple-800 mb-2">Assessment Period</h4>
-                    <div className="space-y-1 text-sm">
-                      <p><span className="text-purple-600">Financial Year:</span> {parsedData.financialYear}</p>
-                      <p><span className="text-purple-600">Assessment Year:</span> {parsedData.assessmentYear}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Salary Breakdown */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Wallet className="h-5 w-5 text-green-600" />
-                    Salary Breakdown
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between py-2 border-b">
-                    <span>Gross Salary</span>
-                    <span className="font-medium">{formatCurrency(parsedData.partB.grossSalary)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b text-green-600">
-                    <span>(-) HRA Exemption</span>
-                    <span>{formatCurrency(parsedData.partB.exemptAllowances.hra)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b text-green-600">
-                    <span>(-) LTA</span>
-                    <span>{formatCurrency(parsedData.partB.exemptAllowances.lta)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b text-green-600">
-                    <span>(-) Standard Deduction</span>
-                    <span>{formatCurrency(parsedData.partB.standardDeduction)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b text-green-600">
-                    <span>(-) Professional Tax</span>
-                    <span>{formatCurrency(parsedData.partB.professionalTax)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 font-medium">
-                    <span>Income from Salaries</span>
-                    <span>{formatCurrency(parsedData.partB.incomeChargeableSalaries)}</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Deductions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <PiggyBank className="h-5 w-5 text-purple-600" />
-                    Chapter VI-A Deductions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {parsedData.partB.deductions.section80C > 0 && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span>Section 80C</span>
-                      <span className="font-medium text-purple-600">{formatCurrency(parsedData.partB.deductions.section80C)}</span>
-                    </div>
-                  )}
-                  {parsedData.partB.deductions.section80D > 0 && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span>Section 80D (Health Insurance)</span>
-                      <span className="font-medium text-purple-600">{formatCurrency(parsedData.partB.deductions.section80D)}</span>
-                    </div>
-                  )}
-                  {parsedData.partB.deductions.section80CCD1B > 0 && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span>Section 80CCD(1B) NPS</span>
-                      <span className="font-medium text-purple-600">{formatCurrency(parsedData.partB.deductions.section80CCD1B)}</span>
-                    </div>
-                  )}
-                  {parsedData.partB.deductions.section80E > 0 && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span>Section 80E (Education Loan)</span>
-                      <span className="font-medium text-purple-600">{formatCurrency(parsedData.partB.deductions.section80E)}</span>
-                    </div>
-                  )}
-                  {parsedData.partB.deductions.section80G > 0 && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span>Section 80G (Donations)</span>
-                      <span className="font-medium text-purple-600">{formatCurrency(parsedData.partB.deductions.section80G)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between py-2 font-bold text-purple-700">
-                    <span>Total Deductions</span>
-                    <span>{formatCurrency(parsedData.partB.deductions.totalDeductions)}</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Tax Computation */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-orange-600" />
-                    Tax Computation
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between py-2 border-b">
-                    <span>Total Taxable Income</span>
-                    <span className="font-medium">{formatCurrency(parsedData.partB.totalTaxableIncome)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b">
-                    <span>Tax on Total Income</span>
-                    <span>{formatCurrency(parsedData.partB.taxOnTotalIncome)}</span>
-                  </div>
-                  {parsedData.partB.rebate87A > 0 && (
-                    <div className="flex justify-between py-2 border-b text-green-600">
-                      <span>(-) Rebate u/s 87A</span>
-                      <span>{formatCurrency(parsedData.partB.rebate87A)}</span>
-                    </div>
-                  )}
-                  {parsedData.partB.surcharge > 0 && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span>(+) Surcharge</span>
-                      <span>{formatCurrency(parsedData.partB.surcharge)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between py-2 border-b">
-                    <span>(+) Health & Education Cess</span>
-                    <span>{formatCurrency(parsedData.partB.healthEducationCess)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 font-bold text-orange-700">
-                    <span>Net Tax Payable</span>
-                    <span>{formatCurrency(parsedData.partB.netTaxPayable)}</span>
-                  </div>
-                  <div className="p-3 bg-green-50 rounded-lg mt-4">
-                    <div className="flex justify-between text-green-800">
-                      <span className="font-medium">TDS Deducted by Employer</span>
-                      <span className="font-bold">{formatCurrency(parsedData.partA.totalTDSDeducted)}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Use in Tax Calculator CTA */}
-            <Card className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
-              <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-bold">Ready to File Your ITR?</h3>
-                  <p className="text-emerald-200">Use the extracted data in our tax calculator or start filing</p>
-                </div>
-                <div className="flex gap-3">
-                  <Link href="/calculators/income-tax">
-                    <Button variant="secondary">
-                      <Wallet className="mr-2 h-4 w-4" />
-                      Tax Calculator
-                    </Button>
-                  </Link>
-                  <Link href="/itr/form-selector">
-                    <Button variant="outline" className="border-white text-white hover:bg-white/10">
-                      Start Filing
-                    </Button>
-                  </Link>
                 </div>
               </CardContent>
             </Card>
-          </m.div>
-        )}
-      </div>
-    </div>
+          </div>
+
+          <div className="space-y-4">
+            {!parsedData ? (
+              <Card className="rounded-lg border-slate-200 bg-white shadow-sm">
+                <CardContent className="p-5 md:p-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                    <FileText className="h-6 w-6" />
+                  </div>
+                  <h2 className="mt-4 text-xl font-bold tracking-tight text-slate-950">Your extracted result appears here.</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Run the sample, paste Form 16 text, or upload a screenshot to see salary, deductions, TDS, and review warnings.
+                  </p>
+                  <div className="mt-5 grid gap-2">
+                    {["Check employer TAN and employee PAN", "Compare TDS with AIS/Form 26AS", "Review old vs new regime before filing"].map((item) => (
+                      <div key={item} className="flex items-start gap-2 text-sm leading-6 text-slate-700">
+                        <CheckCircle className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <Card className="rounded-lg border-slate-200 bg-white shadow-sm">
+                  <CardContent className="p-4 md:p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Parsed result</p>
+                        <h2 className="mt-1 text-xl font-black text-slate-950">Review before filing</h2>
+                      </div>
+                      <Badge className={cn("border hover:bg-current/0", confidenceTone)}>
+                        {parsedData.extractionConfidence}% confidence
+                      </Badge>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      {summaryCards.map((card) => (
+                        <div key={card.label} className={cn("rounded-lg border p-3", card.tone)}>
+                          <p className="text-[11px] font-bold uppercase tracking-wide opacity-80">{card.label}</p>
+                          <p className="mt-2 text-base font-black leading-tight">{card.value}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {validationResult && !validationResult.isValid && (
+                      <Alert className="mt-4 border-amber-200 bg-amber-50 text-amber-900">
+                        <AlertCircle className="h-4 w-4 text-amber-700" />
+                        <AlertTitle>Manual review needed</AlertTitle>
+                        <AlertDescription>
+                          <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
+                            {validationResult.errors.map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {parsedData.warnings.length > 0 && (
+                      <Alert className="mt-4 border-slate-200 bg-slate-50 text-slate-800">
+                        <Info className="h-4 w-4 text-slate-600" />
+                        <AlertDescription>
+                          <ul className="list-disc space-y-1 pl-4 text-sm">
+                            {parsedData.warnings.map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className="rounded-lg border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="p-4 pb-1 md:p-5 md:pb-1">
+                    <CardTitle className="text-base font-bold text-slate-950">Extracted fields</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-2 md:p-5 md:pt-2">
+                    <DetailRow label="Employer" value={parsedData.employer.name || "Not found"} />
+                    <DetailRow label="Employer TAN" value={parsedData.employer.tan || "Not found"} />
+                    <DetailRow label="Employee" value={parsedData.employee.name || "Not found"} />
+                    <DetailRow label="Employee PAN" value={parsedData.employee.pan || "Not found"} />
+                    <DetailRow label="Assessment year" value={parsedData.assessmentYear || "Not found"} />
+                    <DetailRow label="80C deduction" value={formatCurrency(parsedData.partB.deductions.section80C)} />
+                    <DetailRow label="80D deduction" value={formatCurrency(parsedData.partB.deductions.section80D)} />
+                    <DetailRow label="Total deductions" value={formatCurrency(parsedData.partB.deductions.totalDeductions)} strong />
+                  </CardContent>
+                </Card>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <Button onClick={handleExport} className="h-11 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export notes
+                  </Button>
+                  <Button variant="outline" onClick={handleCopy} className="h-11 rounded-lg border-slate-200 bg-white">
+                    <Copy className="mr-2 h-4 w-4" />
+                    {copied ? "Copied" : "Copy data"}
+                  </Button>
+                  <Link href="/calculators/income-tax">
+                    <Button variant="outline" className="h-11 w-full rounded-lg border-slate-200 bg-white">
+                      <Wallet className="mr-2 h-4 w-4" />
+                      Calculate tax
+                    </Button>
+                  </Link>
+                  <Link href="/itr/form-selector">
+                    <Button className="h-11 w-full rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
+                      Start ITR filing
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+
+                <Button variant="ghost" onClick={handleReset} className="h-11 w-full rounded-lg text-slate-600">
+                  <RefreshCcw className="mr-2 h-4 w-4" />
+                  Parse another Form 16
+                </Button>
+              </>
+            )}
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
-

@@ -83,9 +83,9 @@ export default function VideoTutorialsPage() {
       >
         <div className="relative">
           <div className={`bg-gradient-to-br from-slate-700 to-slate-900 ${size === 'small' ? 'h-32' : 'h-40'} rounded-t-lg flex items-center justify-center relative overflow-hidden`}>
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 transition-colors" />
+            <div className="absolute inset-0 bg-blue-900/20 group-hover:bg-blue-900/35 transition-colors" />
             <BookOpen className="h-12 w-12 text-white/80 group-hover:text-white group-hover:scale-110 transition-all" />
-            <Badge className="absolute bottom-2 right-2 bg-black/80 text-white text-xs">
+            <Badge className="absolute bottom-2 right-2 bg-blue-900/80 text-white text-xs">
               {video.duration}
             </Badge>
             <Badge className="absolute top-2 left-2 bg-blue-600 text-white text-xs">
@@ -121,7 +121,7 @@ export default function VideoTutorialsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -304,7 +304,7 @@ export default function VideoTutorialsPage() {
         <DialogContent className="max-w-4xl p-0">
           {selectedVideo && (
             <>
-              <div className="aspect-video bg-slate-900 rounded-t-lg flex items-center justify-center px-6 text-center">
+              <div className="aspect-video bg-blue-700 rounded-t-lg flex items-center justify-center px-6 text-center">
                 <div className="max-w-xl">
                   <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-white/10 flex items-center justify-center">
                     <BookOpen className="h-7 w-7 text-white" />

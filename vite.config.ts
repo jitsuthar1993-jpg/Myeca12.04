@@ -2,8 +2,15 @@
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === "1";
+const shouldUploadSentrySourcemaps = Boolean(
+  process.env.SENTRY_AUTH_TOKEN &&
+  process.env.SENTRY_ORG &&
+  process.env.SENTRY_PROJECT,
+);
+process.env.VITE_GOOGLE_SITE_VERIFICATION ??= "";
 
 export default defineConfig({
   envPrefix: ["VITE_", "NEXT_PUBLIC_"],
@@ -15,6 +22,17 @@ export default defineConfig({
           gzipSize: true,
           brotliSize: true,
           template: "treemap",
+        })
+      : null,
+    shouldUploadSentrySourcemaps
+      ? sentryVitePlugin({
+          org: process.env.SENTRY_ORG,
+          project: process.env.SENTRY_PROJECT,
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          telemetry: false,
+          sourcemaps: {
+            filesToDeleteAfterUpload: [path.resolve(process.cwd(), "dist", "public", "**", "*.map")],
+          },
         })
       : null,
   ].filter(Boolean),
@@ -48,8 +66,9 @@ export default defineConfig({
   build: {
     outDir: path.resolve(process.cwd(), "dist/public"),
     emptyOutDir: true,
+    target: ["chrome87", "edge88", "firefox78", "safari14.1"],
     cssCodeSplit: true,
-    sourcemap: false,
+    sourcemap: shouldUploadSentrySourcemaps ? true : false,
     reportCompressedSize: false, // Faster CI builds
     chunkSizeWarningLimit: 500, // Catch bloated chunks early
     rollupOptions: {

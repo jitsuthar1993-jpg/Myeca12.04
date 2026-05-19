@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { type User as SupabaseUser } from "@supabase/supabase-js";
 import { type User as AppUser } from "@shared/schema";
+import { normalizeAppRole, type AppRole } from "@shared/app-roles";
 import {
   createTemporaryAppUser,
   getTemporaryTestUserByEmail,
@@ -19,7 +20,7 @@ interface AuthContextType {
   authUser: SupabaseUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<AppUser>;
   register: (email: string, password: string, userData: Partial<AppUser>) => Promise<{ needsEmailConfirmation: boolean }>;
   loginWithGoogle: () => Promise<void>;
   logout: (reason?: LogoutReason) => Promise<void>;
@@ -58,7 +59,7 @@ function writeTemporaryUserToSession(user: AppUser) {
 }
 
 function localFallbackUser(email: string): AppUser {
-  let role = "user";
+  let role: AppRole = "user";
   const lowerEmail = email.toLowerCase();
   if (lowerEmail.includes("admin")) role = "admin";
   else if (lowerEmail.includes("ca")) role = "ca";
@@ -79,11 +80,12 @@ function localFallbackUser(email: string): AppUser {
 
 function appUserFromAuthUser(authUser: SupabaseUser): AppUser {
   const syncPayload = authUserToSyncPayload(authUser);
-  const metadataRole =
+  const metadataRole = normalizeAppRole(
     authUser.app_metadata?.role ||
     authUser.user_metadata?.role ||
     authUser.user_metadata?.userRole ||
-    "user";
+    "user",
+  );
 
   return {
     id: authUser.id,
@@ -265,7 +267,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthUser(null);
       setAppUser(user);
       setIsLoading(false);
-      return;
+      return user;
     }
 
     clearTemporaryAuthState();
@@ -282,7 +284,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAppUser(user);
       setAuthUser(null);
       setIsLoading(false);
-      return;
+      return user;
     }
 
     try {
@@ -302,7 +304,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAppUser(appUserFromAuthUser(data.user));
       }
 
-      setAppUser(await fetchAppUserOrFallback(data.session.access_token, data.user));
+      const user = await fetchAppUserOrFallback(data.session.access_token, data.user);
+      setAppUser(user);
+      return user;
     } finally {
       setIsLoading(false);
     }
@@ -467,7 +471,9 @@ const FALLBACK_AUTH_VALUE: AuthContextType = {
   authUser: null,
   isLoading: false,
   isAuthenticated: false,
-  login: async () => {},
+  login: async () => {
+    throw new Error("Authentication is unavailable.");
+  },
   register: async () => ({ needsEmailConfirmation: false }),
   loginWithGoogle: async () => {},
   logout: async () => {},

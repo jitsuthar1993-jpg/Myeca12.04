@@ -152,7 +152,7 @@ export default function ServicesMarketplacePage() {
 
             <div className="grid grid-cols-2 gap-3">
               <Button 
-                className="rounded-2xl h-11 bg-slate-900 hover:bg-black text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-200"
+                className="rounded-2xl h-11 bg-blue-700 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-200"
                 onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   setSelectedService(service);
@@ -241,7 +241,7 @@ export default function ServicesMarketplacePage() {
                       className={cn(
                         "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
                         selectedCategory === 'all'
-                          ? "bg-slate-900 text-white shadow-lg shadow-slate-300"
+                          ? "bg-blue-700 text-white shadow-lg shadow-slate-300"
                           : "text-slate-400 hover:text-slate-700 hover:bg-white"
                       )}
                     >
@@ -254,7 +254,7 @@ export default function ServicesMarketplacePage() {
                         className={cn(
                           "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2",
                           selectedCategory === category.id
-                            ? "bg-slate-900 text-white shadow-lg shadow-slate-300"
+                            ? "bg-blue-700 text-white shadow-lg shadow-slate-300"
                             : "text-slate-400 hover:text-slate-700 hover:bg-white"
                         )}
                       >

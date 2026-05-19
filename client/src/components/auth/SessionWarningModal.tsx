@@ -30,7 +30,7 @@ export function SessionWarningModal({ isOpen, timeLeft, onContinue, onLogout }: 
   return (
     <AnimatePresence>
       <AlertDialog open={isOpen}>
-        <AlertDialogContent className="max-w-md p-0 overflow-hidden border-0 bg-white dark:bg-slate-900 rounded-[32px] shadow-2xl">
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden border-0 bg-white dark:bg-blue-700 rounded-[32px] shadow-2xl">
           <div className="relative p-8">
             {/* Background Decorative Element */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />

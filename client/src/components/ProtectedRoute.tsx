@@ -2,10 +2,11 @@ import { ReactNode } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { useLocation } from 'wouter';
 import { Loader2 } from 'lucide-react';
+import { getRoleHome, type AppRole } from '@shared/app-roles';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  requiredRole?: 'user' | 'admin' | 'ca';
+  requiredRole?: AppRole;
   redirectTo?: string;
 }
 
@@ -34,14 +35,7 @@ export const ProtectedRoute = ({
   }
 
   if (requiredRole && user?.role !== requiredRole) {
-    // Redirect based on user role
-    if (user?.role === 'admin') {
-      setLocation('/admin/dashboard');
-    } else if (user?.role === 'ca') {
-      setLocation('/ca/dashboard');
-    } else {
-      setLocation('/dashboard');
-    }
+    setLocation(getRoleHome(user?.role));
     return null;
   }
 

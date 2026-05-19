@@ -201,8 +201,8 @@ export default function DashboardServicesPage() {
                       onClick={() => setActiveCategory(cat)}
                       className={cn(
                          "w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-200 text-left group",
-                         activeCategory === cat 
-                            ? "bg-slate-900 text-white shadow-lg shadow-slate-200" 
+                         activeCategory === cat
+                            ? "bg-blue-700 text-white shadow-lg shadow-slate-200"
                             : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                       )}
                    >
@@ -227,7 +227,7 @@ export default function DashboardServicesPage() {
                     setSelectedServiceId("custom");
                     setIsRequestModalOpen(true);
                   }}
-                  className="w-full bg-white text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-200 font-black text-[11px] uppercase tracking-widest h-14 rounded-2xl shadow-sm transition-all">
+                  className="w-full bg-white text-slate-900 hover:bg-blue-700 hover:text-white border border-slate-200 font-black text-[11px] uppercase tracking-widest h-14 rounded-2xl shadow-sm transition-all">
                   Request Custom Service
                 </Button>
              </div>
@@ -249,7 +249,7 @@ export default function DashboardServicesPage() {
                 setSelectedServiceId("custom");
                 setIsRequestModalOpen(true);
               }}
-              className="h-14 px-8 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:-translate-y-1"
+              className="h-14 px-8 rounded-2xl bg-blue-700 hover:bg-blue-600 text-white font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:-translate-y-1"
             >
               <Plus className="h-4 w-4 mr-3" />
               Custom Request

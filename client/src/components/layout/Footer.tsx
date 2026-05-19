@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin, Shield, Award, Clock, Globe, Instagram, Youtube } from "lucide-react";
+import { Mail, Phone, Shield, Award, Clock } from "lucide-react";
 import BrandLockup from "@/components/ui/brand-lockup";
 import { useAuth } from "@/components/AuthProvider";
 import { useRoutePreload } from '@/hooks/use-route-preload';
@@ -26,6 +26,7 @@ export default function Footer() {
             
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-medium">
               <Link href="/legal/privacy-policy" className="hover:text-blue-600 transition-colors">Privacy</Link>
+              <Link href="/trust" className="hover:text-blue-600 transition-colors">Trust</Link>
               <Link href="/legal/terms-of-service" className="hover:text-blue-600 transition-colors">Terms</Link>
               <Link href="/contact" className="hover:text-blue-600 transition-colors">Support</Link>
               <Link href="/all-services" className="hover:text-blue-600 transition-colors">Services</Link>
@@ -56,9 +57,9 @@ export default function Footer() {
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           {[
-            ["ERI", "Govt. registered"],
-            ["Secure", "Documents"],
-            ["CA", "Review available"],
+            ["ERI", "Filing workflow"],
+            ["Privacy", "Document handling"],
+            ["CA", "Review option"],
           ].map(([value, label]) => (
             <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
               <div className="text-base font-black tracking-tight text-slate-950">{value}</div>
@@ -69,10 +70,10 @@ export default function Footer() {
 
         <div className="mt-4 grid grid-cols-2 gap-2">
           {[
-            ["Start ITR Filing", "/itr/form-selector"],
-            ["GST Registration", "/services/gst-registration"],
-            ["Calculators", "/calculators"],
-            ["Tax Guides", "/blog"],
+            ["File ITR", "/itr/form-selector"],
+            ["Estimate Tax", "/calculators/income-tax"],
+            ["Compare Regimes", "/calculators/regime-comparator"],
+            ["Parse Form 16", "/form16-parser"],
           ].map(([label, href]) => (
             <Link
               key={href}
@@ -88,6 +89,7 @@ export default function Footer() {
         <div className="mt-5 border-t border-slate-200 pt-4">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500">
             <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="hover:text-slate-700">Privacy</Link>
+            <Link href="/trust" onMouseEnter={() => preloadOnHover("/trust")} className="hover:text-slate-700">Trust</Link>
             <Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="hover:text-slate-700">Terms</Link>
             <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700">Refunds</Link>
             <Link href="/contact" onMouseEnter={() => preloadOnHover("/contact")} className="hover:text-slate-700">Support</Link>
@@ -103,19 +105,19 @@ export default function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">ERI</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Govt. Registered Intermediary</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">E-filing workflow</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">Secure</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Document Workflow</div>
+              <div className="text-2xl font-black tracking-tight">Privacy</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Document handling</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">CA</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Review Available</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Review option</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">AY 2026</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Filing Ready</div>
+              <div className="text-2xl font-black tracking-tight">Scope</div>
+              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Before payment</div>
             </div>
           </div>
         </div>
@@ -151,40 +153,29 @@ export default function Footer() {
                   <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Award className="h-3 w-3 text-blue-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">CA Review Available</span>
+                  <span className="text-slate-600 font-medium">CA Review Option</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center">
                     <Clock className="h-3 w-3 text-orange-600" />
                   </div>
-                  <span className="text-slate-600 font-medium">Clear Filing Timelines</span>
+                  <span className="text-slate-600 font-medium">Scope & Timeline Clarity</span>
                 </div>
               </div>
               
-              {/* Social Media */}
-              <div>
-                <h4 className="text-xs font-semibold text-slate-800 mb-3">Connect With Us</h4>
-                <div className="flex gap-2">
-                  <a href="https://www.facebook.com/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook"
-                     className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
-                    <Facebook className="h-4 w-4" />
-                  </a>
-                  <a href="https://twitter.com/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter"
-                     className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-sky-500 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
-                    <Twitter className="h-4 w-4" />
-                  </a>
-                  <a href="https://www.linkedin.com/company/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn"
-                     className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-blue-700 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
-                    <Linkedin className="h-4 w-4" />
-                  </a>
-                  <a href="https://www.instagram.com/myecain" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram"
-                     className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
-                    <Instagram className="h-4 w-4" />
-                  </a>
-                  <a href="https://youtube.com/@myeca" target="_blank" rel="noopener noreferrer" aria-label="Subscribe on YouTube"
-                     className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transform hover:scale-105 transition-all duration-200 text-slate-600">
-                    <Youtube className="h-4 w-4" />
-                  </a>
+              {/* Trust shortcuts */}
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <h4 className="text-xs font-semibold text-slate-800 mb-2">Before sharing documents</h4>
+                <p className="text-xs leading-5 text-slate-600">
+                  Review document handling, privacy, and scope expectations before uploading tax records.
+                </p>
+                <div className="mt-3 grid gap-2">
+                  <Link href="/trust" onMouseEnter={() => preloadOnHover("/trust")} className="text-xs font-semibold text-blue-700 hover:text-blue-800">
+                    Trust & document handling
+                  </Link>
+                  <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="text-xs font-semibold text-slate-700 hover:text-slate-900">
+                    Privacy policy
+                  </Link>
                 </div>
               </div>
             </div>
@@ -229,6 +220,7 @@ export default function Footer() {
               </h3>
               <ul className="space-y-2 mb-4">
                 <li><Link href="/about" onMouseEnter={() => preloadOnHover("/about")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>About MyeCA.in</Link></li>
+                <li><Link href="/trust" onMouseEnter={() => preloadOnHover("/trust")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Trust & Security</Link></li>
                 <li><Link href="/blog" onMouseEnter={() => preloadOnHover("/blog")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Tax Guides & Blog</Link></li>
                 <li><Link href="/experts" onMouseEnter={() => preloadOnHover("/experts")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Meet our Experts</Link></li>
                 <li><Link href="/pricing" onMouseEnter={() => preloadOnHover("/pricing")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Pricing & Plans</Link></li>
@@ -251,13 +243,13 @@ export default function Footer() {
                     <div className="w-5 h-5 bg-green-100 rounded flex items-center justify-center">
                       <Phone className="h-2.5 w-2.5 text-green-600" />
                     </div>
-                    <span className="text-slate-600">Request callback</span>
+                    <Link href="/expert-consultation" onMouseEnter={() => preloadOnHover("/expert-consultation")} className="text-slate-600 hover:text-blue-700">Request scoped callback</Link>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
                       <Clock className="h-2.5 w-2.5 text-blue-600" />
                     </div>
-                    <span className="text-slate-600">Mon-Sat, 9 AM-7 PM</span>
+                    <span className="text-slate-600">Mon-Sat business hours</span>
                   </div>
                 </div>
               </div>
@@ -296,7 +288,7 @@ export default function Footer() {
                     <span className="font-normal">Made in India</span>
                   </div>
                   <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                    <span className="font-normal">v2.0 Platform</span>
+                    <span className="font-normal">Document privacy</span>
                   </div>
                 </div>
               </div>
@@ -307,13 +299,13 @@ export default function Footer() {
                     <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
                       <Shield className="h-3 w-3 text-green-600" />
                     </div>
-                    <span className="text-slate-600 font-medium">Secure</span>
+                    <span className="text-slate-600 font-medium">Private</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Award className="h-3 w-3 text-blue-600" />
                     </div>
-                    <span className="text-slate-600 font-medium">Reviewed</span>
+                    <span className="text-slate-600 font-medium">Scoped</span>
                   </div>
                 </div>
               </div>
@@ -323,6 +315,7 @@ export default function Footer() {
             <div className="mt-4 pt-4 border-t border-slate-100">
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
                 <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="hover:text-slate-700 transition-colors font-medium">Privacy Policy</Link>
+                <Link href="/trust" onMouseEnter={() => preloadOnHover("/trust")} className="hover:text-slate-700 transition-colors font-medium">Trust & Security</Link>
                 <Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="hover:text-slate-700 transition-colors font-medium">Terms of Service</Link>
                 <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700 transition-colors font-medium">Refund Policy</Link>
                 <Link href="/legal/disclaimer" onMouseEnter={() => preloadOnHover("/legal/disclaimer")} className="hover:text-slate-700 transition-colors font-medium">Disclaimer</Link>

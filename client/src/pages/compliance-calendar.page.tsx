@@ -334,7 +334,7 @@ export default function ComplianceCalendarPage() {
                               <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-blue-500 rounded-full ring-2 ring-white" />
                             )}
                             {isUnderlined && !isSolid && !isSelected && (
-                              <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-4 h-[1.5px] bg-slate-900 rounded-full" />
+                              <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-4 h-[1.5px] bg-blue-700 rounded-full" />
                             )}
                           </div>
                         );

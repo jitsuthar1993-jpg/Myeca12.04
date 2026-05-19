@@ -7,6 +7,7 @@ import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
 import { provisionPrivilegedUser, syncRoleClaims } from "../services/user-accounts.js";
 import { invalidateCachedUser } from "../utils/user-cache.js";
+import { APP_ROLES, PRIVILEGED_APP_ROLES } from "../../shared/app-roles.js";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
@@ -51,7 +52,7 @@ const optionalName = z.preprocess(
 );
 
 const updateUserRoleSchema = z.object({
-  role: z.enum(['user', 'admin', 'ca', 'team_member']).optional(),
+  role: z.enum(APP_ROLES).optional(),
   status: z.enum(['active', 'inactive', 'pending', 'suspended', 'rejected']).optional(),
 });
 
@@ -59,7 +60,7 @@ const invitePrivilegedUserSchema = z.object({
   email: z.string().email("A valid email address is required."),
   firstName: optionalName,
   lastName: optionalName,
-  role: z.enum(["admin", "team_member", "ca"]),
+  role: z.enum(PRIVILEGED_APP_ROLES),
 });
 
 const optionalAdminNote = z.preprocess(

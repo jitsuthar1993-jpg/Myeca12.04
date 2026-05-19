@@ -418,7 +418,7 @@ export default function NoticeCompliancePage() {
 
                <div className="space-y-6">
                   <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3">
-                     <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-lg">2</div>
+                     <div className="w-10 h-10 rounded-xl bg-blue-700 text-white flex items-center justify-center shrink-0 shadow-lg">2</div>
                      The Response Strategy
                   </h3>
                   <p className="text-slate-600 leading-relaxed italic border-l-4 border-red-500 pl-6 py-2">
@@ -473,7 +473,7 @@ export default function NoticeCompliancePage() {
              <div className="flex items-start gap-10">
                 <div className="w-20 h-20 rounded-[2rem] bg-white border-2 border-slate-100 flex items-center justify-center text-slate-900 shrink-0 shadow-xl relative">
                    <Shield className="w-10 h-10 text-red-600" />
-                   <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-slate-900 border-4 border-white flex items-center justify-center text-[10px] font-black tracking-tighter shadow-lg text-white">TM</div>
+                   <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-blue-700 border-4 border-white flex items-center justify-center text-[10px] font-black tracking-tighter shadow-lg text-white">TM</div>
                 </div>
                 <div>
                    <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">E-E-A-T Certified Response Team</h3>

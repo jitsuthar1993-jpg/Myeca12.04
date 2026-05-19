@@ -149,8 +149,8 @@ export default function PenaltyCalculatorPage() {
                   onClick={() => { setActiveReg(key); setActiveItem(Object.keys(reg.items)[0]); }}
                   className={cn(
                     "flex-1 py-3 rounded-2xl text-[10px] font-normal uppercase tracking-wider transition-all",
-                    activeReg === key 
-                      ? "bg-slate-900 text-white shadow-lg" 
+                    activeReg === key
+                      ? "bg-blue-700 text-white shadow-lg"
                       : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
                   )}
                 >

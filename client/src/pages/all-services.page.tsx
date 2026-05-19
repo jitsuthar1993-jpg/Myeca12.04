@@ -95,7 +95,7 @@ export default function AllServicesPage() {
           <CardFooter className="p-6 pt-0">
             {service.path ? (
               <Link href={service.path} className="w-full">
-                <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-6 rounded-xl transition-all shadow-md hover:shadow-lg">
+                <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-6 rounded-xl transition-all shadow-md hover:shadow-lg">
                   {isPremium ? "Subscribe Now" : "Explore Now"}
                   {!isPremium && <ChevronRight className="w-4 h-4 ml-1.5" />}
                 </Button>

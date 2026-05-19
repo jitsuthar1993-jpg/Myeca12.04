@@ -123,8 +123,8 @@ export default function BlogIndexPage() {
                 onClick={() => setSelectedCategory(null)}
                 className={cn(
                   "px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all",
-                  !selectedCategory 
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" 
+                  !selectedCategory
+                    ? "bg-blue-700 text-white shadow-lg shadow-slate-900/10"
                     : "bg-slate-50 text-slate-400 hover:bg-slate-100"
                 )}
               >
@@ -243,7 +243,7 @@ export default function BlogIndexPage() {
                 </p>
                 <div className="space-y-3">
                   <Link href="/learn">
-                    <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-11 font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98]">
+                    <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white rounded-xl h-11 font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98]">
                       Browse Guides
                     </Button>
                   </Link>

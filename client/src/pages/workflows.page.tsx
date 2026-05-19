@@ -252,7 +252,7 @@ export default function WorkflowsPage() {
                    <Zap className="h-16 w-16 text-slate-100 mx-auto mb-6" />
                    <h3 className="text-xl font-black text-slate-900 mb-2 tracking-tight uppercase tracking-tighter">Zero Automations Detected</h3>
                    <p className="text-slate-400 text-xs font-medium max-w-xs mx-auto leading-relaxed mb-8">Start your automation journey by deploying your first workflow from our template library.</p>
-                   <Button onClick={() => setIsCreateDialogOpen(true)} className="h-14 px-8 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest border-none">Deploy First Engine</Button>
+                   <Button onClick={() => setIsCreateDialogOpen(true)} className="h-14 px-8 rounded-2xl bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest border-none">Deploy First Engine</Button>
                 </div>
               ) : (
                 <div className="grid gap-6">
@@ -396,7 +396,7 @@ export default function WorkflowsPage() {
                           <Button 
                             size="sm"
                             onClick={() => handleCreateFromTemplate(template)}
-                            className="h-10 px-6 rounded-xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest border-none hover:bg-purple-600 transition-colors"
+                            className="h-10 px-6 rounded-xl bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest border-none hover:bg-purple-600 transition-colors"
                           >
                             Deploy
                           </Button>

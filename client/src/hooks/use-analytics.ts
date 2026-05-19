@@ -2,39 +2,21 @@
 
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
+import { trackTelemetryPageView } from '@/telemetry/browser';
 
 const loadAnalytics = () => import('@/utils/analytics-enhanced');
 
 // Initialize enhanced analytics on app load
 export function useAnalyticsInitialization() {
-  useEffect(() => {
-    void loadAnalytics().then(({ initializeEnhancedAnalytics }) => {
-      initializeEnhancedAnalytics();
-    });
-  }, []);
+  useEffect(() => {}, []);
 }
 
 // Track page views
 export function usePageTracking() {
   const [location] = useLocation();
-  const previousLocation = useRef(location);
 
   useEffect(() => {
-    if (location !== previousLocation.current) {
-      // Track page view in Google Analytics
-      if (typeof (window as any).gtag !== 'undefined') {
-        (window as any).gtag('config', import.meta.env.VITE_GA_MEASUREMENT_ID, {
-          page_path: location,
-        });
-      }
-
-      // Track in our custom analytics
-      void loadAnalytics().then(({ trackFeatureUse }) => {
-        trackFeatureUse('page_view', 'navigation', location);
-      });
-      
-      previousLocation.current = location;
-    }
+    trackTelemetryPageView(location);
   }, [location]);
 }
 

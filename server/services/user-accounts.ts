@@ -1,9 +1,7 @@
 import { adminDb } from "../data-admin.js";
 import { getSupabaseAdminClient } from "../lib/supabase.js";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-
-type Role = "admin" | "team_member" | "ca" | "user";
-type PrivilegedRole = Exclude<Role, "user">;
+import { PRIVILEGED_APP_ROLES, type AppRole, type PrivilegedAppRole } from "../../shared/app-roles.js";
 
 export type AuthIdentity = {
   userId: string;
@@ -14,11 +12,11 @@ type ProvisionPrivilegedUserInput = {
   email: string;
   firstName?: string;
   lastName?: string;
-  role: PrivilegedRole;
+  role: PrivilegedAppRole;
   invitedBy?: string;
 };
 
-const privilegedRoles = new Set<PrivilegedRole>(["admin", "team_member", "ca"]);
+const privilegedRoles = new Set<PrivilegedAppRole>(PRIVILEGED_APP_ROLES);
 
 function parseEmailList(value?: string) {
   return new Set(
@@ -55,7 +53,7 @@ export function displayNameParts(userMetadata: Record<string, any> | null | unde
   };
 }
 
-export function getBootstrapRoleForEmail(email?: string | null): Role | null {
+export function getBootstrapRoleForEmail(email?: string | null): AppRole | null {
   const normalized = normalizeEmail(email);
   if (!normalized) {
     return null;
@@ -72,7 +70,7 @@ export function getBootstrapRoleForEmail(email?: string | null): Role | null {
   return null;
 }
 
-export async function getProvisionedRoleForEmail(email?: string | null): Promise<PrivilegedRole | null> {
+export async function getProvisionedRoleForEmail(email?: string | null): Promise<PrivilegedAppRole | null> {
   const normalized = normalizeEmail(email);
   if (!normalized) return null;
 
@@ -123,7 +121,7 @@ async function findSupabaseUserByEmail(email: string) {
 
 async function recordPrivilegedProvisioning(
   email: string,
-  role: PrivilegedRole,
+  role: PrivilegedAppRole,
   status: "invited" | "promoted",
   details: Record<string, unknown>,
 ) {

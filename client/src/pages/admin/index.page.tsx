@@ -49,7 +49,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-6 pb-10">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
                 <Zap className="w-3 h-3 fill-current" />
                 System Live
              </div>
-             <h1 className="text-3xl font-bold tracking-tight text-slate-900">Admin Command Center</h1>
+             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Admin Command Center</h1>
              <p className="text-slate-500 max-w-2xl text-sm font-medium">
                Real-time platform oversight, user management, and financial reconciliation.
              </p>
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
              <Button 
                variant="outline" 
-               className="rounded-xl h-10 px-4 font-bold text-xs uppercase tracking-widest border-slate-200"
+               className="h-10 rounded-lg border-slate-200 px-4 text-sm font-bold"
                onClick={() => refetch()}
              >
                <RefreshCw className={cn("h-3 w-3 mr-2", isLoading && "animate-spin")} />
@@ -75,14 +75,14 @@ export default function AdminDashboard() {
         </div>
 
         {error ? (
-          <Card className="rounded-3xl border-red-200 bg-red-50 shadow-sm">
+          <Card className="rounded-lg border-red-200 bg-red-50 shadow-none">
             <CardContent className="flex flex-col gap-3 p-5 text-sm text-red-800 md:flex-row md:items-center md:justify-between">
               <p className="font-medium">
                 Admin statistics could not be loaded: {error instanceof Error ? error.message : 'Request failed'}
               </p>
               <Button
                 variant="outline"
-                className="h-9 rounded-xl border-red-200 bg-white text-xs font-bold uppercase tracking-widest text-red-700 hover:bg-red-100"
+                className="h-9 rounded-lg border-red-200 bg-white text-xs font-bold text-red-700 hover:bg-red-100"
                 onClick={() => refetch()}
               >
                 <RefreshCw className={cn("mr-2 h-3 w-3", isLoading && "animate-spin")} />
@@ -100,9 +100,9 @@ export default function AdminDashboard() {
             { label: 'Expert CA Applications', value: pendingCAs.length, icon: ShieldCheck, color: 'amber' },
             { label: 'Monthly Revenue (MTD)', value: formatCurrency(stats.revenue.thisMonth), icon: Coins, color: 'indigo' },
           ].map((item, i) => (
-            <Card key={i} className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <Card key={i} className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
                <div className="flex justify-between items-start mb-4">
-                  <div className={cn("p-3 rounded-2xl", 
+                  <div className={cn("rounded-lg p-3",
                     item.color === 'blue' ? "bg-blue-50 text-blue-600" :
                     item.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
                     item.color === 'amber' ? "bg-amber-50 text-amber-600" :
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
                   </div>
                   <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
                </div>
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
+               <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{item.label}</p>
                <p className="text-2xl font-bold text-slate-900">{item.value}</p>
             </Card>
           ))}
@@ -130,34 +130,34 @@ export default function AdminDashboard() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
                     <Input 
                       placeholder="Search activity..." 
-                      className="h-9 w-60 rounded-xl bg-white border-slate-100 pl-9 text-xs font-medium shadow-sm"
+                      className="h-9 w-60 rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium"
                     />
                  </div>
-                 <Button variant="outline" size="sm" className="h-9 rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50">
+                 <Button variant="outline" size="sm" className="h-9 rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50">
                     <Filter className="h-4 w-4" />
                  </Button>
               </div>
            </div>
 
-           <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+           <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
              <CardContent className="p-0">
                <div className="overflow-x-auto">
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="border-b border-slate-50">
-                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Activity Detail</th>
-                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Identity / ID</th>
-                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Context</th>
-                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
-                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Action</th>
+                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Activity Detail</th>
+                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Identity / ID</th>
+                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Context</th>
+                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Status</th>
+                       <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Action</th>
                      </tr>
                    </thead>
                    <tbody className="divide-y divide-slate-50">
                      {(stats.workList || []).slice(0, 5).map((work: any) => (
                        <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors">
-                         <td className="px-8 py-5">
+                         <td className="px-6 py-4">
                            <div className="flex items-center gap-4">
-                              <div className="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                                  <Briefcase className="h-4 w-4" />
                               </div>
                               <div>
@@ -166,16 +166,16 @@ export default function AdminDashboard() {
                               </div>
                            </div>
                          </td>
-                         <td className="px-8 py-5">
+                         <td className="px-6 py-4">
                            <p className="text-xs font-bold text-slate-900">{work.userName}</p>
                            <p className="text-[10px] font-medium text-slate-400 uppercase mt-0.5">#TRX-{work.id.toString().padStart(6, '0')}</p>
                          </td>
-                         <td className="px-8 py-5">
+                         <td className="px-6 py-4">
                            <p className="text-[11px] text-slate-500 font-medium line-clamp-1 max-w-xs">
                              {work.description || 'Routine platform transaction and compliance audit.'}
                            </p>
                          </td>
-                         <td className="px-8 py-5">
+                         <td className="px-6 py-4">
                            <Badge className={cn(
                              "rounded-full px-3 py-1 text-[9px] font-bold border-none shadow-sm",
                              work.status === 'pending' ? "bg-amber-50 text-amber-600" :
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
                              {work.status.replace('_', ' ').toUpperCase()}
                            </Badge>
                          </td>
-                         <td className="px-8 py-5 text-right">
+                         <td className="px-6 py-4 text-right">
                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50">
                              <ArrowRight className="h-4 w-4" />
                            </Button>
@@ -206,7 +206,7 @@ export default function AdminDashboard() {
                  </table>
                </div>
                
-               <div className="p-6 bg-slate-50/50 flex items-center justify-between">
+               <div className="flex items-center justify-between bg-slate-50/50 p-5">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">System Total: {stats.workList?.length || 0}</p>
                   <div className="flex items-center gap-2">
                      <Button variant="ghost" className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900">Back</Button>

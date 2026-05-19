@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { Layout } from "@/components/admin/Layout";
+import { getRoleLabel } from "@shared/app-roles";
 
 const formatDate = (date: any, includeTime: boolean = false) => {
   if (!date) return "N/A";
@@ -164,16 +165,6 @@ export default function UsersManagementPage() {
     return matchesSearch && matchesStatus && matchesRole;
   });
 
-  const getRoleLabel = (role: string) => {
-    const labels: Record<string, string> = {
-      admin: 'Admin',
-      team_member: 'Team Member', 
-      ca: 'CA Expert',
-      user: 'User'
-    };
-    return labels[role] || role;
-  };
-
   const userCounts = {
     total: response?.data?.pagination?.total || 0,
     active: users.filter((u: User) => u.status === 'active').length,
@@ -209,7 +200,7 @@ export default function UsersManagementPage() {
           </div>
           <div className="flex items-center gap-3">
              <Button
-               className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-widest shadow-sm"
+               className="h-10 px-6 rounded-xl bg-blue-700 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-widest shadow-sm"
                onClick={() => setInviteOpen(true)}
              >
                <UserPlus className="h-4 w-4 mr-2" />

@@ -50,7 +50,7 @@ export function DailyUpdatesBanner() {
               "relative overflow-hidden p-1 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-2xl transition-all duration-500",
               isCritical 
                 ? "bg-gradient-to-r from-red-600 to-orange-600 shadow-red-500/20" 
-                : "bg-white/10 border border-white/10 bg-slate-900 shadow-blue-500/10"
+                : "bg-white/10 border border-white/10 bg-blue-700 shadow-blue-500/10"
             )}
           >
             {/* Animated Glow for Critical Updates */}

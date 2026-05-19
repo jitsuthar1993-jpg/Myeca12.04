@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'wouter';
 
@@ -55,18 +55,6 @@ const SEO: React.FC<SEOProps> = ({
   const currentUrl = `https://myeca.in${location}`;
   const siteName = 'MyeCA.in - Expert Tax Filing Services';
   const servicePrice = serviceData?.price ? serviceData.price.replace(/,/g, '').match(/\d+(?:\.\d+)?/)?.[0] : undefined;
-
-  // Track page view for Google Analytics
-  useEffect(() => {
-    const gtag = (window as any).gtag;
-    if (typeof gtag === 'function') {
-      gtag('event', 'page_view', {
-        page_location: currentUrl,
-        page_path: location,
-        page_title: title,
-      });
-    }
-  }, [location, title, currentUrl]);
 
   // Generate structured data based on type
   const generateStructuredData = () => {

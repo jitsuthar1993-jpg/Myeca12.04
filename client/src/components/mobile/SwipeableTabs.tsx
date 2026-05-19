@@ -85,7 +85,7 @@ export function SwipeableTabs({
   return (
     <div className={cn("w-full overflow-hidden", className)}>
       {/* Tab Headers */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-10">
+      <div className="flex border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-blue-700 sticky top-0 z-10">
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
@@ -233,7 +233,7 @@ export function PullToRefreshIndicator({
       }}
     >
       <div className={cn(
-        "w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center",
+        "w-10 h-10 rounded-full bg-white dark:bg-blue-800 shadow-lg flex items-center justify-center",
         isRefreshing && "animate-spin"
       )}>
         <svg 

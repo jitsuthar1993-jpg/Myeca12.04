@@ -35,7 +35,9 @@ import {
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
+import { captureServerException, initServerSentry } from "../server/telemetry/sentry.js";
 
+initServerSentry();
 const PUBLIC_CACHE = "public, s-maxage=300, stale-while-revalidate=3600";
 const PRIVATE_CACHE = "private, no-cache";
 const documentUpload = multer({
@@ -277,7 +279,7 @@ function llmsText(full = false) {
   return readFileSync(filePath, "utf8");
 }
 
-export default async function handler(req: any, res: any) {
+async function handleRequest(req: any, res: any) {
   ensureRequestId(req, res);
   const { name, url } = routeFor(req);
 
@@ -728,4 +730,26 @@ export default async function handler(req: any, res: any) {
   }
 
   return sendJson(res, 404, { error: "API route not found" });
+}
+
+export default async function handler(req: any, res: any) {
+  try {
+    return await handleRequest(req, res);
+  } catch (error) {
+    captureServerException(error, {
+      method: req.method,
+      path: requestUrl(req).pathname,
+      requestId: res.locals?.requestId,
+    });
+
+    if (res.headersSent) {
+      throw error;
+    }
+
+    res.setHeader("Cache-Control", PRIVATE_CACHE);
+    return sendJson(res, 500, {
+      error: "Internal server error",
+      requestId: res.locals?.requestId,
+    });
+  }
 }

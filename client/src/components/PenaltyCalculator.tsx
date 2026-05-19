@@ -265,7 +265,7 @@ export default function PenaltyCalculator() {
 
         {/* Right: Summary & Visualization */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <Card className="border-0 shadow-2xl rounded-[2rem] overflow-hidden bg-slate-900 text-white flex-1 relative">
+          <Card className="border-0 shadow-2xl rounded-[2rem] overflow-hidden bg-blue-700 text-white flex-1 relative">
             <CardContent className="p-10 flex flex-col h-full">
               <div className="flex-1">
                 <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-[0.2em] mb-4">

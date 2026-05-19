@@ -109,27 +109,27 @@ export default function ITRFormSelectorPage() {
   const selectedFormData = ITR_FORMS.find(form => form.id === selectedForm);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
+    <div className="min-h-screen bg-slate-50 py-6 md:py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 text-center"
+          className="mb-6 text-left md:mb-10 md:text-center"
         >
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Income Tax Return Filing</h1>
-          <p className="text-slate-600 max-w-2xl mx-auto">
-            Choose your Assessment Year and the appropriate ITR form based on your income profile.
+          <h1 className="text-2xl font-bold text-slate-900 mb-2 md:text-3xl">Income Tax Return Filing</h1>
+          <p className="text-sm leading-6 text-slate-600 max-w-2xl md:mx-auto md:text-base">
+            Choose the assessment year and ITR path that matches your income profile.
           </p>
         </motion.div>
 
         {/* Year Selection Section - Two Box Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 gap-3 mb-6 md:grid-cols-2 md:gap-6 md:mb-12">
           {/* Left Box: Assessment Year Selection */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm flex flex-col justify-center"
+            className="bg-white border border-slate-200 p-4 rounded-lg shadow-sm flex flex-col justify-center md:rounded-2xl md:p-8"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-indigo-50 rounded-lg">
@@ -137,7 +137,7 @@ export default function ITRFormSelectorPage() {
               </div>
               <h2 className="text-lg font-bold text-slate-900">Assessment Year</h2>
             </div>
-            <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+            <p className="text-sm text-slate-500 mb-4 leading-relaxed md:mb-6">
               Select the assessment year for which you want to file your income tax returns.
             </p>
             <Select value={assessmentYear} onValueChange={setAssessmentYear}>
@@ -152,13 +152,16 @@ export default function ITRFormSelectorPage() {
                 ))}
               </SelectContent>
             </Select>
+            <p className="mt-3 text-xs font-medium leading-5 text-slate-500 md:hidden">
+              Financial year: <span className="font-bold text-indigo-700">{selectedYearData?.period}</span>
+            </p>
           </motion.div>
 
           {/* Right Box: Document Period */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm flex flex-col justify-center relative overflow-hidden group"
+            className="hidden bg-white border border-slate-200 p-8 rounded-2xl shadow-sm flex-col justify-center relative overflow-hidden group md:flex"
           >
             <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
               <FileText className="h-24 w-24" />
@@ -181,8 +184,85 @@ export default function ITRFormSelectorPage() {
           </motion.div>
         </div>
 
+        <div className="mb-4 grid gap-2 md:hidden">
+          <Link
+            href="/calculators/income-tax"
+            className="flex min-h-11 items-center justify-between rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700"
+          >
+            <span>Estimate tax first</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="/form16-parser"
+            className="flex min-h-11 items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700"
+          >
+            <span>Parse Form 16 before choosing</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <div className="mb-8 grid gap-3 md:hidden">
+          {ITR_FORMS.map((form) => {
+            const IconComponent = form.icon;
+            const isRecommended = form.id === getRecommendedForm();
+            const isSelected = selectedForm === form.id;
+
+            return (
+              <div
+                key={form.id}
+                className={`rounded-lg border bg-white shadow-sm transition-colors ${
+                  isSelected ? 'border-indigo-300 ring-2 ring-indigo-100' : 'border-slate-200'
+                }`}
+              >
+                <div className="flex gap-3 p-4">
+                  <button
+                    type="button"
+                    onClick={() => form.available && setSelectedForm(form.id)}
+                    className="flex min-w-0 flex-1 items-start gap-3 text-left"
+                  >
+                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${form.color}`}>
+                      <IconComponent className="h-4 w-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span className="text-base font-bold text-slate-950">{form.title}</span>
+                        {isRecommended && (
+                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 text-[10px] py-0 px-2 h-5">
+                            Recommended
+                          </Badge>
+                        )}
+                      </span>
+                      <span className="mt-1 block text-sm leading-5 text-slate-600">{form.description}</span>
+                      <span className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-wide">
+                        <span className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">{form.complexity}</span>
+                        <span className="rounded-md bg-blue-50 px-2 py-1 text-blue-700">{form.estimatedTime}</span>
+                      </span>
+                    </span>
+                  </button>
+                  <Link href={`/itr/filing?form=${form.id}&ay=${assessmentYear}`} className="shrink-0 self-center">
+                    <Button size="sm" className="h-9 rounded-lg bg-indigo-600 px-3 text-xs font-bold text-white hover:bg-indigo-700">
+                      Start
+                    </Button>
+                  </Link>
+                </div>
+                <details className="border-t border-slate-100 px-4 py-3">
+                  <summary className="cursor-pointer text-sm font-bold text-indigo-700">View included cases</summary>
+                  <ul className="mt-3 grid gap-2">
+                    {form.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 text-xs leading-5 text-slate-600">
+                        <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              </div>
+            );
+          })}
+        </div>
+
         {/* Form Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {ITR_FORMS.map((form, index) => {
             const IconComponent = form.icon;
             const isRecommended = form.id === getRecommendedForm();
@@ -259,10 +339,10 @@ export default function ITRFormSelectorPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="mb-10"
+              className="mb-10 hidden md:block"
             >
               <Card className="bg-indigo-600 border-none shadow-xl shadow-indigo-200">
-                <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                <CardContent className="p-5 flex flex-col md:flex-row items-center justify-between gap-5 md:p-8 md:gap-6">
                   <div className="text-center md:text-left">
                     <h3 className="text-xl font-bold text-white mb-2">Proceed with {selectedFormData.title}?</h3>
                     <p className="text-indigo-100 text-sm max-w-md">
@@ -271,7 +351,7 @@ export default function ITRFormSelectorPage() {
                   </div>
                   
                   <Link href={`/itr/filing?form=${selectedFormData.id}&ay=${assessmentYear}`} className="w-full md:w-auto">
-                    <Button size="lg" className="w-full bg-white text-indigo-700 hover:bg-slate-50 px-10 h-14 font-extrabold text-lg shadow-lg group">
+                    <Button size="lg" className="w-full bg-white text-indigo-700 hover:bg-slate-50 px-5 h-12 font-extrabold text-base shadow-lg group md:h-14 md:px-10 md:text-lg">
                       Start Filing Now
                       <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
@@ -289,7 +369,7 @@ export default function ITRFormSelectorPage() {
           transition={{ delay: 0.8 }}
           className="text-center"
         >
-          <div className="inline-flex items-center gap-2 p-3 px-6 bg-slate-200/50 rounded-full border border-slate-200">
+          <div className="flex flex-col items-start gap-2 rounded-lg border border-slate-200 bg-slate-200/50 p-4 text-left md:inline-flex md:flex-row md:items-center md:rounded-full md:px-6 md:py-3">
             <HelpCircle className="h-4 w-4 text-slate-500" />
             <span className="text-sm text-slate-600 font-medium">Confused about which form to pick?</span>
             <Link href="/itr/form-recommender">

@@ -500,7 +500,7 @@ const KeyboardShortcutsHelp: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={hideHelp}>
+    <div className="fixed inset-0 bg-blue-700 bg-opacity-50 flex items-center justify-center z-50" onClick={hideHelp}>
       <div
         ref={modalRef}
         className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[80vh] overflow-hidden"
@@ -535,7 +535,7 @@ const KeyboardShortcutsHelp: React.FC = () => {
                   {categoryShortcuts.map((shortcut, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <kbd className="px-3 py-1 bg-gray-800 text-white text-sm font-mono rounded">
+                        <kbd className="rounded border border-blue-100 bg-blue-50 px-3 py-1 font-mono text-sm text-blue-700">
                           {formatShortcut(shortcut)}
                         </kbd>
                         <span className="text-gray-700">{shortcut.description}</span>

@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import MetaSEO from "@/components/seo/MetaSEO";
 import { CONTACT } from "@/config/contact";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -44,6 +45,7 @@ const SERVICE_LABELS: Record<string, string> = {
   "iso-certification": "ISO Certification",
   "trade-license": "Trade License",
   "gst-returns": "GST Returns Filing",
+  "business-tax-review": "Business Tax Review",
   "startup-india-registration": "Startup India Registration",
   "gst-registration": "GST Registration",
   "company-registration": "Company Registration",
@@ -72,6 +74,23 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
       { value: "Callback", label: "business hours" },
       { value: "CA", label: "reviewed filing" },
       { value: "GSTR", label: "1 + 3B support" },
+    ],
+  },
+  "business-tax-review": {
+    eyebrow: "Business scope review",
+    title: "Get business tax, GST, and TDS scope clear before paid work starts.",
+    subtitle:
+      "For business income, high turnover, GST/TDS, audit-linked filing, notices, or document-heavy cases, we first review the scope and next steps before asking for documents or payment.",
+    formTitle: "Request business tax scope review",
+    cta: "Request Business Review",
+    defaultMessage:
+      "I need a scope review for business income, GST/TDS, audit-linked filing, notices, or high-turnover compliance.",
+    painPoints: ["Business income or GST/TDS scope unclear", "Documents and timelines need review", "Audit or notice risk needs triage"],
+    outcomes: ["Document checklist by case type", "Scope and exclusion clarity before payment", "Review path for CA-assisted work"],
+    stats: [
+      { value: "Scope first", label: "before quote" },
+      { value: "GST + TDS", label: "review" },
+      { value: "Business", label: "documents" },
     ],
   },
   general: {
@@ -127,16 +146,28 @@ export default function ExpertConsultationPage() {
 
   const profile = SERVICE_PROFILES[serviceKey] || SERVICE_PROFILES.general;
   const isGstReturns = serviceKey === "gst-returns";
+  const isBusinessTaxReview = serviceKey === "business-tax-review";
+  const showsTurnoverScope = isGstReturns || isBusinessTaxReview;
+  const identityLabel = isGstReturns ? "GSTIN" : isBusinessTaxReview ? "Company / GSTIN / PAN" : "Company / GSTIN";
+  const identityPlaceholder = isGstReturns ? "22AAAAA0000A1Z5" : isBusinessTaxReview ? "Company name, GSTIN, or PAN status" : "Optional";
+  const turnoverLabel = isBusinessTaxReview ? "Annual turnover" : "Monthly turnover";
+  const messageLabel = isGstReturns ? "What is pending?" : isBusinessTaxReview ? "What needs review?" : "Requirement";
+  const seoDescription = isBusinessTaxReview
+    ? "Request a scope-first review for business income, GST, TDS, audit-linked ITR filing, notices, and high-turnover tax compliance."
+    : profile.subtitle;
 
   const urgency = useMemo(() => {
     const day = new Date().getDate();
     if (isGstReturns && day >= 8 && day <= 20) {
       return "GST return due-date window is active. Avoid late fees by getting a quick review.";
     }
+    if (isBusinessTaxReview) {
+      return "High-value business cases should be scoped before documents or payment move further.";
+    }
     return isGstReturns
       ? "Pending GST returns can attract late fees and interest. A quick review usually catches avoidable mistakes."
       : "Share your details once. We will route the request to the right specialist.";
-  }, [isGstReturns]);
+  }, [isBusinessTaxReview, isGstReturns]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((current) => ({ ...current, [field]: value }));
@@ -179,7 +210,16 @@ export default function ExpertConsultationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] pb-20 text-slate-950 lg:pb-0">
+    <>
+      <MetaSEO
+        title={`${profile.formTitle} | MyeCA.in`}
+        description={seoDescription}
+        keywords={isBusinessTaxReview ? ["business tax review", "GST TDS consultation", "high turnover tax filing", "CA assisted business tax"] : ["tax consultation", "CA consultation", "GST return help", "income tax consultation"]}
+        type="service"
+        canonicalUrl="https://myeca.in/expert-consultation"
+        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Expert Consultation", url: "/expert-consultation" }]}
+      />
+      <div className="min-h-screen bg-[#f7f9fc] pb-20 text-slate-950 lg:pb-0">
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 py-5 sm:py-8 lg:grid-cols-[1fr_430px] lg:items-start lg:gap-8 lg:py-10">
           <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="min-w-0">
@@ -194,7 +234,7 @@ export default function ExpertConsultationPage() {
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:mt-5 sm:text-lg sm:leading-7">{profile.subtitle}</p>
 
             <div className="mt-4 flex flex-wrap gap-3 sm:mt-6">
-              <a href="#consultation-form" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-normal text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-700 sm:h-12 sm:px-5">
+              <a href="#consultation-form" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-normal text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-700 sm:h-12 sm:px-5">
                 <Phone className="h-4 w-4" />
                 Request callback
               </a>
@@ -244,8 +284,8 @@ export default function ExpertConsultationPage() {
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="gstin">{isGstReturns ? "GSTIN" : "Company / GSTIN"}</Label>
-                  <Input id="gstin" value={formData.gstin} onChange={(event) => handleInputChange("gstin", event.target.value.toUpperCase())} placeholder={isGstReturns ? "22AAAAA0000A1Z5" : "Optional"} className="h-11 rounded-lg uppercase" />
+                  <Label htmlFor="gstin">{identityLabel}</Label>
+                  <Input id="gstin" value={formData.gstin} onChange={(event) => handleInputChange("gstin", event.target.value.toUpperCase())} placeholder={identityPlaceholder} className="h-11 rounded-lg uppercase" />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Call time</Label>
@@ -260,9 +300,9 @@ export default function ExpertConsultationPage() {
                 </div>
               </div>
 
-              {isGstReturns ? (
+              {showsTurnoverScope ? (
                 <div className="space-y-1.5">
-                  <Label>Monthly turnover</Label>
+                  <Label>{turnoverLabel}</Label>
                   <Select value={formData.turnover} onValueChange={(value) => handleInputChange("turnover", value)}>
                     <SelectTrigger className="h-11 rounded-lg border-gray-300 bg-white text-gray-900">
                       <SelectValue placeholder="Select range" />
@@ -287,7 +327,7 @@ export default function ExpertConsultationPage() {
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="message">{isGstReturns ? "What is pending?" : "Requirement"}</Label>
+                <Label htmlFor="message">{messageLabel}</Label>
                 <Textarea id="message" value={formData.message} onChange={(event) => handleInputChange("message", event.target.value)} rows={3} className="rounded-lg" />
               </div>
 
@@ -377,6 +417,7 @@ export default function ExpertConsultationPage() {
           </a>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

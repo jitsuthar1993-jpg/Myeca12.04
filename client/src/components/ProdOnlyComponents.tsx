@@ -1,13 +1,13 @@
-import GoogleAnalytics from '@/components/GoogleAnalytics';
-import PerformanceMonitor from '@/components/performance/PerformanceMonitor';
+import TelemetryRuntime from "@/components/TelemetryRuntime";
+import TelemetryConsentBanner from "@/components/TelemetryConsentBanner";
 import SkipLinks from "@/components/accessibility/SkipLinks";
 
 export default function ProdOnlyComponents() {
   return (
     <>
       <SkipLinks />
-      <GoogleAnalytics />
-      <PerformanceMonitor />
+      <TelemetryRuntime />
+      <TelemetryConsentBanner />
     </>
   );
 }

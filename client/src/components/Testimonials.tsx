@@ -1,116 +1,64 @@
-import { m } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { CheckCircle2, FileText, Star } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 
 export default function Testimonials() {
-  return (
-    <section id="testimonials" className="relative py-12 bg-white border-y border-gray-100 scroll-mt-20">
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-        <m.div
-          className="text-center mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            What Our Customers Say
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Anonymized filing feedback focused on workflow clarity, documents, and review scope.
-          </p>
-        </m.div>
+  const featured = testimonials.slice(0, 3);
 
-        <div className="grid gap-4 sm:hidden">
-          {testimonials.slice(0, 3).map((testimonial, index) => (
+  return (
+    <section id="testimonials" className="relative scroll-mt-20 border-y border-slate-200 bg-white py-12 md:py-16">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Customer evidence</p>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
+              Filing situations MyeCA is built to handle
+            </h2>
+          </div>
+          <p className="max-w-xl text-sm leading-6 text-slate-600 md:text-base">
+            Anonymized feedback is shown as workflow evidence, not as public client endorsement. Named case studies can be added once approvals exist.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {featured.map((testimonial) => (
             <Card
               key={testimonial.id}
-              className="w-full bg-white rounded-xl p-5 shadow-sm border border-gray-200"
+              className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200 md:p-6"
             >
-              <div className="flex text-yellow-400 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed">
-                "{testimonial.content}"
-              </p>
-              <div className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold shadow-sm ${
-                  index % 4 === 0 ? 'bg-blue-500' :
-                  index % 4 === 1 ? 'bg-green-500' :
-                  index % 4 === 2 ? 'bg-purple-500' : 'bg-red-500'
-                }`}>
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-extrabold text-blue-700">
                   {testimonial.avatar}
                 </div>
-                <div className="ml-3 min-w-0">
-                  <div className="font-semibold text-gray-900 text-sm">
-                    {testimonial.name}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {testimonial.role}
-                  </div>
-                  <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                    Anonymized feedback
-                  </div>
+                <div className="flex items-center gap-1 text-amber-500" aria-label={`${testimonial.rating} star workflow feedback`}>
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                  ))}
+                </div>
+              </div>
+              <p className="text-sm font-medium leading-6 text-slate-700">"{testimonial.content}"</p>
+              <div className="mt-5 border-t border-slate-100 pt-4">
+                <p className="text-sm font-bold text-slate-950">{testimonial.name}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-600">{testimonial.role}</p>
+                <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-emerald-700">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Anonymized workflow feedback
                 </div>
               </div>
             </Card>
           ))}
         </div>
 
-        {/* Testimonials Carousel */}
-        <div className="relative overflow-hidden hidden sm:block">
-          <m.div
-            className="flex space-x-6 pb-6"
-            animate={{ x: [0, -1200] }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 20,
-                ease: "linear",
-              },
-            }}
-          >
-            {/* Duplicate testimonials for seamless loop */}
-            {[...testimonials, ...testimonials].map((testimonial, index) => (
-              <Card
-                key={`${testimonial.id}-${index}`}
-                className="flex-none w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all"
-              >
-                <div className="flex text-yellow-400 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold shadow-sm ${
-                    index % 4 === 0 ? 'bg-blue-500' :
-                    index % 4 === 1 ? 'bg-green-500' :
-                    index % 4 === 2 ? 'bg-purple-500' : 'bg-red-500'
-                  }`}>
-                    {testimonial.avatar}
-                  </div>
-                  <div className="ml-3">
-                    <div className="font-semibold text-gray-900 text-sm">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {testimonial.role}
-                    </div>
-                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                      Anonymized feedback
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </m.div>
+        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 md:mt-8 md:flex md:items-center md:justify-between md:p-5">
+          <div className="flex items-start gap-3">
+            <FileText className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
+            <div>
+              <p className="text-sm font-bold text-slate-950">Evidence policy</p>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Feedback is anonymized unless a client gives explicit approval for a public case study or named reference.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

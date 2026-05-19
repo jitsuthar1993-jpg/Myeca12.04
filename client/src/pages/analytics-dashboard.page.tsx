@@ -195,7 +195,7 @@ export default function AnalyticsDashboardPage() {
              </CardContent>
           </Card>
 
-          <Button className="w-full h-16 rounded-[32px] bg-slate-900 text-white hover:bg-slate-800 font-black text-xs uppercase tracking-widest transition-all hover:-translate-y-1">
+          <Button className="w-full h-16 rounded-[32px] bg-blue-700 text-white hover:bg-blue-800 font-black text-xs uppercase tracking-widest transition-all hover:-translate-y-1">
              <Download className="h-5 w-5 mr-3 text-blue-400" />
              Download Analytics
           </Button>

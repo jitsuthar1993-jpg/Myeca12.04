@@ -43,6 +43,10 @@ const unsafeSecret = (value: string) => {
 };
 
 const strongSecret = (length: number) => (value: string) => minLength(length)(value) || unsafeSecret(value);
+const ratioValue = (value: string) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1 ? null : "must be a number between 0 and 1";
+};
 
 export const ENV_REQUIREMENTS: EnvRequirement[] = [
   {
@@ -165,6 +169,65 @@ export const ENV_REQUIREMENTS: EnvRequirement[] = [
     key: "VITE_GA_MEASUREMENT_ID",
     level: "optional",
     description: "Google Analytics measurement ID for production telemetry.",
+  },
+  {
+    key: "VITE_GOOGLE_SITE_VERIFICATION",
+    level: "optional",
+    description: "Google Search Console HTML meta verification token exposed to the Vite build.",
+  },
+  {
+    key: "VITE_CLARITY_PROJECT_ID",
+    level: "optional",
+    description: "Microsoft Clarity project ID for production-only public-page behavior analytics.",
+  },
+  {
+    key: "VITE_POSTHOG_KEY",
+    level: "optional",
+    description: "PostHog public project key for production product analytics.",
+  },
+  {
+    key: "VITE_POSTHOG_HOST",
+    level: "optional",
+    description: "PostHog API host, for example https://us.i.posthog.com.",
+    validate: urlValue,
+  },
+  {
+    key: "VITE_SENTRY_DSN",
+    level: "optional",
+    description: "Browser Sentry DSN for production client error monitoring.",
+    validate: urlValue,
+  },
+  {
+    key: "SENTRY_DSN",
+    level: "optional",
+    description: "Server Sentry DSN for production API error monitoring.",
+    validate: urlValue,
+  },
+  {
+    key: "SENTRY_ORG",
+    level: "optional",
+    description: "Sentry organization slug used by build-time source map upload.",
+  },
+  {
+    key: "SENTRY_PROJECT",
+    level: "optional",
+    description: "Sentry project slug used by build-time source map upload.",
+  },
+  {
+    key: "SENTRY_AUTH_TOKEN",
+    level: "optional",
+    description: "Sentry auth token used only during trusted production builds to upload source maps.",
+  },
+  {
+    key: "SENTRY_TRACES_SAMPLE_RATE",
+    level: "optional",
+    description: "Server Sentry tracing sample rate between 0 and 1.",
+    validate: ratioValue,
+  },
+  {
+    key: "VITE_CRISP_WEBSITE_ID",
+    level: "optional",
+    description: "Crisp website ID for production-only public support chat.",
   },
 ];
 

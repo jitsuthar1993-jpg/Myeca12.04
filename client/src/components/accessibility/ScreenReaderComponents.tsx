@@ -130,7 +130,7 @@ export const SkipLink: React.FC<SkipLinkProps> = ({
         position: 'absolute',
         top: '-40px',
         left: '6px',
-        background: '#000',
+        background: '#2563eb',
         color: '#fff',
         padding: '8px 12px',
         textDecoration: 'none',

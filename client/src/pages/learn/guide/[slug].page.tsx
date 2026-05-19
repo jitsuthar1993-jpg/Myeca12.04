@@ -102,7 +102,7 @@ export default function GuidePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
       <MetaSEO
         title={`${guide.title} | MyeCA.in Tax Guides`}
         description={guide.description}

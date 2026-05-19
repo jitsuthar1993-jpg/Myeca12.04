@@ -67,14 +67,14 @@ export default function ImageGallery({
             <>
               <button
                 onClick={handlePrevious}
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-blue-900/50 text-white p-2 rounded-full hover:bg-blue-900/70 transition-colors"
                 aria-label="Previous image"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={handleNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-900/50 text-white p-2 rounded-full hover:bg-blue-900/70 transition-colors"
                 aria-label="Next image"
               >
                 <ChevronRight className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function ImageGallery({
           )}
 
           {/* Image Counter */}
-          <div className="absolute bottom-2 right-2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+          <div className="absolute bottom-2 right-2 bg-blue-900/50 text-white px-3 py-1 rounded-full text-sm">
             {selectedIndex + 1} / {images.length}
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function ImageGallery({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-blue-900/90 flex items-center justify-center"
             onClick={() => setIsLightboxOpen(false)}
             onKeyDown={handleKeyDown}
             tabIndex={0}
@@ -210,7 +210,7 @@ export default function ImageGallery({
 
             {/* Lightbox Caption */}
             {images[selectedIndex].caption && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-blue-900/70 text-white px-4 py-2 rounded-lg">
                 {images[selectedIndex].caption}
               </div>
             )}

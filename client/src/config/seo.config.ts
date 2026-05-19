@@ -403,6 +403,13 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'About Us', url: '/about' }]
   },
+  '/trust': {
+    title: 'Trust & Security | MyeCA.in Document Handling',
+    description: 'Review how MyeCA.in handles tax documents, pricing scope, CA review, privacy, and security expectations before you start filing.',
+    keywords: ['MyeCA trust', 'tax document security', 'ITR document privacy', 'secure tax filing India'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Trust & Security', url: '/trust' }]
+  },
   '/contact': {
     title: 'Contact Us | MyeCA.in Support & Consultation',
     description: 'Get in touch with MyeCA.in for tax consultation, support, and business inquiries during business hours.',

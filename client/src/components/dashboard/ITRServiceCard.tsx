@@ -73,7 +73,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
             </div>
             
             {/* Custom Magic Line Progress */}
-            <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden relative">
+            <div className="h-2 w-full bg-slate-100 dark:bg-blue-700 rounded-full overflow-hidden relative">
               <m.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
@@ -106,8 +106,8 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
             <Link href="/itr/form-selector">
               <Button className={cn(
                 "w-full h-12 rounded-xl font-bold transition-all duration-300 gap-2",
-                isCompleted 
-                  ? "bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900" 
+                isCompleted
+                  ? "bg-blue-700 text-white hover:bg-blue-800 dark:bg-white dark:text-slate-900"
                   : "bg-white text-slate-900 border-2 border-slate-100 hover:border-indigo-200 hover:bg-slate-50 shadow-sm"
               )}>
                 {progress === 100 ? "View Acknowledgement" : "Continue Filing"}

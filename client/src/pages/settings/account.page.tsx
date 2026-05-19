@@ -225,7 +225,7 @@ export default function AccountSettingsPage() {
                       />
 
                       <div className="pt-4 flex justify-end">
-                        <Button type="submit" disabled={updateProfileMutation.isPending} className="rounded-xl bg-slate-900 hover:bg-black px-8 h-11 font-bold text-sm shadow-sm transition-all">
+                        <Button type="submit" disabled={updateProfileMutation.isPending} className="rounded-xl bg-blue-700 hover:bg-blue-700 px-8 h-11 font-bold text-sm shadow-sm transition-all">
                           {updateProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                           <Save className="mr-2 h-4 w-4" />
                           Save Changes

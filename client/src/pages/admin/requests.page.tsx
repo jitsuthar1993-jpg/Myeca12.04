@@ -187,7 +187,7 @@ export default function AdminRequestsPage() {
         <section className="rounded-[28px] border border-slate-100 bg-white p-7 shadow-sm">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <Badge className="border-none bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+              <Badge className="border-none bg-blue-700 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
                 Operations inbox
               </Badge>
               <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-950">Customer Requests</h1>
@@ -431,7 +431,7 @@ export default function AdminRequestsPage() {
                 />
               </div>
               <Button
-                className="w-full rounded-xl bg-slate-900 font-black text-white hover:bg-blue-700"
+                className="w-full rounded-xl bg-blue-700 font-black text-white hover:bg-blue-700"
                 disabled={updateConsultation.isPending}
                 onClick={() =>
                   updateConsultation.mutate({
@@ -504,7 +504,7 @@ export default function AdminRequestsPage() {
                   </Link>
                 )}
                 <Button
-                  className="flex-1 rounded-xl bg-slate-900 font-black text-white hover:bg-blue-700"
+                  className="flex-1 rounded-xl bg-blue-700 font-black text-white hover:bg-blue-700"
                   disabled={updatePayment.isPending}
                   onClick={() =>
                     updatePayment.mutate({

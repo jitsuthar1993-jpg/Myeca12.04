@@ -136,7 +136,7 @@ const PATTERNS = {
 // Parse amount string
 function parseAmount(amountStr: string | undefined): number {
   if (!amountStr) return 0;
-  const cleaned = amountStr.replace(/[₹,\s]/g, '');
+  const cleaned = amountStr.replace(/rs\.?|inr|\u20b9|,|\s/gi, '');
   return parseFloat(cleaned) || 0;
 }
 
@@ -150,6 +150,18 @@ function extractValue(text: string, pattern: RegExp): string | undefined {
 function extractAmount(text: string, pattern: RegExp): number {
   const match = text.match(pattern);
   return match ? parseAmount(match[1]) : 0;
+}
+
+function extractAmountByLabels(text: string, labels: string[]): number {
+  const amount = String.raw`(?:rs\.?|inr|\u20b9)?\s*([0-9][0-9,]*(?:\.\d{1,2})?)`;
+
+  for (const label of labels) {
+    const pattern = new RegExp(`${label}[\\s\\S]{0,120}?${amount}`, 'i');
+    const match = text.match(pattern);
+    if (match?.[1]) return parseAmount(match[1]);
+  }
+
+  return 0;
 }
 
 // Find employer name (usually at the top of the document)
@@ -217,32 +229,68 @@ export function parseForm16Text(text: string): Form16Data {
   if (employeeName !== 'Not Found') matchCount++;
   
   // Extract salary details
-  const grossSalary = extractAmount(text, PATTERNS.grossSalary);
-  const hra = extractAmount(text, PATTERNS.hra);
-  const lta = extractAmount(text, PATTERNS.lta);
-  const standardDeduction = extractAmount(text, PATTERNS.standardDeduction);
-  const professionalTax = extractAmount(text, PATTERNS.professionalTax);
+  const grossSalary = extractAmountByLabels(text, [
+    String.raw`gross\s*salary`,
+    String.raw`salary\s*as\s*per\s*(?:provisions\s*)?(?:contained\s*)?(?:in\s*)?section\s*17\s*\(?1\)?`,
+    String.raw`income\s*chargeable\s*under\s*the\s*head\s*salaries`,
+  ]) || extractAmount(text, PATTERNS.grossSalary);
+  const hra = extractAmountByLabels(text, [
+    String.raw`house\s*rent\s*allowance`,
+    String.raw`\bhra\b`,
+    String.raw`section\s*10\s*\(?13a\)?`,
+  ]) || extractAmount(text, PATTERNS.hra);
+  const lta = extractAmountByLabels(text, [
+    String.raw`leave\s*travel\s*(?:allowance|concession)`,
+    String.raw`\blta\b`,
+  ]) || extractAmount(text, PATTERNS.lta);
+  const standardDeduction = extractAmountByLabels(text, [
+    String.raw`standard\s*deduction`,
+    String.raw`deduction\s*under\s*section\s*16\s*\(?ia\)?`,
+  ]) || extractAmount(text, PATTERNS.standardDeduction);
+  const professionalTax = extractAmountByLabels(text, [
+    String.raw`professional\s*tax`,
+    String.raw`tax\s*on\s*employment`,
+    String.raw`section\s*16\s*\(?iii\)?`,
+  ]) || extractAmount(text, PATTERNS.professionalTax);
   
   if (grossSalary > 0) matchCount++;
   if (standardDeduction > 0) matchCount++;
   
   // Extract deductions
-  const section80C = extractAmount(text, PATTERNS.section80C);
-  const section80D = extractAmount(text, PATTERNS.section80D);
-  const section80E = extractAmount(text, PATTERNS.section80E);
-  const section80G = extractAmount(text, PATTERNS.section80G);
-  const section80CCD = extractAmount(text, PATTERNS.section80CCD);
+  const section80C = extractAmountByLabels(text, [String.raw`section\s*80c`, String.raw`\b80c\b`]) || extractAmount(text, PATTERNS.section80C);
+  const section80D = extractAmountByLabels(text, [String.raw`section\s*80d`, String.raw`\b80d\b`]) || extractAmount(text, PATTERNS.section80D);
+  const section80E = extractAmountByLabels(text, [String.raw`section\s*80e`, String.raw`\b80e\b`]) || extractAmount(text, PATTERNS.section80E);
+  const section80G = extractAmountByLabels(text, [String.raw`section\s*80g`, String.raw`\b80g\b`]) || extractAmount(text, PATTERNS.section80G);
+  const section80CCD = extractAmountByLabels(text, [String.raw`section\s*80ccd`, String.raw`\b80ccd\b`]) || extractAmount(text, PATTERNS.section80CCD);
   
   if (section80C > 0) matchCount++;
   if (section80D > 0) matchCount++;
   
   // Extract tax details
-  const totalIncome = extractAmount(text, PATTERNS.totalIncome);
-  const taxPayable = extractAmount(text, PATTERNS.taxPayable);
-  const tdsDeducted = extractAmount(text, PATTERNS.tdsDeducted);
-  const rebate87A = extractAmount(text, PATTERNS.rebate87A);
-  const surcharge = extractAmount(text, PATTERNS.surcharge);
-  const cess = extractAmount(text, PATTERNS.cess);
+  const totalIncome = extractAmountByLabels(text, [
+    String.raw`total\s*taxable\s*income`,
+    String.raw`total\s*income`,
+  ]) || extractAmount(text, PATTERNS.totalIncome);
+  const taxOnTotalIncome = extractAmountByLabels(text, [
+    String.raw`tax\s*on\s*total\s*income`,
+    String.raw`tax\s*on\s*income`,
+  ]);
+  const netTaxPayable = extractAmountByLabels(text, [
+    String.raw`net\s*tax\s*payable`,
+    String.raw`total\s*tax\s*payable`,
+    String.raw`tax\s*(?:payable|liability)`,
+  ]) || extractAmount(text, PATTERNS.taxPayable);
+  const tdsDeducted = extractAmountByLabels(text, [
+    String.raw`total\s*(?:amount\s*of\s*)?tax\s*deducted`,
+    String.raw`total\s*tds\s*deducted`,
+    String.raw`tds\s*deducted`,
+  ]) || extractAmount(text, PATTERNS.tdsDeducted);
+  const rebate87A = extractAmountByLabels(text, [String.raw`rebate\s*(?:u\/s\s*)?87a`]) || extractAmount(text, PATTERNS.rebate87A);
+  const surcharge = extractAmountByLabels(text, [String.raw`surcharge`]) || extractAmount(text, PATTERNS.surcharge);
+  const cess = extractAmountByLabels(text, [
+    String.raw`health\s*(?:and|&)\s*education\s*cess`,
+    String.raw`education\s*cess`,
+  ]) || extractAmount(text, PATTERNS.cess);
   
   if (totalIncome > 0) matchCount++;
   if (tdsDeducted > 0) matchCount++;
@@ -320,13 +368,13 @@ export function parseForm16Text(text: string): Form16Data {
         totalDeductions,
       },
       totalTaxableIncome: totalIncome || Math.max(0, incomeChargeableSalaries - totalDeductions),
-      taxOnTotalIncome: taxPayable,
+      taxOnTotalIncome: taxOnTotalIncome || netTaxPayable,
       rebate87A,
       surcharge,
       healthEducationCess: cess,
-      totalTaxPayable: taxPayable + surcharge + cess,
+      totalTaxPayable: netTaxPayable || (taxOnTotalIncome + surcharge + cess),
       relief89: 0,
-      netTaxPayable: taxPayable + surcharge + cess - rebate87A,
+      netTaxPayable: netTaxPayable || (taxOnTotalIncome + surcharge + cess - rebate87A),
     },
     extractionConfidence: Math.round(confidence),
     rawText: text,
@@ -423,4 +471,3 @@ export function exportForm16ForITR(data: Form16Data): string {
   
   return output;
 }
-

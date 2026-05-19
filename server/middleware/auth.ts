@@ -3,6 +3,7 @@ import { findOrCreateUserProfile } from "../services/user-accounts.js";
 import { safeError } from "../utils/error-response.js";
 import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 import { getTemporaryTestUserByToken } from "../../shared/temporary-test-users.js";
+import { APP_ROLES, normalizeAppRole, type AppRole } from "../../shared/app-roles.js";
 import { getSupabaseAuthClient } from "../lib/supabase.js";
 import { getRequestId } from "./request-id.js";
 
@@ -103,7 +104,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
 export const authenticateToken = requireAuth;
 
-export function requireRole(allowedRoles: string[]) {
+export function requireRole(allowedRoles: readonly AppRole[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const auth = await readAuth(req);
@@ -116,7 +117,7 @@ export function requireRole(allowedRoles: string[]) {
         return authError(res, 403, "Access denied. Profile not found.");
       }
 
-      const userRole = userData.role || "user";
+      const userRole = normalizeAppRole(userData.role);
 
       if (!allowedRoles.includes(userRole)) {
         return authError(res, 403, "Access denied. Insufficient permissions.");
@@ -142,9 +143,9 @@ export async function requireCA(req: Request, res: Response, next: NextFunction)
 }
 
 export async function requireSuperAdmin(req: Request, res: Response, next: NextFunction) {
-  return requireRole(["superadmin", "admin"])(req, res, next);
+  return requireRole(["admin"])(req, res, next);
 }
 
 export async function requireAnyAuth(req: Request, res: Response, next: NextFunction) {
-  return requireRole(["superadmin", "admin", "team_member", "ca", "user"])(req, res, next);
+  return requireRole(APP_ROLES)(req, res, next);
 }

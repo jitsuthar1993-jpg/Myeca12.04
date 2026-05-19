@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { computeIndividualIncomeTax, type ResidentialStatus } from "@/lib/income-tax-engine";
 import type { TaxCalculationResult } from "@/types/calculator";
@@ -112,6 +113,8 @@ export default function IncomeTaxCalculator() {
   const savingsValue = Math.abs(newRegimeTax.grossTaxLiability - oldRegimeTax.grossTaxLiability);
   const betterRegime = taxDifference < 0 ? "New Regime" : taxDifference > 0 ? "Old Regime" : "Both Regimes";
   const savingsPercent = Math.round((savingsValue / Math.max(newRegimeTax.grossTaxLiability, oldRegimeTax.grossTaxLiability)) * 100) || 0;
+  const selectedCalculation = regime === "new" ? newRegimeTax : oldRegimeTax;
+  const recommendedCalculation = betterRegime === "Old Regime" ? oldRegimeTax : newRegimeTax;
 
   const renderAmountRow = (
     label: string,
@@ -252,11 +255,11 @@ export default function IncomeTaxCalculator() {
       />
 
       {/* Header Section */}
-      <div className="max-w-[1200px] mx-auto px-4 pt-12 pb-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="max-w-[1200px] mx-auto px-4 pt-8 pb-6 md:pt-12 md:pb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
           <div className="space-y-1">
-            <h1 className="text-[40px] font-normal text-[#101828] tracking-tight">Income Tax Calculator</h1>
-            <p className="text-[#667085] text-lg">Estimate your taxes, compare regimes, and review key assumptions.</p>
+            <h1 className="text-[30px] font-normal leading-tight text-[#101828] tracking-tight md:text-[40px]">Income Tax Calculator</h1>
+            <p className="text-sm leading-6 text-[#667085] md:text-lg">Estimate tax, compare regimes, and move into ITR filing with the same assumptions.</p>
           </div>
           <div className="flex items-center gap-4 bg-[#F0F2F5] px-4 py-2 rounded-full border border-[#D0D5DD]">
             <div className="flex items-center gap-2 text-[13px] font-normal text-[#475467]">
@@ -270,8 +273,45 @@ export default function IncomeTaxCalculator() {
           </div>
         </div>
 
+        <div className="mt-6 rounded-[28px] border border-blue-100 bg-white p-5 shadow-sm md:hidden">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-700">Current estimate</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-blue-50 p-4">
+              <p className="text-xs font-semibold text-blue-700">Selected regime</p>
+              <p className="mt-2 text-xl font-black text-slate-950">{fmtCurrency(selectedCalculation.taxPayable)}</p>
+              <p className="mt-1 text-xs text-slate-500">{regime === "new" ? "New regime" : "Old regime"}</p>
+            </div>
+            <div className="rounded-2xl bg-emerald-50 p-4">
+              <p className="text-xs font-semibold text-emerald-700">Recommended</p>
+              <p className="mt-2 text-xl font-black text-slate-950">{fmtCurrency(recommendedCalculation.taxPayable)}</p>
+              <p className="mt-1 text-xs text-slate-500">{betterRegime}</p>
+            </div>
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            {savingsValue > 0
+              ? `${betterRegime} is lower by ${fmtCurrency(savingsValue)} before final document review.`
+              : "Both regimes are currently showing the same tax before final document review."}
+          </p>
+          <div className="mt-4 grid gap-2">
+            <Link href="/itr/form-selector">
+              <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
+                File ITR with this estimate
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setCurrentStep(1)}
+              className="h-11 w-full rounded-lg border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50"
+            >
+              Review deductions and regime
+            </Button>
+          </div>
+        </div>
+
         {/* Main Calculator Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8 md:gap-8 md:mt-12">
           
           {/* Left Column - Inputs */}
           <div className="lg:col-span-7 space-y-6">

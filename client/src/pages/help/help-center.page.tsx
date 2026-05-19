@@ -310,7 +310,7 @@ export default function HelpCenterPage() {
                               <BookOpen className="w-8 h-8 text-white" />
                             </div>
                           </div>
-                          <Badge className="absolute top-2 right-2 bg-black/70">
+                          <Badge className="absolute top-2 right-2 bg-blue-900/70">
                             {video.duration}
                           </Badge>
                         </div>

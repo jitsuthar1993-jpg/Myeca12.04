@@ -60,17 +60,17 @@ export default function CADashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-6 pb-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">CA Expert Panel</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">CA Expert Panel</h1>
             <p className="text-slate-500 max-w-2xl text-sm font-medium">
               Manage client portfolios, monitor filing statuses, and oversee compliance lifecycles.
             </p>
           </div>
           <div className="flex items-center gap-3">
-             <Button variant="outline" className="rounded-xl h-10 px-4 font-bold text-xs uppercase tracking-widest border-slate-200">
+             <Button variant="outline" className="h-10 rounded-lg border-slate-200 px-4 text-sm font-bold">
                Portfolio Report
              </Button>
           </div>
@@ -78,60 +78,60 @@ export default function CADashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+              <div className="rounded-lg bg-blue-50 p-3 text-blue-600">
                 <Users className="h-5 w-5" />
               </div>
               <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Assigned Clients</p>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Assigned Clients</p>
             <p className="text-2xl font-bold text-slate-900">{stats.totalClients}</p>
           </Card>
 
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+              <div className="rounded-lg bg-emerald-50 p-3 text-emerald-600">
                 <CheckCircle className="h-5 w-5" />
               </div>
               <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-500" />
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Returns Filed</p>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Returns Filed</p>
             <p className="text-2xl font-bold text-slate-900">{stats.completedFilings}</p>
           </Card>
 
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+              <div className="rounded-lg bg-amber-50 p-3 text-amber-600">
                 <Clock className="h-5 w-5" />
               </div>
               <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-amber-500" />
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Actions</p>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Pending Actions</p>
             <p className="text-2xl font-bold text-slate-900">{stats.pendingFilings}</p>
           </Card>
 
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-violet-50 text-violet-600 rounded-2xl">
+              <div className="rounded-lg bg-violet-50 p-3 text-violet-600">
                 <TrendingUp className="h-5 w-5" />
               </div>
               <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-violet-500" />
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Annual Volume</p>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Annual Volume</p>
             <p className="text-2xl font-bold text-slate-900">{stats.totalFilings}</p>
           </Card>
         </div>
 
         {/* Portfolio Tabs */}
         <Tabs defaultValue="clients" className="space-y-6">
-          <TabsList className="bg-slate-50 p-1 rounded-xl h-12 inline-flex border border-slate-100/50">
-            <TabsTrigger value="clients" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Active Clients</TabsTrigger>
-            <TabsTrigger value="filings" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm px-6 font-bold text-xs uppercase tracking-widest">Filing History</TabsTrigger>
+          <TabsList className="inline-flex h-11 rounded-lg border border-slate-200 bg-slate-50 p-1">
+            <TabsTrigger value="clients" className="rounded-md px-5 text-xs font-bold uppercase tracking-[0.12em] data-[state=active]:bg-white">Active Clients</TabsTrigger>
+            <TabsTrigger value="filings" className="rounded-md px-5 text-xs font-bold uppercase tracking-[0.12em] data-[state=active]:bg-white">Filing History</TabsTrigger>
           </TabsList>
 
           <TabsContent value="clients" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-             <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+             <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
                 <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
                    <div>
                       <CardTitle className="text-lg font-bold">Client Portfolios</CardTitle>
@@ -139,9 +139,9 @@ export default function CADashboard() {
                    </div>
                    <div className="relative group">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
-                      <Input 
+                      <Input
                         placeholder="Search clients..." 
-                        className="h-9 w-60 rounded-xl bg-slate-50 border-none pl-9 text-xs font-medium"
+                        className="h-9 w-60 rounded-lg border-slate-200 bg-slate-50 pl-9 text-xs font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -169,7 +169,7 @@ export default function CADashboard() {
                                   <tr key={client.id} className="group hover:bg-slate-50/50 transition-colors">
                                      <td className="px-8 py-4">
                                         <div className="flex items-center gap-4">
-                                           <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+                                           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-xs font-bold text-blue-600">
                                               {client.firstName?.[0]}{client.lastName?.[0]}
                                            </div>
                                            <div>
@@ -225,7 +225,7 @@ export default function CADashboard() {
           </TabsContent>
 
           <TabsContent value="filings" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-             <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white p-12 text-center">
+             <Card className="overflow-hidden rounded-lg border-slate-200 bg-white p-10 text-center shadow-none">
                 <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                    <FileText className="w-8 h-8 text-blue-600" />
                 </div>

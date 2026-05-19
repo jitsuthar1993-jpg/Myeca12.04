@@ -187,7 +187,7 @@ export default function ServiceDetailPage() {
           <h1 className="text-2xl font-black text-slate-900">Service case not found</h1>
           <p className="mt-2 text-sm font-medium text-slate-500">The case may have been removed or you may not have access.</p>
           <Link href="/dashboard">
-            <Button className="mt-6 rounded-xl bg-slate-900 text-white">Back to dashboard</Button>
+            <Button className="mt-6 rounded-xl bg-blue-700 text-white">Back to dashboard</Button>
           </Link>
         </div>
       </Layout>
@@ -220,7 +220,7 @@ export default function ServiceDetailPage() {
               </Button>
             </Link>
             <Link href="/help">
-              <Button className="h-10 rounded-xl bg-slate-900 text-white hover:bg-blue-600">
+              <Button className="h-10 rounded-xl bg-blue-700 text-white hover:bg-blue-600">
                 <HelpCircle className="mr-2 h-4 w-4" />
                 Help
               </Button>

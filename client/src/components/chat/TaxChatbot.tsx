@@ -233,7 +233,7 @@ export function TaxChatbot({
                   className={cn(
                     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
                     message.type === "user"
-                      ? "bg-slate-900 text-white"
+                      ? "bg-blue-700 text-white"
                       : "border border-blue-100 bg-blue-50 text-blue-600"
                   )}
                 >
@@ -245,7 +245,7 @@ export function TaxChatbot({
                     "rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm",
                     isSinglePage && "shadow-none",
                     message.type === "user"
-                      ? "rounded-br-md bg-slate-900 text-white"
+                      ? "rounded-br-md bg-blue-700 text-white"
                       : cn(
                           "rounded-bl-md border border-slate-200 bg-white text-slate-700",
                           isSinglePage && "border-transparent bg-transparent px-2"

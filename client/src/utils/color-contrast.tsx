@@ -281,7 +281,7 @@ export const VisualAccessibilityProvider: React.FC<VisualAccessibilityProps> = (
 
     if (highContrastMode) {
       newStyles.filter = 'contrast(1.5)';
-      newStyles.backgroundColor = '#000';
+      newStyles.backgroundColor = '#0B3B75';
       newStyles.color = '#fff';
     }
 
@@ -586,7 +586,7 @@ export const generateAccessibleColorPalette = (baseColor: string): {
 
   const isDarkBase = baseLuminance < 0.5;
   const textColor = isDarkBase ? '#ffffff' : '#000000';
-  const backgroundColor = isDarkBase ? '#000000' : '#ffffff';
+  const backgroundColor = isDarkBase ? '#0B3B75' : '#ffffff';
 
   return {
     primary: baseColor,

@@ -1,126 +1,31 @@
-// Admin Layout Component - Minimalist & Premium Redesign
-
 import { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { 
-  Menu, X, Home, Users, BarChart3, FileText, Settings, 
-  LogOut, Image as ImageIcon, Briefcase, User, FolderOpen, 
-  Search, LayoutGrid,
-  Database, HelpCircle, Command, BookOpen, 
-  ShieldCheck, PieChart, Layers, Globe, Zap, History,
-  ClipboardList, CreditCard, MessageSquare
-} from 'lucide-react';
+import { Command, HelpCircle, LogOut, Menu, MessageSquare, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/AuthProvider';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { 
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from '@/components/ui/tooltip';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+import { ROLE_NAV_GROUPS } from '@/lib/role-workspace';
+import { getRoleHome, getRoleLabel, normalizeAppRole } from '@shared/app-roles';
 
 interface LayoutProps {
   children: ReactNode;
   title?: string;
 }
 
-// Navigation structure grouped by usage/account type
-const navGroups = {
-  admin: [
-    {
-      label: 'Core Management',
-      items: [
-        { icon: LayoutGrid, label: 'Control Center', href: '/admin' },
-        { icon: Users, label: 'User Registry', href: '/admin/users' },
-        { icon: MessageSquare, label: 'Customer Requests', href: '/admin/requests' },
-        { icon: ShieldCheck, label: 'CA Authorization', href: '/admin/dashboard' }, // Link to CA queue
-      ]
-    },
-    {
-      label: 'Content Engine',
-      items: [
-        { icon: FileText, label: 'Blog Manager', href: '/admin/blog-management' },
-        { icon: ImageIcon, label: 'Media Library', href: '/admin/media-management' },
-        { icon: Globe, label: 'Categories', href: '/admin/categories-management' },
-      ]
-    },
-    {
-      label: 'System Insights',
-      items: [
-        { icon: BarChart3, label: 'Performance', href: '/admin/analytics' },
-        { icon: Database, label: 'Audit Logs', href: '/admin/audit-logs' },
-        { icon: Settings, label: 'Configurations', href: '/admin/settings' },
-      ]
-    }
-  ],
-  ca: [
-    {
-      label: 'Professional Portal',
-      items: [
-        { icon: Briefcase, label: 'My Practice', href: '/ca/dashboard' },
-        { icon: Users, label: 'Client Registry', href: '/profiles' },
-        { icon: ClipboardList, label: 'Work Ledger', href: '/ca/dashboard' },
-      ]
-    },
-    {
-      label: 'Tax Services',
-      items: [
-        { icon: Zap, label: 'Active Filings', href: '/ca/dashboard' },
-        { icon: History, label: 'Filing History', href: '/reports' },
-      ]
-    }
-  ],
-  team_member: [
-    {
-      label: 'My Workspace',
-      items: [
-        { icon: Home, label: 'Team Hub', href: '/team/dashboard' },
-        { icon: Layers, label: 'Assigned Tasks', href: '/team/dashboard' },
-      ]
-    },
-    {
-      label: 'Content Operations',
-      items: [
-        { icon: FileText, label: 'Blog Engine', href: '/admin/blog-management' },
-        { icon: ImageIcon, label: 'Asset Library', href: '/admin/media-management' },
-      ]
-    }
-  ],
-  user: [
-    {
-      label: 'Workspace',
-      items: [
-        { icon: LayoutGrid, label: 'My Dashboard', href: '/dashboard' },
-        { icon: ClipboardList, label: 'Active Filings', href: '/dashboard' },
-        { icon: FolderOpen, label: 'Document Vault', href: '/documents' },
-      ]
-    },
-    {
-      label: 'Service Catalog',
-      items: [
-        { icon: Zap, label: 'New Filing', href: '/dashboard/services' },
-        { icon: CreditCard, label: 'Payments', href: '/payments' },
-      ]
-    },
-    {
-      label: 'Account Control',
-      items: [
-        { icon: User, label: 'Account Settings', href: '/settings' },
-      ]
-    }
-  ]
-};
-
-export function Layout({ children, title = 'Control Center' }: LayoutProps) {
+export function Layout({ children, title = 'Workspace' }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
-  
-  // Get groups based on role, fallback to 'user'
-  const roleGroups = navGroups[user?.role as keyof typeof navGroups] || navGroups.user;
+  const role = normalizeAppRole(user?.role);
+  const roleGroups = ROLE_NAV_GROUPS[role];
+  const roleHome = getRoleHome(role);
+  const roleLabel = getRoleLabel(role);
+
   const submitSearch = () => {
     const query = searchTerm.trim();
     if (query) {
@@ -129,175 +34,159 @@ export function Layout({ children, title = 'Control Center' }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] flex font-sans selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-slate-50 font-sans text-slate-950 selection:bg-blue-100 selection:text-blue-900">
       <TooltipProvider>
-        {/* Sidebar - Single Patch Fixed Design */}
         <aside
           className={cn(
-            'fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-100 z-50 transform transition-all duration-300 ease-in-out shadow-sm',
-            'lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:z-auto',
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+            'fixed left-0 top-0 z-50 h-full w-64 transform border-r border-slate-200 bg-white transition-transform duration-200',
+            'lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:translate-x-0',
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           )}
         >
-          <div className="flex flex-col h-full">
-            {/* Sidebar Logo Section */}
-            <div className="h-20 flex items-center px-8 mb-2">
-              <Link href="/" className="flex items-center gap-2 group">
-                <div className="w-7 h-7 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-xs transition-all group-hover:bg-blue-600">
+          <div className="flex h-full flex-col">
+            <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
+              <Link href={roleHome} className="flex min-w-0 items-center gap-2">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-xs font-black text-white">
                   M
                 </div>
-                <h2 className="text-base font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">MyeCA Portal</h2>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-slate-950">MyeCA</p>
+                  <p className="truncate text-[11px] font-medium text-slate-500">{roleLabel}</p>
+                </div>
               </Link>
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden ml-auto rounded-full hover:bg-slate-50"
+                className="ml-auto h-9 w-9 rounded-lg lg:hidden"
                 onClick={() => setSidebarOpen(false)}
+                aria-label="Close navigation"
               >
-                <X className="h-4 w-4 text-slate-400" />
+                <X className="h-4 w-4" />
               </Button>
             </div>
 
-            {/* Navigation - Categorized by Usage */}
-            <ScrollArea className="flex-1 px-4">
-              <div className="space-y-6 pb-8">
-                {roleGroups.map((group, groupIdx) => (
-                  <div key={groupIdx} className="space-y-1">
-                    <div className="px-4 py-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">{group.label}</span>
-                    </div>
-                    <div className="space-y-0.5">
-                      {group.items.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = location === item.href;
-                        return (
-                          <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href}>
-                            <div
-                              className={cn(
-                                'flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group',
-                                isActive
-                                  ? 'bg-slate-50 text-slate-900 font-semibold shadow-sm border border-slate-100/50'
-                                  : 'text-slate-500 hover:bg-slate-50/80 hover:text-slate-900'
-                              )}
-                              onClick={() => setSidebarOpen(false)}
-                            >
-                              <Icon className={cn("h-[17px] w-[17px]", isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-900")} />
-                              <span className="text-[13px]">{item.label}</span>
-                              {isActive && (
-                                <div className="ml-auto w-1 h-3.5 bg-blue-600 rounded-full"></div>
-                              )}
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
+            <ScrollArea className="flex-1 px-3 py-4">
+              <div className="space-y-5">
+                {roleGroups.map((group) => (
+                  <div key={group.label} className="space-y-1">
+                    <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                      {group.label}
+                    </p>
+                    {group.items.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = location === item.href || location.startsWith(`${item.href}/`);
+                      return (
+                        <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href}>
+                          <div
+                            className={cn(
+                              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
+                              isActive
+                                ? 'border border-blue-100 bg-blue-50 text-blue-700'
+                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950',
+                            )}
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <Icon className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{item.label}</span>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 ))}
 
-                {/* Shared Platform Links */}
-                <div className="pt-4 border-t border-slate-50 space-y-1">
-                   <div className="px-4 py-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Support</span>
-                   </div>
-                   <Link href="/help">
-                    <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer group">
-                      <HelpCircle className="h-[17px] w-[17px] text-slate-400 group-hover:text-slate-900" />
-                      <span className="text-[13px]">Knowledge Base</span>
+                <div className="space-y-1 border-t border-slate-200 pt-4">
+                  <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Support</p>
+                  <Link href="/help">
+                    <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
+                      <HelpCircle className="h-4 w-4 shrink-0" />
+                      <span>Knowledge Base</span>
                     </div>
                   </Link>
                   <Link href="/expert-consultation">
-                    <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer group">
-                      <MessageSquare className="h-[17px] w-[17px] text-slate-400 group-hover:text-slate-900" />
-                      <span className="text-[13px]">Direct Support</span>
-                      <Badge variant="outline" className="ml-auto text-[9px] border-slate-100 bg-slate-50">Online</Badge>
+                    <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
+                      <MessageSquare className="h-4 w-4 shrink-0" />
+                      <span>Support Request</span>
                     </div>
                   </Link>
                 </div>
               </div>
             </ScrollArea>
 
-            {/* Sidebar User Footer */}
-            <div className="p-4 mt-auto border-t border-slate-50">
-              <div className="p-3 rounded-2xl bg-slate-50/50 group transition-all hover:bg-white hover:shadow-sm hover:border-slate-100 border border-transparent">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-900 font-bold shadow-sm">
-                    {user?.firstName?.[0] || 'U'}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">{user?.firstName}</p>
-                    <p className="text-[9px] font-medium text-slate-400 truncate uppercase tracking-tighter">{user?.role?.replace('_', ' ')}</p>
-                  </div>
-                  <Link href="/logout">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg">
-                      <LogOut className="h-4 w-4" />
-                    </Button>
-                  </Link>
+            <div className="border-t border-slate-200 p-3">
+              <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-slate-900 ring-1 ring-slate-200">
+                  {user?.firstName?.[0] || 'U'}
                 </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-bold text-slate-950">{user?.firstName || 'User'}</p>
+                  <p className="truncate text-[11px] font-medium text-slate-500">{roleLabel}</p>
+                </div>
+                <Link href="/logout">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600">
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
         </aside>
 
-        {/* Mobile Overlay */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 bg-slate-900/10 backdrop-blur-[2px] z-40 lg:hidden transition-opacity duration-300"
+            className="fixed inset-0 z-40 bg-slate-950/20 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-          {/* Top Navigation Bar */}
-          <header className="h-20 flex items-center justify-between px-8 sticky top-0 bg-white/80 backdrop-blur-md z-30">
-            <div className="flex items-center gap-6 flex-1 max-w-2xl">
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6">
+            <div className="flex min-w-0 flex-1 items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden rounded-full hover:bg-slate-50"
+                className="h-9 w-9 rounded-lg lg:hidden"
                 onClick={() => setSidebarOpen(true)}
+                aria-label="Open navigation"
               >
-                <Menu className="h-5 w-5 text-slate-600" />
+                <Menu className="h-5 w-5" />
               </Button>
-              <div className="relative group w-full hidden sm:block">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-                <Input 
-                  placeholder="Search filings, documents or help..." 
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      event.preventDefault();
-                      submitSearch();
-                    }
-                  }}
-                  className="w-full bg-slate-50/50 border-none focus-visible:ring-1 focus-visible:ring-blue-100 pl-11 h-11 rounded-xl text-[13px] transition-all hover:bg-slate-100/80"
-                />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 opacity-40 group-focus-within:opacity-0 transition-opacity">
-                   <kbd className="h-5 min-w-[20px] items-center justify-center rounded border bg-white px-1 font-sans text-[10px] font-medium text-slate-400 flex">
-                      <Command className="h-2.5 w-2.5 mr-0.5" /> K
-                   </kbd>
+              <div className="hidden w-full max-w-xl sm:block">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Input
+                    placeholder="Search filings, documents, users or help"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                        submitSearch();
+                      }
+                    }}
+                    className="h-10 rounded-lg border-slate-200 bg-slate-50 pl-10 text-sm"
+                  />
+                  <div className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 text-[10px] font-medium text-slate-400 md:flex">
+                    <Command className="h-3 w-3" /> K
+                  </div>
                 </div>
               </div>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <NotificationCenter />
 
-              <div className="h-10 w-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:scale-105 transition-transform">
+            <div className="flex items-center gap-3">
+              <p className="hidden text-sm font-bold text-slate-700 md:block">{title}</p>
+              <NotificationCenter />
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-700 text-sm font-bold text-white">
                 {user?.firstName?.[0] || 'U'}
               </div>
             </div>
           </header>
 
-          {/* Main Body Content */}
-          <main className="flex-1 bg-[#FDFDFD]">
-            <div className="p-8 lg:p-12 max-w-[1600px] mx-auto animate-in fade-in duration-700">
+          <main className="flex-1 bg-slate-50">
+            <div className="mx-auto max-w-[1440px] p-4 sm:p-6 lg:p-8">
               {children}
             </div>
           </main>
-          
-
         </div>
       </TooltipProvider>
     </div>

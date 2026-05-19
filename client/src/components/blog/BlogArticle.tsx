@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight, ArrowUp, BookOpen, BriefcaseBusiness, CalendarDays,
@@ -412,7 +412,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
       <div className="border-y border-blue-100 bg-blue-50/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
-            Optional CA review for eligible ITR plans - <span className="text-white font-semibold">starting ₹999</span>
+            Optional CA review for eligible ITR plans - <span className="text-white font-semibold">starting ?999</span>
           </p>
           <Link href="/itr/form-selector">
             <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
@@ -551,7 +551,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                 "prose-th:text-white prose-th:font-semibold prose-th:py-3 prose-th:px-4",
                 "prose-td:py-3 prose-td:px-4 prose-td:text-sm prose-td:text-slate-700",
                 "prose-code:bg-slate-100 prose-code:text-blue-700 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono",
-                "prose-pre:bg-slate-900 prose-pre:rounded-xl",
+                "prose-pre:bg-blue-700 prose-pre:rounded-xl",
                 "prose-img:rounded-xl prose-img:shadow-sm prose-img:border prose-img:border-slate-200",
               )}
               dangerouslySetInnerHTML={{ __html: normalized.html }}

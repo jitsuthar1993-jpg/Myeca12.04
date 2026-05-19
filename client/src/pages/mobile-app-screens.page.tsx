@@ -56,7 +56,7 @@ function PhoneFrame({
     <div
       className={cn(
         "mx-auto w-full max-w-[360px]",
-        "rounded-[2.75rem] bg-slate-950 p-[10px]",
+        "rounded-[2.75rem] bg-blue-700 p-[10px]",
         "shadow-[0_40px_120px_-50px_rgba(8,42,92,0.85)]",
         className,
       )}
@@ -330,7 +330,7 @@ export default function MobileAppScreensPage() {
                 <StatusBar inverted />
                 <div className="flex-1 px-6 pb-6 pt-4">
                   <div className="mt-4 flex items-center gap-3">
-                    <div className="rounded-2xl bg-white p-2 shadow-lg shadow-black/10">
+                    <div className="rounded-2xl bg-white p-2 shadow-lg shadow-blue-900/10">
                       <span className="block scale-95">
                         <BrandLockup logoSize="sm" wordmarkSize="sm" compact />
                       </span>
@@ -651,7 +651,7 @@ export default function MobileAppScreensPage() {
               <ScreenTag label="Chat" />
             </div>
             <PhoneFrame>
-              <div className="flex h-full flex-col bg-slate-950 text-white">
+              <div className="flex h-full flex-col bg-blue-700 text-white">
                 <StatusBar inverted />
                 <div className="flex-1 space-y-4 overflow-y-auto px-5 pb-4 pt-3 scrollbar-hide-mobile">
                   <PhoneHeader
@@ -684,7 +684,7 @@ export default function MobileAppScreensPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-[1.7rem] bg-white p-4 text-slate-950 shadow-lg shadow-black/20">
+                  <div className="rounded-[1.7rem] bg-white p-4 text-slate-950 shadow-lg shadow-blue-900/20">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-normal">Quick reply</p>
                       <Sparkles className="h-4 w-4 text-[#315efb]" />
@@ -840,7 +840,7 @@ export default function MobileAppScreensPage() {
                         <p className="text-xs text-slate-500">Change password, sign out, and reach support quickly.</p>
                       </div>
                     </div>
-                    <Button className="mt-4 h-11 w-full rounded-2xl bg-slate-950 font-normal text-white hover:bg-[#315efb]">
+                    <Button className="mt-4 h-11 w-full rounded-2xl bg-blue-700 font-normal text-white hover:bg-[#315efb]">
                       Sign out
                     </Button>
                   </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "wouter";
 
@@ -61,18 +61,6 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
   const [location] = useLocation();
   const currentUrl = canonicalUrl || `https://myeca.in${location}`;
   const siteName = "MyeCA.in - Expert Tax Filing Services";
-
-  // Track page view for Google Analytics
-  useEffect(() => {
-    const gtag = (window as any).gtag;
-    if (typeof gtag === 'function') {
-      gtag('event', 'page_view', {
-        page_location: currentUrl,
-        page_path: location,
-        page_title: title,
-      });
-    }
-  }, [location, title, currentUrl]);
 
   const keywordStr = Array.isArray(keywords) ? keywords.join(", ") : keywords;
   const servicePrice = serviceData?.price

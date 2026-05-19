@@ -44,7 +44,7 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-blue-900/50 flex items-center justify-center"
           onClick={() => setIsOpen(false)}
         >
           <div
@@ -73,7 +73,7 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
                     {items.map((s, i) => (
                       <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                         <div className="flex items-center gap-3">
-                          <kbd className="px-2 py-1 bg-gray-800 text-white text-xs rounded">
+                          <kbd className="rounded border border-blue-100 bg-blue-50 px-2 py-1 text-xs text-blue-700">
                             {formatShortcut(s)}
                           </kbd>
                           <span className="text-sm text-gray-800">{s.description}</span>
@@ -96,4 +96,3 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
 };
 
 export default KeyboardShortcutsHelp;
-

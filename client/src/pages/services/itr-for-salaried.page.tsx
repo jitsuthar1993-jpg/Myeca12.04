@@ -486,7 +486,7 @@ export default function ITRForSalariedPage() {
                     }}
                     className={`w-20 h-20 rounded-2xl flex items-center justify-center border-2 mb-6 relative transition-all duration-500`}
                   >
-                    <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full font-bold flex items-center justify-center text-sm shadow-md z-20 transition-colors ${highlightedStep === i ? "bg-blue-600 text-white" : "bg-slate-900 text-white"}`}>
+                    <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full font-bold flex items-center justify-center text-sm shadow-md z-20 transition-colors ${highlightedStep === i ? "bg-blue-600 text-white" : "bg-blue-700 text-white"}`}>
                       {step.no}
                     </div>
                     <step.icon className={`w-8 h-8 transition-transform ${highlightedStep === i ? "text-blue-600 scale-110" : step.color}`} />
@@ -500,7 +500,7 @@ export default function ITRForSalariedPage() {
             <div className="mt-16 text-center relative z-10">
               <Button 
                 size="lg" 
-                className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-8 py-6 text-lg shadow-xl shadow-slate-200 transition-transform hover:scale-105"
+                className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 py-6 text-lg shadow-xl shadow-slate-200 transition-transform hover:scale-105"
                 onClick={() => setIsCheckoutOpen(true)}
               >
                 Start Filing Now <ArrowRight className="ml-2 w-5 h-5" />
@@ -623,7 +623,7 @@ export default function ITRForSalariedPage() {
                   </div>
                 </div>
                 
-                <div className="md:col-span-2 bg-slate-900 p-8 lg:p-10 text-white flex flex-col justify-center relative overflow-hidden">
+                <div className="md:col-span-2 bg-blue-700 p-8 lg:p-10 text-white flex flex-col justify-center relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl" />
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl" />
                   
@@ -704,7 +704,7 @@ export default function ITRForSalariedPage() {
         {/* Client Lead Funnel */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 lg:p-12 relative overflow-hidden shadow-2xl max-w-5xl mx-auto">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl" />
           
           <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
             <div className="text-white">

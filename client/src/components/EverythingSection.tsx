@@ -1,6 +1,6 @@
 import { m } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Calculator, Scan, ShieldCheck } from "lucide-react";
+import { ArrowRight, Calculator, Scan, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "wouter";
 
 const features = [
@@ -8,8 +8,8 @@ const features = [
     id: "itr-filing",
     title: "Guided ITR Filing",
     description: "File your ITR through simple guided steps and add CA review where your case needs it.",
-    color: "bg-[var(--color-accent-600)]",
-    shadowColor: "shadow-[var(--color-accent-500)]/40",
+    label: "Start filing",
+    tone: "bg-blue-50 text-blue-700",
     icon: Zap,
     href: "/itr/form-selector"
   },
@@ -17,8 +17,8 @@ const features = [
     id: "tax-calculators", 
     title: "Tax Estimate Calculator",
     description: "Estimate tax, compare old vs new regime, and review assumptions before filing.",
-    color: "bg-[var(--color-success-600)]",
-    shadowColor: "shadow-[var(--color-success-500)]/40",
+    label: "Estimate",
+    tone: "bg-emerald-50 text-emerald-700",
     icon: Calculator,
     href: "/calculators"
   },
@@ -26,8 +26,8 @@ const features = [
     id: "document-vault",
     title: "Document Upload & Review",
     description: "Upload Form 16, AIS, bank statements, and certificates so extracted details can be checked before filing.",
-    color: "bg-purple-600",
-    shadowColor: "shadow-purple-500/40",
+    label: "Prepare docs",
+    tone: "bg-indigo-50 text-indigo-700",
     icon: Scan,
     href: "/services/document-vault"
   },
@@ -35,33 +35,36 @@ const features = [
     id: "tax-expert",
     title: "Expert Tax Review",
     description: "Get expert review for complex deductions, notices, capital gains, business income, and NRI cases.",
-    color: "bg-[var(--color-warning-600)]",
-    shadowColor: "shadow-[var(--color-warning-500)]/40",
+    label: "Review",
+    tone: "bg-amber-50 text-amber-700",
     icon: ShieldCheck,
-    href: "/consultation"
+    href: "/expert-consultation"
   }
 ];
 
 export default function EverythingSection() {
   return (
-    <section id="services" className="py-9 md:py-[var(--space-24)] bg-[var(--color-primary-50)] border-b border-[var(--color-primary-100)] scroll-mt-20">
+    <section id="services" className="scroll-mt-20 border-b border-slate-200 bg-white py-8 md:py-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <m.div
-          className="mb-6 text-left md:mb-[var(--space-16)] md:text-center"
+          className="mb-6 grid gap-3 md:mb-8 md:grid-cols-[0.8fr_1.2fr] md:items-end"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-2xl md:text-5xl font-extrabold text-[var(--color-primary-900)] mb-2 md:mb-5 tracking-tight">
-            Everything You Need for Tax Filing
-          </h2>
-          <p className="text-sm md:text-[19px] text-[var(--color-primary-500)] max-w-2xl md:mx-auto font-medium leading-relaxed">
-            Calculators, CA filing, GST services, and startup registration - built specifically for Indian tax compliance.
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Connected workflow</p>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
+              Move from estimate to filing without guessing the next step.
+            </h2>
+          </div>
+          <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+            Keep planning, document readiness, and optional expert review connected before you commit to payment or submission.
           </p>
         </m.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 xl:gap-8">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, index) => (
             <m.div
               key={feature.id}
@@ -71,18 +74,26 @@ export default function EverythingSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Link href={feature.href}>
-                <Card className="bg-white rounded-lg md:rounded-[var(--radius-3xl)] shadow-sm hover:shadow-xl transition-all duration-300 h-full border border-[var(--color-primary-200)]/60 md:hover:-translate-y-1 overflow-hidden group cursor-pointer">
-                  <CardContent className="px-4 py-4 md:px-[var(--space-6)] md:py-[var(--space-10)] text-left md:text-center flex flex-row md:flex-col items-center md:items-center justify-start h-full gap-3 md:gap-0">
-                    <div className={`w-11 h-11 md:w-[68px] md:h-[68px] rounded-lg md:rounded-full md:mb-[var(--space-8)] transform md:group-hover:scale-110 transition-transform duration-500 ${feature.color} md:shadow-lg ${feature.shadowColor} flex shrink-0 items-center justify-center`}>
-                      <feature.icon className="w-5 h-5 md:w-8 md:h-8 text-white" strokeWidth={2} />
+                <Card className="group h-full cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                  <CardContent className="flex h-full flex-col p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${feature.tone}`}>
+                        <feature.icon className="h-5 w-5" strokeWidth={2} />
+                      </div>
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+                        {feature.label}
+                      </span>
                     </div>
-                    <div>
-                      <h3 className="text-base md:text-xl font-bold text-[var(--color-primary-900)] md:mb-[var(--space-4)] tracking-tight">
+                    <div className="mt-5 flex flex-1 flex-col">
+                      <h3 className="text-base font-bold tracking-tight text-slate-950 md:text-lg">
                         {feature.title}
                       </h3>
-                      <p className="hidden md:block text-[var(--color-primary-500)] text-[15px] leading-relaxed">
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
                         {feature.description}
                       </p>
+                      <div className="mt-auto inline-flex items-center pt-4 text-sm font-bold text-blue-700">
+                        Open <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

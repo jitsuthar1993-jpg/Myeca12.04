@@ -25,7 +25,7 @@ export function CalculatorGuide({
   steps: GuideStep[];
 }) {
   return (
-    <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
+    <Card className="bg-white dark:bg-blue-800 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg transition-colors duration-200">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export function CalculatorGuide({
                   <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{step.description}</p>
 
                   {step.formula && (
-                    <div className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                    <div className="mt-2 bg-white dark:bg-blue-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                       <div className="flex items-center gap-2 text-gray-900 dark:text-white mb-2">
                         <Sigma className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                         <span className="text-sm font-medium">Formula</span>
@@ -74,11 +74,11 @@ export function CalculatorGuide({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                         <div>
                           <p className="text-gray-600 dark:text-gray-300">Inputs</p>
-                          <div className="bg-white dark:bg-gray-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">{step.example.inputs}</div>
+                          <div className="bg-white dark:bg-blue-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">{step.example.inputs}</div>
                         </div>
                         <div>
                           <p className="text-gray-600 dark:text-gray-300">Outputs</p>
-                          <div className="bg-white dark:bg-gray-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">{step.example.outputs}</div>
+                          <div className="bg-white dark:bg-blue-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">{step.example.outputs}</div>
                         </div>
                       </div>
                     </div>

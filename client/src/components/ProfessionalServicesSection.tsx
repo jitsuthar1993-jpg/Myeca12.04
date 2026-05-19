@@ -35,39 +35,39 @@ const itemVariants = {
 const services = [
   {
     title: "Services Marketplace",
-    description: "Browse all CA services with transparent pricing. ITR filing, GST registration, company formation & more.",
+    description: "Browse available CA and compliance services with scope, documents, and next steps visible before checkout.",
     icon: Briefcase,
     href: "/services/marketplace",
     color: "blue",
-    badge: "30+ Services",
-    features: ["Transparent Pricing", "Expert Support", "Clear Timelines"]
+    badge: "Catalog",
+    features: ["Plan scope", "Document needs", "Timeline notes"]
   },
   {
     title: "Document Generator",
-    description: "Generate rent receipts, salary slips, invoices and more with a free account.",
+    description: "Create common tax and business documents from structured templates when you need clean paperwork quickly.",
     icon: FileText,
     href: "/documents/generator",
     color: "teal",
-    badge: "Free",
-    features: ["Rent Receipts", "Salary Slips", "GST Invoices"]
+    badge: "Templates",
+    features: ["Rent receipts", "Salary slips", "GST invoices"]
   },
   {
     title: "Business Dashboard",
-    description: "Track all compliance deadlines, filings, and documents in one central dashboard.",
+    description: "Track compliance items, service progress, and documents in one place for business workflows.",
     icon: Building2,
     href: "/business/dashboard",
     color: "slate",
     badge: "For Businesses",
-    features: ["Compliance Tracker", "Document Vault", "Due Date Alerts"]
+    features: ["Compliance tracker", "Document vault", "Due date view"]
   },
   {
     title: "Virtual CFO",
-    description: "Get complete financial management with P&L reports, cash flow analysis, and runway tracking.",
+    description: "Request scoped finance support for reporting, cash-flow review, and business decision preparation.",
     icon: BarChart3,
     href: "/business/virtual-cfo",
     color: "emerald",
-    badge: "Premium",
-    features: ["Financial Reports", "Budget Analysis", "Investor Ready"]
+    badge: "Scoped",
+    features: ["Financial reports", "Budget review", "Investor prep"]
   }
 ];
 
@@ -80,45 +80,55 @@ const colorClasses: Record<string, { bg: string; icon: string; badgeBg: string; 
 
 export default function ProfessionalServicesSection() {
   return (
-    <section id="professional-services" className="py-24 bg-[#fcfcfd]">
+    <section id="professional-services" className="border-b border-slate-200 bg-[#F8FAFC] py-8 md:py-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Services Grid */}
+        <div className="mb-6 grid gap-3 md:mb-8 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Business tools</p>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
+              Tools and services for document-heavy tax work.
+            </h2>
+          </div>
+          <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+            Use these when your filing needs supporting documents, business compliance tracking, or a scoped finance review.
+          </p>
+        </div>
+
         <m.div 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8"
+          className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4"
         >
           {services.map((service) => {
             const colors = colorClasses[service.color];
             return (
               <m.div key={service.title} variants={itemVariants} className="h-full">
-                <Card className="flex flex-col h-full bg-white rounded-[24px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] border border-slate-200/60 hover:shadow-[0_15px_35px_-5px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
-                  <CardContent className="p-8 flex flex-col flex-grow h-full">
-                    
-                    <div className="flex items-start justify-between mb-8">
-                      <div className={`w-[52px] h-[52px] rounded-2xl flex items-center justify-center ${colors.bg} group-hover:scale-110 transition-transform duration-500`}>
-                        <service.icon className={`h-6 w-6 ${colors.icon}`} strokeWidth={2} />
+                <Card className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                  <CardContent className="flex h-full flex-grow flex-col p-5">
+                    <div className="mb-5 flex items-start justify-between gap-3">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}>
+                        <service.icon className={`h-5 w-5 ${colors.icon}`} strokeWidth={2} />
                       </div>
-                      <span className={`px-4 py-1.5 rounded-full text-[13px] font-semibold tracking-wide ${colors.badgeBg} ${colors.badgeText}`}>
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${colors.badgeBg} ${colors.badgeText}`}>
                         {service.badge}
                       </span>
                     </div>
 
-                    <h3 className="text-[22px] font-bold text-slate-900 mb-3 tracking-tight">
+                    <h3 className="text-lg font-extrabold tracking-tight text-slate-950">
                       {service.title}
                     </h3>
 
-                    <p className="text-slate-500 text-[15px] leading-relaxed mb-8 flex-grow">
+                    <p className="mt-2 flex-grow text-sm leading-6 text-slate-600">
                       {service.description}
                     </p>
 
-                    <ul className="space-y-4 mb-8">
+                    <ul className="my-5 space-y-3">
                       {service.features.map((feature, i) => (
-                        <li key={i} className="flex items-center gap-3 text-[15px] text-slate-600 font-medium">
-                          <div className="w-[22px] h-[22px] rounded-full border-[1.5px] border-[#22c55e] flex items-center justify-center bg-green-50/30 flex-shrink-0">
-                            <Check className="w-3.5 h-3.5 text-[#22c55e]" strokeWidth={3.5} />
+                        <li key={i} className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                          <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-50">
+                            <Check className="h-3 w-3 text-emerald-600" strokeWidth={3.5} />
                           </div>
                           {feature}
                         </li>
@@ -126,8 +136,8 @@ export default function ProfessionalServicesSection() {
                     </ul>
 
                     <Link href={service.href} className="w-full flex justify-center mt-auto">
-                      <Button className="w-full max-w-[160px] bg-[#2563eb] hover:bg-blue-700 text-white rounded-xl h-11 text-[15px] font-semibold shadow-md shadow-blue-500/20 group">
-                        Explore
+                      <Button className="h-11 w-full rounded-lg bg-[#2563eb] text-sm font-bold text-white transition-colors hover:bg-blue-700">
+                        Open
                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </Link>

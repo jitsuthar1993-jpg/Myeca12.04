@@ -61,7 +61,7 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
         </CardHeader>
 
         <CardContent className="pb-8 space-y-6">
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start gap-3">
+          <div className="p-4 bg-slate-50 dark:bg-blue-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start gap-3">
             <Building2 className="h-5 w-5 text-slate-400 mt-1" />
             <div>
               <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Proposed Name</p>
@@ -92,8 +92,8 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
             <Link href="/services/company-registration">
               <Button className={cn(
                 "w-full h-12 rounded-xl font-bold transition-all duration-300 gap-2",
-                isCompleted 
-                  ? "bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900" 
+                isCompleted
+                  ? "bg-blue-700 text-white hover:bg-blue-800 dark:bg-white dark:text-slate-900"
                   : "bg-white text-slate-900 border-2 border-slate-100 hover:border-violet-200 hover:bg-slate-50 shadow-sm"
               )}>
                 {isCompleted ? "View Documents" : "Manage Application"}

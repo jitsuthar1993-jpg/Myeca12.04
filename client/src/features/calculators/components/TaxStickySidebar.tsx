@@ -31,7 +31,7 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
       <m.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-slate-900 rounded-3xl p-6 text-white shadow-2xl shadow-slate-200 overflow-hidden relative"
+        className="bg-blue-700 rounded-3xl p-6 text-white shadow-2xl shadow-slate-200 overflow-hidden relative"
       >
         {/* Decorative Grid */}
         <div className="absolute inset-0 opacity-10 pointer-events-none" 

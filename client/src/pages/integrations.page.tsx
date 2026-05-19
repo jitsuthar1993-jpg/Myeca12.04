@@ -298,7 +298,7 @@ export default function IntegrationsPage() {
           })}
         </div>
 
-        <section className="grid gap-4 rounded-[32px] bg-slate-950 p-6 text-white md:grid-cols-4 md:p-8">
+        <section className="grid gap-4 rounded-[32px] bg-blue-700 p-6 text-white md:grid-cols-4 md:p-8">
           {[
             ["Tax source", Globe],
             ["Document vault", FileText],

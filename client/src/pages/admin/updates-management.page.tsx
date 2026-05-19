@@ -170,7 +170,7 @@ export default function UpdatesManagementPage() {
           >
             <Button 
               onClick={handleNew}
-              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 h-16 font-black text-xs uppercase tracking-widest transition-all shadow-2xl shadow-slate-900/20 active:scale-95"
+              className="bg-blue-700 hover:bg-blue-800 text-white rounded-2xl px-10 h-16 font-black text-xs uppercase tracking-widest transition-all shadow-2xl shadow-slate-900/20 active:scale-95"
             >
               <Plus className="w-5 h-5 mr-3" strokeWidth={3} />
               New Signal
@@ -239,7 +239,7 @@ export default function UpdatesManagementPage() {
                               {update.priority} Frequency
                             </span>
                             {!update.isActive && (
-                              <span className="text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full bg-slate-900 text-white">
+                              <span className="text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full bg-blue-700 text-white">
                                 Redacted
                               </span>
                             )}

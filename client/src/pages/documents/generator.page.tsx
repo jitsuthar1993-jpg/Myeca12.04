@@ -568,7 +568,7 @@ export default function DocumentGenerator() {
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white shadow-md rounded-full px-5 h-9 transition-all duration-300"
+              className="flex items-center space-x-2 bg-blue-700 hover:bg-blue-800 text-white shadow-md rounded-full px-5 h-9 transition-all duration-300"
             >
               {isExporting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

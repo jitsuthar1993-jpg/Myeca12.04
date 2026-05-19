@@ -76,7 +76,7 @@ export function Skeleton({
 // Pre-built skeleton layouts
 export function CardSkeleton() {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+    <div className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
       <div className="flex items-center gap-4">
         <Skeleton variant="avatar" />
         <div className="flex-1 space-y-2">
@@ -95,9 +95,9 @@ export function CardSkeleton() {
 
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+      <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-blue-700 border-b border-gray-200 dark:border-gray-700">
         <Skeleton variant="text" width="80%" />
         <Skeleton variant="text" width="60%" />
         <Skeleton variant="text" width="70%" />
@@ -123,7 +123,7 @@ export function CalculatorSkeleton() {
   return (
     <div className="grid md:grid-cols-2 gap-6">
       {/* Input Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+      <div className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-6">
         <div className="flex items-center gap-3">
           <Skeleton variant="circular" width={40} height={40} />
           <Skeleton variant="text" width="50%" />
@@ -138,7 +138,7 @@ export function CalculatorSkeleton() {
       </div>
       
       {/* Result Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+      <div className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-6">
         <Skeleton variant="text" width="40%" />
         <div className="bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-xl p-6 text-center">
           <Skeleton variant="text" width="30%" className="mx-auto mb-2" />
@@ -165,7 +165,7 @@ export function DashboardSkeleton() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
+            className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-4">
               <Skeleton variant="text" width="50%" />
@@ -179,11 +179,11 @@ export function DashboardSkeleton() {
       
       {/* Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <Skeleton variant="text" width="40%" className="mb-6" />
           <Skeleton height={240} />
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-blue-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <Skeleton variant="text" width="40%" className="mb-6" />
           <Skeleton height={240} />
         </div>
@@ -220,7 +220,7 @@ export function ListSkeleton({ items = 5 }: { items?: number }) {
       {Array.from({ length: items }).map((_, index) => (
         <div
           key={index}
-          className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+          className="flex items-center gap-4 p-4 bg-white dark:bg-blue-800 rounded-lg border border-gray-200 dark:border-gray-700"
         >
           <Skeleton variant="avatar" />
           <div className="flex-1 space-y-2">

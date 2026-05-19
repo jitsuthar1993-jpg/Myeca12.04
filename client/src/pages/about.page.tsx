@@ -1,4 +1,3 @@
-import React from "react";
 import { Shield, Award, Users, FileCheck, CheckCircle2 } from "lucide-react";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -29,21 +28,20 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Founder Story */}
+      {/* Trust Story */}
       <section className="py-20">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-6">The Founder's Story</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">Why MyeCA Exists</h2>
               <div className="space-y-4 text-slate-600 leading-relaxed font-medium">
                 <p>
-                  MyeCA.in was founded in 2018 by <strong>CA Ankit S.</strong>, a practicing Chartered Accountant (ICAI Member) 
-                  who saw thousands of taxpayers struggling with confusing notices and missed refunds.
+                  MyeCA.in was built around a simple idea: Indian taxpayers should be able to understand what is needed,
+                  what is missing, and when expert review is useful before they share sensitive documents or pay for filing.
                 </p>
                 <p>
-                  While automated platforms became popular, they lacked the "human touch" and professional liability 
-                  that only a qualified CA can provide. We set out to build a platform that combines the speed of AI
-                  with the accountability of a real expert.
+                  Automated tools are useful for speed, but tax filing still needs careful document checks, scope clarity,
+                  and professional judgment for capital gains, NRI matters, business income, notices, and high-value cases.
                 </p>
                 <p>
                   Today, MyeCA.in focuses on guided filing workflows, secure document handling, and expert review paths
@@ -51,18 +49,18 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-            <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
+            <div className="bg-blue-600 rounded-lg p-8 text-white shadow-xl relative overflow-hidden group">
               <div className="relative z-10">
                 <Shield className="w-12 h-12 mb-6 opacity-80" />
-                <h3 className="text-2xl font-bold mb-4">Our Credentials</h3>
+                <h3 className="text-2xl font-bold mb-4">Trust Markers</h3>
                 <ul className="space-y-3 opacity-90">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>ERI Registered Intermediary</span>
+                    <span>ERI-registered filing workflow</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>ICAI Certified Professionals</span>
+                    <span>CA-assisted review on eligible plans</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
@@ -70,7 +68,7 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>CA-Reviewed Before Filing</span>
+                    <span>Scope, pricing, and timelines shown upfront</span>
                   </li>
                 </ul>
               </div>
@@ -80,7 +78,7 @@ export default function AboutPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-20 bg-white border-2 border-slate-100 rounded-[3rem] mx-4 mb-20 overflow-hidden relative shadow-sm">
+      <section className="py-20 bg-white border-y border-slate-100 mb-20 overflow-hidden relative">
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 italic text-slate-900">The MyeCA Way</h2>
@@ -88,12 +86,12 @@ export default function AboutPage() {
           </div>
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { icon: Award, title: "Expertise", desc: "No bots. Every return is signed off by a real CA with years of experience." },
-              { icon: FileCheck, title: "Transparency", desc: "Know exactly what you're paying for. No hidden convenience fees." },
-              { icon: Users, title: "Human-First", desc: "Your personal CA is available via WhatsApp, phone, or email whenever you need." },
-              { icon: Shield, title: "Security", desc: "Bank-grade encryption for your documents. We never sell your financial data." },
+              { icon: Award, title: "Expertise", desc: "Complex returns can add CA-assisted review with the scope shown before work starts." },
+              { icon: FileCheck, title: "Transparency", desc: "Plan inclusions, exclusions, GST treatment, and timelines stay visible before checkout." },
+              { icon: Users, title: "Human-First", desc: "Support requests are reviewed during business hours with a clear callback path." },
+              { icon: Shield, title: "Security", desc: "Documents are handled through a secure workflow and used for the requested service." },
             ].map((value, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-blue-50 hover:border-blue-200 transition-all group">
+              <div key={i} className="p-6 rounded-lg bg-slate-50 border border-slate-100 hover:bg-blue-50 hover:border-blue-200 transition-all group">
                 <value.icon className="w-8 h-8 text-blue-600 mb-4 group-hover:scale-110 transition-transform" />
                 <h4 className="font-bold text-lg mb-2 text-slate-900">{value.title}</h4>
                 <p className="text-slate-500 text-sm leading-relaxed font-medium">{value.desc}</p>
@@ -106,14 +104,14 @@ export default function AboutPage() {
 
       {/* Contact Section */}
       <section className="py-20 text-center container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-slate-900 mb-6">Want to speak with the Founder?</h2>
+        <h2 className="text-3xl font-bold text-slate-900 mb-6">Have a complex filing question?</h2>
         <p className="text-slate-600 mb-8 max-w-xl mx-auto font-medium">
-          Have a complex case or a business inquiry? Ankit is happy to jump on a quick discovery call.
+          Share the facts first. The team can review the case type, document readiness, and next step during business hours.
         </p>
         <div className="flex justify-center gap-4">
           <a
             href="mailto:support@myeca.in?subject=Business Inquiry"
-            className="px-8 py-4 bg-[#315efb] text-white font-bold rounded-2xl shadow-lg hover:-translate-y-1 transition-all"
+            className="px-8 py-4 bg-[#315efb] text-white font-bold rounded-lg shadow-lg hover:-translate-y-1 transition-all"
           >
             Email Us
           </a>

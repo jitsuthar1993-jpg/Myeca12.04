@@ -198,7 +198,7 @@ export default function DashboardPage() {
                       <h3 className="text-sm font-bold text-slate-900">No active services</h3>
                       <p className="text-xs text-slate-500 mt-1 max-w-[200px] mx-auto">Explore our range of professional tax and business services.</p>
                       <Link href="/services">
-                        <Button className="mt-6 rounded-xl bg-slate-900 font-bold text-xs uppercase tracking-widest px-8">Explore Now</Button>
+                        <Button className="mt-6 rounded-xl bg-blue-700 font-bold text-xs uppercase tracking-widest px-8">Explore Now</Button>
                       </Link>
                     </div>
                   ) : (
@@ -273,7 +273,7 @@ export default function DashboardPage() {
               </Card>
 
               {/* Activity Timeline Card */}
-              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-slate-900 text-white">
+              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-blue-700 text-white">
                  <CardHeader className="p-6 border-b border-white/5">
                     <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
                        <Activity className="w-4 h-4 text-emerald-400" />

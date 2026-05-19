@@ -45,7 +45,7 @@ export default function TeamDashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-6 pb-10">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -53,14 +53,14 @@ export default function TeamDashboard() {
                <Zap className="w-3 h-3 fill-current" />
                Operations Center
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Team Portal</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Team Portal</h1>
             <p className="text-slate-500 max-w-2xl text-sm font-medium">
               Collaborate on content, manage tax updates, and maintain the platform's knowledge base.
             </p>
           </div>
           <div className="flex items-center gap-3">
              <Link href="/admin/blog-management">
-               <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-widest shadow-sm">
+               <Button className="h-10 rounded-lg bg-blue-700 px-5 text-sm font-bold text-white hover:bg-blue-800">
                  <Plus className="h-4 w-4 mr-2" />
                  New Post
                </Button>
@@ -71,9 +71,9 @@ export default function TeamDashboard() {
         {/* Content Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {contentStats.map((stat, i) => (
-            <Card key={i} className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+            <Card key={i} className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
                <div className="flex justify-between items-start mb-4">
-                  <div className={cn("p-3 rounded-2xl", 
+                  <div className={cn("rounded-lg p-3",
                     stat.color === 'blue' ? "bg-blue-50 text-blue-600" :
                     stat.color === 'amber' ? "bg-amber-50 text-amber-600" :
                     stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600" :
@@ -85,7 +85,7 @@ export default function TeamDashboard() {
                     {stat.change}
                   </Badge>
                </div>
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
+               <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{stat.label}</p>
                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
             </Card>
           ))}
@@ -103,16 +103,16 @@ export default function TeamDashboard() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
                     <Input 
                       placeholder="Search tasks..." 
-                      className="h-9 w-60 rounded-xl bg-white border-slate-100 pl-9 text-xs font-medium shadow-sm"
+                      className="h-9 w-60 rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium"
                     />
                  </div>
-                 <Button variant="outline" size="sm" className="h-9 rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50">
+                 <Button variant="outline" size="sm" className="h-9 rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50">
                     <Filter className="h-4 w-4" />
                  </Button>
               </div>
            </div>
 
-           <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+           <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
              <CardContent className="p-0">
                <div className="overflow-x-auto">
                  <table className="w-full text-left border-collapse">
@@ -130,7 +130,7 @@ export default function TeamDashboard() {
                        <tr key={task.id} className="group hover:bg-slate-50/50 transition-colors">
                          <td className="px-8 py-5">
                            <div className="flex items-center gap-4">
-                              <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-blue-600 transition-colors">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400 transition-colors group-hover:text-blue-600">
                                  <Layers className="h-4 w-4" />
                               </div>
                               <div>

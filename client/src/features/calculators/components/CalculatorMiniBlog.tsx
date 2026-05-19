@@ -140,7 +140,7 @@ export function CalculatorMiniBlog({
             </p>
           </div>
           <Link href={ctaLink}>
-            <Button className="bg-slate-900 hover:bg-blue-700 text-white rounded-xl px-6 h-11 font-normal shadow-sm transition-colors whitespace-nowrap">
+            <Button className="bg-blue-700 hover:bg-blue-700 text-white rounded-xl px-6 h-11 font-normal shadow-sm transition-colors whitespace-nowrap">
               {ctaButtonText}
               <ArrowUpRight className="w-4 h-4 ml-2" />
             </Button>

@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/components/AuthProvider";
 import HomePage from "@/pages/home.page";
 import { Loader2 } from "lucide-react";
+import { getRoleHome } from "@shared/app-roles";
 
 export default function RoleBasedRedirect() {
   const [, setLocation] = useLocation();
@@ -10,15 +11,7 @@ export default function RoleBasedRedirect() {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
-      if (user.role === "admin") {
-        setLocation("/admin/dashboard");
-      } else if (user.role === "team_member") {
-        setLocation("/admin/blog-management");
-      } else if (user.role === "ca") {
-        setLocation("/ca/dashboard");
-      } else {
-        setLocation("/dashboard");
-      }
+      setLocation(getRoleHome(user.role));
     }
   }, [isLoading, isAuthenticated, user, setLocation]);
 

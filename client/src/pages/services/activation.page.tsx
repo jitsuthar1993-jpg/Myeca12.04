@@ -371,7 +371,7 @@ export default function ActivationPage() {
               <div className="flex flex-col gap-4 max-w-md mx-auto">
                 <Button 
                    onClick={() => setLocation(createdServiceId ? `/dashboard/services/${createdServiceId}` : "/dashboard")}
-                   className="h-16 rounded-[22px] bg-slate-900 hover:bg-black text-white font-black text-lg gap-3"
+                   className="h-16 rounded-[22px] bg-blue-700 hover:bg-blue-700 text-white font-black text-lg gap-3"
                 >
                   Open Service Workspace
                   <ArrowRight className="h-5 w-5" />

@@ -94,12 +94,12 @@ export function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
                     alt={file.name} 
                     className="w-full h-full object-cover" 
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Button size="sm" variant="secondary" className="h-8">
                        Select
                     </Button>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-1 flex justify-between items-center px-2">
+                  <div className="absolute bottom-0 left-0 right-0 bg-blue-900/60 p-1 flex justify-between items-center px-2">
                      <p className="text-[9px] text-white truncate max-w-[60%]">{file.name}</p>
                      <span className="text-[8px] text-gray-300">{formatSize(file.size)}</span>
                   </div>

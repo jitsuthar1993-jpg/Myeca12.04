@@ -134,7 +134,7 @@ export function OnboardingModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-blue-900/50 backdrop-blur-sm p-4">
       <AnimatePresence mode="wait">
         <m.div
           key={currentStep}
@@ -267,7 +267,7 @@ export function OnboardingTrigger() {
           <m.div
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg"
+            className="absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg"
           >
             Take a tour
           </m.div>

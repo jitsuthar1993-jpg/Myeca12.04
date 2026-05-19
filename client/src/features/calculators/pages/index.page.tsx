@@ -175,6 +175,15 @@ const featuredTools = [
   "/calculators/regime-comparator",
 ];
 
+const mobileFeaturedTools = [
+  "/calculators/income-tax",
+  "/calculators/regime-comparator",
+  "/calculators/hra",
+  "/calculators/salary",
+  "/calculators/tds",
+  "/calculators/gst",
+];
+
 function ToolCard({ calc, category }: { calc: CalculatorItem; category: CalculatorCategory }) {
   const Icon = calc.icon;
   const colors = colorClasses[category.color];
@@ -182,11 +191,11 @@ function ToolCard({ calc, category }: { calc: CalculatorItem; category: Calculat
   return (
     <Link href={calc.href} className="group block h-full">
       <article className="flex h-full flex-col rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
-        <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="mb-3 flex items-start justify-between gap-3 md:mb-4">
           <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border", colors.icon)}>
             <Icon className="h-5 w-5" />
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-1">
+          <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
             {calc.isPopular && (
               <span className="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700">
                 Popular
@@ -203,9 +212,9 @@ function ToolCard({ calc, category }: { calc: CalculatorItem; category: Calculat
         <h3 className={cn("text-sm font-medium text-slate-900 transition-colors", colors.hover)}>
           {calc.name}
         </h3>
-        <p className="mt-2 flex-1 text-xs leading-5 text-slate-500">{calc.description}</p>
+        <p className="mt-2 hidden flex-1 text-xs leading-5 text-slate-500 sm:block">{calc.description}</p>
 
-        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 md:mt-5">
           <span className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Free tool</span>
           <ArrowRight className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", colors.text)} />
         </div>
@@ -217,6 +226,7 @@ function ToolCard({ calc, category }: { calc: CalculatorItem; category: Calculat
 export default function CalculatorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [showAllMobileCategories, setShowAllMobileCategories] = useState(false);
 
   const allCalcs = useMemo(
     () =>
@@ -242,6 +252,9 @@ export default function CalculatorsPage() {
   }, [activeCategory, allCalcs, searchTerm]);
 
   const featured = allCalcs.filter(({ href }) => featuredTools.includes(href));
+  const mobileFeatured = allCalcs
+    .filter(({ href }) => mobileFeaturedTools.includes(href))
+    .sort((a, b) => mobileFeaturedTools.indexOf(a.href) - mobileFeaturedTools.indexOf(b.href));
   const isFiltering = searchTerm.trim() !== "" || activeCategory !== "all";
 
   return (
@@ -281,8 +294,8 @@ export default function CalculatorsPage() {
                   <MobilePageHeader
                     eyebrow="Calculator Library"
                     icon={<Sparkles className="h-4 w-4" />}
-                    title="Financial calculators for tax, investing and loans."
-                    description="Search, compare and open focused tools for Indian tax and money decisions."
+                    title="Tax tools for ITR filing."
+                    description="Estimate tax, compare regimes, and open the tools most taxpayers need before filing."
                   />
                 </div>
                 <div className="mb-5 hidden items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-blue-700 md:inline-flex">
@@ -297,7 +310,7 @@ export default function CalculatorsPage() {
                 </p>
               </div>
 
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 md:p-4">
+              <div className="hidden rounded-lg border border-slate-200 bg-slate-50 p-3 md:block md:p-4">
                 <div className="mb-3 flex items-center justify-between md:mb-4">
                   <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Popular now</p>
                   <span className="rounded-md border border-emerald-100 bg-emerald-50 px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-emerald-700">
@@ -324,6 +337,30 @@ export default function CalculatorsPage() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3 md:hidden">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Popular for ITR filing</p>
+                <span className="rounded-md border border-emerald-100 bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
+                  Tax first
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {mobileFeatured.map(({ category, ...calc }) => {
+                  const Icon = calc.icon;
+                  const colors = colorClasses[category.color];
+                  return (
+                    <Link key={calc.href} href={calc.href} className="group rounded-lg border border-blue-100 bg-white p-3 shadow-sm transition-colors hover:border-blue-200">
+                      <span className={cn("flex h-9 w-9 items-center justify-center rounded-lg border", colors.icon)}>
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="mt-3 block text-sm font-bold leading-tight text-slate-900">{calc.name.replace(" Calculator", "")}</span>
+                      <span className="mt-1 block text-xs leading-5 text-slate-500">{calc.description}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -339,10 +376,12 @@ export default function CalculatorsPage() {
               />
             </label>
 
-            <div className="flex gap-2 overflow-x-auto pb-1 lg:justify-end lg:pb-0">
+            <div className="flex flex-wrap gap-2 pb-1 md:flex-nowrap md:overflow-x-auto lg:justify-end lg:pb-0">
               {[{ id: "all", name: "All" }, ...calculatorCategories].map((category) => {
                 const active = activeCategory === category.id;
                 const categoryColor = category.id === "all" ? "blue" : (category as CalculatorCategory).color;
+                const hideFilterOnMobile =
+                  category.id !== "all" && category.id !== "tax" && !showAllMobileCategories;
 
                 return (
                   <button
@@ -351,12 +390,20 @@ export default function CalculatorsPage() {
                     onClick={() => setActiveCategory(category.id)}
                     className={cn(
                       "h-10 shrink-0 rounded-lg border px-3 text-xs font-medium uppercase tracking-wider transition-colors md:h-12 md:px-4",
+                      hideFilterOnMobile && "hidden md:inline-flex",
                       active
                         ? colorClasses[categoryColor].active
                         : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     )}
                   >
-                    {category.name}
+                    {category.id === "all" ? (
+                      <>
+                        <span className="md:hidden">{showAllMobileCategories ? "All" : "ITR tools"}</span>
+                        <span className="hidden md:inline">All</span>
+                      </>
+                    ) : (
+                      category.name
+                    )}
                   </button>
                 );
               })}
@@ -419,9 +466,14 @@ export default function CalculatorsPage() {
               {calculatorCategories.map((category) => {
                 const CategoryIcon = category.icon;
                 const colors = colorClasses[category.color];
+                const hideOnMobile = category.id !== "tax" && !showAllMobileCategories;
 
                 return (
-                  <section key={category.id} aria-labelledby={`${category.id}-heading`}>
+                  <section
+                    key={category.id}
+                    aria-labelledby={`${category.id}-heading`}
+                    className={cn(hideOnMobile && "hidden md:block")}
+                  >
                     <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between md:mb-5 md:gap-4">
                       <div className="flex gap-4">
                         <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border md:h-12 md:w-12", colors.icon)}>
@@ -452,6 +504,16 @@ export default function CalculatorsPage() {
                   </section>
                 );
               })}
+              <div className="md:hidden">
+                <button
+                  type="button"
+                  onClick={() => setShowAllMobileCategories((value) => !value)}
+                  className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 shadow-sm hover:border-blue-100 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  {showAllMobileCategories ? "Show only ITR tax tools" : "Browse more calculators"}
+                  <ArrowRight className={cn("h-4 w-4 transition-transform", showAllMobileCategories && "rotate-[-90deg]")} />
+                </button>
+              </div>
             </div>
           )}
         </section>
@@ -471,7 +533,12 @@ export default function CalculatorsPage() {
                   Start ITR Filing
                 </Button>
               </Link>
-              <Link href="/services">
+              <Link href="/form16-parser" className="md:hidden">
+                <Button variant="outline" className="h-11 w-full rounded-lg border-slate-200 px-5 text-slate-700 hover:bg-slate-50">
+                  Parse Form 16
+                </Button>
+              </Link>
+              <Link href="/services" className="hidden md:block">
                 <Button variant="outline" className="h-11 w-full rounded-lg border-slate-200 px-5 text-slate-700 hover:bg-slate-50 sm:w-auto">
                   Explore Services
                 </Button>

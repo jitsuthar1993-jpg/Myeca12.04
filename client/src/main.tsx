@@ -6,10 +6,13 @@ import { addPerformanceHints } from "./utils/performance-hints";
 import { recoverFromStaleChunk } from "./utils/chunk-recovery";
 import { lazyWithRetry } from "./utils/lazy-with-retry";
 import { shouldLoadProductionTelemetry } from "./utils/runtime-env";
+import { initClientSentry } from "./telemetry/sentry.client";
 import "./utils/safe-dom";
 import "./index.css";
 
 const loadProductionTelemetry = shouldLoadProductionTelemetry();
+
+initClientSentry();
 
 const VercelAnalytics = loadProductionTelemetry
   ? lazyWithRetry(() => import("@vercel/analytics/react").then((mod) => ({ default: mod.Analytics })))

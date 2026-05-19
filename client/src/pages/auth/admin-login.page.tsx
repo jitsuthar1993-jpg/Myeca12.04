@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
+import { getSafeRedirectPath, resolvePostLoginRedirect } from "@/lib/role-redirect";
 
 export default function AdminLoginPage() {
   const { login } = useAuth();
   const [, setLocation] = useLocation();
-  const redirectUrl = new URLSearchParams(window.location.search).get("redirect_url") || "/admin/dashboard";
+  const params = new URLSearchParams(window.location.search);
+  const requestedRedirectPath = getSafeRedirectPath(params.get("redirect_url") || params.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,8 +24,8 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      await login(email.trim(), password);
-      setLocation(redirectUrl);
+      const signedInUser = await login(email.trim(), password);
+      setLocation(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath || "/admin/dashboard"));
     } catch (err: any) {
       setError(err?.message || "Unable to sign in. Check your Supabase account details and try again.");
     } finally {
@@ -49,7 +51,7 @@ export default function AdminLoginPage() {
         label: "User sign in",
       }}
     >
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)]">
+      <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
         {error && (
           <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-bold text-rose-800">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />

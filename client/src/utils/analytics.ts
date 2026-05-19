@@ -1,4 +1,5 @@
 // Analytics utility functions
+import { captureTelemetryEvent, trackTelemetryPageView } from "@/telemetry/browser";
 
 export const trackEvent = (
   action: string, 
@@ -12,13 +13,11 @@ export const trackEvent = (
     return;
   }
 
-  if (typeof (window as any).gtag !== 'undefined') {
-    (window as any).gtag('event', action, {
-      event_category: category,
-      event_label: label,
-      value: value,
-    });
-  }
+  captureTelemetryEvent(action, {
+    event_category: category,
+    event_label: label,
+    value,
+  });
 };
 
 // Predefined event trackers for common actions
@@ -39,11 +38,24 @@ export const trackServiceView = (serviceName: string) => {
 };
 
 export const trackConversion = (type: string, value?: number) => {
-  trackEvent('conversion', 'Revenue', type, value);
+  const normalizedType = type.trim().toLowerCase().replace(/[^a-z0-9_]+/g, '_');
+  const eventName = normalizedType.includes('checkout')
+    ? 'checkout_started'
+    : normalizedType.includes('payment')
+      ? 'payment_link_requested'
+      : normalizedType.includes('service')
+        ? 'service_activation_requested'
+        : 'lead_submit';
+
+  captureTelemetryEvent(eventName, {
+    event_category: 'Conversion',
+    conversion_type: type,
+    value,
+  });
 };
 
 export const trackSignup = (method: string = 'email') => {
-  trackEvent('sign_up', 'User', method);
+  trackEvent('signup', 'User', method);
 };
 
 export const trackLogin = (method: string = 'email') => {
@@ -62,11 +74,7 @@ export const trackPageView = (page: string) => {
     return;
   }
 
-  if (typeof (window as any).gtag !== 'undefined') {
-    (window as any).gtag('event', 'page_view', {
-      page_path: page,
-    });
-  }
+  trackTelemetryPageView(page);
 };
 
 // Track ecommerce events
@@ -77,9 +85,7 @@ export const trackEcommerce = (action: string, params: any) => {
     return;
   }
 
-  if (typeof (window as any).gtag !== 'undefined') {
-    (window as any).gtag('event', action, params);
-  }
+  captureTelemetryEvent(action, params);
 };
 
 // Track user behavior events
@@ -90,10 +96,8 @@ export const trackUserBehavior = (action: string, params: any) => {
     return;
   }
 
-  if (typeof (window as any).gtag !== 'undefined') {
-    (window as any).gtag('event', action, {
-      event_category: 'User Behavior',
-      ...params
-    });
-  }
+  captureTelemetryEvent(action, {
+    event_category: 'User Behavior',
+    ...params,
+  });
 };

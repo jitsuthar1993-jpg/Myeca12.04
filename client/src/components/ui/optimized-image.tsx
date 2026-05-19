@@ -29,7 +29,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden bg-slate-100/50 dark:bg-slate-800/50", 
+        "relative overflow-hidden bg-slate-100/50 dark:bg-blue-800/40",
         !isLoaded && !error && "animate-pulse",
         containerClassName
       )}
@@ -50,7 +50,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       />
       
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-blue-700 text-slate-400">
           <span className="text-xs italic">Failed to load image</span>
         </div>
       )}

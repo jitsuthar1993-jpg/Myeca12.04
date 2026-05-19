@@ -79,7 +79,7 @@ export default function PaymentsPage() {
                 Track pending service fees, request secure payment links, and see receipts once a gateway or manual confirmation is connected.
               </p>
             </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-900 text-white shadow-xl shadow-slate-200">
+            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-700 text-white shadow-xl shadow-slate-200">
               <CreditCard className="h-8 w-8" />
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function PaymentsPage() {
                 <h2 className="text-xl font-black text-slate-900">No service payments yet</h2>
                 <p className="mt-2 text-sm font-medium text-slate-500">Start a filing or compliance service to see payment status here.</p>
                 <Link href="/dashboard/services">
-                  <Button className="mt-6 rounded-xl bg-slate-900 text-white hover:bg-blue-600">Browse Services</Button>
+                  <Button className="mt-6 rounded-xl bg-blue-700 text-white hover:bg-blue-600">Browse Services</Button>
                 </Link>
               </div>
             )}

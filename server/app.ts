@@ -11,7 +11,9 @@ import { customSecurityHeaders, securityHeaders } from "./middleware/security.js
 import { globalErrorHandler } from "./middleware/error-handler.js";
 import { generalRateLimit } from "./middleware/rateLimiting.js";
 import { getRequestId, requestIdMiddleware } from "./middleware/request-id.js";
+import { initServerSentry, setupServerSentryErrorHandler } from "./telemetry/sentry.js";
 
+initServerSentry();
 const app = express();
 const productionOrigins: (string | RegExp)[] = [
   "https://myeca.in",
@@ -124,6 +126,7 @@ app.use((req, res, next) => {
 let _routesRegistered = false;
 const _routesReady = (async () => {
   await registerRoutes(app);
+  setupServerSentryErrorHandler(app);
   app.use(globalErrorHandler);
   _routesRegistered = true;
 })();

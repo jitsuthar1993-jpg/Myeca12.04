@@ -1,5 +1,7 @@
 ﻿import { z } from "zod";
 
+import { APP_ROLES } from "./app-roles";
+
 // --- Base Schemas ---
 
 export const userSchema = z.object({
@@ -9,7 +11,7 @@ export const userSchema = z.object({
   phoneNumber: z.string().optional().nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  role: z.enum(['admin', 'team_member', 'ca', 'user']).default('user'),
+  role: z.enum(APP_ROLES).default('user'),
   assignedCaId: z.string().optional().nullable(),
   assignedCaName: z.string().optional().nullable(),
   assignedCaEmail: z.string().optional().nullable(),
@@ -264,7 +266,7 @@ export const signupSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number')
     .regex(/[!@#$%^&*]/, 'Password must contain at least one special character'),
   confirmPassword: z.string().min(8, 'Confirm password must be at least 8 characters'),
-  role: z.enum(['user', 'admin', 'ca', 'team_member']).default('user'),
+  role: z.enum(APP_ROLES).default('user'),
 }).refine((data) => data.password === data.confirmPassword, {
   path: ['confirmPassword'],
   message: 'Passwords do not match',

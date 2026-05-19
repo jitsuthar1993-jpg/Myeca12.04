@@ -121,7 +121,7 @@ export default function EnhancedFDCalculator() {
               </div>
 
               <Link href="/services/tax-consultation">
-                <button className="w-full py-4 rounded-2xl bg-slate-900 text-white font-normal text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
+                <button className="w-full py-4 rounded-2xl bg-blue-700 text-white font-normal text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
                   <Zap className="w-4 h-4 text-yellow-400" />
                   Optimize FD Tax Now
                 </button>

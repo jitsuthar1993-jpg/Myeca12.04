@@ -69,7 +69,7 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <section className="bg-slate-950 px-4 py-16 text-white sm:px-6 lg:px-8">
+      <section className="bg-blue-700 px-4 py-16 text-white sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
           <div>
             <Badge className="mb-5 border-blue-400/20 bg-blue-400/10 text-blue-200">

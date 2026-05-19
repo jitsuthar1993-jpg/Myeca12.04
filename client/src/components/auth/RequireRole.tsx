@@ -3,15 +3,17 @@ import { Loader2 } from "lucide-react";
 import { logAuditEvent } from "@/lib/audit";
 import { useLocation } from "wouter";
 import { useEffect } from "react";
+import { normalizeAppRole, type AppRole } from "@shared/app-roles";
 
 interface RequireRoleProps {
-  roles: string[];
+  roles: readonly AppRole[];
   children: React.ReactNode;
 }
 
 export function RequireRole({ roles, children }: RequireRoleProps) {
   const { isAuthenticated, isLoading, role, user } = useAuth();
   const [location, setLocation] = useLocation();
+  const appRole = normalizeAppRole(role);
 
   useEffect(() => {
     if (isLoading) return;
@@ -21,21 +23,21 @@ export function RequireRole({ roles, children }: RequireRoleProps) {
       return;
     }
 
-    if (!roles.includes(role)) {
+    if (!roles.includes(appRole)) {
       logAuditEvent({
         action: "role_guard_denied",
         category: "access",
         status: "failure",
         metadata: {
           requiredRoles: roles,
-          actualRole: role,
+          actualRole: appRole,
           userId: user?.id,
           path: location,
         },
       });
       setLocation("/403");
     }
-  }, [isAuthenticated, isLoading, location, role, roles, setLocation, user?.id]);
+  }, [appRole, isAuthenticated, isLoading, location, roles, setLocation, user?.id]);
 
   if (isLoading) {
     return (
@@ -45,7 +47,7 @@ export function RequireRole({ roles, children }: RequireRoleProps) {
     );
   }
 
-  if (!isAuthenticated || !roles.includes(role)) {
+  if (!isAuthenticated || !roles.includes(appRole)) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-blue-600" />

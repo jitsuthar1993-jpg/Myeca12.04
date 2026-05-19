@@ -68,7 +68,7 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
           )}
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent pointer-events-none" />
 
           {/* Category badge */}
           <div className="absolute top-3 left-3 flex items-center gap-2">
@@ -84,7 +84,7 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
 
           {/* Read time badge bottom-right */}
           <div className="absolute bottom-3 right-3">
-            <span className="inline-flex items-center gap-1 rounded-full bg-black/50 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-white">
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-900/50 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-white">
               <Clock3 className="h-3 w-3" />
               {post.readingTimeMinutes} min
             </span>

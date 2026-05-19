@@ -149,6 +149,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/tax-loss-harvesting",
   "/tax-optimizer",
   "/tds-refund-tracker",
+  "/trust",
 ] as const;
 
 export type SitemapEntry = {

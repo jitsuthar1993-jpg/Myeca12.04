@@ -159,7 +159,7 @@ export default function GeneralCalculatorPage() {
               </span>
             </div>
             <Link href="/calculators">
-              <button className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-normal hover:bg-blue-700 transition-colors">
+              <button className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-700 text-white text-xs font-normal hover:bg-blue-700 transition-colors">
                 <Calculator className="w-3.5 h-3.5 text-blue-400" />
                 All Calculators
               </button>

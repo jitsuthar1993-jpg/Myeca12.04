@@ -98,6 +98,7 @@ const DocumentScannerPage = lazyWithRetry(() => import("@/pages/features/documen
 const ExpertTaxReviewPage = lazyWithRetry(() => import("@/pages/features/expert-tax-review.page"));
 const ContactPage = lazyWithRetry(() => import("@/pages/contact.page"));
 const AboutPage = lazyWithRetry(() => import("@/pages/about.page"));
+const TrustPage = lazyWithRetry(() => import("@/pages/trust.page"));
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/login.page"));
 const RegisterPage = lazyWithRetry(() => import("@/pages/auth/register.page"));
 const ForgotPasswordPage = lazyWithRetry(() => import("@/pages/auth/forgot-password.page"));
@@ -286,6 +287,7 @@ export default function Routes() {
         <Route path="/features/expert-tax-review" component={ExpertTaxReviewPage} />
         <Route path="/contact" component={ContactPage} />
         <Route path="/about" component={AboutPage} />
+        <Route path="/trust" component={TrustPage} />
         <Route path="/auth/login" component={LoginPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/auth/admin-login" component={AdminLoginPage} />

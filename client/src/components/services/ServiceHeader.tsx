@@ -50,7 +50,7 @@ export default function ServiceHeader(props: ServiceHeaderProps) {
     primaryCTA && (
       <Button
         size="sm"
-        className={cn("px-5 py-2.5 font-semibold", "bg-slate-800 hover:bg-slate-900 text-white")}
+        className={cn("px-5 py-2.5 font-semibold", "bg-blue-700 hover:bg-blue-700 text-white")}
       >
         {PrimaryIcon && <PrimaryIcon className="w-4 h-4 mr-2" />}
         {primaryCTA.label}

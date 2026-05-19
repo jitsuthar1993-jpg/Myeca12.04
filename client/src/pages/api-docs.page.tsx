@@ -478,14 +478,14 @@ export default function ApiDocsPage() {
 
                 <div>
                   <h3 className="font-semibold mb-2">Authentication</h3>
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm">
+                  <div className="bg-blue-700 text-gray-100 p-4 rounded-lg font-mono text-sm">
                     Authorization: Bearer YOUR_API_TOKEN
                   </div>
                 </div>
 
                 <div>
                   <h3 className="font-semibold mb-2">Base URL</h3>
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm">
+                  <div className="bg-blue-700 text-gray-100 p-4 rounded-lg font-mono text-sm">
                     https://api.myeca.in
                   </div>
                 </div>
@@ -493,7 +493,7 @@ export default function ApiDocsPage() {
                 <div>
                   <h3 className="font-semibold mb-2">Response Format</h3>
                   <p className="text-sm text-gray-600 mb-2">All responses are returned in JSON format.</p>
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <div className="bg-blue-700 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                     {`{
   "success": true,
   "data": { ... },
@@ -594,7 +594,7 @@ export default function ApiDocsPage() {
                             <Copy className="h-4 w-4" />
                           )}
                         </Button>
-                        <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                        <div className="bg-blue-700 text-gray-100 p-4 rounded-lg overflow-x-auto">
                           <pre className="text-sm font-mono">{code}</pre>
                         </div>
                       </div>

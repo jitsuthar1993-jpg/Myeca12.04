@@ -479,7 +479,7 @@ export function TaxOptimizer() {
                             <Progress value={percentUsed} className="h-2" />
                           </div>
 
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <div className="bg-gray-50 dark:bg-blue-800 rounded-lg p-4">
                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                               💡 Suggestions:
                             </p>

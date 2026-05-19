@@ -28,7 +28,6 @@ import { lazyWithRetry } from "@/utils/lazy-with-retry";
 
 
 const FeaturesSection = lazyWithRetry(() => import("@/components/FeaturesSection"));
-const PricingSection = lazyWithRetry(() => import("@/components/PricingSection"));
 const Testimonials = lazyWithRetry(() => import("@/components/Testimonials"));
 const TrustedBySection = lazyWithRetry(() => import("@/components/TrustedBySection"));
 const EverythingSection = lazyWithRetry(() => import("@/components/EverythingSection"));
@@ -107,9 +106,84 @@ const HomePage = () => {
 
       <div className="bg-white min-h-screen">
         {/* Hero Section - Compact & Focused */}
-        <section className="bg-white py-8 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/30 md:to-white md:py-12 lg:py-16">
+        <section className="bg-white py-7 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/30 md:to-white md:py-12 lg:py-14">
           <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl space-y-4 text-left md:space-y-6 md:text-center">
+            <div className="md:hidden">
+              <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
+                <div className="inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">
+                  <Shield className="h-3.5 w-3.5" />
+                  AY 2026-27 tax utility
+                </div>
+                <h1 className="mt-4 text-[28px] font-extrabold leading-tight tracking-tight text-slate-950">
+                  Estimate tax, choose your ITR path, then file.
+                </h1>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Start with the calculator or jump straight into guided filing. Pricing, documents, and review scope stay visible before payment.
+                </p>
+
+                <div className="mt-4 grid gap-2">
+                  {[
+                    { label: "File ITR", helper: "Choose form and start", href: "/itr/form-selector", icon: Rocket, className: "border-blue-600 bg-blue-600 text-white shadow-blue-200" },
+                    { label: "Calculate Tax", helper: "Estimate payable amount", href: "/calculators/income-tax", icon: Calculator, className: "border-slate-200 bg-white text-slate-950" },
+                  ].map((action) => (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className={cn(
+                        "flex min-h-14 items-center justify-between gap-3 rounded-lg border px-4 text-left shadow-sm",
+                        action.className
+                      )}
+                    >
+                      <span>
+                        <span className="block text-sm font-black">{action.label}</span>
+                        <span className={cn("mt-0.5 block text-xs font-semibold", action.href === "/itr/form-selector" ? "text-blue-100" : "text-slate-500")}>
+                          {action.helper}
+                        </span>
+                      </span>
+                      <action.icon className="h-4 w-4 shrink-0" />
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {[
+                    { label: "Compare Regimes", href: "/calculators/regime-comparator", icon: TrendingUp },
+                    { label: "Parse Form 16", href: "/form16-parser", icon: FileText },
+                  ].map((action) => (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-center text-xs font-bold text-slate-800 shadow-sm"
+                    >
+                      <action.icon className="h-3.5 w-3.5 shrink-0 text-blue-700" />
+                      <span>{action.label}</span>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="mt-4 rounded-lg border border-blue-100 bg-white p-3">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Before you start</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700">
+                    {["PAN", "Form 16", "AIS / 26AS", "Deductions"].map((item) => (
+                      <div key={item} className="flex items-center gap-2 rounded-md bg-slate-50 px-2 py-2">
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600">
+                  {["ERI workflow", "Scope before payment", "Optional CA review", "Secure documents"].map((item) => (
+                    <div key={item} className="rounded-md border border-blue-100 bg-white px-2 py-2 text-center">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="hidden max-w-4xl space-y-6 text-center md:mx-auto md:block">
               {/* Trust Badge */}
               <div className="inline-flex max-w-full items-center gap-2 rounded-lg border border-[var(--color-primary-100)] bg-slate-50 px-3 py-2 text-xs font-medium text-[var(--color-primary-700)] shadow-sm md:rounded-full md:bg-white md:px-4 md:text-sm">
                 <Shield className="w-4 h-4 text-[var(--color-accent-600)]" />
@@ -120,13 +194,12 @@ const HomePage = () => {
 
               {/* Headline */}
               <h1 className="text-[30px] font-bold leading-tight text-[var(--color-primary-900)] md:text-3xl lg:text-5xl">
-                File Your <span className="text-[var(--color-accent-600)]">AY 2026-27 ITR</span>
-                <br className="hidden sm:block" />
-                Guided Filing from ₹499
+                <span>File Your <span className="text-[var(--color-accent-600)]">AY 2026-27 ITR</span></span>
+                <span className="block">Guided Filing from ₹499</span>
               </h1>
 
-              <p className="max-w-2xl text-sm leading-6 text-gray-600 md:mx-auto md:text-lg">
-                Use guided filing, regime comparison, and optional CA-assisted review before submission through the official Income Tax Portal.
+              <p className="max-w-2xl text-sm leading-6 text-slate-600 md:mx-auto md:text-lg">
+                Start with a structured ITR workflow, see documents and pricing before payment, and add CA-assisted review when your facts need a closer look.
               </p>
 
               {/* CTA Buttons */}
@@ -147,38 +220,59 @@ const HomePage = () => {
               } />
 
               {/* Trust Indicators */}
-              <div className="grid gap-2 pt-1 text-sm text-gray-600 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center md:gap-6 md:pt-4">
+              <div className="grid gap-2 pt-1 text-sm text-slate-700 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center md:gap-6 md:pt-4">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  ERI filing workflow
+                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  Official portal workflow
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  Document checklist before filing
+                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  Document checklist first
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  Optional CA review plans
+                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  Optional CA review
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
 
-              <div className="grid gap-2 pt-2 text-left sm:grid-cols-2 md:mx-auto md:max-w-3xl md:pt-3">
-                {[
-                  { icon: Shield, title: "ERI workflow", text: "Filing steps are designed around the official income-tax portal process." },
-                  { icon: Users, title: "CA review scope", text: "Assisted plans show what the expert reviews before work starts." },
-                  { icon: FileText, title: "Document handling", text: "You see the required documents and missing items before submission." },
-                  { icon: Award, title: "Price clarity", text: "Starting price, plan scope, and GST treatment stay visible before checkout." },
-                ].map((item) => (
-                  <div key={item.title} className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-blue-600">
-                        <item.icon className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900">{item.title}</p>
-                        <p className="mt-1 text-xs leading-5 text-slate-500">{item.text}</p>
-                      </div>
+        <section className="border-y border-slate-200 bg-[#F8FAFC] py-5 md:py-8">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto grid max-w-6xl gap-3 lg:grid-cols-[1fr_1.35fr] lg:items-stretch">
+              <div className="rounded-lg border border-blue-100 bg-white p-5 shadow-sm md:p-7">
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+                  <Shield className="h-3.5 w-3.5" />
+                  Transparent pricing
+                </div>
+                <h2 className="mt-4 text-2xl font-extrabold leading-tight text-slate-950 md:text-3xl">Know the filing scope before you pay.</h2>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Simple salary cases start at ₹499. Assisted filing starts at ₹999, with CA review available for complex deductions, capital gains, business income, and notices.
+                </p>
+                <div className="mt-5 grid gap-2 text-sm text-slate-700 sm:grid-cols-2 lg:grid-cols-1">
+                  {["Scope shown upfront", "Documents reviewed before quote"].map((item) => (
+                    <div key={item} className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-emerald-600" />
+                      {item}
                     </div>
+                  ))}
+                </div>
+                <Link href="/pricing" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+                  Compare all plans <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {[
+                  { title: "Self-guided", price: "₹499", detail: "Simple salary filing", note: "Checklist and guided workflow" },
+                  { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", note: "Review scope shown upfront" },
+                  { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", note: "Documents reviewed before quote" },
+                ].map((plan) => (
+                  <div key={plan.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200 md:p-6">
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{plan.title}</p>
+                    <p className="mt-3 text-2xl font-extrabold text-slate-950">{plan.price}</p>
+                    <p className="mt-2 text-sm font-semibold text-slate-800">{plan.detail}</p>
+                    <p className="mt-2 text-xs leading-5 text-slate-600">{plan.note}</p>
                   </div>
                 ))}
               </div>
@@ -186,8 +280,39 @@ const HomePage = () => {
           </div>
         </section>
 
+        {/* Proof Strip */}
+        <section className="hidden border-b border-slate-200 bg-[#F8FAFC] py-4 md:block md:py-6">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { icon: Shield, title: "ERI workflow", text: "Filing steps are aligned to official income-tax portal submission flow." },
+                { icon: Users, title: "CA review scope", text: "Assisted plans explain what an expert reviews before work starts." },
+                { icon: FileText, title: "Document privacy", text: "Upload only required documents and see missing items before filing." },
+                { icon: Award, title: "Price clarity", text: "Plan scope, GST treatment, and exclusions stay visible before checkout." },
+              ].map((item) => (
+                <div key={item.title} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-950">{item.title}</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-600">{item.text}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 text-left md:text-center">
+              <Link href="/trust" className="inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+                Review trust and document handling <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Core Features - Redesigned for Premium Look */}
-        <section className="relative overflow-hidden bg-white py-6 md:py-20">
+        <section className="relative hidden overflow-hidden bg-white py-6 md:block md:py-20">
           <div className="absolute left-0 top-0 hidden h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent md:block"></div>
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-7xl gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -280,7 +405,7 @@ const HomePage = () => {
               <h2 className="text-xl font-extrabold tracking-tight text-slate-900 md:text-3xl lg:text-4xl">
                 File ITR in <span className="text-blue-600">3 Simple Steps</span>
               </h2>
-              <p className="mt-2 text-sm text-slate-500 md:mt-4 md:text-lg">Our workflow keeps filing structured, documented, and easier to review.</p>
+              <p className="mt-2 text-sm text-slate-600 md:mt-4 md:text-lg">Our workflow keeps filing structured, documented, and easier to review.</p>
             </div>
 
             <div className="relative mx-auto grid max-w-5xl gap-3 md:grid-cols-3 md:gap-8">
@@ -301,7 +426,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <h3 className="text-base font-bold tracking-tight text-slate-900 md:mb-3 md:text-xl">{step.title}</h3>
-                    <p className="mt-1 text-sm font-medium leading-6 text-slate-500 md:mt-0 md:text-[15px] md:leading-relaxed">{step.desc}</p>
+                    <p className="mt-1 text-sm font-medium leading-6 text-slate-600 md:mt-0 md:text-[15px] md:leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -309,142 +434,162 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Calculators Section */}
-        <section className="bg-white py-6 md:bg-gradient-to-b md:from-white md:to-slate-50 md:py-16">
-          <div className="container mx-auto px-4">
-            <div className="mb-5 text-left md:mb-10 md:text-center">
-              <h2 className="mb-2 text-xl font-bold text-gray-900 md:mb-3 md:text-2xl lg:text-3xl">
-                Free Tax <span className="text-blue-600">Calculators</span>
-              </h2>
-              <p className="text-sm text-gray-600 md:text-base">Plan your taxes with estimate calculators and review caveats</p>
-            </div>
+        <div className="hidden md:block">
+          <Suspense fallback={<SectionFallback />}>
+            <Testimonials />
+          </Suspense>
 
-            <div className="mx-auto grid max-w-5xl gap-3 md:grid-cols-3 md:gap-6">
-              {[
-                { title: "Income Tax Calculator", desc: "AY 2026-27 tax estimate", href: "/calculators/income-tax", icon: Calculator },
-                { title: "HRA Calculator", desc: "Optimize rent allowance", href: "/calculators/hra", icon: Shield },
-                { title: "SIP Calculator", desc: "Plan your investments", href: "/calculators/sip", icon: TrendingUp },
-              ].map((calc) => (
-                <Link key={calc.title} href={calc.href}>
-                  <Card className="group h-full cursor-pointer rounded-lg border border-slate-200/60 bg-white shadow-sm transition-all duration-300 hover:shadow-md md:rounded-[24px] md:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] md:hover:-translate-y-1 md:hover:shadow-[0_15px_35px_-5px_rgba(0,0,0,0.1)]">
-                    <CardContent className="p-4 md:p-8">
-                      <div className="mb-3 flex items-center gap-3 md:mb-5 md:flex-col md:items-start md:gap-5">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#eef2ff] transition-transform duration-300 md:h-14 md:w-14 md:rounded-2xl md:duration-500 md:group-hover:scale-110">
-                          <calc.icon className="h-6 w-6 text-[#4f46e5] md:h-7 md:w-7" strokeWidth={2} />
-                        </div>
-                        <div>
-                          <h3 className="text-base font-bold tracking-tight text-slate-900 transition-colors group-hover:text-[#2563eb] md:text-[19px]">
+          <Suspense fallback={<SectionFallback />}>
+            <TrustedBySection />
+          </Suspense>
+        </div>
+
+        {/* Planning Tools Section */}
+        <section className="bg-white py-8 md:py-16">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+              <div className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-5 md:p-7">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Planning tools</p>
+                <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
+                  Estimate first. File with fewer surprises.
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-slate-600 md:text-base">
+                  Use calculators to prepare your numbers, then move into the filing workflow when documents and deductions are clear.
+                </p>
+                <Link href="/calculators" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+                  View all calculators <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
+
+              <div className="grid gap-3">
+                <div className="grid grid-cols-2 gap-2 md:hidden">
+                  {[
+                    { title: "Income Tax", desc: "Tax payable", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
+                    { title: "Regime", desc: "Old vs new", href: "/calculators/regime-comparator", icon: TrendingUp, tone: "bg-emerald-50 text-emerald-700" },
+                    { title: "HRA", desc: "Rent benefit", href: "/calculators/hra", icon: Shield, tone: "bg-amber-50 text-amber-700" },
+                    { title: "Form 16", desc: "Parse salary data", href: "/form16-parser", icon: FileText, tone: "bg-indigo-50 text-indigo-700" },
+                  ].map((calc) => (
+                    <Link key={calc.title} href={calc.href}>
+                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                        <CardContent className="p-4">
+                          <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg", calc.tone)}>
+                            <calc.icon className="h-4 w-4" strokeWidth={2} />
+                          </div>
+                          <h3 className="mt-3 text-sm font-bold tracking-tight text-slate-950 group-hover:text-blue-700">
                             {calc.title}
                           </h3>
-                          <p className="text-sm text-slate-500 mt-1">{calc.desc}</p>
-                        </div>
-                      </div>
-                      <div className="hidden items-center text-[15px] font-semibold text-[#2563eb] md:flex">
-                        Calculate Now
-                        <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+                          <p className="mt-1 text-xs leading-5 text-slate-600">{calc.desc}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
 
-          {/* AI Assistant Banner - Help Recovery Center Style */}
-          <div className="mx-auto mt-4 max-w-5xl md:mt-12">
-            <Link href="/tax-assistant">
-              <div className="group flex cursor-pointer flex-col gap-3 overflow-hidden rounded-lg border border-[var(--color-primary-100)] bg-white p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md sm:flex-row sm:items-center sm:justify-between md:gap-6 md:rounded-[var(--radius-3xl)] md:p-8 md:hover:-translate-y-1 md:hover:shadow-xl">
-                <div className="flex items-center gap-3 md:gap-6">
-                  <div className="rounded-lg bg-[var(--color-primary-100)] p-3 transition-transform duration-300 md:rounded-[var(--radius-2xl)] md:p-4 md:duration-500 md:group-hover:scale-110">
-                    <Bot className="h-6 w-6 text-[var(--color-primary-600)] md:h-8 md:w-8" />
-                  </div>
-                  <div>
-                    <div className="mb-1 flex items-center gap-2">
-                      <h3 className="text-base font-bold tracking-tight text-[var(--color-primary-900)] md:text-[22px]">AI Tax Assistant</h3>
-                      <span className="px-2 py-0.5 bg-[var(--color-warning-100)] text-[var(--color-warning-700)] text-xs font-bold rounded-full uppercase tracking-tighter">BETA</span>
+                <div className="hidden gap-3 md:grid md:grid-cols-3">
+                  {[
+                    { title: "Income Tax", desc: "AY 2026-27 estimate", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
+                    { title: "HRA", desc: "Rent allowance check", href: "/calculators/hra", icon: Shield, tone: "bg-emerald-50 text-emerald-700" },
+                    { title: "SIP", desc: "Investment planning", href: "/calculators/sip", icon: TrendingUp, tone: "bg-amber-50 text-amber-700" },
+                  ].map((calc) => (
+                    <Link key={calc.title} href={calc.href}>
+                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                        <CardContent className="p-5">
+                          <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg", calc.tone)}>
+                            <calc.icon className="h-5 w-5" strokeWidth={2} />
+                          </div>
+                          <h3 className="mt-4 text-base font-bold tracking-tight text-slate-950 group-hover:text-blue-700">
+                            {calc.title}
+                          </h3>
+                          <p className="mt-1 text-sm leading-5 text-slate-600">{calc.desc}</p>
+                          <div className="mt-4 inline-flex items-center text-sm font-bold text-blue-700">
+                            Calculate <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+
+                <Link href="/tax-assistant" className="hidden md:block">
+                  <div className="group grid gap-4 rounded-lg border border-blue-100 bg-blue-50 p-5 transition-colors hover:border-blue-200 md:grid-cols-[1fr_auto] md:items-center">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
+                        <Bot className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-bold tracking-tight text-slate-950">AI Tax Assistant</h3>
+                          <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">Beta</span>
+                        </div>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">Ask tax questions, prepare documents, and understand next steps before filing.</p>
+                      </div>
                     </div>
-                    <p className="text-[var(--color-primary-500)] text-sm">Tax help, Form 16 support, and document review workflows</p>
+                    <Button variant="brand" className="h-11 w-full rounded-lg px-5 transition-all md:w-auto">
+                      Try Assistant
+                      <Sparkles className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </Link>
+
+                <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 md:hidden">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Next step</p>
+                  <h3 className="mt-2 text-base font-extrabold text-slate-950">Know your number? Choose the ITR path.</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Use the form selector when your salary, deductions, and documents are ready enough to start.
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    <Link href="/itr/form-selector">
+                      <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
+                        Choose ITR form
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Link href="/itr/form-recommender" className="flex h-11 items-center justify-center rounded-lg border border-blue-100 bg-white text-sm font-bold text-blue-700">
+                      Not sure which form?
+                    </Link>
                   </div>
                 </div>
-                <Button variant="brand" className="h-11 w-full rounded-lg px-6 transition-all sm:w-auto md:h-12 md:px-8">
-                  Try AI Assistant
-                  <Sparkles className="w-4 h-4 ml-2" />
-                </Button>
               </div>
-            </Link>
-          </div>
+            </div>
           </div>
         </section>
 
-        <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
+        <section className="hidden md:block" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
           <Suspense fallback={<SectionFallback />}>
             <FeaturesSection />
           </Suspense>
         </section>
 
-        <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
+        <div className="hidden md:block">
           <Suspense fallback={<SectionFallback />}>
-            <PricingSection />
+            <OtherServicesSection />
           </Suspense>
-        </section>
 
-        <Suspense fallback={<SectionFallback />}>
-          <OtherServicesSection />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
-          <EverythingSection />
-        </Suspense>
-
-        <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
           <Suspense fallback={<SectionFallback />}>
-            <ProfessionalServicesSection />
+            <EverythingSection />
           </Suspense>
-        </section>
 
-        {/* Stats Section - Quality signals, no artificial numbers */}
-        <section className="border-y bg-white py-6 md:py-12">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 text-center md:grid-cols-4 md:gap-8">
-              {[
-                { value: "AY 2026", label: "Filing Support" },
-                { value: "₹499", label: "Simple Filing From" },
-                { value: "₹999", label: "Assisted Filing From" },
-                { value: "Add-on", label: "CA Review Available" },
-              ].map((stat, idx) => (
-                <div key={stat.label} className={cn("rounded-lg border border-slate-100 bg-white p-4 shadow-sm transition-transform duration-300 md:rounded-[24px] md:p-8 md:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] md:hover:-translate-y-1", idx > 1 && "hidden md:block")}>
-                  <div className="text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl lg:text-4xl">{stat.value}</div>
-                  <div className="mt-1 text-xs font-medium text-slate-500 md:mt-2 md:text-sm">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
+          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
+            <Suspense fallback={<SectionFallback />}>
+              <ProfessionalServicesSection />
+            </Suspense>
+          </section>
           <Suspense fallback={<SectionFallback />}>
-            <Testimonials />
+            <NoticeComplianceSection />
           </Suspense>
-        </section>
 
-        <Suspense fallback={<SectionFallback />}>
-          <TrustedBySection />
-        </Suspense>
+          <Suspense fallback={<SectionFallback />}>
+            <GSTNoticeSection />
+          </Suspense>
 
-        <Suspense fallback={<SectionFallback />}>
-          <NoticeComplianceSection />
-        </Suspense>
+          <Suspense fallback={<SectionFallback />}>
+            <FinancialGlossary />
+          </Suspense>
 
-        <Suspense fallback={<SectionFallback />}>
-          <GSTNoticeSection />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
-          <FinancialGlossary />
-        </Suspense>
-
-        <Suspense fallback={<SectionFallback />}>
-          <FeaturedResources />
-        </Suspense>
+          <Suspense fallback={<SectionFallback />}>
+            <FeaturedResources />
+          </Suspense>
+        </div>
 
         {/* Final CTA */}
         <section className="border-t border-gray-100 bg-white py-8 md:py-16">

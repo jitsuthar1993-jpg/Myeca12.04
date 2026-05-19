@@ -5,7 +5,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { HelmetProvider } from 'react-helmet-async';
-import { useAnalyticsInitialization, usePageTracking } from '@/hooks/use-analytics';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider';
 import { Suspense } from 'react';
@@ -18,6 +17,7 @@ import { LazyMotion, domAnimation } from 'framer-motion';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 import { useRouteScrollManager } from '@/hooks/use-route-scroll-manager';
+import { shouldMaskTelemetryRoute } from '@/telemetry/privacy';
 
 const Header = lazyWithRetry(() => import('@/components/layout/Header'));
 const Footer = lazyWithRetry(() => import('@/components/layout/Footer'));
@@ -74,7 +74,11 @@ function Router() {
         </Suspense>
       )}
       {showLayoutComponents && <div className="h-[60px] md:h-[74px]"></div>}
-      <main className="flex-1 bg-white">
+      <main
+        className="flex-1 bg-white"
+        data-clarity-mask={shouldMaskTelemetryRoute(currentPath) ? "true" : undefined}
+        data-telemetry-sensitive={shouldMaskTelemetryRoute(currentPath) ? "true" : undefined}
+      >
         <Routes />
       </main>
       {showLayoutComponents && !hideFooter && (
@@ -93,9 +97,6 @@ function AppContent() {
   const isAuthScreen = isAuthLayoutPath(location);
   const isTaxAssistantPage = location === '/tax-assistant';
   const loadProductionTelemetry = shouldLoadProductionTelemetry();
-
-  useAnalyticsInitialization();
-  usePageTracking();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

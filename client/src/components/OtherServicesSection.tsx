@@ -71,22 +71,24 @@ const colorVariants: Record<string, { bg: string; icon: string }> = {
 
 export default function OtherServicesSection() {
   return (
-    <section className="py-24 bg-slate-50/50">
+    <section className="border-y border-slate-200 bg-[#F8FAFC] py-8 md:py-14">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-bold text-slate-500 shadow-sm border border-slate-100 mb-6 uppercase tracking-widest">
+        <div className="mx-auto mb-6 grid max-w-7xl gap-4 md:mb-8 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
             <Zap className="w-4 h-4 text-blue-600" />
             Specialized Advisory
+            </div>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
+              Advisory services with scope-first pricing.
+            </h2>
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-            Advisory <span className="text-blue-600">Services</span>
-          </h2>
-          <p className="text-lg text-slate-500 font-medium">
+          <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
             Review-led compliance and planning services with scope confirmed before payment.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => {
             const colors = colorVariants[service.color];
             return (
@@ -97,47 +99,47 @@ export default function OtherServicesSection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="h-full bg-white border-slate-100 rounded-[2rem] shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex flex-col">
-                  <CardContent className="p-8 flex-grow flex flex-col">
-                    <div className="flex items-start justify-between mb-8">
-                      <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110", colors.bg)}>
-                        <service.icon className={cn("w-7 h-7", colors.icon)} strokeWidth={2.5} />
+                <Card className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                  <CardContent className="flex flex-grow flex-col p-5 md:p-6">
+                    <div className="mb-5 flex items-start justify-between gap-3">
+                      <div className={cn("flex h-11 w-11 items-center justify-center rounded-lg", colors.bg)}>
+                        <service.icon className={cn("h-5 w-5", colors.icon)} strokeWidth={2.5} />
                       </div>
-                      <div className="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                      <div className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-700">
                         {service.badge}
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-black text-slate-900 mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-lg font-extrabold tracking-tight text-slate-950 transition-colors group-hover:text-blue-700">
                       {service.title}
                     </h3>
-                    <p className="text-[15px] text-slate-500 leading-relaxed mb-8 font-medium">
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
                       {service.description}
                     </p>
 
-                    <div className="space-y-4 mb-8">
+                    <div className="my-5 space-y-3">
                       {service.features.map((feature) => (
-                        <div key={feature} className="flex items-center gap-3 text-sm font-bold text-slate-600">
-                          <div className="w-5 h-5 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                            <Check className="w-3 h-3 text-blue-600" strokeWidth={3} />
+                        <div key={feature} className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                          <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-50">
+                            <Check className="h-3 w-3 text-blue-600" strokeWidth={3} />
                           </div>
                           {feature}
                         </div>
                       ))}
                     </div>
 
-                    <div className="mt-auto pt-8 border-t border-slate-100">
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-2xl font-black text-slate-900">{service.price}</span>
-                        {service.label && <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">/ {service.label}</span>}
+                    <div className="mt-auto border-t border-slate-200 pt-5">
+                      <div className="mb-2 flex items-baseline gap-2">
+                        <span className="text-xl font-extrabold text-slate-950">{service.price}</span>
+                        {service.label && <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">/ {service.label}</span>}
                       </div>
-                      <div className="mb-6 flex items-start gap-2 text-xs font-semibold text-slate-500">
+                      <div className="mb-5 flex items-start gap-2 text-xs font-semibold leading-5 text-slate-500">
                         <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
                         {service.tat}
                       </div>
 
                       <Link href={service.href}>
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-12 font-black shadow-lg shadow-blue-500/20 transition-all border-none">
+                        <Button className="h-11 w-full rounded-lg border-none bg-blue-600 font-bold text-white transition-colors hover:bg-blue-700">
                           Request Scope
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>

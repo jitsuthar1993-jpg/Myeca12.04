@@ -41,6 +41,7 @@ import Logo from "@/components/ui/logo";
 import { useAuth } from "@/components/AuthProvider";
 import { useRoutePreload } from "@/hooks/use-route-preload";
 import { cn } from "@/lib/utils";
+import { getRoleHome, getRoleLabel } from "@shared/app-roles";
 
 const PROMO_DISMISSED_KEY = 'promo-bar-dismissed-v2';
 const PROMO_DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours
@@ -95,6 +96,9 @@ export default function Header() {
   } catch {
     // AuthProvider not available
   }
+  const roleHome = getRoleHome(user?.role);
+  const roleLabel = getRoleLabel(user?.role);
+  const workspaceLabel = user?.role === "user" || !user?.role ? "Dashboard" : roleLabel;
 
   const isActive = (path: string) => location === path;
   // Calculate top offset based on promo bar visibility
@@ -143,13 +147,13 @@ export default function Header() {
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 Guided filing and CA review available
               </span>
-              <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="bg-black text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-slate-800 transition-colors ml-2">
+              <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-blue-800 transition-colors ml-2">
                 FILE NOW →
               </Link>
             </div>
             <button
               onClick={dismissPromo}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-black/5 rounded transition-colors text-black/50 hover:text-black flex items-center justify-center"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-blue-900/5 rounded transition-colors text-black/50 hover:text-black flex items-center justify-center"
               aria-label="Dismiss"
             >
               <X className="w-3.5 h-3.5" />
@@ -202,26 +206,18 @@ export default function Header() {
 
                   {isAuthenticated && (
                     <NavigationMenuItem>
-                      <Link href={
-                        user?.role === 'admin' ? "/admin/dashboard" :
-                          user?.role === 'ca' ? "/ca/dashboard" :
-                            user?.role === 'team_member' ? "/admin/blog-management" :
-                              "/dashboard"
-                      }
-                        onMouseEnter={() => preloadOnHover(user?.role === 'admin' ? "/admin/dashboard" : "/dashboard")}
+                      <Link href={roleHome}
+                        onMouseEnter={() => preloadOnHover(roleHome)}
                       >
                         <div className="relative group">
-                          {(location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard') && (
+                          {(location.startsWith('/admin') || location.startsWith('/ca') || location.startsWith('/team') || location === '/dashboard') && (
                             <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                           )}
                           <span className={cn(
                             "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
-                            (location.startsWith('/admin') || location.startsWith('/ca') || location === '/dashboard') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
+                            (location.startsWith('/admin') || location.startsWith('/ca') || location.startsWith('/team') || location === '/dashboard') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                           )}>
-                            {user?.role === 'admin' ? "Admin" :
-                              user?.role === 'ca' ? "CA" :
-                                user?.role === 'team_member' ? "Staff" :
-                                  "Dashboard"}
+                            {workspaceLabel}
                           </span>
                         </div>
                       </Link>
@@ -806,6 +802,23 @@ export default function Header() {
                     </Link>
                   </NavigationMenuItem>
 
+                  <NavigationMenuItem>
+                    <Link href="/trust" onMouseEnter={() => preloadOnHover('/trust')}>
+                      <div className="relative group">
+                        {location === '/trust' && (
+                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
+                        )}
+                        <span className={cn(
+                          "relative z-10 inline-flex items-center justify-center gap-2 px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
+                          location === '/trust' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
+                        )}>
+                          <Shield className="h-4 w-4" />
+                          Trust
+                        </span>
+                      </div>
+                    </Link>
+                  </NavigationMenuItem>
+
 
 
 
@@ -826,14 +839,13 @@ export default function Header() {
                   <Search className="w-[18px] h-[18px]" />
                 </Button>
 
-                <Button
-                  type="button"
-                  onClick={openTaxAssistant}
-                  className="hidden lg:inline-flex h-10 items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 text-sm font-semibold text-blue-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200"
-                >
-                  <Bot className="h-4 w-4" />
-                  <span>Tax Assistant</span>
-                </Button>
+                <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="hidden lg:block">
+                  <Button className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-normal text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)]">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Start ITR
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
 
                 {!isLoading && isAuthenticated && (
                   <div className="flex items-center gap-2">
@@ -876,11 +888,7 @@ export default function Header() {
                         </div>
 
                         <DropdownMenuItem className="p-3 rounded-xl cursor-pointer group" asChild>
-                          <Link href={
-                            user?.role === 'admin' ? "/admin/dashboard" :
-                              user?.role === 'team_member' ? "/admin/blog-management" :
-                                "/dashboard"
-                          } className="flex items-center gap-3 w-full">
+                          <Link href={roleHome} className="flex items-center gap-3 w-full">
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
                               <LayoutDashboard className="w-4 h-4" />
                             </div>
@@ -918,9 +926,9 @@ export default function Header() {
                 {!isLoading && !isAuthenticated && (
                   <div className="hidden lg:flex items-center gap-3">
                     <Link href="/auth/login">
-                      <Button className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-normal text-sm rounded-xl px-7 h-11 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5">
+                      <Button variant="outline" className="h-10 rounded-xl border-slate-200 bg-white px-4 text-sm font-normal text-slate-700 transition-all duration-300 hover:border-blue-100 hover:bg-blue-50 hover:text-blue-700">
                         <User className="w-[18px] h-[18px]" />
-                        <span>Log in / Join</span>
+                        <span>Log in</span>
                       </Button>
                     </Link>
                   </div>
@@ -965,25 +973,46 @@ export default function Header() {
                     <div className="flex-1 overflow-y-auto">
                       <div className="grid gap-2 p-4">
                         {isAuthenticated && (
-                          <Link href={
-                            user?.role === 'admin' ? "/admin/users" :
-                              user?.role === 'ca' ? "/ca/dashboard" :
-                                user?.role === 'team_member' ? "/admin/blog-management" :
-                                  "/dashboard"
-                          } className="flex min-h-11 items-center rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700 transition-colors hover:bg-blue-100">
-                            {user?.role === 'admin' ? "Admin" :
-                              user?.role === 'ca' ? "CA Dashboard" :
-                                user?.role === 'team_member' ? "Staff Panel" :
-                                  "Dashboard"}
+                          <Link href={roleHome} className="flex min-h-11 items-center rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700 transition-colors hover:bg-blue-100">
+                            {workspaceLabel}
                           </Link>
                         )}
 
+                        <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
+                          <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Start here</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { href: "/itr/form-selector", label: "File ITR", icon: FileText },
+                              { href: "/calculators/income-tax", label: "Income Tax", icon: Calculator },
+                              { href: "/calculators/regime-comparator", label: "Regime", icon: Scale },
+                              { href: "/calculators/hra", label: "HRA", icon: Home },
+                            ].map((item) => {
+                              const Icon = item.icon;
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onTouchStart={() => preloadOnHover(item.href)}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={cn(
+                                    "flex min-h-11 items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 text-sm font-bold text-slate-800 shadow-sm",
+                                    location === item.href && "border-blue-200 bg-blue-100 text-blue-700"
+                                  )}
+                                >
+                                  <Icon className="h-4 w-4 shrink-0 text-blue-700" />
+                                  {item.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-2">
                           {[
+                            { href: "/form16-parser", label: "Parse Form 16", icon: FileCheck },
+                            { href: "/contact", label: "Support", icon: HelpCircle },
+                            { href: "/calculators", label: "All Tools", icon: Grid },
                             { href: "/", label: "Home", icon: Home },
-                            { href: "/services", label: "Services", icon: Briefcase },
-                            { href: "/calculators", label: "Calculators", icon: Calculator },
-                            { href: "/blog", label: "Blog", icon: Newspaper },
                           ].map((item) => {
                             const Icon = item.icon;
                             return (
@@ -1010,16 +1039,17 @@ export default function Header() {
                               "min-h-11 px-3 py-2 text-sm text-slate-700 transition-all hover:bg-slate-50 hover:text-blue-600 hover:no-underline",
                               location.startsWith('/services') ? "font-bold" : "font-normal"
                             )}>
-                              Services
+                              More services
                             </AccordionTrigger>
                             <AccordionContent className="px-3 pb-3">
                               <div className="grid gap-1">
                                 {[
+                                  ["/services/itr-for-salaried", "Salaried ITR service"],
                                   ["/services/tds-filing", "TDS Filing"],
                                   ["/services/gst-registration", "GST Registration"],
-                                  ["/services/company-registration", "Company Registration"],
-                                  ["/services/trademark-registration", "Trademark"],
                                   ["/services/document-vault", "Document Vault"],
+                                  ["/services/notice-compliance", "Notice Help"],
+                                  ["/services/company-registration", "Company Setup"],
                                 ].map(([href, label]) => (
                                   <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
                                     {label}
@@ -1034,13 +1064,14 @@ export default function Header() {
                               "min-h-11 px-3 py-2 text-sm text-slate-700 transition-all hover:bg-slate-50 hover:text-purple-600 hover:no-underline",
                               location.startsWith('/startup') ? "font-bold" : "font-normal"
                             )}>
-                              Startup Services
+                              Startup and business
                             </AccordionTrigger>
                             <AccordionContent className="px-3 pb-3">
                               <div className="grid gap-1">
-                                <Link href="/startup-services" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50">Overview</Link>
-                                <Link href="/startup/registration" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Registration</Link>
-                                <Link href="/startup/funding" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Funding & Grants</Link>
+                                <Link href="/startup-services" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50">Startup overview</Link>
+                                <Link href="/startup/registration" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Entity registration</Link>
+                                <Link href="/services/company-registration" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Company setup</Link>
+                                <Link href="/services/marketplace" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Services marketplace</Link>
                               </div>
                             </AccordionContent>
                           </AccordionItem>
@@ -1056,10 +1087,11 @@ export default function Header() {
                               <div className="grid gap-1">
                                 {[
                                   ["/calculators/income-tax", "Income Tax"],
+                                  ["/calculators/regime-comparator", "Regime Compare"],
+                                  ["/calculators/hra", "HRA Calculator"],
                                   ["/calculators/gst", "GST Calculator"],
                                   ["/calculators/salary", "Salary Calculator"],
-                                  ["/calculators/sip", "SIP Calculator"],
-                                  ["/calculators/emi", "EMI Calculator"],
+                                  ["/calculators/tds", "TDS Calculator"],
                                   ["/calculators", "All Calculators"],
                                 ].map(([href, label]) => (
                                   <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
@@ -1082,6 +1114,16 @@ export default function Header() {
                         </Link>
 
                         <Link
+                          href="/trust"
+                          onTouchStart={() => preloadOnHover("/trust")}
+                          className={cn(
+                            "flex min-h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors hover:bg-slate-50 hover:text-blue-600",
+                            location === '/trust' ? "font-bold text-blue-700" : "font-normal"
+                          )}>
+                          Trust & Security
+                        </Link>
+
+                        <Link
                           href="/contact"
                           onTouchStart={() => preloadOnHover("/contact")}
                           className={cn(
@@ -1094,38 +1136,59 @@ export default function Header() {
                     </div>
 
                     <div className="mt-auto border-t bg-slate-50/50 p-4">
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          openTaxAssistant();
-                          setMobileMenuOpen(false);
-                        }}
-                        className="mb-3 h-11 w-full justify-center gap-2 rounded-lg border border-blue-100 bg-blue-50 text-blue-700 shadow-sm hover:bg-blue-600 hover:text-white"
-                      >
-                        <Bot className="h-4 w-4" />
-                        Tax Assistant
-                      </Button>
+                      <Link href="/itr/form-selector" onTouchStart={() => preloadOnHover("/itr/form-selector")} onClick={() => setMobileMenuOpen(false)}>
+                        <Button className="mb-3 h-11 w-full justify-center gap-2 rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-200 hover:bg-blue-700">
+                          <FileText className="h-4 w-4" />
+                          Start ITR filing
+                        </Button>
+                      </Link>
                       {!isLoading && !isAuthenticated && (
-                        <div className="grid gap-3">
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              openTaxAssistant();
+                              setMobileMenuOpen(false);
+                            }}
+                            variant="outline"
+                            className="h-11 w-full justify-center gap-2 rounded-lg border-blue-100 bg-white text-blue-700 hover:bg-blue-50"
+                          >
+                            <Bot className="h-4 w-4" />
+                            Tax Assistant
+                          </Button>
                           <Link href="/auth/login" onTouchStart={() => preloadOnHover("/auth/login")} onClick={() => setMobileMenuOpen(false)}>
-                            <Button className="h-11 w-full justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-200 hover:bg-blue-700">
+                            <Button variant="outline" className="h-11 w-full justify-center rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
                               Join / Sign in
                             </Button>
                           </Link>
                         </div>
                       )}
                       {!isLoading && isAuthenticated && (
-                        <Button
-                          onClick={() => {
-                            logout();
-                            setMobileMenuOpen(false);
-                          }}
-                          variant="outline"
-                          className="h-11 w-full justify-center rounded-lg border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700"
-                        >
-                          <LogOut className="w-4 h-4 mr-2" />
-                          Log Out
-                        </Button>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              openTaxAssistant();
+                              setMobileMenuOpen(false);
+                            }}
+                            variant="outline"
+                            className="h-11 w-full justify-center gap-2 rounded-lg border-blue-100 bg-white text-blue-700 hover:bg-blue-50"
+                          >
+                            <Bot className="h-4 w-4" />
+                            Tax Assistant
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              logout();
+                              setMobileMenuOpen(false);
+                            }}
+                            variant="outline"
+                            className="h-11 w-full justify-center rounded-lg border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700"
+                          >
+                            <LogOut className="w-4 h-4 mr-2" />
+                            Log Out
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </SheetContent>

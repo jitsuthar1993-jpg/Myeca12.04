@@ -43,7 +43,7 @@ export default function LearnPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+    <div className="min-h-screen bg-gray-50 dark:bg-blue-700 font-sans">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white overflow-hidden">
         {/* Abstract Background Shapes */}
@@ -243,13 +243,13 @@ export default function LearnPage() {
             {featuredVideos.map((video) => (
               <Card key={video.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
                 <div className="relative aspect-video overflow-hidden">
-                  <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/10 transition-colors z-10" />
+                  <div className="absolute inset-0 bg-blue-700/20 group-hover:bg-blue-700/10 transition-colors z-10" />
                   <div className="bg-gradient-to-br from-slate-700 to-slate-900 w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                     <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
                       <BookOpen className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <Badge className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md border-none z-20">{video.duration}</Badge>
+                  <Badge className="absolute bottom-3 right-3 bg-blue-900/70 backdrop-blur-md border-none z-20">{video.duration}</Badge>
                 </div>
                 <CardContent className="p-5">
                   <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">

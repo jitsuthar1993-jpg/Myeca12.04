@@ -52,6 +52,7 @@ const searchableContent = [
   { id: 17, title: "About MyeCA", type: "page", url: "/about", description: "Learn about our mission and team", keywords: ["about", "company", "team", "mission"] },
   { id: 18, title: "Contact Us", type: "page", url: "/expert-consultation", description: "Get in touch with our support team", keywords: ["contact", "support", "help", "email"] },
   { id: 19, title: "Blog", type: "page", url: "/blog", description: "Latest tax news and updates", keywords: ["blog", "news", "updates", "articles"] },
+  { id: 29, title: "Trust & Security", type: "page", url: "/trust", description: "Review document handling, privacy, and security expectations", keywords: ["trust", "security", "privacy", "documents"] },
 ];
 
 interface GlobalSearchProps {
@@ -212,7 +213,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-20 px-4"
+        className="fixed inset-0 bg-blue-900/50 z-50 flex items-start justify-center pt-20 px-4"
         onClick={onClose}
       >
         <m.div

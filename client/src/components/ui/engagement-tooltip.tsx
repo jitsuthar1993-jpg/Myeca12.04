@@ -85,7 +85,7 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 z-50 backdrop-blur-sm"
+            className="fixed inset-0 bg-blue-900/20 z-50 backdrop-blur-sm"
             onClick={handleSkip}
           />
           

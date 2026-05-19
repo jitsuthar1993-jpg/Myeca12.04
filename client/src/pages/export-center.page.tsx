@@ -432,7 +432,7 @@ export default function ExportCenterPage() {
                    </div>
                 </Card>
 
-                <div className="bg-slate-900 p-10 rounded-[48px] text-white relative overflow-hidden">
+                <div className="bg-blue-700 p-10 rounded-[48px] text-white relative overflow-hidden">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-3xl rounded-full" />
                    <div className="flex items-center gap-3 mb-6">
                       <AlertCircle className="h-5 w-5 text-indigo-400" />

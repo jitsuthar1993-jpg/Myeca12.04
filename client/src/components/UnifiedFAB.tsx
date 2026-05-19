@@ -3,7 +3,8 @@ import {
   MessageCircle, 
   X, 
   HelpCircle,
-  Mail
+  Mail,
+  ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeedbackDialog } from "@/components/feedback/FeedbackDialog";
@@ -37,7 +38,7 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
       {/* Backdrop when expanded */}
       <div 
         className={cn(
-          "fixed inset-0 z-40 hidden bg-black/20 transition-opacity duration-200 md:block",
+          "fixed inset-0 z-40 hidden bg-blue-900/20 transition-opacity duration-200 md:block",
           isExpanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setIsExpanded(false)}
@@ -71,14 +72,12 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
             </div>
           </button>
 
-          {/* Support Email Button */}
+          {/* Support Request Button */}
           <a
-            href="mailto:support@myeca.in?subject=ITR Filing Enquiry"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/contact"
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl",
-              "bg-emerald-500 text-white",
+              "bg-blue-600 text-white",
               "shadow-lg hover:shadow-xl hover:scale-105",
               "transition-all duration-200"
             )}
@@ -87,8 +86,26 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
               <Mail className="w-4 h-4" />
             </div>
             <div className="text-left">
-              <span className="font-medium text-sm">Email Support</span>
-              <span className="text-emerald-100 text-xs block">Mon-Sat response</span>
+              <span className="font-medium text-sm">Support request</span>
+              <span className="text-blue-100 text-xs block">Scoped callback</span>
+            </div>
+          </a>
+
+          <a
+            href="/trust"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl",
+              "bg-white text-gray-700 border border-gray-200",
+              "shadow-lg hover:shadow-xl hover:scale-105 hover:border-blue-100",
+              "transition-all duration-200"
+            )}
+          >
+            <div className="p-1.5 bg-blue-50 rounded-lg">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+            </div>
+            <div className="text-left">
+              <span className="font-medium text-sm">Trust & security</span>
+              <span className="text-gray-500 text-xs block">Document handling</span>
             </div>
           </a>
         </div>
@@ -100,8 +117,8 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
           className={cn(
             "h-14 w-14 rounded-full shadow-lg hover:shadow-xl",
             "transition-all duration-300",
-            isExpanded 
-              ? "bg-gray-800 hover:bg-gray-900 rotate-0" 
+            isExpanded
+              ? "bg-blue-700 hover:bg-blue-800 rotate-0"
               : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           )}
         >
@@ -113,10 +130,6 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
           <span className="sr-only">{isExpanded ? 'Close menu' : 'Open help menu'}</span>
         </Button>
 
-        {/* Online indicator dot */}
-        {!isExpanded && (
-          <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-        )}
       </div>
 
       {/* Feedback Dialog */}
