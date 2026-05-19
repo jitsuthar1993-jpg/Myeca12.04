@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SmartTaxCalculatorAndroid"
+rootProject.name = "MyeCAAndroid"
 include(":app")

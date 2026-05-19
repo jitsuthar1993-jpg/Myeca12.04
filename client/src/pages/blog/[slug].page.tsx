@@ -12,7 +12,6 @@ import {
   ExternalLink,
   Loader2,
   MessageSquare,
-  Printer,
   Sparkles,
   ShieldCheck,
   Calculator,
@@ -83,6 +82,8 @@ function formatDate(value: string | null | undefined) {
 function getReadTime(post: BlogDetail | BlogSummary) {
   return post.readingTimeMinutes ? `${post.readingTimeMinutes} min read` : post.readTime ?? "5 min read";
 }
+
+const ARTICLE_REVIEWER_NAME = "Team MyeCA.in";
 
 function getAudienceLabel(value: string | null | undefined) {
   if (value === "individuals") return "For taxpayers";
@@ -381,10 +382,10 @@ export default function BlogPostPage() {
             name: authorName,
             jobTitle: getAuthorRole(post),
           },
-          reviewedBy: post.reviewedBy
+          reviewedBy: post.reviewedBy || post.reviewedAt
             ? {
-                "@type": "Person",
-                name: post.reviewedBy,
+                "@type": "Organization",
+                name: ARTICLE_REVIEWER_NAME,
               }
             : undefined,
           about: [getCategoryName(post), ...tags].filter(Boolean),
@@ -647,30 +648,22 @@ export default function BlogPostPage() {
           <div className="sticky top-24 space-y-5">
             {/* Article Info */}
             <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-5">
-              <div className="mb-3 flex items-center gap-2">
-                <UserRound className="h-4 w-4 text-blue-600" />
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Article info</p>
+              <div className="mb-3 flex h-5 items-center gap-2">
+                <UserRound className="h-4 w-4 shrink-0 text-blue-600" />
+                <p className="m-0 text-xs font-semibold uppercase leading-none tracking-[0.18em] text-blue-600">Article info</p>
               </div>
               <div className="space-y-2.5 text-sm text-slate-600">
                 <p><span className="font-semibold text-slate-900">Author:</span> {authorName}</p>
                 <p><span className="font-semibold text-slate-900">Updated:</span> {formatDate(getPublishedDate(post))}</p>
                 <p><span className="font-semibold text-slate-900">Read time:</span> {getReadTime(post)}</p>
-                {post.reviewedBy && (
-                  <p className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /><span className="font-semibold text-slate-900">Reviewed by</span> {post.reviewedBy}</p>
+                {(post.reviewedBy || post.reviewedAt) && (
+                  <p className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /><span className="font-semibold text-slate-900">Reviewed by -</span> {ARTICLE_REVIEWER_NAME}</p>
                 )}
               </div>
               <div className="mt-5 border-t border-blue-100 pt-4">
                 <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-600">Share article</p>
                 <div className="flex items-center gap-3">
-                  <ShareButtons title={post.title} description={post.excerpt ?? post.title} />
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-                    aria-label="Print article"
-                  >
-                    <Printer className="h-5 w-5" />
-                  </button>
+                  <ShareButtons title={post.title} description={post.excerpt ?? post.title} showCopy={false} />
                 </div>
               </div>
             </div>

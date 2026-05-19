@@ -5,14 +5,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardOptions
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myeca.smarttax.ui.components.*
+import com.myeca.smarttax.ui.theme.SmartTaxTheme
 import com.myeca.smarttax.viewmodel.TdsViewModel
-import com.myeca.smarttax.viewmodel.TdsUiState
 
 /**
  * Optimized TDS Calculator Screen with proper mobile optimization:
@@ -28,7 +32,6 @@ fun OptimizedTdsScreen(
     viewModel: TdsViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    var expanded by remember { mutableStateOf(false) }
     val incomeTypes = listOf(
         "salary" to "Salary",
         "interest" to "Interest",
@@ -109,7 +112,7 @@ fun OptimizedTdsScreen(
         OptimizedButton(
             onClick = { viewModel.calculate() },
             text = "Calculate TDS",
-            loading = state.isLoading,
+            loading = false,
             contentDescription = "Calculate Tax Deducted at Source"
         )
         
@@ -142,7 +145,7 @@ fun OptimizedTdsScreen(
                         description = "Minimum amount for TDS deduction"
                     )
                     
-                    Divider()
+                    HorizontalDivider()
                     
                     ResultRow(
                         label = "TDS Amount",

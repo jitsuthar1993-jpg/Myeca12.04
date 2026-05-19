@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "set NODE_ENV=development&& npx tsx server/index.ts",
     "build": "tsx scripts/build-production.ts",
+    "build:android": "set VITE_API_BASE_URL=https://myeca.in&& npm run build",
     "start": "set NODE_ENV=production&& tsx server/index.ts",
     "check": "tsc",
     "test:unit": "vitest run",
@@ -34,11 +35,15 @@
     "upload:pdf-assets": "tsx scripts/upload-income-tax-form-pdfs.ts",
     "check:size": "tsx scripts/check-size-budget.ts",
     "analyze": "set NODE_ENV=production&& set ANALYZE_BUNDLE=1&& vite build",
+    "android:sync": "npm run build:android && cap sync android",
+    "android:open": "cap open android",
     "vercel:build": "vercel build",
     "generate:sitemap": "tsx server/scripts/generate-sitemap.ts"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.848.0",
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@posthog/react": "^1.9.0",
@@ -148,6 +153,7 @@
   },
   "devDependencies": {
     "@axe-core/react": "^4.11.1",
+    "@capacitor/cli": "^8.3.4",
     "@playwright/test": "^1.58.2",
     "@sentry/vite-plugin": "^5.3.0",
     "@tailwindcss/typography": "^0.5.15",

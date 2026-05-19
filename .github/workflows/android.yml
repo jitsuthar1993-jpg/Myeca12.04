@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,8 +32,57 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build and run tests
-        working-directory: mye-ca-android
-        run: |
-          chmod +x ./gradlew || true
-          ./gradlew clean build test --stacktrace
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Lint debug build
+        run: ./gradlew :app:lintDebug --stacktrace
+
+      - name: Run unit tests
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
+
+      - name: Assemble debug APK
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Assemble instrumentation test APK
+        run: ./gradlew :app:assembleDebugAndroidTest --stacktrace
+
+      - name: Assemble unsigned release APK
+        run: ./gradlew :app:assembleRelease --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload unsigned release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-release-unsigned-apk
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Upload instrumentation test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-debug-android-test-apk
+          path: android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-android-lint-report
+          path: |
+            android/app/build/reports/lint-results-debug.html
+            android/app/build/reports/lint-results-debug.xml
+            android/app/build/reports/lint-results-debug.txt
+
+      - name: Upload unit test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-android-unit-test-reports
+          path: |
+            android/app/build/reports/tests/testDebugUnitTest/
+            android/app/build/test-results/testDebugUnitTest/

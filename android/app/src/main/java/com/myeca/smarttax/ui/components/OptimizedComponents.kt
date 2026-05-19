@@ -3,16 +3,19 @@ package com.myeca.smarttax.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.*
-import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 
 /**
@@ -37,7 +40,7 @@ fun OptimizedTouchTarget(
             .clip(RoundedCornerShape(8.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = true),
+                indication = null,
                 enabled = enabled,
                 onClick = onClick
             )
@@ -90,10 +93,6 @@ fun OptimizedTextField(
                 .heightIn(min = 56.dp) // Ensure proper touch target
                 .semantics {
                     this.contentDescription = contentDescription
-                    this.hintText = AnnotatedString(label)
-                    if (isError && errorMessage != null) {
-                        this.errorText = AnnotatedString(errorMessage)
-                    }
                 },
             singleLine = true,
             maxLines = 1
@@ -128,7 +127,7 @@ fun OptimizedSwitch(
             .clip(RoundedCornerShape(8.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = true),
+                indication = null,
                 onClick = { onCheckedChange(!checked) }
             )
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -253,7 +252,7 @@ fun OptimizedDropdownMenu(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) 
             },
             modifier = Modifier
-                .menuAnchor()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
                 .fillMaxWidth()
                 .heightIn(min = 56.dp) // Ensure proper touch target
                 .semantics {
@@ -327,8 +326,13 @@ fun OptimizedNumberInput(
     OptimizedTextField(
         value = value,
         onValueChange = { newValue ->
-            // Only allow numbers and decimal points
-            if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+            val decimals = decimalPlaces.coerceAtLeast(0)
+            val pattern = if (decimals == 0) {
+                Regex("^\\d*$")
+            } else {
+                Regex("^\\d*(\\.\\d{0,$decimals})?$")
+            }
+            if (newValue.isEmpty() || newValue.matches(pattern)) {
                 onValueChange(newValue)
             }
         },
@@ -340,7 +344,7 @@ fun OptimizedNumberInput(
         contentDescription = contentDescription,
         isError = isError,
         errorMessage = errorMessage,
-        supportingText = "Enter amount in rupees"
+        supportingText = "Enter amount in $prefix"
     )
 }
 
@@ -355,7 +359,6 @@ fun ResponsiveLayout(
     BoxWithConstraints(modifier = modifier) {
         val isSmallScreen = maxWidth < 600.dp
         val isMediumScreen = maxWidth in 600.dp..900.dp
-        val isLargeScreen = maxWidth > 900.dp
         
         val horizontalPadding = when {
             isSmallScreen -> 16.dp

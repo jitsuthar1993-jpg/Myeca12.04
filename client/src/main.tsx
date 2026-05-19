@@ -7,11 +7,13 @@ import { recoverFromStaleChunk } from "./utils/chunk-recovery";
 import { lazyWithRetry } from "./utils/lazy-with-retry";
 import { shouldLoadProductionTelemetry } from "./utils/runtime-env";
 import { initClientSentry } from "./telemetry/sentry.client";
+import { installApiBaseUrlFetch, resolveApiUrl } from "./lib/api-base-url";
 import "./utils/safe-dom";
 import "./index.css";
 
 const loadProductionTelemetry = shouldLoadProductionTelemetry();
 
+installApiBaseUrlFetch();
 initClientSentry();
 
 const VercelAnalytics = loadProductionTelemetry
@@ -33,7 +35,7 @@ setupInstallPrompt();
 window.addEventListener('error', (e) => {
   void recoverFromStaleChunk(e.error || e.message);
   try {
-    navigator.sendBeacon?.('/api/errors/log', JSON.stringify({
+    navigator.sendBeacon?.(String(resolveApiUrl('/api/errors/log')), JSON.stringify({
       kind: 'window_error',
       msg: String(e.message || ''),
       src: String(e.filename || ''),
@@ -46,7 +48,7 @@ window.addEventListener('error', (e) => {
 window.addEventListener('unhandledrejection', (e) => {
   void recoverFromStaleChunk(e.reason);
   try {
-    navigator.sendBeacon?.('/api/errors/log', JSON.stringify({
+    navigator.sendBeacon?.(String(resolveApiUrl('/api/errors/log')), JSON.stringify({
       kind: 'unhandled_rejection',
       reason: String(e.reason || ''),
       ts: Date.now(),

@@ -8,7 +8,7 @@ import com.myeca.smarttax.data.local.entity.TdsCalculationEntity
 @Database(
     entities = [TdsCalculationEntity::class],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 abstract class SmartTaxDatabase : RoomDatabase() {
     abstract fun tdsDao(): TdsDao

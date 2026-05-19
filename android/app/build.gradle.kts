@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.myeca.smarttax"
+        applicationId = "in.myeca.app"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -17,6 +17,13 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
+        buildConfigField("String", "MYECA_API_BASE_URL", "\"https://myeca.in/\"")
+        buildConfigField("String", "SUPABASE_URL", "\"https://vedumlohmacaghuebduy.supabase.co/\"")
+        buildConfigField(
+            "String",
+            "SUPABASE_ANON_KEY",
+            "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2ZWR1bWxvaG1hY2FnaHVlYmR1eSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc4NDEyNTY5LCJleHAiOjIwOTM5ODU2OX0.4bwcKGKY4xA4faPL9-PXzEy63qFZo7pj3elxYkVMd40\""
+        )
     }
 
     buildTypes {
@@ -35,6 +42,15 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     composeOptions {
@@ -59,8 +75,10 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.3.0")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.security:security-crypto:1.0.0")
 
     // Retrofit + OkHttp + Moshi
     implementation("com.squareup.retrofit2:retrofit:2.11.0")

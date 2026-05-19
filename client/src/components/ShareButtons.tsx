@@ -14,13 +14,15 @@ interface ShareButtonsProps {
   title?: string;
   description?: string;
   className?: string;
+  showCopy?: boolean;
 }
 
 export default function ShareButtons({ 
   url = typeof window !== 'undefined' ? window.location.href : '',
   title = "MyeCA.in - Expert Tax Filing & Compliance Services",
   description = "Save taxes with India's most trusted tax filing platform. Get expert CA assistance.",
-  className = ""
+  className = "",
+  showCopy = true,
 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
@@ -96,13 +98,15 @@ export default function ShareButtons({
         >
           <Linkedin className="w-4 h-4" />
         </a>
-        <button
-          onClick={handleCopyLink}
-          className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-300 hover:scale-110"
-          aria-label="Copy link"
-        >
-          {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
-        </button>
+        {showCopy && (
+          <button
+            onClick={handleCopyLink}
+            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-300 hover:scale-110"
+            aria-label="Copy link"
+          >
+            {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+          </button>
+        )}
       </div>
 
       {/* Mobile Share Button */}
@@ -170,19 +174,21 @@ export default function ShareButtons({
                   WhatsApp
                 </a>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleCopyLink} className="flex items-center gap-2">
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4 text-green-600" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    Copy Link
-                  </>
-                )}
-              </DropdownMenuItem>
+              {showCopy && (
+                <DropdownMenuItem onClick={handleCopyLink} className="flex items-center gap-2">
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 text-green-600" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy Link
+                    </>
+                  )}
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
