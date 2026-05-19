@@ -18,6 +18,7 @@ import { Plus, Edit, Trash2, ShieldAlert, Zap, Clock, Search, BookOpen, X, Loade
 import { useToast } from "@/hooks/use-toast";
 import { m, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { normalizeAppRole } from "@shared/app-roles";
 
 const updateFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(200),
@@ -30,6 +31,8 @@ type UpdateFormData = z.infer<typeof updateFormSchema>;
 
 export default function UpdatesManagementPage() {
   const { user } = useAuth();
+  const role = normalizeAppRole(user?.role);
+  const canManageUpdates = role === "admin" || role === "team_member";
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -134,7 +137,7 @@ export default function UpdatesManagementPage() {
     }
   };
 
-  if (user?.role !== 'admin' && user?.role !== 'team_member') {
+  if (!canManageUpdates) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">

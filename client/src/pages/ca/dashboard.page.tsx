@@ -19,19 +19,22 @@ import { useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 import { Layout } from "@/components/admin/Layout";
+import { normalizeAppRole } from "@shared/app-roles";
 
 export default function CADashboard() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  const role = normalizeAppRole(user?.role);
+  const canUseCaWorkspace = isAuthenticated && (role === "ca" || role === "admin");
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: statsData, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/ca/stats"],
-    enabled: isAuthenticated && (user?.role === 'ca' || user?.role === 'admin'),
+    enabled: canUseCaWorkspace,
   });
 
   const { data: clientsData, isLoading: clientsLoading } = useQuery({
     queryKey: ["/api/ca/clients"],
-    enabled: isAuthenticated && (user?.role === 'ca' || user?.role === 'admin'),
+    enabled: canUseCaWorkspace,
   });
 
   const stats = (statsData as any)?.data || {

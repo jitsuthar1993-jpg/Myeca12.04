@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { normalizeAppRole } from "@shared/app-roles";
 
 const categoryFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -23,6 +24,8 @@ type CategoryFormData = z.infer<typeof categoryFormSchema>;
 
 export default function CategoriesManagementPage() {
   const { user } = useAuth();
+  const role = normalizeAppRole(user?.role);
+  const canManageCategories = role === "admin" || role === "team_member";
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -93,7 +96,7 @@ export default function CategoriesManagementPage() {
     }
   };
 
-  if (user?.role !== 'admin' && user?.role !== 'team_member') {
+  if (!canManageCategories) {
     return (
       <Layout>
         <div className="text-center py-12">

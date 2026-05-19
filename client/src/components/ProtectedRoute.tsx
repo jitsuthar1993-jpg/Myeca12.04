@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { useLocation } from 'wouter';
 import { Loader2 } from 'lucide-react';
-import { getRoleHome, type AppRole } from '@shared/app-roles';
+import { getRoleHome, normalizeAppRole, type AppRole } from '@shared/app-roles';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -17,6 +17,7 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const { user, isLoading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
+  const role = normalizeAppRole(user?.role);
 
   if (isLoading) {
     return (
@@ -34,8 +35,8 @@ export const ProtectedRoute = ({
     return null;
   }
 
-  if (requiredRole && user?.role !== requiredRole) {
-    setLocation(getRoleHome(user?.role));
+  if (requiredRole && role !== requiredRole) {
+    setLocation(getRoleHome(role));
     return null;
   }
 
