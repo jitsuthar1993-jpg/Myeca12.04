@@ -14,7 +14,7 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 lg:flex">
+    <div className="min-h-screen bg-slate-50 lg:flex">
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       
       {/* Main content area */}
@@ -33,4 +33,3 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
     </div>
   );
 }
-
