@@ -1,6 +1,7 @@
 import { adminDb } from "../server/data-admin.js";
 import { getPublicSupabaseAuthClient, getSupabaseAuthClient } from "../server/lib/supabase.js";
 import { displayNameParts } from "../server/services/user-accounts.js";
+import { normalizeAppRole } from "../shared/app-roles.js";
 import { getTemporaryTestUserByToken, type TemporaryTestRole } from "../shared/temporary-test-users.js";
 
 type ApiUser = {
@@ -32,8 +33,8 @@ function readBearerToken(req: any) {
   return authorization.match(/^Bearer\s+(.+)$/i)?.[1] ?? null;
 }
 
-function roleFromSupabaseUser(user: any) {
-  return user?.app_metadata?.role || user?.user_metadata?.role || "user";
+export function roleFromSupabaseUser(user: any) {
+  return normalizeAppRole(user?.app_metadata?.role || user?.user_metadata?.role);
 }
 
 async function findOrCreateApiUser(authUser: any) {

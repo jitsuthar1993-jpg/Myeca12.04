@@ -46,6 +46,7 @@ export default function AdminDashboard() {
   });
 
   const pendingCAs = users.filter((u: User) => u.role === 'ca' && u.status === 'pending');
+  const workList = stats.workList || [];
 
   return (
     <Layout>
@@ -120,20 +121,20 @@ export default function AdminDashboard() {
 
         {/* Action Bar & Main Feed */}
         <div className="space-y-6">
-           <div className="flex items-center justify-between">
+           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
                  <div className="h-6 w-1 bg-blue-600 rounded-full" />
                  <h2 className="text-sm font-bold uppercase tracking-widest text-slate-900">Operational Log</h2>
               </div>
-              <div className="flex items-center gap-2">
-                 <div className="relative group">
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                 <div className="relative group w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
                     <Input 
                       placeholder="Search activity..." 
-                      className="h-9 w-60 rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium"
+                      className="h-9 w-full rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium sm:w-60"
                     />
                  </div>
-                 <Button variant="outline" size="sm" className="h-9 rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50">
+                 <Button variant="outline" size="sm" className="h-9 w-full rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50 sm:w-9">
                     <Filter className="h-4 w-4" />
                  </Button>
               </div>
@@ -141,7 +142,7 @@ export default function AdminDashboard() {
 
            <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
              <CardContent className="p-0">
-               <div className="overflow-x-auto">
+               <div className="hidden overflow-x-auto md:block">
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="border-b border-slate-50">
@@ -153,7 +154,7 @@ export default function AdminDashboard() {
                      </tr>
                    </thead>
                    <tbody className="divide-y divide-slate-50">
-                     {(stats.workList || []).slice(0, 5).map((work: any) => (
+                     {workList.slice(0, 5).map((work: any) => (
                        <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors">
                          <td className="px-6 py-4">
                            <div className="flex items-center gap-4">
@@ -192,7 +193,7 @@ export default function AdminDashboard() {
                          </td>
                        </tr>
                      ))}
-                     {(!stats.workList || stats.workList.length === 0) && (
+                     {workList.length === 0 && (
                        <tr>
                          <td colSpan={5} className="py-24 text-center">
                            <div className="flex flex-col items-center gap-3 opacity-20">
@@ -205,9 +206,47 @@ export default function AdminDashboard() {
                    </tbody>
                  </table>
                </div>
+
+               <div className="divide-y divide-slate-100 md:hidden">
+                 {workList.slice(0, 5).map((work: any) => (
+                   <div key={work.id} className="space-y-3 p-4">
+                     <div className="flex items-start gap-3">
+                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                         <Briefcase className="h-4 w-4" />
+                       </div>
+                       <div className="min-w-0 flex-1">
+                         <p className="text-sm font-bold leading-tight text-slate-900">{work.title}</p>
+                         <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em] text-blue-500">{work.type.replace('_', ' ')}</p>
+                       </div>
+                     </div>
+                     <div className="flex items-center justify-between gap-3">
+                       <div className="min-w-0">
+                         <p className="truncate text-xs font-bold text-slate-900">{work.userName}</p>
+                         <p className="text-[10px] font-medium uppercase text-slate-400">#TRX-{work.id.toString().padStart(6, '0')}</p>
+                       </div>
+                       <Badge className={cn(
+                         "shrink-0 rounded-full border-none px-3 py-1 text-[9px] font-bold",
+                         work.status === 'pending' ? "bg-amber-50 text-amber-600" :
+                         work.status === 'in_progress' ? "bg-blue-50 text-blue-600" :
+                         "bg-emerald-50 text-emerald-600"
+                       )}>
+                         {work.status.replace('_', ' ').toUpperCase()}
+                       </Badge>
+                     </div>
+                   </div>
+                 ))}
+                 {workList.length === 0 && (
+                   <div className="py-16 text-center">
+                     <div className="flex flex-col items-center gap-3 opacity-30">
+                       <Activity className="h-10 w-10 text-slate-400" />
+                       <p className="text-xs font-bold uppercase tracking-[0.2em]">No Active Logs</p>
+                     </div>
+                   </div>
+                 )}
+               </div>
                
-               <div className="flex items-center justify-between bg-slate-50/50 p-5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">System Total: {stats.workList?.length || 0}</p>
+               <div className="flex flex-col gap-3 bg-slate-50/50 p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">System Total: {workList.length}</p>
                   <div className="flex items-center gap-2">
                      <Button variant="ghost" className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900">Back</Button>
                      <Button className="h-8 px-5 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50">Forward</Button>

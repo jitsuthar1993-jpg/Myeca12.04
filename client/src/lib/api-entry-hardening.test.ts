@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { readTemporaryAuth, sendJson } from "../../../api/_test-api.js";
+import { readTemporaryAuth, roleFromSupabaseUser, sendJson } from "../../../api/_test-api.js";
 import { TEMPORARY_TEST_USERS } from "../../../shared/temporary-test-users.js";
 
 const originalEnv = { ...process.env };
@@ -53,5 +53,10 @@ describe("serverless API entry hardening", () => {
 
     expect(readTemporaryAuth(req)).toBeNull();
   });
-});
 
+  it("normalizes stale Supabase role metadata at the API boundary", () => {
+    expect(roleFromSupabaseUser({ app_metadata: { role: "business" } })).toBe("user");
+    expect(roleFromSupabaseUser({ user_metadata: { role: "team_member" } })).toBe("team_member");
+    expect(roleFromSupabaseUser({ app_metadata: { role: "ca" }, user_metadata: { role: "admin" } })).toBe("ca");
+  });
+});

@@ -9,6 +9,7 @@ import {
   getProvisionedRoleForEmail,
   syncRoleClaims,
 } from "../services/user-accounts.js";
+import { normalizeAppRole } from "../../shared/app-roles.js";
 import { errorResponse, safeError } from "../utils/error-response.js";
 import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
 
@@ -76,11 +77,10 @@ router.post("/sync", requireAuth, validateRequest(syncUserSchema), async (req: A
 
     if (userDoc.exists) {
       const currentData = userDoc.data()!;
+      const bootstrapRole = getBootstrapRoleForEmail(auth.email) ?? "user";
       const role =
         (await getProvisionedRoleForEmail(email || currentData.email || auth.email)) ??
-        currentData.role ??
-        getBootstrapRoleForEmail(auth.email) ??
-        "user";
+        normalizeAppRole(currentData.role ?? bootstrapRole);
       const updatedData = {
         ...currentData,
         email: email || currentData.email,

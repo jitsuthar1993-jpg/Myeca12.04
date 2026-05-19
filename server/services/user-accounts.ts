@@ -1,7 +1,13 @@
 import { adminDb } from "../data-admin.js";
 import { getSupabaseAdminClient } from "../lib/supabase.js";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { PRIVILEGED_APP_ROLES, type AppRole, type PrivilegedAppRole } from "../../shared/app-roles.js";
+import {
+  isAppRole,
+  normalizeAppRole,
+  PRIVILEGED_APP_ROLES,
+  type AppRole,
+  type PrivilegedAppRole,
+} from "../../shared/app-roles.js";
 
 export type AuthIdentity = {
   userId: string;
@@ -263,12 +269,13 @@ export async function findOrCreateUserProfile(auth: AuthIdentity) {
     await syncRoleClaims(auth.userId, role);
     userDoc = await userRef.get();
   } else {
-    const existingRole = userDoc.data()?.role;
+    const rawExistingRole = userDoc.data()?.role;
+    const existingRole = normalizeAppRole(rawExistingRole);
     const provisionedRole = await getProvisionedRoleForEmail(email);
     const role = provisionedRole ?? existingRole;
 
-    if (provisionedRole && provisionedRole !== existingRole) {
-      await userRef.update({ role: provisionedRole, updatedAt: new Date() });
+    if ((provisionedRole && provisionedRole !== rawExistingRole) || !isAppRole(rawExistingRole)) {
+      await userRef.update({ role, updatedAt: new Date() });
       userDoc = await userRef.get();
     }
 

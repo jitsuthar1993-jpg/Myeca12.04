@@ -28,6 +28,7 @@ import {
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
 import { buildOpenApiSpec } from "../server/openapi.js";
 import { getIncomeTaxFormAsset } from "../shared/income-tax-form-assets.js";
+import { normalizeAppRole } from "../shared/app-roles.js";
 import {
   buildRobotsTxt,
   buildSitemapXml,
@@ -343,9 +344,7 @@ async function handleRequest(req: any, res: any) {
     const userRef = adminDb.collection("users").doc(user.id);
     const role =
       (await getProvisionedRoleForEmail(body.email || user.email)) ??
-      user.role ??
-      getBootstrapRoleForEmail(body.email || user.email) ??
-      "user";
+      normalizeAppRole(user.role ?? getBootstrapRoleForEmail(body.email || user.email) ?? "user");
     const updatedUser = {
       ...user,
       email: body.email || user.email || null,

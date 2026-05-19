@@ -93,20 +93,20 @@ export default function TeamDashboard() {
 
         {/* Action Bar & Task Management */}
         <div className="space-y-6">
-           <div className="flex items-center justify-between">
+           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
                  <div className="h-6 w-1 bg-blue-600 rounded-full" />
                  <h2 className="text-sm font-bold uppercase tracking-widest text-slate-900">Production Pipeline</h2>
               </div>
-              <div className="flex items-center gap-2">
-                 <div className="relative group">
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                 <div className="relative group w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
                     <Input 
                       placeholder="Search tasks..." 
-                      className="h-9 w-60 rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium"
+                      className="h-9 w-full rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium sm:w-60"
                     />
                  </div>
-                 <Button variant="outline" size="sm" className="h-9 rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50">
+                 <Button variant="outline" size="sm" className="h-9 w-full rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50 sm:w-9">
                     <Filter className="h-4 w-4" />
                  </Button>
               </div>
@@ -114,7 +114,7 @@ export default function TeamDashboard() {
 
            <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
              <CardContent className="p-0">
-               <div className="overflow-x-auto">
+               <div className="hidden overflow-x-auto md:block">
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="border-b border-slate-50">
@@ -165,8 +165,41 @@ export default function TeamDashboard() {
                    </tbody>
                  </table>
                </div>
+
+               <div className="divide-y divide-slate-100 md:hidden">
+                 {activeTasks.map((task) => (
+                   <div key={task.id} className="space-y-3 p-4">
+                     <div className="flex items-start gap-3">
+                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400">
+                         <Layers className="h-4 w-4" />
+                       </div>
+                       <div className="min-w-0 flex-1">
+                         <p className="text-sm font-bold leading-tight text-slate-900">{task.title}</p>
+                         <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-slate-400">{task.status}</p>
+                       </div>
+                     </div>
+                     <div className="flex items-center justify-between gap-3">
+                       <div className="min-w-0">
+                         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">Coordinator</p>
+                         <p className="truncate text-xs font-bold text-slate-700">{task.assignedBy}</p>
+                       </div>
+                       <div className="flex shrink-0 items-center gap-2">
+                         <Badge className={cn(
+                           "rounded-full border-none px-3 py-1 text-[9px] font-bold",
+                           task.priority === 'High' ? "bg-red-50 text-red-600" :
+                           task.priority === 'Medium' ? "bg-blue-50 text-blue-600" :
+                           "bg-emerald-50 text-emerald-600"
+                         )}>
+                           {task.priority.toUpperCase()}
+                         </Badge>
+                         <span className="text-xs font-bold text-slate-900">{task.deadline}</span>
+                       </div>
+                     </div>
+                   </div>
+                 ))}
+               </div>
                
-               <div className="p-6 bg-slate-50/50 flex items-center justify-between">
+               <div className="flex flex-col gap-3 bg-slate-50/50 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Queue Volume: {activeTasks.length}</p>
                   <div className="flex items-center gap-2">
                      <Button variant="ghost" className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900">Previous</Button>

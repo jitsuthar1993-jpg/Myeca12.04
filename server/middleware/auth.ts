@@ -142,10 +142,6 @@ export async function requireCA(req: Request, res: Response, next: NextFunction)
   return requireRole(["admin", "ca"])(req, res, next);
 }
 
-export async function requireSuperAdmin(req: Request, res: Response, next: NextFunction) {
-  return requireRole(["admin"])(req, res, next);
-}
-
 export async function requireAnyAuth(req: Request, res: Response, next: NextFunction) {
   return requireRole(APP_ROLES)(req, res, next);
 }
