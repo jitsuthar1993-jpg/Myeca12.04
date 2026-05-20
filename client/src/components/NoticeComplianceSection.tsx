@@ -1,5 +1,5 @@
 import { m } from "framer-motion";
-import { AlertTriangle, ArrowRight, Shield, Clock, CheckCircle, Phone, FileText, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, Shield, Clock, CheckCircle, Phone, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
@@ -9,25 +9,25 @@ export default function NoticeComplianceSection() {
       title: "Scrutiny Assessment",
       description: "Review notice details, records, and response requirements before drafting.",
       icon: FileText,
-      color: "bg-blue-50 text-blue-700"
+      color: "bg-blue-100 text-blue-600"
     },
     {
       title: "Mismatch Notices",
       description: "Compare AIS, Form 26AS, TDS, and return data before response.",
       icon: AlertTriangle,
-      color: "bg-amber-50 text-amber-700"
+      color: "bg-orange-100 text-orange-600"
     },
     {
       title: "Default Assessment",
       description: "Assess the order, supporting papers, and correction options.",
       icon: Shield,
-      color: "bg-emerald-50 text-emerald-700"
+      color: "bg-green-100 text-green-600"
     },
     {
       title: "Penalty Notices",
       description: "Prepare penalty or interest responses based on facts and deadlines.",
       icon: Clock,
-      color: "bg-rose-50 text-rose-700"
+      color: "bg-red-100 text-red-600"
     }
   ];
 
@@ -55,39 +55,26 @@ export default function NoticeComplianceSection() {
   ];
 
   return (
-    <section id="notices" className="scroll-mt-20 border-y border-slate-200 bg-white py-8 md:py-14">
-      <div className="container mx-auto px-4">
+    <section id="notices" className="scroll-mt-20 bg-gradient-to-br from-red-50 to-orange-50 py-12">
+      <div className="container mx-auto px-6">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mx-auto mb-8 grid max-w-6xl gap-5 lg:grid-cols-[1fr_0.8fr] lg:items-end"
+          className="mb-12 text-center"
         >
-          <div>
-            <div className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-amber-700">
-              <AlertTriangle className="mr-2 h-3.5 w-3.5" />
-              Notice response
-            </div>
-            <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
-              Respond to income tax notices with a documented workflow.
-            </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600 md:text-base">
-              Get notice support based on the notice type, facts, filings, and records available before response drafting begins.
-            </p>
+          <div className="mb-4 inline-flex items-center rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-700">
+            <AlertTriangle className="mr-2 h-4 w-4" />
+            Notice Compliance Service
           </div>
-          <div className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-5">
-            <p className="text-sm font-bold text-slate-950">Before paid work starts</p>
-            <div className="mt-3 space-y-2">
-              {["Notice type and deadline are checked", "Documents and proof gaps are listed", "Response scope is confirmed"].map((item) => (
-                <div key={item} className="flex items-center gap-2 text-sm text-slate-700">
-                  <CheckCircle className="h-4 w-4 text-emerald-700" />
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
+          <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
+            Income Tax Notice? <span className="text-red-600">Don't Panic!</span>
+          </h2>
+          <p className="mx-auto max-w-3xl text-xl text-gray-600">
+            Get notice support based on the notice type, facts, filings, and records available before response drafting begins.
+          </p>
         </m.div>
 
         {/* Notice Types */}
@@ -96,16 +83,19 @@ export default function NoticeComplianceSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mx-auto mb-8 max-w-6xl"
+          className="mb-16"
         >
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
+            We Handle All Types of Income Tax Notices
+          </h3>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {noticeTypes.map((notice, index) => (
-              <div key={index} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${notice.color}`}>
-                  <notice.icon className="h-5 w-5" />
+              <div key={index} className="rounded-lg bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                <div className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg ${notice.color}`}>
+                  <notice.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-4 text-base font-bold text-slate-950">{notice.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{notice.description}</p>
+                <h3 className="text-lg font-semibold text-gray-900">{notice.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-gray-600">{notice.description}</p>
               </div>
             ))}
           </div>
@@ -115,27 +105,21 @@ export default function NoticeComplianceSection() {
         <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="mx-auto mb-8 max-w-6xl rounded-lg border border-slate-200 bg-[#F8FAFC] p-5 md:p-6"
+          className="mb-16"
         >
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-700 text-white">
-              <Users className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-950">4-step notice support process</p>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Scope, documents, response, follow-up</p>
-            </div>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
+            Our 4-Step Notice Support Process
+          </h3>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {complianceProcess.map((process, index) => (
-              <div key={index} className="rounded-lg border border-slate-200 bg-white p-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">
+              <div key={index} className="text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-lg font-bold text-white">
                   {process.step}
                 </div>
-                <h4 className="mt-3 font-bold text-slate-950">{process.title}</h4>
-                <p className="mt-1 text-sm leading-6 text-slate-600">{process.description}</p>
+                <h4 className="mb-2 font-semibold text-gray-900">{process.title}</h4>
+                <p className="text-sm leading-6 text-gray-600">{process.description}</p>
               </div>
             ))}
           </div>
@@ -145,41 +129,51 @@ export default function NoticeComplianceSection() {
         <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
           viewport={{ once: true }}
-          className="mx-auto max-w-6xl rounded-lg border border-blue-100 bg-blue-50 p-5 shadow-sm md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-6 md:p-6"
+          className="rounded-2xl bg-white p-8 text-center shadow-lg"
         >
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
-              <Phone className="h-5 w-5" />
+          <div className="mb-4 flex items-center justify-center">
+            <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <Phone className="h-8 w-8 text-red-600" />
             </div>
-            <div>
-              <h3 className="text-lg font-extrabold text-slate-950 md:text-xl">Got an income tax notice?</h3>
-              <p className="mt-1 text-sm leading-6 text-slate-600">Share the notice and get a scoped review path before the response is prepared.</p>
+            <div className="text-left">
+              <h3 className="text-2xl font-bold text-gray-900">Got an Income Tax Notice?</h3>
+              <p className="text-gray-600">Share the notice and get a scoped review path before the response is prepared.</p>
             </div>
           </div>
           
-          <div className="mt-5 flex flex-col gap-2 sm:flex-row md:mt-0">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/services/notice-compliance">
               <Button 
                 size="lg" 
-                variant="brand"
-                className="h-11 w-full rounded-lg px-5 sm:w-auto"
+                className="bg-red-600 px-8 py-4 text-white hover:bg-red-700"
               >
-                Get notice help
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Get Notice Help Now
+                <AlertTriangle className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="/expert-consultation?service=notice-compliance">
               <Button 
                 variant="outline" 
                 size="lg"
-                className="h-11 w-full rounded-lg border-blue-200 bg-white px-5 text-blue-700 hover:bg-blue-50 sm:w-auto"
+                className="border-red-600 px-8 py-4 text-red-600 hover:bg-red-50"
               >
                 Request Callback
-                <Phone className="ml-2 h-4 w-4" />
+                <Phone className="ml-2 h-5 w-5" />
               </Button>
             </Link>
+          </div>
+
+          <div className="mt-6 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {["Notice review", "Document check", "Response drafting"].map((item) => (
+                <div key={item} className="flex items-center">
+                  <CheckCircle className="mr-1 h-4 w-4 text-green-600" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </m.div>
       </div>
