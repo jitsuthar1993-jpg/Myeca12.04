@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { AlertCircle, Loader2, Lock, Mail, Phone, UserRound } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Lock, Mail, Phone, Send, UserRound } from "lucide-react";
 import { AuthPageShell } from "@/components/auth/AuthPageShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
+import { getAuthRedirectPath } from "@/lib/auth-confirmation";
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, resendSignupConfirmation } = useAuth();
   const [, setLocation] = useLocation();
-  const redirectUrl =
-    new URLSearchParams(window.location.search).get("redirect_url") || "/dashboard";
+  const params = new URLSearchParams(window.location.search);
+  const redirectUrl = getAuthRedirectPath(params.get("redirect_url") || params.get("next"));
   const signInUrl = `/auth/login?redirect_url=${encodeURIComponent(redirectUrl)}`;
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,8 +21,10 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [pendingEmail, setPendingEmail] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,14 +38,16 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const result = await register(email.trim(), password, {
+      const normalizedEmail = email.trim();
+      const result = await register(normalizedEmail, password, {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         phoneNumber: phoneNumber.trim() || null,
-      });
+      }, redirectUrl);
       if (result.needsEmailConfirmation) {
         setPassword("");
         setConfirmPassword("");
+        setPendingEmail(normalizedEmail);
         setNotice("Account created. Check your email and confirm the account before signing in.");
         return;
       }
@@ -52,6 +57,23 @@ export default function RegisterPage() {
       setError(err?.message || "Unable to create account. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    const targetEmail = (pendingEmail || email).trim();
+    setError(null);
+    setNotice(null);
+    setResendLoading(true);
+
+    try {
+      await resendSignupConfirmation(targetEmail, redirectUrl);
+      setPendingEmail(targetEmail);
+      setNotice("Confirmation email sent. Use the link in your inbox to activate this account.");
+    } catch (err: any) {
+      setError(err?.message || "Unable to resend confirmation email. Please try again.");
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -77,8 +99,11 @@ export default function RegisterPage() {
         )}
 
         {notice && (
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-800">
-            {notice}
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+              <span className="font-bold">{notice}</span>
+            </div>
           </div>
         )}
 
@@ -142,6 +167,24 @@ export default function RegisterPage() {
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Create account
         </Button>
+
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+          <p className="font-bold text-slate-900">Need a new confirmation email?</p>
+          <p className="mt-1 text-xs leading-5 text-slate-600">
+            Enter the account email above and resend the Supabase confirmation link.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={loading || resendLoading}
+            onClick={handleResendConfirmation}
+            className="mt-3 h-9 rounded-lg"
+          >
+            {resendLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            Resend confirmation
+          </Button>
+        </div>
       </form>
     </AuthPageShell>
   );

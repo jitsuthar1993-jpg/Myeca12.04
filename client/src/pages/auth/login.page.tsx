@@ -13,6 +13,7 @@ import {
   Lock,
   Mail,
   ReceiptText,
+  Send,
   ShieldCheck,
   UserCog,
   UserRound,
@@ -47,6 +48,14 @@ const reasonCopy: Record<string, { title: string; message: string }> = {
     title: 'Admin sign in required',
     message: 'Use your Supabase administrator or team-member account to continue.',
   },
+  email_confirmed: {
+    title: 'Email confirmed',
+    message: 'Your account is active. Sign in to open your workspace.',
+  },
+  confirmation_required: {
+    title: 'Confirm your email',
+    message: 'Use the confirmation link sent by Supabase before signing in.',
+  },
 };
 
 function getLoginErrorMessage(error: any) {
@@ -54,18 +63,23 @@ function getLoginErrorMessage(error: any) {
   if (/invalid login credentials/i.test(message)) {
     return "Email or password did not match a confirmed account. Use Forgot to reset your password, or create the account here if it was made on another deployment.";
   }
+  if (/email not confirmed|not confirmed/i.test(message)) {
+    return "Confirm your email before signing in. You can resend the Supabase confirmation link below.";
+  }
 
   return message || 'Unable to sign in. Check your details and try again.';
 }
 
 export default function LoginPage() {
-  const { user, isAuthenticated, isLoading: authLoading, login, loginWithGoogle } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, login, loginWithGoogle, resendSignupConfirmation } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const params = new URLSearchParams(window.location.search);
   const requestedRedirectPath = getSafeRedirectPath(params.get('redirect_url') || params.get('next'));
   const reason = params.get('reason');
@@ -99,6 +113,7 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setNotice(null);
     setLoading(true);
 
     try {
@@ -113,6 +128,7 @@ export default function LoginPage() {
 
   const handleGoogle = async () => {
     setError(null);
+    setNotice(null);
     setGoogleLoading(true);
 
     try {
@@ -125,6 +141,7 @@ export default function LoginPage() {
 
   const handleTemporaryLogin = async (testUser: TemporaryTestUser) => {
     setError(null);
+    setNotice(null);
     setLoading(true);
 
     try {
@@ -133,6 +150,21 @@ export default function LoginPage() {
     } catch (err: any) {
       setError(err?.message || `Unable to sign in as ${testUser.label}.`);
       setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    setError(null);
+    setNotice(null);
+    setResendLoading(true);
+
+    try {
+      await resendSignupConfirmation(email, requestedRedirectPath || '/dashboard');
+      setNotice('Confirmation email sent. Use the link in your inbox, then sign in here.');
+    } catch (err: any) {
+      setError(err?.message || 'Unable to resend confirmation email. Please try again.');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -176,6 +208,13 @@ export default function LoginPage() {
           <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-bold text-rose-800">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
+          </div>
+        )}
+
+        {notice && (
+          <div className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-800">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{notice}</span>
           </div>
         )}
 
@@ -253,13 +292,33 @@ export default function LoginPage() {
 
         <Button
           type="submit"
-          disabled={loading || googleLoading}
+          disabled={loading || googleLoading || resendLoading}
           className="h-11 w-full rounded-lg bg-blue-700 text-sm font-bold text-white hover:bg-blue-800"
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Sign in
           {!loading ? <ArrowRight className="ml-1 h-4 w-4" /> : null}
         </Button>
+
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="font-bold text-slate-900">Need a confirmation email?</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">Enter your email above and resend the link.</p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={loading || googleLoading || resendLoading}
+              onClick={handleResendConfirmation}
+              className="h-9 rounded-lg"
+            >
+              {resendLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Resend
+            </Button>
+          </div>
+        </div>
 
         <div className="grid gap-2 border-t border-slate-200 pt-4 sm:grid-cols-3">
           {[

@@ -10,6 +10,10 @@ import {
 import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
+import {
+  buildSignupConfirmationRedirectUrl,
+  buildSignupConfirmationResendOptions,
+} from "@/lib/auth-confirmation";
 import { isGoogleAuthEnabled, isSupabaseEnabled, supabase } from "@/lib/supabase";
 import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
@@ -21,7 +25,8 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<AppUser>;
-  register: (email: string, password: string, userData: Partial<AppUser>) => Promise<{ needsEmailConfirmation: boolean }>;
+  register: (email: string, password: string, userData: Partial<AppUser>, redirectPath?: string | null) => Promise<{ needsEmailConfirmation: boolean }>;
+  resendSignupConfirmation: (email: string, redirectPath?: string | null) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: (reason?: LogoutReason) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
@@ -312,7 +317,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, userData: Partial<AppUser>) => {
+  const register = async (email: string, password: string, userData: Partial<AppUser>, redirectPath?: string | null) => {
     clearTemporaryAuthState();
     clearAuthToken();
     setAuthUser(null);
@@ -332,7 +337,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const redirectTo = `${window.location.origin}/auth/login`;
+      const redirectTo = buildSignupConfirmationRedirectUrl(redirectPath);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -363,6 +368,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const resendSignupConfirmation = async (email: string, redirectPath?: string | null) => {
+    const normalizedEmail = email.trim();
+    if (!normalizedEmail) throw new Error("Enter your email address first.");
+    if (!isSupabaseEnabled) return;
+
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: normalizedEmail,
+      options: buildSignupConfirmationResendOptions(redirectPath),
+    });
+    if (error) throw error;
   };
 
   const loginWithGoogle = async () => {
@@ -428,7 +446,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const sendEmailVerification = async () => {
     if (!isSupabaseEnabled || !appUser?.email) return;
-    const { error } = await supabase.auth.resend({ type: "signup", email: appUser.email });
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: appUser.email,
+      options: buildSignupConfirmationResendOptions("/dashboard"),
+    });
     if (error) throw error;
   };
 
@@ -445,6 +467,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!appUser,
         login,
         register,
+        resendSignupConfirmation,
         loginWithGoogle,
         logout,
         sendPasswordReset,
@@ -475,6 +498,7 @@ const FALLBACK_AUTH_VALUE: AuthContextType = {
     throw new Error("Authentication is unavailable.");
   },
   register: async () => ({ needsEmailConfirmation: false }),
+  resendSignupConfirmation: async () => {},
   loginWithGoogle: async () => {},
   logout: async () => {},
   sendPasswordReset: async () => {},
