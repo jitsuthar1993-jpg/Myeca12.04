@@ -1,8 +1,13 @@
 import { chromium, type Page } from "playwright";
+import {
+  classifyPublicHref,
+  getPublicLinkAuditSeedRoutes,
+  parsePublicSitemapRoutes,
+} from "../shared/public-link-audit.js";
 
 const baseUrl = (process.env.SMOKE_BASE_URL || "http://127.0.0.1:5000").replace(/\/$/, "");
 
-const publicRoutes = [
+const highValuePublicRoutes = [
   "/",
   "/about",
   "/services",
@@ -200,6 +205,7 @@ async function assertAssetEndpoints() {
     throw new Error("/openapi.json missing bearerAuth security scheme");
   }
 
+  return parsePublicSitemapRoutes(sitemap.text);
 }
 
 async function assertNoAppCrash(page: Page, route: string) {
@@ -282,6 +288,166 @@ async function assertHasContent(page: Page, route: string) {
   }
 }
 
+async function assertPublicRouteFound(page: Page, route: string) {
+  const bodyText = await page.locator("body").innerText({ timeout: 10_000 });
+  if (/Page Not Found/i.test(bodyText)) {
+    throw new Error(`${route} rendered the not-found page`);
+  }
+}
+
+type PageLink = {
+  download: boolean;
+  href: string;
+  text: string;
+};
+
+async function collectPageLinks(page: Page): Promise<PageLink[]> {
+  return page.locator("a[href]").evaluateAll((links) =>
+    links.map((link) => {
+      const anchor = link as HTMLAnchorElement;
+      return {
+        download: anchor.hasAttribute("download"),
+        href: anchor.getAttribute("href") || "",
+        text: (anchor.textContent || anchor.getAttribute("aria-label") || "").trim().replace(/\s+/g, " ").slice(0, 80),
+      };
+    }),
+  );
+}
+
+async function hasAnchorTarget(page: Page, hash: string) {
+  const decodedHash = decodeURIComponent(hash.replace(/^#/, ""));
+  if (!decodedHash) return false;
+
+  return page.evaluate((target) => Boolean(document.getElementById(target) || document.querySelector(`[name="${CSS.escape(target)}"]`)), decodedHash);
+}
+
+function linkLabel(link: PageLink) {
+  return link.text ? `"${link.text}" (${link.href})` : link.href;
+}
+
+async function fetchExternalLinkStatus(href: string) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+
+  try {
+    const headResponse = await fetch(href, {
+      method: "HEAD",
+      redirect: "follow",
+      signal: controller.signal,
+    });
+    if (headResponse.status !== 405) {
+      return headResponse.status;
+    }
+
+    const getResponse = await fetch(href, {
+      method: "GET",
+      redirect: "follow",
+      signal: controller.signal,
+    });
+    return getResponse.status;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function auditExternalLinks(hrefs: string[]) {
+  const failures: string[] = [];
+  let nextIndex = 0;
+
+  async function probeNext() {
+    while (nextIndex < hrefs.length) {
+      const href = hrefs[nextIndex++];
+      try {
+        const status = await fetchExternalLinkStatus(href);
+        if (status >= 400) failures.push(`${status} ${href}`);
+      } catch (error) {
+        failures.push(`${error instanceof Error ? error.message : String(error)} ${href}`);
+      }
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(8, hrefs.length) }, () => probeNext()));
+
+  if (failures.length === 0) {
+    console.log(`External link audit checked ${hrefs.length} unique URLs with no fetch failures.`);
+    return;
+  }
+
+  console.warn(`External link audit checked ${hrefs.length} unique URLs and observed ${failures.length} fetch failures:`);
+  failures.slice(0, 20).forEach((failure) => console.warn(`- ${failure}`));
+}
+
+async function assertPublicLinkGraph(page: Page, seedRoutes: string[]) {
+  const failures: string[] = [];
+  const queuedRoutes = [...new Set(seedRoutes)];
+  const queuedSet = new Set(queuedRoutes);
+  const requiredAnchors = new Map<string, Set<string>>();
+  const visitedRoutes = new Set<string>();
+  const externalLinks = new Set<string>();
+
+  while (queuedRoutes.length > 0) {
+    const route = queuedRoutes.shift();
+    if (!route || visitedRoutes.has(route)) continue;
+    visitedRoutes.add(route);
+
+    try {
+      await page.goto(`${baseUrl}${route}`, navigationOptions);
+      await assertHasContent(page, route);
+      await assertPublicRouteFound(page, route);
+
+      for (const hash of requiredAnchors.get(route) || []) {
+        if (!(await hasAnchorTarget(page, hash))) {
+          failures.push(`${route} is missing linked anchor ${hash}`);
+        }
+      }
+
+      for (const link of await collectPageLinks(page)) {
+        if (link.download) continue;
+
+        const classified = classifyPublicHref(link.href, route, baseUrl);
+        if (classified.kind === "placeholder") {
+          failures.push(`${route} has placeholder public link ${linkLabel(link)}`);
+          continue;
+        }
+
+        if (classified.kind === "same-page-anchor") {
+          if (!(await hasAnchorTarget(page, classified.hash))) {
+            failures.push(`${route} has broken same-page anchor ${classified.hash} from ${linkLabel(link)}`);
+          }
+          continue;
+        }
+
+        if (classified.kind === "internal-route") {
+          if (classified.hash) {
+            const anchors = requiredAnchors.get(classified.path) || new Set<string>();
+            anchors.add(classified.hash);
+            requiredAnchors.set(classified.path, anchors);
+          }
+
+          if (!queuedSet.has(classified.path) && !visitedRoutes.has(classified.path)) {
+            queuedRoutes.push(classified.path);
+            queuedSet.add(classified.path);
+          }
+          continue;
+        }
+
+        if (classified.kind === "external") externalLinks.add(classified.href);
+      }
+    } catch (error) {
+      failures.push(`${route}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  if (failures.length) {
+    throw new Error(failures.slice(0, 20).join("\n"));
+  }
+
+  console.log(`Public link audit visited ${visitedRoutes.size} routes and observed ${externalLinks.size} unique external links.`);
+  if (process.env.SMOKE_AUDIT_EXTERNAL_LINKS === "1") {
+    await auditExternalLinks([...externalLinks]);
+  }
+}
+
 async function assertAnonymousBlocked(page: Page, route: string) {
   await page.waitForFunction(
     () => {
@@ -328,13 +494,14 @@ async function main() {
 
   const failures: string[] = [];
 
+  let sitemapRoutes: string[] = [];
   try {
-    await assertAssetEndpoints();
+    sitemapRoutes = await assertAssetEndpoints();
   } catch (error) {
     failures.push(`assets: ${error instanceof Error ? error.message : String(error)}`);
   }
 
-  for (const route of publicRoutes) {
+  for (const route of highValuePublicRoutes) {
     try {
       await page.goto(`${baseUrl}${route}`, navigationOptions);
       await assertHasContent(page, route);
@@ -342,6 +509,12 @@ async function main() {
     } catch (error) {
       failures.push(`${route}: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+
+  try {
+    await assertPublicLinkGraph(page, getPublicLinkAuditSeedRoutes(sitemapRoutes, highValuePublicRoutes));
+  } catch (error) {
+    failures.push(`public links: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   for (const route of privateRoutes) {

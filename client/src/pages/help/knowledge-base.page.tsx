@@ -32,25 +32,29 @@ const knowledgeCategories = [
         title: 'Understanding Income Tax in India',
         description: 'Complete guide to Indian income tax system, slabs, and calculation',
         readTime: '15 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/calculators/income-tax'
       },
       {
         title: 'Types of Income Sources',
         description: 'Learn about salary, business, capital gains, and other income types',
         readTime: '12 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/learn/guides'
       },
       {
         title: 'Tax Deductions Under Section 80',
         description: 'Comprehensive list of all deductions available under Section 80',
         readTime: '20 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/calculators/tax-regime'
       },
       {
         title: 'Form 16 Explained',
         description: 'Understanding your salary certificate and tax details',
         readTime: '10 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/form16-parser'
       }
     ]
   },
@@ -64,25 +68,29 @@ const knowledgeCategories = [
         title: 'Capital Gains Tax Guide',
         description: 'STCG, LTCG, indexation benefits, and exemptions explained',
         readTime: '25 min',
-        level: 'Advanced'
+        level: 'Advanced',
+        href: '/calculators/capital-gains'
       },
       {
         title: 'International Taxation',
         description: 'DTAA, foreign income, and NRI taxation rules',
         readTime: '30 min',
-        level: 'Advanced'
+        level: 'Advanced',
+        href: '/expert-consultation'
       },
       {
         title: 'Tax Planning for HNIs',
         description: 'Strategies for high net worth individuals',
         readTime: '22 min',
-        level: 'Advanced'
+        level: 'Advanced',
+        href: '/expert-consultation'
       },
       {
         title: 'Cryptocurrency Taxation',
         description: 'How crypto gains are taxed in India',
         readTime: '15 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/capital-gains-import'
       }
     ]
   },
@@ -96,25 +104,29 @@ const knowledgeCategories = [
         title: 'GST Complete Guide',
         description: 'Registration, returns, ITC, and compliance',
         readTime: '35 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/services/gst-returns'
       },
       {
         title: 'Presumptive Taxation',
         description: 'Section 44AD, 44ADA benefits for small businesses',
         readTime: '18 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/itr/form-selector'
       },
       {
         title: 'TDS Compliance for Businesses',
         description: 'When and how to deduct TDS',
         readTime: '20 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/services/tds-filing'
       },
       {
         title: 'Startup Tax Benefits',
         description: 'Tax holidays and incentives for startups',
         readTime: '16 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/startup-services'
       }
     ]
   },
@@ -128,25 +140,29 @@ const knowledgeCategories = [
         title: 'Tax Calendar 2025-26',
         description: 'All important tax dates and deadlines',
         readTime: '8 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/compliance-calendar'
       },
       {
         title: 'Penalty and Interest Calculation',
         description: 'Late filing penalties and interest rates',
         readTime: '12 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/calculators/penalty'
       },
       {
         title: 'Notice Handling Guide',
         description: 'How to respond to income tax notices',
         readTime: '15 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/services/notice-compliance'
       },
       {
         title: 'Audit and Assessment',
         description: 'Types of assessments and preparation',
         readTime: '20 min',
-        level: 'Advanced'
+        level: 'Advanced',
+        href: '/services/audit-services'
       }
     ]
   },
@@ -160,25 +176,29 @@ const knowledgeCategories = [
         title: 'Best Tax Saving Investments',
         description: 'ELSS, PPF, NPS, and other 80C options compared',
         readTime: '18 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/elss-comparator'
       },
       {
         title: 'NPS Tax Benefits',
         description: 'Additional 50K deduction and retirement planning',
         readTime: '14 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/calculators/nps'
       },
       {
         title: 'Life Insurance and Tax',
         description: 'Premium deductions and maturity taxation',
         readTime: '16 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/tax-optimizer'
       },
       {
         title: 'Real Estate Tax Planning',
         description: 'Home loan benefits and property taxation',
         readTime: '22 min',
-        level: 'Advanced'
+        level: 'Advanced',
+        href: '/calculators/home-loan'
       }
     ]
   },
@@ -192,25 +212,29 @@ const knowledgeCategories = [
         title: 'NRI Taxation Guide',
         description: 'Complete guide for Non-Resident Indians',
         readTime: '28 min',
-        level: 'Advanced'
+        level: 'Advanced',
+        href: '/expert-consultation'
       },
       {
         title: 'Senior Citizen Benefits',
         description: 'Special provisions and higher exemptions',
         readTime: '15 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/itr/form-selector'
       },
       {
         title: 'Freelancer Tax Guide',
         description: 'Tax planning for gig economy workers',
         readTime: '20 min',
-        level: 'Intermediate'
+        level: 'Intermediate',
+        href: '/itr/form-selector'
       },
       {
         title: 'Women Tax Benefits',
         description: 'Special deductions and schemes',
         readTime: '12 min',
-        level: 'Beginner'
+        level: 'Beginner',
+        href: '/learn/guides'
       }
     ]
   }
@@ -385,7 +409,7 @@ export default function KnowledgeBasePage() {
                       {category.articles.map((article, index) => (
                         <Link
                           key={index}
-                          href={`/help/article/${category.id}/${index}`}
+                          href={article.href}
                         >
                           <div className="p-4 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
                             <div className="flex items-start justify-between mb-2">

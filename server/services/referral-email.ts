@@ -104,7 +104,7 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
               <li><strong>${data.discount} discount</strong> on ${data.serviceType.replace(/_/g, ' ')}</li>
               <li>Expert CA assistance throughout the process</li>
               <li>Eligible deduction review</li>
-              <li>100% secure and confidential</li>
+              <li>Secure document workflow and privacy review</li>
             </ul>
           </div>
           

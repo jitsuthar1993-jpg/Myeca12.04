@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SEO_CONFIG, type SEOConfigItem } from "../client/src/config/seo.config.js";
 import { TAX_GUIDES, type TaxGuide } from "../client/src/data/tax-guides.js";
+import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
 import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
 import {
   DEFAULT_LOGO,
@@ -409,9 +410,12 @@ function writeTextAssets(blogPosts: DefaultBlogPost[]) {
     lastmod: guide.lastUpdated,
   }));
   const routes = getIndexablePublicRoutes(
-    Object.entries(SEO_CONFIG)
-      .filter(([, config]) => !config.noindex)
-      .map(([route]) => route),
+    [
+      ...Object.entries(SEO_CONFIG)
+        .filter(([, config]) => !config.noindex)
+        .map(([route]) => route),
+      ...getGeneratedPublicRoutes(),
+    ],
     [...blogEntries, ...guideEntries].map((entry) => entry.route),
   );
   const dynamicDateMap = new Map([...blogEntries, ...guideEntries].map((entry) => [normalizePublicPath(entry.route), entry.lastmod]));
@@ -463,9 +467,12 @@ function main() {
   const blogRoutes = blogPosts.map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const publicRoutes = getIndexablePublicRoutes(
-    Object.entries(SEO_CONFIG)
-      .filter(([, config]) => !config.noindex)
-      .map(([route]) => route),
+    [
+      ...Object.entries(SEO_CONFIG)
+        .filter(([, config]) => !config.noindex)
+        .map(([route]) => route),
+      ...getGeneratedPublicRoutes(),
+    ],
     [...blogRoutes, ...guideRoutes],
   );
 

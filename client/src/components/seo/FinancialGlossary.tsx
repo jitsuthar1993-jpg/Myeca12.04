@@ -148,7 +148,7 @@ export default function FinancialGlossary() {
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {visibleTerms.length > 0 ? (
             visibleTerms.map((item, index) => (
-              <Link key={index} href={item.href || "#"}>
+              <Link key={index} href={item.href}>
                 <div className="group flex h-full cursor-pointer flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">

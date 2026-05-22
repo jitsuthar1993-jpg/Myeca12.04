@@ -14,7 +14,7 @@ export const EMAIL_TEMPLATES = {
         <div style="padding: 40px; background-color: #f9fafb;">
           <h2 style="color: #1f2937;">Hello ${data.userName}! 👋</h2>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-            Thank you for joining MyeCA.in - India's most trusted platform for expert tax filing services.
+            Thank you for joining MyeCA.in for guided tax filing workflows and optional CA-assisted review.
           </p>
           <div style="background-color: white; padding: 30px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #1f2937; margin-top: 0;">What's Next?</h3>
@@ -22,7 +22,7 @@ export const EMAIL_TEMPLATES = {
               <li>Complete your profile to get personalized tax advice</li>
               <li>Upload your documents for faster processing</li>
               <li>Connect with our expert CAs for assistance</li>
-              <li>Track your refund status in real-time</li>
+              <li>Review refund-status steps from your dashboard and official sources</li>
             </ul>
           </div>
           <div style="text-align: center; margin-top: 30px;">
@@ -42,13 +42,13 @@ export const EMAIL_TEMPLATES = {
       
       Hello ${data.userName}!
       
-      Thank you for joining MyeCA.in - India's most trusted platform for expert tax filing services.
+      Thank you for joining MyeCA.in for guided tax filing workflows and optional CA-assisted review.
       
       What's Next?
       - Complete your profile to get personalized tax advice
       - Upload your documents for faster processing
       - Connect with our expert CAs for assistance
-      - Track your refund status in real-time
+      - Review refund-status steps from your dashboard and official sources
       
       Visit your dashboard: https://myeca.in/dashboard
       
@@ -142,7 +142,7 @@ export const EMAIL_TEMPLATES = {
             <a href="https://myeca.in/dashboard" style="background-color: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 10px;">
               e-Verify Now
             </a>
-            <a href="https://myeca.in/track-refund" style="background-color: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            <a href="https://myeca.in/tds-refund-tracker" style="background-color: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
               Track Refund
             </a>
           </div>
@@ -167,7 +167,7 @@ export const EMAIL_TEMPLATES = {
       3. Keep this acknowledgment for your records
       
       e-Verify Now: https://myeca.in/dashboard
-      Track Refund: https://myeca.in/track-refund
+      Track Refund: https://myeca.in/tds-refund-tracker
     `
   },
   
@@ -303,7 +303,7 @@ export const EMAIL_TEMPLATES = {
             </p>
           </div>
           <div style="text-align: center; margin-top: 30px;">
-            <a href="https://myeca.in/security" style="background-color: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            <a href="https://myeca.in/settings/account" style="background-color: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
               Secure My Account
             </a>
           </div>
@@ -325,7 +325,7 @@ export const EMAIL_TEMPLATES = {
       
       Was this you? If you don't recognize this login, please secure your account immediately by changing your password.
       
-      Secure My Account: https://myeca.in/security
+      Secure My Account: https://myeca.in/settings/account
     `
   }
 };

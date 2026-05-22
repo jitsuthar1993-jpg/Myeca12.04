@@ -200,6 +200,11 @@ test.describe("release smoke", () => {
     const sitemapText = await sitemap.text();
     expect(sitemapText).toContain("<urlset");
     expect(sitemapText).toContain("<loc>https://myeca.in/services</loc>");
+    expect(sitemapText).toContain("<loc>https://myeca.in/compare</loc>");
+    expect(sitemapText).toContain("<loc>https://myeca.in/services/pan-card</loc>");
+    expect(sitemapText).toContain("<loc>https://myeca.in/calculators/vda-tax</loc>");
+    expect(sitemapText).toContain("<loc>https://myeca.in/startup/planning</loc>");
+    expect(sitemapText).toContain("<loc>https://myeca.in/learn/guide/complete-itr-guide-salaried</loc>");
 
     const openapi = await request.get("/openapi.json");
     expect(openapi.ok()).toBeTruthy();
@@ -264,6 +269,11 @@ test.describe("release smoke", () => {
       await expectUsablePage(page, route);
       await expectNoHorizontalOverflow(page, route);
     }
+  });
+
+  test("public compliance actions use real destinations", async ({ page }) => {
+    await expectUsablePage(page, "/compliance-calendar");
+    await expect(page.locator('a[href="#"]')).toHaveCount(0);
   });
 
   test("blog pages keep content visible and avoid redundant detail fetches", async ({ page }) => {

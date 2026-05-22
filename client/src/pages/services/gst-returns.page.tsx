@@ -75,7 +75,7 @@ export default function GSTReturnsPage() {
       description: "Auto-drafted ITC statement based on supplier filings",
       applicability: "All registered taxpayers",
       penalty: "No penalty (system generated)",
-      changes2025: "Real-time updates with supplier GSTR-1 filings",
+      changes2025: "Supplier filing updates flow into GSTR-2A",
       icon: Download,
       color: "purple"
     },
@@ -261,15 +261,15 @@ export default function GSTReturnsPage() {
       icon: Shield
     },
     {
-      feature: "Real-time ITC Matching",
+      feature: "ITC Reconciliation Checks",
       description: "Input tax credit verification checks",
-      impact: "Faster refund processing",
+      impact: "Earlier mismatch review",
       icon: Zap
     },
     {
-      feature: "AI-powered Validation",
+      feature: "Filing Validation Checks",
       description: "Automated error detection before filing",
-      impact: "Reduced compliance issues",
+      impact: "Reduced data issues",
       icon: Target
     }
   ];
@@ -713,7 +713,7 @@ export default function GSTReturnsPage() {
               {
                 id: 10,
                 question: "What should I do if I receive a GST notice or demand?",
-                answer: "Respond promptly within the specified timeframe (usually 30 days). Gather all supporting documents, analyze the notice thoroughly, and provide detailed explanations with evidence. Consider professional assistance for complex notices. Our experts handle GST notice responses with 95% success rate in avoiding penalties."
+                answer: "Respond promptly within the specified timeframe (usually 30 days). Gather all supporting documents, analyze the notice thoroughly, and provide detailed explanations with evidence. Consider professional assistance for complex notices and keep a clear response record."
               }
             ]}
             subtitle="Common queries about GST returns filing and compliance"

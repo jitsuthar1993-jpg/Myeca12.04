@@ -84,7 +84,7 @@ const incomeTaxSourceLinks = [
   },
   {
     label: "Income Tax Department - AIS Guidance",
-    url: "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/annual-information-statement",
+    url: "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/ais-annual-information-statement",
   },
 ];
 

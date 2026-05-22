@@ -23,6 +23,9 @@ import blogWebhooksRouter from "./routes/blog-webhooks.js";
 import whatsappRouter from "./routes/whatsapp.js";
 import { buildOpenApiSpec } from "./openapi.js";
 import { listPublishedBlogPosts, sortPublishedPosts } from "./services/blog.js";
+import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { TAX_GUIDES } from "../client/src/data/tax-guides.js";
+import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
 import {
   buildRobotsTxt,
   buildSitemapXml,
@@ -71,7 +74,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         blogDateMap.set(route, Number.isNaN(d.getTime()) ? new Date().toISOString().split("T")[0] : d.toISOString().split("T")[0]);
         return route;
       });
-      const routes = getIndexablePublicRoutes([], blogRoutes);
+      const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
+      const seoConfigRoutes = Object.entries(SEO_CONFIG)
+        .filter(([, config]) => !config.noindex)
+        .map(([route]) => route);
+      const routes = getIndexablePublicRoutes(
+        [...seoConfigRoutes, ...getGeneratedPublicRoutes()],
+        [...blogRoutes, ...guideRoutes],
+      );
       const trimmedSitemap = buildSitemapXml(routes.map((route) => ({
         loc: toAbsoluteUrl(route),
         lastmod: blogDateMap.get(route) || new Date().toISOString().split("T")[0],

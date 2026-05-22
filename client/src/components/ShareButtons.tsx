@@ -20,7 +20,7 @@ interface ShareButtonsProps {
 export default function ShareButtons({ 
   url = typeof window !== 'undefined' ? window.location.href : '',
   title = "MyeCA.in - Expert Tax Filing & Compliance Services",
-  description = "Save taxes with India's most trusted tax filing platform. Get expert CA assistance.",
+  description = "Share this MyeCA tax filing and compliance resource.",
   className = "",
   showCopy = true,
 }: ShareButtonsProps) {

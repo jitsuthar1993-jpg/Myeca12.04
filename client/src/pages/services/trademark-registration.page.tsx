@@ -875,7 +875,7 @@ export default function TrademarkRegistrationPage() {
               <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-purple-100">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>95% Success Rate</span>
+                  <span>Search Before Filing</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

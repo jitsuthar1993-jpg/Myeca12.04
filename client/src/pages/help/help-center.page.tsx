@@ -29,10 +29,10 @@ const helpCategories = [
     icon: BookOpen,
     description: 'New to MyeCA.in? Start here',
     articles: [
-      { title: 'How to create an account' },
-      { title: 'Understanding ITR forms' },
-      { title: 'Document requirements checklist' },
-      { title: 'First-time tax filing guide' }
+      { title: 'How to create an account', href: '/help/user-guide' },
+      { title: 'Understanding ITR forms', href: '/itr/form-selector' },
+      { title: 'Document requirements checklist', href: '/itr/step-by-step-guide' },
+      { title: 'First-time tax filing guide', href: '/help/user-guide' }
     ]
   },
   {
@@ -41,10 +41,10 @@ const helpCategories = [
     icon: FileText,
     description: 'Everything about filing your returns',
     articles: [
-      { title: 'Step-by-step ITR filing process' },
-      { title: 'Which ITR form should I use?' },
-      { title: 'Common ITR filing mistakes' },
-      { title: 'How to claim deductions' }
+      { title: 'Step-by-step ITR filing process', href: '/itr/step-by-step-guide' },
+      { title: 'Which ITR form should I use?', href: '/itr/form-selector' },
+      { title: 'Common ITR filing mistakes', href: '/learn/guides' },
+      { title: 'How to claim deductions', href: '/calculators/tax-regime' }
     ]
   },
   {
@@ -53,10 +53,10 @@ const helpCategories = [
     icon: Calculator,
     description: 'Learn to use our calculators',
     articles: [
-      { title: 'Income tax calculator guide' },
-      { title: 'HRA calculator explained' },
-      { title: 'Capital gains calculation' },
-      { title: 'TDS calculator tutorial' }
+      { title: 'Income tax calculator guide', href: '/calculators/income-tax' },
+      { title: 'HRA calculator explained', href: '/calculators/hra' },
+      { title: 'Capital gains calculation', href: '/calculators/capital-gains' },
+      { title: 'TDS calculator tutorial', href: '/calculators/tds' }
     ]
   },
   {
@@ -65,10 +65,10 @@ const helpCategories = [
     icon: Shield,
     description: 'Manage your account safely',
     articles: [
-      { title: 'Reset your password' },
-      { title: 'Two-factor authentication setup' },
-      { title: 'Update profile information' },
-      { title: 'Data security measures' }
+      { title: 'Reset your password', href: '/forgot-password' },
+      { title: 'Two-factor authentication setup', href: '/settings/account' },
+      { title: 'Update profile information', href: '/settings/account' },
+      { title: 'Data security measures', href: '/trust' }
     ]
   },
   {
@@ -77,10 +77,10 @@ const helpCategories = [
     icon: CreditCard,
     description: 'Billing and refund information',
     articles: [
-      { title: 'Payment methods accepted' },
-      { title: 'Refund policy explained' },
-      { title: 'Invoice download guide' },
-      { title: 'Subscription management' }
+      { title: 'Payment methods accepted', href: '/pricing' },
+      { title: 'Refund policy explained', href: '/legal/refund-policy' },
+      { title: 'Invoice download guide', href: '/payments' },
+      { title: 'Subscription management', href: '/settings/account' }
     ]
   },
   {
@@ -89,10 +89,10 @@ const helpCategories = [
     icon: HelpCircle,
     description: 'Fix common issues',
     articles: [
-      { title: 'Login issues resolution' },
-      { title: 'Form submission errors' },
-      { title: 'Document upload problems' },
-      { title: 'Browser compatibility' }
+      { title: 'Login issues resolution', href: '/help/faq' },
+      { title: 'Form submission errors', href: '/help' },
+      { title: 'Document upload problems', href: '/help' },
+      { title: 'Browser compatibility', href: '/help' }
     ]
   }
 ];
@@ -240,7 +240,7 @@ export default function HelpCenterPage() {
                         <ul className="space-y-3">
                           {category.articles.map((article, index) => (
                             <li key={index}>
-                              <Link href={`/help/article/${category.id}/${index}`}>
+                              <Link href={article.href}>
                                 <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer group">
                                   <div className="flex-1">
                                     <h4 className="font-medium text-gray-900 group-hover:text-blue-600">

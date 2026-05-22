@@ -595,3 +595,11 @@ export function findGeneratedCalculatorPage(slug: string) {
 export function findGeneratedStartupPage(slug: string) {
   return generatedStartupPages.find((page) => page.slug === slug);
 }
+
+export function getGeneratedPublicRoutes() {
+  return [
+    ...generatedServicePages.map((page) => `/services/${page.slug}`),
+    ...generatedCalculatorPages.map((page) => `/calculators/${page.slug}`),
+    ...generatedStartupPages.map((page) => `/startup/${page.slug}`),
+  ];
+}

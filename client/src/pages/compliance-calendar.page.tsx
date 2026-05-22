@@ -603,8 +603,8 @@ export default function ComplianceCalendarPage() {
                   <p className="text-sm font-normal text-slate-500 mt-1">Audit log of recent statutory filings</p>
                 </div>
               </div>
-              <Link href="#" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center gap-2 group transition-colors">
-                View all activity <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <Link href="/services/compliance-management" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center gap-2 group transition-colors">
+                Explore compliance support <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
@@ -664,8 +664,8 @@ export default function ComplianceCalendarPage() {
             </div>
 
             <div className="p-6 bg-slate-50/30 border-t border-slate-50 text-center">
-              <Link href="#" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center justify-center gap-2 group transition-all">
-                View all compliance activity <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <Link href="/services/compliance-management" className="text-indigo-600 hover:text-indigo-700 font-normal text-sm flex items-center justify-center gap-2 group transition-all">
+                Plan compliance support <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </Card>
