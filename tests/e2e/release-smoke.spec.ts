@@ -271,6 +271,21 @@ test.describe("release smoke", () => {
     }
   });
 
+  test("UI routes use the global Inter font", async ({ page }) => {
+    for (const route of ["/", "/calculators/regime-comparator", "/auth/login"]) {
+      await page.goto(route, { waitUntil: "domcontentloaded" });
+
+      await expect.poll(
+        () => page.evaluate(() => getComputedStyle(document.body).fontFamily),
+        { message: `${route} should use the global Inter body stack` },
+      ).toContain("Inter");
+      await expect.poll(
+        () => page.evaluate(() => document.body.classList.contains("home-inter-font")),
+        { message: `${route} should not need the old homepage Inter body class` },
+      ).toBe(false);
+    }
+  });
+
   test("public compliance actions use real destinations", async ({ page }) => {
     await expectUsablePage(page, "/compliance-calendar");
     await expect(page.locator('a[href="#"]')).toHaveCount(0);

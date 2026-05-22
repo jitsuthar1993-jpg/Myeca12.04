@@ -229,10 +229,6 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
-  .font-jakarta {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  }
-
   /* Brand Utilities — all aligned to #315efb navy */
   .gradient-primary {
     background: #315efb;
