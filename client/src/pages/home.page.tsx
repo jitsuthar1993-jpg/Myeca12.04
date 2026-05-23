@@ -13,15 +13,14 @@ import {
   Building2,
   Bot
 } from "lucide-react";
-import { Link, useLocation } from "wouter";
-import { Suspense, useState, useEffect } from "react";
+import { Link } from "wouter";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
 import { FastITRFilingLogo, AccurateTaxCalculatorLogo, SmartDocumentScannerLogo, ExpertTaxReviewLogo } from "@/components/ui/home-feature-logos";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/components/AuthProvider";
 import { getSEOConfig } from "@/config/seo.config";
 import { MobileActionBar } from "@/components/mobile";
 import { lazyWithRetry } from "@/utils/lazy-with-retry";
@@ -53,18 +52,7 @@ const SectionFallback = () => (
 );
 
 const HomePage = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-  const [, setLocation] = useLocation();
   const seo = getSEOConfig('/');
-
-  useEffect(() => {
-    // Removed auto-redirect so users can always access the homepage
-    // if (!isLoading && isAuthenticated) {
-    //   setLocation("/dashboard");
-    // }
-  }, [isAuthenticated, isLoading, setLocation]);
-
-  // if (isAuthenticated) return null;
 
   return (
     <>

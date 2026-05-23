@@ -61,6 +61,22 @@ function isAuthLayoutPath(path: string) {
   return path.startsWith('/auth/') || authLayoutRoutes.includes(path);
 }
 
+function useDeferredGlobalChrome(timeout = 2400) {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (isReady) return;
+
+    const timeoutId = globalThis.setTimeout(() => setIsReady(true), timeout);
+
+    return () => {
+      globalThis.clearTimeout(timeoutId);
+    };
+  }, [isReady, timeout]);
+
+  return isReady;
+}
+
 function Router() {
   const [currentPath] = useLocation();
   useRouteScrollManager(currentPath);
@@ -125,6 +141,7 @@ function AppContent() {
   const isAuthScreen = isAuthLayoutPath(location);
   const isTaxAssistantPage = location === '/tax-assistant';
   const loadProductionTelemetry = shouldLoadProductionTelemetry();
+  const showDeferredGlobalChrome = useDeferredGlobalChrome();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -183,12 +200,12 @@ function AppContent() {
       <ErrorBoundary>
         <Router />
       </ErrorBoundary>
-      {loadProductionTelemetry && (
+      {loadProductionTelemetry && showDeferredGlobalChrome && (
         <Suspense fallback={null}>
           <ProdOnlyComponents />
         </Suspense>
       )}
-      {!isAuthScreen && (
+      {!isAuthScreen && (showDeferredGlobalChrome || isSearchOpen) && (
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
             <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
@@ -196,7 +213,7 @@ function AppContent() {
         </ErrorBoundary>
       )}
 
-      {!isAuthScreen && !isTaxAssistantPage && (
+      {!isAuthScreen && !isTaxAssistantPage && showDeferredGlobalChrome && (
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
             <UnifiedFAB />
@@ -204,14 +221,14 @@ function AppContent() {
         </ErrorBoundary>
       )}
 
-      <ErrorBoundary fallback={null}>
+      {(showDeferredGlobalChrome || isShortcutsOpen) && <ErrorBoundary fallback={null}>
         <Suspense fallback={null}>
           <KeyboardShortcutsModal
             isOpen={isShortcutsOpen}
             onClose={() => setIsShortcutsOpen(false)}
           />
         </Suspense>
-      </ErrorBoundary>
+      </ErrorBoundary>}
     </LazyMotion>
   );
 }

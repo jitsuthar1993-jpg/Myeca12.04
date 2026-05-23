@@ -38,9 +38,15 @@
 
   var fontLink = document.getElementById("app-font-css");
   if (fontLink) {
-    window.setTimeout(function () {
+    var promoteFont = function () {
       fontLink.media = "all";
-    }, 0);
+    };
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(promoteFont, { timeout: 1800 });
+    } else {
+      window.setTimeout(promoteFont, 1200);
+    }
   }
 
   window.onerror = function (msg, url, line) {
