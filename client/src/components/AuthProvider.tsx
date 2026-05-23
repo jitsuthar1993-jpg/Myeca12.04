@@ -1,5 +1,6 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { type User as SupabaseUser } from "@supabase/supabase-js";
+import { navigate } from "wouter/use-browser-location";
 import { type User as AppUser } from "@shared/schema";
 import { normalizeAppRole, type AppRole } from "@shared/app-roles";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/lib/temporary-test-users";
 import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
+import { shouldUseBlockingAuthLoading } from "@/lib/auth-transition";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
 import {
   buildSignupConfirmationRedirectUrl,
@@ -163,6 +165,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [appUser, setAppUser] = useState<AppUser | null>(() => readTemporaryUserFromSession());
   const [authUser, setAuthUser] = useState<SupabaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const appUserRef = useRef<AppUser | null>(appUser);
+
+  useEffect(() => {
+    appUserRef.current = appUser;
+  }, [appUser]);
 
   const refreshUser = useCallback(async (nextAuthUser?: SupabaseUser | null) => {
     const temporaryUser = readTemporaryUserFromSession();
@@ -213,7 +220,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!active) return;
-      setIsLoading(true);
+      const shouldBlock = shouldUseBlockingAuthLoading(
+        _event,
+        Boolean(appUserRef.current),
+        Boolean(session?.access_token),
+      );
+      if (shouldBlock) {
+        setIsLoading(true);
+      }
 
       const temporaryUser = readTemporaryUserFromSession();
       if (temporaryUser) {
@@ -408,7 +422,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
-  const logout = async (reason: LogoutReason = "manual") => {
+  const logout = useCallback(async (reason: LogoutReason = "manual") => {
     const token = await getAuthToken();
     if (token) {
       await fetch("/api/v1/auth/logout-event", {
@@ -429,7 +443,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setAuthUser(null);
     setAppUser(null);
-  };
+    navigate("/", { replace: true });
+  }, []);
 
   const sendPasswordReset = async (email: string) => {
     if (!isSupabaseEnabled) return;

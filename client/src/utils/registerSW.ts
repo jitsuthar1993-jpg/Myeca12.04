@@ -1,4 +1,5 @@
 // Service Worker Registration Utility
+import { recordReloadAttempt } from "@/utils/reload-diagnostics";
 
 interface ServiceWorkerConfig {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
@@ -7,7 +8,36 @@ interface ServiceWorkerConfig {
   onOnline?: () => void;
 }
 
-export async function registerServiceWorker(config?: ServiceWorkerConfig) {
+interface ServiceWorkerRuntimeOptions {
+  now?: () => number;
+  pathname?: string;
+  reloadPage?: () => void;
+  storage?: Storage | null;
+}
+
+const SW_DEV_UNREGISTERED_KEY = "sw_dev_unregistered";
+
+function getRuntimeStorage(options?: ServiceWorkerRuntimeOptions) {
+  return options?.storage ?? (typeof window === "undefined" ? null : window.sessionStorage);
+}
+
+function readStorageFlag(storage: Storage | null, key: string) {
+  try {
+    return storage?.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStorageFlag(storage: Storage | null, key: string, value: string) {
+  try {
+    storage?.setItem(key, value);
+  } catch {
+    // Best-effort guard; a storage failure should not block service worker cleanup.
+  }
+}
+
+export async function registerServiceWorker(config?: ServiceWorkerConfig, options: ServiceWorkerRuntimeOptions = {}) {
   if (!('serviceWorker' in navigator)) {
     console.log('[SW] Service workers not supported');
     return;
@@ -20,11 +50,19 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
       const regs = await navigator.serviceWorker.getRegistrations();
       const hadAny = regs.length > 0;
       await Promise.all(regs.map((r) => r.unregister().catch(() => false)));
+      const storage = getRuntimeStorage(options);
 
       // If an old SW was controlling the page, force a one-time reload to detach it.
-      if (hadAny && navigator.serviceWorker.controller && !sessionStorage.getItem('sw_dev_unregistered')) {
-        sessionStorage.setItem('sw_dev_unregistered', '1');
-        window.location.reload();
+      if (hadAny && navigator.serviceWorker.controller && !readStorageFlag(storage, SW_DEV_UNREGISTERED_KEY)) {
+        const now = options.now?.() ?? Date.now();
+        const path = (options.pathname ?? window.location.pathname) || "/";
+        writeStorageFlag(storage, SW_DEV_UNREGISTERED_KEY, '1');
+        recordReloadAttempt("service_worker_dev_unregistered", {
+          path,
+          now,
+          storage,
+        });
+        (options.reloadPage ?? (() => window.location.reload()))();
         return;
       }
     } catch (e) {
