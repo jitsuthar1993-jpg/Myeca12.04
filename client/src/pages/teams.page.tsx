@@ -196,14 +196,14 @@ export default function TeamsPage() {
                    </div>
                    <div className="mt-5 text-center">
                       <h2 className="text-xl font-black text-slate-900 tracking-tight">Collaboration Hub</h2>
-                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                          {teams.length} Active Teams
                       </Badge>
                    </div>
                 </div>
 
                 <div className="mt-10 space-y-3">
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Team Directory</p>
+                   <p className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Team Directory</p>
                    {teamsLoading ? (
                       <div className="flex justify-center py-10">
                          <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
@@ -231,7 +231,7 @@ export default function TeamsPage() {
                               </div>
                               <div>
                                  <p className={cn("text-sm font-black leading-none mb-1", selectedTeam === t.id ? "text-white" : "text-slate-900")}>{t.name}</p>
-                                 <p className={cn("text-[10px] font-black uppercase tracking-widest", selectedTeam === t.id ? "text-indigo-100" : "text-slate-400")}>{t.memberCount} Members</p>
+                                 <p className={cn("type-meta font-black uppercase tracking-widest", selectedTeam === t.id ? "text-indigo-100" : "text-slate-400")}>{t.memberCount} Members</p>
                               </div>
                            </div>
                            <ChevronRight className={cn("h-4 w-4", selectedTeam === t.id ? "text-white" : "text-slate-200")} />
@@ -275,7 +275,7 @@ export default function TeamsPage() {
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3 mb-2">
                        <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
-                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">{team?.type.replace('_', ' ')} Unit</span>
+                       <span className="type-meta font-black uppercase tracking-[0.2em] text-indigo-600">{team?.type.replace('_', ' ')} Unit</span>
                     </div>
                     <h1 className="text-4xl font-black tracking-tight text-slate-900">{team?.name}</h1>
                     <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
@@ -306,10 +306,10 @@ export default function TeamsPage() {
 
                 <Tabs defaultValue="overview" className="space-y-10">
                    <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50">
-                     <TabsTrigger value="overview" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Strategic Overview</TabsTrigger>
-                     <TabsTrigger value="tasks" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Operational Tasks</TabsTrigger>
-                     <TabsTrigger value="members" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Unit Members</TabsTrigger>
-                     <TabsTrigger value="activity" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Audit Trail</TabsTrigger>
+                     <TabsTrigger value="overview" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Strategic Overview</TabsTrigger>
+                     <TabsTrigger value="tasks" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Operational Tasks</TabsTrigger>
+                     <TabsTrigger value="members" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Unit Members</TabsTrigger>
+                     <TabsTrigger value="activity" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Audit Trail</TabsTrigger>
                    </TabsList>
 
                    <TabsContent value="overview" className="space-y-10 outline-none">
@@ -324,11 +324,11 @@ export default function TeamsPage() {
                                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center", `bg-${s.color}-50 text-${s.color}-600`)}>
                                     <s.icon className="h-7 w-7" />
                                  </div>
-                                 <Badge className="border-none bg-blue-50 px-2 py-0.5 text-[8px] font-black uppercase text-blue-600 rounded-full">
+                                 <Badge className="border-none bg-blue-50 px-2 py-0.5 type-meta font-black uppercase text-blue-600 rounded-full">
                                     {s.trend}
                                  </Badge>
                               </div>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
+                              <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
                               <p className="text-3xl font-black text-slate-900 tracking-tight">{String(s.value)}</p>
                            </Card>
                          ))}
@@ -342,19 +342,19 @@ export default function TeamsPage() {
                          <CardContent className="px-0">
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
                                <div>
-                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Domain</p>
+                                 <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Domain</p>
                                  <p className="text-lg font-black text-slate-900 leading-none capitalize">{team?.type.replace("_", " ")}</p>
                                </div>
                                <div>
-                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Force Strength</p>
+                                 <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Force Strength</p>
                                  <p className="text-lg font-black text-slate-900 leading-none">{team?.memberCount} Experts</p>
                                </div>
                                <div>
-                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Operational Queue</p>
+                                 <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Operational Queue</p>
                                  <p className="text-lg font-black text-slate-900 leading-none">{team?.stats.activeTasks} Assignments</p>
                                </div>
                                <div>
-                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Ledger Entries</p>
+                                 <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Ledger Entries</p>
                                  <p className="text-lg font-black text-slate-900 leading-none">{team?.stats.totalNotes} Records</p>
                                </div>
                             </div>
@@ -385,11 +385,11 @@ export default function TeamsPage() {
                                     <div>
                                       <h4 className="text-lg font-black text-slate-900 leading-none mb-3">{task.title}</h4>
                                       <div className="flex items-center gap-6">
-                                         <Badge className={cn("border-none font-black text-[8px] uppercase px-3 py-1 rounded-full", `bg-${priorityColors[task.priority]}-50 text-${priorityColors[task.priority]}-600`)}>
+                                         <Badge className={cn("border-none font-black type-meta uppercase px-3 py-1 rounded-full", `bg-${priorityColors[task.priority]}-50 text-${priorityColors[task.priority]}-600`)}>
                                             {task.priority} Priority
                                          </Badge>
                                          {task.dueDate && (
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                            <span className="type-meta font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                               <Calendar className="h-3 w-3" />
                                               Due {format(new Date(task.dueDate), "MMM dd")}
                                             </span>
@@ -397,7 +397,7 @@ export default function TeamsPage() {
                                       </div>
                                     </div>
                                   </div>
-                                  <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black text-[10px] uppercase tracking-widest">
+                                  <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black type-meta uppercase tracking-widest">
                                     {task.status}
                                   </Badge>
                                 </div>
@@ -433,8 +433,8 @@ export default function TeamsPage() {
                                </div>
                                <div>
                                   <h4 className="text-xl font-black text-slate-900 leading-none mb-2">{memberName}</h4>
-                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">{memberEmail}</p>
-                                  <Badge variant="outline" className="h-8 px-4 rounded-xl border-slate-100 font-black text-[9px] uppercase tracking-widest group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                                  <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-6">{memberEmail}</p>
+                                  <Badge variant="outline" className="h-8 px-4 rounded-xl border-slate-100 font-black type-meta uppercase tracking-widest group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
                                     {member.role} Status
                                   </Badge>
                                </div>
@@ -469,7 +469,7 @@ export default function TeamsPage() {
                                     <span className="text-slate-500 font-medium mx-2">{activity.action}</span>
                                     {activity.target && <span className="font-black text-indigo-600"> "{activity.target}"</span>}
                                   </p>
-                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                  <p className="type-meta font-black text-slate-400 uppercase tracking-widest">
                                     {format(new Date(activity.timestamp), "MMM dd, yyyy 'at' hh:mm a")}
                                   </p>
                                 </div>

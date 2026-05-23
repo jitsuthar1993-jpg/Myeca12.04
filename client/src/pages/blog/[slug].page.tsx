@@ -156,7 +156,7 @@ function TocPanel({ toc, activeId }: { toc: BlogTocItem[]; activeId: string }) {
           <BookOpen className="h-4 w-4 text-blue-600" />
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Index</p>
         </div>
-        <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-semibold text-blue-700">
+        <span className="type-meta rounded-full bg-blue-50 px-2.5 py-0.5 font-semibold text-blue-700">
           {toc.length} sections
         </span>
       </div>
@@ -170,8 +170,8 @@ function TocPanel({ toc, activeId }: { toc: BlogTocItem[]; activeId: string }) {
               aria-current={isActive ? "location" : undefined}
               onClick={() => scrollToHeading(item.id)}
               className={cn(
-                "block min-h-9 w-full rounded-lg border-l-[3px] px-3 py-2 text-left text-[13px] leading-snug transition-all",
-                item.level === 3 && "pl-6 text-[12px]",
+                "type-support block min-h-9 w-full rounded-lg border-l-[3px] px-3 py-2 text-left leading-snug transition-all",
+                item.level === 3 && "type-meta pl-6",
                 isActive
                   ? "border-blue-600 bg-blue-50 font-bold text-blue-700"
                   : "border-transparent text-slate-600 hover:border-blue-200 hover:bg-slate-50 hover:text-blue-700",
@@ -216,8 +216,8 @@ function InlineToc({ toc, activeId }: { toc: BlogTocItem[]; activeId: string }) 
                   aria-current={isActive ? "location" : undefined}
                   onClick={() => scrollToHeading(item.id)}
                   className={cn(
-                    "block py-1 text-left text-[15px] leading-snug transition group",
-                    item.level === 3 && "pl-6 text-[14px]",
+                    "type-body block py-1 text-left leading-snug transition group",
+                    item.level === 3 && "type-support pl-6",
                     isActive
                       ? "font-bold text-blue-700"
                       : "text-slate-600 hover:text-blue-700"
@@ -432,21 +432,21 @@ export default function BlogPostPage() {
         <article className="min-w-0">
           <header className="mb-10">
             <div className="mb-6 flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+              <span className="type-meta rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 font-semibold uppercase text-blue-700">
                 {getCategoryName(post)}
               </span>
-              <span className="rounded-full border border-emerald-100 bg-emerald-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-700">
+              <span className="type-meta rounded-full border border-emerald-100 bg-emerald-50 px-4 py-1.5 font-semibold uppercase text-emerald-700">
                 {getAudienceLabel(post.audience)}
               </span>
               {(post.reviewedBy || post.reviewedAt) && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-700 shadow-sm">
+                <span className="type-meta inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-4 py-1.5 font-semibold uppercase text-blue-700 shadow-sm">
                   <ShieldCheck className="h-4 w-4 text-blue-500" />
                   Expert reviewed
                 </span>
               )}
             </div>
 
-            <h1 className="text-[34px] font-bold leading-[1.1] tracking-tight text-slate-950 sm:text-[46px] lg:text-[58px]">
+            <h1 className="type-hero-title font-bold text-slate-950">
               {post.title}
             </h1>
 
@@ -473,7 +473,7 @@ export default function BlogPostPage() {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 {highlights.map((highlight) => (
-                  <div key={highlight} className="flex min-h-16 items-start gap-3 rounded-xl border border-blue-100/70 bg-white px-4 py-3 text-[14px] leading-6 text-slate-700 shadow-sm transition hover:border-blue-200">
+                  <div key={highlight} className="type-support flex min-h-16 items-start gap-3 rounded-xl border border-blue-100/70 bg-white px-4 py-3 text-slate-700 shadow-sm transition hover:border-blue-200">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
                     <p>{highlight}</p>
                   </div>
@@ -484,24 +484,24 @@ export default function BlogPostPage() {
 
           <section
             className={cn(
-              "prose prose-slate max-w-none prose-p:text-[17px] prose-p:leading-[1.75] prose-p:text-slate-700",
-              "prose-headings:scroll-mt-32 prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-950",
-              "prose-h2:mt-14 prose-h2:mb-6 prose-h2:border-b prose-h2:border-slate-100 prose-h2:pb-3 prose-h2:text-3xl",
-              "prose-h3:mt-9 prose-h3:text-xl",
-              "prose-li:text-[17px] prose-li:leading-[1.75] prose-li:text-slate-700",
+              "type-article-prose prose prose-slate max-w-none prose-p:text-slate-700",
+              "prose-headings:scroll-mt-32 prose-headings:font-bold prose-headings:text-slate-950",
+              "prose-h2:mt-14 prose-h2:mb-6 prose-h2:border-b prose-h2:border-slate-100 prose-h2:pb-3",
+              "prose-h3:mt-9",
+              "prose-li:text-slate-700",
               "prose-a:font-medium prose-a:text-blue-700 prose-a:no-underline hover:prose-a:underline",
               "prose-strong:font-semibold prose-strong:text-slate-950",
               "prose-blockquote:rounded-r-3xl prose-blockquote:border-l-[6px] prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:px-8 prose-blockquote:py-6 prose-blockquote:not-italic prose-blockquote:text-slate-800 prose-blockquote:font-normal prose-blockquote:text-lg",
               "prose-table:overflow-hidden prose-table:rounded-[2rem] prose-table:border prose-table:border-slate-200",
               "prose-th:bg-blue-600 prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-th:uppercase prose-th:tracking-wider prose-th:text-white",
-              "prose-td:px-6 prose-td:py-4 prose-td:text-[15px] prose-td:text-slate-700",
+              "prose-td:px-6 prose-td:py-4 prose-td:text-sm prose-td:text-slate-700",
               "prose-img:rounded-[2rem] prose-img:border prose-img:border-slate-100",
             )}
             dangerouslySetInnerHTML={{ __html: normalizedContent.html }}
           />
 
           <div className="mt-16 space-y-12">
-            <section className="rounded-3xl border border-amber-200 bg-amber-50/50 p-8 text-[15px] leading-relaxed text-slate-700 sm:p-10">
+            <section className="type-support rounded-3xl border border-amber-200 bg-amber-50/50 p-8 text-slate-700 sm:p-10">
               <div className="mb-4 flex items-center gap-3">
                 <ShieldCheck className="h-6 w-6 text-amber-600" />
                 <h2 className="text-xl font-bold text-slate-950">Professional Disclaimer</h2>
@@ -533,7 +533,7 @@ export default function BlogPostPage() {
             <section className="relative overflow-hidden rounded-2xl border border-blue-100 bg-blue-50/60 p-6 text-slate-700 shadow-sm sm:p-8">
               <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                 <div className="max-w-xl">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-blue-700">
+                  <div className="type-meta mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-1.5 font-semibold uppercase text-blue-700">
                     Expert Assistance
                   </div>
                   <h2 className="text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">Get a MyeCA Expert to review your case.</h2>
@@ -582,7 +582,7 @@ export default function BlogPostPage() {
                 <div className="divide-y divide-slate-100 overflow-hidden rounded-[2rem] border border-slate-200 bg-white">
                   {faqItems.map((faq, index) => (
                     <details key={`${faq.question}-${index}`} className="group p-6 transition-colors open:bg-blue-50/30 hover:bg-slate-50/50">
-                      <summary className="flex cursor-pointer list-none items-center justify-between text-[17px] font-semibold leading-snug text-slate-950 marker:hidden">
+                      <summary className="type-body flex cursor-pointer list-none items-center justify-between font-semibold text-slate-950 marker:hidden">
                         {faq.question}
                         <ChevronDown className="h-5 w-5 text-slate-400 transition-transform duration-300 group-open:rotate-180" />
                       </summary>
@@ -661,7 +661,7 @@ export default function BlogPostPage() {
                 )}
               </div>
               <div className="mt-5 border-t border-blue-100 pt-4">
-                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-600">Share article</p>
+                <p className="type-meta mb-3 font-semibold uppercase text-blue-600">Share article</p>
                 <div className="flex items-center gap-3">
                   <ShareButtons title={post.title} description={post.excerpt ?? post.title} showCopy={false} />
                 </div>

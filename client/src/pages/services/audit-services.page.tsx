@@ -143,7 +143,7 @@ const AuditServicesPage = () => {
                 <div className="w-14 h-14 bg-purple-50 rounded-full flex items-center justify-center soft-shadow">
                   <FileSearch className="w-8 h-8 text-purple-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Professional Audit Services for Startups
                 </h1>
               </div>

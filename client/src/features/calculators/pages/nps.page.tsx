@@ -67,7 +67,7 @@ export default function NPSCalculatorPage() {
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
+              <h1 className="type-page-title font-normal text-[#101828]">
                 NPS <span className="text-[#444CE7]">Calculator</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
@@ -77,20 +77,20 @@ export default function NPSCalculatorPage() {
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center type-meta font-normal text-[#475467]">
                     {i === 1 ? 'JD' : i === 2 ? 'RK' : 'AM'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
                 <p className="text-xs font-normal text-[#444CE7]">35k+ Investors</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">Projection Tool</p>
+                <p className="type-meta font-normal text-[#667085]">Projection Tool</p>
               </div>
             </div>
           </div>
@@ -224,12 +224,12 @@ export default function NPSCalculatorPage() {
                       </div>
                       <div>
                         <p className="text-xs font-normal text-[#101828]">Accumulation Phase</p>
-                        <p className="text-[11px] text-[#667085]">{years} years of active compounding</p>
+                        <p className="type-support text-[#667085]">{years} years of active compounding</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-normal text-[#444CE7]">Retire at 60</p>
-                      <p className="text-[11px] text-[#667085]">Standard PFRDA Age</p>
+                      <p className="type-support text-[#667085]">Standard PFRDA Age</p>
                     </div>
                   </div>
                 </div>
@@ -258,7 +258,7 @@ export default function NPSCalculatorPage() {
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">Pension Summary</h2>
-                <div className="text-[10px] font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
+                <div className="type-meta font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
                   <BadgeCent className="w-3 h-3" />
                   Estimated
                 </div>
@@ -271,7 +271,7 @@ export default function NPSCalculatorPage() {
                   <div className="absolute -right-4 -bottom-4 opacity-10">
                     <PiggyBank className="w-32 h-32" />
                   </div>
-                  <span className="text-[11px] font-normal uppercase tracking-[0.2em] opacity-80 block mb-2">Retirement Corpus</span>
+                  <span className="type-meta font-normal uppercase tracking-[0.2em] opacity-80 block mb-2">Retirement Corpus</span>
                   <span className="text-4xl font-normal block tabular-nums leading-none">
                     {fmt(result.corpus)}
                   </span>
@@ -285,7 +285,7 @@ export default function NPSCalculatorPage() {
                 <div className="bg-[#F9FAFB] rounded-[24px] border border-[#EAECF0] p-5">
                   <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#F2F4F7]">
                     <div>
-                      <p className="text-[11px] font-normal text-[#667085] uppercase tracking-wider">Monthly Pension</p>
+                      <p className="type-meta font-normal text-[#667085] uppercase tracking-wider">Monthly Pension</p>
                       <p className="text-2xl font-normal text-[#101828] tabular-nums">{fmt(result.monthlyPension)}</p>
                     </div>
                     <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#444CE7]">
@@ -294,11 +294,11 @@ export default function NPSCalculatorPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-[10px] font-normal text-[#667085] uppercase mb-0.5">Lump Sum (60%)</p>
+                      <p className="type-meta font-normal text-[#667085] uppercase mb-0.5">Lump Sum (60%)</p>
                       <p className="text-sm font-normal text-[#101828] tabular-nums">{fmt(result.lumpSum)}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-normal text-[#667085] uppercase mb-0.5">Annuity (40%)</p>
+                      <p className="type-meta font-normal text-[#667085] uppercase mb-0.5">Annuity (40%)</p>
                       <p className="text-sm font-normal text-[#101828] tabular-nums">{fmt(result.annuityCorpus)}</p>
                     </div>
                   </div>
@@ -316,7 +316,7 @@ export default function NPSCalculatorPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-normal text-[#667085]">Lump Sum Tax Status</span>
-                  <span className="text-[10px] font-normal px-2 py-0.5 rounded-full bg-[#ECFDF3] text-[#027A48] uppercase">Tax Free</span>
+                  <span className="type-meta font-normal px-2 py-0.5 rounded-full bg-[#ECFDF3] text-[#027A48] uppercase">Tax Free</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
                   <span className="text-sm font-normal text-[#101828]">Estimated Pension</span>
@@ -331,9 +331,9 @@ export default function NPSCalculatorPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Retirement Strategy?</h4>
-                  <p className="text-[11px] text-[#667085] mb-2 leading-tight">Map your portfolio for a stress-free retirement with our CA experts.</p>
+                  <p className="type-support text-[#667085] mb-2 leading-tight">Map your portfolio for a stress-free retirement with our CA experts.</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-sm font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Speak to Consultant
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -357,8 +357,8 @@ export default function NPSCalculatorPage() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
-                <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
+                <h5 className="type-support font-normal text-[#101828]">{item.label}</h5>
+                <p className="type-support text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>
           ))}

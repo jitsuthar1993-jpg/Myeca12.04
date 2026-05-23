@@ -809,7 +809,7 @@ export default function DocumentGeneratorRegistry() {
               >
                 {category.icon}
               </div>
-              <span className="min-w-0 flex-1 whitespace-nowrap text-left text-[13px] md:text-sm">
+              <span className="min-w-0 flex-1 whitespace-nowrap text-left type-support md:text-sm">
                 {category.name}
               </span>
               {activeCategory === category.id && (

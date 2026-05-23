@@ -197,12 +197,12 @@ function ToolCard({ calc, category }: { calc: CalculatorItem; category: Calculat
           </div>
           <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
             {calc.isPopular && (
-              <span className="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700">
+              <span className="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 type-meta font-medium uppercase tracking-wider text-amber-700">
                 Popular
               </span>
             )}
             {calc.isNew && (
-              <span className="rounded-md border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-indigo-700">
+              <span className="rounded-md border border-indigo-200 bg-indigo-50 px-2 py-0.5 type-meta font-medium uppercase tracking-wider text-indigo-700">
                 New
               </span>
             )}
@@ -215,7 +215,7 @@ function ToolCard({ calc, category }: { calc: CalculatorItem; category: Calculat
         <p className="mt-2 hidden flex-1 text-xs leading-5 text-slate-500 sm:block">{calc.description}</p>
 
         <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 md:mt-5">
-          <span className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Free tool</span>
+          <span className="type-meta font-medium uppercase tracking-widest text-slate-400">Free tool</span>
           <ArrowRight className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", colors.text)} />
         </div>
       </article>
@@ -298,11 +298,11 @@ export default function CalculatorsPage() {
                     description="Estimate tax, compare regimes, and open the tools most taxpayers need before filing."
                   />
                 </div>
-                <div className="mb-5 hidden items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-blue-700 md:inline-flex">
+                <div className="mb-5 hidden items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 type-meta font-medium uppercase tracking-widest text-blue-700 md:inline-flex">
                   <Sparkles className="h-3.5 w-3.5" />
                   Calculator Library
                 </div>
-                <h1 className="hidden max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 md:block sm:text-5xl">
+                <h1 className="type-page-title hidden max-w-3xl font-semibold text-slate-950 md:block">
                   Financial calculators for tax, investing and loans.
                 </h1>
                 <p className="mt-5 hidden max-w-2xl text-base leading-7 text-slate-600 md:block">
@@ -313,7 +313,7 @@ export default function CalculatorsPage() {
               <div className="hidden rounded-lg border border-slate-200 bg-slate-50 p-3 md:block md:p-4">
                 <div className="mb-3 flex items-center justify-between md:mb-4">
                   <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Popular now</p>
-                  <span className="rounded-md border border-emerald-100 bg-emerald-50 px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-emerald-700">
+                  <span className="rounded-md border border-emerald-100 bg-emerald-50 px-2 py-1 type-meta font-medium uppercase tracking-wider text-emerald-700">
                     Updated
                   </span>
                 </div>
@@ -340,8 +340,8 @@ export default function CalculatorsPage() {
 
             <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3 md:hidden">
               <div className="mb-3 flex items-center justify-between">
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Popular for ITR filing</p>
-                <span className="rounded-md border border-emerald-100 bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
+                <p className="type-meta font-bold uppercase tracking-[0.14em] text-blue-700">Popular for ITR filing</p>
+                <span className="rounded-md border border-emerald-100 bg-white px-2 py-1 type-meta font-bold uppercase tracking-wide text-emerald-700">
                   Tax first
                 </span>
               </div>
@@ -480,7 +480,7 @@ export default function CalculatorsPage() {
                           <CategoryIcon className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-medium uppercase tracking-widest text-slate-500">{category.eyebrow}</p>
+                          <p className="type-meta font-medium uppercase tracking-widest text-slate-500">{category.eyebrow}</p>
                           <h2 id={`${category.id}-heading`} className="mt-1 text-xl font-semibold tracking-tight text-slate-950 md:text-2xl">
                             {category.name}
                           </h2>

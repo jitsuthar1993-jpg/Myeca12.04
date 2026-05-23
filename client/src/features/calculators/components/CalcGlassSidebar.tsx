@@ -29,12 +29,12 @@ export default function CalcGlassSidebar({
           {(title || description) && (
             <div className="space-y-1">
               {title && (
-                <h3 className="text-xl font-normal text-slate-900 tracking-tight">
+                <h3 className="type-card-title font-normal text-slate-900">
                   {title}
                 </h3>
               )}
               {description && (
-                <p className="text-sm font-normal text-slate-500 mt-1">
+                <p className="type-support mt-1 font-normal text-slate-500">
                   {description}
                 </p>
               )}
@@ -74,11 +74,11 @@ export function CalcResultRow({
   return (
     <div className={cn("flex items-center justify-between gap-4 py-1", className)}>
       <div className="space-y-0.5">
-        <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">
+        <p className="type-meta font-normal uppercase tracking-widest text-slate-400">
           {label}
         </p>
         {subValue && (
-          <p className="text-[10px] text-slate-400 font-normal italic">
+          <p className="type-meta font-normal italic text-slate-400">
             {subValue}
           </p>
         )}

@@ -296,7 +296,7 @@ export default function ISOCertificationPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Award className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   ISO Certification Services
                 </h1>
               </div>
@@ -372,7 +372,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               ISO Certification Cost & Timeline 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -441,7 +441,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               6-Phase ISO Certification Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -486,7 +486,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Required Documentation for ISO Certification
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -526,7 +526,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Cost Factors & Variables
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -565,7 +565,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Business Benefits & ROI
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -605,7 +605,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Certification Body Selection
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -649,7 +649,7 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Ongoing Maintenance Costs
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

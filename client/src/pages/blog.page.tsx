@@ -342,10 +342,10 @@ export default function BlogPage() {
           <div className="grid gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(320px,0.42fr)] lg:items-center">
             <div>
               <div className="relative mb-3">
-                <span className="absolute -left-1 -top-4 select-none text-[46px] font-black tracking-tight text-slate-100 sm:text-[58px]">
+                <span className="type-hero-title absolute -left-1 -top-4 select-none font-black text-slate-100">
                   Blogs
                 </span>
-                <h1 className="relative text-[28px] font-black tracking-tight text-blue-700 sm:text-[34px]">
+                <h1 className="type-page-title relative font-black text-blue-700">
                   Blogs
                 </h1>
               </div>
@@ -399,7 +399,7 @@ export default function BlogPage() {
                     )}
                   >
                     <p className="text-lg font-black leading-none">{stat.value}</p>
-                    <p className="mt-1 text-[8px] font-black uppercase tracking-wider opacity-70">
+                    <p className="type-meta mt-1 font-black uppercase opacity-70">
                       {stat.label}
                     </p>
                   </div>
@@ -417,7 +417,7 @@ export default function BlogPage() {
               <Search className="h-5 w-5 shrink-0 text-blue-500" />
               <input
                 id="blog-search"
-                className="w-full bg-transparent text-[15px] font-bold text-slate-950 outline-none placeholder:text-slate-400"
+                className="type-body w-full bg-transparent font-bold text-slate-950 outline-none placeholder:text-slate-400"
                 placeholder="Search tax, GST, ITR, deductions..."
                 value={searchQuery}
                 onChange={(event) => {
@@ -535,7 +535,7 @@ export default function BlogPage() {
         ) : (
           <div>
             <div className="mb-7 flex items-end justify-between border-b border-slate-200">
-              <h2 className="border-b-2 border-blue-600 pb-2 text-2xl font-black tracking-tight text-slate-950">
+              <h2 className="type-section-title border-b-2 border-blue-600 pb-2 font-black text-slate-950">
                 Latest Posts
               </h2>
               <div className="flex items-center gap-3 pb-3">
@@ -644,7 +644,7 @@ export default function BlogPage() {
             <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">
               Quick answers
             </p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+            <h2 className="type-section-title mt-3 font-black text-slate-950">
               Frequently asked questions
             </h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">

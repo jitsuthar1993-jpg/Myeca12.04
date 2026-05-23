@@ -12,7 +12,7 @@ export default function HeroSection() {
           {/* Left Content */}
           <div className="text-center lg:text-left">
             <m.h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
+              className="type-hero-title text-gray-900 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}

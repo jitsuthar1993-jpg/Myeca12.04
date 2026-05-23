@@ -208,7 +208,7 @@ export default function IntegrationsPage() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <Badge className="mb-4 border-blue-100 bg-blue-50 text-blue-700">Workflow moat</Badge>
-              <h1 className="text-3xl font-black tracking-tight text-slate-950 md:text-5xl">
+              <h1 className="type-page-title text-slate-950">
                 Integrations that turn documents into trackable tax cases.
               </h1>
               <p className="mt-4 text-base leading-7 text-slate-600">

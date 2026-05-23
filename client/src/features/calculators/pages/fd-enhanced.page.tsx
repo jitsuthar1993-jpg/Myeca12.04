@@ -107,14 +107,14 @@ export default function EnhancedFDCalculator() {
               <CalcResultRow label="Post-Tax Returns" value={formatCurrency(result.postTaxReturns)} variant="success" />
               
               <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
-                <p className="text-[10px] font-normal text-slate-500 uppercase tracking-widest mb-2">Yield Analysis</p>
+                <p className="type-meta font-normal text-slate-500 uppercase tracking-widest mb-2">Yield Analysis</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] font-normal text-slate-400">Effective rate</p>
+                    <p className="type-meta font-normal text-slate-400">Effective rate</p>
                     <p className="text-sm font-normal text-slate-800">{result.effectiveRate}%</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-normal text-slate-400">Total Tax</p>
+                    <p className="type-meta font-normal text-slate-400">Total Tax</p>
                     <p className="text-sm font-normal text-red-600">{formatCurrency(result.taxOnInterest)}</p>
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export default function EnhancedFDCalculator() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Select Bank</Label>
+                    <Label className="type-meta font-normal text-slate-400 uppercase tracking-widest">Select Bank</Label>
                     <Select value={bankSelected} onValueChange={handleBankChange}>
                       <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
                         <SelectValue />
@@ -187,7 +187,7 @@ export default function EnhancedFDCalculator() {
                   </CalcInputGroup>
 
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Compounding</Label>
+                    <Label className="type-meta font-normal text-slate-400 uppercase tracking-widest">Compounding</Label>
                     <Select value={compoundingFrequency.toString()} onValueChange={(value) => setCompoundingFrequency(Number(value))}>
                       <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
                         <SelectValue />
@@ -203,7 +203,7 @@ export default function EnhancedFDCalculator() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Your Tax Slab</Label>
+                    <Label className="type-meta font-normal text-slate-400 uppercase tracking-widest">Your Tax Slab</Label>
                     <Select value={taxRate.toString()} onValueChange={(value) => setTaxRate(Number(value))}>
                       <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
                         <SelectValue />
@@ -241,9 +241,9 @@ export default function EnhancedFDCalculator() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th className="text-left p-4 text-[10px] font-normal text-slate-400 uppercase tracking-widest">Bank</th>
-                      <th className="text-center p-4 text-[10px] font-normal text-slate-400 uppercase tracking-widest">Rate</th>
-                      <th className="text-right p-4 text-[10px] font-normal text-slate-400 uppercase tracking-widest">Maturity</th>
+                      <th className="text-left p-4 type-meta font-normal text-slate-400 uppercase tracking-widest">Bank</th>
+                      <th className="text-center p-4 type-meta font-normal text-slate-400 uppercase tracking-widest">Rate</th>
+                      <th className="text-right p-4 type-meta font-normal text-slate-400 uppercase tracking-widest">Maturity</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -253,7 +253,7 @@ export default function EnhancedFDCalculator() {
                         <tr key={bank.value} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                           <td className="p-4 font-normal text-slate-800 text-sm">{bank.label}</td>
                           <td className="text-center p-4">
-                            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-normal px-2.5 py-0.5 rounded-full text-[10px]">
+                            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-normal px-2.5 py-0.5 rounded-full type-meta">
                               {bank.rate}%
                             </Badge>
                           </td>

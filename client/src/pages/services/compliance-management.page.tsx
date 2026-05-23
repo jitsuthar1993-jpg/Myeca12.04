@@ -145,7 +145,7 @@ const ComplianceManagementPage = () => {
                 <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center soft-shadow">
                   <Shield className="w-8 h-8 text-green-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Startup Compliance Management
                 </h1>
               </div>

@@ -130,7 +130,7 @@ export default function ReportsPage() {
                    </div>
                    <div className="mt-5 text-center">
                       <h2 className="text-xl font-black text-slate-900 tracking-tight">Financial Intelligence</h2>
-                      <Badge variant="outline" className="mt-2 bg-blue-50 text-blue-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                      <Badge variant="outline" className="mt-2 bg-blue-50 text-blue-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                          Live Analytics
                       </Badge>
                    </div>
@@ -145,7 +145,7 @@ export default function ReportsPage() {
                    ].map((stat, i) => (
                      <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                         <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
+                        <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
                         <span className="text-sm font-black text-slate-900 leading-none">{stat.value}</span>
                      </div>
                    ))}
@@ -157,8 +157,8 @@ export default function ReportsPage() {
              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all group-hover:scale-150" />
              <Activity className="h-8 w-8 text-blue-500 mb-6" />
              <h3 className="font-black text-xl leading-tight mb-3 text-slate-900">Health Check</h3>
-             <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">Automated scan for audit risks and tax optimization gaps.</p>
-             <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-blue-100 border-none transition-all">Scan Health</Button>
+             <p className="text-slate-500 type-meta font-medium leading-relaxed mb-6">Automated scan for audit risks and tax optimization gaps.</p>
+             <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 font-black type-meta uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-blue-100 border-none transition-all">Scan Health</Button>
           </div>
         </div>
 
@@ -169,7 +169,7 @@ export default function ReportsPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mb-2">
                  <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Reporting Engine</span>
+                 <span className="type-meta font-black uppercase tracking-[0.2em] text-blue-600">Reporting Engine</span>
               </div>
               <h1 className="text-4xl font-black tracking-tight text-slate-900">Reports & Analytics</h1>
               <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
@@ -180,9 +180,9 @@ export default function ReportsPage() {
 
           <Tabs defaultValue="generate" className="space-y-10">
             <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50">
-              <TabsTrigger value="generate" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white">Generate Intelligence</TabsTrigger>
-              <TabsTrigger value="history" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white">Archived Records</TabsTrigger>
-              <TabsTrigger value="insights" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white">Trend Visualization</TabsTrigger>
+              <TabsTrigger value="generate" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white">Generate Intelligence</TabsTrigger>
+              <TabsTrigger value="history" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white">Archived Records</TabsTrigger>
+              <TabsTrigger value="insights" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white">Trend Visualization</TabsTrigger>
             </TabsList>
 
             <TabsContent value="generate" className="space-y-10 outline-none">
@@ -221,7 +221,7 @@ export default function ReportsPage() {
                                   <Icon className="h-7 w-7" />
                                 </div>
                                 {isSelected && (
-                                  <Badge className="bg-blue-600 text-white border-none font-black text-[8px] uppercase px-3 py-1 rounded-full">Primary Select</Badge>
+                                  <Badge className="bg-blue-600 text-white border-none font-black type-meta uppercase px-3 py-1 rounded-full">Primary Select</Badge>
                                 )}
                               </div>
                               <CardTitle className="text-xl font-black text-slate-900">{template.name}</CardTitle>
@@ -246,7 +246,7 @@ export default function ReportsPage() {
                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                          {/* Date Range */}
                          <div className="space-y-4">
-                           <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Analysis Period</Label>
+                           <Label className="type-meta font-black uppercase tracking-widest text-slate-400 ml-1">Analysis Period</Label>
                            <div className="grid grid-cols-2 gap-4">
                              <Popover>
                                <PopoverTrigger asChild>
@@ -284,7 +284,7 @@ export default function ReportsPage() {
 
                          {/* Format */}
                          <div className="space-y-4">
-                           <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Export Architecture</Label>
+                           <Label className="type-meta font-black uppercase tracking-widest text-slate-400 ml-1">Export Architecture</Label>
                            <Select value={exportFormat} onValueChange={setExportFormat}>
                              <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none text-base font-black shadow-inner">
                                <SelectValue />
@@ -352,12 +352,12 @@ export default function ReportsPage() {
                             </div>
                             <div>
                               <h4 className="text-lg font-black text-slate-900 leading-none mb-2">{report.name}</h4>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              <p className="type-meta font-black text-slate-400 uppercase tracking-widest">
                                 Generated {format(new Date(report.generatedAt), "MMM dd, yyyy")} - {report.size}
                               </p>
                             </div>
                           </div>
-                          <Button variant="outline" className="h-12 px-6 rounded-2xl border-slate-200 font-black text-[10px] uppercase tracking-widest transition-all hover:bg-blue-600 hover:text-white hover:border-blue-600">
+                          <Button variant="outline" className="h-12 px-6 rounded-2xl border-slate-200 font-black type-meta uppercase tracking-widest transition-all hover:bg-blue-600 hover:text-white hover:border-blue-600">
                             <Download className="h-4 w-4 mr-2" />
                             Download {report.format}
                           </Button>

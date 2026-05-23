@@ -31,7 +31,7 @@ export default function GeneratedCalculatorInfoPage() {
   if (!page) {
     return (
       <main className="min-h-screen bg-slate-50 px-4 py-20 text-center">
-        <h1 className="text-4xl font-black text-slate-950">Calculator guide not found</h1>
+        <h1 className="type-page-title font-black text-slate-950">Calculator guide not found</h1>
         <Link href="/calculators">
           <Button className="mt-6">Back to calculators</Button>
         </Link>
@@ -65,8 +65,8 @@ export default function GeneratedCalculatorInfoPage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-[1.1fr_0.9fr] md:px-6 lg:px-8">
           <div>
             <Badge className="mb-5 bg-indigo-50 text-indigo-700">{page.subtitle}</Badge>
-            <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-6xl">{page.title}</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{page.description}</p>
+            <h1 className="type-page-title font-black text-slate-950">{page.title}</h1>
+            <p className="type-body mt-6 max-w-3xl text-slate-600">{page.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/expert-consultation">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
@@ -85,7 +85,7 @@ export default function GeneratedCalculatorInfoPage() {
               <div className="rounded-3xl bg-white p-5 text-blue-700 shadow-sm">
                 <Icon className="h-10 w-10" />
               </div>
-              <h2 className="mt-6 text-2xl font-black text-slate-950">What this guide helps with</h2>
+              <h2 className="type-section-title mt-6 font-black text-slate-950">What this guide helps with</h2>
               <div className="mt-5 grid gap-3">
                 {page.highlights.map((item) => (
                   <div key={item} className="flex items-center gap-3 rounded-2xl bg-white p-4">
@@ -110,8 +110,8 @@ export default function GeneratedCalculatorInfoPage() {
           <CardContent className="flex flex-col justify-between gap-6 p-8 md:flex-row md:items-center">
             <div>
               <BookOpen className="mb-4 h-7 w-7 text-blue-600" />
-              <h2 className="text-2xl font-black text-slate-950">Continue with a related workflow</h2>
-              <p className="mt-2 text-slate-600">Use an existing tool or ask an expert to review your facts.</p>
+              <h2 className="type-section-title font-black text-slate-950">Continue with a related workflow</h2>
+              <p className="type-body mt-2 text-slate-600">Use an existing tool or ask an expert to review your facts.</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               {page.relatedLinks.map((link) => (
@@ -131,7 +131,7 @@ function InfoCard({ title, items }: { title: string; items: string[] }) {
   return (
     <Card className="h-full rounded-[24px] border-slate-200 bg-white shadow-sm">
       <CardContent className="p-6">
-        <h2 className="text-lg font-black text-slate-950">{title}</h2>
+        <h2 className="type-card-title font-black text-slate-950">{title}</h2>
         <div className="mt-5 space-y-3">
           {items.map((item) => (
             <div key={item} className="flex gap-3 rounded-2xl bg-slate-50 p-3 text-sm font-semibold text-slate-700">

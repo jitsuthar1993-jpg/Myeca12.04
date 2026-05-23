@@ -18,9 +18,9 @@ const wordmarkSizeClasses = {
 };
 
 const subtitleSizeClasses = {
-  sm: "text-[9px] tracking-[0.18em]",
-  md: "text-[10px] tracking-[0.2em]",
-  lg: "text-[11px] tracking-[0.22em]",
+  sm: "type-meta tracking-[0.18em]",
+  md: "type-meta tracking-[0.2em]",
+  lg: "type-meta tracking-[0.22em]",
 };
 
 export default function BrandLockup({
@@ -53,7 +53,7 @@ export default function BrandLockup({
           {badge ? (
             <span
               className={cn(
-                "rounded-full px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em]",
+                "rounded-full px-2 py-1 type-meta font-black uppercase tracking-[0.16em]",
                 dark
                   ? "bg-white/12 text-white/90 ring-1 ring-white/15"
                   : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100",

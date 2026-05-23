@@ -231,7 +231,7 @@ export default function UserGuidePage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <BookOpen className="w-16 h-16 mx-auto mb-4 text-blue-200" />
-              <h1 className="text-4xl font-bold mb-4">User Guides</h1>
+              <h1 className="type-page-title mb-4 font-bold">User Guides</h1>
               <p className="text-xl text-blue-100">
                 Step-by-step guides to help you navigate tax filing with confidence
               </p>
@@ -310,7 +310,7 @@ export default function UserGuidePage() {
                     <CardTitle className="flex items-center gap-3">
                       <guide.icon className="w-8 h-8 text-blue-600" />
                       <div className="flex-1">
-                        <h1 className="text-2xl font-bold">{guide.title}</h1>
+                        <h1 className="type-section-title font-bold">{guide.title}</h1>
                         <p className="text-gray-600 mt-1">{guide.description}</p>
                       </div>
                       <Badge variant="secondary">

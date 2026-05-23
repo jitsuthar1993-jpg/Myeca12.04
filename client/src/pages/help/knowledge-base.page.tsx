@@ -309,7 +309,7 @@ export default function KnowledgeBasePage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <BookOpen className="w-16 h-16 mx-auto mb-4 text-indigo-200" />
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              <h1 className="type-page-title mb-6 font-bold">
                 Tax Knowledge Base
               </h1>
               <p className="text-xl mb-8 text-indigo-100">

@@ -32,10 +32,10 @@ export default function ITRSuccessPage() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="type-page-title text-gray-900 mb-2">
             {isDemoMode ? "ITR Review Request Prepared" : "ITR Review Request Received"}
           </h1>
-          <p className="text-gray-600">
+          <p className="type-body text-gray-600">
             {isDemoMode
               ? "Your local development flow has prepared a review reference. It is not an Income Tax portal filing acknowledgment."
               : "Your details are ready for CA review. A valid filing acknowledgment is issued only after portal filing is completed."}
@@ -45,7 +45,7 @@ export default function ITRSuccessPage() {
         {/* Acknowledgment Details */}
         <Card className="mb-6 border-green-200 bg-green-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-green-900">
+            <CardTitle className="type-card-title flex items-center text-green-900">
               <Receipt className="h-5 w-5 mr-2" />
               {isDemoMode ? "Development Review Reference" : "Filing Reference"}
             </CardTitle>
@@ -53,18 +53,18 @@ export default function ITRSuccessPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-green-600">
+                <p className="type-meta text-green-600">
                   {isDemoMode ? "Development Reference" : "Acknowledgment Status"}
                 </p>
-                <p className="text-lg font-bold text-green-900 font-mono">
+                <p className="type-card-title font-bold text-green-900 font-mono">
                   {isDemoMode ? acknowledgmentNumber : "Issued after Income Tax portal filing"}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-green-600">
+                <p className="type-meta text-green-600">
                   {isDemoMode ? "Submission Date" : "Request Date"}
                 </p>
-                <p className="text-lg font-semibold text-green-900">
+                <p className="type-card-title font-semibold text-green-900">
                   {new Date().toLocaleDateString('en-IN', {
                     day: '2-digit',
                     month: 'long',
@@ -73,12 +73,12 @@ export default function ITRSuccessPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-green-600">Assessment Year</p>
-                <p className="text-lg font-semibold text-green-900">To be confirmed in review</p>
+                <p className="type-meta text-green-600">Assessment Year</p>
+                <p className="type-card-title font-semibold text-green-900">To be confirmed in review</p>
               </div>
               <div>
-                <p className="text-sm text-green-600">ITR Form</p>
-                <p className="text-lg font-semibold text-green-900">To be confirmed in review</p>
+                <p className="type-meta text-green-600">ITR Form</p>
+                <p className="type-card-title font-semibold text-green-900">To be confirmed in review</p>
               </div>
             </div>
           </CardContent>
@@ -87,8 +87,8 @@ export default function ITRSuccessPage() {
         {/* Next Steps */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Next Steps</CardTitle>
-          <CardDescription>
+            <CardTitle className="type-card-title">Next Steps</CardTitle>
+          <CardDescription className="type-support">
             {isDemoMode
               ? "What you need to do next to complete your tax filing"
               : "What happens next before your return is filed"}
@@ -98,13 +98,13 @@ export default function ITRSuccessPage() {
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-semibold text-blue-600">1</span>
+                  <span className="type-meta font-semibold text-blue-600">1</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">
                     CA Review
                   </h4>
-                  <p className="text-gray-600 text-sm">
+                  <p className="type-support text-gray-600">
                     {isDemoMode
                       ? "Use this local reference to test the post-submit journey. A tax expert review is still required before any real filing."
                       : "A tax expert will verify your income, AIS/26AS, deductions, and filing eligibility before submission."}
@@ -114,13 +114,13 @@ export default function ITRSuccessPage() {
               
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-semibold text-blue-600">2</span>
+                  <span className="type-meta font-semibold text-blue-600">2</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">
                     Confirm Filing
                   </h4>
-                  <p className="text-gray-600 text-sm">
+                  <p className="type-support text-gray-600">
                     {isDemoMode
                       ? "In production, the reviewed return should be confirmed before submission through the official workflow."
                       : "You will be asked to confirm the reviewed return before it is filed through the official workflow."}
@@ -130,13 +130,13 @@ export default function ITRSuccessPage() {
               
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-semibold text-blue-600">3</span>
+                  <span className="type-meta font-semibold text-blue-600">3</span>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">
                     Receive Valid Acknowledgment
                   </h4>
-                  <p className="text-gray-600 text-sm">
+                  <p className="type-support text-gray-600">
                     {isDemoMode
                       ? "The official acknowledgment is available only after a real Income Tax portal filing succeeds."
                       : "After successful filing, the official acknowledgment details will be attached to your account."}
@@ -150,17 +150,17 @@ export default function ITRSuccessPage() {
         {/* Important Information */}
         <Card className="mb-6 border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="text-orange-900">Important Information</CardTitle>
+            <CardTitle className="type-card-title text-orange-900">Important Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {isDemoMode ? (
-              <ul className="list-disc list-inside space-y-1 text-orange-800 text-sm">
+              <ul className="list-disc list-inside space-y-1 type-support text-orange-800">
                 <li>This is a local development review reference for testing purposes only</li>
                 <li>It is not a filing acknowledgment and should not be shown as proof of submission</li>
                 <li>For actual filing, users receive a valid acknowledgment from the Income Tax Department after portal submission</li>
               </ul>
             ) : (
-              <ul className="list-disc list-inside space-y-1 text-orange-800 text-sm">
+              <ul className="list-disc list-inside space-y-1 type-support text-orange-800">
                 <li>This page confirms that the review request was received, not that the return has already been filed</li>
                 <li>A valid acknowledgment is available only after successful filing on the Income Tax portal</li>
                 <li>Keep supporting documents ready until review and filing are complete</li>
@@ -192,7 +192,7 @@ export default function ITRSuccessPage() {
         {/* Status Timeline */}
         <Card>
           <CardHeader>
-            <CardTitle>Filing Status Timeline</CardTitle>
+            <CardTitle className="type-card-title">Filing Status Timeline</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -205,7 +205,7 @@ export default function ITRSuccessPage() {
                     </span>
                     <Badge variant="default">Completed</Badge>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="type-support text-gray-600">
                     {new Date().toLocaleString('en-IN')}
                   </p>
                 </div>
@@ -220,7 +220,7 @@ export default function ITRSuccessPage() {
                     </span>
                     <Badge variant="secondary">Pending</Badge>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="type-support text-gray-600">
                     Pending expert verification
                   </p>
                 </div>
@@ -235,7 +235,7 @@ export default function ITRSuccessPage() {
                     </span>
                     <Badge variant="outline">Awaiting</Badge>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="type-support text-gray-600">
                     After e-verification
                   </p>
                 </div>

@@ -83,7 +83,7 @@ export function SessionWarningModal({ isOpen, timeLeft, onContinue, onLogout }: 
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+            <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2 type-meta text-slate-400 font-bold uppercase tracking-widest">
               <ShieldAlert className="h-3 w-3" />
               Secure Session Management
             </div>

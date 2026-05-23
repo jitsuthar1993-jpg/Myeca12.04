@@ -358,12 +358,12 @@ export default function ComplianceCalendarPage() {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-normal text-slate-900">Global Sync</span>
-                        <span className="text-[10px] font-normal text-slate-500">250+ Firms Verified</span>
+                        <span className="type-meta font-normal text-slate-500">250+ Firms Verified</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-100 shadow-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-                      <span className="text-[10px] font-normal text-slate-600">LIVE FY 26-27</span>
+                      <span className="type-meta font-normal text-slate-600">LIVE FY 26-27</span>
                     </div>
                   </div>
                 </div>
@@ -388,7 +388,7 @@ export default function ComplianceCalendarPage() {
                             <CalendarDays className="w-7 h-7 text-indigo-600" />
                           </div>
                           <div>
-                            <h3 className="text-[28px] font-normal text-slate-900 tracking-tight">
+                            <h3 className="type-section-title font-normal text-slate-900 tracking-tight">
                               {selectedDate ? selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Select a date'}
                             </h3>
                             <p className="text-slate-500 text-sm font-normal mt-1">Active Compliance Requirements</p>
@@ -396,7 +396,7 @@ export default function ComplianceCalendarPage() {
                         </div>
                         <div className="w-16 h-16 rounded-full border-4 border-indigo-50 bg-white flex flex-col items-center justify-center shadow-sm">
                           <span className="text-2xl font-normal text-indigo-600 leading-none">{getComplianceForDate(selectedDate).length}</span>
-                          <span className="text-[10px] font-normal text-indigo-400 mt-1">Due</span>
+                          <span className="type-meta font-normal text-indigo-400 mt-1">Due</span>
                         </div>
                       </div>
 
@@ -472,11 +472,11 @@ export default function ComplianceCalendarPage() {
                       >
                         <div className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white border border-slate-100 shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-all duration-300 shadow-sm">
                           <span className="text-xl font-normal text-slate-900 group-hover:text-indigo-700 leading-none">{item.date.getDate().toString().padStart(2, '0')}</span>
-                          <span className="text-[10px] font-normal text-slate-500 group-hover:text-indigo-600 mt-1">{item.date.toLocaleDateString('en-US', { month: 'short' })}</span>
+                          <span className="type-meta font-normal text-slate-500 group-hover:text-indigo-600 mt-1">{item.date.toLocaleDateString('en-US', { month: 'short' })}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <h5 className="text-sm font-normal text-slate-800 truncate group-hover:text-indigo-700 transition-colors">{item.activity}</h5>
-                          <div className={cn("inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full text-[10px] font-normal", s.bg, s.text)}>
+                          <div className={cn("inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full type-meta font-normal", s.bg, s.text)}>
                             <div className={cn("w-1.5 h-1.5 rounded-full", s.dot)} />
                             {item.reg}
                           </div>
@@ -513,7 +513,7 @@ export default function ComplianceCalendarPage() {
                         </div>
                         <div className="min-w-0 flex flex-col gap-0.5">
                           <p className="text-sm font-normal text-slate-900 truncate leading-none m-0">{reg}</p>
-                          <p className="text-[11px] font-normal text-slate-500 truncate leading-none m-0">
+                          <p className="type-meta font-normal text-slate-500 truncate leading-none m-0">
                             {reg === 'GST' ? 'GST Compliance' :
                               reg === 'IT' ? 'Income Tax' :
                                 reg === 'MCA' ? 'Corporate Affairs' :
@@ -630,7 +630,7 @@ export default function ComplianceCalendarPage() {
                     <tr key={idx} className="group hover:bg-slate-50/50 transition-colors">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-3">
-                          <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-[10px] font-normal text-white shadow-sm", REG_STYLES[item.reg as keyof typeof REG_STYLES]?.darkBg || "bg-slate-600")}>
+                          <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center type-meta font-normal text-white shadow-sm", REG_STYLES[item.reg as keyof typeof REG_STYLES]?.darkBg || "bg-slate-600")}>
                             {item.reg}
                           </div>
                           <span className="text-sm font-normal text-slate-800">{item.reg}</span>
@@ -645,7 +645,7 @@ export default function ComplianceCalendarPage() {
                       </td>
                       <td className="px-8 py-5">
                         <Badge className={cn(
-                          "rounded-full px-4 py-1.5 text-[11px] font-normal",
+                          "rounded-full px-4 py-1.5 type-meta font-normal",
                           item.status === 'Completed' ? "bg-emerald-100 text-emerald-700" :
                             item.status === 'Pending' ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-600"
                         )}>

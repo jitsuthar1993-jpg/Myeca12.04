@@ -73,7 +73,7 @@ export function DailyUpdatesBanner() {
 
                 <div className="flex flex-col min-w-0">
                   <span className={cn(
-                    "text-[10px] font-black uppercase tracking-[0.2em] mb-0.5",
+                    "type-meta font-black uppercase tracking-[0.2em] mb-0.5",
                     isCritical ? "text-red-100" : "text-blue-400"
                   )}>
                     {activeUpdate.priority} Intelligence Update
@@ -93,7 +93,7 @@ export function DailyUpdatesBanner() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={cn(
-                      "hidden sm:flex items-center gap-2 px-6 py-2 rounded-full text-[11px] font-black uppercase tracking-widest transition-all",
+                      "hidden sm:flex items-center gap-2 px-6 py-2 rounded-full type-meta font-black uppercase tracking-widest transition-all",
                       isCritical 
                         ? "bg-white text-red-600 hover:bg-red-50" 
                         : "bg-white/10 text-white border border-white/10 hover:bg-white/20"

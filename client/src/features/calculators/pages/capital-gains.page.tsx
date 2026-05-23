@@ -73,7 +73,7 @@ export default function CapitalGainsCalculatorPage() {
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
+              <h1 className="type-page-title font-normal text-[#101828]">
                 Capital <span className="text-[#027A48]">Gains</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
@@ -83,20 +83,20 @@ export default function CapitalGainsCalculatorPage() {
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center type-meta font-normal text-[#475467]">
                     {i === 1 ? 'JD' : i === 2 ? 'AS' : 'RK'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
                 <p className="text-xs font-normal text-[#027A48]">25k+ Investors</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">Estimate Tool</p>
+                <p className="type-meta font-normal text-[#667085]">Estimate Tool</p>
               </div>
             </div>
           </div>
@@ -142,8 +142,8 @@ export default function CapitalGainsCalculatorPage() {
                         )}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <p className={cn("text-[11px] font-normal leading-tight", assetType === type.value ? "text-[#101828]" : "text-[#344054]")}>{type.label}</p>
-                        <p className="text-[9px] text-[#667085] font-normal mt-0.5">LTCG {type.ltcgRate}</p>
+                        <p className={cn("type-support font-normal leading-tight", assetType === type.value ? "text-[#101828]" : "text-[#344054]")}>{type.label}</p>
+                        <p className="type-meta text-[#667085] font-normal mt-0.5">LTCG {type.ltcgRate}</p>
                         {assetType === type.value && (
                           <div className="absolute top-2 right-2">
                             <CheckCircle2 className="w-3.5 h-3.5 text-[#027A48]" />
@@ -157,7 +157,7 @@ export default function CapitalGainsCalculatorPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#F2F4F7]">
                   {/* Purchase Date */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Purchase Date</label>
+                    <label className="type-meta font-normal text-[#667085] uppercase tracking-widest px-1">Purchase Date</label>
                     <div className="relative group">
                       <input 
                         type="date"
@@ -171,7 +171,7 @@ export default function CapitalGainsCalculatorPage() {
 
                   {/* Sale Date */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-normal text-[#667085] uppercase tracking-widest px-1">Sale Date</label>
+                    <label className="type-meta font-normal text-[#667085] uppercase tracking-widest px-1">Sale Date</label>
                     <div className="relative group">
                       <input 
                         type="date"
@@ -244,7 +244,7 @@ export default function CapitalGainsCalculatorPage() {
                     <Target className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[11px] font-normal text-[#667085] uppercase tracking-wider">Holding Period</p>
+                    <p className="type-meta font-normal text-[#667085] uppercase tracking-wider">Holding Period</p>
                     <p className="text-sm font-normal text-[#101828]">
                       {result?.holdingPeriodDays} Days <span className="text-[#667085] font-normal text-xs">({result?.holdingPeriod} Yrs)</span>
                     </p>
@@ -255,7 +255,7 @@ export default function CapitalGainsCalculatorPage() {
                   <div className="w-8 h-8 rounded-full bg-[#027A48] flex items-center justify-center text-white shrink-0">
                     <Zap className="w-4 h-4" />
                   </div>
-                  <p className="text-[11px] text-[#027A48] font-normal leading-tight">
+                  <p className="type-support text-[#027A48] font-normal leading-tight">
                     {result?.gainType} estimate detected. Applied simplified rate: <span className="font-normal underline">{result?.taxRate}%</span>
                   </p>
                 </div>
@@ -269,7 +269,7 @@ export default function CapitalGainsCalculatorPage() {
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">Tax Summary</h2>
                 <div className={cn(
-                  "text-[10px] font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider",
+                  "type-meta font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider",
                   (result?.taxPayable || 0) > 0 ? "bg-[#FEF3F2] text-[#B42318]" : "bg-[#ECFDF3] text-[#027A48]"
                 )}>
                   {selectedAssetType?.value}
@@ -284,24 +284,24 @@ export default function CapitalGainsCalculatorPage() {
                   (result?.capitalGain || 0) >= 0 ? "bg-[#F6FEF9] border-[#ECFDF3]" : "bg-[#FFFBFA] border-[#FEF3F2]"
                 )}>
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">Total Gain/Loss</span>
-                  <span className="text-[10px] text-[#667085] block mb-2">Net appreciation</span>
+                  <span className="type-meta text-[#667085] block mb-2">Net appreciation</span>
                   <span className={cn(
                     "text-2xl font-normal block mb-0.5 tabular-nums",
                     (result?.capitalGain || 0) >= 0 ? "text-[#027A48]" : "text-[#B42318]"
                   )}>
                     {fmt(result?.capitalGain || 0)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">{result?.gainType}</span>
+                  <span className="type-meta text-[#98A2B3] font-normal uppercase tracking-widest">{result?.gainType}</span>
                 </div>
 
                 {/* Net Tax Payable */}
                 <div className="p-4 rounded-[20px] border-2 border-[#EAECF0] bg-[#F9FAFB]">
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">Tax Payable</span>
-                  <span className="text-[10px] text-[#667085] block mb-2">Final liability</span>
+                  <span className="type-meta text-[#667085] block mb-2">Final liability</span>
                   <span className="text-2xl font-normal block mb-0.5 text-[#B42318] tabular-nums">
                     {fmt(result?.taxPayable || 0)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Post Exemption</span>
+                  <span className="type-meta text-[#98A2B3] font-normal uppercase tracking-widest">Post Exemption</span>
                 </div>
               </div>
 
@@ -351,7 +351,7 @@ export default function CapitalGainsCalculatorPage() {
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Optimize Gains?</h4>
                   <p className="text-xs text-[#667085] mb-2">Save tax on gains with expert planning</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-sm font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
                       Consult a CA Expert
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -375,8 +375,8 @@ export default function CapitalGainsCalculatorPage() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
-                <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
+                <h5 className="type-support font-normal text-[#101828]">{item.label}</h5>
+                <p className="type-support text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>
           ))}

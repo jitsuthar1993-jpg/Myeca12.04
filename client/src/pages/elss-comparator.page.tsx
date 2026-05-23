@@ -13,6 +13,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend
 } from "@/components/charts/lightweight-recharts";
+import { FONT_SIZES } from "@/styles/fonts";
 
 const fmt = (n: number) =>
   n >= 1e7 ? `₹${(n / 1e7).toFixed(2)} Cr` : n >= 1e5 ? `₹${(n / 1e5).toFixed(2)} L` : `₹${n.toLocaleString("en-IN")}`;
@@ -118,11 +119,11 @@ export default function ELSSCalculatorPage() {
           <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
           <div className="max-w-7xl mx-auto px-4 text-center">
             <m.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-600 text-[11px] font-black uppercase tracking-widest mb-6 shadow-sm">
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-600 type-meta font-black uppercase tracking-widest mb-6 shadow-sm">
               <Sparkles className="w-3.5 h-3.5" /> Section 80C · 3 Year Lock-in
             </m.div>
             <m.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+              className="type-page-title text-slate-900 mb-6">
               ELSS Fund <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Comparator</span>
             </m.h1>
             <m.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
@@ -142,7 +143,7 @@ export default function ELSSCalculatorPage() {
                 <div key={label} className={`flex items-center gap-2.5 ${bg} border rounded-2xl px-5 py-3`}>
                   <Icon className={`w-4 h-4 ${c}`} />
                   <div className="text-left">
-                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{label}</p>
+                    <p className="type-meta text-slate-400 font-black uppercase tracking-widest">{label}</p>
                     <p className="text-slate-900 font-black text-sm">{val}</p>
                   </div>
                 </div>
@@ -162,23 +163,23 @@ export default function ELSSCalculatorPage() {
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Monthly SIP</label>
+                  <label className="type-meta font-black uppercase tracking-widest text-slate-400">Monthly SIP</label>
                   <span className="text-emerald-600 font-black text-xl">{fmt(monthly)}</span>
                 </div>
                 <Slider colorTheme="blue" value={[monthly]} onValueChange={([v]) => setMonthly(v)} min={500} max={50000} step={500} />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold"><span>₹500</span><span>₹50,000</span></div>
+                <div className="flex justify-between type-meta text-slate-400 mt-1.5 font-bold"><span>₹500</span><span>₹50,000</span></div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Investment Period</label>
+                  <label className="type-meta font-black uppercase tracking-widest text-slate-400">Investment Period</label>
                   <span className="text-indigo-600 font-black text-xl">{years} yrs</span>
                 </div>
                 <Slider colorTheme="blue" value={[years]} onValueChange={([v]) => setYears(v)} min={3} max={25} step={1} />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1.5 font-bold"><span>3 yrs</span><span>25 yrs</span></div>
+                <div className="flex justify-between type-meta text-slate-400 mt-1.5 font-bold"><span>3 yrs</span><span>25 yrs</span></div>
               </div>
             </div>
             <div className="mt-6 flex items-center gap-3 flex-wrap">
-              <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Compare using:</span>
+              <span className="type-meta font-black text-slate-400 uppercase tracking-widest">Compare using:</span>
               {PERIOD_KEYS.map(p => (
                 <button key={p} onClick={() => setPeriod(p)}
                   className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all border ${period === p ? "bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-200/50" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"}`}>
@@ -209,7 +210,7 @@ export default function ELSSCalculatorPage() {
                     )}
                     {fund.tag && !selected && (
                       <div className="absolute top-4 right-4">
-                        <Badge className={`${fund.tagColor} border text-[10px] font-black`}>{fund.tag}</Badge>
+                        <Badge className={`${fund.tagColor} border type-meta font-black`}>{fund.tag}</Badge>
                       </div>
                     )}
 
@@ -219,7 +220,7 @@ export default function ELSSCalculatorPage() {
                     <div className="grid grid-cols-4 gap-1.5 mb-4">
                       {PERIOD_KEYS.map(p => (
                         <div key={p} className={`rounded-xl p-2 text-center ${p === period ? "bg-emerald-50 border border-emerald-100" : "bg-slate-50"}`}>
-                          <p className="text-[9px] text-slate-400 font-black uppercase">{p}</p>
+                          <p className="type-meta text-slate-400 font-black uppercase">{p}</p>
                           <p className={`text-xs font-black mt-0.5 ${fund.returns[p] >= 20 ? "text-emerald-600" : fund.returns[p] >= 15 ? "text-indigo-600" : "text-slate-600"}`}>
                             {fund.returns[p]}%
                           </p>
@@ -233,7 +234,7 @@ export default function ELSSCalculatorPage() {
                           <Star key={s} className={`w-3 h-3 ${s <= fund.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`} />
                         ))}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400">Exp: {fund.expense}% · AUM: {fund.aum}</span>
+                      <span className="type-meta font-bold text-slate-400">Exp: {fund.expense}% · AUM: {fund.aum}</span>
                     </div>
                   </m.div>
                 );
@@ -254,10 +255,10 @@ export default function ELSSCalculatorPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} barSize={14}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                        <XAxis dataKey="period" stroke="#94a3b8" tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 700 }} tickLine={false} />
-                        <YAxis stroke="#94a3b8" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} tickFormatter={v => `${v}%`} />
+                        <XAxis dataKey="period" stroke="#94a3b8" tick={{ fill: "#94a3b8", fontSize: FONT_SIZES.xs, fontWeight: 700 }} tickLine={false} />
+                        <YAxis stroke="#94a3b8" tick={{ fill: "#94a3b8", fontSize: FONT_SIZES.xs }} tickLine={false} tickFormatter={v => `${v}%`} />
                         <Tooltip content={<CompTooltip />} />
-                        <Legend wrapperStyle={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }} />
+                        <Legend wrapperStyle={{ fontSize: FONT_SIZES.xs, fontWeight: 700, color: "#64748b" }} />
                         {selectedFunds.map((f, i) => (
                           <Bar key={f.id} dataKey={f.name.split(" ").slice(0, 2).join(" ")} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[4, 4, 0, 0]} />
                         ))}
@@ -288,13 +289,13 @@ export default function ELSSCalculatorPage() {
                             { label: "Tax Saved", val: fmt(taxSavedTotal), c: "text-indigo-600" },
                           ].map(({ label, val, c }) => (
                             <div key={label} className="bg-white rounded-xl p-2 border border-slate-100">
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                              <p className="type-meta font-black text-slate-400 uppercase tracking-widest">{label}</p>
                               <p className={`text-xs font-black mt-0.5 ${c}`}>{val}</p>
                             </div>
                           ))}
                         </div>
                         <div className="mt-2 bg-emerald-50 rounded-xl p-2 text-center border border-emerald-100">
-                          <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Net After LTCG Tax</p>
+                          <p className="type-meta font-black text-emerald-600 uppercase tracking-widest">Net After LTCG Tax</p>
                           <p className="text-emerald-700 font-black text-sm">{fmt(netCorpus)}</p>
                         </div>
                       </div>
@@ -317,11 +318,11 @@ export default function ELSSCalculatorPage() {
                 { name: "NSC", ret: "7.7% avg", corpus: "₹43.2 L", lockin: "5 yrs", best: false, c: "from-violet-50 to-purple-50 border-violet-200" },
               ].map(({ name, ret, corpus, lockin, best, c }) => (
                 <div key={name} className={`rounded-2xl bg-gradient-to-br ${c} border p-5`}>
-                  {best && <Badge className="bg-emerald-100 text-emerald-700 border-0 text-[10px] font-black mb-3 hover:bg-emerald-100">Best Returns</Badge>}
+                  {best && <Badge className="bg-emerald-100 text-emerald-700 border-0 type-meta font-black mb-3 hover:bg-emerald-100">Best Returns</Badge>}
                   <p className="text-slate-900 font-black text-xl">{name}</p>
                   <p className="text-slate-500 text-xs font-bold mt-1">{ret}</p>
                   <p className={`font-black text-2xl mt-3 ${best ? "text-emerald-700" : "text-slate-700"}`}>{corpus}</p>
-                  <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">{lockin} lock-in</p>
+                  <p className="text-slate-400 type-meta font-black uppercase tracking-widest mt-2">{lockin} lock-in</p>
                 </div>
               ))}
             </div>

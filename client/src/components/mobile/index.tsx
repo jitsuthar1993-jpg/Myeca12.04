@@ -56,7 +56,7 @@ export function MobilePageHeader({
   return (
     <header className={cn("space-y-3 md:space-y-5", className)}>
       {(eyebrow || icon) && (
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-700">
+        <div className="type-meta flex items-center gap-2 font-semibold uppercase text-blue-700">
           {icon && (
             <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 md:h-10 md:w-10">
               {icon}
@@ -66,11 +66,11 @@ export function MobilePageHeader({
         </div>
       )}
       <div className="space-y-2">
-        <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-slate-950 md:text-5xl">
+        <h1 className="type-page-title font-semibold text-slate-950">
           {title}
         </h1>
         {description && (
-          <p className="text-sm leading-6 text-slate-600 md:max-w-2xl md:text-base md:leading-7">
+          <p className="type-support text-slate-600 md:max-w-2xl">
             {description}
           </p>
         )}

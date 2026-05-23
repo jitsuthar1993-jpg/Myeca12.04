@@ -460,12 +460,12 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
 
         <div className="mb-8 hidden flex-col gap-4 md:flex md:flex-row md:items-end md:justify-between">
           <div>
-            <div className={cn("inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-normal uppercase tracking-widest mb-4", accent.bg, accent.border, accent.text)}>
+            <div className={cn("type-meta mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 font-normal uppercase", accent.bg, accent.border, accent.text)}>
               <Icon className="w-3.5 h-3.5" />
               {config.eyebrow}
             </div>
-            <h1 className="text-4xl md:text-5xl font-normal text-slate-950 tracking-tight">{config.title}</h1>
-            <p className="mt-3 text-slate-500 max-w-2xl">{config.description}</p>
+            <h1 className="type-page-title font-normal text-slate-950">{config.title}</h1>
+            <p className="type-body mt-3 max-w-2xl text-slate-500">{config.description}</p>
           </div>
           <Link href="/calculators" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900">
             All calculators <ChevronRight className="w-4 h-4" />
@@ -546,7 +546,7 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
           <MobileCard as="aside" className="lg:col-span-5 md:rounded-[28px] md:p-6 lg:sticky lg:top-24">
             <div className={cn("rounded-lg p-4 text-white md:rounded-[24px] md:p-5", accent.button)}>
               <p className="text-xs uppercase tracking-[0.18em] text-white/75">{result.primaryLabel}</p>
-              <div className="mt-2 text-[32px] font-semibold tracking-tight md:mt-3 md:text-4xl md:font-normal">{formatCurrency(result.primaryValue)}</div>
+              <div className="type-page-title mt-2 font-semibold md:mt-3 md:font-normal">{formatCurrency(result.primaryValue)}</div>
               <p className="mt-3 text-sm text-white/80">{result.summary}</p>
             </div>
 

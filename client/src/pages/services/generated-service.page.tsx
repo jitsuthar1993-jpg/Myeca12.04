@@ -66,8 +66,8 @@ export default function GeneratedServicePage() {
       <main className="min-h-screen bg-slate-50 px-4 py-20">
         <div className="mx-auto max-w-3xl text-center">
           <Badge className="mb-4 bg-blue-50 text-blue-700">Service directory</Badge>
-          <h1 className="text-4xl font-black text-slate-950">Service page is being prepared</h1>
-          <p className="mt-4 text-slate-600">
+          <h1 className="type-page-title font-black text-slate-950">Service page is being prepared</h1>
+          <p className="type-body mt-4 text-slate-600">
             This service is not available as a dedicated page yet. You can still explore the full service marketplace or talk to an expert.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -126,8 +126,8 @@ export default function GeneratedServicePage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-[1.1fr_0.9fr] md:px-6 lg:px-8">
           <div>
             <Badge className="mb-5 border-blue-100 bg-blue-50 text-blue-700">{page.subtitle}</Badge>
-            <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-6xl">{page.title}</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{page.description}</p>
+            <h1 className="type-page-title font-black text-slate-950">{page.title}</h1>
+            <p className="type-body mt-6 max-w-3xl text-slate-600">{page.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setIsCheckoutOpen(true)}>
                 Start service
@@ -149,7 +149,7 @@ export default function GeneratedServicePage() {
                 </div>
                 <div>
                   <p className="text-xs font-black uppercase tracking-widest text-slate-400">Service package</p>
-                  <h2 className="text-2xl font-black text-slate-950">{page.priceLabel}</h2>
+                  <h2 className="type-section-title font-black text-slate-950">{page.priceLabel}</h2>
                   <p className="mt-1 text-sm font-bold text-slate-500">{page.timeline}</p>
                 </div>
               </div>
@@ -182,8 +182,8 @@ export default function GeneratedServicePage() {
 
       <section className="border-t border-slate-100 bg-slate-50 py-14">
         <div className="mx-auto max-w-5xl px-4 text-center">
-          <h2 className="text-3xl font-black text-slate-950">Get the paperwork right before deadlines get noisy</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+          <h2 className="type-section-title font-black text-slate-950">Get the paperwork right before deadlines get noisy</h2>
+          <p className="type-body mx-auto mt-4 max-w-2xl text-slate-600">
             MyeCA keeps the workflow simple: expert review, clear document requests, and status updates from intake to completion.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -226,7 +226,7 @@ function InfoPanel({
     <m.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
       <Card className="h-full rounded-[24px] border-slate-200 shadow-sm">
         <CardContent className="p-6">
-          <h2 className="text-lg font-black text-slate-950">{title}</h2>
+          <h2 className="type-card-title font-black text-slate-950">{title}</h2>
           <div className="mt-5 space-y-3">
             {items.map((item, index) => {
               const maybeLink = links?.find((link) => link.label === item);

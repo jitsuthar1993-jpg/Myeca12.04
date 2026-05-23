@@ -139,7 +139,7 @@ function FixedMobileIndex({ toc, activeId }: { toc: BlogTocItem[]; activeId: str
           <span className="flex min-w-0 items-center gap-2">
             <BookOpen className="h-4 w-4 shrink-0 text-blue-600" />
             <span className="min-w-0">
-              <span className="block text-[10px] font-black uppercase tracking-[2px] text-slate-400">Index</span>
+              <span className="block type-meta font-black uppercase tracking-[2px] text-slate-400">Index</span>
               <span className="block truncate text-sm font-semibold text-slate-900">{activeItem?.text ?? "Sections"}</span>
             </span>
           </span>
@@ -205,9 +205,9 @@ function RightSidebar({
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <BookOpen className="h-3.5 w-3.5 shrink-0 text-blue-500" />
-              <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Index</p>
+              <p className="type-meta font-black uppercase tracking-[2px] text-slate-400">Index</p>
             </div>
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 type-meta font-semibold text-slate-500">
               {toc.length} sections
             </span>
           </div>
@@ -221,7 +221,7 @@ function RightSidebar({
                     aria-current={isActive ? "location" : undefined}
                     onClick={() => scrollToTocTarget(item.id)}
                     className={cn(
-                      "min-h-9 w-full rounded-lg border-l-2 px-3 py-2 text-left text-[13px] leading-snug transition-all duration-200",
+                      "min-h-9 w-full rounded-lg border-l-2 px-3 py-2 text-left type-support leading-snug transition-all duration-200",
                       item.level === 3 ? "pl-5" : "",
                       isActive
                         ? "border-blue-500 bg-blue-50 font-semibold text-blue-700"
@@ -284,10 +284,10 @@ function RightSidebar({
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[12px] font-semibold text-slate-800 leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">
+                      <p className="type-meta font-semibold text-slate-800 leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">
                         {rel.title}
                       </p>
-                      <span className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                      <span className="type-meta text-slate-400 mt-1 flex items-center gap-1">
                         <Clock3 className="w-2.5 h-2.5" /> {rel.readingTimeMinutes} min
                       </span>
                     </div>
@@ -298,7 +298,7 @@ function RightSidebar({
               <p className="text-sm text-slate-400 text-center py-3">No related articles yet.</p>
             )}
             <Link href="/blog">
-              <span className="flex items-center justify-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition pt-1 cursor-pointer">
+              <span className="flex items-center justify-center gap-1 type-meta font-semibold text-blue-600 hover:text-blue-700 transition pt-1 cursor-pointer">
                 Browse all <ArrowRight className="w-3 h-3" />
               </span>
             </Link>
@@ -314,7 +314,7 @@ function RightSidebar({
                 <div className="w-7 h-7 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
                   <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
                 </div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
+                <p className="type-meta font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
               </div>
               <h3 className="text-sm font-bold leading-snug mb-1.5 text-slate-950">Need expert help?</h3>
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
@@ -325,8 +325,8 @@ function RightSidebar({
 
             {/* Article info */}
             <div className="rounded-xl bg-slate-50 p-3.5 space-y-2">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[2px]">Article info</p>
-              <div className="space-y-1.5 text-[13px] text-slate-600">
+              <p className="type-meta font-black text-slate-400 uppercase tracking-[2px]">Article info</p>
+              <div className="space-y-1.5 type-support text-slate-600">
                 <div className="flex items-center gap-2">
                   <UserRound className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                   <span>{post.authorName}</span>
@@ -350,7 +350,7 @@ function RightSidebar({
 
             {/* Share */}
             <div>
-              <p className="mb-2 text-[9px] font-black text-slate-400 uppercase tracking-[2px]">Share this guide</p>
+              <p className="mb-2 type-meta font-black text-slate-400 uppercase tracking-[2px]">Share this guide</p>
               <ShareButtons title={post.title} description={post.excerpt ?? post.title} />
             </div>
           </div>
@@ -458,7 +458,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
             ))}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight max-w-4xl">
+          <h1 className="type-hero-title text-slate-900 max-w-4xl">
             {post.title}
           </h1>
 
@@ -476,7 +476,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-800 leading-none">{post.authorName}</p>
-                {post.authorRole && <p className="text-[11px] text-slate-400 mt-0.5">{post.authorRole}</p>}
+                {post.authorRole && <p className="type-meta text-slate-400 mt-0.5">{post.authorRole}</p>}
               </div>
             </div>
             <span className="text-slate-200 hidden sm:inline">|</span>
@@ -564,7 +564,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                   <div className="w-8 h-8 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
                     <MessageSquare className="w-4 h-4 text-blue-600" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
+                  <p className="type-meta font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
                 </div>
                 <h3 className="text-base font-bold leading-snug mb-2 text-slate-950">Need expert help?</h3>
                 <p className="text-sm text-slate-600 leading-relaxed mb-4">
@@ -573,7 +573,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                 <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="solid" size="sm" />
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p className="mb-3 text-[10px] font-black text-slate-400 uppercase tracking-[2px]">Share this guide</p>
+                <p className="mb-3 type-meta font-black text-slate-400 uppercase tracking-[2px]">Share this guide</p>
                 <ShareButtons title={post.title} description={post.excerpt ?? post.title} />
               </div>
             </div>

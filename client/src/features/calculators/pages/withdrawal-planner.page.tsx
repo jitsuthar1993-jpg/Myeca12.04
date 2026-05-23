@@ -82,7 +82,7 @@ export default function WithdrawalPlannerPage() {
         sidebar={
           <CalcGlassSidebar title="Plan Summary">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Ending Balance</p>
+              <p className="type-meta font-normal uppercase tracking-widest text-slate-400">Ending Balance</p>
               <AnimatePresence mode="wait">
                 <motion.p 
                   key={result.endingBalance} 
@@ -97,7 +97,7 @@ export default function WithdrawalPlannerPage() {
                 </motion.p>
               </AnimatePresence>
               {result.depleted && (
-                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-normal uppercase tracking-widest border border-red-100">
+                <div className="type-meta mt-2 inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 font-normal uppercase tracking-widest text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   Corpus Depleted in Year {Math.floor(result.depletionPeriod / (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1))}
                 </div>
@@ -150,7 +150,7 @@ export default function WithdrawalPlannerPage() {
                       key={amt} 
                       onClick={() => setPrincipal(amt)}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg border transition-all text-[10px] font-normal",
+                        "type-meta rounded-lg border px-3 py-1.5 font-normal transition-all",
                         principal === amt ? "border-indigo-600 bg-indigo-50 text-indigo-600" : "border-slate-100 bg-white text-slate-500 hover:border-indigo-200"
                       )}
                     >
@@ -177,7 +177,7 @@ export default function WithdrawalPlannerPage() {
           <CalcInputCard title="Withdrawal Strategy" icon={<Clock className="w-5 h-5" />}>
              <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Frequency</label>
+                  <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Frequency</label>
                   <Select value={frequency} onValueChange={(v) => setFrequency(v as WithdrawalFrequency)}>
                     <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm">
                       <SelectValue />
@@ -190,7 +190,7 @@ export default function WithdrawalPlannerPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Duration (Years)</label>
+                  <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Duration (Years)</label>
                   <Input 
                     type="number"
                     value={years}
@@ -215,9 +215,9 @@ export default function WithdrawalPlannerPage() {
              <div className="mt-8 p-5 rounded-2xl bg-amber-50 border border-amber-100">
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="w-4 h-4 text-amber-600" />
-                  <p className="text-[10px] font-normal text-amber-700 uppercase tracking-widest">Sustainability Insight</p>
+                  <p className="type-meta font-normal uppercase tracking-widest text-amber-700">Sustainability Insight</p>
                 </div>
-                <p className="text-[11px] text-amber-800 font-normal leading-relaxed">
+                <p className="type-support font-normal text-amber-800">
                   {withdrawalAmount * (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1) > principal * (annualRate/100) 
                     ? "Your withdrawal rate exceeds the interest earned. Your principal will deplete over time." 
                     : "Your withdrawal rate is lower than the interest earned. Your corpus is growing or stable!"}

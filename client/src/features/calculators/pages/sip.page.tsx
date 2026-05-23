@@ -88,10 +88,10 @@ export default function SIPCalculator() {
               <CalcResultRow label="Maturity Value" value={fmt(result.maturityValue)} variant="highlight" className="pt-4 border-t border-white/20" />
               
               <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
-                <p className="text-[10px] font-normal text-slate-500 uppercase tracking-widest mb-2">Growth Analysis</p>
+                <p className="type-meta mb-2 font-normal uppercase tracking-widest text-slate-500">Growth Analysis</p>
                 <div className="space-y-2">
                    <div className="flex justify-between items-center">
-                    <span className="text-[11px] font-normal text-slate-400">Wealth Multiple</span>
+                    <span className="type-meta font-normal text-slate-400">Wealth Multiple</span>
                     <span className="text-xs font-normal text-blue-600">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
                   </div>
                   <div className="w-full bg-slate-200/50 h-1.5 rounded-full overflow-hidden">
@@ -100,7 +100,7 @@ export default function SIPCalculator() {
                       style={{ width: `${Math.min(100, (result.wealthGain / result.maturityValue) * 100)}%` }}
                     />
                   </div>
-                  <p className="text-[9px] text-slate-400 text-center italic">Returns make up {Math.round((result.wealthGain / result.maturityValue) * 100)}% of your final wealth</p>
+                  <p className="type-meta text-center italic text-slate-400">Returns make up {Math.round((result.wealthGain / result.maturityValue) * 100)}% of your final wealth</p>
                 </div>
               </div>
 
@@ -193,7 +193,7 @@ export default function SIPCalculator() {
                       if (active && payload && payload.length) {
                         return (
                           <div className="bg-white border border-slate-100 p-4 rounded-xl shadow-xl">
-                            <p className="text-[10px] font-normal text-slate-400 mb-2 uppercase tracking-widest">Year {label}</p>
+                            <p className="type-meta mb-2 font-normal uppercase tracking-widest text-slate-400">Year {label}</p>
                             <p className="text-sm font-normal text-slate-900 flex justify-between gap-8">
                               Total: <span className="text-blue-600">{fmt(payload[0].value as number)}</span>
                             </p>

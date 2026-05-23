@@ -111,7 +111,7 @@ export default function ProfessionalServicesSection() {
                       <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}>
                         <service.icon className={`h-5 w-5 ${colors.icon}`} strokeWidth={2} />
                       </div>
-                      <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${colors.badgeBg} ${colors.badgeText}`}>
+                      <span className={`rounded-full px-3 py-1 type-meta font-bold uppercase tracking-wide ${colors.badgeBg} ${colors.badgeText}`}>
                         {service.badge}
                       </span>
                     </div>

@@ -105,7 +105,7 @@ export default function OtherServicesSection() {
                       <div className={cn("flex h-11 w-11 items-center justify-center rounded-lg", colors.bg)}>
                         <service.icon className={cn("h-5 w-5", colors.icon)} strokeWidth={2.5} />
                       </div>
-                      <div className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-700">
+                      <div className="rounded-full bg-blue-50 px-3 py-1 type-meta font-bold uppercase tracking-wide text-blue-700">
                         {service.badge}
                       </div>
                     </div>
@@ -131,7 +131,7 @@ export default function OtherServicesSection() {
                     <div className="mt-auto border-t border-slate-200 pt-5">
                       <div className="mb-2 flex items-baseline gap-2">
                         <span className="text-xl font-extrabold text-slate-950">{service.price}</span>
-                        {service.label && <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">/ {service.label}</span>}
+                        {service.label && <span className="type-meta font-bold uppercase tracking-wide text-slate-500">/ {service.label}</span>}
                       </div>
                       <div className="mb-5 flex items-start gap-2 text-xs font-semibold leading-5 text-slate-500">
                         <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />

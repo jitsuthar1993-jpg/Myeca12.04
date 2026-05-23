@@ -223,12 +223,12 @@ export default function ExpertConsultationPage() {
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 py-5 sm:py-8 lg:grid-cols-[1fr_430px] lg:items-start lg:gap-8 lg:py-10">
           <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-normal uppercase tracking-widest text-blue-700">
+            <div className="inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-1 type-meta font-normal uppercase tracking-widest text-blue-700">
               <ReceiptText className="h-3.5 w-3.5" />
               {profile.eyebrow}
             </div>
 
-            <h1 className="mt-4 max-w-4xl text-[30px] font-normal leading-[1.05] tracking-tight text-slate-950 sm:mt-5 sm:text-5xl lg:text-[60px]">
+            <h1 className="mt-4 max-w-4xl type-page-title text-slate-950 sm:mt-5">
               {profile.title}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:mt-5 sm:text-lg sm:leading-7">{profile.subtitle}</p>
@@ -248,7 +248,7 @@ export default function ExpertConsultationPage() {
               {profile.stats.map((stat) => (
                 <div key={stat.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <div className="text-2xl font-normal text-slate-950">{stat.value}</div>
-                  <div className="mt-1 text-[11px] font-normal uppercase tracking-widest text-slate-500">{stat.label}</div>
+                  <div className="mt-1 type-meta font-normal uppercase tracking-widest text-slate-500">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -265,7 +265,7 @@ export default function ExpertConsultationPage() {
                 <h2 className="text-xl font-normal text-slate-950">{profile.formTitle}</h2>
                 <p className="mt-1 text-sm text-slate-500">Takes less than 45 seconds.</p>
               </div>
-              <div className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-normal uppercase tracking-widest text-emerald-700">
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-1 type-meta font-normal uppercase tracking-widest text-emerald-700">
                 Free call
               </div>
             </div>
@@ -345,7 +345,7 @@ export default function ExpertConsultationPage() {
                 )}
               </Button>
 
-              <p className="text-center text-[11px] leading-5 text-slate-500">
+              <p className="text-center type-meta leading-5 text-slate-500">
                 No spam. No payment on this page. You get a document checklist and price before work starts.
               </p>
             </form>

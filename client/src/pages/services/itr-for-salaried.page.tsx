@@ -224,7 +224,7 @@ export default function ITRForSalariedPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Briefcase className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Income Tax Filing for <span className="text-blue-600">Salaried Employees</span>
                 </h1>
               </div>

@@ -49,7 +49,7 @@ export default function DocumentScannerPage() {
             <ScanLine className="w-4 h-4" />
             Zero Manual Entry
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
+          <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
             Upload Your Documents. <span className="text-[#315efb]">We Read Them.</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
@@ -72,7 +72,7 @@ export default function DocumentScannerPage() {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">From upload to pre-filled form</h2>
+            <h2 className="type-section-title font-extrabold text-slate-900">From upload to pre-filled form</h2>
             <p className="text-slate-500 mt-3 text-lg">Three steps. No spreadsheets.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -93,7 +93,7 @@ export default function DocumentScannerPage() {
       <section className="py-20 bg-slate-50 border-y border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Supported document types</h2>
+            <h2 className="type-section-title font-extrabold text-slate-900">Supported document types</h2>
             <p className="text-slate-500 mt-3 text-lg">Every document Indian taxpayers need to file.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -121,7 +121,7 @@ export default function DocumentScannerPage() {
                 <Lock className="w-4 h-4" />
                 Document Security
               </div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">
+              <h2 className="type-section-title mb-4 font-extrabold text-slate-900">
                 Your documents stay private
               </h2>
               <p className="text-slate-500 mb-8">

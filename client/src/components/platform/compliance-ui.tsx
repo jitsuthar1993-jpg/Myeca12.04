@@ -191,14 +191,14 @@ export function SectionHeading({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {eyebrow && (
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0050b5]">
+          <p className="type-meta font-black uppercase text-[#0050b5]">
             {eyebrow}
           </p>
         )}
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 md:text-3xl">
+        <h2 className="type-section-title mt-2 font-black text-slate-950">
           {title}
         </h2>
-        {description && <p className="mt-2 max-w-2xl text-slate-600">{description}</p>}
+        {description && <p className="type-body mt-2 max-w-2xl text-slate-600">{description}</p>}
       </div>
       {action}
     </div>
@@ -329,11 +329,11 @@ export function ComplianceShell({
         <main className="min-w-0 px-4 pb-24 pt-6 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-col gap-4 rounded-[32px] bg-gradient-to-br from-[#315efb] via-[#0646b2] to-[#082a5c] p-6 text-white shadow-[0_30px_90px_-50px_rgba(0,48,135,0.75)] md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-100">
+              <p className="type-meta font-black uppercase text-blue-100">
                 MyeCA compliance cockpit
               </p>
-              <h1 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">{title}</h1>
-              {subtitle && <p className="mt-3 max-w-3xl text-blue-50/90">{subtitle}</p>}
+              <h1 className="type-page-title mt-3 font-black">{title}</h1>
+              {subtitle && <p className="type-body mt-3 max-w-3xl text-blue-50/90">{subtitle}</p>}
             </div>
             {actions}
           </div>
@@ -350,7 +350,7 @@ export function ComplianceShell({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-bold",
+                "type-meta flex flex-col items-center gap-1 rounded-xl px-2 py-2 font-bold",
                 isActive ? "bg-blue-50 text-[#315efb]" : "text-slate-500",
               )}
             >

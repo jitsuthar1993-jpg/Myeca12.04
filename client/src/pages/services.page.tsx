@@ -264,7 +264,7 @@ export default function ServicesPage() {
                 <Sparkles className="h-3.5 w-3.5 text-[#315efb]" />
                 Services marketplace
               </div>
-              <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-6xl">
+              <h1 className="type-hero-title mt-5 max-w-4xl font-black text-slate-950">
                 Find the right tax and compliance service without decoding forms.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg">
@@ -295,7 +295,7 @@ export default function ServicesPage() {
               {proofPoints.map((point) => (
                 <div key={point.label} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                   <p className="text-sm font-black text-slate-950">{point.value}</p>
-                  <p className="mt-0.5 text-[10px] leading-3 text-slate-500">{point.label}</p>
+                  <p className="type-meta mt-0.5 text-slate-500">{point.label}</p>
                 </div>
               ))}
             </div>
@@ -315,7 +315,7 @@ export default function ServicesPage() {
               {proofPoints.map((point) => (
                 <div key={point.label} className="rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-lg font-black text-slate-950">{point.value}</p>
-                  <p className="mt-1 text-[11px] leading-4 text-slate-500">{point.label}</p>
+                  <p className="type-meta mt-1 text-slate-500">{point.label}</p>
                 </div>
               ))}
             </div>
@@ -349,7 +349,7 @@ export default function ServicesPage() {
             <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0050b5]">
               Service groups
             </p>
-            <h2 className="mt-1 text-xl font-black tracking-tight text-slate-950 md:mt-2 md:text-3xl">
+            <h2 className="type-section-title mt-1 font-black text-slate-950 md:mt-2">
               {totalVisibleServices} clear next steps
             </h2>
           </div>
@@ -374,7 +374,7 @@ export default function ServicesPage() {
                         <Icon className="h-5 w-5 md:h-6 md:w-6" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-black tracking-tight text-slate-950 md:mt-4 md:text-2xl">
+                        <h3 className="type-card-title font-black text-slate-950 md:mt-4">
                           {category.title}
                         </h3>
                         <p className="mt-1 text-xs font-semibold text-slate-500 md:mt-2 md:text-sm">{category.audience}</p>
@@ -393,7 +393,7 @@ export default function ServicesPage() {
                           )}
                         >
                           <div className="flex items-center justify-between gap-3">
-                            <span className="rounded-full border border-slate-200 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-600 md:px-2.5 md:text-[11px] md:normal-case md:tracking-normal">
+                            <span className="type-meta rounded-full border border-slate-200 bg-white px-2 py-1 font-black uppercase text-slate-600 md:px-2.5 md:normal-case">
                               {service.meta}
                             </span>
                             <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-[#315efb]" />
@@ -454,7 +454,7 @@ export default function ServicesPage() {
           <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0050b5]">
             Why MyeCA services
           </p>
-          <h2 className="mt-1 text-xl font-black tracking-tight text-slate-950 md:mt-2 md:text-3xl">
+          <h2 className="type-section-title mt-1 font-black text-slate-950 md:mt-2">
             Built for repeated compliance work, not one-off confusion.
           </h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-3 md:mt-6 md:gap-4">

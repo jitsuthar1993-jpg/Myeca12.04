@@ -117,8 +117,8 @@ export default function ITRFormSelectorPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 text-left md:mb-10 md:text-center"
         >
-          <h1 className="text-2xl font-bold text-slate-900 mb-2 md:text-3xl">Income Tax Return Filing</h1>
-          <p className="text-sm leading-6 text-slate-600 max-w-2xl md:mx-auto md:text-base">
+          <h1 className="type-page-title text-slate-900 mb-2">Income Tax Return Filing</h1>
+          <p className="type-body text-slate-600 max-w-2xl md:mx-auto">
             Choose the assessment year and ITR path that matches your income profile.
           </p>
         </motion.div>
@@ -135,9 +135,9 @@ export default function ITRFormSelectorPage() {
               <div className="p-2 bg-indigo-50 rounded-lg">
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
               </div>
-              <h2 className="text-lg font-bold text-slate-900">Assessment Year</h2>
+              <h2 className="type-card-title text-slate-900">Assessment Year</h2>
             </div>
-            <p className="text-sm text-slate-500 mb-4 leading-relaxed md:mb-6">
+            <p className="type-support text-slate-500 mb-4 md:mb-6">
               Select the assessment year for which you want to file your income tax returns.
             </p>
             <Select value={assessmentYear} onValueChange={setAssessmentYear}>
@@ -152,7 +152,7 @@ export default function ITRFormSelectorPage() {
                 ))}
               </SelectContent>
             </Select>
-            <p className="mt-3 text-xs font-medium leading-5 text-slate-500 md:hidden">
+            <p className="mt-3 type-support font-medium text-slate-500 md:hidden">
               Financial year: <span className="font-bold text-indigo-700">{selectedYearData?.period}</span>
             </p>
           </motion.div>
@@ -170,15 +170,15 @@ export default function ITRFormSelectorPage() {
               <div className="p-2 bg-emerald-50 rounded-lg">
                 <CheckCircle className="h-5 w-5 text-emerald-600" />
               </div>
-              <h2 className="text-lg font-bold text-slate-900">Document Period</h2>
+              <h2 className="type-card-title text-slate-900">Document Period</h2>
             </div>
-            <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+            <p className="type-support text-slate-500 mb-6">
               Income earned during this period will be reported in your ITR for {selectedYearData?.label}.
             </p>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Financial Year Range</p>
-                <p className="text-base font-bold text-indigo-700">{selectedYearData?.period}</p>
+                <p className="type-meta uppercase font-bold text-slate-400 tracking-widest">Financial Year Range</p>
+                <p className="type-body font-bold text-indigo-700">{selectedYearData?.period}</p>
               </div>
             </div>
           </motion.div>
@@ -225,31 +225,31 @@ export default function ITRFormSelectorPage() {
                     </span>
                     <span className="min-w-0">
                       <span className="flex flex-wrap items-center gap-2">
-                        <span className="text-base font-bold text-slate-950">{form.title}</span>
+                        <span className="type-card-title text-slate-950">{form.title}</span>
                         {isRecommended && (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 text-[10px] py-0 px-2 h-5">
+                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 type-meta py-0 px-2 h-5">
                             Recommended
                           </Badge>
                         )}
                       </span>
-                      <span className="mt-1 block text-sm leading-5 text-slate-600">{form.description}</span>
-                      <span className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-wide">
+                      <span className="mt-1 block type-support text-slate-600">{form.description}</span>
+                      <span className="mt-3 flex flex-wrap gap-2 type-meta font-bold uppercase tracking-wide">
                         <span className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">{form.complexity}</span>
                         <span className="rounded-md bg-blue-50 px-2 py-1 text-blue-700">{form.estimatedTime}</span>
                       </span>
                     </span>
                   </button>
                   <Link href={`/itr/filing?form=${form.id}&ay=${assessmentYear}`} className="shrink-0 self-center">
-                    <Button size="sm" className="h-9 rounded-lg bg-indigo-600 px-3 text-xs font-bold text-white hover:bg-indigo-700">
+                    <Button size="sm" className="h-9 rounded-lg bg-indigo-600 px-3 type-support font-bold text-white hover:bg-indigo-700">
                       Start
                     </Button>
                   </Link>
                 </div>
                 <details className="border-t border-slate-100 px-4 py-3">
-                  <summary className="cursor-pointer text-sm font-bold text-indigo-700">View included cases</summary>
+                  <summary className="cursor-pointer type-support font-bold text-indigo-700">View included cases</summary>
                   <ul className="mt-3 grid gap-2">
                     {form.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2 text-xs leading-5 text-slate-600">
+                      <li key={feature} className="flex items-start gap-2 type-support text-slate-600">
                         <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
                         {feature}
                       </li>
@@ -288,22 +288,22 @@ export default function ITRFormSelectorPage() {
                           <IconComponent className="h-4 w-4" />
                         </div>
                         {isRecommended && (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 text-[10px] py-0 px-2 h-5">
+                           <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 type-meta py-0 px-2 h-5">
                             Recommended
                           </Badge>
                         )}
                     </div>
-                    <CardTitle className="text-base text-slate-900">{form.title}</CardTitle>
-                    <CardDescription className="text-xs text-slate-500 mt-1 line-clamp-2 h-8">
+                    <CardTitle className="type-card-title text-slate-900">{form.title}</CardTitle>
+                    <CardDescription className="type-support text-slate-500 mt-1 line-clamp-2 min-h-11">
                       {form.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-4 space-y-4">
                     <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-0.5">Features</p>
+                      <p className="type-meta font-bold text-slate-400 uppercase tracking-widest px-0.5">Features</p>
                       <ul className="space-y-1.5 min-h-[100px]">
                         {form.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-start text-[11px] text-slate-600 font-medium">
+                          <li key={idx} className="flex items-start type-support text-slate-600 font-medium">
                             <CheckCircle className="h-3 w-3 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
                             <span>{feature}</span>
                           </li>
@@ -313,15 +313,15 @@ export default function ITRFormSelectorPage() {
                     
                     <div className="flex justify-between items-center pt-3 border-t border-slate-50">
                       <div>
-                        <p className="text-[9px] uppercase font-bold text-slate-400">Complexity</p>
-                        <p className={`text-[11px] font-bold ${
+                        <p className="type-meta uppercase font-bold text-slate-400">Complexity</p>
+                        <p className={`type-meta font-bold ${
                           form.complexity === 'Simple' ? 'text-emerald-600' : 
                           form.complexity === 'Moderate' ? 'text-blue-600' : 'text-amber-600'
                         }`}>{form.complexity}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[9px] uppercase font-bold text-slate-400">Est. Time</p>
-                        <p className="text-[11px] font-bold text-slate-700">{form.estimatedTime}</p>
+                        <p className="type-meta uppercase font-bold text-slate-400">Est. Time</p>
+                        <p className="type-meta font-bold text-slate-700">{form.estimatedTime}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -344,8 +344,8 @@ export default function ITRFormSelectorPage() {
               <Card className="bg-indigo-600 border-none shadow-xl shadow-indigo-200">
                 <CardContent className="p-5 flex flex-col md:flex-row items-center justify-between gap-5 md:p-8 md:gap-6">
                   <div className="text-center md:text-left">
-                    <h3 className="text-xl font-bold text-white mb-2">Proceed with {selectedFormData.title}?</h3>
-                    <p className="text-indigo-100 text-sm max-w-md">
+                    <h3 className="type-section-title text-white mb-2">Proceed with {selectedFormData.title}?</h3>
+                    <p className="type-support text-indigo-100 max-w-md">
                       You've selected {selectedFormData.title} for AY {assessmentYear}. All data will be processed according to financial regulations.
                     </p>
                   </div>
@@ -371,9 +371,9 @@ export default function ITRFormSelectorPage() {
         >
           <div className="flex flex-col items-start gap-2 rounded-lg border border-slate-200 bg-slate-200/50 p-4 text-left md:inline-flex md:flex-row md:items-center md:rounded-full md:px-6 md:py-3">
             <HelpCircle className="h-4 w-4 text-slate-500" />
-            <span className="text-sm text-slate-600 font-medium">Confused about which form to pick?</span>
+            <span className="type-support text-slate-600 font-medium">Confused about which form to pick?</span>
             <Link href="/itr/form-recommender">
-              <button className="text-sm text-indigo-600 font-bold hover:underline">Tell me which form to select</button>
+              <button className="type-support text-indigo-600 font-bold hover:underline">Tell me which form to select</button>
             </Link>
           </div>
         </motion.div>

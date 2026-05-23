@@ -111,8 +111,8 @@ export default function ITRFormRecommenderPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Form Selection Assistant</h1>
-          <p className="text-slate-600">Answer a few questions to find the right ITR form for you.</p>
+          <h1 className="type-page-title text-slate-900 mb-2">Form Selection Assistant</h1>
+          <p className="type-body text-slate-600">Answer a few questions to find the right ITR form for you.</p>
         </motion.div>
 
         {/* Progress Bar */}
@@ -139,8 +139,8 @@ export default function ITRFormRecommenderPage() {
             >
               <Card className="border-slate-200 shadow-sm overflow-hidden">
                 <CardHeader className="bg-white border-b border-slate-50 p-6 md:p-8">
-                  <CardTitle className="text-xl text-slate-900">{STEPS[currentStep].title}</CardTitle>
-                  <CardDescription className="text-slate-500">{STEPS[currentStep].description}</CardDescription>
+                  <CardTitle className="type-section-title text-slate-900">{STEPS[currentStep].title}</CardTitle>
+                  <CardDescription className="type-support text-slate-500">{STEPS[currentStep].description}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-6 md:p-8 space-y-6">
                   {currentStep === 0 ? (
@@ -163,7 +163,7 @@ export default function ITRFormRecommenderPage() {
                             }`}>
                               <Icon className="h-6 w-6" />
                             </div>
-                            <span className={`text-sm font-bold text-center ${isSelected ? 'text-indigo-900' : 'text-slate-600'}`}>
+                            <span className={`type-support font-bold text-center ${isSelected ? 'text-indigo-900' : 'text-slate-600'}`}>
                               {option.label}
                             </span>
                           </div>
@@ -180,7 +180,7 @@ export default function ITRFormRecommenderPage() {
                         })
                         .map((q) => (
                         <div key={q.id} className="space-y-4">
-                          <Label className="text-base font-bold text-slate-900">{q.label}</Label>
+                          <Label className="type-body font-bold text-slate-900">{q.label}</Label>
                           <RadioGroup 
                             value={selections.details[q.id]} 
                             onValueChange={(val) => handleDetailChange(q.id, val)}
@@ -241,8 +241,8 @@ export default function ITRFormRecommenderPage() {
                   <div className="inline-flex items-center justify-center p-4 bg-white/20 rounded-full mb-4 backdrop-blur-sm border border-white/20">
                     <CheckCircle className="h-10 w-10" />
                   </div>
-                  <h2 className="text-2xl font-black mb-2 italic uppercase tracking-wider">Recommended: {recommendedForm}</h2>
-                  <p className="text-indigo-100 text-sm max-w-md mx-auto">
+                  <h2 className="type-section-title font-black mb-2 italic uppercase tracking-wide">Recommended: {recommendedForm}</h2>
+                  <p className="type-support text-indigo-100 max-w-md mx-auto">
                     Based on your inputs, this form is the best fit for your filing requirements.
                   </p>
                 </div>
@@ -255,23 +255,23 @@ export default function ITRFormRecommenderPage() {
                         </h3>
                         <ul className="space-y-3">
                           {recommendedForm === 'ITR-1' && (
-                            <li className="text-sm text-slate-600">• Simple salary/pension case</li>
+                            <li className="type-support text-slate-600">• Simple salary/pension case</li>
                           )}
                           {recommendedForm === 'ITR-2' && (
-                            <li className="text-sm text-slate-600">• Capital gains or foreign assets</li>
+                            <li className="type-support text-slate-600">• Capital gains or foreign assets</li>
                           )}
                           {recommendedForm === 'ITR-3' && (
-                            <li className="text-sm text-slate-600">• Complex business/profession income</li>
+                            <li className="type-support text-slate-600">• Complex business/profession income</li>
                           )}
                           {recommendedForm === 'ITR-4' && (
-                            <li className="text-sm text-slate-600">• Simplified presumptive taxation</li>
+                            <li className="type-support text-slate-600">• Simplified presumptive taxation</li>
                           )}
-                          <li className="text-sm text-slate-600">• Matches your reported income sources</li>
+                          <li className="type-support text-slate-600">• Matches your reported income sources</li>
                         </ul>
                      </div>
                      <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-2 text-center">Next Steps</p>
-                        <p className="text-sm text-slate-600 text-center mb-6">Proceed to the filing section with your recommended form selected.</p>
+                        <p className="type-meta uppercase font-bold text-slate-400 tracking-widest mb-2 text-center">Next Steps</p>
+                        <p className="type-support text-slate-600 text-center mb-6">Proceed to the filing section with your recommended form selected.</p>
                         <Link href={`/itr/form-selector?recommended=${recommendedForm}`}>
                           <Button className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 shadow-md">
                             Continue to Filing
@@ -283,7 +283,7 @@ export default function ITRFormRecommenderPage() {
                   <div className="pt-6 border-t border-slate-100 text-center">
                     <button 
                       onClick={() => setCurrentStep(0)} 
-                      className="text-indigo-600 font-bold hover:underline text-sm"
+                      className="type-support text-indigo-600 font-bold hover:underline"
                     >
                       Restart Assistant
                     </button>

@@ -18,11 +18,11 @@ export default function DisclaimerPage() {
                 <AlertTriangle className="w-8 h-8 text-white" />
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Disclaimer</h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            <h1 className="type-page-title mb-4">Disclaimer</h1>
+            <p className="type-body text-blue-100 max-w-3xl mx-auto">
               Important notices and limitations regarding our services and information.
             </p>
-            <p className="text-sm text-blue-200 mt-4">Last updated: January 19, 2025</p>
+            <p className="type-meta text-blue-200 mt-4">Last updated: January 19, 2025</p>
           </m.div>
         </div>
       </section>
@@ -34,7 +34,7 @@ export default function DisclaimerPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-lg shadow-lg p-8"
+            className="type-article-prose bg-white rounded-lg shadow-lg p-8"
           >
             {/* General Disclaimer */}
             <div className="mb-12">

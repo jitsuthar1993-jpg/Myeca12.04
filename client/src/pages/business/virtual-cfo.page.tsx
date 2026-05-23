@@ -34,6 +34,7 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
+import { FONT_SIZES } from "@/styles/fonts";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -135,7 +136,7 @@ export default function VirtualCFOPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight mb-6"
+              className="type-hero-title text-slate-900 mb-6"
             >
               Your Strategic <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Financial Pilot</span>
             </m.h1>
@@ -186,7 +187,7 @@ export default function VirtualCFOPage() {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Financial Mastery, <span className="text-blue-600">Simplified</span></h2>
+            <h2 className="type-section-title text-slate-900 mb-6">Financial Mastery, <span className="text-blue-600">Simplified</span></h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto">We provide the structure and insight needed to turn your financial data into a competitive advantage.</p>
           </div>
 
@@ -221,7 +222,7 @@ export default function VirtualCFOPage() {
                 <Zap className="h-3 w-3 fill-blue-600" />
                 Platform Preview
               </div>
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-8 leading-tight tracking-tight">
+              <h2 className="type-section-title text-slate-900 mb-8">
                 Finance Telemetry at Your <span className="text-blue-600">Fingertips</span>
               </h2>
               <p className="text-lg text-slate-600 mb-10 leading-relaxed">
@@ -282,7 +283,7 @@ export default function VirtualCFOPage() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                      <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
+                      <XAxis dataKey="month" stroke="#94a3b8" fontSize={FONT_SIZES.xs} axisLine={false} tickLine={false} />
                       <YAxis hide />
                       <Tooltip 
                         contentStyle={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }}
@@ -295,11 +296,11 @@ export default function VirtualCFOPage() {
 
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">EBITDA Margin</p>
+                    <p className="type-meta font-black uppercase tracking-widest text-slate-400 mb-1">EBITDA Margin</p>
                     <p className="text-lg font-black text-slate-900">32.4%</p>
                   </div>
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Cash Runway</p>
+                    <p className="type-meta font-black uppercase tracking-widest text-slate-400 mb-1">Cash Runway</p>
                     <p className="text-lg font-black text-slate-900">18 Months</p>
                   </div>
                 </div>
@@ -313,12 +314,12 @@ export default function VirtualCFOPage() {
               >
                 <div className="flex items-center gap-2 mb-2">
                   <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                  <span className="text-[10px] font-bold text-slate-600">GST Compliance</span>
+                  <span className="type-meta font-bold text-slate-600">GST Compliance</span>
                 </div>
                 <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500 w-full" />
                 </div>
-                <p className="text-[9px] text-emerald-600 font-bold mt-2">Review Ready</p>
+                <p className="type-meta text-emerald-600 font-bold mt-2">Review Ready</p>
               </m.div>
 
               {/* Floating Element 2 */}
@@ -330,7 +331,7 @@ export default function VirtualCFOPage() {
                 <p className="text-xs font-bold text-slate-600 mb-2 italic">"Switching to MyeCA Virtual CFO was the best strategic move we made this year."</p>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-blue-100" />
-                  <span className="text-[10px] font-bold text-slate-900">Rohit S., CEO at TechFlow</span>
+                  <span className="type-meta font-bold text-slate-900">Rohit S., CEO at TechFlow</span>
                 </div>
               </m.div>
             </m.div>
@@ -342,7 +343,7 @@ export default function VirtualCFOPage() {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">The Modern Choice</h2>
+            <h2 className="type-section-title text-slate-900 mb-6">The Modern Choice</h2>
             <p className="text-lg text-slate-500">Why settle for a part-time accountant when you can have a full-service strategic team?</p>
           </div>
 
@@ -402,7 +403,7 @@ export default function VirtualCFOPage() {
       <section className="py-24 bg-slate-50 border-y border-slate-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Tailored to Your <span className="text-blue-600">Scale</span></h2>
+            <h2 className="type-section-title text-slate-900 mb-6">Tailored to Your <span className="text-blue-600">Scale</span></h2>
             <p className="text-lg text-slate-500">From seed-stage startups to established enterprises.</p>
           </div>
 
@@ -433,7 +434,7 @@ export default function VirtualCFOPage() {
                 p.popular ? "border-blue-200 shadow-2xl scale-105 bg-white z-10" : "border-slate-200 bg-white/50 hover:bg-white hover:shadow-xl"
               )}>
                 {p.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1 rounded-full type-meta font-black uppercase tracking-widest shadow-lg">
                     Most Popular
                   </div>
                 )}
@@ -476,7 +477,7 @@ export default function VirtualCFOPage() {
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -ml-32 -mb-32 pointer-events-none" />
             
             <div className="relative z-10">
-              <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tight">
+              <h2 className="type-section-title mb-8">
                 Ready to Accelerate Your <span className="text-blue-200">Growth?</span>
               </h2>
               <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto leading-relaxed">

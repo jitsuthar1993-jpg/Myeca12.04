@@ -105,14 +105,14 @@ export default function ContactPage() {
 
         <section className="border-b border-slate-200 bg-slate-50 py-14 sm:py-16">
           <div className="mx-auto max-w-4xl px-4 text-center">
-            <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1 text-[11px] font-normal uppercase tracking-widest text-blue-700">
+            <div className="type-meta mx-auto mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1 font-normal uppercase text-blue-700">
               <ShieldCheck className="h-3.5 w-3.5" />
               Scope-first support
             </div>
             <m.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-5 text-4xl font-normal tracking-tight text-slate-950 md:text-5xl"
+              className="type-hero-title mb-5 font-normal text-slate-950"
             >
               Contact MyeCA support and tax experts.
             </m.h1>

@@ -197,8 +197,8 @@ export default function DocumentsPage() {
                       </div>
                    </div>
                    <div className="mt-5 text-center">
-                      <h2 className="text-xl font-black text-slate-900 tracking-tight">Security Vault</h2>
-                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                      <h2 className="type-card-title font-black text-slate-900 tracking-tight">Security Vault</h2>
+                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                          Encryption Active
                       </Badge>
                    </div>
@@ -213,21 +213,21 @@ export default function DocumentsPage() {
                    ].map((stat, i) => (
                      <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                         <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
-                        <span className="text-sm font-black text-slate-900 leading-none">{stat.value}</span>
+                        <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
+                        <span className="type-support font-black text-slate-900 leading-none">{stat.value}</span>
                      </div>
                    ))}
                 </div>
 
                 <div className="mt-10 space-y-3">
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Private Folders</p>
+                   <p className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Private Folders</p>
                    {vaultFolders.map((folder) => (
                       <div key={folder.key} className="flex items-center justify-between p-4 rounded-3xl bg-white border border-slate-100 hover:border-blue-200 transition-all cursor-pointer group shadow-sm">
                          <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 transition-colors">
                                <FolderOpen className="h-4 w-4" />
                             </div>
-                            <span className="text-xs font-black text-slate-700 group-hover:text-blue-600 transition-colors">{folder.label}</span>
+                            <span className="type-meta font-black text-slate-700 group-hover:text-blue-600 transition-colors">{folder.label}</span>
                          </div>
                          <ChevronRight className="h-3 w-3 text-slate-300 group-hover:text-blue-600" />
                       </div>
@@ -239,15 +239,15 @@ export default function DocumentsPage() {
           <div className="p-8 rounded-[40px] bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-100/50 relative overflow-hidden group cursor-pointer shadow-xl shadow-blue-50">
              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all group-hover:scale-150" />
              <ShieldCheck className="h-8 w-8 text-blue-500 mb-6" />
-             <h3 className="font-black text-xl leading-tight mb-3 text-slate-900">AI Verification</h3>
-             <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">OCR extraction will appear only after a real document scan is available for a file.</p>
-             <Button disabled className="w-full bg-slate-100 text-slate-400 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl border-none">Scan Preview</Button>
+             <h3 className="type-card-title font-black mb-3 text-slate-900">AI Verification</h3>
+             <p className="text-slate-500 type-support font-medium mb-6">OCR extraction will appear only after a real document scan is available for a file.</p>
+             <Button disabled className="w-full bg-slate-100 text-slate-400 font-black type-meta uppercase tracking-widest h-11 rounded-2xl border-none">Scan Preview</Button>
           </div>
 
           <Card className="border-none shadow-sm rounded-[32px] bg-white">
             <CardHeader className="p-6 border-b border-slate-50">
-              <CardTitle className="text-sm font-black uppercase tracking-widest">Filing readiness</CardTitle>
-              <CardDescription className="text-xs">What the CA can verify from this vault.</CardDescription>
+              <CardTitle className="type-card-title font-black uppercase tracking-widest">Filing readiness</CardTitle>
+              <CardDescription className="type-support">What the CA can verify from this vault.</CardDescription>
             </CardHeader>
             <CardContent className="p-5 space-y-3">
               {vaultChecklist.map((item) => {
@@ -256,8 +256,8 @@ export default function DocumentsPage() {
                   <div key={item.label} className="flex gap-3 rounded-2xl bg-slate-50 p-4">
                     <Icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                     <div>
-                      <p className="text-xs font-black text-slate-800">{item.label}</p>
-                      <p className="mt-1 text-[10px] font-medium leading-relaxed text-slate-500">{item.detail}</p>
+                      <p className="type-support font-black text-slate-800">{item.label}</p>
+                      <p className="mt-1 type-support font-medium text-slate-500">{item.detail}</p>
                     </div>
                   </div>
                 );
@@ -273,10 +273,10 @@ export default function DocumentsPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mb-2">
                  <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Secure Storage</span>
+                 <span className="type-meta font-black uppercase tracking-[0.2em] text-blue-600">Secure Storage</span>
               </div>
-              <h1 className="text-4xl font-black tracking-tight text-slate-900">Document Vault</h1>
-              <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
+              <h1 className="type-page-title font-black text-slate-900">Document Vault</h1>
+              <p className="text-slate-500 max-w-2xl type-body font-medium">
                 Profile-aware, encrypted storage for your financial and compliance paperwork.
               </p>
             </div>
@@ -314,9 +314,9 @@ export default function DocumentsPage() {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-slate-50">
-                        <th className="px-8 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Document</th>
-                        <th className="px-8 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
-                        <th className="px-8 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                        <th className="px-8 py-4 type-meta font-bold text-slate-400 uppercase tracking-widest">Document</th>
+                        <th className="px-8 py-4 type-meta font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                        <th className="px-8 py-4 type-meta font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -328,15 +328,15 @@ export default function DocumentsPage() {
                                 <FileText className="h-5 w-5" />
                               </div>
                               <div>
-                                <p className="text-sm font-bold text-slate-900">{doc.name}</p>
-                                <p className="text-[10px] font-medium text-slate-500 uppercase tracking-tight">
+                                <p className="type-support font-bold text-slate-900">{doc.name}</p>
+                                <p className="type-meta font-medium text-slate-500 uppercase tracking-tight">
                                   {doc.category} · {formatFileSize(doc.size)}
                                 </p>
                               </div>
                             </div>
                           </td>
                           <td className="px-8 py-4">
-                             <Badge className="bg-slate-50 text-slate-600 border-none font-bold text-[9px] uppercase tracking-widest px-2.5 py-1">
+                             <Badge className="bg-slate-50 text-slate-600 border-none font-bold type-meta uppercase tracking-widest px-2.5 py-1">
                                 {doc.status}
                              </Badge>
                           </td>
@@ -359,8 +359,8 @@ export default function DocumentsPage() {
                         <tr>
                           <td colSpan={3} className="px-8 py-12 text-center">
                             <FolderOpen className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-                            <p className="text-sm font-bold text-slate-900">No documents uploaded yet</p>
-                            <p className="mt-1 text-xs font-medium text-slate-500">
+                            <p className="type-support font-bold text-slate-900">No documents uploaded yet</p>
+                            <p className="mt-1 type-support font-medium text-slate-500">
                               Upload Form 16, AIS, bank statements, or investment proofs to build your private vault.
                             </p>
                           </td>
@@ -376,8 +376,8 @@ export default function DocumentsPage() {
             <div className="space-y-8">
               <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
                 <CardHeader className="p-8 border-b border-slate-50">
-                  <CardTitle className="text-lg font-bold">Quick Upload</CardTitle>
-                  <CardDescription className="text-xs font-medium text-slate-500">Securely ingest new compliance documents.</CardDescription>
+                  <CardTitle className="type-card-title font-bold">Quick Upload</CardTitle>
+                  <CardDescription className="type-support font-medium text-slate-500">Securely ingest new compliance documents.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <input
@@ -397,13 +397,13 @@ export default function DocumentsPage() {
                     <div className="p-4 rounded-2xl bg-white shadow-sm mb-4 text-blue-600 transition group-hover:-translate-y-1">
                       <Upload className="h-6 w-6" />
                     </div>
-                    <p className="text-sm font-bold text-slate-900">Drop files here</p>
-                    <p className="text-[10px] text-slate-400 mt-1 font-medium">PDF, image, Word or Excel (compressed when possible)</p>
+                    <p className="type-support font-bold text-slate-900">Drop files here</p>
+                    <p className="type-support text-slate-400 mt-1 font-medium">PDF, image, Word or Excel (compressed when possible)</p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Document Name</Label>
+                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Document Name</Label>
                       <Input 
                         value={uploadData.name}
                         onChange={(e) => setUploadData(p => ({...p, name: e.target.value}))}
@@ -412,7 +412,7 @@ export default function DocumentsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Category</Label>
+                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Category</Label>
                       <Select value={uploadData.category} onValueChange={(category) => setUploadData(p => ({...p, category}))}>
                         <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
                           <SelectValue />
@@ -424,7 +424,7 @@ export default function DocumentsPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Taxpayer Profile</Label>
+                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Taxpayer Profile</Label>
                       <Select value={uploadData.profileId} onValueChange={(profileId) => setUploadData(p => ({...p, profileId}))}>
                         <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
                           <SelectValue />
@@ -436,10 +436,10 @@ export default function DocumentsPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] font-medium text-slate-400">Use this when the document belongs to a saved taxpayer or family profile.</p>
+                      <p className="type-support font-medium text-slate-400">Use this when the document belongs to a saved taxpayer or family profile.</p>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Linked Service</Label>
+                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Linked Service</Label>
                       <Select value={uploadData.userServiceId} onValueChange={(userServiceId) => setUploadData(p => ({...p, userServiceId}))}>
                         <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
                           <SelectValue />
@@ -453,7 +453,7 @@ export default function DocumentsPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] font-medium text-slate-400">
+                      <p className="type-support font-medium text-slate-400">
                         {userServices.length
                           ? "Attach this file to an active case so it appears in that service workspace."
                           : "No service cases yet. Start a service first if this file should move a case forward."}
@@ -465,8 +465,8 @@ export default function DocumentsPage() {
 
               <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
                 <CardHeader className="p-8 border-b border-slate-50">
-                  <CardTitle className="text-lg font-bold">Internal Generators</CardTitle>
-                  <CardDescription className="text-xs font-medium text-slate-500">Documents created within MyeCA.</CardDescription>
+                  <CardTitle className="type-card-title font-bold">Internal Generators</CardTitle>
+                  <CardDescription className="type-support font-medium text-slate-500">Documents created within MyeCA.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="grid grid-cols-1 gap-2">
@@ -499,8 +499,8 @@ export default function DocumentsPage() {
             <CardContent className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-4">
               {caseTimelineStages.map((stage, index) => (
                 <div key={stage} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-300">Stage {index + 1}</p>
-                  <p className="mt-2 text-sm font-bold text-white">{stage}</p>
+                  <p className="type-meta font-black uppercase tracking-widest text-blue-300">Stage {index + 1}</p>
+                  <p className="mt-2 type-support font-bold text-white">{stage}</p>
                 </div>
               ))}
             </CardContent>
@@ -515,13 +515,13 @@ export default function DocumentsPage() {
                <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-6 border border-white/10">
                   <FileText className="h-10 w-10 text-blue-400" />
                </div>
-               <h3 className="text-xl font-bold text-white mb-2">Document Preview</h3>
-               <p className="text-slate-400 text-sm max-w-xs font-medium">Verified extraction fields will appear here after OCR metadata is available.</p>
+               <h3 className="type-card-title font-bold text-white mb-2">Document Preview</h3>
+               <p className="text-slate-400 type-support max-w-xs font-medium">Verified extraction fields will appear here after OCR metadata is available.</p>
             </div>
             <div className="p-8 space-y-6">
                <div>
-                  <h2 className="text-lg font-bold text-slate-900">Extraction Status</h2>
-                  <p className="text-xs font-medium text-slate-500">This file is stored securely. OCR verification is not available for this document yet.</p>
+                  <h2 className="type-card-title font-bold text-slate-900">Extraction Status</h2>
+                  <p className="type-support font-medium text-slate-500">This file is stored securely. OCR verification is not available for this document yet.</p>
                </div>
                
                {extractedFields.length ? (
@@ -529,8 +529,8 @@ export default function DocumentsPage() {
                   {extractedFields.map(([label, value, confidence]) => (
                     <div key={label} className="space-y-1.5">
                       <div className="flex items-center justify-between px-1">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</Label>
-                        <Badge variant="outline" className={cn("text-[8px] font-black uppercase px-1.5 py-0 border-none", confidence === "High" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
+                        <Label className="type-meta font-bold uppercase tracking-widest text-slate-400">{label}</Label>
+                        <Badge variant="outline" className={cn("type-meta font-black uppercase px-1.5 py-0 border-none", confidence === "High" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
                           {confidence} Match
                         </Badge>
                       </div>
@@ -540,8 +540,8 @@ export default function DocumentsPage() {
                 </div>
                ) : (
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
-                  <p className="text-sm font-black text-slate-900">{selectedDoc?.name}</p>
-                  <p className="mt-2 text-xs font-medium leading-relaxed text-slate-500">
+                  <p className="type-support font-black text-slate-900">{selectedDoc?.name}</p>
+                  <p className="mt-2 type-support font-medium text-slate-500">
                     Download the original file or wait for OCR metadata to be generated before confirming extracted values.
                   </p>
                 </div>

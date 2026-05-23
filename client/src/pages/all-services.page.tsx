@@ -191,7 +191,7 @@ export default function AllServicesPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-                <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-slate-200 bg-slate-100 px-1.5 font-mono text-[10px] font-medium text-slate-500">
+                <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-slate-200 bg-slate-100 px-1.5 font-mono type-meta font-medium text-slate-500">
                   <span className="text-xs">⌘</span>K
                 </kbd>
               </div>

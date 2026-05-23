@@ -55,7 +55,7 @@ export default function FastestITRFilingPage() {
             <Clock className="w-4 h-4" />
             Guided filing workflow
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
+          <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
             File Your ITR in <span className="text-[#315efb]">4 Simple Steps</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
@@ -78,7 +78,7 @@ export default function FastestITRFilingPage() {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">How It Works</h2>
+            <h2 className="type-section-title font-extrabold text-slate-900">How It Works</h2>
             <p className="text-slate-500 mt-3 text-lg">Four steps with document checks and review points.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
@@ -103,7 +103,7 @@ export default function FastestITRFilingPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">
+              <h2 className="type-section-title mb-4 font-extrabold text-slate-900">
                 What's included in every filing
               </h2>
               <p className="text-slate-500 mb-8">

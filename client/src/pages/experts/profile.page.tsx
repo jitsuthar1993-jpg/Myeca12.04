@@ -129,7 +129,7 @@ export default function ExpertProfilePage() {
                 </Badge>
               </div>
               
-              <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-2 leading-tight">
+              <h1 className="type-page-title text-slate-900 mb-2">
                 {expert.name}
               </h1>
               <p className="text-xl font-bold text-blue-600 mb-6">{expert.fullRole}</p>

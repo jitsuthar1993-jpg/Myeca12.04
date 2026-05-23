@@ -150,10 +150,10 @@ export default function GeneralCalculatorPage() {
             className="flex items-center justify-between mb-5"
           >
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl lg:text-4xl font-normal text-slate-900 tracking-tight">
+              <h1 className="type-page-title font-normal text-slate-900">
                 General Calculator
               </h1>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[9px] font-normal text-slate-600 uppercase tracking-wider">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 type-meta font-normal text-slate-600 uppercase tracking-wider">
                 <Sparkles className="w-3 h-3" />
                 Keyboard Supported
               </span>
@@ -181,7 +181,7 @@ export default function GeneralCalculatorPage() {
                 {/* ── Display Area (LIGHT THEMED) ── */}
                 <div className="bg-slate-50 border-b border-slate-200 px-5 pt-5 pb-4 text-right relative">
                   <div className="absolute top-3 left-4 flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] font-normal text-slate-500 border-slate-200 bg-white">Standard</Badge>
+                    <Badge variant="outline" className="type-meta font-normal text-slate-500 border-slate-200 bg-white">Standard</Badge>
                     <button
                       onClick={() => setShowHistory(!showHistory)}
                       className={cn(
@@ -213,7 +213,7 @@ export default function GeneralCalculatorPage() {
                         key={btn.label}
                         onClick={btn.action}
                         title={btn.title}
-                        className="h-12 text-[15px] font-normal text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-colors border-r border-slate-100 last:border-r-0"
+                        className="h-12 text-base font-normal text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-colors border-r border-slate-100 last:border-r-0"
                       >
                         {btn.label}
                       </button>
@@ -255,7 +255,7 @@ export default function GeneralCalculatorPage() {
                   </div>
                 </CardContent>
               </Card>
-              <p className="mt-3 text-center text-[11px] text-slate-400 font-normal">
+              <p className="mt-3 text-center type-support text-slate-400 font-normal">
                 ⌨️ Keyboard shortcuts supported · NumPad enabled
               </p>
             </motion.div>
@@ -272,7 +272,7 @@ export default function GeneralCalculatorPage() {
                     <h3 className="font-normal text-sm text-slate-700 flex items-center gap-2">
                       <History className="w-4 h-4 text-slate-400" /> Calculation History
                     </h3>
-                    <button onClick={() => setHistory([])} disabled={history.length === 0} className="text-[11px] font-normal text-red-500 hover:text-red-600 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <button onClick={() => setHistory([])} disabled={history.length === 0} className="text-sm font-normal text-red-500 hover:text-red-600 disabled:opacity-40 disabled:cursor-not-allowed">
                       Clear All
                     </button>
                   </div>
@@ -365,7 +365,7 @@ export default function GeneralCalculatorPage() {
 
         {/* Footer */}
         <div className="border-t border-slate-200/60 py-8 px-4 text-center mt-12">
-          <p className="text-[11px] font-normal text-slate-400 tracking-wide">
+          <p className="type-meta font-normal text-slate-400 tracking-wide">
             MyeCA.in · Free Online Calculator · Professional Financial Tools · © 2025
           </p>
         </div>

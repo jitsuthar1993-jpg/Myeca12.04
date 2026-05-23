@@ -51,7 +51,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
             </div>
             
             <Badge className={cn(
-              "rounded-full px-3 py-1 h-7 border-0 font-bold text-[10px] uppercase tracking-wider",
+              "rounded-full px-3 py-1 h-7 border-0 font-bold type-meta uppercase tracking-wider",
               isCompleted 
                 ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" 
                 : "bg-[#EEF4FF] text-[#315efb]"
@@ -65,7 +65,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
         <CardContent className="pb-8 space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Filing Progress</span>
+              <span className="type-meta font-black uppercase tracking-widest text-slate-400">Filing Progress</span>
               <span className={cn(
                 "text-lg font-black tracking-tight",
                 isCompleted ? "text-emerald-600" : "text-[#315efb]"
@@ -97,7 +97,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
           <div className="flex items-center gap-3 p-4 bg-amber-50/50 dark:bg-amber-900/10 rounded-2xl border border-amber-100/50 dark:border-amber-800/30">
             <Calendar className="h-5 w-5 text-amber-600/70" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-600/60">Due Date</span>
+              <span className="type-meta font-black uppercase tracking-widest text-amber-600/60">Due Date</span>
               <span className="text-sm font-bold text-amber-900 dark:text-amber-200">{dueDate}</span>
             </div>
           </div>

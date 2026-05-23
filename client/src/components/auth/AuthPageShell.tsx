@@ -112,13 +112,13 @@ export function AuthPageShell({
             </div>
 
             <div className="mb-7">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-700 sm:text-xs">
+              <p className="type-meta font-bold uppercase text-emerald-700">
                 {eyebrow}
               </p>
-              <h1 className="mt-2 text-[30px] font-black leading-tight text-slate-950 sm:text-[36px]">
+              <h1 className="type-page-title mt-2 font-black text-slate-950">
                 {title}
               </h1>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
+              <p className="type-support mt-3 text-slate-600">{description}</p>
             </div>
 
             {notice && (
@@ -170,10 +170,10 @@ export function AuthPageShell({
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
                     Finance dashboard
                   </p>
-                  <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950">
+                  <h2 className="type-section-title mt-3 font-black text-slate-950">
                     Simple access to your tax numbers.
                   </h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                  <p className="type-support mt-3 text-slate-600">
                     Filing status, refund estimates, documents, and review updates stay organized after sign in.
                   </p>
                 </div>

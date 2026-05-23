@@ -63,7 +63,7 @@ export default function TaxCalculatorFeaturePage() {
             <Calculator className="w-4 h-4" />
             Updated for AY 2025–26
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
+          <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
             Know Your Tax <span className="text-[#315efb]">Before You File</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
@@ -86,7 +86,7 @@ export default function TaxCalculatorFeaturePage() {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">All Calculators</h2>
+            <h2 className="type-section-title font-extrabold text-slate-900">All Calculators</h2>
             <p className="text-slate-500 mt-3 text-lg">Pick the one that applies to your situation.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -96,7 +96,7 @@ export default function TaxCalculatorFeaturePage() {
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-base font-bold text-slate-900 group-hover:text-[#315efb] transition-colors">{calc.title}</h3>
                     {calc.badge && (
-                      <span className="ml-2 shrink-0 px-2 py-0.5 bg-[#315efb]/8 text-[#315efb] text-[10px] font-black uppercase tracking-wider rounded-full">
+                      <span className="type-meta ml-2 shrink-0 rounded-full bg-[#315efb]/8 px-2 py-0.5 font-black text-[#315efb]">
                         {calc.badge}
                       </span>
                     )}
@@ -117,7 +117,7 @@ export default function TaxCalculatorFeaturePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">
+              <h2 className="type-section-title mb-4 font-extrabold text-slate-900">
                 Built on the actual tax code, not estimates
               </h2>
               <p className="text-slate-500 mb-8">

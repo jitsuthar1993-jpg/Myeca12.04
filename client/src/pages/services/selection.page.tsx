@@ -131,7 +131,7 @@ export default function ServiceSelectionPage() {
               <m.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-4 border border-blue-500/20"
+                className="type-meta mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 font-black text-blue-600"
               >
                 <Sparkles className="h-3 w-3" />
                 Expert Marketplace
@@ -140,7 +140,7 @@ export default function ServiceSelectionPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4"
+                className="type-page-title mb-4 font-black text-slate-900 dark:text-white"
               >
                 Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Premium Service</span>
               </m.h1>
@@ -238,7 +238,7 @@ export default function ServiceSelectionPage() {
                         {service.category === 'tax-compliance' && <FileText className="h-5 w-5" />}
                       </div>
                       {service.popular && (
-                        <Badge className="bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 border-0 flex items-center gap-1 font-black text-[8px] tracking-tight uppercase px-2 py-0.5">
+                        <Badge className="type-meta flex items-center gap-1 border-0 bg-yellow-500/10 px-2 py-0.5 font-black text-yellow-700 hover:bg-yellow-500/20">
                           <StarIcon className="h-2.5 w-2.5 fill-yellow-600" />
                           Popular
                         </Badge>
@@ -247,7 +247,7 @@ export default function ServiceSelectionPage() {
                     <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-1 group-hover:text-blue-600 transition-colors">
                       {service.title}
                     </CardTitle>
-                    <CardDescription className="text-[11px] font-medium text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed h-8">
+                    <CardDescription className="type-support h-8 line-clamp-2 font-medium text-slate-500 dark:text-slate-400">
                       {service.description}
                     </CardDescription>
                   </CardHeader>
@@ -257,7 +257,7 @@ export default function ServiceSelectionPage() {
                       {service.features.map((feature, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <CheckCircle2 className="h-3 w-3 text-blue-600 shrink-0" />
-                          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 tracking-tight">{feature}</span>
+                          <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -265,12 +265,12 @@ export default function ServiceSelectionPage() {
                     <div className="mt-auto space-y-3">
                       <div className="flex items-center justify-between py-3 border-t border-slate-100">
                         <div>
-                          <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400 block">Fee</span>
+                          <span className="type-meta block font-bold text-slate-400">Fee</span>
                           <span className="text-xl font-extrabold text-slate-900">{service.price}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400 block">Time</span>
-                          <span className="text-[11px] font-bold text-slate-900 flex items-center justify-end gap-1">
+                          <span className="type-meta block font-bold text-slate-400">Time</span>
+                          <span className="flex items-center justify-end gap-1 text-xs font-bold text-slate-900">
                             <Clock className="h-3 w-3 text-blue-600" />
                             3-5 Days
                           </span>

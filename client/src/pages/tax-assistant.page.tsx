@@ -94,7 +94,7 @@ export default function TaxAssistantPage() {
                 <Sparkles className="h-3.5 w-3.5" />
                 Tax Assistant
               </div>
-              <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
+              <h1 className="type-page-title text-slate-950">
                 How can I help with your taxes?
               </h1>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">

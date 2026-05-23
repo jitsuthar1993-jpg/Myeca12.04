@@ -374,7 +374,7 @@ export default function TrademarkRegistrationPage() {
                 <div className="w-14 h-14 bg-purple-50 rounded-full flex items-center justify-center soft-shadow">
                   <Shield className="w-8 h-8 text-purple-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Trademark Registration Services
                 </h1>
               </div>
@@ -440,7 +440,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Complete 6-Step Registration Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -503,7 +503,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Government Fee Structure 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -576,7 +576,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Popular Trademark Classes
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -615,7 +615,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Required Documents Checklist
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -655,7 +655,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Key Benefits of Trademark Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -688,7 +688,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               10-Year Renewal Timeline
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -722,7 +722,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Common Rejection Reasons & Solutions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -772,7 +772,7 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

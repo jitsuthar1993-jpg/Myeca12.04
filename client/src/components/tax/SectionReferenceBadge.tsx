@@ -14,7 +14,7 @@ export function SectionReferenceBadge({ section, className }: SectionReferenceBa
   return (
     <span
       className={cn(
-        "ml-2 inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 align-middle text-[10px] font-medium text-blue-700",
+        "ml-2 inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 align-middle type-meta font-medium text-blue-700",
         className,
       )}
       title={`${reference.oldAct}: ${reference.label}`}

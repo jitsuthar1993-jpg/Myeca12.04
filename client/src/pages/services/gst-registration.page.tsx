@@ -319,7 +319,7 @@ export default function GstRegistrationPage() {
                 <div className="p-2 bg-green-50 rounded-lg border border-green-100">
                   <Receipt className="w-6 h-6 text-green-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   GST Registration Services
                 </h1>
               </div>
@@ -432,7 +432,7 @@ export default function GstRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Types of GST Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -555,7 +555,7 @@ export default function GstRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               4-Step GST Registration Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -594,7 +594,7 @@ export default function GstRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Benefits of GST Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -763,7 +763,7 @@ export default function GstRegistrationPage() {
           className="text-center"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               GST Registration Pricing
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

@@ -29,11 +29,11 @@ export default function TermsOfServicePage() {
                 <Scale className="w-8 h-8 text-blue-600" />
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Terms of Service</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <h1 className="type-page-title mb-4 text-gray-900">Terms of Service</h1>
+            <p className="type-body text-gray-600 max-w-3xl mx-auto">
               Please read these terms carefully before using our platform and services.
             </p>
-            <p className="text-sm text-gray-500 mt-4">Last updated: January 19, 2025</p>
+            <p className="type-meta text-gray-500 mt-4">Last updated: January 19, 2025</p>
           </m.div>
         </div>
       </section>
@@ -45,7 +45,7 @@ export default function TermsOfServicePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-lg shadow-lg p-8"
+            className="type-article-prose bg-white rounded-lg shadow-lg p-8"
           >
             {/* Agreement */}
             <div className="mb-12">

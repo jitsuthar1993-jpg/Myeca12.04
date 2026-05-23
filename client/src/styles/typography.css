@@ -4,12 +4,12 @@
 @layer base {
     h1 {
         font-size: var(--text-4xl);
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
     }
 
     h2 {
         font-size: var(--text-3xl);
-        letter-spacing: -0.01em;
+        letter-spacing: 0;
     }
 
     h3 {
@@ -45,5 +45,89 @@
 
     .text-body {
         font-family: var(--font-sans);
+    }
+
+    .type-hero-title,
+    .type-page-title,
+    .type-section-title,
+    .type-card-title {
+        letter-spacing: 0;
+    }
+
+    .type-hero-title {
+        font-size: var(--type-hero-title);
+        font-weight: var(--font-extrabold);
+        line-height: 1.12;
+    }
+
+    .type-page-title {
+        font-size: var(--type-page-title);
+        font-weight: var(--font-bold);
+        line-height: var(--leading-tight);
+    }
+
+    .type-section-title {
+        font-size: var(--type-section-title);
+        font-weight: var(--font-bold);
+        line-height: var(--leading-tight);
+    }
+
+    .type-card-title {
+        font-size: var(--type-card-title);
+        font-weight: var(--font-bold);
+        line-height: var(--leading-snug);
+    }
+
+    .type-body {
+        font-size: var(--type-body);
+        line-height: var(--leading-relaxed);
+    }
+
+    .type-support {
+        font-size: var(--type-support);
+        line-height: var(--leading-relaxed);
+    }
+
+    .type-meta {
+        font-size: var(--type-meta);
+        line-height: var(--leading-snug);
+    }
+
+    .type-article-prose {
+        font-size: var(--type-article-body);
+        line-height: 1.75;
+    }
+
+    .type-article-prose :where(p, li) {
+        font-size: inherit;
+        line-height: inherit;
+    }
+
+    .type-article-prose :where(h2) {
+        font-size: var(--type-section-title);
+        line-height: var(--leading-tight);
+    }
+
+    .type-article-prose :where(h3) {
+        font-size: var(--text-xl);
+        line-height: var(--leading-snug);
+    }
+
+    @media (min-width: 768px) {
+        .type-hero-title {
+            font-size: var(--type-hero-title-lg);
+        }
+
+        .type-page-title {
+            font-size: var(--type-page-title-lg);
+        }
+
+        .type-section-title {
+            font-size: var(--type-section-title-lg);
+        }
+
+        .type-article-prose {
+            font-size: var(--type-article-body-lg);
+        }
     }
 }

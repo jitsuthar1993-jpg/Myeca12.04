@@ -54,7 +54,7 @@ export function ComparisonTable() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm font-bold leading-snug text-slate-950">{item.feature}</h3>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-600">MyeCA.in advantage</p>
+                  <p className="type-meta font-semibold uppercase tracking-wide text-blue-600">MyeCA.in advantage</p>
                 </div>
               </div>
 
@@ -86,7 +86,7 @@ export function ComparisonTable() {
             <th className="p-6 text-left border-b border-slate-100 bg-blue-50/30">
               <div className="flex items-center gap-2">
                 <span className="text-lg font-black text-blue-600">MyeCA.in</span>
-                <span className="px-2 py-0.5 bg-blue-600 text-[10px] text-white font-bold rounded-full uppercase tracking-tighter">Recommended</span>
+                <span className="px-2 py-0.5 bg-blue-600 type-meta text-white font-bold rounded-full uppercase tracking-tighter">Recommended</span>
               </div>
             </th>
             <th className="p-6 text-left text-sm font-bold text-slate-600 border-b border-slate-100">DIY / Govt Portal</th>

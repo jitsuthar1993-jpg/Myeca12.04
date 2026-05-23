@@ -76,7 +76,7 @@ export default function HSNFinderPage() {
           <CalcGlassSidebar title="Finder Summary">
             <div className="space-y-6 pt-2">
               <div className="p-5 rounded-2xl bg-white/40 border border-white/20 backdrop-blur-md">
-                <p className="text-[10px] font-normal text-blue-700 uppercase tracking-widest mb-1">Results Found</p>
+                <p className="type-meta mb-1 font-normal uppercase tracking-widest text-blue-700">Results Found</p>
                 <p className="text-3xl font-normal text-slate-900">{filteredItems.length}</p>
               </div>
 
@@ -87,7 +87,7 @@ export default function HSNFinderPage() {
                   </div>
                   <div>
                     <p className="text-xs font-normal text-slate-800">Compliance Audit</p>
-                    <p className="text-[11px] text-slate-500 font-normal">Verify your codes with a CA to avoid GST penalties and notices.</p>
+                    <p className="type-support font-normal text-slate-500">Verify your codes with a CA to avoid GST penalties and notices.</p>
                   </div>
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function HSNFinderPage() {
                       </div>
                       <div>
                         <p className="font-normal text-slate-900 text-lg">{item.name}</p>
-                        <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">{item.category}</p>
+                        <p className="type-meta font-normal uppercase tracking-widest text-slate-400">{item.category}</p>
                       </div>
                     </div>
                     <div className="text-right">

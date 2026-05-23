@@ -94,7 +94,7 @@ export default function CityLandingPage() {
               Serving {city.name}: {city.population}
             </m.div>
             
-            <h1 className="text-4xl lg:text-6xl font-black mb-6 leading-tight">
+            <h1 className="type-page-title mb-6">
               Expert <span className="text-blue-400">{service.title}</span> 
               <br />Services in <span className="underline decoration-blue-500 underline-offset-8">{city.name}</span>
             </h1>
@@ -204,7 +204,7 @@ export default function CityLandingPage() {
           <Card className="bg-blue-600 text-white overflow-hidden relative">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
             <CardContent className="p-12 text-center relative z-10">
-              <h2 className="text-3xl md:text-5xl font-black mb-6">
+              <h2 className="type-section-title mb-6">
                 Ready to Start your Business in {city.name}?
               </h2>
               <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">

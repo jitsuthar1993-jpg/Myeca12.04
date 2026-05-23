@@ -147,23 +147,23 @@ export default function DashboardServicesPage() {
                 <IconComponent className="h-6 w-6" />
               </div>
               {service.popular && (
-                <Badge className="bg-amber-50 text-amber-600 border-none text-[9px] font-black uppercase tracking-wider h-6 px-2">
+                <Badge className="bg-amber-50 text-amber-600 border-none type-meta font-black uppercase tracking-wider h-6 px-2">
                   Popular
                 </Badge>
               )}
             </div>
 
             <div className="space-y-2 mb-6">
-              <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight">{service.title}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 font-medium">
+              <h3 className="type-card-title text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight">{service.title}</h3>
+              <p className="type-support text-slate-500 line-clamp-2 font-medium">
                 {service.description}
               </p>
             </div>
 
             <div className="flex items-center justify-between pt-6 border-t border-slate-50">
                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fee Starts From</span>
-                  <span className="text-base font-bold text-slate-900">{service.price || "Free"}</span>
+                  <span className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Fee Starts From</span>
+                  <span className="type-body font-bold text-slate-900">{service.price || "Free"}</span>
                </div>
                <Button 
                 onClick={() => {
@@ -172,7 +172,7 @@ export default function DashboardServicesPage() {
                 }}
                 variant="outline"
                 size="sm" 
-                className="h-10 px-5 rounded-xl border-slate-200 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all font-black text-[10px] uppercase tracking-widest"
+                className="h-10 px-5 rounded-xl border-slate-200 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all font-black type-meta uppercase tracking-widest"
                >
                  Enroll
                </Button>
@@ -190,8 +190,8 @@ export default function DashboardServicesPage() {
         <div className="lg:w-80 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
           <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm">
              <div className="mb-10">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Marketplace</h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Filter by category</p>
+                <h2 className="type-section-title font-black text-slate-900 tracking-tight mb-2">Marketplace</h2>
+                <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Filter by category</p>
              </div>
 
              <div className="space-y-1.5">
@@ -220,14 +220,14 @@ export default function DashboardServicesPage() {
 
           <div className="p-10 rounded-[48px] bg-blue-50 border border-blue-100 relative overflow-hidden group cursor-pointer">
              <div className="relative z-10">
-                <h3 className="font-black text-2xl leading-tight mb-3 text-slate-900">Custom Help?</h3>
-                <p className="text-slate-500 text-[11px] font-medium leading-relaxed mb-8">Can't find a specific service? Our CAs can handle bespoke requests.</p>
+                <h3 className="type-section-title font-black mb-3 text-slate-900">Custom Help?</h3>
+                <p className="text-slate-500 type-support font-medium mb-8">Can't find a specific service? Our CAs can handle bespoke requests.</p>
                 <Button 
                   onClick={() => {
                     setSelectedServiceId("custom");
                     setIsRequestModalOpen(true);
                   }}
-                  className="w-full bg-white text-slate-900 hover:bg-blue-700 hover:text-white border border-slate-200 font-black text-[11px] uppercase tracking-widest h-14 rounded-2xl shadow-sm transition-all">
+                  className="w-full bg-white text-slate-900 hover:bg-blue-700 hover:text-white border border-slate-200 font-black type-meta uppercase tracking-widest h-14 rounded-2xl shadow-sm transition-all">
                   Request Custom Service
                 </Button>
              </div>
@@ -239,8 +239,8 @@ export default function DashboardServicesPage() {
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col gap-1">
-              <h1 className="text-4xl font-black tracking-tight text-slate-900">Service Catalog</h1>
-              <p className="text-slate-500 max-w-2xl text-base font-medium">
+              <h1 className="type-page-title font-black text-slate-900">Service Catalog</h1>
+              <p className="text-slate-500 max-w-2xl type-body font-medium">
                 Professional tax and business solutions at your fingertips.
               </p>
             </div>
@@ -284,8 +284,8 @@ export default function DashboardServicesPage() {
                <div className="h-24 w-24 rounded-[32px] bg-slate-50 flex items-center justify-center mb-8">
                   <Search className="h-12 w-12 text-slate-300" />
                </div>
-               <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Search Spectrum Empty</h3>
-               <p className="text-slate-500 text-center max-w-md mb-10 text-base font-medium">
+               <h3 className="type-section-title font-black text-slate-900 mb-3 tracking-tight">Search Spectrum Empty</h3>
+               <p className="text-slate-500 text-center max-w-md mb-10 type-body font-medium">
                  We couldn't find any services matching your query. Let our experts assist you with a custom solution.
                </p>
                <Button 
@@ -308,8 +308,8 @@ export default function DashboardServicesPage() {
         <DialogContent className="sm:max-w-[550px] rounded-[48px] p-10 border-none shadow-2xl overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600" />
           <DialogHeader className="mb-8">
-            <DialogTitle className="text-3xl font-black text-slate-900 tracking-tight">Service Enrollment</DialogTitle>
-            <DialogDescription className="text-slate-500 font-medium text-base pt-3 leading-relaxed">
+            <DialogTitle className="type-section-title font-black text-slate-900 tracking-tight">Service Enrollment</DialogTitle>
+            <DialogDescription className="text-slate-500 font-medium type-body pt-3">
               {selectedServiceId === "custom" 
                 ? "Provide details about your specific legal or financial requirement for expert evaluation."
                 : `You are initiating a high-priority request for ${allServices.find(s => s.id === selectedServiceId)?.title}.`}
@@ -318,17 +318,17 @@ export default function DashboardServicesPage() {
 
           <div className="space-y-8">
             <div className="space-y-3">
-              <Label htmlFor="service" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Service Identifier</Label>
+              <Label htmlFor="service" className="type-meta font-black uppercase tracking-widest text-slate-400 ml-1">Service Identifier</Label>
               <div className="p-5 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between shadow-inner">
                  <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm transition-transform hover:scale-105">
                        {selectedServiceId === "custom" ? <Sparkles className="h-6 w-6" /> : <ShieldCheck className="h-6 w-6" />}
                     </div>
                     <div>
-                       <p className="text-base font-black text-slate-900 leading-none mb-1.5">
+                       <p className="type-body font-black text-slate-900 mb-1.5">
                          {selectedServiceId === "custom" ? "Bespoke Consultation" : allServices.find(s => s.id === selectedServiceId)?.title}
                        </p>
-                       <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.1em]">
+                       <p className="type-meta font-black text-blue-600 uppercase tracking-[0.1em]">
                           {selectedServiceId === "custom" ? "EXPERT ANALYSIS" : "PREMIUM FILING"}
                        </p>
                     </div>
@@ -337,7 +337,7 @@ export default function DashboardServicesPage() {
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Engagement Brief</Label>
+              <Label htmlFor="description" className="type-meta font-black uppercase tracking-widest text-slate-400 ml-1">Engagement Brief</Label>
               <Textarea 
                 id="description" 
                 placeholder="Describe your current situation, business nature or specific goals..." 
@@ -352,8 +352,8 @@ export default function DashboardServicesPage() {
                   <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                </div>
                <div>
-                  <p className="text-[11px] font-black text-emerald-800 uppercase tracking-widest mb-1">Expert Availability</p>
-                  <p className="text-xs text-emerald-700 leading-relaxed font-semibold">Verified CA experts are active. Anticipated response window: 120 minutes.</p>
+                  <p className="type-meta font-black text-emerald-800 uppercase tracking-widest mb-1">Expert Availability</p>
+                  <p className="type-meta text-emerald-700 font-semibold">Verified CA experts are active. Anticipated response window: 120 minutes.</p>
                </div>
             </div>
           </div>

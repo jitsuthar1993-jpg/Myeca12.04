@@ -172,7 +172,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                       <link.icon className="w-4 h-4 text-slate-500 group-hover:text-blue-600" />
                     </div>
                     <span className="font-medium text-slate-700">{link.title}</span>
-                    <span className="ml-auto text-[10px] font-bold text-slate-400 uppercase tracking-widest">{link.category}</span>
+                    <span className="ml-auto type-meta font-bold text-slate-400 uppercase tracking-widest">{link.category}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

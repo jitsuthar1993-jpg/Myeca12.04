@@ -1,4 +1,5 @@
 import React from "react";
+import { FONT_SIZES } from "@/styles/fonts";
 
 type Datum = Record<string, string | number | null | undefined>;
 type ChartChild = React.ReactElement<Record<string, unknown>>;
@@ -113,7 +114,7 @@ function renderAxes(data: Datum[], xKey: string, yMax: number) {
         return (
           <g key={tick}>
             <line x1={MARGIN.left} x2={CHART_WIDTH - MARGIN.right} y1={y} y2={y} stroke="#e5e7eb" strokeDasharray="4 4" />
-            <text x={MARGIN.left - 12} y={y + 4} textAnchor="end" fontSize="11" fill="#64748b">
+            <text x={MARGIN.left - 12} y={y + 4} textAnchor="end" fontSize={FONT_SIZES.xs} fill="#64748b">
               {formatLabel(Math.round(yMax * tick))}
             </text>
           </g>
@@ -125,7 +126,7 @@ function renderAxes(data: Datum[], xKey: string, yMax: number) {
         const originalIndex = data.indexOf(item);
         const x = MARGIN.left + (data.length > 1 ? originalIndex * xStep : plotWidth / 2);
         return (
-          <text key={`${String(item[xKey])}-${index}`} x={x} y={CHART_HEIGHT - 18} textAnchor="middle" fontSize="11" fill="#64748b">
+          <text key={`${String(item[xKey])}-${index}`} x={x} y={CHART_HEIGHT - 18} textAnchor="middle" fontSize={FONT_SIZES.xs} fill="#64748b">
             {String(item[xKey] ?? "")}
           </text>
         );
@@ -144,7 +145,7 @@ function renderLegend(series: ChartChild[]) {
         return (
           <g key={label} transform={`translate(${x} 14)`}>
             <rect width="10" height="10" rx="2" fill={color} />
-            <text x="16" y="10" fontSize="12" fill="#475569">
+            <text x="16" y="10" fontSize={FONT_SIZES.xs} fill="#475569">
               {label}
             </text>
           </g>
@@ -250,7 +251,7 @@ function PieChartBase({ children, className }: { children?: React.ReactNode; cla
         return (
           <g key={`${String(item[nameKey])}-legend`} transform={`translate(370 ${72 + index * 28})`}>
             <rect width="10" height="10" rx="2" fill={color} />
-            <text x="18" y="10" fontSize="12" fill="#475569">
+            <text x="18" y="10" fontSize={FONT_SIZES.xs} fill="#475569">
               {String(item[nameKey] ?? `Item ${index + 1}`)} ({formatLabel(item[dataKey])})
             </text>
           </g>

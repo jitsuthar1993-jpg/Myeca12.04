@@ -162,7 +162,7 @@ export default function NoticeCompliancePage() {
                 <div className="p-2 bg-red-50 rounded-lg border border-red-100">
                   <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Notice Compliance
                 </h1>
               </div>
@@ -366,7 +366,7 @@ export default function NoticeCompliancePage() {
                     Request Call Back
                   </Button>
                   
-                  <p className="text-[10px] text-center text-gray-400">
+                  <p className="type-meta text-center text-gray-400">
                     By submitting, you agree to our privacy policy.
                   </p>
                 </CardContent>
@@ -473,7 +473,7 @@ export default function NoticeCompliancePage() {
              <div className="flex items-start gap-10">
                 <div className="w-20 h-20 rounded-[2rem] bg-white border-2 border-slate-100 flex items-center justify-center text-slate-900 shrink-0 shadow-xl relative">
                    <Shield className="w-10 h-10 text-red-600" />
-                   <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-blue-700 border-4 border-white flex items-center justify-center text-[10px] font-black tracking-tighter shadow-lg text-white">TM</div>
+                   <div className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-blue-700 text-xs font-black text-white shadow-lg">TM</div>
                 </div>
                 <div>
                    <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">E-E-A-T Certified Response Team</h3>

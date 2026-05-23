@@ -57,7 +57,7 @@ export default function GuidePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Guide Not Found</h1>
+          <h1 className="type-section-title mb-2 font-bold">Guide Not Found</h1>
           <p className="text-gray-500 mb-4">The guide you're looking for doesn't exist.</p>
           <Button asChild>
             <Link href="/learn/guides">Back to Guides</Link>
@@ -159,7 +159,7 @@ export default function GuidePage() {
             </Badge>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">{guide.title}</h1>
+          <h1 className="type-page-title mb-2 font-bold">{guide.title}</h1>
           <p className="text-emerald-200 mb-4">{guide.description}</p>
 
           <div className="flex flex-wrap items-center gap-4 text-sm text-emerald-200">

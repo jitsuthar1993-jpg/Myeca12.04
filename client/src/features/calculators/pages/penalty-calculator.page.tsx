@@ -105,7 +105,7 @@ export default function PenaltyCalculatorPage() {
           >
              <div className="space-y-6">
                 <div className="text-center py-6">
-                   <span className="text-[10px] font-normal uppercase tracking-widest text-slate-400 block mb-1">Total Due</span>
+                   <span className="type-meta mb-1 block font-normal uppercase tracking-widest text-slate-400">Total Due</span>
                    <div className="flex items-baseline justify-center gap-1">
                       <span className="text-2xl font-normal text-slate-400">₹</span>
                       <span className="text-6xl font-normal text-slate-900 tracking-tighter">
@@ -113,7 +113,7 @@ export default function PenaltyCalculatorPage() {
                       </span>
                    </div>
                    <div className="mt-4 flex justify-center">
-                      <Badge className={cn("rounded-full border-none px-4 py-1 font-normal text-[9px] tracking-widest", severity.color)}>
+                      <Badge className={cn("type-meta rounded-full border-none px-4 py-1 font-normal tracking-widest", severity.color)}>
                         {severity.label}
                       </Badge>
                    </div>
@@ -148,7 +148,7 @@ export default function PenaltyCalculatorPage() {
                   key={key}
                   onClick={() => { setActiveReg(key); setActiveItem(Object.keys(reg.items)[0]); }}
                   className={cn(
-                    "flex-1 py-3 rounded-2xl text-[10px] font-normal uppercase tracking-wider transition-all",
+                    "type-meta flex-1 rounded-2xl py-3 font-normal uppercase tracking-wider transition-all",
                     activeReg === key
                       ? "bg-blue-700 text-white shadow-lg"
                       : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
@@ -177,7 +177,7 @@ export default function PenaltyCalculatorPage() {
                        <CheckCircle2 className="w-5 h-5 text-amber-500" />
                     </div>
                   )}
-                  <span className="text-[9px] font-normal uppercase tracking-[0.2em] text-slate-400 mb-2 block">
+                  <span className="type-meta mb-2 block font-normal uppercase tracking-[0.2em] text-slate-400">
                     {item.rateType.replace('daily', 'per day').replace('percent', '% per month')}
                   </span>
                   <h4 className={cn("text-sm font-normal leading-tight", activeItem === key ? "text-slate-900" : "text-slate-600 group-hover:text-slate-900")}>
@@ -194,7 +194,7 @@ export default function PenaltyCalculatorPage() {
                   <div className="space-y-6">
                     <div className="flex justify-between items-end">
                       <div className="space-y-1">
-                        <Label className="text-[10px] font-normal uppercase tracking-widest text-slate-400">Delay Period</Label>
+                        <Label className="type-meta font-normal uppercase tracking-widest text-slate-400">Delay Period</Label>
                         <h3 className="text-lg font-normal text-slate-900">How many days were missed?</h3>
                       </div>
                       <div className="text-3xl font-normal text-amber-600">{delay} <span className="text-xs font-normal text-slate-300 uppercase">Days</span></div>
@@ -206,7 +206,7 @@ export default function PenaltyCalculatorPage() {
                       step={1} 
                       className="py-4"
                     />
-                    <div className="flex justify-between text-[8px] font-normal text-slate-300 uppercase tracking-widest">
+                    <div className="type-meta flex justify-between font-normal uppercase tracking-widest text-slate-300">
                        <span>1 Day Delay</span>
                        <span>6 Months Delay</span>
                     </div>
@@ -216,7 +216,7 @@ export default function PenaltyCalculatorPage() {
                 {itemData.rateType === "percent" && (
                   <div className="space-y-6 pt-6 border-t border-slate-50">
                     <div className="space-y-1">
-                      <Label className="text-[10px] font-normal uppercase tracking-widest text-slate-400">Base Amount</Label>
+                      <Label className="type-meta font-normal uppercase tracking-widest text-slate-400">Base Amount</Label>
                       <h3 className="text-lg font-normal text-slate-900">Total Tax Payable (₹)</h3>
                     </div>
                     <div className="relative">
@@ -236,7 +236,7 @@ export default function PenaltyCalculatorPage() {
                     <Info className="w-5 h-5 text-slate-400" />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[9px] font-normal uppercase tracking-widest text-slate-400">Statutory Provision</span>
+                    <span className="type-meta font-normal uppercase tracking-widest text-slate-400">Statutory Provision</span>
                     <p className="text-xs text-slate-600 font-normal leading-relaxed">
                       {itemData.desc}
                     </p>

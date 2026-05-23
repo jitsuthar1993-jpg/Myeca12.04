@@ -28,14 +28,14 @@ export function SectionHeader({
   return (
     <div className={cn("mb-6", isCenter ? "text-center" : "text-left", className)}>
       {badge ? (
-        <div className={cn("inline-flex items-center rounded-full px-4 py-2 mb-3 bg-blue-100 text-blue-700")}
+        <div className={cn("type-meta mb-3 inline-flex items-center rounded-full bg-blue-100 px-4 py-2 font-semibold uppercase text-blue-700")}
         >
           {Icon ? <Icon className="h-4 w-4 mr-2" /> : null}
           {badge}
         </div>
       ) : null}
 
-      <h1 className={cn("text-4xl md:text-5xl font-bold text-gray-900 leading-tight")}
+      <h1 className={cn("type-page-title text-gray-900")}
       >
         {title}
         {highlight ? (
@@ -46,7 +46,7 @@ export function SectionHeader({
       {subtitle ? (
         <p
           className={cn(
-            "mt-3 text-lg text-gray-600",
+            "type-body mt-3 text-gray-600",
             isCenter ? "max-w-4xl mx-auto" : "max-w-3xl"
           )}
         >

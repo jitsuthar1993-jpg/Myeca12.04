@@ -42,7 +42,7 @@ export default function ExpertTaxReviewPage() {
             <UserCheck className="w-4 h-4" />
             Licensed Chartered Accountant
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
+          <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
             A CA Reviews Your Return <span className="text-[#315efb]">Before It's Filed</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
@@ -65,7 +65,7 @@ export default function ExpertTaxReviewPage() {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">How CA review works</h2>
+            <h2 className="type-section-title font-extrabold text-slate-900">How CA review works</h2>
             <p className="text-slate-500 mt-3 text-lg">You handle the inputs. The CA handles the accuracy.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -86,7 +86,7 @@ export default function ExpertTaxReviewPage() {
       <section className="py-20 bg-slate-50 border-y border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">What the CA checks</h2>
+            <h2 className="type-section-title font-extrabold text-slate-900">What the CA checks</h2>
             <p className="text-slate-500 mt-3 text-lg">A structured review against source documents and tax law — not a rubber stamp.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -108,7 +108,7 @@ export default function ExpertTaxReviewPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">
+              <h2 className="type-section-title mb-4 font-extrabold text-slate-900">
                 Why this isn't just an algorithm
               </h2>
               <p className="text-slate-500 mb-6">

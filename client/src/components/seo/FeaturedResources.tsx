@@ -66,7 +66,7 @@ export default function FeaturedResources() {
                     <resource.icon className="w-7 h-7" />
                   </div>
                   
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                  <span className="type-meta font-black uppercase tracking-widest text-slate-400 mb-2 block">
                     {resource.tag}
                   </span>
                   

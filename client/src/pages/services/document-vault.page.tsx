@@ -99,7 +99,7 @@ export default function DocumentVaultServicePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-3xl lg:text-5xl font-bold text-[var(--color-primary-900)] leading-tight"
+              className="type-page-title font-bold text-[var(--color-primary-900)]"
             >
               Your Personal <span className="text-[var(--color-accent-600)]">Secure Vault</span>
               <br className="hidden sm:block" />
@@ -121,11 +121,11 @@ export default function DocumentVaultServicePage() {
               transition={{ delay: 0.3 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
             >
-              <VaultButton className="w-full sm:w-auto px-8 rounded-xl h-12 text-[15px] font-semibold bg-[var(--color-accent-600)] hover:bg-[var(--color-accent-700)] shadow-sm shadow-[var(--color-accent-600)]/20 transition-all" />
+              <VaultButton className="h-12 w-full rounded-xl bg-[var(--color-accent-600)] px-8 text-sm font-semibold shadow-sm shadow-[var(--color-accent-600)]/20 transition-all hover:bg-[var(--color-accent-700)] sm:w-auto" />
               
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 rounded-xl h-12 text-[15px] font-semibold border-slate-200 hover:bg-slate-50 text-slate-700 transition-all">
+                  <Button variant="outline" size="lg" className="h-12 w-full rounded-xl border-slate-200 px-8 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 sm:w-auto">
                     Review Security Practices
                   </Button>
                 </DialogTrigger>
@@ -180,8 +180,8 @@ export default function DocumentVaultServicePage() {
                       {feature.icon}
                     </div>
                     <div>
-                      <h3 className="text-[20px] font-bold text-slate-900 tracking-tight">{feature.title}</h3>
-                      <p className="text-[15px] text-slate-500 mt-2 leading-relaxed">{feature.description}</p>
+                      <h3 className="type-card-title font-bold text-slate-900">{feature.title}</h3>
+                      <p className="type-support mt-2 text-slate-500">{feature.description}</p>
                     </div>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ export default function DocumentVaultServicePage() {
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span className="text-slate-600 font-semibold text-[15px]">{item}</span>
+                    <span className="type-support font-semibold text-slate-600">{item}</span>
                   </div>
                 ))}
               </div>
@@ -286,7 +286,7 @@ export default function DocumentVaultServicePage() {
                       <div className="w-3 h-3 rounded-full bg-amber-400/40" />
                       <div className="w-3 h-3 rounded-full bg-emerald-400/40" />
                     </div>
-                    <div className="text-[11px] font-bold text-slate-400 tracking-[3px] uppercase">Safe Storage Vault</div>
+                    <div className="type-meta font-bold text-slate-400">Safe Storage Vault</div>
                     <div className="w-10" />
                   </div>
                   <div className="p-10 space-y-8">
@@ -335,20 +335,20 @@ export default function DocumentVaultServicePage() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
             
             <div className="relative z-10">
-              <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+              <h2 className="type-section-title mb-6 font-extrabold text-slate-900">
                 Secure your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Compliance Files</span> today
               </h2>
 
-              <p className="text-[19px] text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+              <p className="type-body mx-auto mb-10 max-w-2xl text-slate-500">
                 Keep tax and compliance documents organized with a secure, account-based vault.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <VaultButton className="px-8 w-full sm:w-auto rounded-[14px] h-14 text-[16px] font-semibold bg-[#2563eb] hover:bg-blue-700 shadow-lg shadow-blue-500/25 text-white transition-all hover:-translate-y-0.5" />
+                <VaultButton className="h-14 w-full rounded-[14px] bg-[#2563eb] px-8 text-base font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5 hover:bg-blue-700 sm:w-auto" />
                 
                 <Dialog onOpenChange={(open) => !open && setPreviewStep(0)}>
                   <DialogTrigger asChild>
-                    <Button size="lg" variant="outline" className="px-8 w-full sm:w-auto rounded-[14px] h-14 text-[16px] font-semibold border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm transition-all hover:-translate-y-0.5">
+                    <Button size="lg" variant="outline" className="h-14 w-full rounded-[14px] border-slate-200 px-8 text-base font-semibold text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-slate-50 sm:w-auto">
                       Preview Security Flow
                     </Button>
                   </DialogTrigger>
@@ -397,7 +397,7 @@ export default function DocumentVaultServicePage() {
                                    key={i}
                                    initial={{ opacity: 0, x: -10 }}
                                    animate={{ opacity: previewStep > i + 1 ? 1 : 0.3, x: 0 }}
-                                   className="flex items-center gap-3 text-[13px] font-medium"
+                                   className="flex items-center gap-3 text-sm font-medium"
                                  >
                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${previewStep > i + 1 ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
                                       {previewStep > i + 1 ? <Check className="w-3 h-3" /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}

@@ -189,7 +189,7 @@ export default function PenaltyCalculator() {
                       <TabsTrigger 
                         key={key} 
                         value={key}
-                        className="flex-1 rounded-lg font-black text-[10px] uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
+                        className="flex-1 rounded-lg font-black type-meta uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
                       >
                         {section.title.split(' ')[0]}
                       </TabsTrigger>
@@ -235,7 +235,7 @@ export default function PenaltyCalculator() {
                         step={1} 
                         className="py-4"
                       />
-                      <div className="flex justify-between text-[10px] font-black text-slate-300 uppercase">
+                      <div className="flex justify-between type-meta font-black text-slate-300 uppercase">
                         <span>On Time</span>
                         <span>6 Months Delay</span>
                       </div>
@@ -338,7 +338,7 @@ export default function PenaltyCalculator() {
                   <div className="p-2 bg-white rounded-xl shadow-sm">
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
                   </div>
-                  <p className="text-[10px] text-orange-800 font-medium leading-relaxed">
+                  <p className="type-meta text-orange-800 font-medium leading-relaxed">
                     Note: Actual penalties may involve interest on late payment AND late filing fees. 
                     This is an indicative estimation for informational purposes.
                   </p>

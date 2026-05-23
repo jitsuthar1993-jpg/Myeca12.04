@@ -139,7 +139,7 @@ export default function Header() {
       {!promoDismissed && (
         <div className="fixed top-0 left-0 right-0 z-[60] bg-[#FDE047] text-black h-[36px] flex items-center shadow-sm">
           <div className="max-w-7xl mx-auto px-4 w-full flex items-center justify-center relative">
-            <div className="text-[11px] font-normal uppercase tracking-wider flex items-center justify-center gap-3">
+            <div className="type-meta font-normal uppercase tracking-wider flex items-center justify-center gap-3">
               <span className="flex items-center text-sm">⏰</span>
               <span className="hidden sm:inline">ITR filing support for AY 2026-27</span>
               <span className="hidden sm:inline opacity-30">|</span>
@@ -147,7 +147,7 @@ export default function Header() {
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 Guided filing and CA review available
               </span>
-              <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full text-[9px] font-bold hover:bg-blue-800 transition-colors ml-2">
+              <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full type-meta font-bold hover:bg-blue-800 transition-colors ml-2">
                 FILE NOW →
               </Link>
             </div>
@@ -214,7 +214,7 @@ export default function Header() {
                             <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                           )}
                           <span className={cn(
-                            "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
+                            "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
                             (location.startsWith('/admin') || location.startsWith('/ca') || location.startsWith('/team') || location === '/dashboard') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                           )}>
                             {workspaceLabel}
@@ -230,7 +230,7 @@ export default function Header() {
                         <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
-                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
+                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full type-body",
                         inServices ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600",
                         "data-[state=open]:bg-blue-600/10 data-[state=open]:text-blue-600 data-[state=open]:border-blue-600/20 border border-transparent"
                       )}>
@@ -248,7 +248,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax & Compliance</h4>
-                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Expert Guided</p>
+                                <p className="type-meta text-slate-400 font-normal uppercase tracking-widest mt-0.5">Expert Guided</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -277,7 +277,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -293,7 +293,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Setup</h4>
-                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Focused</p>
+                                <p className="type-meta text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Focused</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -320,7 +320,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-indigo-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -336,7 +336,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Business Intel</h4>
-                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Analytics</p>
+                                <p className="type-meta text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth Analytics</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -363,7 +363,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -376,7 +376,7 @@ export default function Header() {
                         {/* Sidebar */}
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                           <div className="flex-1">
-                            <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
+                            <h5 className="type-meta font-normal text-slate-400 uppercase tracking-[2px] mb-6">Trending Tool</h5>
                             <Link href="/tax-loss-harvesting" className="block group relative">
                               <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl shadow-blue-100/30 transition-all duration-500 group-hover:-translate-y-1 bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/50 backdrop-blur-sm">
                                 <div className="relative z-10">
@@ -384,11 +384,11 @@ export default function Header() {
                                     <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                                       <Sparkles className="w-4 h-4 fill-white/20" />
                                     </div>
-                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Optimized AI</span>
+                                    <span className="type-meta font-black text-blue-600 uppercase tracking-widest">Optimized AI</span>
                                   </div>
                                   <h6 className="text-xl font-normal text-slate-900 leading-tight mb-2">Tax Optimizer AI</h6>
-                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-6">Compare regimes and review eligible deductions before filing.</p>
-                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-blue-200/50">
+                                  <p className="type-meta text-slate-500 font-medium leading-relaxed mb-6">Compare regimes and review eligible deductions before filing.</p>
+                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 type-meta font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-blue-200/50">
                                     Explore Tool <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                                   </div>
                                 </div>
@@ -413,7 +413,7 @@ export default function Header() {
                         <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
-                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
+                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full type-body",
                         inStartup ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600",
                         "data-[state=open]:bg-blue-600/10 data-[state=open]:text-blue-600 data-[state=open]:border-blue-600/20 border border-transparent"
                       )}>
@@ -430,7 +430,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Launch</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 setup</p>
+                                <p className="type-meta text-slate-400 font-bold uppercase tracking-widest mt-0.5">Day 0 setup</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -457,7 +457,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -473,7 +473,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Licenses</h4>
-                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance ready</p>
+                                <p className="type-meta text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance ready</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -502,7 +502,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-medium">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-medium">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -518,7 +518,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Scale</h4>
-                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth engine</p>
+                                <p className="type-meta text-slate-400 font-normal uppercase tracking-widest mt-0.5">Growth engine</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -547,7 +547,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-purple-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -559,17 +559,17 @@ export default function Header() {
 
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                           <div className="flex-1">
-                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-6">Founder spotlight</h5>
+                            <h5 className="type-meta font-black text-slate-400 uppercase tracking-[2px] mb-6">Founder spotlight</h5>
                             <Link href="/services/startup-india-registration" onMouseEnter={() => preloadOnHover("/services/startup-india-registration")} className="block">
                               <div className="bg-white rounded-2xl p-6 shadow-md border border-purple-100/50 group">
                                 <div className="relative z-10">
                                   <div className="flex items-center gap-2 mb-3">
                                     <Zap className="w-4 h-4 text-purple-600 fill-purple-600/20" />
-                                    <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider">Startup India</span>
+                                    <span className="type-meta font-black text-purple-600 uppercase tracking-wider">Startup India</span>
                                   </div>
                                   <h6 className="font-normal text-slate-900 text-lg mb-2">Recognition + tax benefits</h6>
-                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Get DPIIT recognition, IP support, and founder-friendly compliance guidance.</p>
-                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
+                                  <p className="type-meta text-slate-500 font-medium leading-relaxed mb-4">Get DPIIT recognition, IP support, and founder-friendly compliance guidance.</p>
+                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 type-meta font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-purple-200/50">
                                     Apply Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                                   </div>
                                 </div>
@@ -594,7 +594,7 @@ export default function Header() {
                         <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                       )}
                       <NavigationMenuTrigger className={cn(
-                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full text-[17px]",
+                        "relative z-10 bg-transparent transition-colors duration-300 group px-5 py-2.5 rounded-full type-body",
                         inCalculators ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600",
                         "data-[state=open]:bg-blue-600/10 data-[state=open]:text-blue-600 data-[state=open]:border-blue-600/20 border border-transparent"
                       )}>
@@ -613,7 +613,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Tax Calculators</h4>
-                                <p className="text-[9px] text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance Hub</p>
+                                <p className="type-meta text-slate-400 font-normal uppercase tracking-widest mt-0.5">Compliance Hub</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -645,7 +645,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-emerald-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -662,7 +662,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Investment & Savings</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
+                                <p className="type-meta text-slate-400 font-bold uppercase tracking-widest mt-0.5">Financial Planning</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -697,7 +697,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-blue-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -714,7 +714,7 @@ export default function Header() {
                               </div>
                               <div>
                                 <h4 className="font-normal text-slate-900 tracking-tight text-sm">Loan & EMI</h4>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
+                                <p className="type-meta text-slate-400 font-bold uppercase tracking-widest mt-0.5">Borrowing Tools</p>
                               </div>
                             </div>
                             <ul className="space-y-4">
@@ -745,7 +745,7 @@ export default function Header() {
                                       </div>
                                       <div>
                                         <span className="block text-sm font-normal text-slate-700 group-hover:text-orange-600 transition-colors">{item.title}</span>
-                                        <span className="block text-[10px] text-slate-400 font-normal">{item.desc}</span>
+                                        <span className="block type-meta text-slate-400 font-normal">{item.desc}</span>
                                       </div>
                                     </Link>
                                   </li>
@@ -757,17 +757,17 @@ export default function Header() {
 
                         <div className="w-72 bg-slate-50/50 p-6 border-l border-slate-100 flex flex-col">
                           <div className="flex-1">
-                            <h5 className="text-[10px] font-normal text-slate-400 uppercase tracking-[2px] mb-6">Calculator Index</h5>
+                            <h5 className="type-meta font-normal text-slate-400 uppercase tracking-[2px] mb-6">Calculator Index</h5>
                             <Link href="/calculators" onMouseEnter={() => preloadOnHover("/calculators")} className="block group">
                               <div className="bg-white rounded-2xl p-6 shadow-md border border-emerald-100/50 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-lg">
                                 <div className="relative z-10">
                                   <div className="flex items-center gap-2 mb-3">
                                     <Grid className="w-4 h-4 text-emerald-600" />
-                                    <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">All Tools</span>
+                                    <span className="type-meta font-black text-emerald-600 uppercase tracking-wider">All Tools</span>
                                   </div>
                                   <h6 className="font-normal text-slate-900 text-lg mb-2">Browse every calculator</h6>
-                                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">Open the full calculator library for tax, investment, loan, and compliance tools.</p>
-                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-emerald-200/50">
+                                  <p className="type-meta text-slate-500 font-medium leading-relaxed mb-4">Open the full calculator library for tax, investment, loan, and compliance tools.</p>
+                                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 type-meta font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-emerald-200/50">
                                     View All <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                                   </div>
                                 </div>
@@ -793,7 +793,7 @@ export default function Header() {
                           <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                         )}
                         <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
+                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
                           location.startsWith('/blog') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                         )}>
                           Blog
@@ -809,7 +809,7 @@ export default function Header() {
                           <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
                         )}
                         <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center gap-2 px-5 py-2.5 transition-colors duration-300 cursor-pointer text-[17px]",
+                          "relative z-10 inline-flex items-center justify-center gap-2 px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
                           location === '/trust' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                         )}>
                           <Shield className="h-4 w-4" />
@@ -852,7 +852,7 @@ export default function Header() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="flex items-center gap-2 px-2 h-10 rounded-full hover:bg-slate-100/50">
-                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[11px] font-normal text-white shadow-sm ring-2 ring-white">
+                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center type-meta font-normal text-white shadow-sm ring-2 ring-white">
                             {getInitials()}
                           </div>
                           <span className="hidden sm:inline text-xs font-normal text-slate-600">
@@ -870,15 +870,15 @@ export default function Header() {
                               <span className="text-sm font-normal text-slate-900 truncate">
                                 {[user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || user?.email}
                               </span>
-                              <span className="text-[10px] font-medium text-slate-500 truncate mt-0.5">
+                              <span className="type-meta font-medium text-slate-500 truncate mt-0.5">
                                 {user?.email}
                               </span>
                               <div className="mt-1.5 flex items-center gap-1.5">
-                                <span className="px-1.5 py-0.5 rounded-md bg-blue-50 text-[9px] font-normal text-blue-600 uppercase tracking-widest border border-blue-100/50">
+                                <span className="px-1.5 py-0.5 rounded-md bg-blue-50 type-meta font-normal text-blue-600 uppercase tracking-widest border border-blue-100/50">
                                   {user?.role || 'User'}
                                 </span>
                                 {user?.isVerified && (
-                                  <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-600">
+                                  <span className="flex items-center gap-0.5 type-meta font-bold text-emerald-600">
                                     <Shield className="w-2.5 h-2.5" /> Verified
                                   </span>
                                 )}
@@ -964,7 +964,7 @@ export default function Header() {
                           <span className="m-0 block text-lg font-bold leading-none text-[#315efb]">
                             MyeCA.in
                           </span>
-                          <span className="m-0 block text-[9px] font-normal uppercase leading-none tracking-widest text-slate-400">SMART TAX SOLUTIONS</span>
+                          <span className="m-0 block type-meta font-normal uppercase leading-none tracking-widest text-slate-400">SMART TAX SOLUTIONS</span>
                         </div>
                       </a>
                       <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
@@ -979,7 +979,7 @@ export default function Header() {
                         )}
 
                         <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
-                          <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Start here</p>
+                          <p className="mb-3 type-meta font-bold uppercase tracking-[0.14em] text-blue-700">Start here</p>
                           <div className="grid grid-cols-2 gap-2">
                             {[
                               { href: "/itr/form-selector", label: "File ITR", icon: FileText },

@@ -83,7 +83,7 @@ export function StandardPricingCompactCard({ service }: { service: ServicePricin
     <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Price</p>
+          <p className="type-meta font-black uppercase tracking-widest text-slate-400">Price</p>
           <p className="mt-1 text-xl font-black tracking-tight text-slate-950">{formatPricingLabel(service.pricing)}</p>
           <p className="mt-1 text-xs font-bold text-slate-500">{getGstNote(service.pricing)}</p>
         </div>
@@ -310,7 +310,7 @@ function InfoPill({ icon: Icon, label, value }: { icon: typeof Clock; label: str
   return (
     <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
       <Icon className="h-4 w-4 text-blue-700" />
-      <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
+      <p className="mt-2 type-meta font-black uppercase tracking-widest text-slate-400">{label}</p>
       <p className="mt-1 text-sm font-bold text-slate-800">{value}</p>
     </div>
   );

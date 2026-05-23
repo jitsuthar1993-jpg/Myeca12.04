@@ -40,7 +40,7 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-6 opacity-60">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="text-[10px] font-normal uppercase tracking-widest">Live Tax Summary</span>
+            <span className="type-meta font-normal uppercase tracking-widest">Live Tax Summary</span>
           </div>
 
           <div className="space-y-6">
@@ -54,11 +54,11 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
 
             <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
               <div>
-                <p className="text-slate-500 text-[10px] font-normal uppercase tracking-wider mb-1">Taxable Income</p>
+                <p className="type-meta text-slate-500 font-normal uppercase tracking-wider mb-1">Taxable Income</p>
                 <p className="text-sm font-normal text-slate-200">{formatCurrency(result.taxableIncome)}</p>
               </div>
               <div>
-                <p className="text-slate-500 text-[10px] font-normal uppercase tracking-wider mb-1">Effective Rate</p>
+                <p className="type-meta text-slate-500 font-normal uppercase tracking-wider mb-1">Effective Rate</p>
                 <div className="flex items-center gap-1.5">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                    <p className="text-sm font-normal text-emerald-400">{effectiveRate.toFixed(1)}%</p>
@@ -68,7 +68,7 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
 
             <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-normal text-slate-400 uppercase tracking-widest">Take Home Income</span>
+                  <span className="type-meta font-normal text-slate-400 uppercase tracking-widest">Take Home Income</span>
                   <TrendingUp className="w-3 h-3 text-emerald-400" />
                </div>
                <p className="text-lg font-normal text-white">{formatCurrency(netIncome)}</p>
@@ -91,7 +91,7 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
             <div className="w-full bg-slate-50 h-1 rounded-full overflow-hidden">
                <div className="bg-blue-600 h-full" style={{ width: '100%' }} />
             </div>
-            <p className="text-[10px] text-slate-400 font-normal italic">
+            <p className="type-support text-slate-400 font-normal italic">
                Assumes {inputs.regime === 'new' ? 'New' : 'Old'} Regime is active.
             </p>
          </div>

@@ -63,7 +63,7 @@ export default function Footer() {
           ].map(([value, label]) => (
             <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
               <div className="text-base font-black tracking-tight text-slate-950">{value}</div>
-              <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</div>
+              <div className="mt-0.5 type-meta font-semibold uppercase tracking-wide text-slate-500">{label}</div>
             </div>
           ))}
         </div>
@@ -105,19 +105,19 @@ export default function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">ERI</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">E-filing workflow</div>
+              <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">E-filing workflow</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">Privacy</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Document handling</div>
+              <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">Document handling</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">CA</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Review option</div>
+              <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">Review option</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">Scope</div>
-              <div className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-1">Before payment</div>
+              <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">Before payment</div>
             </div>
           </div>
         </div>

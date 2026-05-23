@@ -47,7 +47,7 @@ export default function PPFCalculatorPage() {
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
+              <h1 className="type-page-title font-normal text-[#101828]">
                 PPF <span className="text-[#027A48]">Calculator</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
@@ -57,20 +57,20 @@ export default function PPFCalculatorPage() {
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center type-meta font-normal text-[#475467]">
                     {i === 1 ? 'RK' : i === 2 ? 'PS' : 'MD'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
                 <p className="text-xs font-normal text-[#027A48]">100k+ Investors</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">5.0/5 Rating</p>
+                <p className="type-meta font-normal text-[#667085]">5.0/5 Rating</p>
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function PPFCalculatorPage() {
                       key={btn.amount}
                       onClick={() => setAnnualInvestment(btn.amount)}
                       className={cn(
-                        "py-2 px-3 rounded-xl border text-[11px] font-normal transition-all text-center",
+                        "py-2 px-3 rounded-xl border text-sm font-normal transition-all text-center",
                         annualInvestment === btn.amount
                           ? "bg-[#027A48] border-[#027A48] text-white shadow-sm"
                           : "bg-white border-[#EAECF0] text-[#344054] hover:border-[#D1FADF]"
@@ -193,7 +193,7 @@ export default function PPFCalculatorPage() {
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">Maturity Summary</h2>
-                <div className="text-[10px] font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
+                <div className="type-meta font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
                   <Percent className="w-3 h-3" />
                   {CURRENT_RATES.PPF}% P.A.
                 </div>
@@ -206,7 +206,7 @@ export default function PPFCalculatorPage() {
                   <div className="absolute -right-4 -bottom-4 opacity-10">
                     <IndianRupee className="w-32 h-32" />
                   </div>
-                  <span className="text-[11px] font-normal uppercase tracking-[0.2em] opacity-80 block mb-2">Total Maturity Value</span>
+                  <span className="type-meta font-normal uppercase tracking-[0.2em] opacity-80 block mb-2">Total Maturity Value</span>
                   <span className="text-4xl font-normal block tabular-nums leading-none">
                     {fmt(result.maturityValue)}
                   </span>
@@ -218,11 +218,11 @@ export default function PPFCalculatorPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-[20px] border border-[#EAECF0] bg-[#F9FAFB]">
-                    <span className="text-[10px] font-normal text-[#667085] uppercase tracking-wider block mb-1">Total Invested</span>
+                    <span className="type-meta font-normal text-[#667085] uppercase tracking-wider block mb-1">Total Invested</span>
                     <span className="text-lg font-normal text-[#101828] block tabular-nums">{fmt(result.totalInvestment)}</span>
                   </div>
                   <div className="p-4 rounded-[20px] border border-[#EAECF0] bg-[#F9FAFB]">
-                    <span className="text-[10px] font-normal text-[#667085] uppercase tracking-wider block mb-1">Interest Earned</span>
+                    <span className="type-meta font-normal text-[#667085] uppercase tracking-wider block mb-1">Interest Earned</span>
                     <span className="text-lg font-normal text-[#027A48] block tabular-nums">{fmt(result.interestEarned)}</span>
                   </div>
                 </div>
@@ -254,9 +254,9 @@ export default function PPFCalculatorPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Plan 80C Savings?</h4>
-                  <p className="text-[11px] text-[#667085] mb-2 leading-tight">Maximize your tax-free returns with professional wealth planning.</p>
+                  <p className="type-support text-[#667085] mb-2 leading-tight">Maximize your tax-free returns with professional wealth planning.</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-sm font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
                       Consult a CA Expert
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -280,8 +280,8 @@ export default function PPFCalculatorPage() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
-                <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
+                <h5 className="type-support font-normal text-[#101828]">{item.label}</h5>
+                <p className="type-support text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>
           ))}

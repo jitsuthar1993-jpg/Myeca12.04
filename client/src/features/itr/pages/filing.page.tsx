@@ -173,7 +173,7 @@ export default function ITRFilingPage() {
       title="ITR filing wizard"
       subtitle="A guided AY 2026-27 / FY 2025-26 flow with autosave, smart branching, OCR-ready document upload, CA review, and mobile-first payment handoff."
       actions={
-        <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white/90">
+        <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 type-support text-white/90">
           <Save className="mr-2 inline h-4 w-4" />
           {lastSavedAt ? `Autosaved ${lastSavedAt.toLocaleTimeString()}` : "Autosave ready"}
         </div>
@@ -181,10 +181,10 @@ export default function ITRFilingPage() {
     >
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
         <MyeCard className="h-max xl:sticky xl:top-24">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0050b5]">
+          <p className="type-meta font-black uppercase tracking-[0.22em] text-[#0050b5]">
             Filing progress
           </p>
-          <h2 className="mt-2 text-xl font-black text-slate-950">Step {currentStep + 1} of {steps.length}</h2>
+          <h2 className="mt-2 type-section-title font-black text-slate-950">Step {currentStep + 1} of {steps.length}</h2>
           <Progress value={progress} className="mt-4 h-2" />
           <div className="mt-6 space-y-3">
             {steps.map((step, index) => (
@@ -205,7 +205,7 @@ export default function ITRFilingPage() {
                 </span>
                 <span>
                   <span className="block font-black">{step.title}</span>
-                  <span className="mt-1 block text-xs opacity-80">{step.description}</span>
+                  <span className="mt-1 block type-meta opacity-80">{step.description}</span>
                 </span>
               </button>
             ))}
@@ -229,8 +229,8 @@ export default function ITRFilingPage() {
                   ["Assessment year", "2026-27", "FY 2025-26"],
                 ].map(([label, value, status]) => (
                   <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                    <p className="text-sm font-semibold text-slate-500">{label}</p>
-                    <p className="mt-2 text-xl font-black text-slate-950">{value}</p>
+                    <p className="type-support font-semibold text-slate-500">{label}</p>
+                    <p className="mt-2 type-card-title font-black text-slate-950">{value}</p>
                     <StatusBadge status="filed" label={status} className="mt-4" />
                   </div>
                 ))}
@@ -267,7 +267,7 @@ export default function ITRFilingPage() {
                     <p className="mt-3 text-4xl font-black text-slate-950">{formatInr(regime.newTax)}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {newRegimeSlabs.map((slab) => (
-                        <span key={slab} className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-700">
+                        <span key={slab} className="rounded-full bg-white px-3 py-1 type-meta font-bold text-slate-700">
                           {slab}
                         </span>
                       ))}
@@ -276,14 +276,14 @@ export default function ITRFilingPage() {
                   <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-6">
                     <p className="font-black text-emerald-900">Old Regime tax</p>
                     <p className="mt-3 text-4xl font-black text-slate-950">{formatInr(regime.oldTax)}</p>
-                    <p className="mt-4 text-sm text-emerald-900">
+                    <p className="mt-4 type-support text-emerald-900">
                       Includes standard deduction and your declared Chapter VIA/HRA estimate.
                     </p>
                   </div>
                 </div>
                 <div className="rounded-[24px] bg-[#315efb] p-6 text-white">
                   <BadgeCheck className="h-8 w-8 text-emerald-200" />
-                  <p className="mt-3 text-2xl font-black">{regime.better} currently looks better</p>
+                  <p className="mt-3 type-section-title font-black">{regime.better} currently looks better</p>
                   <p className="mt-2 text-blue-50">
                     Estimated advantage: {formatInr(regime.savings)}. Final selection remains CA-reviewed.
                   </p>
@@ -303,7 +303,7 @@ export default function ITRFilingPage() {
                     <div key={title} className="rounded-2xl border border-slate-200 p-4">
                       <FileText className="h-5 w-5 text-[#315efb]" />
                       <p className="mt-2 font-black text-slate-950">{title}</p>
-                      <p className="text-sm text-slate-600">{description}</p>
+                      <p className="type-support text-slate-600">{description}</p>
                       <StatusBadge status="not_started" className="mt-3" />
                     </div>
                   ))}
@@ -340,7 +340,7 @@ export default function ITRFilingPage() {
                 </div>
                 <div className="rounded-[28px] bg-gradient-to-br from-emerald-50 to-blue-50 p-6">
                   <Home className="h-8 w-8 text-emerald-800" />
-                  <p className="mt-4 text-2xl font-black text-slate-950">HRA receipt generator</p>
+                  <p className="mt-4 type-section-title font-black text-slate-950">HRA receipt generator</p>
                   <p className="mt-2 text-slate-600">
                     Generate valid rent receipts from the filing flow and save them directly into the document vault.
                   </p>
@@ -363,8 +363,8 @@ export default function ITRFilingPage() {
                 ].map(([title, description, status]) => (
                   <div key={title} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                     <CalendarCheck className="h-7 w-7 text-[#315efb]" />
-                    <p className="mt-4 text-lg font-black text-slate-950">{title}</p>
-                    <p className="mt-2 text-sm text-slate-600">{description}</p>
+                    <p className="mt-4 type-card-title font-black text-slate-950">{title}</p>
+                    <p className="mt-2 type-support text-slate-600">{description}</p>
                     <StatusBadge status={status as any} className="mt-4" />
                   </div>
                 ))}
@@ -375,7 +375,7 @@ export default function ITRFilingPage() {
               <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.85fr]">
                 <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
                   <ShieldCheck className="h-8 w-8 text-emerald-800" />
-                  <h3 className="mt-4 text-2xl font-black text-slate-950">Ready for CA review</h3>
+                  <h3 className="mt-4 type-section-title font-black text-slate-950">Ready for CA review</h3>
                   <p className="mt-2 text-slate-600">
                     Your draft is autosaved. The next step opens a Razorpay UPI Intent handoff on mobile and marks the filing for CA review.
                   </p>
@@ -387,7 +387,7 @@ export default function ITRFilingPage() {
                 </div>
                 <div className="rounded-[28px] bg-[#315efb] p-6 text-white">
                   <IndianRupee className="h-8 w-8 text-emerald-200" />
-                  <p className="mt-4 text-sm font-black uppercase tracking-widest text-blue-100">
+                  <p className="mt-4 type-support font-black uppercase tracking-widest text-blue-100">
                     Expert-assisted filing
                   </p>
                   <p className="mt-2 text-4xl font-black">₹999</p>

@@ -20,7 +20,7 @@ export default function GeneratedStartupTopicPage() {
   if (!page) {
     return (
       <main className="min-h-screen bg-slate-50 px-4 py-20 text-center">
-        <h1 className="text-4xl font-black text-slate-950">Startup topic not found</h1>
+        <h1 className="type-page-title font-black text-slate-950">Startup topic not found</h1>
         <Link href="/startup-services">
           <Button className="mt-6">Back to startup services</Button>
         </Link>
@@ -48,8 +48,8 @@ export default function GeneratedStartupTopicPage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-[1fr_0.9fr] md:px-6 lg:px-8">
           <div>
             <Badge className="mb-5 bg-emerald-50 text-emerald-700">{page.subtitle}</Badge>
-            <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-6xl">{page.title}</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{page.description}</p>
+            <h1 className="type-page-title font-black text-slate-950">{page.title}</h1>
+            <p className="type-body mt-6 max-w-3xl text-slate-600">{page.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={`/expert-consultation?service=startup-${page.slug}`}>
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
@@ -71,7 +71,7 @@ export default function GeneratedStartupTopicPage() {
                 </div>
                 <div>
                   <p className="text-xs font-black uppercase tracking-widest text-slate-400">Founder workflow</p>
-                  <h2 className="text-2xl font-black text-slate-950">Build from clean foundations</h2>
+                  <h2 className="type-section-title font-black text-slate-950">Build from clean foundations</h2>
                 </div>
               </div>
               <div className="mt-6 grid gap-3">
@@ -110,7 +110,7 @@ function StartupCard({
   return (
     <Card className="h-full rounded-[24px] border-slate-200 bg-white shadow-sm">
       <CardContent className="p-6">
-        <h2 className="text-lg font-black text-slate-950">{title}</h2>
+        <h2 className="type-card-title font-black text-slate-950">{title}</h2>
         <div className="mt-5 space-y-3">
           {items.map((item, index) => {
             const maybeLink = links?.find((link) => link.label === item);

@@ -64,7 +64,7 @@ export default function LearnPage() {
                 <GraduationCap className="h-5 w-5 text-indigo-300" />
                 <span className="text-sm font-medium text-indigo-100">SmartTax Learning Hub</span>
               </div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight tracking-tight">
+              <h1 className="type-hero-title mb-6 font-bold">
                 Master Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Taxes</span>
               </h1>
               <p className="text-xl text-indigo-100/90 mb-8 leading-relaxed max-w-xl">
@@ -373,7 +373,7 @@ export default function LearnPage() {
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
 
             <div className="relative z-10 p-12 md:p-20 text-center text-white">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
+              <h2 className="type-section-title mb-6 font-bold">
                 Still Have Questions?
               </h2>
               <p className="text-indigo-100 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">

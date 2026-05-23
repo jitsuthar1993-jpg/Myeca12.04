@@ -80,7 +80,7 @@ export default function EverythingSection() {
                       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${feature.tone}`}>
                         <feature.icon className="h-5 w-5" strokeWidth={2} />
                       </div>
-                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 type-meta font-bold uppercase tracking-wide text-slate-600">
                         {feature.label}
                       </span>
                     </div>

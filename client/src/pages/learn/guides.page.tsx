@@ -166,7 +166,7 @@ export default function GuidesPage() {
               <BookOpen className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Interactive Tax Guides</h1>
+              <h1 className="type-page-title font-bold">Interactive Tax Guides</h1>
               <p className="text-emerald-200 mt-1">
                 Step-by-step guides with checklists to master tax concepts
               </p>
@@ -304,4 +304,3 @@ export default function GuidesPage() {
     </div>
   );
 }
-

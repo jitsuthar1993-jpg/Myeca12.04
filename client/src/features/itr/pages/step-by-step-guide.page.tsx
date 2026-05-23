@@ -248,14 +248,14 @@ export default function ITRStepByStepGuide() {
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="type-page-title mb-4 text-gray-900">
             ITR Filing Step-by-Step Guide
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="type-body text-gray-600">
             Complete your Income Tax Return filing in simple steps
           </p>
           {lastSaved && (
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="type-support text-gray-500 mt-2">
               <Save className="inline w-4 h-4 mr-1" />
               Auto-saved at {lastSaved.toLocaleTimeString()}
             </p>
@@ -265,11 +265,11 @@ export default function ITRStepByStepGuide() {
         {/* Progress Bar */}
         <div className="mb-8">
           <Progress value={progressPercentage} className="h-2" />
-          <div className="flex justify-between mt-4">
+          <div className="grid grid-cols-6 gap-1 mt-4 md:flex md:justify-between">
             {steps.map((step) => (
               <div 
                 key={step.id} 
-                className={`flex flex-col items-center cursor-pointer ${
+                className={`flex min-w-0 flex-col items-center cursor-pointer ${
                   currentStep >= step.id ? 'text-blue-600' : 'text-gray-400'
                 }`}
                 onClick={() => setCurrentStep(step.id)}
@@ -279,7 +279,7 @@ export default function ITRStepByStepGuide() {
                 }`}>
                   <step.icon className="w-5 h-5" />
                 </div>
-                <span className="text-sm font-medium hidden md:block">{step.title}</span>
+                <span className="type-support font-medium hidden md:block">{step.title}</span>
               </div>
             ))}
           </div>
@@ -296,11 +296,11 @@ export default function ITRStepByStepGuide() {
           >
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-3">
+                <CardTitle className="type-section-title flex items-center gap-3">
                   {React.createElement(steps[currentStep].icon, { className: "w-6 h-6" })}
                   {steps[currentStep].title}
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="type-support">
                   Step {currentStep + 1} of {steps.length}
                 </CardDescription>
               </CardHeader>
@@ -309,7 +309,7 @@ export default function ITRStepByStepGuide() {
                 {currentStep === 0 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-lg font-semibold mb-4 block">
+                      <Label className="type-card-title mb-4 block">
                         Select Filing Type
                       </Label>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -321,8 +321,8 @@ export default function ITRStepByStepGuide() {
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <h4 className="font-medium text-lg mb-2">Original Return</h4>
-                          <p className="text-sm text-gray-600">Filing for the first time for this assessment year</p>
+                          <h4 className="type-card-title font-medium mb-2">Original Return</h4>
+                          <p className="type-support text-gray-600">Filing for the first time for this assessment year</p>
                           {filingType === "original" && (
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
                           )}
@@ -336,8 +336,8 @@ export default function ITRStepByStepGuide() {
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <h4 className="font-medium text-lg mb-2">Revised Return</h4>
-                          <p className="text-sm text-gray-600">Correct a previously filed return</p>
+                          <h4 className="type-card-title font-medium mb-2">Revised Return</h4>
+                          <p className="type-support text-gray-600">Correct a previously filed return</p>
                           {filingType === "revised" && (
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
                           )}
@@ -351,8 +351,8 @@ export default function ITRStepByStepGuide() {
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <h4 className="font-medium text-lg mb-2">Belated Return</h4>
-                          <p className="text-sm text-gray-600">Filing after the due date</p>
+                          <h4 className="type-card-title font-medium mb-2">Belated Return</h4>
+                          <p className="type-support text-gray-600">Filing after the due date</p>
                           {filingType === "belated" && (
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
                           )}
@@ -384,7 +384,7 @@ export default function ITRStepByStepGuide() {
                 {currentStep === 1 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-lg font-semibold mb-4 block">
+                      <Label className="type-card-title mb-4 block">
                         Choose ITR Form
                       </Label>
                       <div className="space-y-4">
@@ -398,9 +398,9 @@ export default function ITRStepByStepGuide() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <h4 className="font-medium text-lg">ITR-1 (Sahaj)</h4>
-                              <p className="text-sm text-gray-600 mt-1">For salaried individuals with income up to ₹50 lakh</p>
-                              <ul className="text-sm text-gray-500 mt-2 space-y-1">
+                              <h4 className="type-card-title font-medium">ITR-1 (Sahaj)</h4>
+                              <p className="type-support text-gray-600 mt-1">For salaried individuals with income up to ₹50 lakh</p>
+                              <ul className="type-support text-gray-500 mt-2 space-y-1">
                                 <li>• Salary income</li>
                                 <li>• One house property</li>
                                 <li>• Interest income</li>
@@ -420,9 +420,9 @@ export default function ITRStepByStepGuide() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <h4 className="font-medium text-lg">ITR-2</h4>
-                              <p className="text-sm text-gray-600 mt-1">For individuals with capital gains or foreign income</p>
-                              <ul className="text-sm text-gray-500 mt-2 space-y-1">
+                              <h4 className="type-card-title font-medium">ITR-2</h4>
+                              <p className="type-support text-gray-600 mt-1">For individuals with capital gains or foreign income</p>
+                              <ul className="type-support text-gray-500 mt-2 space-y-1">
                                 <li>• Capital gains</li>
                                 <li>• Multiple properties</li>
                                 <li>• Foreign assets/income</li>
@@ -442,9 +442,9 @@ export default function ITRStepByStepGuide() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <h4 className="font-medium text-lg">ITR-3</h4>
-                              <p className="text-sm text-gray-600 mt-1">For individuals with business/professional income</p>
-                              <ul className="text-sm text-gray-500 mt-2 space-y-1">
+                              <h4 className="type-card-title font-medium">ITR-3</h4>
+                              <p className="type-support text-gray-600 mt-1">For individuals with business/professional income</p>
+                              <ul className="type-support text-gray-500 mt-2 space-y-1">
                                 <li>• Business income</li>
                                 <li>• Professional income</li>
                                 <li>• Presumptive taxation</li>
@@ -464,9 +464,9 @@ export default function ITRStepByStepGuide() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <h4 className="font-medium text-lg">ITR-4 (Sugam)</h4>
-                              <p className="text-sm text-gray-600 mt-1">For presumptive income from business/profession</p>
-                              <ul className="text-sm text-gray-500 mt-2 space-y-1">
+                              <h4 className="type-card-title font-medium">ITR-4 (Sugam)</h4>
+                              <p className="type-support text-gray-600 mt-1">For presumptive income from business/profession</p>
+                              <ul className="type-support text-gray-500 mt-2 space-y-1">
                                 <li>• Presumptive income only</li>
                                 <li>• Turnover up to ₹2 crore</li>
                                 <li>• Simplified filing</li>

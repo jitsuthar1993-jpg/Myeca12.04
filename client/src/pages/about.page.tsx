@@ -17,7 +17,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="py-20 bg-slate-50 border-b">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+          <h1 className="type-hero-title mb-6 font-black text-slate-900">
             We're on a mission to <br />
             <span className="text-blue-600">Humanize Tax Filing</span>
           </h1>

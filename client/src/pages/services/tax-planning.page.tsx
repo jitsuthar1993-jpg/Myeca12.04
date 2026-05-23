@@ -109,7 +109,7 @@ const TaxPlanningPage = () => {
                 <div className="p-2 bg-blue-50 rounded-lg border border-blue-100">
                   <Calculator className="w-6 h-6 text-blue-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Startup Tax Planning
                 </h1>
               </div>

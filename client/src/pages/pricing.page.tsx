@@ -75,7 +75,7 @@ export default function PricingPage() {
             <Badge className="mb-5 border-blue-400/20 bg-blue-400/10 text-blue-200">
               No hidden-cost anxiety
             </Badge>
-            <h1 className="max-w-4xl text-4xl font-black tracking-tight md:text-6xl">
+            <h1 className="type-hero-title max-w-4xl font-black">
               Transparent tax filing plans mapped to real return complexity.
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
@@ -111,7 +111,7 @@ export default function PricingPage() {
         <div className="mx-auto max-w-7xl">
           <div className="max-w-3xl">
             <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-700">Plan comparison</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+            <h2 className="type-section-title mt-3 font-black text-slate-950">
               Make scope visible before the user starts filing.
             </h2>
           </div>
@@ -139,7 +139,7 @@ export default function PricingPage() {
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
             <Badge className="bg-emerald-50 text-emerald-700">Included workflow</Badge>
-            <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-950">
+            <h2 className="type-section-title mt-4 font-black text-slate-950">
               Every paid action becomes a trackable case.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">

@@ -49,7 +49,7 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
             </div>
             
             <Badge className={cn(
-              "rounded-full px-3 py-1 h-7 border-0 font-bold text-[10px] uppercase tracking-wider",
+              "rounded-full px-3 py-1 h-7 border-0 font-bold type-meta uppercase tracking-wider",
               isCompleted 
                 ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" 
                 : "bg-violet-500/15 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400"
@@ -64,7 +64,7 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
           <div className="p-4 bg-slate-50 dark:bg-blue-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start gap-3">
             <Building2 className="h-5 w-5 text-slate-400 mt-1" />
             <div>
-              <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Proposed Name</p>
+              <p className="type-meta text-slate-400 uppercase font-black tracking-widest mb-1">Proposed Name</p>
               <p className="font-bold text-base text-slate-900 dark:text-white leading-tight">
                 {companyName || "Name Approval Pending"}
               </p>

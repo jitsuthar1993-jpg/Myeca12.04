@@ -164,7 +164,7 @@ export default function IncomeTaxCalculator() {
             </p>
           </div>
           {isRecommended && (
-            <span className="rounded-full bg-[#ECFDF3] px-3 py-1 text-[10px] font-normal uppercase tracking-wider text-[#027A48]">
+            <span className="rounded-full bg-[#ECFDF3] px-3 py-1 type-meta font-normal uppercase tracking-wider text-[#027A48]">
               {savingsValue > 0 ? "Lower tax" : "Same tax"}
             </span>
           )}
@@ -202,7 +202,7 @@ export default function IncomeTaxCalculator() {
                   <div key={`${title}-${slab.min}-${slab.max}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 rounded-xl bg-[#F9FAFB] px-3 py-2">
                     <div className="min-w-0">
                       <p className="break-words text-xs text-[#475467]">{slab.label} ({Math.round(slab.rate * 100)}%)</p>
-                      <p className="mt-0.5 text-[11px] text-[#98A2B3]">Taxable: {fmtCurrency(slab.taxableAmount)}</p>
+                      <p className="mt-0.5 type-meta text-[#98A2B3]">Taxable: {fmtCurrency(slab.taxableAmount)}</p>
                     </div>
                     <span className="text-right text-sm tabular-nums text-[#101828]">{fmtCurrency(slab.tax)}</span>
                   </div>
@@ -258,23 +258,23 @@ export default function IncomeTaxCalculator() {
       <div className="max-w-[1200px] mx-auto px-4 pt-8 pb-6 md:pt-12 md:pb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
           <div className="space-y-1">
-            <h1 className="text-[30px] font-normal leading-tight text-[#101828] tracking-tight md:text-[40px]">Income Tax Calculator</h1>
+            <h1 className="type-page-title font-normal text-[#101828]">Income Tax Calculator</h1>
             <p className="text-sm leading-6 text-[#667085] md:text-lg">Estimate tax, compare regimes, and move into ITR filing with the same assumptions.</p>
           </div>
           <div className="flex items-center gap-4 bg-[#F0F2F5] px-4 py-2 rounded-full border border-[#D0D5DD]">
-            <div className="flex items-center gap-2 text-[13px] font-normal text-[#475467]">
+            <div className="flex items-center gap-2 text-sm font-normal text-[#475467]">
               <CheckCircle2 className="w-4 h-4 text-[#101828]" />
               Rule-based estimate
             </div>
             <div className="w-px h-4 bg-[#D0D5DD]" />
-            <div className="text-[13px] font-normal text-[#475467]">Secure workflow</div>
+            <div className="text-sm font-normal text-[#475467]">Secure workflow</div>
             <div className="w-px h-4 bg-[#D0D5DD]" />
-            <div className="text-[13px] font-normal text-[#475467]">Review before filing</div>
+            <div className="text-sm font-normal text-[#475467]">Review before filing</div>
           </div>
         </div>
 
         <div className="mt-6 rounded-[28px] border border-blue-100 bg-white p-5 shadow-sm md:hidden">
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-700">Current estimate</p>
+          <p className="type-meta font-bold uppercase tracking-[0.16em] text-blue-700">Current estimate</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-blue-50 p-4">
               <p className="text-xs font-semibold text-blue-700">Selected regime</p>
@@ -429,7 +429,7 @@ export default function IncomeTaxCalculator() {
                     step={10000} 
                     colorTheme="slate"
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Gross salary</span>
                   </div>
                 </div>
@@ -459,7 +459,7 @@ export default function IncomeTaxCalculator() {
                     step={10000} 
                     colorTheme="slate"
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>House property</span>
                   </div>
                 </div>
@@ -489,7 +489,7 @@ export default function IncomeTaxCalculator() {
                       step={500} 
                       colorTheme="slate"
                     />
-                    <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                    <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                       <span>Max ₹10k deduction</span>
                     </div>
                   </div>
@@ -519,7 +519,7 @@ export default function IncomeTaxCalculator() {
                       step={5000} 
                       colorTheme="slate"
                     />
-                    <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                    <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                       <span>Other sources</span>
                     </div>
                   </div>
@@ -632,7 +632,7 @@ export default function IncomeTaxCalculator() {
                     step={5000} 
                     colorTheme="slate"
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>PPF, ELSS, LIC (Max 1.5L)</span>
                   </div>
                 </div>
@@ -662,7 +662,7 @@ export default function IncomeTaxCalculator() {
                     step={5000} 
                     colorTheme="slate"
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Health Insurance Premiums</span>
                   </div>
                 </div>
@@ -692,7 +692,7 @@ export default function IncomeTaxCalculator() {
                     step={5000} 
                     colorTheme="slate"
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>NPS, HRA, etc.</span>
                   </div>
                 </div>
@@ -722,7 +722,7 @@ export default function IncomeTaxCalculator() {
                     step={5000}
                     colorTheme="slate"
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>TDS, TCS, advance/self-assessment tax</span>
                   </div>
                 </div>
@@ -755,7 +755,7 @@ export default function IncomeTaxCalculator() {
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col">
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">Tax Summary</h2>
-                <div className="bg-[#ECFDF3] text-[#027A48] text-[10px] font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
+                <div className="bg-[#ECFDF3] text-[#027A48] type-meta font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
                   <Star className="w-3 h-3 fill-[#027A48]" />
                   Recommended
                 </div>
@@ -769,11 +769,11 @@ export default function IncomeTaxCalculator() {
                   betterRegime !== "Old Regime" ? "border-[#ECFDF3] bg-[#F6FEF9]" : "border-[#EAECF0] bg-white"
                 )}>
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">New Regime</span>
-                  <span className="text-[10px] text-[#667085] block mb-2">Lower tax rates</span>
+                  <span className="type-meta text-[#667085] block mb-2">Lower tax rates</span>
                   <span className={cn("text-2xl font-normal block mb-0.5", betterRegime !== "Old Regime" ? "text-[#027A48]" : "text-[#344054]")}>
                     ₹ {fmt(newRegimeTax.taxPayable)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Total Tax</span>
+                  <span className="type-meta text-[#98A2B3] font-normal uppercase tracking-widest">Total Tax</span>
                 </div>
 
                 {/* Old Regime Box */}
@@ -782,11 +782,11 @@ export default function IncomeTaxCalculator() {
                   betterRegime !== "New Regime" ? "border-[#ECFDF3] bg-[#F6FEF9]" : "border-[#EAECF0] bg-white"
                 )}>
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">Old Regime</span>
-                  <span className="text-[10px] text-[#667085] block mb-2">With deductions</span>
+                  <span className="type-meta text-[#667085] block mb-2">With deductions</span>
                   <span className={cn("text-2xl font-normal block mb-0.5", betterRegime !== "New Regime" ? "text-[#027A48]" : "text-[#B42318]")}>
                     ₹ {fmt(oldRegimeTax.taxPayable)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Total Tax</span>
+                  <span className="type-meta text-[#98A2B3] font-normal uppercase tracking-widest">Total Tax</span>
                 </div>
               </div>
 
@@ -853,7 +853,7 @@ export default function IncomeTaxCalculator() {
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Need expert help?</h4>
                   <p className="text-xs text-[#667085] mb-2">Plan your tax with our expert CA</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-sm font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Book Free Consultation
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -899,8 +899,8 @@ export default function IncomeTaxCalculator() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
-                <p className="text-[11px] text-[#667085]">{item.desc}</p>
+                <h5 className="type-support font-normal text-[#101828]">{item.label}</h5>
+                <p className="type-support text-[#667085]">{item.desc}</p>
               </div>
             </div>
           ))}

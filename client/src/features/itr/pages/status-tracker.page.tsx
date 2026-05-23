@@ -146,25 +146,25 @@ export default function ITRStatusTrackerPage() {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full mb-4">
               <Search className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">
+              <span className="type-support font-medium text-green-700">
                 Guide, not live portal data
               </span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="type-page-title mb-3 text-gray-900">
               ITR Status Guide
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="type-body text-gray-600 max-w-2xl mx-auto">
               Prepare your details and follow the official steps to check filing, e-verification, and refund status on the Income Tax portal.
             </p>
           </div>
 
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="type-card-title flex items-center gap-2">
                 <Search className="h-5 w-5 text-blue-600" />
                 Prepare Official Portal Check
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="type-support">
                 Validate the format of your PAN and acknowledgement number before opening the official e-filing portal.
               </CardDescription>
             </CardHeader>
@@ -224,7 +224,7 @@ export default function ITRStatusTrackerPage() {
               <Card>
                 <CardHeader>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="type-card-title flex items-center gap-2">
                       <FileText className="h-5 w-5 text-blue-600" />
                       Details Ready for Official Check
                     </CardTitle>
@@ -234,11 +234,11 @@ export default function ITRStatusTrackerPage() {
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-gray-500">PAN</p>
+                      <p className="type-meta text-gray-500">PAN</p>
                       <p className="font-semibold">{validatedLookup.pan}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Acknowledgement Number</p>
+                      <p className="type-meta text-gray-500">Acknowledgement Number</p>
                       <p className="font-semibold">
                         {validatedLookup.acknowledgementNo || "Use portal login if unavailable"}
                       </p>
@@ -255,7 +255,7 @@ export default function ITRStatusTrackerPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Official Status Steps</CardTitle>
+                  <CardTitle className="type-card-title">Official Status Steps</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
@@ -274,7 +274,7 @@ export default function ITRStatusTrackerPage() {
 
                           <div className="ml-4 flex-1">
                             <h4 className="font-semibold text-gray-900">{step.label}</h4>
-                            <p className="text-sm text-gray-500">{step.description}</p>
+                            <p className="type-support text-gray-500">{step.description}</p>
                           </div>
                         </div>
                       );
@@ -285,11 +285,11 @@ export default function ITRStatusTrackerPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="type-card-title flex items-center gap-2">
                     <Shield className="h-5 w-5 text-blue-600" />
                     e-Verification Methods
                   </CardTitle>
-                  <CardDescription>Choose one of the official verification methods inside the e-filing portal</CardDescription>
+                  <CardDescription className="type-support">Choose one of the official verification methods inside the e-filing portal</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -308,10 +308,10 @@ export default function ITRStatusTrackerPage() {
                             <div className="flex items-center gap-2">
                               <h4 className="font-semibold">{method.title}</h4>
                               {method.recommended && (
-                                <Badge className="bg-green-500 text-xs">Recommended</Badge>
+                                <Badge className="bg-green-500 type-meta">Recommended</Badge>
                               )}
                             </div>
-                            <p className="text-sm text-gray-600">{method.desc}</p>
+                            <p className="type-support text-gray-600">{method.desc}</p>
                           </div>
                         </div>
                       </div>
@@ -328,13 +328,13 @@ export default function ITRStatusTrackerPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="type-card-title flex items-center gap-2">
                     <FileText className="h-5 w-5 text-blue-600" />
                     Documents to Download From the Portal
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
+                  <div className="grid md:grid-cols-2 gap-4 type-support text-gray-700">
                     {OFFICIAL_DOCUMENTS.map((document) => (
                       <div key={document.title} className="rounded-lg border border-gray-200 p-4">
                         <p className="font-medium text-gray-900">{document.title}</p>
@@ -351,7 +351,7 @@ export default function ITRStatusTrackerPage() {
                     <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div>
                       <h4 className="font-semibold text-blue-900">Typical Processing Timeline</h4>
-                      <ul className="mt-2 space-y-1 text-sm text-blue-800">
+                      <ul className="mt-2 space-y-1 type-support text-blue-800">
                         <li>- ITR-1 and ITR-4: often 15-45 days after e-verification</li>
                         <li>- ITR-2 and ITR-3: often 30-60 days after e-verification</li>
                         <li>- Refunds depend on processing, bank validation, and mismatch resolution</li>
@@ -366,7 +366,7 @@ export default function ITRStatusTrackerPage() {
           {!validatedLookup && (
             <Card className="mt-8">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="type-card-title flex items-center gap-2">
                   <Info className="h-5 w-5 text-blue-600" />
                   Important Information
                 </CardTitle>
@@ -375,7 +375,7 @@ export default function ITRStatusTrackerPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="font-semibold mb-2">Where to find Acknowledgement Number?</h4>
-                    <ul className="space-y-2 text-sm text-gray-600">
+                    <ul className="space-y-2 type-support text-gray-600">
                       <li className="flex items-start gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                         Downloaded ITR-V PDF after filing
@@ -392,7 +392,7 @@ export default function ITRStatusTrackerPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2">Need Help?</h4>
-                    <ul className="space-y-2 text-sm text-gray-600">
+                    <ul className="space-y-2 type-support text-gray-600">
                       <li className="flex items-start gap-2">
                         <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                         <span>Call Income Tax Helpline: <strong>1800-103-0025</strong></span>

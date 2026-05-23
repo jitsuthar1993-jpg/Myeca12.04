@@ -254,7 +254,7 @@ export default function Form16ParserPage() {
               ].map(([value, label]) => (
                 <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
                   <p className="text-sm font-black text-slate-950">{value}</p>
-                  <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">{label}</p>
+                  <p className="mt-0.5 type-meta font-bold uppercase tracking-wide text-slate-500">{label}</p>
                 </div>
               ))}
             </div>
@@ -393,7 +393,7 @@ export default function Form16ParserPage() {
                   <CardContent className="p-4 md:p-5">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-700">Parsed result</p>
+                        <p className="type-meta font-bold uppercase tracking-[0.14em] text-blue-700">Parsed result</p>
                         <h2 className="mt-1 text-xl font-black text-slate-950">Review before filing</h2>
                       </div>
                       <Badge className={cn("border hover:bg-current/0", confidenceTone)}>
@@ -404,7 +404,7 @@ export default function Form16ParserPage() {
                     <div className="mt-4 grid grid-cols-2 gap-2">
                       {summaryCards.map((card) => (
                         <div key={card.label} className={cn("rounded-lg border p-3", card.tone)}>
-                          <p className="text-[11px] font-bold uppercase tracking-wide opacity-80">{card.label}</p>
+                          <p className="type-meta font-bold uppercase tracking-wide opacity-80">{card.label}</p>
                           <p className="mt-2 text-base font-black leading-tight">{card.value}</p>
                         </div>
                       ))}

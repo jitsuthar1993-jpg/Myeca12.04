@@ -72,11 +72,11 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
 
           {/* Category badge */}
           <div className="absolute top-3 left-3 flex items-center gap-2">
-            <Badge className="rounded-full border border-white/50 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 shadow-sm">
+            <Badge className="rounded-full border border-white/50 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 type-meta font-semibold text-slate-700 shadow-sm">
               {post.category?.name || "Insights"}
             </Badge>
             {post.isFeatured && (
-              <Badge className="rounded-full bg-blue-600/90 backdrop-blur-sm px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-sm">
+              <Badge className="rounded-full bg-blue-600/90 backdrop-blur-sm px-2.5 py-0.5 type-meta font-semibold text-white shadow-sm">
                 Featured
               </Badge>
             )}
@@ -84,7 +84,7 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
 
           {/* Read time badge bottom-right */}
           <div className="absolute bottom-3 right-3">
-            <span className="inline-flex items-center gap-1 rounded-full bg-blue-900/50 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-white">
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-900/50 backdrop-blur-sm px-2.5 py-1 type-meta font-medium text-white">
               <Clock3 className="h-3 w-3" />
               {post.readingTimeMinutes} min
             </span>
@@ -126,7 +126,7 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
           {!compact && post.tags && post.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1.5">
               {post.tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+                <span key={tag} className="rounded-full bg-slate-100 px-2 py-0.5 type-meta font-medium text-slate-500">
                   {tag}
                 </span>
               ))}
@@ -139,13 +139,13 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
             !compact && "border-t border-slate-100 mt-5",
           )}>
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white type-meta font-bold shrink-0">
                 {getInitials(post.authorName)}
               </div>
               <div>
                 <p className="text-xs font-semibold text-slate-700">{post.authorName}</p>
                 {post.authorRole && !compact && (
-                  <p className="text-[10px] text-slate-400 hidden sm:block">{post.authorRole}</p>
+                  <p className="type-meta text-slate-400 hidden sm:block">{post.authorRole}</p>
                 )}
               </div>
             </div>

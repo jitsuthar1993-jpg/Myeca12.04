@@ -171,14 +171,14 @@ export default function ExportCenterPage() {
                    </div>
                    <div className="mt-5 text-center">
                       <h2 className="text-xl font-black text-slate-900 tracking-tight">Data Vault</h2>
-                      <Badge variant="outline" className="mt-2 bg-indigo-50 text-indigo-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                      <Badge variant="outline" className="mt-2 bg-indigo-50 text-indigo-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                          Live Sync Enabled
                       </Badge>
                    </div>
                 </div>
 
                 <div className="mt-10 space-y-3">
-                   <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Export Categories</Label>
+                   <Label className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Export Categories</Label>
                    {Object.entries(exportTypes).map(([key, type]) => {
                      const Icon = type.icon;
                      return (
@@ -200,7 +200,7 @@ export default function ExportCenterPage() {
                          </div>
                          <div className="flex-1">
                            <p className={cn("text-xs font-black uppercase tracking-wider", selectedType === key ? 'text-white' : 'text-slate-900')}>{type.name}</p>
-                           <p className={cn("text-[10px] font-medium", selectedType === key ? 'text-indigo-100' : 'text-slate-400')}>
+                           <p className={cn("type-meta font-medium", selectedType === key ? 'text-indigo-100' : 'text-slate-400')}>
                              {type.formats.join(" • ")}
                            </p>
                          </div>
@@ -229,11 +229,11 @@ export default function ExportCenterPage() {
                         <item.icon className="h-4 w-4 text-slate-400 group-hover:text-indigo-600" />
                       </div>
                       <div>
-                        <p className="text-[11px] font-black text-slate-700 uppercase tracking-tight">{item.name}</p>
-                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{item.time}</p>
+                        <p className="type-meta font-black text-slate-700 uppercase tracking-tight">{item.name}</p>
+                        <p className="type-meta font-black text-slate-300 uppercase tracking-widest">{item.time}</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="border-slate-100 text-[8px] font-black text-slate-400">{item.format}</Badge>
+                    <Badge variant="outline" className="border-slate-100 type-meta font-black text-slate-400">{item.format}</Badge>
                   </div>
                 ))}
              </div>
@@ -246,7 +246,7 @@ export default function ExportCenterPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mb-2">
                  <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Configuration Panel</span>
+                 <span className="type-meta font-black uppercase tracking-[0.2em] text-indigo-600">Configuration Panel</span>
               </div>
               <h1 className="text-4xl font-black tracking-tight text-slate-900">Custom Export Center</h1>
               <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
@@ -261,7 +261,7 @@ export default function ExportCenterPage() {
                    <div className="space-y-12">
                       {/* Format Selection */}
                       <div className="space-y-6">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Output Format</Label>
+                        <Label className="type-meta font-black text-slate-400 uppercase tracking-[0.2em]">Output Format</Label>
                         <RadioGroup value={selectedFormat} onValueChange={setSelectedFormat} className="grid grid-cols-3 gap-4">
                           {currentExportType.formats.map(format => (
                             <div key={format}>
@@ -273,7 +273,7 @@ export default function ExportCenterPage() {
                                 {format === "PDF" && <FileText className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />}
                                 {format === "Excel" && <FileSpreadsheet className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />}
                                 {format === "CSV" && <Table className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />}
-                                <span className="mt-3 text-[10px] font-black uppercase tracking-widest text-slate-600">{format}</span>
+                                <span className="mt-3 type-meta font-black uppercase tracking-widest text-slate-600">{format}</span>
                               </Label>
                             </div>
                           ))}
@@ -282,11 +282,11 @@ export default function ExportCenterPage() {
 
                       {/* Filters */}
                       <div className="space-y-6">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Data Constraints</Label>
+                        <Label className="type-meta font-black text-slate-400 uppercase tracking-[0.2em]">Data Constraints</Label>
                         <div className="grid md:grid-cols-2 gap-6">
                           {currentExportType.filters.includes("Date Range") && (
                             <div className="col-span-full space-y-3">
-                              <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Timeline</Label>
+                              <Label className="type-meta font-black text-slate-500 uppercase tracking-widest ml-1">Timeline</Label>
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="relative">
                                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
@@ -294,7 +294,7 @@ export default function ExportCenterPage() {
                                     type="date" 
                                     value={format(dateRange.from, 'yyyy-MM-dd')}
                                     onChange={(e) => setDateRange(prev => ({ ...prev, from: new Date(e.target.value) }))}
-                                    className="h-14 pl-12 rounded-2xl bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest"
+                                    className="h-14 pl-12 rounded-2xl bg-slate-50 border-none type-meta font-black uppercase tracking-widest"
                                   />
                                 </div>
                                 <div className="relative">
@@ -303,7 +303,7 @@ export default function ExportCenterPage() {
                                     type="date" 
                                     value={format(dateRange.to, 'yyyy-MM-dd')}
                                     onChange={(e) => setDateRange(prev => ({ ...prev, to: new Date(e.target.value) }))}
-                                    className="h-14 pl-12 rounded-2xl bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest"
+                                    className="h-14 pl-12 rounded-2xl bg-slate-50 border-none type-meta font-black uppercase tracking-widest"
                                   />
                                 </div>
                               </div>
@@ -312,14 +312,14 @@ export default function ExportCenterPage() {
 
                           {currentExportType.filters.includes("Year") && (
                             <div className="space-y-3">
-                              <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Assessment Year</Label>
+                              <Label className="type-meta font-black text-slate-500 uppercase tracking-widest ml-1">Assessment Year</Label>
                               <Select defaultValue="2024-25">
-                                <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest">
+                                <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none type-meta font-black uppercase tracking-widest">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="2024-25" className="text-[10px] font-black uppercase tracking-widest">2024-25</SelectItem>
-                                  <SelectItem value="2023-24" className="text-[10px] font-black uppercase tracking-widest">2023-24</SelectItem>
+                                  <SelectItem value="2024-25" className="type-meta font-black uppercase tracking-widest">2024-25</SelectItem>
+                                  <SelectItem value="2023-24" className="type-meta font-black uppercase tracking-widest">2023-24</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -327,14 +327,14 @@ export default function ExportCenterPage() {
 
                           {currentExportType.filters.includes("Status") && (
                             <div className="space-y-3">
-                              <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">State Filter</Label>
+                              <Label className="type-meta font-black text-slate-500 uppercase tracking-widest ml-1">State Filter</Label>
                               <Select defaultValue="all">
-                                <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest">
+                                <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none type-meta font-black uppercase tracking-widest">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest">All Records</SelectItem>
-                                  <SelectItem value="filed" className="text-[10px] font-black uppercase tracking-widest">Filed Only</SelectItem>
+                                  <SelectItem value="all" className="type-meta font-black uppercase tracking-widest">All Records</SelectItem>
+                                  <SelectItem value="filed" className="type-meta font-black uppercase tracking-widest">Filed Only</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -344,7 +344,7 @@ export default function ExportCenterPage() {
 
                       {/* Field Selection */}
                       <div className="space-y-6">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Schema Definition</Label>
+                        <Label className="type-meta font-black text-slate-400 uppercase tracking-[0.2em]">Schema Definition</Label>
                         <div className="grid md:grid-cols-2 gap-4">
                           {currentExportType.fields.map(field => (
                             <div key={field.id} className="flex items-center space-x-4 p-4 rounded-3xl bg-slate-50 group hover:bg-indigo-50/50 transition-colors">
@@ -356,7 +356,7 @@ export default function ExportCenterPage() {
                               />
                               <Label 
                                 htmlFor={field.id} 
-                                className="flex-1 cursor-pointer text-[11px] font-black text-slate-600 uppercase tracking-tight group-hover:text-indigo-900"
+                                className="flex-1 cursor-pointer type-meta font-black text-slate-600 uppercase tracking-tight group-hover:text-indigo-900"
                               >
                                 {field.label}
                               </Label>
@@ -373,7 +373,7 @@ export default function ExportCenterPage() {
                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                       <div className="text-center md:text-left">
                          <h3 className="text-2xl font-black text-white tracking-tight mb-2">Initialize Data Pipeline</h3>
-                         <p className="text-indigo-100 text-[11px] font-medium uppercase tracking-widest">Preparing {Object.values(selectedFields).filter(Boolean).length} Data Fields for {selectedFormat} Output</p>
+                         <p className="text-indigo-100 type-meta font-medium uppercase tracking-widest">Preparing {Object.values(selectedFields).filter(Boolean).length} Data Fields for {selectedFormat} Output</p>
                       </div>
                       <Button 
                         size="lg"
@@ -425,7 +425,7 @@ export default function ExportCenterPage() {
                            </div>
                            <div>
                               <h5 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-1.5">{tip.title}</h5>
-                              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">{tip.desc}</p>
+                              <p className="type-meta text-slate-500 font-medium leading-relaxed">{tip.desc}</p>
                            </div>
                         </div>
                       ))}
@@ -436,7 +436,7 @@ export default function ExportCenterPage() {
                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-3xl rounded-full" />
                    <div className="flex items-center gap-3 mb-6">
                       <AlertCircle className="h-5 w-5 text-indigo-400" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Security Notice</span>
+                      <span className="type-meta font-black uppercase tracking-widest text-indigo-400">Security Notice</span>
                    </div>
                    <p className="text-xs font-medium leading-relaxed text-slate-400">
                       Exports contain PII (Personally Identifiable Information). Ensure downloads are stored in encrypted environments.

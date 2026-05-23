@@ -51,7 +51,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-slate-950">MyeCA</p>
-                  <p className="truncate text-[11px] font-medium text-slate-500">{roleLabel}</p>
+                  <p className="type-meta truncate font-medium text-slate-500">{roleLabel}</p>
                 </div>
               </Link>
               <Button
@@ -69,7 +69,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
               <div className="space-y-5">
                 {roleGroups.map((group) => (
                   <div key={group.label} className="space-y-1">
-                    <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                    <p className="type-meta px-3 font-bold uppercase tracking-[0.12em] text-slate-400">
                       {group.label}
                     </p>
                     {group.items.map((item) => {
@@ -96,7 +96,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                 ))}
 
                 <div className="space-y-1 border-t border-slate-200 pt-4">
-                  <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Support</p>
+                  <p className="type-meta px-3 font-bold uppercase tracking-[0.12em] text-slate-400">Support</p>
                   <Link href="/help">
                     <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
                       <HelpCircle className="h-4 w-4 shrink-0" />
@@ -120,7 +120,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-bold text-slate-950">{user?.firstName || 'User'}</p>
-                  <p className="truncate text-[11px] font-medium text-slate-500">{roleLabel}</p>
+                  <p className="type-meta truncate font-medium text-slate-500">{roleLabel}</p>
                 </div>
                 <Link href="/logout">
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600">
@@ -166,7 +166,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                     }}
                     className="h-10 rounded-lg border-slate-200 bg-slate-50 pl-10 text-sm"
                   />
-                  <div className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 text-[10px] font-medium text-slate-400 md:flex">
+                  <div className="type-meta pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 font-medium text-slate-400 md:flex">
                     <Command className="h-3 w-3" /> K
                   </div>
                 </div>

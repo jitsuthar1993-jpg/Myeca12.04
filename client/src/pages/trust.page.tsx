@@ -88,7 +88,7 @@ export default function TrustPage() {
                 <ShieldCheck className="h-4 w-4" />
                 Trust center
               </div>
-              <h1 className="mt-6 text-4xl font-extrabold leading-tight tracking-tight text-slate-950 md:text-6xl">
+              <h1 className="type-hero-title mt-6 font-extrabold text-slate-950">
                 Trust, security, and document handling.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:mx-auto md:text-lg">
@@ -110,7 +110,7 @@ export default function TrustPage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-8 max-w-3xl">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Before checkout</p>
-              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">What users should be able to verify first</h2>
+              <h2 className="type-section-title mt-3 font-extrabold text-slate-950">What users should be able to verify first</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {proofPoints.map((item) => (
@@ -130,7 +130,7 @@ export default function TrustPage() {
           <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Document workflow</p>
-              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">How sensitive tax documents move through the service</h2>
+              <h2 className="type-section-title mt-3 font-extrabold text-slate-950">How sensitive tax documents move through the service</h2>
               <p className="mt-4 text-sm leading-6 text-slate-600 md:text-base">
                 The goal is to keep the workflow understandable: what is needed, why it is needed, who may review it, and which support route handles privacy questions.
               </p>
@@ -153,7 +153,7 @@ export default function TrustPage() {
             <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Security practices</p>
-                <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">Practical controls, stated plainly</h2>
+                <h2 className="type-section-title mt-3 font-extrabold text-slate-950">Practical controls, stated plainly</h2>
                 <div className="mt-6 grid gap-4 md:grid-cols-3">
                   {securityPractices.map((item) => (
                     <div key={item.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -185,7 +185,7 @@ export default function TrustPage() {
           <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_0.8fr] lg:px-8 lg:items-center">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-200">Business cases</p>
-              <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-4xl">High-value cases should start with scope review.</h2>
+              <h2 className="type-section-title mt-3 font-extrabold">High-value cases should start with scope review.</h2>
               <p className="mt-4 text-sm leading-6 text-slate-300 md:text-base">
                 For business income, GST, TDS, notices, capital gains, NRI facts, or higher-turnover cases, a scope review helps clarify documents, timelines, exclusions, and professional review needs before checkout.
               </p>

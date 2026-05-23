@@ -291,7 +291,7 @@ export default function CompanyRegistrationPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Building2 className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   Company Registration Services
                 </h1>
               </div>
@@ -361,7 +361,7 @@ export default function CompanyRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Choose Your Company Structure
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -457,7 +457,7 @@ export default function CompanyRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Company Registration Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -541,7 +541,7 @@ export default function CompanyRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Benefits of Company Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

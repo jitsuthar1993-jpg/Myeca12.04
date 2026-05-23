@@ -151,7 +151,7 @@ export default function FinancialGlossary() {
               <Link key={index} href={item.href}>
                 <div className="group flex h-full cursor-pointer flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200">
                   <div className="mb-4 flex items-center justify-between gap-3">
-                    <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+                    <span className="rounded-lg bg-slate-50 px-2.5 py-1 type-meta font-bold uppercase tracking-wide text-slate-600">
                       {item.category}
                     </span>
                     <ArrowUpRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-blue-700" />

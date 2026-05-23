@@ -98,6 +98,20 @@
   --text-5xl: 3rem;
   --text-6xl: 3.75rem;
 
+  /* Semantic Typography Roles */
+  --type-hero-title: var(--text-4xl);
+  --type-hero-title-lg: 3.25rem;
+  --type-page-title: var(--text-3xl);
+  --type-page-title-lg: 2.5rem;
+  --type-section-title: var(--text-2xl);
+  --type-section-title-lg: var(--text-3xl);
+  --type-card-title: var(--text-lg);
+  --type-body: var(--text-base);
+  --type-support: var(--text-sm);
+  --type-meta: var(--text-xs);
+  --type-article-body: var(--text-base);
+  --type-article-body-lg: 1.0625rem;
+
   /* Line Heights */
   --leading-none: 1;
   --leading-tight: 1.25;
@@ -297,7 +311,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-bold);
   line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 /* ============================================

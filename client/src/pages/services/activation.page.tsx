@@ -155,10 +155,10 @@ export default function ActivationPage() {
               className="space-y-8"
             >
               <div className="space-y-3">
-                <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 px-3 py-1 font-black uppercase text-[10px] tracking-widest">
+                <Badge className="type-meta border-blue-500/20 bg-blue-500/10 px-3 py-1 font-black text-blue-600">
                   Service Activation Phase
                 </Badge>
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+                <h1 className="type-page-title font-black text-slate-900 dark:text-white">
                   Activate {service.title}
                 </h1>
                 <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
@@ -201,11 +201,11 @@ export default function ActivationPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Professional Fee</p>
+                      <p className="type-meta font-black text-slate-400">Professional Fee</p>
                       <p className="text-4xl font-black tracking-tighter text-slate-900">{service.price}</p>
                     </div>
                   </div>
-                  <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-slate-500">
+                  <div className="type-meta flex items-center gap-2 border-t border-slate-100 bg-slate-50 p-4 font-bold text-slate-500">
                     <ShieldCheck className="h-4 w-4 text-emerald-500" />
                     Secure Transaction & Data Privacy
                   </div>
@@ -299,21 +299,21 @@ export default function ActivationPage() {
                     <Info className="h-5 w-5 text-amber-600" />
                   </div>
                   <h4 className="font-black text-slate-900 text-sm mb-1">Clear Copy</h4>
-                  <p className="text-[11px] text-slate-600 font-bold leading-relaxed">Ensure all text and edges are clearly visible for faster verification.</p>
+                  <p className="type-support font-bold text-slate-600">Ensure all text and edges are clearly visible for faster verification.</p>
                 </div>
                 <div className="p-6 rounded-3xl bg-blue-50 border border-blue-100">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-4">
                     <ShieldCheck className="h-5 w-5 text-blue-600" />
                   </div>
                   <h4 className="font-black text-slate-900 text-sm mb-1">End-to-End Encrypted</h4>
-                  <p className="text-[11px] text-slate-600 font-bold leading-relaxed">Your data is secured with enterprise-grade AES-256 encryption.</p>
+                  <p className="type-support font-bold text-slate-600">Your data is secured with enterprise-grade AES-256 encryption.</p>
                 </div>
                 <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-4">
                     <HelpCircle className="h-5 w-5 text-indigo-600" />
                   </div>
                   <h4 className="font-black text-slate-900 text-sm mb-1">Need help?</h4>
-                  <p className="text-[11px] text-slate-600 font-bold leading-relaxed">Connect with our support team using the chatbot below.</p>
+                  <p className="type-support font-bold text-slate-600">Connect with our support team using the chatbot below.</p>
                 </div>
               </div>
             </m.div>

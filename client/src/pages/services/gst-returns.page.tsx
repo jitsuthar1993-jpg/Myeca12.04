@@ -285,7 +285,7 @@ export default function GSTReturnsPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Receipt className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-gray-900">
                   GST Returns Filing Services
                 </h1>
               </div>
@@ -347,7 +347,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               GST Returns Filing Guidance
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -412,7 +412,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Current GST Rate Structure 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -456,7 +456,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Monthly GST Compliance Calendar
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -490,7 +490,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Required Documents for GST Filing
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -530,7 +530,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               New GST Portal Features 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -564,7 +564,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Common GST Filing Mistakes to Avoid
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -615,7 +615,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               GST Penalty Structure 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -655,7 +655,7 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

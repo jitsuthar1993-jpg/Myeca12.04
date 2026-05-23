@@ -184,8 +184,8 @@ export default function ServiceDetailPage() {
       <Layout>
         <div className="mx-auto max-w-xl rounded-[28px] border border-slate-100 bg-white p-10 text-center shadow-sm">
           <Briefcase className="mx-auto mb-4 h-10 w-10 text-slate-300" />
-          <h1 className="text-2xl font-black text-slate-900">Service case not found</h1>
-          <p className="mt-2 text-sm font-medium text-slate-500">The case may have been removed or you may not have access.</p>
+          <h1 className="type-page-title font-black text-slate-900">Service case not found</h1>
+          <p className="mt-2 type-support font-medium text-slate-500">The case may have been removed or you may not have access.</p>
           <Link href="/dashboard">
             <Button className="mt-6 rounded-xl bg-blue-700 text-white">Back to dashboard</Button>
           </Link>
@@ -231,17 +231,17 @@ export default function ServiceDetailPage() {
         <section className="rounded-[32px] border border-slate-100 bg-white p-8 shadow-sm">
           <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
             <div>
-              <Badge className="border-none bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
+              <Badge className="border-none bg-blue-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-blue-700">
                 {statusLabel(service.status)}
               </Badge>
-              <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-900">{service.serviceTitle || 'Service request'}</h1>
-              <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-slate-500">
+              <h1 className="type-page-title mt-4 font-black text-slate-900">{service.serviceTitle || 'Service request'}</h1>
+              <p className="mt-3 max-w-2xl type-support font-medium text-slate-500">
                 {service.serviceCategory || 'General service'} case workspace for documents, payment state, expert handoff, and next action.
               </p>
             </div>
             <div className="rounded-2xl border border-amber-100 bg-amber-50 p-5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-amber-700">Next action</p>
-              <p className="mt-2 text-sm font-bold leading-6 text-amber-950">{nextAction(service, documents)}</p>
+              <p className="type-meta font-black uppercase tracking-widest text-amber-700">Next action</p>
+              <p className="mt-2 type-support font-bold text-amber-950">{nextAction(service, documents)}</p>
             </div>
           </div>
         </section>
@@ -258,8 +258,8 @@ export default function ServiceDetailPage() {
                   <item.icon className="h-6 w-6" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
-                  <p className="mt-1 truncate text-sm font-black text-slate-900">{item.value}</p>
+                  <p className="type-meta font-black uppercase tracking-widest text-slate-400">{item.label}</p>
+                  <p className="mt-1 truncate type-support font-black text-slate-900">{item.value}</p>
                 </div>
               </CardContent>
             </Card>
@@ -270,17 +270,17 @@ export default function ServiceDetailPage() {
           <div className="space-y-8">
             <Card className="rounded-[28px] border-slate-100 shadow-sm">
               <CardHeader className="border-b border-slate-50 p-6">
-                <CardTitle className="text-lg font-black">Case Timeline</CardTitle>
-                <CardDescription>What has happened and what still needs attention.</CardDescription>
+                <CardTitle className="type-card-title font-black">Case Timeline</CardTitle>
+                <CardDescription className="type-support">What has happened and what still needs attention.</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-5">
                 {timeline.map((stage, index) => (
                   <div key={stage.label} className={cn('rounded-2xl border p-4', stage.active ? 'border-blue-100 bg-blue-50 text-blue-900' : 'border-slate-100 bg-slate-50 text-slate-500')}>
                     <div className="flex items-center gap-2">
                       {stage.active ? <CheckCircle2 className="h-4 w-4 text-blue-600" /> : <Clock className="h-4 w-4 text-slate-400" />}
-                      <p className="text-[10px] font-black uppercase tracking-widest">Step {index + 1}</p>
+                      <p className="type-meta font-black uppercase tracking-widest">Step {index + 1}</p>
                     </div>
-                    <p className="mt-2 text-sm font-black">{stage.label}</p>
+                    <p className="mt-2 type-support font-black">{stage.label}</p>
                   </div>
                 ))}
               </CardContent>
@@ -288,8 +288,8 @@ export default function ServiceDetailPage() {
 
             <Card className="rounded-[28px] border-slate-100 shadow-sm">
               <CardHeader className="border-b border-slate-50 p-6">
-                <CardTitle className="text-lg font-black">Linked Documents</CardTitle>
-                <CardDescription>Files uploaded here stay attached to this service case.</CardDescription>
+                <CardTitle className="type-card-title font-black">Linked Documents</CardTitle>
+                <CardDescription className="type-support">Files uploaded here stay attached to this service case.</CardDescription>
               </CardHeader>
               <CardContent className="p-0">
                 {documents.length ? (
@@ -301,8 +301,8 @@ export default function ServiceDetailPage() {
                             <FileText className="h-5 w-5" />
                           </div>
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-black text-slate-900">{doc.name || doc.originalName || 'Document'}</p>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            <p className="truncate type-support font-black text-slate-900">{doc.name || doc.originalName || 'Document'}</p>
+                            <p className="type-meta font-bold uppercase tracking-widest text-slate-400">
                               {doc.category || 'Other'} - {formatFileSize(doc.size || 0)}
                             </p>
                           </div>
@@ -316,8 +316,8 @@ export default function ServiceDetailPage() {
                 ) : (
                   <div className="p-10 text-center">
                     <FileText className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-                    <p className="text-sm font-black text-slate-900">No documents linked yet</p>
-                    <p className="mt-1 text-xs font-medium text-slate-500">Upload Form 16, AIS, GST files, invoices, or proofs for this case.</p>
+                    <p className="type-support font-black text-slate-900">No documents linked yet</p>
+                    <p className="mt-1 type-meta font-medium text-slate-500">Upload Form 16, AIS, GST files, invoices, or proofs for this case.</p>
                   </div>
                 )}
               </CardContent>
@@ -327,8 +327,8 @@ export default function ServiceDetailPage() {
           <div className="space-y-8">
             <Card className="rounded-[28px] border-slate-100 shadow-sm">
               <CardHeader className="border-b border-slate-50 p-6">
-                <CardTitle className="text-lg font-black">Case Upload</CardTitle>
-                <CardDescription>Attach a document directly to this service.</CardDescription>
+                <CardTitle className="type-card-title font-black">Case Upload</CardTitle>
+                <CardDescription className="type-support">Attach a document directly to this service.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5 p-6">
                 <input
@@ -342,11 +342,11 @@ export default function ServiceDetailPage() {
                   }}
                 />
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Document name</Label>
+                  <Label className="type-meta font-black uppercase tracking-widest text-slate-400">Document name</Label>
                   <Input value={uploadName} onChange={(event) => setUploadName(event.target.value)} placeholder="e.g. Form 16 FY 2025-26" className="h-11 rounded-xl border-slate-100" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Category</Label>
+                  <Label className="type-meta font-black uppercase tracking-widest text-slate-400">Category</Label>
                   <Input value={uploadCategory} onChange={(event) => setUploadCategory(event.target.value)} placeholder="form16, ais, invoice..." className="h-11 rounded-xl border-slate-100" />
                 </div>
                 <Button disabled={uploadMutation.isPending} onClick={() => fileInputRef.current?.click()} className="h-12 w-full rounded-xl bg-blue-600 text-white hover:bg-blue-700">
@@ -358,13 +358,13 @@ export default function ServiceDetailPage() {
 
             <Card className="rounded-[28px] border-slate-100 shadow-sm">
               <CardHeader className="border-b border-slate-50 p-6">
-                <CardTitle className="text-lg font-black">Request Notes</CardTitle>
-                <CardDescription>Original brief and your latest update.</CardDescription>
+                <CardTitle className="type-card-title font-black">Request Notes</CardTitle>
+                <CardDescription className="type-support">Original brief and your latest update.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5 p-6">
                 <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Original request</p>
-                  <p className="mt-2 text-sm font-medium leading-6 text-slate-700">{requestDescription || 'No detailed brief was added.'}</p>
+                  <p className="type-meta font-black uppercase tracking-widest text-slate-400">Original request</p>
+                  <p className="mt-2 type-support font-medium text-slate-700">{requestDescription || 'No detailed brief was added.'}</p>
                 </div>
                 <Textarea
                   value={note}

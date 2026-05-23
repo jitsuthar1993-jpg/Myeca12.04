@@ -90,19 +90,19 @@ export default function CalcHero({
               <div className="space-y-1">
                 {category && (
                   <span className={cn(
-                    "text-[10px] font-normal uppercase tracking-[0.2em]",
+                    "type-meta font-normal uppercase tracking-[0.2em]",
                     variantStyles[variant].split(" ").pop()
                   )}>
                     {category}
                   </span>
                 )}
-                <h1 className="text-3xl lg:text-4xl font-normal text-slate-900 tracking-tight">
+                <h1 className="type-page-title font-normal text-slate-900">
                   {title}
                 </h1>
               </div>
             </div>
             {description && (
-              <p className="text-slate-500 max-w-2xl text-lg font-normal leading-relaxed">
+              <p className="type-body max-w-2xl font-normal text-slate-500">
                 {description}
               </p>
             )}

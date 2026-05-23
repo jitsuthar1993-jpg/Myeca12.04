@@ -287,7 +287,7 @@ export default function ReferralsPage() {
                         </div>
                         <div className="mt-5 text-center">
                            <h2 className="text-xl font-black text-slate-900 tracking-tight">Earning Hub</h2>
-                           <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                           <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                               ₹{stats.availableRewards} Available
                            </Badge>
                         </div>
@@ -302,17 +302,17 @@ export default function ReferralsPage() {
                         ].map((stat, i) => (
                            <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                               <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
+                              <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
                               <span className="text-sm font-black text-slate-900 leading-none">{stat.value}</span>
                            </div>
                         ))}
                      </div>
 
                      <div className="mt-10 space-y-4">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Referral Meta</p>
+                        <p className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Referral Meta</p>
                         <div className="p-6 rounded-[32px] bg-slate-50 border border-slate-100/50 space-y-4">
                            <div>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Your Asset Code</p>
+                              <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2 leading-none">Your Asset Code</p>
                               <div className="flex items-center justify-between bg-white p-3 rounded-2xl border border-slate-100">
                                  <span className="text-xs font-black text-slate-900 uppercase">MYECA25</span>
                                  <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-400 hover:text-indigo-600" onClick={() => copyToClipboard("MYECA25", "Referral Code")}>
@@ -324,7 +324,7 @@ export default function ReferralsPage() {
                               <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
                                  <div className="h-full bg-indigo-600 transition-all" style={{ width: `${conversionRate}%` }} />
                               </div>
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 flex justify-between">
+                              <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-2 flex justify-between">
                                  <span>Conversion Yield</span>
                                  <span className="text-indigo-600">{conversionRate.toFixed(1)}%</span>
                               </p>
@@ -350,7 +350,7 @@ export default function ReferralsPage() {
                   <div className="flex flex-col gap-2">
                      <div className="flex items-center gap-3 mb-2">
                         <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Referral Management</span>
+                        <span className="type-meta font-black uppercase tracking-[0.2em] text-indigo-600">Referral Management</span>
                      </div>
                      <h1 className="text-4xl font-black tracking-tight text-slate-900">Earning Program</h1>
                      <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
@@ -377,11 +377,11 @@ export default function ReferralsPage() {
 
                <Tabs defaultValue="referrals" className="space-y-10">
                   <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-x-auto no-scrollbar justify-start sm:justify-center">
-                     <TabsTrigger value="referrals" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Active Queue</TabsTrigger>
-                     <TabsTrigger value="rewards" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Reward Vault</TabsTrigger>
-                     <TabsTrigger value="leaderboard" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Leaderboard</TabsTrigger>
-                     <TabsTrigger value="bulk-import" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Batch Import</TabsTrigger>
-                     <TabsTrigger value="analytics" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Performance Analytics</TabsTrigger>
+                     <TabsTrigger value="referrals" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Active Queue</TabsTrigger>
+                     <TabsTrigger value="rewards" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Reward Vault</TabsTrigger>
+                     <TabsTrigger value="leaderboard" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Leaderboard</TabsTrigger>
+                     <TabsTrigger value="bulk-import" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Batch Import</TabsTrigger>
+                     <TabsTrigger value="analytics" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Performance Analytics</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="referrals" className="outline-none">
@@ -416,22 +416,22 @@ export default function ReferralsPage() {
                                              </div>
                                              <div>
                                                 <h4 className="text-lg font-black text-slate-900 mb-1">{referral.refereeName}</h4>
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{referral.refereeEmail}</p>
+                                                <p className="type-meta font-black text-slate-400 uppercase tracking-widest">{referral.refereeEmail}</p>
                                                 <div className="flex items-center gap-4 mt-3">
-                                                   <Badge variant="outline" className="text-[8px] font-black uppercase border-slate-200 text-slate-500">{referral.serviceType.replace("_", " ")}</Badge>
-                                                   <span className="text-[9px] font-black text-slate-400 uppercase">Code: {referral.referralCode}</span>
+                                                   <Badge variant="outline" className="type-meta font-black uppercase border-slate-200 text-slate-500">{referral.serviceType.replace("_", " ")}</Badge>
+                                                   <span className="type-meta font-black text-slate-400 uppercase">Code: {referral.referralCode}</span>
                                                 </div>
                                              </div>
                                           </div>
                                           <div className="flex items-center gap-6">
                                              {referral.status === "pending" && (
-                                                <Button variant="ghost" size="sm" onClick={() => sendReminderEmail(referral.id)} className="h-10 px-6 rounded-xl text-slate-400 hover:text-indigo-600 font-black text-[9px] uppercase tracking-widest">
+                                                <Button variant="ghost" size="sm" onClick={() => sendReminderEmail(referral.id)} className="h-10 px-6 rounded-xl text-slate-400 hover:text-indigo-600 font-black type-meta uppercase tracking-widest">
                                                    <Send className="h-3.5 w-3.5 mr-2" />
                                                    Remind
                                                 </Button>
                                              )}
                                              <div className="text-right">
-                                                <Badge className={cn("border-none font-black text-[10px] uppercase px-4 py-1.5 rounded-xl", `bg-${statusColors[referral.status]}-50 text-${statusColors[referral.status]}-600`)}>
+                                                <Badge className={cn("border-none font-black type-meta uppercase px-4 py-1.5 rounded-xl", `bg-${statusColors[referral.status]}-50 text-${statusColors[referral.status]}-600`)}>
                                                    {referral.status}
                                                 </Badge>
                                                 {referral.rewardEarned && (
@@ -454,25 +454,25 @@ export default function ReferralsPage() {
                            <div className="h-16 w-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6">
                               <Coins className="h-8 w-8" />
                            </div>
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Liquid Rewards</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Liquid Rewards</p>
                            <h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{stats.availableRewards}</h4>
-                           <Button className="mt-8 w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[10px] uppercase tracking-widest">Redeem to Bank</Button>
+                           <Button className="mt-8 w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black type-meta uppercase tracking-widest">Redeem to Bank</Button>
                         </Card>
                         <Card className="border-none shadow-sm rounded-[40px] bg-white p-10 flex flex-col items-center text-center">
                            <div className="h-16 w-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
                               <Gift className="h-8 w-8" />
                            </div>
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Minted</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Total Minted</p>
                            <h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{stats.totalRewards}</h4>
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">Lifetime Yield</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">Lifetime Yield</p>
                         </Card>
                         <Card className="border-none shadow-sm rounded-[40px] bg-white p-10 flex flex-col items-center text-center">
                            <div className="h-16 w-16 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
                               <Trophy className="h-8 w-8" />
                            </div>
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Rewards Claimed</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Rewards Claimed</p>
                            <h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{stats.redeemedRewards}</h4>
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">Verified Payouts</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">Verified Payouts</p>
                         </Card>
                      </div>
 
@@ -497,15 +497,15 @@ export default function ReferralsPage() {
                                           </div>
                                           <div>
                                              <h4 className="text-lg font-black text-slate-900 leading-none mb-2">₹{reward.amount} Credit</h4>
-                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{reward.description}</p>
-                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-3">Valid until: {format(new Date(reward.expiryDate), "MMM dd, yyyy")}</p>
+                                             <p className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none">{reward.description}</p>
+                                             <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-3">Valid until: {format(new Date(reward.expiryDate), "MMM dd, yyyy")}</p>
                                           </div>
                                        </div>
                                        <div>
                                           {reward.status === "available" ? (
-                                             <Button size="sm" onClick={() => redeemRewardMutation.mutate(reward.id)} className="h-11 px-8 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[10px] uppercase tracking-widest">Redeem</Button>
+                                             <Button size="sm" onClick={() => redeemRewardMutation.mutate(reward.id)} className="h-11 px-8 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black type-meta uppercase tracking-widest">Redeem</Button>
                                           ) : (
-                                             <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black text-[10px] uppercase tracking-widest">{reward.status}</Badge>
+                                             <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black type-meta uppercase tracking-widest">{reward.status}</Badge>
                                           )}
                                        </div>
                                     </div>
@@ -537,12 +537,12 @@ export default function ReferralsPage() {
                                        </Avatar>
                                        <div>
                                           <h4 className="text-xl font-black tracking-tight">{leader.userName}</h4>
-                                          <p className={cn("text-[10px] font-black uppercase tracking-widest", index === 0 ? "text-indigo-100" : "text-slate-400")}>{leader.successfulReferrals} Conversions</p>
+                                          <p className={cn("type-meta font-black uppercase tracking-widest", index === 0 ? "text-indigo-100" : "text-slate-400")}>{leader.successfulReferrals} Conversions</p>
                                        </div>
                                     </div>
                                     <div className="text-right">
                                        <p className={cn("text-2xl font-black tracking-tighter", index === 0 ? "text-white" : "text-emerald-600")}>₹{leader.totalRewards}</p>
-                                       <p className={cn("text-[10px] font-black uppercase tracking-widest", index === 0 ? "text-indigo-100" : "text-slate-400")}>Total Earnings</p>
+                                       <p className={cn("type-meta font-black uppercase tracking-widest", index === 0 ? "text-indigo-100" : "text-slate-400")}>Total Earnings</p>
                                     </div>
                                  </div>
                               ))}
@@ -570,10 +570,10 @@ export default function ReferralsPage() {
                               </Button>
                               <Input type="file" accept=".csv" className="hidden" id="csv-upload" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleBulkImport(file); }} />
                               <div className="flex items-center justify-center gap-8 mt-4">
-                                 <Button variant="link" onClick={() => { }} className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Download Template.csv</Button>
+                                 <Button variant="link" onClick={() => { }} className="type-meta font-black uppercase tracking-widest text-indigo-600">Download Template.csv</Button>
                                  <div className="flex items-center gap-3">
                                     <Checkbox id="send-emails" checked={sendEmailsOnImport} onCheckedChange={(checked) => setSendEmailsOnImport(checked as boolean)} />
-                                    <Label htmlFor="send-emails" className="text-[10px] font-black uppercase tracking-widest text-slate-400">Auto-notify leads</Label>
+                                    <Label htmlFor="send-emails" className="type-meta font-black uppercase tracking-widest text-slate-400">Auto-notify leads</Label>
                                  </div>
                               </div>
                            </div>
@@ -588,7 +588,7 @@ export default function ReferralsPage() {
                                        </div>
                                        <div>
                                           <p className="text-2xl font-black text-slate-900 leading-none mb-1">{bulkImportResults.summary.imported}</p>
-                                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Successful</p>
+                                          <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Successful</p>
                                        </div>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -597,7 +597,7 @@ export default function ReferralsPage() {
                                        </div>
                                        <div>
                                           <p className="text-2xl font-black text-slate-900 leading-none mb-1">{bulkImportResults.summary.failed}</p>
-                                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Failed</p>
+                                          <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Failed</p>
                                        </div>
                                     </div>
                                  </div>
@@ -623,7 +623,7 @@ export default function ReferralsPage() {
                                     </div>
                                     <div>
                                        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Conversion Funnel</h3>
-                                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Outreach to Liquid Reward lifecycle</p>
+                                       <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Outreach to Liquid Reward lifecycle</p>
                                     </div>
                                  </div>
                                  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -634,7 +634,7 @@ export default function ReferralsPage() {
                                        { label: "Conversion Yield", value: `${analytics.conversionFunnel.conversionRate.toFixed(1)}%`, color: "indigo" }
                                     ].map((f, i) => (
                                        <div key={i} className="p-8 rounded-[32px] bg-slate-50 border border-slate-100/50">
-                                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{f.label}</p>
+                                          <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2">{f.label}</p>
                                           <p className={cn("text-3xl font-black tracking-tighter", `text-${f.color}-600`)}>{f.value}</p>
                                        </div>
                                     ))}
@@ -652,21 +652,21 @@ export default function ReferralsPage() {
                                              </div>
                                              <div>
                                                 <h4 className="text-lg font-black text-slate-900 uppercase tracking-tight">{service.replace(/_/g, ' ')}</h4>
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Market Vertical</p>
+                                                <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Market Vertical</p>
                                              </div>
                                           </div>
                                           <div className="flex items-center gap-12">
                                              <div className="text-center">
                                                 <p className="text-xl font-black text-slate-900">{data.total}</p>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase">Leads</p>
+                                                <p className="type-meta font-black text-slate-400 uppercase">Leads</p>
                                              </div>
                                              <div className="text-center">
                                                 <p className="text-xl font-black text-emerald-600">{data.converted}</p>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase">Converted</p>
+                                                <p className="type-meta font-black text-slate-400 uppercase">Converted</p>
                                              </div>
                                              <div className="text-center">
                                                 <p className="text-xl font-black text-indigo-600">₹{data.revenue}</p>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase">Earned</p>
+                                                <p className="type-meta font-black text-slate-400 uppercase">Earned</p>
                                              </div>
                                           </div>
                                        </div>

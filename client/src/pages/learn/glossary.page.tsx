@@ -105,7 +105,7 @@ export default function GlossaryPage() {
       />
 
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 mb-3">Financial Glossary</h1>
+        <h1 className="type-page-title mb-3 font-bold text-slate-900">Financial Glossary</h1>
         <p className="text-slate-600 mb-6">Master the language of money</p>
         
         <div className="relative max-w-lg mx-auto">

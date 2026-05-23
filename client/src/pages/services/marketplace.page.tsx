@@ -81,7 +81,7 @@ export default function ServicesMarketplacePage() {
         <div className="group relative flex flex-col h-full bg-white/70 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-7 hover:border-white hover:bg-white/90 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-blue-100 transition-all duration-500 cursor-pointer overflow-hidden">
           {service.badge && (
             <div className="mb-4">
-              <span className="text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-xl bg-orange-400/10 text-orange-600 border border-orange-400/20 backdrop-blur-sm">
+              <span className="type-meta rounded-xl border border-orange-400/20 bg-orange-400/10 px-3 py-1.5 font-black text-orange-600 backdrop-blur-sm">
                 {service.badge}
               </span>
             </div>
@@ -100,7 +100,7 @@ export default function ServicesMarketplacePage() {
               <h3 className="text-lg font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">
                 {service.name}
               </h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+              <p className="type-meta mt-1 font-bold text-slate-400">
                 {SERVICE_CATEGORIES.find(c => c.id === service.category)?.name}
               </p>
             </div>
@@ -129,7 +129,7 @@ export default function ServicesMarketplacePage() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                    <Clock className="h-3 w-3 text-slate-400" />
-                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{service.timeline}</span>
+                   <span className="type-meta font-bold text-slate-400">{service.timeline}</span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-black text-slate-900 tracking-tight">
@@ -143,7 +143,7 @@ export default function ServicesMarketplacePage() {
                 </div>
               </div>
               {hasDiscount && (
-                <div className="px-2.5 py-1 rounded-lg bg-green-50 text-green-600 text-[10px] font-black border border-green-100">
+                <div className="type-meta rounded-lg border border-green-100 bg-green-50 px-2.5 py-1 font-black text-green-600">
                   {discount}% OFF
                 </div>
               )}
@@ -194,7 +194,7 @@ export default function ServicesMarketplacePage() {
               <m.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200 bg-white shadow-sm text-slate-500 text-[10px] font-black uppercase tracking-widest mb-6"
+                className="type-meta mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 font-black text-slate-500 shadow-sm"
               >
                 <Rocket className="w-3.5 h-3.5 text-blue-500" />
                 Service Directory
@@ -204,7 +204,7 @@ export default function ServicesMarketplacePage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-5"
+                className="type-page-title mb-5 font-black text-slate-900"
               >
                 CA Services <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Marketplace</span>
               </m.h1>
@@ -239,7 +239,7 @@ export default function ServicesMarketplacePage() {
                     <button
                       onClick={() => setSelectedCategory('all')}
                       className={cn(
-                        "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
+                        "type-meta whitespace-nowrap rounded-xl px-5 py-2.5 font-black transition-all",
                         selectedCategory === 'all'
                           ? "bg-blue-700 text-white shadow-lg shadow-slate-300"
                           : "text-slate-400 hover:text-slate-700 hover:bg-white"
@@ -252,7 +252,7 @@ export default function ServicesMarketplacePage() {
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
                         className={cn(
-                          "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2",
+                          "type-meta flex whitespace-nowrap items-center gap-2 rounded-xl px-5 py-2.5 font-black transition-all",
                           selectedCategory === category.id
                             ? "bg-blue-700 text-white shadow-lg shadow-slate-300"
                             : "text-slate-400 hover:text-slate-700 hover:bg-white"
@@ -284,7 +284,7 @@ export default function ServicesMarketplacePage() {
                         </div>
                         <div>
                           <h3 className="text-lg font-black text-slate-800 leading-none">Quick Tips</h3>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1.5">Marketplace Guide</p>
+                          <p className="type-meta mt-1.5 font-bold text-slate-400">Marketplace Guide</p>
                         </div>
                       </div>
                       <ul className="space-y-4">
@@ -347,7 +347,7 @@ export default function ServicesMarketplacePage() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => {setSearchQuery(""); setSelectedCategory("all");}}
-                className="text-blue-600 font-black text-[10px] uppercase tracking-widest hover:bg-blue-50"
+                className="type-meta font-black text-blue-600 hover:bg-blue-50"
               >
                 Clear Filters
               </Button>
@@ -389,7 +389,7 @@ export default function ServicesMarketplacePage() {
                     </div>
                     <Button 
                       variant="ghost"
-                      className="font-black text-[10px] uppercase tracking-widest text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                      className="type-meta font-black text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                       onClick={() => setSelectedCategory(category.id)}
                     >
                       Explore All ({categoryServices.length}) <ChevronRight className="h-4 w-4 ml-1" />
@@ -420,7 +420,7 @@ export default function ServicesMarketplacePage() {
                   <Icon className="w-6 h-6 text-blue-600" />
                 </div>
                 <p className="text-sm font-black text-slate-800 tracking-tight">{label}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{sub}</p>
+                <p className="type-meta mt-1 font-bold text-slate-400">{sub}</p>
               </div>
             ))}
           </div>
@@ -434,11 +434,11 @@ export default function ServicesMarketplacePage() {
             <>
               <DialogHeader>
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+                  <span className="type-meta rounded-xl border border-blue-100 bg-blue-50 px-3 py-1.5 font-black text-blue-600">
                     {SERVICE_CATEGORIES.find(c => c.id === selectedService.category)?.name}
                   </span>
                   {selectedService.badge && (
-                    <span className="text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-xl bg-orange-50 text-orange-600 border border-orange-100">
+                    <span className="type-meta rounded-xl border border-orange-100 bg-orange-50 px-3 py-1.5 font-black text-orange-600">
                       {selectedService.badge}
                     </span>
                   )}
@@ -454,7 +454,7 @@ export default function ServicesMarketplacePage() {
               <div className="space-y-8 py-6">
                 <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Price</p>
+                    <p className="type-meta mb-1 font-black text-slate-400">Price</p>
                     <p className="text-4xl font-black text-slate-900 tracking-tight">
                       {getPricingByServiceId(selectedService.id)
                         ? formatPricingLabel(getPricingByServiceId(selectedService.id)!.pricing)
@@ -465,7 +465,7 @@ export default function ServicesMarketplacePage() {
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Expected Timeline</p>
+                    <p className="type-meta mb-1 font-black text-slate-400">Expected Timeline</p>
                     <div className="flex items-center gap-2 justify-end text-slate-900 font-black">
                        <Clock className="w-4 h-4 text-blue-600" />
                        {selectedService.timeline}

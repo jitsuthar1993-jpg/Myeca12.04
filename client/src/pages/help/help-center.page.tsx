@@ -168,7 +168,7 @@ export default function HelpCenterPage() {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 tracking-tight">
+              <h1 className="type-page-title mb-6 font-black text-slate-900">
                 How can we <span className="text-blue-600 italic">help you?</span>
               </h1>
               <p className="text-xl mb-10 text-slate-500 font-medium leading-relaxed">

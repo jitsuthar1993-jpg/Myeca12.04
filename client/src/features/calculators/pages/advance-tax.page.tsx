@@ -147,7 +147,7 @@ export default function AdvanceTaxCalculatorPage() {
         sidebar={
           <CalcGlassSidebar title="Compliance Overview">
             <div className="space-y-1 pb-6 border-b border-white/20">
-              <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Net Tax Liability</p>
+              <p className="type-meta font-normal uppercase tracking-widest text-slate-400">Net Tax Liability</p>
               <AnimatePresence mode="wait">
                 <motion.p 
                   key={calculations.netTaxLiability} 
@@ -168,7 +168,7 @@ export default function AdvanceTaxCalculatorPage() {
               {!calculations.advanceTaxRequired && (
                 <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-200 mt-4 flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <p className="text-[10px] font-normal text-emerald-700 leading-relaxed uppercase tracking-widest">No Advance Tax Required (&lt;₹10k)</p>
+                  <p className="type-meta font-normal uppercase leading-relaxed tracking-widest text-emerald-700">No Advance Tax Required (&lt;₹10k)</p>
                 </div>
               )}
 
@@ -176,10 +176,10 @@ export default function AdvanceTaxCalculatorPage() {
                 <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 mt-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <Bell className="w-4 h-4 text-amber-600" />
-                    <p className="text-[10px] font-normal text-amber-700 uppercase tracking-widest">Next Due Date</p>
+                    <p className="type-meta font-normal uppercase tracking-widest text-amber-700">Next Due Date</p>
                   </div>
                   <p className="text-sm font-normal text-slate-900">{calculations.quarterlyAnalysis[currentQuarter - 1].dueDate}</p>
-                  <p className="text-[10px] text-slate-500 font-normal italic">Installment Target: {calculations.quarterlyAnalysis[currentQuarter - 1].cumulativePercent}%</p>
+                  <p className="type-meta font-normal italic text-slate-500">Installment Target: {calculations.quarterlyAnalysis[currentQuarter - 1].cumulativePercent}%</p>
                 </div>
               )}
             </div>
@@ -196,7 +196,7 @@ export default function AdvanceTaxCalculatorPage() {
         <div className="space-y-8">
           <CalcInputCard title="Tax Configuration" icon={<ShieldCheck className="w-5 h-5" />}>
              <div className="space-y-4 mb-8">
-                <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Financial Year</label>
+                <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Financial Year</label>
                 <div className="grid grid-cols-2 gap-3">
                   {["2026-27", "2025-26"].map((fy) => (
                     <button
@@ -211,7 +211,7 @@ export default function AdvanceTaxCalculatorPage() {
                     </button>
                   ))}
                 </div>
-                <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Tax Regime</label>
+                <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Tax Regime</label>
                 <div className="grid grid-cols-2 gap-3">
                   {['new', 'old'].map((r) => (
                     <button
@@ -257,7 +257,7 @@ export default function AdvanceTaxCalculatorPage() {
              <div className="grid grid-cols-2 gap-4 mb-8">
                 {(['q1', 'q2', 'q3', 'q4'] as const).map((q, i) => (
                   <div key={q} className="space-y-2">
-                    <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">
+                    <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">
                       {calculations.quarterlyAnalysis[i].quarter} Paid (INR)
                     </label>
                     <Input 
@@ -275,7 +275,7 @@ export default function AdvanceTaxCalculatorPage() {
              </div>
 
              <div className="space-y-6 pt-6 border-t border-slate-50">
-                <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest px-1">Payment Progress</label>
+                <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Payment Progress</label>
                 <div className="space-y-4">
                   {calculations.quarterlyAnalysis.map((q, i) => (
                     <div key={i} className="space-y-2">
@@ -285,7 +285,7 @@ export default function AdvanceTaxCalculatorPage() {
                       </div>
                       <Progress value={(q.paidTillQuarter / q.cumulativeAmount) * 100} className="h-2 bg-slate-100" />
                       {q.shortfall > 0 && (
-                        <p className="text-[10px] font-normal text-red-500 uppercase tracking-widest">Shortfall: {formatCurrency(q.shortfall)}</p>
+                        <p className="type-meta font-normal uppercase tracking-widest text-red-500">Shortfall: {formatCurrency(q.shortfall)}</p>
                       )}
                     </div>
                   ))}

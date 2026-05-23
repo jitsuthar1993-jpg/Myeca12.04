@@ -26,7 +26,7 @@ export default function CalcInputCard({
               {icon}
             </div>
           )}
-          <h3 className="text-lg font-normal text-slate-900 tracking-tight">
+          <h3 className="type-card-title font-normal text-slate-900">
             {title}
           </h3>
         </div>
@@ -53,7 +53,7 @@ export function CalcInputGroup({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <label className="text-[11px] font-normal text-slate-500 uppercase tracking-widest">
+        <label className="type-meta font-normal uppercase tracking-widest text-slate-500">
           {label}
         </label>
         {badgeValue && (

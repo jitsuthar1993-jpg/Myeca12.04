@@ -150,7 +150,7 @@ export default function VideoTutorialsPage() {
               <Play className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Lesson Outlines</h1>
+              <h1 className="type-page-title font-bold">Lesson Outlines</h1>
               <p className="text-red-200 mt-1">
                 Browse expert-prepared lesson outlines for tax filing, savings, and compliance
               </p>

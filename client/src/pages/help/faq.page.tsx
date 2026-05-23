@@ -197,7 +197,7 @@ export default function FAQPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <HelpCircle className="w-16 h-16 mx-auto mb-4 text-blue-200" />
-              <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+              <h1 className="type-page-title mb-4 font-bold">Frequently Asked Questions</h1>
               <p className="text-xl text-blue-100 mb-8">
                 Get answers to common questions about our tax filing services
               </p>

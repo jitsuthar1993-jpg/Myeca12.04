@@ -150,10 +150,10 @@ export default function UnifiedAccountPage() {
           <div className="space-y-1">
              <div className="flex items-center gap-2 text-blue-600 mb-1">
                 <Sparkles className="h-4 w-4" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">User Preferences</span>
+                <span className="type-meta font-black uppercase">User Preferences</span>
              </div>
-             <h1 className="text-4xl font-black tracking-tight text-slate-900">Account Control</h1>
-             <p className="text-slate-500 font-medium text-sm">Manage your profile details and account security in one place.</p>
+             <h1 className="type-page-title font-black text-slate-900">Account Control</h1>
+             <p className="type-support font-medium text-slate-500">Manage your profile details and account security in one place.</p>
           </div>
           <Button 
             onClick={() => logout()}
@@ -183,13 +183,13 @@ export default function UnifiedAccountPage() {
                         </div>
                      </div>
                      <div className="mt-6 text-center">
-                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">{displayName}</h2>
+                        <h2 className="type-section-title font-black text-slate-900">{displayName}</h2>
                         <div className="mt-3 space-y-1 text-xs font-semibold text-slate-500">
                            <p className="break-all">{displayEmail}</p>
                            <p>{displayPhone}</p>
                         </div>
                         <div className="flex items-center justify-center gap-2 mt-2">
-                           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                           <Badge variant="outline" className="type-meta border-none bg-blue-50 px-2.5 py-0.5 font-black uppercase text-blue-700">
                               {accountUser?.role?.replace('_', ' ') || 'user'}
                            </Badge>
                            {accountUser?.isVerified && (
@@ -223,8 +223,8 @@ export default function UnifiedAccountPage() {
                               <tab.icon className="h-5 w-5" />
                            </div>
                            <div className="flex flex-col min-w-0">
-                              <span className="font-bold text-sm tracking-tight">{tab.label}</span>
-                              <span className={cn("text-[10px] font-medium truncate", activeTab === tab.id ? "text-blue-100" : "text-slate-400")}>{tab.desc}</span>
+                              <span className="text-sm font-bold">{tab.label}</span>
+                              <span className={cn("type-meta truncate font-medium", activeTab === tab.id ? "text-blue-100" : "text-slate-400")}>{tab.desc}</span>
                            </div>
                            {activeTab === tab.id && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}
                         </button>
@@ -250,12 +250,12 @@ export default function UnifiedAccountPage() {
                            <div>
                               <div className="flex items-center gap-3 mb-2">
                                  <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Identity Profile</span>
+                                 <span className="type-meta font-black uppercase text-blue-600">Identity Profile</span>
                               </div>
-                              <CardTitle className="text-3xl font-black text-slate-900 tracking-tight">General Information</CardTitle>
+                              <CardTitle className="type-section-title font-black text-slate-900">General Information</CardTitle>
                               <CardDescription className="text-sm font-medium text-slate-500 mt-2">Update your personal and legal identifiers used for official filings.</CardDescription>
                            </div>
-                           <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-none px-4 py-1.5 font-black text-[9px] uppercase tracking-widest">Active Profile</Badge>
+                           <Badge variant="outline" className="type-meta border-none bg-emerald-50 px-4 py-1.5 font-black uppercase text-emerald-700">Active Profile</Badge>
                         </CardHeader>
                         <CardContent className="p-10">
                            {isLoadingProfile ? (
@@ -271,7 +271,7 @@ export default function UnifiedAccountPage() {
                                           name="firstName"
                                           render={({ field }) => (
                                              <FormItem className="space-y-3">
-                                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Legal First Name</FormLabel>
+                                                <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">Legal First Name</FormLabel>
                                                 <FormControl>
                                                    <div className="relative">
                                                       <User className="absolute left-4 top-4 h-5 w-5 text-slate-300" />
@@ -287,7 +287,7 @@ export default function UnifiedAccountPage() {
                                           name="lastName"
                                           render={({ field }) => (
                                              <FormItem className="space-y-3">
-                                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Legal Last Name</FormLabel>
+                                                <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">Legal Last Name</FormLabel>
                                                 <FormControl>
                                                    <div className="relative">
                                                       <User className="absolute left-4 top-4 h-5 w-5 text-slate-300" />
@@ -306,7 +306,7 @@ export default function UnifiedAccountPage() {
                                           name="email"
                                           render={({ field }) => (
                                              <FormItem className="space-y-3">
-                                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</FormLabel>
+                                                <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">Email Address</FormLabel>
                                                 <FormControl>
                                                    <div className="relative">
                                                       <Mail className="absolute left-4 top-4 h-5 w-5 text-slate-300" />
@@ -322,7 +322,7 @@ export default function UnifiedAccountPage() {
                                           name="phoneNumber"
                                           render={({ field }) => (
                                              <FormItem className="space-y-3">
-                                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Phone Number</FormLabel>
+                                                <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">Phone Number</FormLabel>
                                                 <FormControl>
                                                    <div className="relative">
                                                       <Phone className="absolute left-4 top-4 h-5 w-5 text-slate-300" />
@@ -362,7 +362,7 @@ export default function UnifiedAccountPage() {
                               )}>
                                  <stat.icon className="h-7 w-7" />
                               </div>
-                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{stat.label}</p>
+                              <p className="type-meta mb-2 font-black uppercase text-slate-400">{stat.label}</p>
                               <p className="text-base font-black text-slate-900">{stat.value}</p>
                            </div>
                         ))}
@@ -382,9 +382,9 @@ export default function UnifiedAccountPage() {
                         <CardHeader className="p-10 border-b border-slate-50">
                            <div className="flex items-center gap-3 mb-2">
                               <div className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
-                              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600">Secure Access</span>
+                              <span className="type-meta font-black uppercase text-red-600">Secure Access</span>
                            </div>
-                           <CardTitle className="text-3xl font-black text-slate-900 tracking-tight">Security Credentials</CardTitle>
+                           <CardTitle className="type-section-title font-black text-slate-900">Security Credentials</CardTitle>
                            <CardDescription className="text-sm font-medium text-slate-500 mt-2">Manage your authentication protocols and password security.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-10">
@@ -395,7 +395,7 @@ export default function UnifiedAccountPage() {
                                     name="current_password"
                                     render={({ field }) => (
                                        <FormItem className="space-y-3">
-                                          <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Current Password</FormLabel>
+                                          <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">Current Password</FormLabel>
                                           <FormControl>
                                              <div className="relative">
                                                 <Lock className="absolute left-4 top-4 h-5 w-5 text-slate-300" />
@@ -413,7 +413,7 @@ export default function UnifiedAccountPage() {
                                        name="new_password"
                                        render={({ field }) => (
                                           <FormItem className="space-y-3">
-                                             <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">New Password</FormLabel>
+                                             <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">New Password</FormLabel>
                                              <FormControl>
                                                 <Input type="password" {...field} className="h-14 rounded-2xl bg-slate-50/50 border-slate-100 focus-visible:ring-blue-500 font-bold text-base" />
                                              </FormControl>
@@ -426,7 +426,7 @@ export default function UnifiedAccountPage() {
                                        name="confirm_password"
                                        render={({ field }) => (
                                           <FormItem className="space-y-3">
-                                             <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Confirm New Password</FormLabel>
+                                             <FormLabel className="type-meta ml-1 font-black uppercase text-slate-400">Confirm New Password</FormLabel>
                                              <FormControl>
                                                 <Input type="password" {...field} className="h-14 rounded-2xl bg-slate-50/50 border-slate-100 focus-visible:ring-blue-500 font-bold text-base" />
                                              </FormControl>
@@ -455,7 +455,7 @@ export default function UnifiedAccountPage() {
                                     <Fingerprint className="h-8 w-8" />
                                  </div>
                                  <div>
-                                    <h3 className="text-2xl font-black text-slate-900 tracking-tight">Multi-Factor Authentication</h3>
+                                    <h3 className="type-section-title font-black text-slate-900">Multi-Factor Authentication</h3>
                                     <p className="text-sm font-medium text-slate-500 mt-1">Fortify your account with biometrics or authenticator apps.</p>
                                  </div>
                               </div>

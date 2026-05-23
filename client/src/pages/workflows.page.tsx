@@ -186,14 +186,14 @@ export default function WorkflowsPage() {
                    </div>
                    <div className="mt-5 text-center">
                       <h2 className="text-xl font-black text-slate-900 tracking-tight">Automation Engine</h2>
-                      <Badge variant="outline" className="mt-2 bg-purple-50 text-purple-700 border-none font-black text-[9px] uppercase tracking-widest px-2.5 py-0.5">
+                      <Badge variant="outline" className="mt-2 bg-purple-50 text-purple-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                          {workflows.length} Active Workflows
                       </Badge>
                    </div>
                 </div>
 
                 <div className="mt-10 space-y-2">
-                   <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Workflow Status</Label>
+                   <Label className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Workflow Status</Label>
                    <div className="grid grid-cols-2 gap-3">
                       {[
                         { label: "Healthy", value: workflowStats.healthy, color: "emerald" },
@@ -202,7 +202,7 @@ export default function WorkflowsPage() {
                         { label: "Paused", value: workflowStats.paused, color: "slate" }
                       ].map((stat, i) => (
                         <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
-                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
+                           <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
                            <span className={cn("text-sm font-black leading-none", `text-${stat.color}-600`)}>{String(stat.value).padStart(2, "0")}</span>
                         </div>
                       ))}
@@ -215,8 +215,8 @@ export default function WorkflowsPage() {
              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2" />
              <Plus className="h-8 w-8 text-purple-500 mb-6" />
              <h3 className="font-black text-xl leading-tight mb-3 text-slate-900">New Automation</h3>
-             <p className="text-slate-500 text-[10px] font-medium leading-relaxed mb-6">Create a bespoke workflow from scratch or use our high-conversion templates.</p>
-             <Button onClick={() => setIsCreateDialogOpen(true)} className="w-full bg-purple-600 text-white hover:bg-purple-700 font-black text-[10px] uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-purple-100 border-none">Initialize Creation</Button>
+             <p className="text-slate-500 type-meta font-medium leading-relaxed mb-6">Create a bespoke workflow from scratch or use our high-conversion templates.</p>
+             <Button onClick={() => setIsCreateDialogOpen(true)} className="w-full bg-purple-600 text-white hover:bg-purple-700 font-black type-meta uppercase tracking-widest h-11 rounded-2xl shadow-lg shadow-purple-100 border-none">Initialize Creation</Button>
           </div>
         </div>
 
@@ -226,7 +226,7 @@ export default function WorkflowsPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mb-2">
                  <div className="h-2 w-2 rounded-full bg-purple-600 animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600">Operations Control</span>
+                 <span className="type-meta font-black uppercase tracking-[0.2em] text-purple-600">Operations Control</span>
               </div>
               <h1 className="text-4xl font-black tracking-tight text-slate-900">Workflow Orchestrator</h1>
               <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
@@ -237,22 +237,22 @@ export default function WorkflowsPage() {
 
           <Tabs defaultValue="active" className="space-y-10">
             <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-x-auto no-scrollbar justify-start sm:justify-center">
-               <TabsTrigger value="active" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">Active Engines</TabsTrigger>
-               <TabsTrigger value="templates" className="rounded-2xl px-8 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">Template Library</TabsTrigger>
+               <TabsTrigger value="active" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">Active Engines</TabsTrigger>
+               <TabsTrigger value="templates" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">Template Library</TabsTrigger>
             </TabsList>
 
             <TabsContent value="active" className="outline-none space-y-6">
               {isLoading ? (
                 <div className="py-40 flex flex-col items-center justify-center bg-white rounded-[48px] border border-slate-100">
                   <Loader2 className="h-12 w-12 animate-spin text-purple-200" />
-                  <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Warming up engines...</p>
+                  <p className="mt-4 type-meta font-black text-slate-400 uppercase tracking-widest">Warming up engines...</p>
                 </div>
               ) : workflows.length === 0 ? (
                 <div className="py-40 text-center bg-white rounded-[48px] border border-dashed border-slate-100">
                    <Zap className="h-16 w-16 text-slate-100 mx-auto mb-6" />
                    <h3 className="text-xl font-black text-slate-900 mb-2 tracking-tight uppercase tracking-tighter">Zero Automations Detected</h3>
                    <p className="text-slate-400 text-xs font-medium max-w-xs mx-auto leading-relaxed mb-8">Start your automation journey by deploying your first workflow from our template library.</p>
-                   <Button onClick={() => setIsCreateDialogOpen(true)} className="h-14 px-8 rounded-2xl bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest border-none">Deploy First Engine</Button>
+                   <Button onClick={() => setIsCreateDialogOpen(true)} className="h-14 px-8 rounded-2xl bg-blue-700 text-white font-black type-meta uppercase tracking-widest border-none">Deploy First Engine</Button>
                 </div>
               ) : (
                 <div className="grid gap-6">
@@ -270,7 +270,7 @@ export default function WorkflowsPage() {
                                <div className="space-y-4">
                                  <div className="flex items-center gap-4">
                                    <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase tracking-tighter">{workflow.name}</h3>
-                                   <Badge className={cn("rounded-full px-3 h-6 border-none text-[9px] font-black uppercase tracking-widest", workflow.enabled ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500")}>
+                                   <Badge className={cn("rounded-full px-3 h-6 border-none type-meta font-black uppercase tracking-widest", workflow.enabled ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500")}>
                                      {workflow.enabled ? "Operational" : "Standby"}
                                    </Badge>
                                  </div>
@@ -284,8 +284,8 @@ export default function WorkflowsPage() {
                                          <Clock className="h-4 w-4 text-slate-300" />
                                       </div>
                                       <div className="flex flex-col">
-                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Schedule</span>
-                                         <span className="text-[10px] font-black text-slate-700 uppercase">{formatNextRun(workflow.nextRun)}</span>
+                                         <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Schedule</span>
+                                         <span className="type-meta font-black text-slate-700 uppercase">{formatNextRun(workflow.nextRun)}</span>
                                       </div>
                                    </div>
                                    <div className="flex items-center gap-2">
@@ -293,8 +293,8 @@ export default function WorkflowsPage() {
                                          <Play className="h-4 w-4 text-slate-300" />
                                       </div>
                                       <div className="flex flex-col">
-                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Execution</span>
-                                         <span className="text-[10px] font-black text-slate-700 uppercase">{workflow.runs} Cycles</span>
+                                         <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Execution</span>
+                                         <span className="type-meta font-black text-slate-700 uppercase">{workflow.runs} Cycles</span>
                                       </div>
                                    </div>
                                    {workflow.lastRun && (
@@ -303,8 +303,8 @@ export default function WorkflowsPage() {
                                            <CheckCircle className="h-4 w-4 text-emerald-600" />
                                         </div>
                                         <div className="flex flex-col">
-                                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status</span>
-                                           <span className="text-[10px] font-black text-slate-700 uppercase">Success</span>
+                                           <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status</span>
+                                           <span className="type-meta font-black text-slate-700 uppercase">Success</span>
                                         </div>
                                      </div>
                                    )}
@@ -316,7 +316,7 @@ export default function WorkflowsPage() {
                                      return (
                                        <div key={index} className="px-4 h-9 bg-slate-50 rounded-xl flex items-center gap-2 border border-slate-100 hover:border-purple-200 transition-colors">
                                          <ActionIcon className="h-3.5 w-3.5 text-purple-600" />
-                                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{action.type}</span>
+                                         <span className="type-meta font-black text-slate-500 uppercase tracking-widest">{action.type}</span>
                                        </div>
                                      );
                                    })}
@@ -358,7 +358,7 @@ export default function WorkflowsPage() {
               {templatesLoading ? (
                 <div className="py-32 flex flex-col items-center justify-center bg-white rounded-[48px] border border-slate-100">
                   <Loader2 className="h-10 w-10 animate-spin text-purple-200" />
-                  <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading templates...</p>
+                  <p className="mt-4 type-meta font-black text-slate-400 uppercase tracking-widest">Loading templates...</p>
                 </div>
               ) : templates.length === 0 ? (
                 <div className="py-32 text-center bg-white rounded-[48px] border border-dashed border-slate-100">
@@ -378,10 +378,10 @@ export default function WorkflowsPage() {
                           <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100 group-hover:bg-indigo-600 group-hover:border-none transition-all">
                              <TriggerIcon className="h-7 w-7 text-indigo-600 group-hover:text-white transition-colors" />
                           </div>
-                          <Badge variant="outline" className="border-slate-100 text-[8px] font-black text-slate-400 uppercase tracking-widest px-2.5 py-0.5">{template.category}</Badge>
+                          <Badge variant="outline" className="border-slate-100 type-meta font-black text-slate-400 uppercase tracking-widest px-2.5 py-0.5">{template.category}</Badge>
                        </div>
                        <h3 className="text-xl font-black text-slate-900 mb-2 tracking-tight uppercase tracking-tighter">{template.name}</h3>
-                       <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-8">{template.description}</p>
+                       <p className="type-meta text-slate-500 font-medium leading-relaxed mb-8">{template.description}</p>
                        <div className="flex items-center justify-between mt-auto pt-6 border-t border-slate-50">
                           <div className="flex -space-x-2">
                             {template.actions.map((action, index) => {
@@ -396,7 +396,7 @@ export default function WorkflowsPage() {
                           <Button 
                             size="sm"
                             onClick={() => handleCreateFromTemplate(template)}
-                            className="h-10 px-6 rounded-xl bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest border-none hover:bg-purple-600 transition-colors"
+                            className="h-10 px-6 rounded-xl bg-blue-700 text-white font-black type-meta uppercase tracking-widest border-none hover:bg-purple-600 transition-colors"
                           >
                             Deploy
                           </Button>

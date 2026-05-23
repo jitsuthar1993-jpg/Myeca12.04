@@ -89,7 +89,7 @@ export default function HRACalculator() {
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-normal text-[#101828] tracking-tight">
+              <h1 className="type-page-title font-normal text-[#101828]">
                 HRA <span className="text-[#444CE7]">Calculator</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
@@ -99,20 +99,20 @@ export default function HRACalculator() {
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center text-[10px] font-normal text-[#475467]">
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#F2F4F7] flex items-center justify-center type-meta font-normal text-[#475467]">
                     {i === 1 ? 'JD' : i === 2 ? 'AS' : 'RK'}
                   </div>
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="text-[10px] font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
                 <p className="text-xs font-normal text-[#444CE7]">HRA Estimate Tool</p>
               </div>
               <div className="pl-2">
                 <div className="flex text-amber-400">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
-                <p className="text-[10px] font-normal text-[#667085]">Rule-Based</p>
+                <p className="type-meta font-normal text-[#667085]">Rule-Based</p>
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function HRACalculator() {
                     min={100000} 
                     step={10000} 
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 1L</span>
                     <span>Max: 50L</span>
                   </div>
@@ -191,7 +191,7 @@ export default function HRACalculator() {
                     min={0} 
                     step={5000} 
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 0</span>
                     <span>Max: 20L</span>
                   </div>
@@ -221,7 +221,7 @@ export default function HRACalculator() {
                     min={0} 
                     step={5000} 
                   />
-                  <div className="flex items-center justify-between text-[10px] text-[#667085] font-normal uppercase tracking-wider">
+                  <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 0</span>
                     <span>Max: 20L</span>
                   </div>
@@ -256,7 +256,7 @@ export default function HRACalculator() {
                           </div>
                           <div>
                             <p className={cn("text-sm font-normal", city === opt.id ? "text-[#101828]" : "text-[#344054]")}>{opt.label}</p>
-                            <p className="text-[10px] text-[#667085] font-normal">{opt.sub}</p>
+                            <p className="type-meta text-[#667085] font-normal">{opt.sub}</p>
                           </div>
                         </div>
                         {city === opt.id && (
@@ -303,7 +303,7 @@ export default function HRACalculator() {
                       </div>
                       <div>
                         <p className={cn("text-sm font-normal", item.value === minVal ? "text-[#101828]" : "text-[#344054]")}>{item.label}</p>
-                        <p className="text-[10px] text-[#667085] font-normal">{item.desc}</p>
+                        <p className="type-meta text-[#667085] font-normal">{item.desc}</p>
                       </div>
                     </div>
                     <span className={cn("text-sm font-normal", item.value === minVal ? "text-[#027A48]" : "text-[#101828]")}>
@@ -320,7 +320,7 @@ export default function HRACalculator() {
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-8">
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">HRA Summary</h2>
-                <div className="bg-[#ECFDF3] text-[#027A48] text-[10px] font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
+                <div className="bg-[#ECFDF3] text-[#027A48] type-meta font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
                   <Star className="w-3 h-3 fill-[#027A48]" />
                   Section 10(13A)
                 </div>
@@ -331,21 +331,21 @@ export default function HRACalculator() {
                 {/* Exempt HRA */}
                 <div className="p-4 rounded-[20px] border-2 border-[#ECFDF3] bg-[#F6FEF9]">
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">Exempt HRA</span>
-                  <span className="text-[10px] text-[#667085] block mb-2">Non-taxable part</span>
+                  <span className="type-meta text-[#667085] block mb-2">Non-taxable part</span>
                   <span className="text-2xl font-normal block mb-0.5 text-[#027A48]">
                     {fmt(result.exemption)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Tax Free</span>
+                  <span className="type-meta text-[#98A2B3] font-normal uppercase tracking-widest">Tax Free</span>
                 </div>
 
                 {/* Taxable HRA */}
                 <div className="p-4 rounded-[20px] border-2 border-[#FEF3F2] bg-[#FFFBFA]">
                   <span className="text-xs font-normal text-[#101828] block mb-0.5">Taxable HRA</span>
-                  <span className="text-[10px] text-[#667085] block mb-2">Added to salary</span>
+                  <span className="type-meta text-[#667085] block mb-2">Added to salary</span>
                   <span className="text-2xl font-normal block mb-0.5 text-[#B42318]">
                     {fmt(result.taxableHRA)}
                   </span>
-                  <span className="text-[10px] text-[#98A2B3] font-normal uppercase tracking-widest">Added to Tax</span>
+                  <span className="type-meta text-[#98A2B3] font-normal uppercase tracking-widest">Added to Tax</span>
                 </div>
               </div>
 
@@ -393,7 +393,7 @@ export default function HRACalculator() {
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Maximize HRA?</h4>
                   <p className="text-xs text-[#667085] mb-2">Get CA assistance for HRA optimization</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-[13px] font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
+                    <button className="text-sm font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Book Consultation
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -417,8 +417,8 @@ export default function HRACalculator() {
                 {item.icon}
               </div>
               <div className="space-y-0.5">
-                <h5 className="text-[13px] font-normal text-[#101828]">{item.label}</h5>
-                <p className="text-[11px] text-[#667085] leading-tight">{item.desc}</p>
+                <h5 className="type-support font-normal text-[#101828]">{item.label}</h5>
+                <p className="type-support text-[#667085] leading-tight">{item.desc}</p>
               </div>
             </div>
           ))}

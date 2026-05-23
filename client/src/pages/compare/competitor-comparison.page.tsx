@@ -45,7 +45,7 @@ export default function CompetitorComparisonPage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-[1.1fr_0.9fr] md:px-6 lg:px-8">
           <div>
             <Badge className="mb-5 border-blue-100 bg-blue-50 text-blue-700">Competitor capture page</Badge>
-            <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-6xl">{page.title}</h1>
+            <h1 className="type-page-title text-slate-950">{page.title}</h1>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{page.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={page.primaryCta}>

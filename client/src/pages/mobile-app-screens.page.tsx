@@ -72,7 +72,7 @@ function StatusBar({ inverted = false }: { inverted?: boolean }) {
   return (
     <div
       className={cn(
-        "flex items-center justify-between px-5 pt-4 text-[10px] font-normal tracking-[0.24em]",
+        "flex items-center justify-between px-5 pt-4 type-meta font-normal tracking-[0.24em]",
         inverted ? "text-white/90" : "text-slate-500",
       )}
     >
@@ -99,7 +99,7 @@ function BottomNav({ active }: { active: string }) {
               key={item.id}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-[10px] font-normal transition",
+                "flex flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 type-meta font-normal transition",
                 "min-h-[56px] touch-manipulation active:scale-95",
                 isActive ? "bg-blue-50 text-[#315efb]" : "text-slate-500",
               )}
@@ -135,8 +135,8 @@ function PhoneHeader({
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">MyeCA mobile</p>
-        <h3 className="mt-2 text-[22px] font-normal tracking-tight text-slate-950">{title}</h3>
+        <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">MyeCA mobile</p>
+        <h3 className="mt-2 type-card-title font-normal tracking-tight text-slate-950">{title}</h3>
         <p className="mt-1 text-sm leading-6 text-slate-500">{subtitle}</p>
       </div>
       <div className={cn("rounded-2xl p-3", tone)}>
@@ -148,7 +148,7 @@ function PhoneHeader({
 
 function ScreenTag({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-normal uppercase tracking-[0.22em] text-slate-500">
+    <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 type-meta font-normal uppercase tracking-[0.22em] text-slate-500">
       {label}
     </span>
   );
@@ -172,7 +172,7 @@ function StatPill({
 
   return (
     <div className={cn("rounded-[22px] border border-slate-100 px-4 py-3", classes)}>
-      <p className="text-[10px] font-normal uppercase tracking-[0.22em] opacity-60">{label}</p>
+      <p className="type-meta font-normal uppercase tracking-[0.22em] opacity-60">{label}</p>
       <p className="mt-1 text-lg font-normal tracking-tight">{value}</p>
     </div>
   );
@@ -218,7 +218,7 @@ export default function MobileAppScreensPage() {
             <div className="space-y-7">
               <ScreenTag label="Mobile app concept" />
               <div className="space-y-4">
-                <h1 className="max-w-3xl text-4xl font-normal tracking-tight text-slate-950 md:text-6xl">
+                <h1 className="max-w-3xl type-page-title text-slate-950">
                   MyeCA, redesigned for
                   <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#315efb] via-[#0646b2] to-[#0f766e]">
                     a mobile-first tax cockpit
@@ -320,7 +320,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 01</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 01</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Splash and welcome</h3>
               </div>
               <ScreenTag label="Onboarding" />
@@ -336,13 +336,13 @@ export default function MobileAppScreensPage() {
                       </span>
                     </div>
                     <div>
-                      <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">Smart tax solutions</p>
+                      <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Smart tax solutions</p>
                       <p className="mt-1 text-sm font-normal text-white/90">Tax, GST, and business in one place</p>
                     </div>
                   </div>
 
                   <div className="mt-8 rounded-[2rem] border border-white/15 bg-white/10 p-5 backdrop-blur-md">
-                    <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">Welcome back</p>
+                    <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Welcome back</p>
                     <h4 className="mt-2 text-2xl font-normal tracking-tight">File, track, and ask</h4>
                     <p className="mt-2 text-sm leading-6 text-white/80">
                       Upload your documents, get AI help, and let a named CA review the filing before submission.
@@ -360,7 +360,7 @@ export default function MobileAppScreensPage() {
 
                   <div className="mt-6 flex flex-wrap gap-2">
                     {["CA verified", "Secure login", "Fast setup"].map((item) => (
-                      <Badge key={item} className="rounded-full bg-white/10 px-3 py-1 text-[10px] text-white hover:bg-white/10">
+                      <Badge key={item} className="rounded-full bg-white/10 px-3 py-1 type-meta text-white hover:bg-white/10">
                         {item}
                       </Badge>
                     ))}
@@ -373,7 +373,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 02</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 02</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Home dashboard</h3>
               </div>
               <ScreenTag label="Primary hub" />
@@ -384,7 +384,7 @@ export default function MobileAppScreensPage() {
                 <div className="flex-1 space-y-4 overflow-y-auto px-5 pb-4 pt-3 scrollbar-hide-mobile">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-slate-400">Hello, Arjun</p>
+                      <p className="type-meta font-normal uppercase tracking-[0.24em] text-slate-400">Hello, Arjun</p>
                       <h4 className="mt-1 text-2xl font-normal tracking-tight text-slate-950">Your tax cockpit</h4>
                     </div>
                     <div className="rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-200">
@@ -395,7 +395,7 @@ export default function MobileAppScreensPage() {
                   <div className="rounded-[2rem] bg-gradient-to-br from-[#315efb] to-[#0646b2] p-5 text-white shadow-[0_18px_45px_-28px_rgba(49,94,251,0.75)]">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">Refund estimate</p>
+                        <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Refund estimate</p>
                         <p className="mt-2 text-3xl font-normal tracking-tight">₹18,400</p>
                       </div>
                       <div className="rounded-2xl bg-white/10 p-3">
@@ -427,7 +427,7 @@ export default function MobileAppScreensPage() {
                   <div className="rounded-[1.7rem] border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-slate-400">Today’s insight</p>
+                        <p className="type-meta font-normal uppercase tracking-[0.24em] text-slate-400">Today’s insight</p>
                         <p className="mt-1 text-sm font-normal text-slate-900">HRA deduction looks available</p>
                       </div>
                       <ChevronRight className="h-4 w-4 text-slate-300" />
@@ -446,7 +446,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 03</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 03</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">ITR filing flow</h3>
               </div>
               <ScreenTag label="Filing" />
@@ -463,7 +463,7 @@ export default function MobileAppScreensPage() {
                   />
 
                   <div className="rounded-[1.7rem] bg-slate-50 p-4">
-                    <div className="flex items-center justify-between text-[10px] font-normal uppercase tracking-[0.24em] text-slate-400">
+                    <div className="flex items-center justify-between type-meta font-normal uppercase tracking-[0.24em] text-slate-400">
                       <span>Step 2 of 4</span>
                       <span className="text-[#315efb]">CA review</span>
                     </div>
@@ -518,7 +518,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 04</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 04</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Tax tools</h3>
               </div>
               <ScreenTag label="Calculators" />
@@ -559,7 +559,7 @@ export default function MobileAppScreensPage() {
                   <div className="rounded-[1.7rem] bg-gradient-to-br from-[#315efb] to-[#082a5c] p-4 text-white shadow-[0_18px_50px_-35px_rgba(8,42,92,0.8)]">
                     <div className="flex items-end justify-between gap-4">
                       <div>
-                        <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">Savings snapshot</p>
+                        <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Savings snapshot</p>
                         <p className="mt-2 text-2xl font-normal tracking-tight">₹32,000</p>
                       </div>
                       <div className="flex h-16 items-end gap-2">
@@ -583,7 +583,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 05</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 05</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Document vault</h3>
               </div>
               <ScreenTag label="Secure storage" />
@@ -645,7 +645,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 06</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 06</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">AI assistant</h3>
               </div>
               <ScreenTag label="Chat" />
@@ -663,7 +663,7 @@ export default function MobileAppScreensPage() {
 
                   <div className="flex flex-wrap gap-2">
                     {["Salary income", "HRA check", "Old vs new", "Form 16 OCR"].map((chip) => (
-                      <Badge key={chip} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] text-white hover:bg-white/10">
+                      <Badge key={chip} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 type-meta text-white hover:bg-white/10">
                         {chip}
                       </Badge>
                     ))}
@@ -671,13 +671,13 @@ export default function MobileAppScreensPage() {
 
                   <div className="space-y-3">
                     <div className="max-w-[85%] rounded-[1.5rem] rounded-tl-md bg-white/10 p-4 backdrop-blur">
-                      <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">You</p>
+                      <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">You</p>
                       <p className="mt-2 text-sm leading-6 text-white/90">
                         Compare the new regime with my salary and rent details.
                       </p>
                     </div>
                     <div className="ml-auto max-w-[86%] rounded-[1.5rem] rounded-tr-md bg-blue-500/20 p-4">
-                      <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">MyeCA AI</p>
+                      <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">MyeCA AI</p>
                       <p className="mt-2 text-sm leading-6 text-white/90">
                         Upload Form 16 and rent receipts. I will estimate the HRA benefit, compare both regimes, and flag any CA review items.
                       </p>
@@ -705,7 +705,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 07</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 07</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Services marketplace</h3>
               </div>
               <ScreenTag label="Business" />
@@ -745,7 +745,7 @@ export default function MobileAppScreensPage() {
                             <p className="text-sm font-normal text-slate-950">{service.title}</p>
                             <p className="mt-1 text-xs leading-5 text-slate-500">{service.desc}</p>
                           </div>
-                          <span className={cn("rounded-full px-3 py-1 text-[10px] font-normal uppercase tracking-[0.22em]", service.tone)}>
+                          <span className={cn("rounded-full px-3 py-1 type-meta font-normal uppercase tracking-[0.22em]", service.tone)}>
                             {service.price}
                           </span>
                         </div>
@@ -754,7 +754,7 @@ export default function MobileAppScreensPage() {
                   </div>
 
                   <div className="rounded-[1.7rem] bg-gradient-to-br from-[#315efb] to-[#082a5c] p-4 text-white shadow-[0_18px_50px_-35px_rgba(8,42,92,0.75)]">
-                    <p className="text-[10px] font-normal uppercase tracking-[0.24em] text-blue-100">Need expert help?</p>
+                    <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Need expert help?</p>
                     <p className="mt-2 text-sm leading-6 text-blue-100/90">
                       Push people toward the same high-trust service flow used on the website.
                     </p>
@@ -772,7 +772,7 @@ export default function MobileAppScreensPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-normal uppercase tracking-[0.28em] text-slate-400">Screen 08</p>
+                <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 08</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Account and settings</h3>
               </div>
               <ScreenTag label="Profile" />
@@ -796,7 +796,7 @@ export default function MobileAppScreensPage() {
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="text-base font-normal text-slate-950">Arjun Mehta</p>
-                          <Badge className="rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] text-emerald-700 hover:bg-emerald-50">
+                          <Badge className="rounded-full bg-emerald-50 px-2.5 py-1 type-meta text-emerald-700 hover:bg-emerald-50">
                             Verified
                           </Badge>
                         </div>

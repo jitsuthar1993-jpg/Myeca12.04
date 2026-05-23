@@ -71,7 +71,7 @@ export default function PaymentsPage() {
         <section className="rounded-[32px] border border-slate-100 bg-white p-8 shadow-sm">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <Badge className="border-none bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
+              <Badge className="border-none bg-blue-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-blue-700">
                 Service-linked payments
               </Badge>
               <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-900">Payments</h1>
@@ -97,7 +97,7 @@ export default function PaymentsPage() {
                   <item.icon className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.title}</p>
+                  <p className="type-meta font-black uppercase tracking-widest text-slate-400">{item.title}</p>
                   <p className="mt-1 text-2xl font-black text-slate-900">{item.value}</p>
                 </div>
               </CardContent>
@@ -122,10 +122,10 @@ export default function PaymentsPage() {
                   <div key={service.id} className="grid gap-4 p-6 lg:grid-cols-[1fr_160px_180px_220px] lg:items-center">
                     <div className="min-w-0">
                       <p className="truncate text-base font-black text-slate-900">{service.serviceTitle || service.serviceId || 'Service request'}</p>
-                      <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{service.serviceCategory || 'General service'}</p>
+                      <p className="mt-1 type-meta font-black uppercase tracking-widest text-slate-400">{service.serviceCategory || 'General service'}</p>
                     </div>
                     <p className="text-sm font-black text-slate-900">{amountLabel(service.paymentAmount)}</p>
-                    <Badge variant="outline" className="w-fit border-none bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                    <Badge variant="outline" className="w-fit border-none bg-slate-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-slate-600">
                       {statusLabel(service.paymentStatus)}
                     </Badge>
                     <div className="flex flex-wrap gap-2 lg:justify-end">

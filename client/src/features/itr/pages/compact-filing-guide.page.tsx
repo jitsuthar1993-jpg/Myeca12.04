@@ -180,8 +180,8 @@ export function CompactFilingGuidePage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-4">
-          <h1 className="text-2xl font-bold">ITR Filing Form - AY {assessmentYear}</h1>
-          <p className="text-sm text-gray-600">Complete all sections below to file your return</p>
+          <h1 className="type-page-title">ITR Filing Form - AY {assessmentYear}</h1>
+          <p className="type-support text-gray-600">Complete all sections below to file your return</p>
         </div>
 
         {/* Main Form Grid */}
@@ -191,14 +191,14 @@ export function CompactFilingGuidePage() {
             {/* Filing Details */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm">Filing Details</CardTitle>
+                <CardTitle className="type-card-title">Filing Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <Label className="text-xs">Type</Label>
+                    <Label className="type-meta">Type</Label>
                     <Select value={filingType} onValueChange={setFilingType}>
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-8 type-meta">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -209,9 +209,9 @@ export function CompactFilingGuidePage() {
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-xs">Form</Label>
+                    <Label className="type-meta">Form</Label>
                     <Select value={itrForm} onValueChange={setItrForm}>
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-8 type-meta">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -223,9 +223,9 @@ export function CompactFilingGuidePage() {
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-xs">Regime</Label>
+                    <Label className="type-meta">Regime</Label>
                     <Select value={taxRegime} onValueChange={setTaxRegime}>
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-8 type-meta">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -241,7 +241,7 @@ export function CompactFilingGuidePage() {
             {/* Personal Information */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="type-card-title flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Personal Information
                 </CardTitle>
@@ -249,61 +249,61 @@ export function CompactFilingGuidePage() {
               <CardContent className="space-y-2">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs">PAN</Label>
+                    <Label className="type-meta">PAN</Label>
                     <Input
                       value={personalInfo.pan}
                       onChange={(e) => setPersonalInfo({...personalInfo, pan: e.target.value.toUpperCase()})}
                       placeholder="ABCDE1234F"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                       maxLength={10}
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Aadhaar</Label>
+                    <Label className="type-meta">Aadhaar</Label>
                     <Input
                       value={personalInfo.aadhaar}
                       onChange={(e) => setPersonalInfo({...personalInfo, aadhaar: e.target.value})}
                       placeholder="123456789012"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                       maxLength={12}
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Name</Label>
+                    <Label className="type-meta">Name</Label>
                     <Input
                       value={personalInfo.name}
                       onChange={(e) => setPersonalInfo({...personalInfo, name: e.target.value})}
                       placeholder="As per PAN"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">DOB</Label>
+                    <Label className="type-meta">DOB</Label>
                     <Input
                       type="date"
                       value={personalInfo.dob}
                       onChange={(e) => setPersonalInfo({...personalInfo, dob: e.target.value})}
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Mobile</Label>
+                    <Label className="type-meta">Mobile</Label>
                     <Input
                       value={personalInfo.mobile}
                       onChange={(e) => setPersonalInfo({...personalInfo, mobile: e.target.value})}
                       placeholder="9876543210"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                       maxLength={10}
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Email</Label>
+                    <Label className="type-meta">Email</Label>
                     <Input
                       type="email"
                       value={personalInfo.email}
                       onChange={(e) => setPersonalInfo({...personalInfo, email: e.target.value})}
                       placeholder="email@example.com"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                 </div>
@@ -313,7 +313,7 @@ export function CompactFilingGuidePage() {
             {/* Income Details */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="type-card-title flex items-center gap-2">
                   <Wallet className="h-4 w-4" />
                   Income Details
                 </CardTitle>
@@ -321,63 +321,63 @@ export function CompactFilingGuidePage() {
               <CardContent className="space-y-2">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs">Salary</Label>
+                    <Label className="type-meta">Salary</Label>
                     <Input
                       type="number"
                       value={income.salary}
                       onChange={(e) => setIncome({...income, salary: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">House Property</Label>
+                    <Label className="type-meta">House Property</Label>
                     <Input
                       type="number"
                       value={income.houseProperty}
                       onChange={(e) => setIncome({...income, houseProperty: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Business</Label>
+                    <Label className="type-meta">Business</Label>
                     <Input
                       type="number"
                       value={income.business}
                       onChange={(e) => setIncome({...income, business: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Capital Gains</Label>
+                    <Label className="type-meta">Capital Gains</Label>
                     <Input
                       type="number"
                       value={income.capitalGains}
                       onChange={(e) => setIncome({...income, capitalGains: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Other Sources</Label>
+                    <Label className="type-meta">Other Sources</Label>
                     <Input
                       type="number"
                       value={income.otherSources}
                       onChange={(e) => setIncome({...income, otherSources: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">TDS Deducted</Label>
+                    <Label className="type-meta">TDS Deducted</Label>
                     <Input
                       type="number"
                       value={income.tdsOnSalary}
                       onChange={(e) => setIncome({...income, tdsOnSalary: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                 </div>
@@ -390,7 +390,7 @@ export function CompactFilingGuidePage() {
             {/* Bank Details */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="type-card-title flex items-center gap-2">
                   <Building className="h-4 w-4" />
                   Bank Details
                 </CardTitle>
@@ -398,50 +398,50 @@ export function CompactFilingGuidePage() {
               <CardContent className="space-y-2">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs">Bank Name</Label>
+                    <Label className="type-meta">Bank Name</Label>
                     <Input
                       value={personalInfo.bankName}
                       onChange={(e) => setPersonalInfo({...personalInfo, bankName: e.target.value})}
                       placeholder="SBI"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Account No</Label>
+                    <Label className="type-meta">Account No</Label>
                     <Input
                       value={personalInfo.accountNumber}
                       onChange={(e) => setPersonalInfo({...personalInfo, accountNumber: e.target.value})}
                       placeholder="1234567890"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">IFSC</Label>
+                    <Label className="type-meta">IFSC</Label>
                     <Input
                       value={personalInfo.ifscCode}
                       onChange={(e) => setPersonalInfo({...personalInfo, ifscCode: e.target.value.toUpperCase()})}
                       placeholder="SBIN0001234"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Pincode</Label>
+                    <Label className="type-meta">Pincode</Label>
                     <Input
                       value={personalInfo.pincode}
                       onChange={(e) => setPersonalInfo({...personalInfo, pincode: e.target.value})}
                       placeholder="400001"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                       maxLength={6}
                     />
                   </div>
                 </div>
                 <div>
-                  <Label className="text-xs">Address</Label>
+                  <Label className="type-meta">Address</Label>
                   <Input
                     value={personalInfo.address}
                     onChange={(e) => setPersonalInfo({...personalInfo, address: e.target.value})}
                     placeholder="Complete address"
-                    className="h-8 text-xs"
+                    className="h-8 type-meta"
                   />
                 </div>
               </CardContent>
@@ -450,7 +450,7 @@ export function CompactFilingGuidePage() {
             {/* Deductions */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="type-card-title flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Deductions
                 </CardTitle>
@@ -458,65 +458,65 @@ export function CompactFilingGuidePage() {
               <CardContent className="space-y-2">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs">80C (Max 1.5L)</Label>
+                    <Label className="type-meta">80C (Max 1.5L)</Label>
                     <Input
                       type="number"
                       value={deductions.section80C}
                       onChange={(e) => setDeductions({...deductions, section80C: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                       max="150000"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">80CCD-NPS (Max 50K)</Label>
+                    <Label className="type-meta">80CCD-NPS (Max 50K)</Label>
                     <Input
                       type="number"
                       value={deductions.section80CCD}
                       onChange={(e) => setDeductions({...deductions, section80CCD: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                       max="50000"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">80D (Medical)</Label>
+                    <Label className="type-meta">80D (Medical)</Label>
                     <Input
                       type="number"
                       value={deductions.section80D}
                       onChange={(e) => setDeductions({...deductions, section80D: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">80G (Donations)</Label>
+                    <Label className="type-meta">80G (Donations)</Label>
                     <Input
                       type="number"
                       value={deductions.section80G}
                       onChange={(e) => setDeductions({...deductions, section80G: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Home Loan (24)</Label>
+                    <Label className="type-meta">Home Loan (24)</Label>
                     <Input
                       type="number"
                       value={deductions.homeLoanInterest}
                       onChange={(e) => setDeductions({...deductions, homeLoanInterest: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">80DD (Disability)</Label>
+                    <Label className="type-meta">80DD (Disability)</Label>
                     <Input
                       type="number"
                       value={deductions.section80DD}
                       onChange={(e) => setDeductions({...deductions, section80DD: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                 </div>
@@ -526,28 +526,28 @@ export function CompactFilingGuidePage() {
             {/* Tax Details */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm">Tax Paid Details</CardTitle>
+                <CardTitle className="type-card-title">Tax Paid Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-xs">TDS Other</Label>
+                    <Label className="type-meta">TDS Other</Label>
                     <Input
                       type="number"
                       value={income.tdsOther}
                       onChange={(e) => setIncome({...income, tdsOther: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Advance Tax</Label>
+                    <Label className="type-meta">Advance Tax</Label>
                     <Input
                       type="number"
                       value={income.advanceTax}
                       onChange={(e) => setIncome({...income, advanceTax: e.target.value})}
                       placeholder="0"
-                      className="h-8 text-xs"
+                      className="h-8 type-meta"
                     />
                   </div>
                 </div>
@@ -560,13 +560,13 @@ export function CompactFilingGuidePage() {
             {/* Tax Computation Summary */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="type-card-title flex items-center gap-2">
                   <Calculator className="h-4 w-4" />
                   Tax Computation
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2 type-meta">
                   <div className="flex justify-between">
                     <span>Gross Income:</span>
                     <span className="font-medium">₹{taxData.totalIncome.toLocaleString()}</span>
@@ -603,14 +603,14 @@ export function CompactFilingGuidePage() {
             {taxData.refundDue >= 0 ? (
               <Alert className="bg-green-50 border-green-200">
                 <Check className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-xs text-green-800">
+                <AlertDescription className="type-meta text-green-800">
                   Good news! You are eligible for a refund. Ensure bank details are correct.
                 </AlertDescription>
               </Alert>
             ) : (
               <Alert className="bg-red-50 border-red-200">
                 <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-xs text-red-800">
+                <AlertDescription className="type-meta text-red-800">
                   You have tax payable. Pay before filing to avoid interest.
                 </AlertDescription>
               </Alert>
@@ -619,26 +619,26 @@ export function CompactFilingGuidePage() {
             {/* Actions */}
             <Card>
               <CardHeader className="py-3">
-                <CardTitle className="text-sm">Actions</CardTitle>
+                <CardTitle className="type-card-title">Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button className="w-full h-8 text-xs" variant="outline">
+                <Button className="w-full h-8 type-meta" variant="outline">
                   <Save className="h-3 w-3 mr-1" />
                   Save Draft
                 </Button>
                 <Button 
-                  className="w-full h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full h-8 type-meta bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={handleGenerateITR}
                 >
                   <FileJson className="h-3 w-3 mr-1" />
                   Generate ITR JSON
                 </Button>
-                <Button className="w-full h-8 text-xs" variant="outline">
+                <Button className="w-full h-8 type-meta" variant="outline">
                   <FileText className="h-3 w-3 mr-1" />
                   Preview Return
                 </Button>
                 <Button 
-                  className="w-full h-8 text-xs bg-green-600 hover:bg-green-700"
+                  className="w-full h-8 type-meta bg-green-600 hover:bg-green-700"
                   onClick={handleSubmit}
                 >
                   <Send className="h-3 w-3 mr-1" />
@@ -646,11 +646,11 @@ export function CompactFilingGuidePage() {
                 </Button>
                 <Separator />
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" className="flex-1 h-8 text-xs">
+                  <Button size="sm" variant="outline" className="flex-1 h-8 type-meta">
                     <Download className="h-3 w-3 mr-1" />
                     Download PDF
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1 h-8 text-xs">
+                  <Button size="sm" variant="outline" className="flex-1 h-8 type-meta">
                     <Home className="h-3 w-3 mr-1" />
                     Dashboard
                   </Button>
@@ -661,7 +661,7 @@ export function CompactFilingGuidePage() {
             {/* Help */}
             <Alert>
               <Briefcase className="h-4 w-4" />
-              <AlertDescription className="text-xs">
+              <AlertDescription className="type-meta">
                 Need help? Request CA support at {CONTACT.supportEmail} or book a consultation.
               </AlertDescription>
             </Alert>

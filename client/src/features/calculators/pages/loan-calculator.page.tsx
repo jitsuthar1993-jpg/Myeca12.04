@@ -177,7 +177,7 @@ export default function UnifiedLoanCalculatorPage() {
                 </ResponsiveContainer>
               </div>
               <div className="space-y-1">
-                <p className="text-[11px] font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
+                <p className="type-meta font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
                 <AnimatePresence mode="wait">
                   <motion.p 
                     key={result.emi} 
@@ -199,7 +199,7 @@ export default function UnifiedLoanCalculatorPage() {
               {activeTab === 'personal' && (
                 <div className="mt-4 pt-4 border-t border-white/20">
                    <CalcResultRow label="EMI/Income Ratio" value={`${result.emiToIncomeRatio}%`} variant={result.emiToIncomeRatio > 40 ? "warning" : "success"} />
-                   <p className="text-[10px] text-slate-400 font-normal mt-1 leading-relaxed">Banks prefer &lt; 40% for personal loans.</p>
+                   <p className="type-support text-slate-400 font-normal mt-1 leading-relaxed">Banks prefer &lt; 40% for personal loans.</p>
                 </div>
               )}
             </div>
@@ -231,7 +231,7 @@ export default function UnifiedLoanCalculatorPage() {
                     )}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="text-[10px] font-normal uppercase tracking-wider">{loanConfig[type].title.split(' ')[0]}</span>
+                    <span className="type-meta font-normal uppercase tracking-wider">{loanConfig[type].title.split(' ')[0]}</span>
                   </button>
                 )
               })}
@@ -298,7 +298,7 @@ export default function UnifiedLoanCalculatorPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-normal text-slate-800">Moratorium Period</p>
-                    <p className="text-[10px] text-slate-400 font-normal">Interest calculation during study period</p>
+                    <p className="type-support text-slate-400 font-normal">Interest calculation during study period</p>
                   </div>
                   <div 
                     onClick={() => setHasMoratorium(!hasMoratorium)}

@@ -74,7 +74,7 @@ export default function ExpertsIndexPage() {
             <Badge className="bg-blue-100 text-blue-600 mb-6 px-4 py-1 text-sm font-bold border-blue-200">
               Verified Professionals
             </Badge>
-            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+            <h1 className="type-page-title text-slate-900 mb-6">
               Guidance from India's <br />
               <span className="text-blue-600">Top-Tier Financial Minds</span>
             </h1>
