@@ -15,11 +15,14 @@ The command checks the live site for:
 - `robots.txt` availability and no global `Disallow: /`.
 - `/itr/filing/` disallow in `robots.txt`.
 - `sitemap.xml` availability and substantial public URL coverage.
-- Required public URLs in the sitemap, including `/itr/form-selector`, `/services/pan-card`, `/calculators/vda-tax`, and `/startup/planning`.
+- Required public URLs in the sitemap, including ITR season campaign pages, `/itr/form-selector`, `/form16-parser`, `/capital-gains-import`, `/expert-consultation`, `/services/pan-card`, `/calculators/regime-comparator`, `/calculators/vda-tax`, and `/startup/planning`.
+- Required public URLs return `200`, are indexable, have the expected production canonical URL, and do not reuse another required page's title.
 - Private URLs excluded from the sitemap, including `/itr/filing`, `/dashboard`, `/documents`, `/reports`, and `/admin`.
 - Homepage `index, follow`.
 - `/itr/filing` and `/dashboard` `noindex`.
 - Google Search Console verification through either DNS TXT or a non-empty `google-site-verification` HTML meta tag.
+
+Run the command against `https://myeca.in` for the final launch gate. Temporary Vercel aliases may fail sitemap and canonical checks because the production SEO shell intentionally points crawlers to `https://myeca.in`.
 
 ## Vercel And Search Console Steps
 

@@ -3,15 +3,24 @@ import { resolveTxt } from "node:dns/promises";
 const defaultBaseUrl = "https://myeca.in";
 const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_INDEXING_BASE_URL || defaultBaseUrl);
 
-const requiredSitemapRoutes = [
+const requiredPublicRoutes = [
   "/",
   "/blog",
   "/itr/form-selector",
+  "/form16-parser",
+  "/capital-gains-import",
+  "/expert-consultation",
   "/services/itr-for-salaried",
   "/services/pan-card",
   "/calculators/income-tax",
+  "/calculators/regime-comparator",
   "/calculators/vda-tax",
   "/startup/planning",
+  "/itr-season-2026",
+  "/itr-season-2026/ais-form-26as-mismatch-checklist",
+  "/itr-season-2026/form-16-parser-guide",
+  "/itr-season-2026/capital-gains-broker-statement-checklist",
+  "/itr-season-2026/itr-deadline-refund-status-tracker",
 ] as const;
 
 const forbiddenSitemapRoutes = [
@@ -54,6 +63,16 @@ function findMetaContent(html: string, name: string) {
   return { content, tag };
 }
 
+function findCanonicalHref(html: string) {
+  const tag = html.match(/<link[^>]+rel=["']canonical["'][^>]*>/i)?.[0] ?? "";
+  const href = tag.match(/href=["']([^"']*)["']/i)?.[1] ?? "";
+  return { href, tag };
+}
+
+function findTitle(html: string) {
+  return html.match(/<title>(.*?)<\/title>/i)?.[1]?.trim() ?? "";
+}
+
 function hasGlobalRobotsBlock(robots: string) {
   return robots
     .split(/\r?\n/)
@@ -81,13 +100,15 @@ async function main() {
   const checks: Check[] = [];
   const { hostname } = new URL(baseUrl);
 
-  const [robots, sitemap, home, itrFiling, dashboard] = await Promise.all([
+  const [robots, sitemap, home, itrFiling, dashboard, publicRouteResponses] = await Promise.all([
     fetchText("/robots.txt"),
     fetchText("/sitemap.xml"),
     fetchText("/"),
     fetchText("/itr/filing"),
     fetchText("/dashboard"),
+    Promise.all(requiredPublicRoutes.map(async (route) => [route, await fetchText(route)] as const)),
   ]);
+  const publicRouteMap = new Map(publicRouteResponses);
 
   checks.push({
     label: "robots.txt reachable",
@@ -120,12 +141,49 @@ async function main() {
     detail: `${sitemapUrlCount} URL entries`,
   });
 
-  for (const route of requiredSitemapRoutes) {
+  for (const route of requiredPublicRoutes) {
     const url = routeUrl(route);
     checks.push({
       label: `sitemap includes ${route}`,
       ok: sitemap.text.includes(`<loc>${url}</loc>`),
       detail: sitemap.text.includes(`<loc>${url}</loc>`) ? url : `missing ${url}`,
+    });
+  }
+
+  const titleCounts = new Map<string, number>();
+  for (const route of requiredPublicRoutes) {
+    const html = publicRouteMap.get(route)?.text ?? "";
+    const title = findTitle(html);
+    if (title) titleCounts.set(title, (titleCounts.get(title) ?? 0) + 1);
+  }
+
+  for (const route of requiredPublicRoutes) {
+    const result = publicRouteMap.get(route);
+    const html = result?.text ?? "";
+    const robotsMeta = findMetaContent(html, "robots");
+    const canonical = findCanonicalHref(html);
+    const title = findTitle(html);
+    const expectedUrl = routeUrl(route);
+
+    checks.push({
+      label: `${route} returns 200`,
+      ok: result?.response.ok ?? false,
+      detail: result ? `${result.response.status} ${result.response.statusText}` : "not fetched",
+    });
+    checks.push({
+      label: `${route} is indexable`,
+      ok: result?.response.ok === true && !robotsMeta.content.toLowerCase().includes("noindex"),
+      detail: robotsMeta.tag || "robots meta missing",
+    });
+    checks.push({
+      label: `${route} canonical`,
+      ok: canonical.href === expectedUrl,
+      detail: canonical.href ? `${canonical.href}` : "canonical link missing",
+    });
+    checks.push({
+      label: `${route} title is present and unique`,
+      ok: title.length > 0 && titleCounts.get(title) === 1,
+      detail: title || "title missing",
     });
   }
 
