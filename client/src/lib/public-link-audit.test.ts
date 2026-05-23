@@ -138,6 +138,13 @@ describe("public link audit", () => {
     });
   });
 
+  it("links the ITR season hub from public global footer crawl paths", () => {
+    const footerSource = readFileSync("client/src/components/layout/Footer.tsx", "utf8");
+
+    expect(footerSource).toContain('href="/itr-season-2026"');
+    expect(SEO_CONFIG["/itr-season-2026"]).toBeDefined();
+  });
+
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
     const indexTemplate = readFileSync("client/index.html", "utf8");
     const glossarySource = readFileSync("client/src/components/seo/FinancialGlossary.tsx", "utf8");
