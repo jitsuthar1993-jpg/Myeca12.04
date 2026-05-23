@@ -99,8 +99,8 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-950">Admin Panel</h2>
-                <p className="text-xs text-slate-500">Control Center</p>
+                <h2 className="text-xl font-bold leading-tight text-slate-950">Admin Panel</h2>
+                <p className="mb-0 text-xs leading-tight text-slate-500">Control Center</p>
               </div>
             </div>
             <Button

@@ -16,6 +16,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      'framer-motion': path.resolve(__dirname, './client/src/lib/framer-motion-lite.tsx'),
       '@': path.resolve(__dirname, './client/src'),
       '@shared': path.resolve(__dirname, './shared'),
     },

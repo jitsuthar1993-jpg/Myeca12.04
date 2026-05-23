@@ -50,8 +50,8 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                   M
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-950">MyeCA</p>
-                  <p className="type-meta truncate font-medium text-slate-500">{roleLabel}</p>
+                  <p className="mb-0 truncate text-sm font-bold leading-tight text-slate-950">MyeCA</p>
+                  <p className="type-meta mb-0 truncate font-medium leading-tight text-slate-500">{roleLabel}</p>
                 </div>
               </Link>
               <Button
@@ -119,11 +119,11 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                   {user?.firstName?.[0] || 'U'}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-bold text-slate-950">{user?.firstName || 'User'}</p>
-                  <p className="type-meta truncate font-medium text-slate-500">{roleLabel}</p>
+                  <p className="mb-0 truncate text-xs font-bold leading-tight text-slate-950">{user?.firstName || 'User'}</p>
+                  <p className="type-meta mb-0 truncate font-medium leading-tight text-slate-500">{roleLabel}</p>
                 </div>
                 <Link href="/logout">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-lg p-0 text-slate-500 hover:bg-red-50 hover:text-red-600">
                     <LogOut className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -173,10 +173,10 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <p className="hidden text-sm font-bold text-slate-700 md:block">{title}</p>
+            <div className="flex h-9 items-center gap-3">
+              <p className="mb-0 hidden text-sm font-bold leading-none text-slate-700 md:block">{title}</p>
               <NotificationCenter />
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-700 text-sm font-bold text-white">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-sm font-bold text-white">
                 {user?.firstName?.[0] || 'U'}
               </div>
             </div>

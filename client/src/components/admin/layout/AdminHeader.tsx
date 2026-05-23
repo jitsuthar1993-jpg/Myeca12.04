@@ -44,9 +44,9 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
             <Menu className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-950">{title}</h1>
+            <h1 className="text-2xl font-bold leading-tight text-slate-950">{title}</h1>
             {description && (
-              <p className="hidden text-sm text-slate-500 sm:block">{description}</p>
+              <p className="mb-0 hidden text-sm leading-tight text-slate-500 sm:block">{description}</p>
             )}
           </div>
         </div>
@@ -93,9 +93,9 @@ export function AdminHeader({ title = 'Dashboard Overview', description, onMenuC
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-bold text-white">
                   {initials}
                 </div>
-                <div className="text-left hidden sm:block">
-                  <p className="text-sm font-semibold">{fullName}</p>
-                  <p className="text-xs text-slate-500">{roleLabel}</p>
+                <div className="hidden text-left sm:block">
+                  <p className="mb-0 text-sm font-semibold leading-tight">{fullName}</p>
+                  <p className="mb-0 text-xs leading-tight text-slate-500">{roleLabel}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
