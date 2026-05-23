@@ -415,7 +415,7 @@ export default function Routes() {
         )} />
         <Route path="/itr/form-selector" component={ITRFormSelectorPage} />
         <Route path="/itr/form-recommender" component={ITRFormRecommenderPage} />
-        <Route path="/itr/filing" component={ITRFilingPage} />
+        <Route path="/itr/filing" component={() => <RequireAuth><ITRFilingPage /></RequireAuth>} />
         <Route path="/itr/success" component={ITRSuccessPage} />
         <Route path="/itr/step-by-step-guide" component={ITRStepByStepGuide} />
         <Route path="/itr/compact-filing" component={CompactFilingGuidePage} />

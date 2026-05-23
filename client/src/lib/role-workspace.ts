@@ -90,6 +90,7 @@ export const ROLE_NAV_GROUPS: Record<AppRole, RoleNavGroup[]> = {
       label: "Workspace",
       items: [
         { icon: LayoutGrid, label: "Home", href: "/dashboard" },
+        { icon: FileText, label: "MY ITR", href: "/itr/filing" },
         { icon: Zap, label: "Services", href: "/dashboard/services" },
         { icon: FolderOpen, label: "Documents", href: "/documents" },
         { icon: CreditCard, label: "Payments", href: "/payments" },

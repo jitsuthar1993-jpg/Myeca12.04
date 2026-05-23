@@ -76,6 +76,7 @@ function Router() {
     '/profile',
     '/settings',
     '/documents',
+    '/itr/filing',
     '/reports',
     '/workflows',
     '/teams',
