@@ -23,6 +23,11 @@ Public campaign hub:
 - `/itr-season-2026/capital-gains-broker-statement-checklist`
 - `/itr-season-2026/itr-deadline-refund-status-tracker`
 
+Operator files:
+
+- `docs/marketing/itr-season-2026-content-calendar.csv`
+- `docs/marketing/itr-season-2026-prospect-segment-plan.csv`
+
 ## Backlink Policy
 
 Allowed:
@@ -84,6 +89,8 @@ Segment quotas:
 - Resource pages, calculators lists, and tax guide roundups: 100
 - Partner/referral prospects already known to MyeCA: 25
 
+Use `docs/marketing/itr-season-2026-prospect-segment-plan.csv` for segment quotas, first-choice pitch assets, approved sample UTM URLs, and rejection flags before building the full 900-prospect tracker.
+
 Daily outreach target:
 
 - Days 1-30: 25 personalized pitches per working day.
@@ -119,6 +126,7 @@ Launch weeks 1-2:
 - Publish daily: 3 short ITR Q&A posts, 2 expert guides, 1 tool workflow, and 1 high-value refresh per week.
 - Priority topics: ITR filing start, Form 16 release, AIS/Form 26AS mismatch, old vs new regime, salary plus capital gains, refunds, notices, freelancers, and foreign-asset edge cases.
 - Each new piece must link to one tool, one conversion/service route, one related blog post, and one Learn guide.
+- Use `docs/marketing/itr-season-2026-content-calendar.csv` as the first four-week working calendar, then reprioritize weekly using Search Console impressions, UTM conversions, and CA review availability.
 
 Weeks 3-6:
 
