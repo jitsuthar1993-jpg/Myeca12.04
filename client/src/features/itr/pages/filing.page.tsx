@@ -69,6 +69,26 @@ export const ITR_FILING_STEPS = [
   },
 ] as const;
 
+export type ITRFilingStepId = (typeof ITR_FILING_STEPS)[number]["id"];
+
+export type ITRFilingSectionStatus = {
+  tone: "updated" | "pending";
+  label: "Updated" | "Pending";
+};
+
+export function getITRFilingSectionStatuses(
+  updatedSections: Partial<Record<ITRFilingStepId, boolean>> = {},
+): Record<ITRFilingStepId, ITRFilingSectionStatus> {
+  return ITR_FILING_STEPS.reduce((statuses, step) => {
+    const updated = Boolean(updatedSections[step.id]);
+    statuses[step.id] = {
+      tone: updated ? "updated" : "pending",
+      label: updated ? "Updated" : "Pending",
+    };
+    return statuses;
+  }, {} as Record<ITRFilingStepId, ITRFilingSectionStatus>);
+}
+
 export const ITR_DOCUMENT_CHECKLIST = [
   {
     id: "form16",
@@ -622,6 +642,7 @@ export default function ITRFilingPage() {
     ifsc: "",
   });
   const [documentFiles, setDocumentFiles] = useState<Record<string, string>>({});
+  const [updatedSections, setUpdatedSections] = useState<Partial<Record<ITRFilingStepId, boolean>>>({});
   const [salaryIncome, setSalaryIncome] = useState(1200000);
   const [interestIncome, setInterestIncome] = useState(25000);
   const [capitalGainsIncome, setCapitalGainsIncome] = useState(0);
@@ -634,6 +655,11 @@ export default function ITRFilingPage() {
   const totalIncome = salaryIncome + interestIncome + capitalGainsIncome;
   const selectedSourceCount = Object.values(sourceSelections).filter(Boolean).length;
   const selectedIncomeProfile = INCOME_SOURCE_OPTIONS.filter((source) => sourceSelections[source.id]);
+  const sectionStatuses = useMemo(() => getITRFilingSectionStatuses(updatedSections), [updatedSections]);
+
+  const markSectionUpdated = (sectionId: ITRFilingStepId) => {
+    setUpdatedSections((prev) => (prev[sectionId] ? prev : { ...prev, [sectionId]: true }));
+  };
 
   const itrRecommendation = useMemo(
     () =>
@@ -672,6 +698,7 @@ export default function ITRFilingPage() {
           filingFacts,
           profileDraft,
           documentFiles,
+          updatedSections,
           salaryIncome,
           interestIncome,
           capitalGainsIncome,
@@ -693,6 +720,7 @@ export default function ITRFilingPage() {
     filingFacts,
     profileDraft,
     documentFiles,
+    updatedSections,
     salaryIncome,
     interestIncome,
     capitalGainsIncome,
@@ -715,6 +743,7 @@ export default function ITRFilingPage() {
   };
 
   const submitForReview = () => {
+    markSectionUpdated("review");
     trackProductionEvent("itr_review_payment_start", { method: "assisted_handoff", regime: regime.better });
     window.location.href = "/itr/success";
   };
@@ -749,46 +778,68 @@ export default function ITRFilingPage() {
           </div>
         </MyeCard>
 
-        <MyeCard className="p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <MyeCard className="p-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="type-meta font-black uppercase text-[#0050b5]">
                 MY ITR progress
               </p>
-              <h2 className="mt-2 type-section-title font-black text-slate-950">
+              <h2 className="mt-1 type-section-title font-black text-slate-950">
                 Step {currentStep + 1} of {ITR_FILING_STEPS.length}
               </h2>
             </div>
             <StatusBadge status="in_progress" label={ITR_FILING_STEPS[currentStep].title} />
           </div>
-          <Progress value={progress} className="mt-4 h-2" />
-          <div className="mt-4 grid gap-2 md:grid-cols-4">
-            {ITR_FILING_STEPS.map((step, index) => (
-              <button
-                key={step.id}
-                type="button"
-                aria-current={index === currentStep ? "step" : undefined}
-                onClick={() => setCurrentStep(index)}
-                className={cn(
-                  "flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition",
-                  index === currentStep && "border-blue-200 bg-blue-50 text-slate-950 shadow-sm",
-                  index < currentStep && "border-emerald-200 bg-emerald-50 text-emerald-900",
-                  index > currentStep && "border-slate-200 bg-white text-slate-600 hover:bg-slate-50",
-                )}
-              >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-black text-[#315efb]">
-                  {index < currentStep ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
-                </span>
-                <span>
-                  <span className="block font-black">{step.title}</span>
-                  <span className="mt-1 hidden type-meta opacity-80 lg:block">{step.description}</span>
-                </span>
-              </button>
-            ))}
+          <Progress value={progress} className="mt-3 h-1.5" />
+          <div className="mt-3 grid gap-2 md:grid-cols-4">
+            {ITR_FILING_STEPS.map((step, index) => {
+              const sectionStatus = sectionStatuses[step.id];
+              const isUpdated = sectionStatus.tone === "updated";
+
+              return (
+                <button
+                  key={step.id}
+                  type="button"
+                  aria-current={index === currentStep ? "step" : undefined}
+                  onClick={() => setCurrentStep(index)}
+                  className={cn(
+                    "flex min-h-[68px] w-full items-start gap-2 rounded-xl border px-3 py-2 text-left transition",
+                    isUpdated
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-950 hover:bg-emerald-100"
+                      : "border-amber-200 bg-amber-50/70 text-amber-950 hover:bg-amber-50",
+                    index === currentStep && "ring-2 ring-blue-100",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-black",
+                      isUpdated
+                        ? "border-emerald-600 bg-emerald-600 text-white"
+                        : "border-amber-300 bg-white text-amber-700",
+                    )}
+                  >
+                    {isUpdated ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-black leading-tight">{step.title}</span>
+                    <span
+                      className={cn(
+                        "mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-black uppercase leading-none",
+                        isUpdated
+                          ? "border-emerald-200 bg-white text-emerald-700"
+                          : "border-amber-200 bg-white text-amber-700",
+                      )}
+                    >
+                      {sectionStatus.label}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </MyeCard>
 
-        <MyeCard>
+        <MyeCard className="p-5">
             <SectionHeading
               eyebrow="Current step"
               title={ITR_FILING_STEPS[currentStep].title}
@@ -824,7 +875,10 @@ export default function ITRFilingPage() {
                                 ? "border-blue-300 bg-blue-50 text-blue-800 hover:bg-blue-100"
                                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100",
                             )}
-                            onClick={() => setSourceSelections((prev) => ({ ...prev, [source.id]: true }))}
+                            onClick={() => {
+                              markSectionUpdated("sources");
+                              setSourceSelections((prev) => ({ ...prev, [source.id]: true }));
+                            }}
                           >
                             Yes
                           </button>
@@ -836,7 +890,10 @@ export default function ITRFilingPage() {
                                 ? "border-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-200"
                                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100",
                             )}
-                            onClick={() => setSourceSelections((prev) => ({ ...prev, [source.id]: false }))}
+                            onClick={() => {
+                              markSectionUpdated("sources");
+                              setSourceSelections((prev) => ({ ...prev, [source.id]: false }));
+                            }}
                           >
                             No
                           </button>
@@ -877,7 +934,10 @@ export default function ITRFilingPage() {
                                   ? "border-blue-300 bg-blue-50 text-blue-800 hover:bg-blue-100"
                                   : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100",
                               )}
-                              onClick={() => setFilingFacts((prev) => ({ ...prev, [fact.id]: true }))}
+                              onClick={() => {
+                                markSectionUpdated("sources");
+                                setFilingFacts((prev) => ({ ...prev, [fact.id]: true }));
+                              }}
                             >
                               Yes
                             </button>
@@ -889,7 +949,10 @@ export default function ITRFilingPage() {
                                   ? "border-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-200"
                                   : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100",
                               )}
-                              onClick={() => setFilingFacts((prev) => ({ ...prev, [fact.id]: false }))}
+                              onClick={() => {
+                                markSectionUpdated("sources");
+                                setFilingFacts((prev) => ({ ...prev, [fact.id]: false }));
+                              }}
                             >
                               No
                             </button>
@@ -919,7 +982,10 @@ export default function ITRFilingPage() {
                     id="pan"
                     placeholder="ABCDE1234F"
                     value={profileDraft.pan}
-                    onChange={(event) => setProfileDraft((prev) => ({ ...prev, pan: event.target.value.toUpperCase() }))}
+                    onChange={(event) => {
+                      markSectionUpdated("profile");
+                      setProfileDraft((prev) => ({ ...prev, pan: event.target.value.toUpperCase() }));
+                    }}
                     className="mt-2 h-12 rounded-xl"
                   />
                 </div>
@@ -928,7 +994,10 @@ export default function ITRFilingPage() {
                   <Input
                     id="aadhaarStatus"
                     value={profileDraft.aadhaarStatus}
-                    onChange={(event) => setProfileDraft((prev) => ({ ...prev, aadhaarStatus: event.target.value }))}
+                    onChange={(event) => {
+                      markSectionUpdated("profile");
+                      setProfileDraft((prev) => ({ ...prev, aadhaarStatus: event.target.value }));
+                    }}
                     className="mt-2 h-12 rounded-xl"
                   />
                 </div>
@@ -938,7 +1007,10 @@ export default function ITRFilingPage() {
                     id="mobile"
                     placeholder="9876543210"
                     value={profileDraft.mobile}
-                    onChange={(event) => setProfileDraft((prev) => ({ ...prev, mobile: event.target.value }))}
+                    onChange={(event) => {
+                      markSectionUpdated("profile");
+                      setProfileDraft((prev) => ({ ...prev, mobile: event.target.value }));
+                    }}
                     className="mt-2 h-12 rounded-xl"
                   />
                 </div>
@@ -948,7 +1020,10 @@ export default function ITRFilingPage() {
                     id="bankAccount"
                     placeholder="Bank account number"
                     value={profileDraft.bankAccount}
-                    onChange={(event) => setProfileDraft((prev) => ({ ...prev, bankAccount: event.target.value }))}
+                    onChange={(event) => {
+                      markSectionUpdated("profile");
+                      setProfileDraft((prev) => ({ ...prev, bankAccount: event.target.value }));
+                    }}
                     className="mt-2 h-12 rounded-xl"
                   />
                 </div>
@@ -958,7 +1033,10 @@ export default function ITRFilingPage() {
                     id="ifsc"
                     placeholder="ABCD0123456"
                     value={profileDraft.ifsc}
-                    onChange={(event) => setProfileDraft((prev) => ({ ...prev, ifsc: event.target.value.toUpperCase() }))}
+                    onChange={(event) => {
+                      markSectionUpdated("profile");
+                      setProfileDraft((prev) => ({ ...prev, ifsc: event.target.value.toUpperCase() }));
+                    }}
                     className="mt-2 h-12 rounded-xl"
                   />
                 </div>
@@ -997,6 +1075,7 @@ export default function ITRFilingPage() {
                           className="mt-4 h-11 rounded-lg bg-white"
                           onChange={(event) => {
                             const file = event.target.files?.[0];
+                            if (file) markSectionUpdated("documents");
                             setDocumentFiles((prev) => {
                               const next = { ...prev };
                               if (file) next[document.id] = file.name;
@@ -1038,7 +1117,10 @@ export default function ITRFilingPage() {
                       id="salaryIncome"
                       type="number"
                       value={salaryIncome}
-                      onChange={(event) => setSalaryIncome(Number(event.target.value))}
+                      onChange={(event) => {
+                        markSectionUpdated("income");
+                        setSalaryIncome(Number(event.target.value));
+                      }}
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>
@@ -1048,7 +1130,10 @@ export default function ITRFilingPage() {
                       id="interestIncome"
                       type="number"
                       value={interestIncome}
-                      onChange={(event) => setInterestIncome(Number(event.target.value))}
+                      onChange={(event) => {
+                        markSectionUpdated("income");
+                        setInterestIncome(Number(event.target.value));
+                      }}
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>
@@ -1058,7 +1143,10 @@ export default function ITRFilingPage() {
                       id="capitalGainsIncome"
                       type="number"
                       value={capitalGainsIncome}
-                      onChange={(event) => setCapitalGainsIncome(Number(event.target.value))}
+                      onChange={(event) => {
+                        markSectionUpdated("income");
+                        setCapitalGainsIncome(Number(event.target.value));
+                      }}
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>
@@ -1088,7 +1176,10 @@ export default function ITRFilingPage() {
                       id="deductions"
                       type="number"
                       value={deductions}
-                      onChange={(event) => setDeductions(Number(event.target.value))}
+                      onChange={(event) => {
+                        markSectionUpdated("deductions");
+                        setDeductions(Number(event.target.value));
+                      }}
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>
@@ -1098,7 +1189,10 @@ export default function ITRFilingPage() {
                       id="rentAmount"
                       type="number"
                       value={rentAmount}
-                      onChange={(event) => setRentAmount(Number(event.target.value))}
+                      onChange={(event) => {
+                        markSectionUpdated("deductions");
+                        setRentAmount(Number(event.target.value));
+                      }}
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>
@@ -1168,7 +1262,10 @@ export default function ITRFilingPage() {
                     id="tdsPaid"
                     type="number"
                     value={tdsPaid}
-                    onChange={(event) => setTdsPaid(Number(event.target.value))}
+                    onChange={(event) => {
+                      markSectionUpdated("tax-paid");
+                      setTdsPaid(Number(event.target.value));
+                    }}
                     className="mt-2 h-12 rounded-xl"
                   />
                 </div>

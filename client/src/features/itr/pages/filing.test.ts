@@ -4,6 +4,7 @@ import {
   ITR_DOCUMENT_CHECKLIST,
   ITR_FILING_LAYOUT,
   ITR_FILING_STEPS,
+  getITRFilingSectionStatuses,
   recommendITRForAY2026,
 } from "./filing.page";
 
@@ -38,6 +39,26 @@ describe("ITR filing workspace", () => {
       usesAuthenticatedWorkspaceShell: true,
       tone: "professional",
     });
+  });
+
+  it("keeps filing sections pending until the user updates that section", () => {
+    const statuses = getITRFilingSectionStatuses();
+
+    expect(Object.values(statuses).every((section) => section.tone === "pending")).toBe(true);
+    expect(statuses.profile.label).toBe("Pending");
+  });
+
+  it("marks updated filing sections with a green status", () => {
+    const statuses = getITRFilingSectionStatuses({
+      sources: true,
+      profile: true,
+      documents: true,
+    });
+
+    expect(statuses.sources).toMatchObject({ tone: "updated", label: "Updated" });
+    expect(statuses.profile).toMatchObject({ tone: "updated", label: "Updated" });
+    expect(statuses.documents).toMatchObject({ tone: "updated", label: "Updated" });
+    expect(statuses.income).toMatchObject({ tone: "pending", label: "Pending" });
   });
 
   it("documents the common and conditional AY 2026-27 filing records", () => {
