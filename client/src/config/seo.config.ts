@@ -669,12 +669,82 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'service',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }, { name: 'Registration', url: '/startup/registration' }]
   },
+  '/itr-season-2026': {
+    title: 'AY 2026-27 ITR Season Hub | Checklists, Tools & Filing Paths',
+    description: 'Use MyeCA checklists and tools for AY 2026-27 ITR filing, including Form 16, AIS/Form 26AS, capital gains, refund status, and expert review.',
+    keywords: ['AY 2026-27 ITR season', 'ITR filing checklist', 'Form 16 parser', 'AIS Form 26AS mismatch', 'capital gains ITR checklist'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Season 2026', url: '/itr-season-2026' }]
+  },
+  '/itr-season-2026/ais-form-26as-mismatch-checklist': {
+    title: 'AIS and Form 26AS Mismatch Checklist AY 2026-27 | MyeCA.in',
+    description: 'Match AIS, TIS, Form 26AS, salary TDS, bank credits, and return values before filing AY 2026-27 ITR or requesting expert review.',
+    keywords: ['AIS mismatch checklist', 'Form 26AS mismatch', 'TDS mismatch ITR', 'AY 2026-27 AIS', 'ITR refund mismatch'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Season 2026', url: '/itr-season-2026' }, { name: 'AIS Mismatch Checklist', url: '/itr-season-2026/ais-form-26as-mismatch-checklist' }]
+  },
+  '/itr-season-2026/form-16-parser-guide': {
+    title: 'Form 16 Parser Workflow for AY 2026-27 ITR Filing | MyeCA.in',
+    description: 'Use the MyeCA Form 16 parser workflow to extract salary, TDS, deductions, employer details, and review notes before ITR filing.',
+    keywords: ['Form 16 parser guide', 'upload Form 16 ITR', 'salary TDS extraction', 'AY 2026-27 Form 16', 'ITR prefill workflow'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Season 2026', url: '/itr-season-2026' }, { name: 'Form 16 Parser Guide', url: '/itr-season-2026/form-16-parser-guide' }]
+  },
+  '/itr-season-2026/capital-gains-broker-statement-checklist': {
+    title: 'Capital Gains Broker Statement Checklist for ITR-2 and ITR-3 | MyeCA.in',
+    description: 'Prepare broker P&L, tradebook, capital gains, F&O, VDA, and AIS records before filing ITR-2 or ITR-3 for AY 2026-27.',
+    keywords: ['capital gains broker statement', 'ITR-2 capital gains checklist', 'broker tax P&L', 'F&O ITR checklist', 'capital gains import'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Season 2026', url: '/itr-season-2026' }, { name: 'Broker Statement Checklist', url: '/itr-season-2026/capital-gains-broker-statement-checklist' }]
+  },
+  '/itr-season-2026/itr-deadline-refund-status-tracker': {
+    title: 'AY 2026-27 ITR Deadline and Refund Status Tracker | MyeCA.in',
+    description: 'Track ITR filing readiness, submission, e-verification, processing, refund status, demand notices, and revised return decisions for AY 2026-27.',
+    keywords: ['ITR deadline tracker', 'ITR refund status AY 2026-27', 'ITR e-verification', 'income tax refund tracker', 'revised return checklist'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Season 2026', url: '/itr-season-2026' }, { name: 'Deadline and Refund Tracker', url: '/itr-season-2026/itr-deadline-refund-status-tracker' }]
+  },
   '/compare': {
     title: 'Tax Tool Comparison Hub | MyeCA.in',
     description: 'Compare tax filing workflows, calculators, services, and support options before choosing the right path.',
     keywords: ['tax filing comparison', 'ITR platform comparison', 'tax tool comparison'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }]
+  },
+  '/compare/cleartax-alternative': {
+    title: 'ClearTax Alternative for CA-Reviewed ITR Filing | MyeCA.in',
+    description: 'Compare MyeCA with ClearTax for named CA accountability, AIS/26AS checks, document history, case tracking, and visible scope before payment.',
+    keywords: ['ClearTax alternative', 'CA assisted ITR filing', 'MyeCA vs ClearTax', 'tax filing comparison'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'ClearTax Alternative', url: '/compare/cleartax-alternative' }]
+  },
+  '/compare/taxbuddy-alternative': {
+    title: 'TaxBuddy Alternative with Case Tracking | MyeCA.in',
+    description: 'Compare MyeCA with TaxBuddy for assisted filing, document status, written scope, post-filing support, and expert review paths.',
+    keywords: ['TaxBuddy alternative', 'MyeCA vs TaxBuddy', 'assisted ITR filing', 'case tracking tax filing'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'TaxBuddy Alternative', url: '/compare/taxbuddy-alternative' }]
+  },
+  '/compare/quicko-capital-gains-alternative': {
+    title: 'Quicko Alternative for Capital Gains with CA Review | MyeCA.in',
+    description: 'Compare MyeCA with Quicko for capital gains import, broker statement review, AIS mismatch checks, and CA-assisted investor filing.',
+    keywords: ['Quicko alternative', 'capital gains tax filing', 'broker statement import', 'CA reviewed capital gains'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'Quicko Alternative', url: '/compare/quicko-capital-gains-alternative' }]
+  },
+  '/compare/indiafilings-alternative': {
+    title: 'IndiaFilings Alternative for Transparent Startup Compliance | MyeCA.in',
+    description: 'Compare MyeCA with IndiaFilings for GST, company registration, startup compliance, service milestones, and transparent add-on scope.',
+    keywords: ['IndiaFilings alternative', 'startup compliance India', 'GST registration comparison', 'company registration service'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'IndiaFilings Alternative', url: '/compare/indiafilings-alternative' }]
+  },
+  '/compare/best-ca-assisted-itr-filing': {
+    title: 'Best CA-Assisted ITR Filing for Complex Taxpayers | MyeCA.in',
+    description: 'Choose a CA-assisted ITR filing workflow for capital gains, business income, foreign assets, notices, and document-heavy returns.',
+    keywords: ['best CA assisted ITR filing', 'complex ITR filing India', 'expert tax review', 'MyeCA ITR filing'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'Best CA-Assisted ITR Filing', url: '/compare/best-ca-assisted-itr-filing' }]
   }
 };
 

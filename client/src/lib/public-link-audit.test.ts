@@ -1,11 +1,19 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { SEO_CONFIG } from "../config/seo.config";
+import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
+import { getGeneratedPublicRoutes } from "../data/missing-pages";
+import { buildApiSitemapXml } from "../../../api/index";
 import {
   classifyPublicHref,
   getPublicLinkAuditSeedRoutes,
   parsePublicSitemapRoutes,
 } from "@shared/public-link-audit";
-import { getGeneratedPublicRoutes } from "../data/missing-pages";
+import {
+  PRIVATE_NOINDEX_ROUTES,
+  getIndexablePublicRoutes,
+  isPrivateRoute,
+} from "@shared/seo-public";
 import { EMAIL_TEMPLATES } from "../../../server/services/email";
 
 describe("public link audit", () => {
@@ -52,6 +60,82 @@ describe("public link audit", () => {
         "/startup/planning",
       ]),
     );
+  });
+
+  it("keeps authenticated ITR filing private while preserving the public selector entry point", () => {
+    const routes = getIndexablePublicRoutes(
+      [
+        ...Object.entries(SEO_CONFIG)
+          .filter(([, config]) => !config.noindex)
+          .map(([route]) => route),
+        ...getGeneratedPublicRoutes(),
+      ],
+      [],
+    );
+
+    expect(routes).toContain("/itr/form-selector");
+    expect(routes).toContain("/itr/form-recommender");
+    expect(routes).not.toContain("/itr/filing");
+    expect(isPrivateRoute("/itr/filing")).toBe(true);
+    expect(isPrivateRoute("/itr/form-selector")).toBe(false);
+    expect(PRIVATE_NOINDEX_ROUTES).toContain("/itr/filing");
+  });
+
+  it("builds the Vercel API sitemap from the full generated public route inventory", () => {
+    const sitemap = buildApiSitemapXml();
+
+    expect(sitemap).toContain("<loc>https://myeca.in/services/pan-card</loc>");
+    expect(sitemap).toContain("<loc>https://myeca.in/calculators/vda-tax</loc>");
+    expect(sitemap).toContain("<loc>https://myeca.in/startup/planning</loc>");
+    expect(sitemap).toContain("<loc>https://myeca.in/learn/guide/complete-itr-guide-salaried</loc>");
+    expect(sitemap).toContain("<loc>https://myeca.in/itr/form-selector</loc>");
+    expect(sitemap).not.toContain("<loc>https://myeca.in/itr/filing</loc>");
+    expect(sitemap).not.toContain("<loc>https://myeca.in/dashboard</loc>");
+    expect(sitemap).not.toContain("<loc>https://myeca.in/documents</loc>");
+  });
+
+  it("indexes the ITR season campaign assets and competitor capture pages", () => {
+    const routes = getIndexablePublicRoutes(
+      [
+        ...Object.entries(SEO_CONFIG)
+          .filter(([, config]) => !config.noindex)
+          .map(([route]) => route),
+        ...getGeneratedPublicRoutes(),
+      ],
+      [],
+    );
+    const sitemap = buildApiSitemapXml();
+    const expectedRoutes = [
+      "/itr-season-2026",
+      "/itr-season-2026/ais-form-26as-mismatch-checklist",
+      "/itr-season-2026/form-16-parser-guide",
+      "/itr-season-2026/capital-gains-broker-statement-checklist",
+      "/itr-season-2026/itr-deadline-refund-status-tracker",
+      "/compare/cleartax-alternative",
+      "/compare/taxbuddy-alternative",
+      "/compare/quicko-capital-gains-alternative",
+      "/compare/indiafilings-alternative",
+      "/compare/best-ca-assisted-itr-filing",
+    ];
+
+    expectedRoutes.forEach((route) => {
+      expect(SEO_CONFIG[route], route).toBeDefined();
+      expect(routes, route).toContain(route);
+      expect(sitemap, route).toContain(`<loc>https://myeca.in${route}</loc>`);
+      expect(SEO_CONFIG[route].title, route).not.toBe(SEO_CONFIG["/"].title);
+    });
+  });
+
+  it("keeps each ITR season asset source-reviewed and conversion-linked", () => {
+    itrSeasonCampaignAssets.forEach((asset) => {
+      expect(asset.reviewNote, asset.slug).toMatch(/FY 2025-26|AY 2026-27/);
+      expect(asset.disclaimer, asset.slug).toMatch(/educational/i);
+      expect(asset.sourceLinks.length, asset.slug).toBeGreaterThanOrEqual(2);
+      expect(asset.toolLink.href, asset.slug).toMatch(/^\//);
+      expect(asset.conversionLink.href, asset.slug).toMatch(/^\//);
+      expect(asset.relatedBlogLink.href, asset.slug).toMatch(/^\/blog\//);
+      expect(asset.learnGuideLink.href, asset.slug).toMatch(/^\/learn\/guide\//);
+    });
   });
 
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
