@@ -35,6 +35,7 @@
     "sync:income-tax-forms": "tsx scripts/sync-income-tax-forms.ts",
     "upload:pdf-assets": "tsx scripts/upload-income-tax-form-pdfs.ts",
     "check:size": "tsx scripts/check-size-budget.ts",
+    "check:google-indexing": "tsx scripts/check-google-indexing-readiness.ts",
     "analyze": "set NODE_ENV=production&& set ANALYZE_BUNDLE=1&& vite build",
     "android:sync": "npm run build:android && cap sync android",
     "android:open": "cap open android",
