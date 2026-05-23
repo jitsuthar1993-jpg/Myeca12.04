@@ -71,6 +71,7 @@ export default function Footer() {
         <div className="mt-4 grid grid-cols-2 gap-2">
           {[
             ["File ITR", "/itr/form-selector"],
+            ["AY 2026 Hub", "/itr-season-2026"],
             ["Estimate Tax", "/calculators/income-tax"],
             ["Compare Regimes", "/calculators/regime-comparator"],
             ["Parse Form 16", "/form16-parser"],
@@ -188,6 +189,7 @@ export default function Footer() {
               </h3>
               <ul className="space-y-2">
                 <li><Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover("/itr/form-selector")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>ITR Filing (All Forms)</Link></li>
+                <li><Link href="/itr-season-2026" onMouseEnter={() => preloadOnHover("/itr-season-2026")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>AY 2026 ITR Season Hub</Link></li>
                 <li><Link href="/services/gst-registration" onMouseEnter={() => preloadOnHover("/services/gst-registration")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>GST Registration</Link></li>
                 <li><Link href="/services/tds-filing" onMouseEnter={() => preloadOnHover("/services/tds-filing")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>TDS Filing</Link></li>
                 <li><Link href="/services/notice-compliance" onMouseEnter={() => preloadOnHover("/services/notice-compliance")} className="text-slate-600 text-sm hover:text-blue-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-blue-600">→</span>Tax Notice Handling</Link></li>
