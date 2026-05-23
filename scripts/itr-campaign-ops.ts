@@ -25,8 +25,37 @@ const requiredProspectColumns = [
   "reject_if",
 ];
 
+const requiredOutreachColumns = [
+  "segment",
+  "prospect_name",
+  "site_or_org",
+  "url",
+  "contact_name",
+  "contact_email",
+  "social_url",
+  "asset_to_pitch",
+  "utm_url",
+  "status",
+  "last_contacted",
+  "next_follow_up",
+  "notes",
+];
+
+const allowedOutreachStatuses = new Set([
+  "",
+  "not_started",
+  "pitched",
+  "follow_up_1",
+  "follow_up_2",
+  "replied",
+  "earned",
+  "rejected",
+  "unsafe",
+]);
+
 type CampaignOpsInput = {
   calendarCsv: string;
+  outreachCsv?: string;
   prospectsCsv: string;
 };
 
@@ -86,8 +115,12 @@ export function parseCsv(text: string): CsvRow[] {
   );
 }
 
-function missingColumns(rows: CsvRow[], columns: string[]) {
-  const availableColumns = new Set(Object.keys(rows[0] ?? {}));
+function parseCsvHeaders(text: string) {
+  return parseCsvLineAware(text.trim().replace(/^\uFEFF/, ""))[0] ?? [];
+}
+
+function missingColumns(headers: string[], columns: string[]) {
+  const availableColumns = new Set(headers);
   return columns.filter((column) => !availableColumns.has(column));
 }
 
@@ -98,7 +131,11 @@ function isInternalRoute(value: string) {
 export function validateCampaignOps(input: CampaignOpsInput) {
   const errors: string[] = [];
   const calendarRows = parseCsv(input.calendarCsv);
+  const outreachRows = input.outreachCsv ? parseCsv(input.outreachCsv) : [];
   const prospectRows = parseCsv(input.prospectsCsv);
+  const calendarHeaders = parseCsvHeaders(input.calendarCsv);
+  const outreachHeaders = input.outreachCsv ? parseCsvHeaders(input.outreachCsv) : [];
+  const prospectHeaders = parseCsvHeaders(input.prospectsCsv);
 
   if (calendarRows.length === 0) {
     errors.push("content calendar must have at least one row");
@@ -108,12 +145,18 @@ export function validateCampaignOps(input: CampaignOpsInput) {
     errors.push("prospect segment plan must have at least one row");
   }
 
-  for (const column of missingColumns(calendarRows, requiredCalendarColumns)) {
+  for (const column of missingColumns(calendarHeaders, requiredCalendarColumns)) {
     errors.push(`content calendar is missing required column ${column}`);
   }
 
-  for (const column of missingColumns(prospectRows, requiredProspectColumns)) {
+  for (const column of missingColumns(prospectHeaders, requiredProspectColumns)) {
     errors.push(`prospect segment plan is missing required column ${column}`);
+  }
+
+  if (input.outreachCsv) {
+    for (const column of missingColumns(outreachHeaders, requiredOutreachColumns)) {
+      errors.push(`outreach tracker is missing required column ${column}`);
+    }
   }
 
   calendarRows.forEach((row, index) => {
@@ -168,6 +211,30 @@ export function validateCampaignOps(input: CampaignOpsInput) {
   if (quotaTotal !== 900) {
     errors.push(`prospect quotas must sum to 900, got ${quotaTotal}`);
   }
+
+  outreachRows.forEach((row, index) => {
+    const rowNumber = index + 1;
+    if (!allowedOutreachStatuses.has(row.status)) {
+      errors.push(`outreach tracker row ${rowNumber} status is unsupported: ${row.status}`);
+    }
+    if (row.utm_url) {
+      try {
+        const url = new URL(row.utm_url);
+        const medium = url.searchParams.get("utm_medium") ?? "";
+        if (url.hostname !== "myeca.in") {
+          errors.push(`outreach tracker row ${rowNumber} utm_url must use myeca.in`);
+        }
+        if (url.searchParams.get("utm_campaign") !== "itr-season-2026") {
+          errors.push(`outreach tracker row ${rowNumber} utm_url must use utm_campaign=itr-season-2026`);
+        }
+        if (!allowedUtmMediums.has(medium)) {
+          errors.push(`outreach tracker row ${rowNumber} utm_url has unsupported utm_medium ${medium}`);
+        }
+      } catch {
+        errors.push(`outreach tracker row ${rowNumber} utm_url must be a valid URL`);
+      }
+    }
+  });
 
   return errors;
 }

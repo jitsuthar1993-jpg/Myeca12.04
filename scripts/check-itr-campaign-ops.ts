@@ -2,10 +2,12 @@ import { readFileSync } from "node:fs";
 import { summarizeCampaignOps, validateCampaignOps } from "./itr-campaign-ops";
 
 const calendarPath = "docs/marketing/itr-season-2026-content-calendar.csv";
+const outreachPath = "docs/marketing/itr-season-2026-outreach-tracker-template.csv";
 const prospectsPath = "docs/marketing/itr-season-2026-prospect-segment-plan.csv";
 
 const input = {
   calendarCsv: readFileSync(calendarPath, "utf8"),
+  outreachCsv: readFileSync(outreachPath, "utf8"),
   prospectsCsv: readFileSync(prospectsPath, "utf8"),
 };
 

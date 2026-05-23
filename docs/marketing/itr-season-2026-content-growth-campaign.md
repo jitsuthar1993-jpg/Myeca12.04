@@ -26,6 +26,7 @@ Public campaign hub:
 Operator files:
 
 - `docs/marketing/itr-season-2026-content-calendar.csv`
+- `docs/marketing/itr-season-2026-outreach-tracker-template.csv`
 - `docs/marketing/itr-season-2026-prospect-segment-plan.csv`
 
 Automated ops check:
