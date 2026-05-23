@@ -156,6 +156,7 @@ const ExportCenterPage = lazyWithRetry(() => import("@/pages/export-center.page"
 const IntegrationsPage = lazyWithRetry(() => import("@/pages/integrations.page"));
 const BlogIndexPage = lazyWithRetry(() => import("@/pages/blog.page"));
 const BlogDetailPage = lazyWithRetry(() => import("@/pages/blog/[slug].page"));
+const ITRSeasonCampaignPage = lazyWithRetry(() => import("@/pages/itr-season-campaign.page"));
 const ServicesPage = lazyWithRetry(() => import("@/pages/services.page"));
 const AllServicesPage = lazyWithRetry(() => import("@/pages/all-services.page"));
 const AdvancedFeaturesPage = lazyWithRetry(() => import("@/pages/advanced-features.page"));
@@ -420,6 +421,8 @@ export default function Routes() {
         <Route path="/itr/step-by-step-guide" component={ITRStepByStepGuide} />
         <Route path="/itr/compact-filing" component={CompactFilingGuidePage} />
         <Route path="/search" component={SearchPage} />
+        <Route path="/itr-season-2026" component={ITRSeasonCampaignPage} />
+        <Route path="/itr-season-2026/:slug" component={ITRSeasonCampaignPage} />
         <Route path="/blog" component={BlogIndexPage} />
         <Route path="/blog/:slug" component={BlogDetailPage} />
         <Route path="/analytics" component={() => <RequireAuth><AnalyticsPage /></RequireAuth>} />

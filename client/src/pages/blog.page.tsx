@@ -582,6 +582,32 @@ export default function BlogPage() {
               </div>
 
               <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+                <div className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
+                  <div className="bg-emerald-50 p-3">
+                    <img
+                      src="/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg"
+                      alt="AY 2026-27 ITR season hub"
+                      className="aspect-[16/9] w-full rounded-xl bg-white object-contain p-1.5"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
+                      AY 2026-27 hub
+                    </p>
+                    <h2 className="mt-2 text-xl font-black leading-tight text-slate-950">
+                      ITR season checklists, tools, and filing paths
+                    </h2>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                      Start with Form 16, AIS/Form 26AS, capital gains, refund status, and expert-review routes.
+                    </p>
+                    <Link href="/itr-season-2026">
+                      <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-black text-white transition hover:bg-emerald-700">
+                        Open hub <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="mb-4 flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-blue-600" />

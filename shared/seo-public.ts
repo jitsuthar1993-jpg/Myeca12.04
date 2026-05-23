@@ -99,6 +99,12 @@ export const PUBLIC_STATIC_ROUTES = [
   "/calculators/swp",
   "/calculators/tax-regime",
   "/calculators/tds",
+  "/compare",
+  "/compare/best-ca-assisted-itr-filing",
+  "/compare/cleartax-alternative",
+  "/compare/indiafilings-alternative",
+  "/compare/quicko-capital-gains-alternative",
+  "/compare/taxbuddy-alternative",
   "/compliance-calendar",
   "/contact",
   "/elss-comparator",
@@ -115,6 +121,11 @@ export const PUBLIC_STATIC_ROUTES = [
   "/help/user-guide",
   "/itr/form-recommender",
   "/itr/form-selector",
+  "/itr-season-2026",
+  "/itr-season-2026/ais-form-26as-mismatch-checklist",
+  "/itr-season-2026/capital-gains-broker-statement-checklist",
+  "/itr-season-2026/form-16-parser-guide",
+  "/itr-season-2026/itr-deadline-refund-status-tracker",
   "/learn",
   "/learn/glossary",
   "/learn/guides",
@@ -197,8 +208,10 @@ export function toAbsoluteUrl(route: string) {
 export function routePriority(route: string) {
   const path = normalizePublicPath(route);
   if (path === "/") return "1.0";
+  if (path.startsWith("/itr-season-2026")) return "0.7";
   if (path.startsWith("/services") || path.startsWith("/calculators") || path.startsWith("/itr")) return "0.8";
   if (path.startsWith("/blog/")) return "0.6";
+  if (path.startsWith("/compare/")) return "0.6";
   return "0.5";
 }
 
