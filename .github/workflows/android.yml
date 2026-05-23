@@ -22,6 +22,12 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -50,6 +56,15 @@ jobs:
       - name: Assemble unsigned release APK
         run: ./gradlew :app:assembleRelease --stacktrace
 
+      - name: Build unsigned release app bundle
+        run: ./gradlew :app:bundleRelease --stacktrace
+
+      - name: Verify release app bundle structure
+        run: bash scripts/verify-release-bundle.sh
+
+      - name: Verify release APK metadata
+        run: bash scripts/verify-release-apk.sh
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -61,6 +76,12 @@ jobs:
         with:
           name: myeca-release-unsigned-apk
           path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Upload unsigned release app bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-release-unsigned-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
 
       - name: Upload instrumentation test APK
         uses: actions/upload-artifact@v4
@@ -86,3 +107,12 @@ jobs:
           path: |
             android/app/build/reports/tests/testDebugUnitTest/
             android/app/build/test-results/testDebugUnitTest/
+
+      - name: Upload release metadata reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: myeca-android-release-metadata
+          path: |
+            android/app/build/reports/apk-metadata/
+            android/app/build/reports/bundle-metadata/

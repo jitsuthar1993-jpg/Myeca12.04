@@ -1,5 +1,6 @@
 package com.myeca.smarttax.ui.screens
 
+import java.math.BigDecimal
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,8 +18,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myeca.smarttax.ui.theme.MyeCaColors
 import com.myeca.smarttax.viewmodel.TdsViewModel
+import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,26 +80,25 @@ fun TdsScreen(paddingValues: PaddingValues = PaddingValues(0.dp), viewModel: Tds
         )
 
         var expanded by remember { mutableStateOf(false) }
-        val types = listOf("salary", "interest", "dividend", "rent", "commission", "professional_fees", "contractor_payment")
 
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
                 readOnly = true,
-                value = state.incomeType,
+                value = tdsIncomeTypeLabel(state.incomeType),
                 onValueChange = {},
                 label = { Text("Income Type") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true)
                     .fillMaxWidth()
                     .semantics { contentDescription = "Income type selector" }
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                types.forEach {
+                tdsIncomeTypes.forEach { (type, label) ->
                     DropdownMenuItem(
-                        text = { Text(it.replace("_", " ")) },
+                        text = { Text(label) },
                         onClick = {
-                            viewModel.updateIncomeType(it)
+                            viewModel.updateIncomeType(type)
                             expanded = false
                         }
                     )
@@ -125,13 +126,34 @@ fun TdsScreen(paddingValues: PaddingValues = PaddingValues(0.dp), viewModel: Tds
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                ResultRow("TDS Rate", "${state.tdsRate}%")
-                ResultRow("Threshold", "Rs ${state.threshold}")
-                ResultRow("TDS Amount", "Rs ${state.tdsAmount}")
-                ResultRow("Net Income", "Rs ${state.income - state.tdsAmount}")
+                ResultRow("TDS Rate", formatTdsRate(state.tdsRate))
+                ResultRow("Threshold", formatTdsMoney(state.threshold))
+                ResultRow("TDS Amount", formatTdsMoney(state.tdsAmount))
+                ResultRow("Net Income", formatTdsMoney(state.income - state.tdsAmount))
             }
         }
     }
+}
+
+internal val tdsIncomeTypes = listOf(
+    "salary" to "Salary",
+    "interest" to "Interest",
+    "dividend" to "Dividend",
+    "rent" to "Rent",
+    "commission" to "Commission",
+    "professional_fees" to "Professional Fees",
+    "contractor_payment" to "Contractor Payment"
+)
+
+internal fun tdsIncomeTypeLabel(type: String): String {
+    return tdsIncomeTypes.firstOrNull { it.first == type }?.second ?: type
+}
+
+internal fun formatTdsMoney(value: Double): String = "Rs ${value.roundToLong()}"
+
+internal fun formatTdsRate(value: Double): String {
+    val text = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString()
+    return "$text%"
 }
 
 @Composable

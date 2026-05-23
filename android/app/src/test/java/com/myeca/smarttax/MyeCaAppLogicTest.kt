@@ -4,6 +4,7 @@ import com.myeca.smarttax.core.network.DocumentItem
 import com.myeca.smarttax.core.network.UserService
 import com.myeca.smarttax.ui.app.MyeCaTab
 import com.myeca.smarttax.ui.app.MyeCaUiState
+import com.myeca.smarttax.ui.app.consultationValidationMessage
 import com.myeca.smarttax.ui.app.isAuthFailure
 import com.myeca.smarttax.ui.app.isValidEmailInput
 import com.myeca.smarttax.ui.app.myeCaTabsFor
@@ -75,7 +76,28 @@ class MyeCaAppLogicTest {
         assertFalse(isValidEmailInput("not-an-email"))
         assertFalse(isValidEmailInput("user@example"))
         assertFalse(isValidEmailInput("user name@example.com"))
+        assertFalse(isValidEmailInput("user@.example.com"))
+        assertFalse(isValidEmailInput("user@example..com"))
+        assertFalse(isValidEmailInput("user@example.c"))
+        assertFalse(isValidEmailInput("user@example-.com"))
         assertTrue(isValidEmailInput(" user@example.com "))
+        assertTrue(isValidEmailInput("user+tax@example.co.in"))
+    }
+
+    @Test
+    fun `consultation validation requires usable callback details`() {
+        assertEquals(
+            "Add name, email, and a short message.",
+            consultationValidationMessage("", "user@example.com", "Need help")
+        )
+        assertEquals(
+            "Enter a valid callback email address.",
+            consultationValidationMessage("Aarav", "bad-email", "Need help")
+        )
+        assertEquals(
+            null,
+            consultationValidationMessage("Aarav", "user@example.com", "Need help with ITR")
+        )
     }
 
     @Test

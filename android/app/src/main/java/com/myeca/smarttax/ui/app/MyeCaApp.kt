@@ -242,20 +242,18 @@ class MyeCaAppViewModel(application: Application) : AndroidViewModel(application
 
     fun requestConsultation() {
         val current = state.value
+        if (current.isRefreshing) return
         val name = current.consultationName.trim()
         val email = current.consultationEmail.trim()
         val message = current.consultationMessage.trim()
-        if (name.isBlank() || email.isBlank() || message.isBlank()) {
-            _state.update { it.copy(message = "Add name, email, and a short message.") }
-            return
-        }
-        if (!isValidEmailInput(email)) {
-            _state.update { it.copy(message = "Enter a valid callback email address.") }
+        val validationMessage = consultationValidationMessage(name, email, message)
+        if (validationMessage != null) {
+            _state.update { it.copy(message = validationMessage) }
             return
         }
 
+        _state.update { it.copy(isRefreshing = true, message = null) }
         viewModelScope.launch {
-            _state.update { it.copy(isRefreshing = true, message = null) }
             runCatching {
                 repository.requestConsultation(
                     name = name,
@@ -740,8 +738,12 @@ private fun ConsultationCard(state: MyeCaUiState, viewModel: MyeCaAppViewModel) 
                 minLines = 3,
                 modifier = Modifier.fillMaxWidth()
             )
-            OutlinedButton(onClick = viewModel::requestConsultation, modifier = Modifier.fillMaxWidth()) {
-                Text("Send request")
+            OutlinedButton(
+                onClick = viewModel::requestConsultation,
+                enabled = !state.isRefreshing,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(if (state.isRefreshing) "Sending..." else "Send request")
             }
         }
     }
@@ -930,7 +932,26 @@ internal fun isValidEmailInput(value: String): Boolean {
     if (email.isBlank() || email.any { it.isWhitespace() }) return false
     val parts = email.split("@")
     if (parts.size != 2 || parts.any { it.isBlank() }) return false
-    return "." in parts[1].trim('.')
+    val local = parts[0]
+    val domain = parts[1]
+    if (local.startsWith(".") || local.endsWith(".") || local.contains("..")) return false
+    if (domain.startsWith(".") || domain.endsWith(".") || domain.contains("..")) return false
+
+    val domainParts = domain.split(".")
+    if (domainParts.size < 2 || domainParts.any { it.isBlank() }) return false
+    return domainParts.all { part ->
+        part.all { it.isLetterOrDigit() || it == '-' } &&
+            !part.startsWith("-") &&
+            !part.endsWith("-")
+    } && domainParts.last().length >= 2
+}
+
+internal fun consultationValidationMessage(name: String, email: String, message: String): String? {
+    return when {
+        name.isBlank() || email.isBlank() || message.isBlank() -> "Add name, email, and a short message."
+        !isValidEmailInput(email) -> "Enter a valid callback email address."
+        else -> null
+    }
 }
 
 internal fun isAuthFailure(error: Throwable): Boolean {

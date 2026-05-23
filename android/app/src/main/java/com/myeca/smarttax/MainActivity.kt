@@ -5,14 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import com.myeca.smarttax.ui.app.MyeCaApp
-import com.myeca.smarttax.ui.theme.SmartTaxTheme
+import com.myeca.smarttax.ui.theme.MyeCaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SmartTaxTheme {
+            MyeCaTheme {
                 MyeCaApp()
             }
         }

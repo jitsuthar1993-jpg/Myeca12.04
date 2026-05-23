@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="myeca_blue">#315EFB</color>
-    <color name="myeca_blue_dark">#2040D8</color>
     <color name="myeca_surface">#EEF4FF</color>
     <color name="myeca_white">#FFFFFF</color>
 </resources>

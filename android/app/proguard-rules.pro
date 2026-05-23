@@ -12,5 +12,5 @@
 -keep class com.myeca.smarttax.core.network.model.** { *; }
 -keep class kotlin.Metadata { *; }
 
-# Optional compile-time annotation referenced by AndroidX Security/Tink.
--dontwarn com.google.errorprone.annotations.Immutable
+# Optional compile-time annotations referenced by AndroidX Security/Tink.
+-dontwarn com.google.errorprone.annotations.**

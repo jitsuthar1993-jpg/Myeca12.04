@@ -12,7 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -252,7 +253,7 @@ fun OptimizedDropdownMenu(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) 
             },
             modifier = Modifier
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true)
                 .fillMaxWidth()
                 .heightIn(min = 56.dp) // Ensure proper touch target
                 .semantics {
@@ -384,28 +385,40 @@ fun ResponsiveLayout(
 object ScreenSize {
     @Composable
     fun isSmallScreen(): Boolean {
-        return LocalConfiguration.current.screenWidthDp < 600
+        return windowSizeDp().width < 600.dp
     }
     
     @Composable
     fun isMediumScreen(): Boolean {
-        val width = LocalConfiguration.current.screenWidthDp
-        return width in 600..900
+        val width = windowSizeDp().width
+        return width in 600.dp..900.dp
     }
     
     @Composable
     fun isLargeScreen(): Boolean {
-        return LocalConfiguration.current.screenWidthDp > 900
+        return windowSizeDp().width > 900.dp
     }
     
     @Composable
     fun getScreenWidth(): Dp {
-        return LocalConfiguration.current.screenWidthDp.dp
+        return windowSizeDp().width
     }
     
     @Composable
     fun getScreenHeight(): Dp {
-        return LocalConfiguration.current.screenHeightDp.dp
+        return windowSizeDp().height
+    }
+
+    @Composable
+    private fun windowSizeDp(): DpSize {
+        val density = LocalDensity.current
+        val containerSize = LocalWindowInfo.current.containerSize
+        return with(density) {
+            DpSize(
+                width = containerSize.width.toDp(),
+                height = containerSize.height.toDp()
+            )
+        }
     }
 }
 

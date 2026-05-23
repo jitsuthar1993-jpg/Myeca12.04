@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.myeca.smarttax.BuildConfig
@@ -249,19 +250,17 @@ private class SharedPreferencesSessionStore(
     override fun getString(key: String): String? = prefs.getString(key, null)
 
     override fun save(accessToken: String, refreshToken: String?) {
-        prefs.edit()
-            .putString(MyeCaRepository.KEY_ACCESS_TOKEN, accessToken)
-            .apply {
-                if (refreshToken != null) {
-                    putString(MyeCaRepository.KEY_REFRESH_TOKEN, refreshToken)
-                }
+        prefs.edit {
+            putString(MyeCaRepository.KEY_ACCESS_TOKEN, accessToken)
+            if (refreshToken != null) {
+                putString(MyeCaRepository.KEY_REFRESH_TOKEN, refreshToken)
             }
-            .apply()
+        }
     }
 
     override fun clear() {
-        prefs.edit().clear().apply()
-        legacyPrefs.edit().clear().apply()
+        prefs.edit { clear() }
+        legacyPrefs.edit { clear() }
     }
 }
 
@@ -296,7 +295,7 @@ private fun createSessionStore(context: Context): SessionStore {
         migrateLegacySession(legacyPrefs, securePrefs)
         SharedPreferencesSessionStore(securePrefs, legacyPrefs)
     }.getOrElse {
-        legacyPrefs.edit().clear().apply()
+        legacyPrefs.edit { clear() }
         MemorySessionStore()
     }
 }
@@ -305,15 +304,13 @@ private fun migrateLegacySession(legacyPrefs: SharedPreferences, securePrefs: Sh
     val hasSecureToken = securePrefs.contains(MyeCaRepository.KEY_ACCESS_TOKEN)
     val legacyAccessToken = legacyPrefs.getString(MyeCaRepository.KEY_ACCESS_TOKEN, null)
     if (!hasSecureToken && legacyAccessToken != null) {
-        securePrefs.edit()
-            .putString(MyeCaRepository.KEY_ACCESS_TOKEN, legacyAccessToken)
-            .apply {
-                val legacyRefreshToken = legacyPrefs.getString(MyeCaRepository.KEY_REFRESH_TOKEN, null)
-                if (legacyRefreshToken != null) {
-                    putString(MyeCaRepository.KEY_REFRESH_TOKEN, legacyRefreshToken)
-                }
+        securePrefs.edit {
+            putString(MyeCaRepository.KEY_ACCESS_TOKEN, legacyAccessToken)
+            val legacyRefreshToken = legacyPrefs.getString(MyeCaRepository.KEY_REFRESH_TOKEN, null)
+            if (legacyRefreshToken != null) {
+                putString(MyeCaRepository.KEY_REFRESH_TOKEN, legacyRefreshToken)
             }
-            .apply()
+        }
     }
-    legacyPrefs.edit().clear().apply()
+    legacyPrefs.edit { clear() }
 }

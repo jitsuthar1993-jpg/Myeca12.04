@@ -188,6 +188,12 @@ server/coverage/
 
 # Gradle cache
 android/.gradle/
+android/local.properties
+
+# Android signing keys
+android/keystores/
+android/**/*.jks
+android/**/*.keystore
 
 # Dev/server logs
 dev_error.txt

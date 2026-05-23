@@ -11,11 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myeca.smarttax.ui.components.*
-import com.myeca.smarttax.ui.theme.SmartTaxTheme
+import com.myeca.smarttax.ui.theme.MyeCaTheme
 import com.myeca.smarttax.viewmodel.TdsViewModel
 
 /**
@@ -209,9 +208,9 @@ fun OptimizedTdsScreen(
 private fun ResultRow(
     label: String,
     value: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
-    valueStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyLarge,
-    modifier: Modifier = Modifier
+    valueStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyLarge
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -256,32 +255,12 @@ private fun ResultRow(
 @DevicePreviews
 @Composable
 fun OptimizedTdsScreenPreview() {
-    SmartTaxTheme {
+    MyeCaTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             OptimizedTdsScreen()
-        }
-    }
-}
-
-/**
- * Loading state preview
- */
-@Preview(name = "Loading State")
-@Composable
-fun OptimizedTdsScreenLoadingPreview() {
-    SmartTaxTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            // Mock loading state
-            val mockViewModel = TdsViewModel().apply {
-                // Simulate loading state
-            }
-            OptimizedTdsScreen(viewModel = mockViewModel)
         }
     }
 }

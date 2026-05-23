@@ -47,7 +47,7 @@ private val MyeCaShapes = Shapes(
 )
 
 @Composable
-fun SmartTaxTheme(
+fun MyeCaTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(

@@ -6,7 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.myeca.smarttax.ui.screens.TdsScreen
-import com.myeca.smarttax.ui.theme.SmartTaxTheme
+import com.myeca.smarttax.ui.theme.MyeCaTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ class TdsScreenTest {
     @Test
     fun screenRendersInputsAndCalculateButton() {
         composeRule.setContent {
-            SmartTaxTheme {
+            MyeCaTheme {
                 TdsScreen()
             }
         }
