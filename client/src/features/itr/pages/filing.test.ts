@@ -3,7 +3,9 @@ import {
   AY_2026_27_ITR_GUIDE,
   ITR_DOCUMENT_CHECKLIST,
   ITR_FILING_LAYOUT,
+  ITR_FILING_PATHS,
   ITR_FILING_STEPS,
+  canViewITRStatus,
   getITRFilingSectionStatuses,
   recommendITRForAY2026,
 } from "./filing.page";
@@ -11,15 +13,21 @@ import {
 describe("ITR filing workspace", () => {
   it("follows the signed-in guided filing sequence from documents to e-verification", () => {
     expect(ITR_FILING_STEPS.map((step) => step.id)).toEqual([
-      "sources",
-      "profile",
       "documents",
-      "income",
-      "deductions",
-      "tax-paid",
-      "review",
-      "e-verify",
+      "filing-path",
     ]);
+  });
+
+  it("offers the two filing paths after documents are collected", () => {
+    expect(ITR_FILING_PATHS.map((path) => path.id)).toEqual(["self", "ca"]);
+    expect(ITR_FILING_PATHS.map((path) => path.title)).toEqual(["File Self ITR", "File ITR by CA"]);
+  });
+
+  it("allows status viewing only after document upload and filing path selection", () => {
+    expect(canViewITRStatus(false, null)).toBe(false);
+    expect(canViewITRStatus(true, null)).toBe(false);
+    expect(canViewITRStatus(false, "self")).toBe(false);
+    expect(canViewITRStatus(true, "ca")).toBe(true);
   });
 
   it("asks for the core documents needed before filing an ITR", () => {
@@ -45,20 +53,17 @@ describe("ITR filing workspace", () => {
     const statuses = getITRFilingSectionStatuses();
 
     expect(Object.values(statuses).every((section) => section.tone === "pending")).toBe(true);
-    expect(statuses.profile.label).toBe("Pending");
+    expect(statuses.documents.label).toBe("Pending");
   });
 
   it("marks updated filing sections with a green status", () => {
     const statuses = getITRFilingSectionStatuses({
-      sources: true,
-      profile: true,
       documents: true,
+      "filing-path": true,
     });
 
-    expect(statuses.sources).toMatchObject({ tone: "updated", label: "Updated" });
-    expect(statuses.profile).toMatchObject({ tone: "updated", label: "Updated" });
     expect(statuses.documents).toMatchObject({ tone: "updated", label: "Updated" });
-    expect(statuses.income).toMatchObject({ tone: "pending", label: "Pending" });
+    expect(statuses["filing-path"]).toMatchObject({ tone: "updated", label: "Updated" });
   });
 
   it("documents the common and conditional AY 2026-27 filing records", () => {
