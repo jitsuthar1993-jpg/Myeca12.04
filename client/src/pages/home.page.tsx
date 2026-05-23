@@ -446,9 +446,9 @@ const HomePage = () => {
 
         {/* Planning Tools Section */}
         <section className="bg-white py-8 md:py-16">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-              <div className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-5 md:p-7">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
+              <div className="flex h-full flex-col rounded-lg border border-slate-200 bg-[#F8FAFC] p-5 md:p-7">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Planning tools</p>
                 <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
                   Estimate first. File with fewer surprises.
@@ -456,12 +456,12 @@ const HomePage = () => {
                 <p className="mt-3 text-sm leading-6 text-slate-600 md:text-base">
                   Use calculators to prepare your numbers, then move into the filing workflow when documents and deductions are clear.
                 </p>
-                <Link href="/calculators" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+                <Link href="/calculators" className="mt-auto inline-flex items-center pt-5 text-sm font-bold text-blue-700 hover:text-blue-800">
                   View all calculators <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-4">
                 <div className="grid grid-cols-2 gap-2 md:hidden">
                   {[
                     { title: "Income Tax", desc: "Tax payable", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
@@ -485,7 +485,7 @@ const HomePage = () => {
                   ))}
                 </div>
 
-                <div className="hidden gap-3 md:grid md:grid-cols-3">
+                <div className="hidden gap-4 md:grid md:grid-cols-3">
                   {[
                     { title: "Income Tax", desc: "AY 2026-27 estimate", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
                     { title: "HRA", desc: "Rent allowance check", href: "/calculators/hra", icon: Shield, tone: "bg-emerald-50 text-emerald-700" },
