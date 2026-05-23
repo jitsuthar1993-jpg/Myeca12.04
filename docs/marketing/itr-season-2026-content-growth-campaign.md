@@ -28,6 +28,12 @@ Operator files:
 - `docs/marketing/itr-season-2026-content-calendar.csv`
 - `docs/marketing/itr-season-2026-prospect-segment-plan.csv`
 
+Automated ops check:
+
+```bash
+npm run check:itr-campaign
+```
+
 ## Backlink Policy
 
 Allowed:
