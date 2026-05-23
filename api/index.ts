@@ -26,6 +26,8 @@ import {
   setPublicCache,
 } from "./_public-blog.js";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { TAX_GUIDES } from "../client/src/data/tax-guides.js";
+import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
 import { buildOpenApiSpec } from "../server/openapi.js";
 import { getIncomeTaxFormAsset } from "../shared/income-tax-form-assets.js";
 import { normalizeAppRole } from "../shared/app-roles.js";
@@ -246,7 +248,7 @@ function redirectToIncomeTaxForm(req: any, res: any, url: URL) {
   return res.redirect(302, destination);
 }
 
-function sitemapXml() {
+export function buildApiSitemapXml() {
   const blogResponse = listPublicBlogs(new URL("https://myeca.in/api/public/blogs?limit=50"));
   const blogRoutes = blogResponse.posts.map((post: any) => `/blog/${post.slug || post.id}`);
   const blogDateMap = new Map(
@@ -255,11 +257,15 @@ function sitemapXml() {
       new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()).toISOString().split("T")[0],
     ]),
   );
+  const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const routes = getIndexablePublicRoutes(
-    Object.entries(SEO_CONFIG)
-      .filter(([, config]) => !config.noindex)
-      .map(([route]) => route),
-    blogRoutes,
+    [
+      ...Object.entries(SEO_CONFIG)
+        .filter(([, config]) => !config.noindex)
+        .map(([route]) => route),
+      ...getGeneratedPublicRoutes(),
+    ],
+    [...blogRoutes, ...guideRoutes],
   );
 
   return buildSitemapXml(routes.map((route) => ({
@@ -294,7 +300,7 @@ async function handleRequest(req: any, res: any) {
     return sendJson(res, 200, { status: "logged" });
   }
 
-  if (name === "sitemap") return sendText(res, 200, sitemapXml(), "application/xml", "public, s-maxage=86400");
+  if (name === "sitemap") return sendText(res, 200, buildApiSitemapXml(), "application/xml", "public, s-maxage=86400");
   if (name === "robots") return sendText(res, 200, robotsTxt(), "text/plain", "public, s-maxage=86400");
   if (name === "openapi") return sendJson(res, 200, buildOpenApiSpec());
   if (name === "llms") return sendText(res, 200, llmsText(false), "text/plain", "public, s-maxage=3600");
