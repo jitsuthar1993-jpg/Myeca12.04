@@ -27,8 +27,13 @@ export default function TelemetryConsentBanner() {
       data-telemetry-block="true"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-3xl text-sm leading-6 text-slate-700">
-          MyeCA uses privacy-scrubbed analytics on public pages to improve forms, support, and site speed. Sensitive tax, document, payment, and account flows stay excluded from replay.
+        <p className="max-w-3xl text-xs leading-5 text-slate-700 sm:text-sm sm:leading-6">
+          <span className="sm:hidden">
+            Privacy-scrubbed analytics improve public pages. Sensitive tax, document, payment, and account flows stay excluded.
+          </span>
+          <span className="hidden sm:inline">
+            MyeCA uses privacy-scrubbed analytics on public pages to improve forms, support, and site speed. Sensitive tax, document, payment, and account flows stay excluded from replay.
+          </span>
         </p>
         <div className="flex shrink-0 gap-2">
           <button
