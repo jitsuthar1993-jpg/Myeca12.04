@@ -6,6 +6,7 @@ import BrandLockup from '@/components/ui/brand-lockup';
 type PanelItem = { label: string; icon?: any };
 
 type AuthPageShellProps = {
+  variant?: 'split' | 'compact';
   eyebrow: string;
   title: string;
   description: string;
@@ -65,6 +66,7 @@ export function AuthFormSkeleton() {
 }
 
 export function AuthPageShell({
+  variant = 'split',
   eyebrow,
   title,
   description,
@@ -76,6 +78,66 @@ export function AuthPageShell({
   primaryLink,
 }: AuthPageShellProps) {
   const items: PanelItem[] = panelItems || defaultRequiredDocuments.map(d => ({ label: d }));
+
+  if (variant === 'compact') {
+    return (
+      <main className="flex min-h-screen w-full max-w-full items-center justify-center overflow-x-hidden bg-[#f7f8fa] px-4 py-3 text-slate-950 sm:px-6 sm:py-5">
+        <div className="w-full max-w-[520px]">
+          <header className="mb-3 flex items-center justify-between gap-3">
+            <Link
+              href="/"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-[#315efb] hover:text-[#315efb]"
+              aria-label="Back to home"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+
+            <p className="text-right text-xs font-semibold leading-5 text-slate-500 sm:text-sm">
+              {primaryLink.text}{' '}
+              <Link
+                href={primaryLink.href}
+                className="font-bold text-[#315efb] hover:text-[#06439f]"
+              >
+                {primaryLink.label}
+              </Link>
+            </p>
+          </header>
+
+          <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_24px_70px_-58px_rgba(15,23,42,0.8)] sm:p-6">
+            <div className="mb-4 flex justify-center">
+              <BrandLockup
+                logoSize="sm"
+                wordmarkSize="sm"
+                badge="Finance"
+                compact
+              />
+            </div>
+
+            <div className="mb-4 text-center">
+              <p className="type-meta font-bold uppercase text-emerald-700">
+                {eyebrow}
+              </p>
+              <h1 className="mt-2 text-2xl font-black leading-tight text-slate-950 sm:text-3xl">
+                {title}
+              </h1>
+              {description ? (
+                <p className="mt-2 text-sm leading-5 text-slate-600">{description}</p>
+              ) : null}
+            </div>
+
+            {notice && (
+              <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-950">
+                <p className="font-black">{notice.title}</p>
+                <p className="mt-1 text-blue-800">{notice.message}</p>
+              </div>
+            )}
+
+            <div className="w-full min-w-0">{children}</div>
+          </section>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f7f8fa] text-slate-950 lg:h-screen">

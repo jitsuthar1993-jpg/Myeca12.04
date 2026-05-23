@@ -3,16 +3,13 @@ import { Link } from 'wouter';
 import {
   AlertCircle,
   ArrowRight,
-  BadgeIndianRupee,
   CheckCircle2,
+  Chrome,
   Eye,
   EyeOff,
-  FileCheck2,
-  Files,
   Loader2,
   Lock,
   Mail,
-  ReceiptText,
   Send,
   ShieldCheck,
   UserCog,
@@ -24,7 +21,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/components/AuthProvider';
 import { TEMPORARY_TEST_USERS, type TemporaryTestUser } from '@/lib/temporary-test-users';
-import { isGoogleAuthEnabled } from '@/lib/supabase';
 import {
   AuthPageShell,
 } from '@/components/auth/AuthPageShell';
@@ -132,7 +128,7 @@ export default function LoginPage() {
     setGoogleLoading(true);
 
     try {
-      await loginWithGoogle();
+      await loginWithGoogle(requestedRedirectPath || '/dashboard');
     } catch (err: any) {
       setError(err?.message || 'Google sign in failed. Please try again.');
       setGoogleLoading(false);
@@ -169,41 +165,24 @@ export default function LoginPage() {
   };
 
   const temporaryLoginIcons = [UserRound, ShieldCheck, UserCog, UsersRound];
-  const workspaceItems = [
-    { label: 'FY 2025-26 filing', icon: ReceiptText },
-    { label: 'AIS / Form 26AS', icon: Files },
-    { label: 'Refund estimate', icon: BadgeIndianRupee },
-    { label: 'CA review', icon: FileCheck2 },
-  ];
+  const showConfirmationResend = Boolean(notice || (error && /confirm/i.test(error)));
 
   return (
     <AuthPageShell
+      variant="compact"
       eyebrow="Finance login"
       title="Sign in to MyeCA"
-      description="Access your tax filing, documents, refund estimate, and advisor review from one secure workspace."
+      description="Open your secure tax workspace and continue where you left off."
       notice={reasonState}
       panelTitle="Account summary"
       panelDescription="Your latest filing and document status appear first."
-      panelItems={workspaceItems}
       primaryLink={{
         href: signUpUrl,
         text: 'New to MyeCA?',
         label: 'Create an account',
       }}
     >
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 sm:p-5">
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-2.5">
-          <div className="grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 gap-y-0.5">
-            <div className="row-span-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-700 ring-1 ring-slate-200">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
-            <p className="min-w-0 text-sm font-bold leading-5 text-slate-950">Secure account access</p>
-            <p className="col-start-2 text-xs leading-4 text-slate-600">
-              We will return you to {requestedRedirectPath ? 'the page you requested' : 'your role workspace'} after sign in.
-            </p>
-          </div>
-        </div>
-
+      <form onSubmit={handleSubmit} className="space-y-3">
         {error && (
           <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-bold text-rose-800">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -218,28 +197,24 @@ export default function LoginPage() {
           </div>
         )}
 
-        {isGoogleAuthEnabled && (
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleGoogle}
-              disabled={loading || googleLoading}
-              className="h-11 w-full rounded-lg border-slate-300 bg-white font-bold text-slate-900 hover:border-[#315efb] hover:bg-slate-50"
-            >
-              {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Continue with Google
-            </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogle}
+          disabled={loading || googleLoading || resendLoading}
+          className="h-10 w-full rounded-lg border-slate-300 bg-white font-bold text-slate-900 hover:border-[#315efb] hover:bg-slate-50"
+        >
+          {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Chrome className="mr-2 h-4 w-4" />}
+          Continue with Google
+        </Button>
 
-            <div className="flex items-center gap-3 text-xs font-black uppercase text-slate-400">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span>or</span>
-              <div className="h-px flex-1 bg-slate-200" />
-            </div>
-          </>
-        )}
+        <div className="flex items-center gap-3 text-xs font-black uppercase text-slate-400">
+          <div className="h-px flex-1 bg-slate-200" />
+          <span>or</span>
+          <div className="h-px flex-1 bg-slate-200" />
+        </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="email" className="text-sm font-bold text-slate-800">
             Email address
           </Label>
@@ -252,13 +227,13 @@ export default function LoginPage() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
-              className="h-11 rounded-lg border-slate-300 bg-white pl-10 text-sm"
+              className="h-10 rounded-lg border-slate-300 bg-white pl-10 text-sm"
               required
             />
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-3">
             <Label htmlFor="password" className="text-sm font-bold text-slate-800">
               Password
@@ -276,7 +251,7 @@ export default function LoginPage() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
-              className="h-11 rounded-lg border-slate-300 bg-white pl-10 pr-12 text-sm"
+              className="h-10 rounded-lg border-slate-300 bg-white pl-10 pr-12 text-sm"
               required
             />
             <button
@@ -293,45 +268,34 @@ export default function LoginPage() {
         <Button
           type="submit"
           disabled={loading || googleLoading || resendLoading}
-          className="h-11 w-full rounded-lg bg-blue-700 text-sm font-bold text-white hover:bg-blue-800"
+          className="h-10 w-full rounded-lg bg-blue-700 text-sm font-bold text-white hover:bg-blue-800"
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Sign in
           {!loading ? <ArrowRight className="ml-1 h-4 w-4" /> : null}
         </Button>
 
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <p className="font-bold text-slate-900">Need a confirmation email?</p>
-              <p className="mt-1 text-xs leading-5 text-slate-600">Enter your email above and resend the link.</p>
+        {showConfirmationResend && (
+          <div className="border-t border-slate-200 pt-3 text-sm text-slate-700">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="font-bold text-slate-900">Missing confirmation email?</p>
+                <p className="mt-0.5 text-xs leading-4 text-slate-600">Enter your email above and resend the link.</p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={loading || googleLoading || resendLoading}
+                onClick={handleResendConfirmation}
+                className="h-8 rounded-lg sm:w-auto"
+              >
+                {resendLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                Resend
+              </Button>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={loading || googleLoading || resendLoading}
-              onClick={handleResendConfirmation}
-              className="h-9 rounded-lg"
-            >
-              {resendLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Resend
-            </Button>
           </div>
-        </div>
-
-        <div className="grid gap-2 border-t border-slate-200 pt-4 sm:grid-cols-3">
-          {[
-            'Encrypted',
-            'PAN-ready',
-            'Advisor sync',
-          ].map((item) => (
-            <div key={item} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
-              <span>{item}</span>
-            </div>
-          ))}
-        </div>
+        )}
       </form>
 
       {showTemporaryLogin && (

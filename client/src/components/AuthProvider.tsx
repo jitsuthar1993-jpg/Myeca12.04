@@ -14,7 +14,7 @@ import {
   buildSignupConfirmationRedirectUrl,
   buildSignupConfirmationResendOptions,
 } from "@/lib/auth-confirmation";
-import { isGoogleAuthEnabled, isSupabaseEnabled, supabase } from "@/lib/supabase";
+import { isSupabaseEnabled, supabase } from "@/lib/supabase";
 import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
 type LogoutReason = "manual" | "timeout" | "session_expired";
@@ -27,7 +27,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<AppUser>;
   register: (email: string, password: string, userData: Partial<AppUser>, redirectPath?: string | null) => Promise<{ needsEmailConfirmation: boolean }>;
   resendSignupConfirmation: (email: string, redirectPath?: string | null) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: (redirectPath?: string | null) => Promise<void>;
   logout: (reason?: LogoutReason) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   sendEmailVerification: () => Promise<void>;
@@ -383,11 +383,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
-  const loginWithGoogle = async () => {
-    if (!isGoogleAuthEnabled) {
-      throw new Error("Google sign in is not enabled for this project yet. Use email and password to continue.");
-    }
-
+  const loginWithGoogle = async (redirectPath?: string | null) => {
     clearTemporaryAuthState();
     clearAuthToken();
     setAuthUser(null);
@@ -405,7 +401,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: buildSignupConfirmationRedirectUrl(redirectPath),
       },
     });
 
