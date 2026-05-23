@@ -28,14 +28,14 @@ import { cn } from "@/lib/utils";
 
 export const ITR_FILING_STEPS = [
   {
-    id: "documents",
-    title: "Upload Documents",
-    description: "Upload the required records for AY 2026-27 before choosing how the return will be filed.",
-  },
-  {
     id: "filing-path",
     title: "Choose Filing Path",
-    description: "File the return yourself or send the document-ready case to a CA, then track the ITR status.",
+    description: "Choose File Self ITR or File ITR by CA first, then upload only the records needed for that path.",
+  },
+  {
+    id: "documents",
+    title: "Upload Required Documents",
+    description: "Upload the supporting records for AY 2026-27 and confirm non-upload details separately.",
   },
 ] as const;
 
@@ -126,7 +126,7 @@ export const ITR_DOCUMENT_CHECKLIST = [
 
 export type ITRFormId = "ITR-1" | "ITR-2" | "ITR-3" | "ITR-4";
 
-type FilingGuideItem = {
+export type FilingGuideItem = {
   id: string;
   title: string;
   description: string;
@@ -154,6 +154,28 @@ export type ITRRecommendation = {
   compulsorySections: FilingGuideItem[];
   nextSteps: string[];
 };
+
+const UPLOADABLE_ITR_DOCUMENT_IDS = new Set([
+  "form16-form16a",
+  "ais-tis",
+  "form26as",
+  "bank-statements",
+  "tax-challans",
+  "deduction-proofs",
+  "hra-rent",
+  "home-loan-interest",
+  "capital-gains-reports",
+  "business-books",
+  "presumptive-turnover",
+  "foreign-assets-ftc",
+]);
+
+export function getUploadableITRDocuments(
+  documents: readonly FilingGuideItem[],
+  _filingPath: ITRFilingPathId | null = null,
+) {
+  return documents.filter((document) => UPLOADABLE_ITR_DOCUMENT_IDS.has(document.id));
+}
 
 export const AY_2026_27_ITR_GUIDE = {
   assessmentYear: "2026-27",
@@ -648,6 +670,7 @@ export default function ITRFilingPage() {
   const [tdsPaid, setTdsPaid] = useState(95000);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const progress = ((currentStep + 1) / ITR_FILING_STEPS.length) * 100;
+  const currentStepId: string = ITR_FILING_STEPS[currentStep].id;
 
   const totalIncome = salaryIncome + interestIncome + capitalGainsIncome;
   const selectedSourceCount = Object.values(sourceSelections).filter(Boolean).length;
@@ -671,10 +694,20 @@ export default function ITRFilingPage() {
     [capitalGainsIncome, filingFacts, sourceSelections, totalIncome],
   );
 
-  const readyDocumentCount = itrRecommendation.requiredDocuments.filter((document) => documentFiles[document.id]).length;
-  const missingRequiredDocuments = itrRecommendation.requiredDocuments.filter((document) => !documentFiles[document.id]);
+  const uploadableDocuments = useMemo(
+    () => getUploadableITRDocuments(itrRecommendation.requiredDocuments, selectedFilingPath),
+    [itrRecommendation.requiredDocuments, selectedFilingPath],
+  );
+  const uploadableDocumentIds = new Set(uploadableDocuments.map((document) => document.id));
+  const infoOnlyRequiredDocuments = itrRecommendation.requiredDocuments.filter(
+    (document) => !uploadableDocumentIds.has(document.id),
+  );
+  const selectedFilingPathDetails = ITR_FILING_PATHS.find((path) => path.id === selectedFilingPath);
+  const readyDocumentCount = uploadableDocuments.filter((document) => documentFiles[document.id]).length;
+  const missingRequiredDocuments = uploadableDocuments.filter((document) => !documentFiles[document.id]);
   const requiredDocumentsReady = missingRequiredDocuments.length === 0;
   const statusReady = canViewITRStatus(requiredDocumentsReady, selectedFilingPath);
+  const canContinueFromCurrentStep = currentStepId !== "filing-path" || Boolean(selectedFilingPath);
 
   const regime = useMemo(() => {
     const newTax = estimateNewRegimeTax(totalIncome);
@@ -751,8 +784,6 @@ export default function ITRFilingPage() {
     window.location.href = "/itr/success";
   };
 
-  const currentStepId: string = ITR_FILING_STEPS[currentStep].id;
-
   return (
     <Layout title="MY ITR">
       <div className="space-y-6 pb-28 md:pb-0">
@@ -764,7 +795,7 @@ export default function ITRFilingPage() {
               </p>
               <h1 className="type-page-title mt-2 font-black text-slate-950">MY ITR filing workspace</h1>
               <p className="type-body mt-3 max-w-3xl text-slate-600">
-                A compact AY 2026-27 flow: upload the required documents, choose File Self ITR or File ITR by CA, then track your ITR status.
+                A compact AY 2026-27 flow: choose File Self ITR or File ITR by CA, upload only the required documents, then track your ITR status.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 md:min-w-[360px] md:grid-cols-1">
@@ -794,7 +825,7 @@ export default function ITRFilingPage() {
             <StatusBadge status="in_progress" label={ITR_FILING_STEPS[currentStep].title} />
           </div>
           <Progress value={progress} className="mt-3 h-1.5" />
-          <div className="mt-3 grid gap-2 md:grid-cols-4">
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {ITR_FILING_STEPS.map((step, index) => {
               const sectionStatus = sectionStatuses[step.id];
               const isUpdated = sectionStatus.tone === "updated";
@@ -1049,13 +1080,15 @@ export default function ITRFilingPage() {
             {currentStepId === "documents" && (
               <div className="mt-6 space-y-5">
                 <div className="rounded-2xl border border-amber-200 bg-white p-5">
-                  <p className="font-black text-slate-950">AY 2026-27 required document upload for {itrRecommendation.recommendedForm}</p>
+                  <p className="font-black text-slate-950">
+                    AY 2026-27 required uploads for {selectedFilingPathDetails?.title ?? "your selected filing path"}
+                  </p>
                   <p className="mt-1 type-support text-slate-600">
-                    ITR forms are prepared from supporting records. Keep proofs ready for review and future queries even when no document is attached with the return.
+                    Upload the evidence records needed for {itrRecommendation.recommendedForm}. Details such as PAN, Aadhaar status, and refund bank account are confirmed separately instead of asking for attachments.
                   </p>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {itrRecommendation.requiredDocuments.map((document) => {
+                  {uploadableDocuments.map((document) => {
                     const uploaded = documentFiles[document.id];
                     return (
                       <div
@@ -1098,6 +1131,22 @@ export default function ITRFilingPage() {
                     );
                   })}
                 </div>
+                {infoOnlyRequiredDocuments.length > 0 && (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                    <p className="font-black text-slate-950">Details to confirm without upload</p>
+                    <p className="mt-1 type-support text-slate-600">
+                      These are required filing details, but they do not need a file attachment in this workspace.
+                    </p>
+                    <div className="mt-4 grid gap-3 md:grid-cols-3">
+                      {infoOnlyRequiredDocuments.map((document) => (
+                        <div key={document.id} className="rounded-xl border border-slate-200 bg-white p-3">
+                          <p className="font-black text-slate-950">{document.title}</p>
+                          <p className="mt-1 type-support text-slate-600">{document.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div
                   className={cn(
                     "rounded-2xl border p-5",
@@ -1105,12 +1154,12 @@ export default function ITRFilingPage() {
                   )}
                 >
                   <p className={cn("font-black", requiredDocumentsReady ? "text-emerald-950" : "text-slate-950")}>
-                    {readyDocumentCount} of {itrRecommendation.requiredDocuments.length} document groups ready
+                    {readyDocumentCount} of {uploadableDocuments.length} upload groups ready
                   </p>
                   <p className={cn("mt-1 type-support", requiredDocumentsReady ? "text-emerald-900" : "text-slate-600")}>
                     {requiredDocumentsReady
-                      ? "The selected-return document plan is marked ready. Extra proofs can still be added before review."
-                      : `Complete ${missingRequiredDocuments.length} pending group${missingRequiredDocuments.length === 1 ? "" : "s"} before review.`}
+                      ? "The selected-path upload plan is marked ready. Extra proofs can still be added before review."
+                      : `Complete ${missingRequiredDocuments.length} pending upload group${missingRequiredDocuments.length === 1 ? "" : "s"} before review.`}
                   </p>
                   <Link href="/documents">
                     <Button variant="outline" className="mt-4 border-amber-200 bg-white text-slate-800 hover:bg-amber-50">
@@ -1124,27 +1173,20 @@ export default function ITRFilingPage() {
 
             {currentStepId === "filing-path" && (
               <div className="mt-6 space-y-5">
-                <div
-                  className={cn(
-                    "rounded-2xl border p-5",
-                    requiredDocumentsReady ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-white",
-                  )}
-                >
+                <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="type-meta font-black uppercase text-slate-500">Document gate</p>
+                      <p className="type-meta font-black uppercase text-blue-700">Start here</p>
                       <h3 className="mt-1 type-card-title font-black text-slate-950">
-                        Upload required documents before filing
+                        Choose how you want to file this return
                       </h3>
-                      <p className="mt-1 type-support text-slate-600">
-                        {requiredDocumentsReady
-                          ? "All required document groups are uploaded. Choose whether you want to file yourself or file through a CA."
-                          : `${missingRequiredDocuments.length} required document group${missingRequiredDocuments.length === 1 ? "" : "s"} still need upload before filing can proceed.`}
+                      <p className="mt-1 type-support text-blue-900">
+                        MY ITR will show the upload checklist and status tracker based on this selection. You can change it before final filing.
                       </p>
                     </div>
                     <StatusBadge
-                      status={requiredDocumentsReady ? "filed" : "action_required"}
-                      label={requiredDocumentsReady ? "Documents uploaded" : "Upload pending"}
+                      status={selectedFilingPath ? "filed" : "in_progress"}
+                      label={selectedFilingPathDetails?.title ?? "Choose path"}
                     />
                   </div>
                 </div>
@@ -1152,7 +1194,6 @@ export default function ITRFilingPage() {
                 <div className="grid gap-4 lg:grid-cols-2">
                   {ITR_FILING_PATHS.map((path) => {
                     const selected = selectedFilingPath === path.id;
-                    const disabled = !requiredDocumentsReady;
 
                     return (
                       <div
@@ -1162,7 +1203,6 @@ export default function ITRFilingPage() {
                           selected
                             ? "border-emerald-200 bg-emerald-50"
                             : "border-amber-200 bg-white",
-                          disabled && "opacity-75",
                         )}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -1172,20 +1212,20 @@ export default function ITRFilingPage() {
                             <p className="mt-2 type-support text-slate-600">{path.description}</p>
                           </div>
                           <StatusBadge
-                            status={selected ? "filed" : disabled ? "action_required" : "not_started"}
-                            label={selected ? "Selected" : disabled ? "Upload docs" : "Ready"}
+                            status={selected ? "filed" : "not_started"}
+                            label={selected ? "Selected" : "Choose"}
                           />
                         </div>
                         <button
                           type="button"
-                          disabled={disabled}
                           onClick={() => {
                             setSelectedFilingPath(path.id);
                             markSectionUpdated("filing-path");
+                            setCurrentStep(ITR_FILING_STEPS.findIndex((step) => step.id === "documents"));
                             trackProductionEvent("itr_filing_path_selected", { path: path.id });
                           }}
                           className={cn(
-                            "mt-5 flex h-10 w-full items-center justify-center gap-2 rounded-lg border px-4 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-60",
+                            "mt-5 flex h-10 w-full items-center justify-center gap-2 rounded-lg border px-4 text-sm font-bold transition",
                             selected
                               ? "border-emerald-200 bg-white text-emerald-800 hover:bg-emerald-100"
                               : "border-amber-200 bg-white text-slate-800 hover:bg-amber-50",
@@ -1209,7 +1249,7 @@ export default function ITRFilingPage() {
                       <p className="mt-1 type-support text-slate-600">
                         {statusReady
                           ? "Your document upload and filing path are ready. Open the ITR status tracker for acknowledgement, e-verification, and refund updates."
-                          : "Upload all required document groups and select a filing path before opening the ITR status tracker."}
+                          : "Choose a filing path and upload the required evidence records before opening the ITR status tracker."}
                       </p>
                     </div>
                     {statusReady ? (
@@ -1574,10 +1614,16 @@ export default function ITRFilingPage() {
             {currentStep < ITR_FILING_STEPS.length - 1 ? (
               <button
                 type="button"
+                disabled={!canContinueFromCurrentStep}
                 onClick={nextStep}
-                className="flex h-10 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 text-sm font-bold text-blue-700 transition hover:bg-blue-100"
+                className={cn(
+                  "flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-60",
+                  canContinueFromCurrentStep
+                    ? "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"
+                    : "border-amber-200 bg-white text-slate-500",
+                )}
               >
-                Continue
+                {currentStepId === "filing-path" ? "Choose a path" : "Continue"}
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : (

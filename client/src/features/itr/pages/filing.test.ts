@@ -6,19 +6,20 @@ import {
   ITR_FILING_PATHS,
   ITR_FILING_STEPS,
   canViewITRStatus,
+  getUploadableITRDocuments,
   getITRFilingSectionStatuses,
   recommendITRForAY2026,
 } from "./filing.page";
 
 describe("ITR filing workspace", () => {
-  it("follows the signed-in guided filing sequence from documents to e-verification", () => {
+  it("starts with filing path selection before document upload", () => {
     expect(ITR_FILING_STEPS.map((step) => step.id)).toEqual([
-      "documents",
       "filing-path",
+      "documents",
     ]);
   });
 
-  it("offers the two filing paths after documents are collected", () => {
+  it("offers the two filing paths as the entry choice", () => {
     expect(ITR_FILING_PATHS.map((path) => path.id)).toEqual(["self", "ca"]);
     expect(ITR_FILING_PATHS.map((path) => path.title)).toEqual(["File Self ITR", "File ITR by CA"]);
   });
@@ -28,6 +29,34 @@ describe("ITR filing workspace", () => {
     expect(canViewITRStatus(true, null)).toBe(false);
     expect(canViewITRStatus(false, "self")).toBe(false);
     expect(canViewITRStatus(true, "ca")).toBe(true);
+  });
+
+  it("shows upload controls only for required upload-worthy filing documents", () => {
+    const recommendation = recommendITRForAY2026({
+      sourceSelections: {
+        salary: true,
+        capitalGains: false,
+        business: false,
+        houseProperty: true,
+        otherSources: true,
+        foreignIncome: false,
+      },
+      totalIncome: 1_225_000,
+      capitalGainsIncome: 0,
+      isPresumptiveBusiness: false,
+    });
+
+    const uploadableIds = getUploadableITRDocuments(recommendation.requiredDocuments, "self").map(
+      (document) => document.id,
+    );
+
+    expect(uploadableIds).toContain("form16-form16a");
+    expect(uploadableIds).toContain("ais-tis");
+    expect(uploadableIds).toContain("form26as");
+    expect(uploadableIds).toContain("bank-statements");
+    expect(uploadableIds).not.toContain("profile-pan");
+    expect(uploadableIds).not.toContain("aadhaar-status");
+    expect(uploadableIds).not.toContain("bank-refund");
   });
 
   it("asks for the core documents needed before filing an ITR", () => {
@@ -53,7 +82,7 @@ describe("ITR filing workspace", () => {
     const statuses = getITRFilingSectionStatuses();
 
     expect(Object.values(statuses).every((section) => section.tone === "pending")).toBe(true);
-    expect(statuses.documents.label).toBe("Pending");
+    expect(statuses["filing-path"].label).toBe("Pending");
   });
 
   it("marks updated filing sections with a green status", () => {
