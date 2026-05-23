@@ -15,14 +15,14 @@ const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
   '/blog': ['/blog/:slug'],
   '/auth/login': ['/auth/register'],
   '/auth/register': ['/auth/login'],
-  '/dashboard': ['/profiles', '/documents', '/settings', '/itr/form-selector'],
+  '/dashboard': ['/profiles', '/documents', '/payments', '/settings', '/itr/form-selector'],
   '/itr': ['/itr/form-selector', '/itr/status-tracker'],
   '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],
   '/experts': ['/experts/ca-rahul-sharma', '/experts/ca-priya-nair'],
 };
 
 const preloadedRoutes = new Set<string>();
-const PRIVATE_ROUTE_PREFIXES = ['/dashboard', '/profiles', '/documents', '/settings', '/reports', '/workflows', '/teams', '/referrals', '/export'];
+const PRIVATE_ROUTE_PREFIXES = ['/dashboard', '/profiles', '/documents', '/payments', '/settings', '/reports', '/workflows', '/teams', '/referrals', '/export'];
 
 function isPrivatePreload(path: string) {
   return PRIVATE_ROUTE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
@@ -71,6 +71,7 @@ const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
     '/dashboard': () => import('@/pages/user-dashboard.page'),
     '/profiles': () => import('@/pages/profiles.page'),
     '/documents': () => import('@/pages/documents.page'),
+    '/payments': () => import('@/pages/payments.page'),
     '/settings': () => import('@/pages/settings.page'),
     '/itr': () => import('@/features/itr/pages/filing.page'),
     '/itr/filing': () => import('@/features/itr/pages/filing.page'),
