@@ -54,6 +54,7 @@ function escapeJsonForHtml(value: unknown) {
 function stripDefaultSeo(html: string) {
   return html
     .replace(/<title>[\s\S]*?<\/title>\s*/i, "")
+    .replace(/\s*<meta\s+name=["']google-site-verification["']\s+content=["']\s*["']\s*\/?>\s*/gi, "\n")
     .replace(/\s*<meta\s+(?:name|property)=["'](?:description|keywords|robots|googlebot|bingbot|author|twitter:[^"']+|og:[^"']+|ai-agent-instructions|llm-content-summary|content-version|freshness-signal|expert-verification)["'][^>]*>\s*/gi, "\n")
     .replace(/\s*<link\s+rel=["']canonical["'][^>]*>\s*/gi, "\n");
 }
