@@ -76,6 +76,7 @@ vi.mock("@vercel/blob", () => ({
   put: vi.fn(),
 }));
 
+const { put } = await import("@vercel/blob");
 const { default: documentsRouter } = await import("../../../server/routes/documents.js");
 
 function resetStore() {
@@ -97,16 +98,19 @@ async function request(path: string, options: RequestInit = {}) {
   if (!address || typeof address === "string") throw new Error("Unable to start test server");
 
   try {
+    const isFormData = (options.body as any)?.constructor?.name === "FormData";
     const response = await fetch(`http://127.0.0.1:${address.port}${path}`, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(options.headers || {}),
       },
     });
-    const json = await response.json();
+    const raw = await response.text();
+    const json = raw ? JSON.parse(raw) : {};
     return { response, json };
   } finally {
+    server.closeAllConnections?.();
     await new Promise<void>((resolve, reject) => {
       server.close((error) => (error ? reject(error) : resolve()));
     });
@@ -116,6 +120,57 @@ async function request(path: string, options: RequestInit = {}) {
 beforeEach(resetStore);
 
 describe("document routes", () => {
+  it("persists upload compression metadata and service/tax-return links", async () => {
+    vi.mocked(put).mockResolvedValue({
+      pathname: "documents/user_1/doc_1/form16.pdf",
+      url: "https://blob.example.com/form16.pdf",
+      downloadUrl: "https://blob.example.com/form16.pdf?download=1",
+    } as any);
+    seed("user_services", "service_1", {
+      userId: "user_1",
+      serviceTitle: "ITR Filing",
+    });
+    seed("tax_returns", "return_1", {
+      userId: "user_1",
+      status: "ca_review",
+    });
+
+    const boundary = "----myeca-upload-test";
+    const multipartBody = [
+      `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="form16.pdf"\r\nContent-Type: application/pdf\r\n\r\n%PDF-1.4\nsample\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="name"\r\n\r\nForm 16\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="category"\r\n\r\nform16\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="userServiceId"\r\n\r\nservice_1\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="taxReturnId"\r\n\r\nreturn_1\r\n`,
+      `--${boundary}--\r\n`,
+    ].join("");
+
+    const uploaded = await request("/api/documents/upload", {
+      method: "POST",
+      body: multipartBody,
+      headers: { "Content-Type": `multipart/form-data; boundary=${boundary}` },
+    });
+
+    expect(uploaded.response.status).toBe(200);
+    expect(uploaded.json.document).toMatchObject({
+      name: "Form 16",
+      userServiceId: "service_1",
+      taxReturnId: "return_1",
+      originalSize: 15,
+      storedSize: 15,
+      compressionType: "pdf",
+      compressionStatus: "skipped",
+    });
+    expect(collectionStore("documents").get(uploaded.json.document.id)).toMatchObject({
+      originalSize: 15,
+      storedSize: 15,
+      compressionType: "pdf",
+      compressionStatus: "skipped",
+      userServiceId: "service_1",
+      taxReturnId: "return_1",
+    });
+  });
+
   it("keeps serviceId and userServiceId aligned when updating document links", async () => {
     seed("user_services", "service_1", {
       userId: "user_1",

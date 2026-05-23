@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { format } from "date-fns";
 import {
   CalendarClock,
+  Briefcase,
   CheckCircle2,
   CreditCard,
   ExternalLink,
@@ -56,6 +57,27 @@ type PaymentLinkRequest = {
   adminNote?: string;
   paymentLink?: string;
   createdAt?: string;
+};
+
+type ServiceCaseRequest = {
+  id: string;
+  userName?: string;
+  clientName?: string;
+  serviceTitle?: string;
+  serviceCategory?: string;
+  status?: string;
+  paymentStatus?: string | null;
+  assignedCaName?: string | null;
+  documentCount?: number;
+  latestDocumentAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  taxReturn?: {
+    id?: string;
+    assessmentYear?: string | null;
+    recommendedForm?: string | null;
+    status?: string | null;
+  } | null;
 };
 
 const consultationStatuses = ["all", "new", "contacted", "converted", "closed"];
@@ -130,8 +152,17 @@ export default function AdminRequestsPage() {
     },
   });
 
+  const caseQuery = useQuery<{ cases: ServiceCaseRequest[]; total: number }>({
+    queryKey: ["/api/admin/requests/cases"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/admin/requests/cases");
+      return response.json();
+    },
+  });
+
   const consultationRequests = consultationQuery.data?.requests ?? [];
   const paymentRequests = paymentQuery.data?.requests ?? [];
+  const caseRequests = caseQuery.data?.cases ?? [];
   const openConsultations = useMemo(
     () => consultationRequests.filter((request) => !["converted", "closed"].includes(request.status || "")).length,
     [consultationRequests],
@@ -139,6 +170,10 @@ export default function AdminRequestsPage() {
   const openPayments = useMemo(
     () => paymentRequests.filter((request) => !["paid", "cancelled"].includes(request.status || "")).length,
     [paymentRequests],
+  );
+  const openCases = useMemo(
+    () => caseRequests.filter((request) => !["completed", "closed", "cancelled"].includes(request.status || "")).length,
+    [caseRequests],
   );
 
   const updateConsultation = useMutation({
@@ -201,18 +236,20 @@ export default function AdminRequestsPage() {
               onClick={() => {
                 consultationQuery.refetch();
                 paymentQuery.refetch();
+                caseQuery.refetch();
               }}
             >
-              <RefreshCw className={cn("mr-2 h-4 w-4", (consultationQuery.isFetching || paymentQuery.isFetching) && "animate-spin")} />
+              <RefreshCw className={cn("mr-2 h-4 w-4", (consultationQuery.isFetching || paymentQuery.isFetching || caseQuery.isFetching) && "animate-spin")} />
               Refresh
             </Button>
           </div>
         </section>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {[
             { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-blue-600 bg-blue-50" },
             { label: "Open Payments", value: openPayments, icon: CreditCard, color: "text-emerald-600 bg-emerald-50" },
+            { label: "Open Cases", value: openCases, icon: Briefcase, color: "text-violet-600 bg-violet-50" },
             { label: "Consultations Shown", value: consultationRequests.length, icon: Phone, color: "text-amber-600 bg-amber-50" },
             { label: "Payments Shown", value: paymentRequests.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100" },
           ].map((item) => (
@@ -231,6 +268,73 @@ export default function AdminRequestsPage() {
         </div>
 
         <div className="grid gap-6 xl:grid-cols-2">
+          <Card className="rounded-[26px] border-slate-100 shadow-sm xl:col-span-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
+              <CardTitle className="text-base font-black">Service / ITR Case Queue</CardTitle>
+              <Badge variant="outline" className="border-violet-100 bg-violet-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-violet-700">
+                {caseRequests.length} shown
+              </Badge>
+            </CardHeader>
+            <CardContent className="overflow-x-auto p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Case</TableHead>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Documents</TableHead>
+                    <TableHead>Assigned CA</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {caseQuery.isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-32 text-center text-slate-500">
+                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
+                        Loading service cases...
+                      </TableCell>
+                    </TableRow>
+                  ) : caseRequests.length ? (
+                    caseRequests.map((request) => (
+                      <TableRow key={request.id}>
+                        <TableCell>
+                          <p className="font-black text-slate-900">{request.serviceTitle || "Service case"}</p>
+                          <p className="mt-1 text-xs text-slate-500">{request.serviceCategory || "Workspace request"}</p>
+                          {request.taxReturn && (
+                            <p className="mt-1 text-xs text-slate-400">
+                              {request.taxReturn.assessmentYear || "AY"} / {request.taxReturn.recommendedForm || "ITR"}
+                            </p>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-sm font-semibold text-slate-700">
+                          {request.userName || request.clientName || "User"}
+                        </TableCell>
+                        <TableCell>
+                          <p className="text-sm font-black text-slate-900">{request.documentCount || 0}</p>
+                          <p className="text-xs text-slate-400">{request.latestDocumentAt ? dateLabel(request.latestDocumentAt) : "No uploads"}</p>
+                        </TableCell>
+                        <TableCell className="text-sm font-semibold text-slate-700">
+                          {request.assignedCaName || "Unassigned"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={cn("border px-2 py-1 text-[10px] font-black uppercase tracking-widest", statusBadgeClass(request.status))}>
+                            {label(request.status)}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-32 text-center text-sm font-medium text-slate-500">
+                        No submitted service or MY ITR cases yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
           <Card className="rounded-[26px] border-slate-100 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
               <CardTitle className="text-base font-black">Consultation Queue</CardTitle>

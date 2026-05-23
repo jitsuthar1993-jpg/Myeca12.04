@@ -27,6 +27,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { getAuthToken } from '@/lib/authToken';
 import { ALLOWED_FILE_TYPES, formatFileSize, prepareDocumentForUpload } from '@/lib/file_utils';
 import { cn } from '@/lib/utils';
+import { invalidateDocumentCaches, invalidateWorkspaceCaseCaches } from '@/lib/workspace-cache';
 
 type ServiceCase = {
   id: string;
@@ -105,8 +106,8 @@ export default function ServiceDetailPage() {
       });
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services', serviceId] });
+    onSuccess: async () => {
+      await invalidateWorkspaceCaseCaches(queryClient, serviceId);
       toast({ title: 'Case note saved', description: 'Your update is now attached to this service case.' });
     },
     onError: (error: any) => {
@@ -136,10 +137,8 @@ export default function ServiceDetailPage() {
       }
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services', serviceId] });
-      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user/dashboard'] });
+    onSuccess: async () => {
+      await invalidateDocumentCaches(queryClient, serviceId);
       setUploadName('');
       if (fileInputRef.current) fileInputRef.current.value = '';
       toast({ title: 'Document linked', description: 'The file is attached to this service case.' });

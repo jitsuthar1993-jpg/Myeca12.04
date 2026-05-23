@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
@@ -25,6 +26,11 @@ import {
 } from "@/components/platform/compliance-ui";
 import { Layout } from "@/components/admin/Layout";
 import { cn } from "@/lib/utils";
+import { apiRequest } from "@/lib/queryClient";
+import { getAuthToken } from "@/lib/authToken";
+import { ALLOWED_FILE_TYPES, prepareDocumentForUpload } from "@/lib/file_utils";
+import { useToast } from "@/hooks/use-toast";
+import { invalidateDocumentCaches, invalidateWorkspaceCaseCaches } from "@/lib/workspace-cache";
 
 export const ITR_FILING_STEPS = [
   {
@@ -452,6 +458,96 @@ const trackProductionEvent = (
     .catch(() => undefined);
 };
 
+export const ITR_DRAFT_STORAGE_KEY = "mye_itr_draft";
+
+type ITRDraftWorkspaceInput = {
+  currentStep: number;
+  sourceSelections: Record<string, boolean>;
+  filingFacts: FilingFactsState;
+  profileDraft: Record<string, string>;
+  documentFiles: Record<string, string>;
+  updatedSections: Partial<Record<ITRFilingStepId, boolean>>;
+  selectedFilingPath: ITRFilingPathId | null;
+  salaryIncome: number;
+  interestIncome: number;
+  capitalGainsIncome: number;
+  deductions: number;
+  rentAmount: number;
+  tdsPaid: number;
+};
+
+type ITRDraftApiInput = ITRDraftWorkspaceInput & {
+  recommendation: ITRRecommendation;
+  totalIncome: number;
+  regime: {
+    newTax: number;
+    oldTax: number;
+    better: string;
+    savings: number;
+    estimatedPayable: number;
+  };
+  uploadableDocuments: FilingGuideItem[];
+};
+
+export function parseCachedITRDraft(raw: string | null) {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed as Record<string, any> : null;
+  } catch {
+    return null;
+  }
+}
+
+export function buildITRDraftWorkspaceState(input: ITRDraftWorkspaceInput) {
+  return {
+    currentStep: input.currentStep,
+    sourceSelections: input.sourceSelections,
+    filingFacts: input.filingFacts,
+    profileDraft: input.profileDraft,
+    documentFiles: input.documentFiles,
+    updatedSections: input.updatedSections,
+    selectedFilingPath: input.selectedFilingPath,
+    salaryIncome: input.salaryIncome,
+    interestIncome: input.interestIncome,
+    capitalGainsIncome: input.capitalGainsIncome,
+    deductions: input.deductions,
+    rentAmount: input.rentAmount,
+    tdsPaid: input.tdsPaid,
+    assessmentYear: "2026-27",
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function buildITRDraftApiPayload(input: ITRDraftApiInput) {
+  const workspaceState = buildITRDraftWorkspaceState(input);
+  return {
+    assessmentYear: "2026-27",
+    filingPath: input.selectedFilingPath,
+    recommendedForm: input.recommendation.recommendedForm,
+    sourceSelections: input.sourceSelections,
+    filingFacts: input.filingFacts,
+    profileDraft: input.profileDraft,
+    estimateSummary: {
+      totalIncome: input.totalIncome,
+      salaryIncome: input.salaryIncome,
+      interestIncome: input.interestIncome,
+      capitalGainsIncome: input.capitalGainsIncome,
+      deductions: input.deductions,
+      rentAmount: input.rentAmount,
+      tdsPaid: input.tdsPaid,
+      ...input.regime,
+    },
+    documentChecklist: input.uploadableDocuments.map((document) => ({
+      id: document.id,
+      title: document.title,
+      uploaded: Boolean(input.documentFiles[document.id]),
+      fileName: input.documentFiles[document.id] ?? null,
+    })),
+    workspaceState,
+  };
+}
+
 function estimateNewRegimeTax(income: number) {
   const slabs = [
     [400000, 0],
@@ -635,6 +731,9 @@ export function recommendITRForAY2026(input: ITRRecommendationInput): ITRRecomme
 }
 
 export default function ITRFilingPage() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [sourceSelections, setSourceSelections] = useState<Record<string, boolean>>({
     salary: true,
@@ -669,6 +768,10 @@ export default function ITRFilingPage() {
   const [rentAmount, setRentAmount] = useState(300000);
   const [tdsPaid, setTdsPaid] = useState(95000);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const [userServiceId, setUserServiceId] = useState<string | null>(null);
+  const [uploadingDocumentId, setUploadingDocumentId] = useState<string | null>(null);
+  const [serverDraftApplied, setServerDraftApplied] = useState(false);
   const progress = ((currentStep + 1) / ITR_FILING_STEPS.length) * 100;
   const currentStepId: string = ITR_FILING_STEPS[currentStep].id;
 
@@ -721,49 +824,240 @@ export default function ITRFilingPage() {
     };
   }, [totalIncome, deductions, tdsPaid]);
 
+  const draftWorkspaceInput = useMemo(
+    () => ({
+      currentStep,
+      sourceSelections,
+      filingFacts,
+      profileDraft,
+      documentFiles,
+      updatedSections,
+      selectedFilingPath,
+      salaryIncome,
+      interestIncome,
+      capitalGainsIncome,
+      deductions,
+      rentAmount,
+      tdsPaid,
+    }),
+    [
+      currentStep,
+      sourceSelections,
+      filingFacts,
+      profileDraft,
+      documentFiles,
+      updatedSections,
+      selectedFilingPath,
+      salaryIncome,
+      interestIncome,
+      capitalGainsIncome,
+      deductions,
+      rentAmount,
+      tdsPaid,
+    ],
+  );
+
+  const draftApiPayload = useMemo(
+    () =>
+      buildITRDraftApiPayload({
+        ...draftWorkspaceInput,
+        recommendation: itrRecommendation,
+        totalIncome,
+        regime,
+        uploadableDocuments,
+      }),
+    [draftWorkspaceInput, itrRecommendation, regime, totalIncome, uploadableDocuments],
+  );
+
+  const draftQuery = useQuery({
+    queryKey: ["/api/itr/draft"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/itr/draft");
+      return response.json();
+    },
+    retry: 0,
+  });
+
+  const saveDraftMutation = useMutation({
+    mutationFn: async (payload: ReturnType<typeof buildITRDraftApiPayload>) => {
+      const response = await apiRequest("/api/itr/draft", {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+      return response.json();
+    },
+    onSuccess: async (data) => {
+      if (data?.draft?.id) setDraftId(data.draft.id);
+      if (data?.draft?.userServiceId) setUserServiceId(data.draft.userServiceId);
+      await queryClient.invalidateQueries({ queryKey: ["/api/user/dashboard"] });
+    },
+  });
+
+  const submitReviewMutation = useMutation({
+    mutationFn: async () => {
+      const reviewPayload = buildITRDraftApiPayload({
+        ...draftWorkspaceInput,
+        selectedFilingPath: "ca",
+        recommendation: itrRecommendation,
+        totalIncome,
+        regime,
+        uploadableDocuments,
+      });
+      await saveDraftMutation.mutateAsync(reviewPayload);
+      const response = await apiRequest("/api/itr/submit-review", {
+        method: "POST",
+        body: JSON.stringify({ userNote: "Submitted from MY ITR workspace." }),
+      });
+      return response.json();
+    },
+    onSuccess: async (data) => {
+      if (data?.taxReturn?.id) setDraftId(data.taxReturn.id);
+      if (data?.service?.id) setUserServiceId(data.service.id);
+      await invalidateWorkspaceCaseCaches(queryClient, data?.service?.id);
+      await invalidateDocumentCaches(queryClient, data?.service?.id);
+      localStorage.removeItem(ITR_DRAFT_STORAGE_KEY);
+      toast({
+        title: "Submitted for CA review",
+        description: "Your MY ITR draft, uploads, and case details are now in the review queue.",
+      });
+      setLocation(data?.service?.id ? `/dashboard/services/${data.service.id}` : "/itr/success");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Could not submit for review",
+        description: error?.message || "Please try again after saving the draft.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const applyDraftSnapshot = (draft: Record<string, any>) => {
+    const workspace = (draft.workspaceState || draft) as Record<string, any>;
+    const savedStep = Number(workspace.currentStep);
+    if (Number.isInteger(savedStep)) {
+      setCurrentStep(Math.min(Math.max(savedStep, 0), ITR_FILING_STEPS.length - 1));
+    }
+    if (workspace.sourceSelections || draft.sourceSelections) {
+      setSourceSelections((current) => ({ ...current, ...(workspace.sourceSelections || draft.sourceSelections) }));
+    }
+    if (workspace.filingFacts || draft.filingFacts) {
+      setFilingFacts((current) => ({ ...current, ...(workspace.filingFacts || draft.filingFacts) }));
+    }
+    if (workspace.profileDraft || draft.profileDraft) {
+      setProfileDraft((current) => ({ ...current, ...(workspace.profileDraft || draft.profileDraft) }));
+    }
+    if (workspace.documentFiles && typeof workspace.documentFiles === "object") {
+      setDocumentFiles(workspace.documentFiles);
+    }
+    if (workspace.updatedSections && typeof workspace.updatedSections === "object") {
+      setUpdatedSections(workspace.updatedSections);
+    }
+    const restoredPath = draft.filingPath || workspace.selectedFilingPath;
+    if (restoredPath === "self" || restoredPath === "ca") {
+      setSelectedFilingPath(restoredPath);
+    }
+    if (typeof workspace.salaryIncome === "number") setSalaryIncome(workspace.salaryIncome);
+    if (typeof workspace.interestIncome === "number") setInterestIncome(workspace.interestIncome);
+    if (typeof workspace.capitalGainsIncome === "number") setCapitalGainsIncome(workspace.capitalGainsIncome);
+    if (typeof workspace.deductions === "number") setDeductions(workspace.deductions);
+    if (typeof workspace.rentAmount === "number") setRentAmount(workspace.rentAmount);
+    if (typeof workspace.tdsPaid === "number") setTdsPaid(workspace.tdsPaid);
+    if (typeof draft.id === "string") setDraftId(draft.id);
+    if (typeof draft.userServiceId === "string") setUserServiceId(draft.userServiceId);
+    if (draft.updatedAt || workspace.updatedAt) {
+      const savedAt = new Date(draft.updatedAt || workspace.updatedAt);
+      if (!Number.isNaN(savedAt.getTime())) setLastSavedAt(savedAt);
+    }
+  };
+
+  useEffect(() => {
+    const cached = parseCachedITRDraft(localStorage.getItem(ITR_DRAFT_STORAGE_KEY));
+    if (cached) applyDraftSnapshot(cached);
+  }, []);
+
+  useEffect(() => {
+    if (serverDraftApplied || draftQuery.isLoading) return;
+    if (draftQuery.data?.draft) {
+      applyDraftSnapshot(draftQuery.data.draft);
+    }
+    setServerDraftApplied(true);
+  }, [draftQuery.data, draftQuery.isLoading, serverDraftApplied]);
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
+      const workspaceState = buildITRDraftWorkspaceState(draftWorkspaceInput);
       localStorage.setItem(
-        "mye_itr_draft",
+        ITR_DRAFT_STORAGE_KEY,
         JSON.stringify({
-          currentStep,
-          sourceSelections,
-          filingFacts,
-          profileDraft,
-          documentFiles,
-          updatedSections,
-          selectedFilingPath,
-          salaryIncome,
-          interestIncome,
-          capitalGainsIncome,
-          deductions,
-          rentAmount,
-          tdsPaid,
-          assessmentYear: "2026-27",
+          ...workspaceState,
           recommendedForm: itrRecommendation.recommendedForm,
-          updatedAt: new Date().toISOString(),
         }),
       );
       setLastSavedAt(new Date());
+      if (draftQuery.isFetched && serverDraftApplied && !submitReviewMutation.isPending) {
+        saveDraftMutation.mutate(draftApiPayload);
+      }
       trackProductionEvent("itr_draft_autosaved", { step: ITR_FILING_STEPS[currentStep].id });
     }, 600);
     return () => window.clearTimeout(timer);
   }, [
+    draftWorkspaceInput,
+    draftApiPayload,
+    draftQuery.isFetched,
+    serverDraftApplied,
+    submitReviewMutation.isPending,
     currentStep,
-    sourceSelections,
-    filingFacts,
-    profileDraft,
-    documentFiles,
-    updatedSections,
-    selectedFilingPath,
-    salaryIncome,
-    interestIncome,
-    capitalGainsIncome,
-    deductions,
-    rentAmount,
-    tdsPaid,
     itrRecommendation.recommendedForm,
   ]);
+
+  const uploadITRDocument = async (document: FilingGuideItem, file: File) => {
+    setUploadingDocumentId(document.id);
+    try {
+      markSectionUpdated("documents");
+      const savedDraft = draftId ? null : await saveDraftMutation.mutateAsync(draftApiPayload);
+      const activeDraftId = draftId || savedDraft?.draft?.id;
+      const activeServiceId = userServiceId || savedDraft?.draft?.userServiceId || null;
+      if (activeDraftId) setDraftId(activeDraftId);
+      if (activeServiceId) setUserServiceId(activeServiceId);
+
+      const preparedFile = await prepareDocumentForUpload(file);
+      const token = await getAuthToken();
+      const formData = new FormData();
+      formData.append("file", preparedFile);
+      formData.append("name", document.title);
+      formData.append("category", document.id);
+      formData.append("description", `Uploaded from MY ITR for ${itrRecommendation.recommendedForm}`);
+      if (activeDraftId) formData.append("taxReturnId", activeDraftId);
+      if (activeServiceId) formData.append("userServiceId", activeServiceId);
+
+      const response = await fetch("/api/documents/upload", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || data.message || "Failed to upload document");
+      }
+
+      const uploaded = await response.json();
+      setDocumentFiles((prev) => ({ ...prev, [document.id]: uploaded.document?.originalName || preparedFile.name }));
+      await invalidateDocumentCaches(queryClient, activeServiceId);
+      toast({
+        title: "Document uploaded",
+        description: `${document.title} is saved and linked to your MY ITR draft.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error?.message || "Please try this document again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingDocumentId(null);
+    }
+  };
 
   const nextStep = () => {
     if (currentStep < ITR_FILING_STEPS.length - 1) {
@@ -781,7 +1075,7 @@ export default function ITRFilingPage() {
     markSectionUpdated("filing-path");
     setSelectedFilingPath("ca");
     trackProductionEvent("itr_review_payment_start", { method: "assisted_handoff", regime: regime.better });
-    window.location.href = "/itr/success";
+    submitReviewMutation.mutate();
   };
 
   return (
@@ -1114,18 +1408,25 @@ export default function ITRFilingPage() {
                         </div>
                         <Input
                           type="file"
+                          accept={ALLOWED_FILE_TYPES.join(",")}
+                          disabled={uploadingDocumentId === document.id}
                           className="mt-4 h-11 rounded-lg bg-white"
                           onChange={(event) => {
                             const file = event.target.files?.[0];
-                            if (file) markSectionUpdated("documents");
-                            setDocumentFiles((prev) => {
-                              const next = { ...prev };
-                              if (file) next[document.id] = file.name;
-                              else delete next[document.id];
-                              return next;
-                            });
+                            if (file) {
+                              void uploadITRDocument(document, file);
+                            } else {
+                              setDocumentFiles((prev) => {
+                                const next = { ...prev };
+                                delete next[document.id];
+                                return next;
+                              });
+                            }
                           }}
                         />
+                        {uploadingDocumentId === document.id && (
+                          <p className="mt-2 type-meta font-semibold text-blue-700">Uploading and saving...</p>
+                        )}
                         {uploaded && <p className="mt-2 type-meta font-semibold text-emerald-700">{uploaded}</p>}
                       </div>
                     );
@@ -1167,6 +1468,17 @@ export default function ITRFilingPage() {
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>
+                  {selectedFilingPath === "ca" && (
+                    <Button
+                      type="button"
+                      disabled={!requiredDocumentsReady || submitReviewMutation.isPending}
+                      onClick={submitForReview}
+                      className="mt-4 ml-0 bg-blue-700 text-white hover:bg-blue-800 sm:ml-3"
+                    >
+                      {submitReviewMutation.isPending ? "Submitting..." : "Submit for CA Review"}
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
@@ -1469,9 +1781,10 @@ export default function ITRFilingPage() {
                     <button
                       type="button"
                       onClick={submitForReview}
+                      disabled={submitReviewMutation.isPending}
                       className="mt-6 flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 text-sm font-bold text-blue-700 transition hover:bg-blue-100"
                     >
-                      Submit for CA Review
+                      {submitReviewMutation.isPending ? "Submitting..." : "Submit for CA Review"}
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>

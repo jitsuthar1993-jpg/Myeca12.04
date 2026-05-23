@@ -5,9 +5,11 @@ import {
   ITR_FILING_LAYOUT,
   ITR_FILING_PATHS,
   ITR_FILING_STEPS,
+  buildITRDraftApiPayload,
   canViewITRStatus,
   getUploadableITRDocuments,
   getITRFilingSectionStatuses,
+  parseCachedITRDraft,
   recommendITRForAY2026,
 } from "./filing.page";
 
@@ -93,6 +95,71 @@ describe("ITR filing workspace", () => {
 
     expect(statuses.documents).toMatchObject({ tone: "updated", label: "Updated" });
     expect(statuses["filing-path"]).toMatchObject({ tone: "updated", label: "Updated" });
+  });
+
+  it("restores a browser draft cache snapshot without throwing on bad cache data", () => {
+    expect(parseCachedITRDraft("{bad json")).toBeNull();
+    expect(parseCachedITRDraft(JSON.stringify({ selectedFilingPath: "ca", documentFiles: { form16: "form16.pdf" } }))).toMatchObject({
+      selectedFilingPath: "ca",
+      documentFiles: { form16: "form16.pdf" },
+    });
+  });
+
+  it("builds a durable API draft payload with uploaded document state", () => {
+    const recommendation = recommendITRForAY2026({
+      sourceSelections: {
+        salary: true,
+        capitalGains: false,
+        business: false,
+        houseProperty: false,
+        otherSources: true,
+        foreignIncome: false,
+      },
+      totalIncome: 1_225_000,
+      capitalGainsIncome: 0,
+      isPresumptiveBusiness: false,
+    });
+    const uploadableDocuments = getUploadableITRDocuments(recommendation.requiredDocuments, "ca");
+
+    const payload = buildITRDraftApiPayload({
+      currentStep: 1,
+      sourceSelections: { salary: true, otherSources: true },
+      filingFacts: {
+        isPresumptiveBusiness: false,
+        hasMoreThanTwoHouseProperties: false,
+        hasDirectorStatus: false,
+        hasUnlistedShares: false,
+        hasBroughtForwardLoss: false,
+        hasDeferredEsop: false,
+      },
+      profileDraft: { pan: "ABCDE1234F", aadhaarStatus: "Linked", mobile: "", bankAccount: "", ifsc: "" },
+      documentFiles: { "form16-form16a": "form16.pdf" },
+      updatedSections: { documents: true },
+      selectedFilingPath: "ca",
+      salaryIncome: 1_200_000,
+      interestIncome: 25_000,
+      capitalGainsIncome: 0,
+      deductions: 250_000,
+      rentAmount: 300_000,
+      tdsPaid: 95_000,
+      recommendation,
+      totalIncome: 1_225_000,
+      regime: { newTax: 0, oldTax: 0, better: "New Regime", savings: 0, estimatedPayable: 0 },
+      uploadableDocuments,
+    });
+
+    expect(payload).toMatchObject({
+      assessmentYear: "2026-27",
+      filingPath: "ca",
+      recommendedForm: "ITR-1",
+      workspaceState: {
+        currentStep: 1,
+        documentFiles: { "form16-form16a": "form16.pdf" },
+      },
+    });
+    expect(payload.documentChecklist).toContainEqual(
+      expect.objectContaining({ id: "form16-form16a", uploaded: true, fileName: "form16.pdf" }),
+    );
   });
 
   it("documents the common and conditional AY 2026-27 filing records", () => {

@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { getServiceById } from "@/data/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { invalidateWorkspaceCaseCaches } from "@/lib/workspace-cache";
 
 export default function ActivationPage() {
   const [, params] = useRoute("/services/activate/:serviceId") as [boolean, { serviceId?: string } | null];
@@ -77,12 +78,12 @@ export default function ActivationPage() {
       });
       return response.json();
     },
-    onSuccess: (data: { id?: string }) => {
+    onSuccess: async (data: { id?: string }) => {
       if (data?.id) {
         setCreatedServiceId(data.id);
         setActivationReference(`MyeCA-${data.id.slice(0, 10).toUpperCase()}`);
       }
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services'] });
+      await invalidateWorkspaceCaseCaches(queryClient, data?.id);
       setCurrentStep(totalSteps - 1); // Go to success step
     },
     onError: (err: any) => {

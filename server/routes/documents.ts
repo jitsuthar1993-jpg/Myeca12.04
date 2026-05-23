@@ -6,6 +6,7 @@ import { del, get, put } from "@vercel/blob";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { errorResponse, safeError } from "../utils/error-response.js";
+import { notifyAdmins, notifyUser } from "../utils/workflow-notifications.js";
 import {
   assertCanAccessUserData,
   canAccessUserData,
@@ -26,6 +27,7 @@ const upload = multer({
       "image/jpeg",
       "image/png",
       "image/jpg",
+      "image/webp",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "application/vnd.ms-excel",
@@ -65,6 +67,10 @@ function serializeDocument(docId: string, data: Record<string, any>) {
     name: data.name,
     mimeType: data.mimeType,
     size: data.size ?? 0,
+    originalSize: data.originalSize ?? data.size ?? 0,
+    storedSize: data.storedSize ?? data.size ?? 0,
+    compressionType: data.compressionType ?? "none",
+    compressionStatus: data.compressionStatus ?? "not_applicable",
     category: data.category,
     tags: data.tags ?? [],
     description: data.description ?? null,
@@ -171,20 +177,34 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
     await validateDocumentLinks(userId, metadata);
 
     let fileBuffer = req.file.buffer;
+    const originalSize = req.file.size;
     let finalSize = req.file.size;
     let mimeType = req.file.mimetype;
+    let compressionType: "image" | "pdf" | "none" = "none";
+    let compressionStatus: "compressed" | "skipped" | "failed" | "not_applicable" = "not_applicable";
 
     if (req.file.mimetype.startsWith("image/")) {
+      compressionType = "image";
       try {
-        fileBuffer = await sharp(req.file.buffer)
+        const compressed = await sharp(req.file.buffer)
           .resize(2000, 2000, { fit: "inside", withoutEnlargement: true })
           .jpeg({ quality: 80 })
           .toBuffer();
-        finalSize = fileBuffer.length;
-        mimeType = "image/jpeg";
+        if (compressed.length < req.file.size) {
+          fileBuffer = compressed;
+          finalSize = fileBuffer.length;
+          mimeType = "image/jpeg";
+          compressionStatus = "compressed";
+        } else {
+          compressionStatus = "skipped";
+        }
       } catch (compressError) {
         console.error("Compression error:", compressError);
+        compressionStatus = "failed";
       }
+    } else if (req.file.mimetype === "application/pdf") {
+      compressionType = "pdf";
+      compressionStatus = "skipped";
     }
 
     const docRef = adminDb.collection("documents").doc();
@@ -201,6 +221,10 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
       originalName: req.file.originalname,
       mimeType,
       size: finalSize,
+      originalSize,
+      storedSize: finalSize,
+      compressionType,
+      compressionStatus,
       profileId: metadata.profileId ?? null,
       serviceId: metadata.serviceId ?? null,
       userServiceId: metadata.userServiceId ?? null,
@@ -220,6 +244,34 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
     };
 
     await docRef.set(newDoc);
+    await Promise.all([
+      notifyAdmins({
+        title: "Document uploaded",
+        message: `${metadata.name} was uploaded to a user workspace.`,
+        type: "info",
+        metadata: {
+          documentId: docRef.id,
+          userId,
+          userServiceId: metadata.userServiceId ?? null,
+          taxReturnId: metadata.taxReturnId ?? null,
+        },
+      }),
+      (async () => {
+        if (!metadata.userServiceId) return;
+        const service = await adminDb.collection("user_services").doc(metadata.userServiceId).get();
+        await notifyUser(service.data()?.assignedCaId, {
+          title: "Client document uploaded",
+          message: `${metadata.name} was attached to an assigned case.`,
+          type: "info",
+          metadata: {
+            documentId: docRef.id,
+            userId,
+            userServiceId: metadata.userServiceId,
+            taxReturnId: metadata.taxReturnId ?? null,
+          },
+        });
+      })(),
+    ]);
     res.json({
       success: true,
       document: serializeDocument(docRef.id, newDoc)

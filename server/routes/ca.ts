@@ -2,6 +2,7 @@ import { Router, Response } from "express";
 import { requireAuth, requireCA, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { canAccessUserData, isAdmin } from "../utils/access-control.js";
+import { buildServiceCaseDetail, buildServiceCaseQueue } from "../utils/case-queue.js";
 
 const router = Router();
 
@@ -104,6 +105,48 @@ router.get("/clients/:userId/documents", requireAuth, requireCA, async (req: Aut
   } catch (error: any) {
     console.error("Error fetching client documents:", error);
     res.status(500).json({ success: false, error: error.message || "Failed to fetch documents" });
+  }
+});
+
+router.get("/cases", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.auth?.userId || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const cases = await buildServiceCaseQueue(isAdmin(req.user) ? {} : { assignedCaId: req.user.id });
+    res.json({
+      success: true,
+      data: {
+        cases,
+        total: cases.length,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error fetching CA cases:", error);
+    res.status(500).json({ success: false, error: error.message || "Failed to fetch cases" });
+  }
+});
+
+router.get("/cases/:id", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.auth?.userId || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const serviceCase = await buildServiceCaseDetail(req.params.id);
+    if (!serviceCase) {
+      return res.status(404).json({ success: false, error: "Case not found" });
+    }
+
+    if (!isAdmin(req.user) && serviceCase.assignedCaId !== req.user.id) {
+      return res.status(403).json({ success: false, error: "This case is not assigned to you." });
+    }
+
+    res.json({ success: true, data: { case: serviceCase } });
+  } catch (error: any) {
+    console.error("Error fetching CA case:", error);
+    res.status(500).json({ success: false, error: error.message || "Failed to fetch case" });
   }
 });
 

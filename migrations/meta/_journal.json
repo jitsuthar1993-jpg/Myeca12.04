@@ -22,6 +22,13 @@
       "when": 1776511800000,
       "tag": "0002_backend_hardening_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779531000000,
+      "tag": "0003_workspace_case_queue_indexes",
+      "breakpoints": true
     }
   ]
 }

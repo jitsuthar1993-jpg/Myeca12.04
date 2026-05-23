@@ -103,6 +103,13 @@ export function buildOpenApiSpec() {
         get: operation("Get current user's service case", { tags: ["user", "services"], auth: true, status: "production" }),
         patch: operation("Update current user's editable service metadata", { tags: ["user", "services"], auth: true, requestBody: true, status: "production" }),
       }),
+      "/api/itr/draft": path({
+        get: operation("Get current user's private MY ITR draft", { tags: ["user", "itr"], auth: true, status: "production" }),
+        put: operation("Save current user's private MY ITR draft", { tags: ["user", "itr"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/itr/submit-review": path({
+        post: operation("Submit the current MY ITR draft for CA review", { tags: ["user", "itr"], auth: true, requestBody: true, status: "production" }),
+      }),
       "/api/consultation-requests": path({
         post: operation("Create a consultation callback request", { tags: ["consultation"], requestBody: true, status: "production" }),
       }),
@@ -148,6 +155,9 @@ export function buildOpenApiSpec() {
       }),
       "/api/admin/stats": path({
         get: operation("Get admin operational statistics", { tags: ["admin"], auth: true, status: "mixed" }),
+      }),
+      "/api/admin/requests/cases": path({
+        get: operation("List submitted service and MY ITR cases for admin review", { tags: ["admin", "requests"], auth: true, status: "production" }),
       }),
       "/api/admin/feedback": path({
         get: operation("List submitted feedback", { tags: ["admin", "feedback"], auth: true, status: "production" }),
@@ -209,6 +219,12 @@ export function buildOpenApiSpec() {
       }),
       "/api/ca/clients": path({
         get: operation("List clients assigned to current CA", { tags: ["ca"], auth: true, status: "production" }),
+      }),
+      "/api/ca/cases": path({
+        get: operation("List service and MY ITR cases assigned to current CA", { tags: ["ca"], auth: true, status: "production" }),
+      }),
+      "/api/ca/cases/{id}": path({
+        get: operation("Get an assigned CA service case with linked documents", { tags: ["ca"], auth: true, status: "production" }),
       }),
       "/api/whatsapp/webhook": path({
         post: operation("Receive WhatsApp webhook", { tags: ["webhooks"], status: "production" }),

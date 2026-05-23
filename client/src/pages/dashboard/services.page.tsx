@@ -42,6 +42,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
 import { buildDashboardServiceRequestPayload } from '@/lib/service-workflow';
+import { invalidateWorkspaceCaseCaches } from '@/lib/workspace-cache';
 
 const iconMap: Record<string, any> = {
   FileText,
@@ -99,10 +100,7 @@ export default function DashboardServicesPage() {
       return response.json();
     },
     onSuccess: async (data) => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['/api/user/dashboard'] }),
-        queryClient.invalidateQueries({ queryKey: ['/api/user-services'] }),
-      ]);
+      await invalidateWorkspaceCaseCaches(queryClient, data?.id);
       toast({
         title: 'Request created',
         description: 'Your service case is ready. Continue from the case workspace.',

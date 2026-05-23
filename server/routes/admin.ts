@@ -8,6 +8,7 @@ import { safeError } from "../utils/error-response.js";
 import { provisionPrivilegedUser, syncRoleClaims } from "../services/user-accounts.js";
 import { invalidateCachedUser } from "../utils/user-cache.js";
 import { APP_ROLES, PRIVILEGED_APP_ROLES } from "../../shared/app-roles.js";
+import { buildServiceCaseQueue } from "../utils/case-queue.js";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
@@ -186,6 +187,19 @@ router.get("/requests/payment-links", requireAuth, requireAdmin, async (req: Aut
     });
   } catch (error) {
     return safeError(res, error, "Failed to load payment link requests");
+  }
+});
+
+router.get("/requests/cases", requireAuth, requireAdmin, async (_req: AuthRequest, res: Response) => {
+  try {
+    const cases = await buildServiceCaseQueue();
+    res.json({
+      success: true,
+      cases,
+      total: cases.length,
+    });
+  } catch (error) {
+    return safeError(res, error, "Failed to load service cases");
   }
 });
 

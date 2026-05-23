@@ -8,6 +8,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { useLocation } from "wouter";
 import { formatINR } from "@/data/pricing";
 import { apiRequest } from "@/lib/queryClient";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateWorkspaceCaseCaches } from "@/lib/workspace-cache";
 
 interface ServiceCheckoutModalProps {
   isOpen: boolean;
@@ -28,6 +30,7 @@ export function ServiceCheckoutModal({
 }: ServiceCheckoutModalProps) {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +75,7 @@ export function ServiceCheckoutModal({
       }
 
       setSuccess(true);
+      await invalidateWorkspaceCaseCaches(queryClient, data?.id);
       setTimeout(() => {
         onClose();
         setLocation(data.id ? `/dashboard/services/${data.id}` : "/dashboard");

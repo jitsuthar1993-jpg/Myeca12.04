@@ -37,6 +37,11 @@ export default function CADashboard() {
     enabled: canUseCaWorkspace,
   });
 
+  const { data: casesData, isLoading: casesLoading } = useQuery({
+    queryKey: ["/api/ca/cases"],
+    enabled: canUseCaWorkspace,
+  });
+
   const stats = (statsData as any)?.data || {
     totalClients: 0,
     totalFilings: 0,
@@ -49,6 +54,15 @@ export default function CADashboard() {
     `${client.firstName} ${client.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const assignedCases = ((casesData as any)?.data?.cases || []).filter((serviceCase: any) =>
+    searchTerm === "" ||
+    serviceCase.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    serviceCase.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    serviceCase.serviceTitle?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const activeCaseCount = assignedCases.filter((serviceCase: any) =>
+    !["completed", "closed", "cancelled"].includes(serviceCase.status || "")
+  ).length;
 
   if (authLoading || statsLoading) {
     return (
@@ -80,7 +94,7 @@ export default function CADashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
           <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
             <div className="flex justify-between items-start mb-4">
               <div className="rounded-lg bg-blue-50 p-3 text-blue-600">
@@ -116,6 +130,17 @@ export default function CADashboard() {
 
           <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
             <div className="flex justify-between items-start mb-4">
+              <div className="rounded-lg bg-blue-50 p-3 text-blue-600">
+                <Briefcase className="h-5 w-5" />
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+            </div>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Assigned Cases</p>
+            <p className="text-2xl font-bold text-slate-900">{activeCaseCount}</p>
+          </Card>
+
+          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
+            <div className="flex justify-between items-start mb-4">
               <div className="rounded-lg bg-violet-50 p-3 text-violet-600">
                 <TrendingUp className="h-5 w-5" />
               </div>
@@ -130,6 +155,7 @@ export default function CADashboard() {
         <Tabs defaultValue="clients" className="space-y-6">
           <TabsList className="inline-flex h-11 rounded-lg border border-slate-200 bg-slate-50 p-1">
             <TabsTrigger value="clients" className="rounded-md px-5 text-xs font-bold uppercase tracking-[0.12em] data-[state=active]:bg-white">Active Clients</TabsTrigger>
+            <TabsTrigger value="cases" className="rounded-md px-5 text-xs font-bold uppercase tracking-[0.12em] data-[state=active]:bg-white">Assigned Cases</TabsTrigger>
             <TabsTrigger value="filings" className="rounded-md px-5 text-xs font-bold uppercase tracking-[0.12em] data-[state=active]:bg-white">Filing History</TabsTrigger>
           </TabsList>
 
@@ -221,6 +247,97 @@ export default function CADashboard() {
                                <p className="text-sm font-bold text-slate-400">No matching clients found.</p>
                             </div>
                          )}
+                      </div>
+                   )}
+                </CardContent>
+             </Card>
+          </TabsContent>
+
+          <TabsContent value="cases" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+             <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
+                <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
+                   <div>
+                      <CardTitle className="text-lg font-bold">Assigned Case Queue</CardTitle>
+                      <CardDescription className="text-xs font-medium text-slate-500">Review submitted service cases, MY ITR handoffs, and linked document counts.</CardDescription>
+                   </div>
+                   <div className="relative group">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
+                      <Input
+                        placeholder="Search cases..."
+                        className="h-9 w-60 rounded-lg border-slate-200 bg-slate-50 pl-9 text-xs font-medium"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                   </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                   {casesLoading ? (
+                      <div className="p-12 text-center">
+                         <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+                         <p className="text-slate-500 font-medium">Loading assigned cases...</p>
+                      </div>
+                   ) : (
+                      <div className="overflow-x-auto">
+                         <Table>
+                            <TableHeader>
+                               <TableRow>
+                                  <TableHead>Case</TableHead>
+                                  <TableHead>Client</TableHead>
+                                  <TableHead>Documents</TableHead>
+                                  <TableHead>Tax Return</TableHead>
+                                  <TableHead className="text-right">Actions</TableHead>
+                               </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                               {assignedCases.map((serviceCase: any) => (
+                                  <TableRow key={serviceCase.id}>
+                                     <TableCell>
+                                        <p className="text-sm font-bold text-slate-900">{serviceCase.serviceTitle || "Service case"}</p>
+                                        <p className="text-xs font-medium text-slate-500">{serviceCase.serviceCategory || "Workspace request"}</p>
+                                     </TableCell>
+                                     <TableCell>
+                                        <p className="text-sm font-bold text-slate-900">{serviceCase.clientName || serviceCase.userName || "Client"}</p>
+                                        <Badge className="mt-1 border-none bg-slate-50 text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                                           {(serviceCase.status || "pending").replace(/_/g, " ")}
+                                        </Badge>
+                                     </TableCell>
+                                     <TableCell>
+                                        <p className="text-sm font-bold text-slate-900">{serviceCase.documentCount || 0}</p>
+                                        <p className="text-[10px] font-medium text-slate-500">{serviceCase.latestDocumentAt ? new Date(serviceCase.latestDocumentAt).toLocaleDateString("en-IN") : "No uploads"}</p>
+                                     </TableCell>
+                                     <TableCell>
+                                        <p className="text-sm font-bold text-slate-900">{serviceCase.taxReturn?.recommendedForm || "Not linked"}</p>
+                                        <p className="text-[10px] font-medium text-slate-500">{serviceCase.taxReturn?.assessmentYear || "AY pending"}</p>
+                                     </TableCell>
+                                     <TableCell className="text-right">
+                                        <div className="flex items-center justify-end gap-1.5">
+                                           {serviceCase.userId && (
+                                             <Link href={`/ca/clients/${serviceCase.userId}/documents`}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+                                                   <FolderOpen className="h-4 w-4" />
+                                                </Button>
+                                             </Link>
+                                           )}
+                                           {serviceCase.userId && (
+                                             <Link href={`/ca/clients/${serviceCase.userId}/filings`}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+                                                   <ArrowRight className="h-4 w-4" />
+                                                </Button>
+                                             </Link>
+                                           )}
+                                        </div>
+                                     </TableCell>
+                                  </TableRow>
+                               ))}
+                               {assignedCases.length === 0 && (
+                                  <TableRow>
+                                    <TableCell colSpan={5} className="h-32 text-center text-sm font-bold text-slate-400">
+                                      No assigned cases found.
+                                    </TableCell>
+                                  </TableRow>
+                               )}
+                            </TableBody>
+                         </Table>
                       </div>
                    )}
                 </CardContent>

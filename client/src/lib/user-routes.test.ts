@@ -72,11 +72,14 @@ vi.mock("../../../server/data-admin.js", () => ({
 vi.mock("../../../server/middleware/auth.js", () => {
   const attachUser = (req: any) => {
     const userId = req.get("x-test-user-id") || "user_1";
+    const role = req.get("x-test-role") || "user";
     req.auth = { userId, email: `${userId}@example.com` };
     req.user = {
       id: userId,
       email: `${userId}@example.com`,
       firstName: "Test",
+      lastName: "User",
+      role,
       assignedCaId: "ca_1",
     };
   };
@@ -93,6 +96,9 @@ vi.mock("../../../server/middleware/auth.js", () => {
     requireAdmin: (_req: any, _res: any, next: any) => {
       next();
     },
+    requireCA: (_req: any, _res: any, next: any) => {
+      next();
+    },
     requireAnyAuth: (req: any, _res: any, next: any) => {
       attachUser(req);
       next();
@@ -102,6 +108,7 @@ vi.mock("../../../server/middleware/auth.js", () => {
 
 const { default: userRouter } = await import("../../../server/routes/user.js");
 const { default: adminRouter } = await import("../../../server/routes/admin.js");
+const { default: caRouter } = await import("../../../server/routes/ca.js");
 
 function resetStore() {
   mockState.store.clear();
@@ -121,6 +128,7 @@ async function request(path: string, options: RequestInit = {}) {
   app.use(express.json());
   app.use("/api", userRouter);
   app.use("/api/admin", adminRouter);
+  app.use("/api/ca", caRouter);
 
   const server = app.listen(0, "127.0.0.1");
   await new Promise<void>((resolve) => server.once("listening", resolve));
@@ -128,14 +136,16 @@ async function request(path: string, options: RequestInit = {}) {
   if (!address || typeof address === "string") throw new Error("Unable to start test server");
 
   try {
+    const isFormData = (options.body as any)?.constructor?.name === "FormData";
     const response = await fetch(`http://127.0.0.1:${address.port}${path}`, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(options.headers || {}),
       },
     });
-    const json = await response.json();
+    const raw = await response.text();
+    const json = raw ? JSON.parse(raw) : {};
     return { response, json };
   } finally {
     await new Promise<void>((resolve, reject) => {
@@ -434,6 +444,201 @@ describe("user service routes", () => {
       metadata: {
         paymentLinkRequestId: "payment_link_requests_1",
       },
+    });
+  });
+});
+
+describe("ITR draft and handoff routes", () => {
+  const draftPayload = {
+    assessmentYear: "2026-27",
+    filingPath: "ca",
+    recommendedForm: "ITR-2",
+    sourceSelections: { salary: true, capitalGains: true },
+    filingFacts: { hasDirectorStatus: false },
+    profileDraft: { pan: "ABCDE1234F", mobile: "9999999999" },
+    estimateSummary: { totalIncome: 1580000, estimatedPayable: 12000 },
+    workspaceState: { currentStep: 1, documentFiles: { "form16-form16a": "form16.pdf" } },
+    documentChecklist: [
+      { id: "form16-form16a", title: "Form 16 / Form 16A", uploaded: true },
+      { id: "capital-gains-reports", title: "Capital gains reports", uploaded: false },
+    ],
+  };
+
+  it("saves and reloads a private MY ITR draft for the signed-in user", async () => {
+    const saved = await request("/api/itr/draft", {
+      method: "PUT",
+      body: JSON.stringify(draftPayload),
+    });
+
+    expect(saved.response.status).toBe(200);
+    expect(saved.json.draft).toMatchObject({
+      userId: "user_1",
+      assessmentYear: "2026-27",
+      filingPath: "ca",
+      recommendedForm: "ITR-2",
+      status: "draft",
+    });
+
+    const loaded = await request("/api/itr/draft");
+
+    expect(loaded.response.status).toBe(200);
+    expect(loaded.json.draft).toMatchObject({
+      id: saved.json.draft.id,
+      userId: "user_1",
+      profileDraft: { pan: "ABCDE1234F", mobile: "9999999999" },
+      estimateSummary: { totalIncome: 1580000, estimatedPayable: 12000 },
+      workspaceState: { currentStep: 1, documentFiles: { "form16-form16a": "form16.pdf" } },
+    });
+  });
+
+  it("submits the MY ITR draft for CA review and creates linked service and notifications", async () => {
+    seed("users", "admin_1", {
+      email: "admin@example.com",
+      role: "admin",
+      status: "active",
+    });
+    seed("users", "ca_1", {
+      email: "ca_1@example.com",
+      firstName: "Case",
+      lastName: "Expert",
+      role: "ca",
+      status: "active",
+    });
+
+    const savedDraft = await request("/api/itr/draft", {
+      method: "PUT",
+      body: JSON.stringify(draftPayload),
+    });
+    seed("documents", "draft_doc_1", {
+      userId: "user_1",
+      taxReturnId: savedDraft.json.draft.id,
+      name: "Form 16",
+      status: "active",
+      createdAt: new Date("2026-05-15T08:00:00.000Z"),
+    });
+
+    const submitted = await request("/api/itr/submit-review", {
+      method: "POST",
+      body: JSON.stringify({ userNote: "Please review before filing." }),
+    });
+
+    expect(submitted.response.status).toBe(200);
+    expect(submitted.json.taxReturn).toMatchObject({
+      userId: "user_1",
+      status: "ca_review",
+      filingPath: "ca",
+      recommendedForm: "ITR-2",
+    });
+    expect(submitted.json.service).toMatchObject({
+      userId: "user_1",
+      serviceId: "itr-filing",
+      serviceTitle: "ITR Filing Review",
+      assignedCaId: "ca_1",
+      status: "pending",
+    });
+    expect(submitted.json.service.metadata).toMatchObject({
+      source: "itr_filing_workspace",
+      userNote: "Please review before filing.",
+      linkedTaxReturnId: submitted.json.taxReturn.id,
+    });
+    expect(collectionStore("tax_returns").get(submitted.json.taxReturn.id)).toMatchObject({
+      userServiceId: submitted.json.service.id,
+      submittedForReviewAt: expect.any(Date),
+    });
+    expect(collectionStore("documents").get("draft_doc_1")).toMatchObject({
+      taxReturnId: submitted.json.taxReturn.id,
+      userServiceId: submitted.json.service.id,
+      serviceId: submitted.json.service.id,
+    });
+    expect(readCollection("notifications")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ userId: "admin_1", title: "ITR review submitted" }),
+        expect.objectContaining({ userId: "ca_1", title: "New assigned ITR case" }),
+      ]),
+    );
+  });
+});
+
+describe("role case queues", () => {
+  beforeEach(() => {
+    seed("users", "user_1", {
+      firstName: "Asha",
+      lastName: "Shah",
+      email: "asha@example.com",
+      role: "user",
+      assignedCaId: "ca_1",
+    });
+    seed("users", "user_2", {
+      firstName: "Ravi",
+      lastName: "Mehta",
+      email: "ravi@example.com",
+      role: "user",
+      assignedCaId: "ca_2",
+    });
+    seed("user_services", "service_1", {
+      userId: "user_1",
+      serviceId: "itr-filing",
+      serviceTitle: "ITR Filing Review",
+      serviceCategory: "Income Tax",
+      status: "pending",
+      assignedCaId: "ca_1",
+      metadata: { linkedTaxReturnId: "return_1" },
+      createdAt: new Date("2026-05-15T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-15T09:00:00.000Z"),
+    });
+    seed("user_services", "service_2", {
+      userId: "user_2",
+      serviceId: "gst-returns",
+      serviceTitle: "GST Returns",
+      serviceCategory: "GST",
+      status: "pending",
+      assignedCaId: "ca_2",
+      metadata: {},
+      createdAt: new Date("2026-05-14T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-14T09:00:00.000Z"),
+    });
+    seed("tax_returns", "return_1", {
+      userId: "user_1",
+      userServiceId: "service_1",
+      assessmentYear: "2026-27",
+      recommendedForm: "ITR-2",
+      status: "ca_review",
+    });
+    seed("documents", "doc_1", {
+      userId: "user_1",
+      userServiceId: "service_1",
+      taxReturnId: "return_1",
+      name: "Form 16",
+      status: "active",
+      createdAt: new Date("2026-05-15T10:00:00.000Z"),
+    });
+  });
+
+  it("lists submitted service cases for the admin operations inbox", async () => {
+    const listed = await request("/api/admin/requests/cases");
+
+    expect(listed.response.status).toBe(200);
+    expect(listed.json.cases).toHaveLength(2);
+    expect(listed.json.cases[0]).toMatchObject({
+      id: "service_1",
+      userName: "Asha Shah",
+      documentCount: 1,
+      taxReturn: { id: "return_1", recommendedForm: "ITR-2" },
+    });
+  });
+
+  it("lists only cases assigned to the signed-in CA", async () => {
+    const listed = await request("/api/ca/cases", {
+      headers: { "x-test-user-id": "ca_1", "x-test-role": "ca" },
+    });
+
+    expect(listed.response.status).toBe(200);
+    expect(listed.json.data.cases).toHaveLength(1);
+    expect(listed.json.data.cases[0]).toMatchObject({
+      id: "service_1",
+      clientName: "Asha Shah",
+      documentCount: 1,
+      taxReturn: { id: "return_1", assessmentYear: "2026-27" },
     });
   });
 });

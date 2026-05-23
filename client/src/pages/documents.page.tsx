@@ -24,6 +24,7 @@ import { ALLOWED_FILE_TYPES, formatFileSize, prepareDocumentForUpload } from "@/
 import { apiRequest } from "@/lib/queryClient";
 import { Layout } from "@/components/admin/Layout";
 import { shouldLoadProductionTelemetry } from "@/utils/runtime-env";
+import { invalidateDocumentCaches } from "@/lib/workspace-cache";
 
 interface Document {
   id: string;
@@ -117,8 +118,8 @@ export default function DocumentsPage() {
 
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+    onSuccess: async () => {
+      await invalidateDocumentCaches(queryClient);
       void trackDocumentEvent("document_upload_success", { category: uploadData.category });
       toast({ title: "Document uploaded", description: "Stored securely in your private vault." });
       setUploadData((current) => ({ ...current, name: "", description: "" }));
@@ -138,8 +139,8 @@ export default function DocumentsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/documents/${id}`, { method: "DELETE" }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+    onSuccess: async () => {
+      await invalidateDocumentCaches(queryClient);
       toast({ title: "Document deleted", description: "The file metadata and private access link were removed." });
     },
   });
