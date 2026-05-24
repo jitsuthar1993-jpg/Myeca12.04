@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SEO_CONFIG } from "../config/seo.config";
 import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
-import { getGeneratedPublicRoutes } from "../data/missing-pages";
+import {
+  getGeneratedPublicRoutes,
+  getGeneratedRouteSEOConfig,
+} from "../data/missing-pages";
 import { buildApiSitemapXml } from "../../../api/index";
 import {
   classifyPublicHref,
@@ -83,6 +86,18 @@ describe("public link audit", () => {
       expect(SEO_CONFIG[route].title, route).toBe(title);
       expect(SEO_CONFIG[route].description, route).not.toMatch(/ on MyeCA\.in: Indian tax/i);
       expect(SEO_CONFIG[route].keywords.length, route).toBeGreaterThanOrEqual(4);
+    });
+  });
+
+  it("derives route-specific SEO metadata for every generated public page", () => {
+    getGeneratedPublicRoutes().forEach((route) => {
+      const config = SEO_CONFIG[route] ?? getGeneratedRouteSEOConfig(route);
+
+      expect(config, route).toBeDefined();
+      expect(config?.title, route).not.toBe(`${route.split("/").filter(Boolean).slice(-2).join(" ")} | MyeCA.in`);
+      expect(config?.description, route).not.toMatch(/ on MyeCA\.in: Indian tax/i);
+      expect(config?.keywords.length, route).toBeGreaterThanOrEqual(4);
+      expect(config?.breadcrumbs.at(-1)?.url, route).toBe(route);
     });
   });
 
