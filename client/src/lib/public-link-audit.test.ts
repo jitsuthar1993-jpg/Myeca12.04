@@ -281,6 +281,23 @@ describe("public link audit", () => {
     expect(SEO_CONFIG["/itr-season-2026"]).toBeDefined();
   });
 
+  it("documents external GSC and backlink execution steps", () => {
+    const indexingRunbook = readFileSync("docs/google-indexing-readiness.md", "utf8");
+    const campaignRunbook = readFileSync("docs/marketing/itr-season-2026-content-growth-campaign.md", "utf8");
+
+    expect(indexingRunbook).toContain("Domain property");
+    expect(indexingRunbook).toContain("DNS TXT");
+    expect(indexingRunbook).toContain("URL Inspection");
+    expect(indexingRunbook).toContain("Page indexing report");
+    expect(indexingRunbook).toContain("sitemap submitted");
+
+    expect(campaignRunbook).toContain("CA blogs");
+    expect(campaignRunbook).toContain("StartupIndia");
+    expect(campaignRunbook).toContain("Medium");
+    expect(campaignRunbook).toContain("LinkedIn");
+    expect(campaignRunbook).toMatch(/finance forums/i);
+  });
+
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
     const indexTemplate = readFileSync("client/index.html", "utf8");
     const glossarySource = readFileSync("client/src/components/seo/FinancialGlossary.tsx", "utf8");

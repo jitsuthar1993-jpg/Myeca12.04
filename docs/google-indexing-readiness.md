@@ -42,6 +42,26 @@ Alternative HTML-tag setup:
 3. Confirm the homepage has a non-empty `google-site-verification` meta tag.
 4. Submit `https://myeca.in/sitemap.xml` and inspect priority URLs in Search Console.
 
+## Search Console Evidence Log
+
+Keep a dated evidence row whenever Search Console work is performed. The goal is to separate repo defects from account/DNS/operator tasks.
+
+```text
+date,owner,property_type,verification_method,evidence_link_or_note,status,next_action
+```
+
+Required evidence before calling Search Console setup done:
+
+- Domain property exists for `myeca.in`.
+- DNS TXT verification is visible in Search Console, or the production homepage has a valid non-empty HTML verification token.
+- `https://myeca.in/sitemap.xml` is submitted and Search Console shows the sitemap submitted successfully.
+- URL Inspection live test passes for `/`, `/blog`, `/blog/when-will-itr-filing-start-ay-2026-27`, `/services/itr-for-salaried`, `/calculators/income-tax`, and `/itr/form-selector`.
+- URL Inspection rendered page view shows page content, not only an app-loading skeleton.
+- Page indexing report is checked after Google recrawls the sitemap; record excluded/duplicate/crawled-not-indexed reasons separately.
+- Request indexing is used for the priority URLs that pass live inspection.
+
+If `npm run check:google-indexing` only fails on the verification token, treat that as an account/DNS dependency until the property owner completes the DNS TXT or HTML verification step.
+
 ## Known Access Boundary
 
 The active `myeca.in` deployment has previously been under the Vercel scope `jitsuthar1993-gmailcoms-projects`. If the local Vercel token only has access to another team, the DNS TXT record and production env var cannot be set from this workspace.

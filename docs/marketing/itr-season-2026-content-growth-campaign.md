@@ -84,6 +84,27 @@ Segment quotas:
 - Resource pages, calculators lists, and tax guide roundups: 100
 - Partner/referral prospects already known to MyeCA: 25
 
+Mandatory backlink channel coverage:
+
+- CA blogs and independent CA practice resource pages: pitch expert quotes, checklist references, and client education links.
+- StartupIndia-adjacent listings and founder resource pages: pitch startup planning, company-registration, and compliance calendar resources.
+- Medium articles controlled by the owner or guest contributors: publish educational summaries that cite the canonical MyeCA guide, using conservative claims and canonical/UTM discipline.
+- LinkedIn posts, newsletters, and creator collaborations: share short excerpts, charts, and filing-season checklists with tracked links.
+- Finance forums and taxpayer communities: answer specific questions first; add a MyeCA link only when it directly solves the thread.
+
+Record each placement with:
+
+```text
+date,channel,source_url,target_url,anchor_text,rel_attribute,utm_url,status,owner,notes
+```
+
+Quality bar:
+
+- Prefer branded or natural anchors such as `MyeCA ITR checklist`, `income tax calculator`, or the exact article title.
+- Mark paid/sponsored placements as `rel=sponsored` or `nofollow`.
+- Reject any placement that requires refund guarantees, fake reviews, exact-match anchor stuffing, or unrelated content.
+- Track earned referring domains separately from raw link count.
+
 Daily outreach target:
 
 - Days 1-30: 25 personalized pitches per working day.
