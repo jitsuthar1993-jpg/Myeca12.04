@@ -21,6 +21,7 @@ export interface TaxGuide {
   estimatedTime: string;
   steps: GuideStep[];
   relatedCalculators: string[];
+  relatedResources?: { label: string; href: string }[];
   tags: string[];
   lastUpdated: string;
   author: string;
@@ -163,6 +164,11 @@ export const TAX_GUIDES: TaxGuide[] = [
     lastUpdated: '2026-05-24',
     author: 'MyeCA Tax Desk',
     relatedCalculators: ['/calculators/income-tax', '/itr/form-selector'],
+    relatedResources: [
+      { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Start Filing', href: '/itr/form-selector' },
+    ],
     steps: [
       {
         id: 'confirm-eligibility',
@@ -254,6 +260,11 @@ export const TAX_GUIDES: TaxGuide[] = [
     lastUpdated: '2026-05-24',
     author: 'MyeCA Tax Desk',
     relatedCalculators: ['/calculators/income-tax', '/calculators/elss', '/calculators/ppf'],
+    relatedResources: [
+      { label: 'Tax Planning Service', href: '/services/tax-planning' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Choose ITR Form', href: '/itr/form-selector' },
+    ],
     steps: [
       {
         id: 'understand-limit',
@@ -338,7 +349,12 @@ export const TAX_GUIDES: TaxGuide[] = [
     tags: ['AIS', 'TIS', 'Form 26AS', 'ITR mismatch'],
     lastUpdated: '2026-05-24',
     author: 'MyeCA Tax Desk',
-    relatedCalculators: ['/itr/form-selector', '/expert-consultation'],
+    relatedCalculators: ['/calculators/income-tax', '/itr/form-selector'],
+    relatedResources: [
+      { label: 'Expert Consultation', href: '/expert-consultation' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Start Filing', href: '/itr/form-selector' },
+    ],
     steps: [
       {
         id: 'what-ais-shows',
@@ -894,7 +910,13 @@ export const TAX_GUIDES: TaxGuide[] = [
     tags: ['GST notice', 'DRC-01', 'DRC-03', 'GST compliance'],
     lastUpdated: '2026-05-24',
     author: 'MyeCA Tax Desk',
-    relatedCalculators: ['/services/notice-compliance', '/services/gst-returns'],
+    relatedCalculators: ['/calculators/gst'],
+    relatedResources: [
+      { label: 'GST Notice Compliance Service', href: '/services/notice-compliance' },
+      { label: 'GST Returns Service', href: '/services/gst-returns' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Expert Consultation', href: '/expert-consultation' },
+    ],
     steps: [
       {
         id: 'identify-notice',

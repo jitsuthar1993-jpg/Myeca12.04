@@ -215,6 +215,36 @@ describe("public link audit", () => {
     });
   });
 
+  it("keeps high-intent guides linked into calculator, service, pricing, and filing paths", () => {
+    const highIntentGuides = TAX_GUIDES.filter((guide) =>
+      [
+        "itr-1-filing-guide-ay-2026-27",
+        "section-80c-deductions-ay-2026-27",
+        "ais-explained-ay-2026-27",
+        "gst-notice-handling-guide",
+      ].includes(guide.slug),
+    );
+
+    expect(highIntentGuides).toHaveLength(4);
+
+    highIntentGuides.forEach((guide) => {
+      const links = [
+        ...guide.relatedCalculators,
+        ...(guide.relatedResources?.map((resource) => resource.href) ?? []),
+      ];
+
+      expect(links.some((href) => href.startsWith("/calculators/")), guide.slug).toBe(true);
+      expect(links.some((href) => href.startsWith("/services/") || href === "/expert-consultation"), guide.slug).toBe(true);
+      expect(links, guide.slug).toContain("/pricing");
+
+      if (guide.slug === "gst-notice-handling-guide") {
+        expect(links, guide.slug).toContain("/services/notice-compliance");
+      } else {
+        expect(links, guide.slug).toContain("/itr/form-selector");
+      }
+    });
+  });
+
   it("keeps each ITR season asset source-reviewed and conversion-linked", () => {
     itrSeasonCampaignAssets.forEach((asset) => {
       expect(asset.reviewNote, asset.slug).toMatch(/FY 2025-26|AY 2026-27/);

@@ -363,6 +363,29 @@ export default function GuidePage() {
                 </CardContent>
               </Card>
             )}
+
+            {guide.relatedResources && guide.relatedResources.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <ChevronRight className="h-5 w-5 text-emerald-600" />
+                    Next Steps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {guide.relatedResources.map((resource, index) => (
+                      <Button key={index} variant="outline" size="sm" asChild>
+                        <Link href={resource.href}>
+                          {resource.label}
+                          <ChevronRight className="h-3 w-3 ml-2" />
+                        </Link>
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
