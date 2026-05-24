@@ -62,6 +62,30 @@ describe("public link audit", () => {
     );
   });
 
+  it("uses tailored SEO metadata for high-value generated public routes", () => {
+    const expectedMetadata = [
+      {
+        route: "/services/pan-card",
+        title: "PAN Card Assistance Online | Correction & Business PAN Support | MyeCA.in",
+      },
+      {
+        route: "/calculators/vda-tax",
+        title: "VDA & Crypto Tax Guide for ITR Filing | MyeCA.in",
+      },
+      {
+        route: "/startup/planning",
+        title: "Startup Business Planning Services India | Founder Roadmap | MyeCA.in",
+      },
+    ];
+
+    expectedMetadata.forEach(({ route, title }) => {
+      expect(SEO_CONFIG[route], route).toBeDefined();
+      expect(SEO_CONFIG[route].title, route).toBe(title);
+      expect(SEO_CONFIG[route].description, route).not.toMatch(/ on MyeCA\.in: Indian tax/i);
+      expect(SEO_CONFIG[route].keywords.length, route).toBeGreaterThanOrEqual(4);
+    });
+  });
+
   it("keeps authenticated ITR filing private while preserving the public selector entry point", () => {
     const routes = getIndexablePublicRoutes(
       [

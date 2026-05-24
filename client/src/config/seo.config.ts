@@ -662,12 +662,41 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'service',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Document Vault', url: '/services/document-vault' }]
   },
+  '/services/pan-card': {
+    title: 'PAN Card Assistance Online | Correction & Business PAN Support | MyeCA.in',
+    description: 'Get PAN application, correction readiness, business PAN documentation, status guidance, and tax identity support from MyeCA experts.',
+    keywords: ['PAN card assistance', 'PAN correction support', 'business PAN card', 'PAN application guidance', 'tax identity documentation'],
+    type: 'service',
+    serviceData: { price: '499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'PAN Card Assistance', url: '/services/pan-card' }]
+  },
+  '/calculators/vda-tax': {
+    title: 'VDA & Crypto Tax Guide for ITR Filing | MyeCA.in',
+    description: 'Organize crypto, VDA, exchange, wallet, TDS, and capital gains records before choosing the right ITR filing path.',
+    keywords: ['VDA tax guide', 'crypto tax India', 'crypto ITR filing', 'virtual digital asset tax', 'crypto TDS statement'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'VDA Tax Guide',
+      features: ['Exchange statement checklist', 'Wallet record review', 'TDS readiness', 'ITR filing handoff'],
+      accuracy: 'Informational filing guide',
+      updates: 'AY 2026-27 supported'
+    },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'VDA Tax Guide', url: '/calculators/vda-tax' }]
+  },
   '/startup/registration': {
     title: 'Startup Registration Guidance India | MyeCA.in',
     description: 'Get guidance for startup registration, entity setup, DPIIT readiness, GST, MSME, and compliance next steps.',
     keywords: ['startup registration India', 'DPIIT startup registration', 'startup compliance India'],
     type: 'service',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }, { name: 'Registration', url: '/startup/registration' }]
+  },
+  '/startup/planning': {
+    title: 'Startup Business Planning Services India | Founder Roadmap | MyeCA.in',
+    description: 'Turn an early-stage business idea into a practical founder roadmap with entity planning, registrations, budgets, and compliance milestones.',
+    keywords: ['startup business planning India', 'founder roadmap', 'startup compliance planning', 'business plan checklist', 'entity planning'],
+    type: 'service',
+    serviceData: { price: '4999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }, { name: 'Business Planning', url: '/startup/planning' }]
   },
   '/itr-season-2026': {
     title: 'AY 2026-27 ITR Season Hub | Checklists, Tools & Filing Paths',
