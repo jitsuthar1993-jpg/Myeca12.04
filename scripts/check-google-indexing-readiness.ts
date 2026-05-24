@@ -77,6 +77,10 @@ function findTitle(html: string) {
   return html.match(/<title>(.*?)<\/title>/i)?.[1]?.trim() ?? "";
 }
 
+function expectedStaticShellMarker(route: string) {
+  return route === "/" ? 'data-seo-static-shell="home"' : 'data-seo-static-shell="route"';
+}
+
 function hasGlobalRobotsBlock(robots: string) {
   return robots
     .split(/\r?\n/)
@@ -189,6 +193,13 @@ async function main() {
       label: `${route} title is present and unique`,
       ok: title.length > 0 && titleCounts.get(title) === 1,
       detail: title || "title missing",
+    });
+    checks.push({
+      label: `${route} has pre-hydration SEO body`,
+      ok: html.includes(expectedStaticShellMarker(route)),
+      detail: html.includes(expectedStaticShellMarker(route))
+        ? expectedStaticShellMarker(route)
+        : `missing ${expectedStaticShellMarker(route)}`,
     });
   }
 

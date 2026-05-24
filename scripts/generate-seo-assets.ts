@@ -396,9 +396,40 @@ function renderSeoHead(meta: RouteMeta) {
 ${jsonLd}`;
 }
 
-export function renderStaticRootFallback(meta: Pick<RouteMeta, "path" | "robots">) {
-  if (normalizePublicPath(meta.path) !== "/" || meta.robots !== "index, follow") {
+type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> & Partial<Pick<RouteMeta, "title" | "description" | "canonicalUrl">>;
+
+export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
+  if (meta.robots !== "index, follow") {
     return "";
+  }
+
+  const pathName = normalizePublicPath(meta.path);
+
+  if (pathName !== "/") {
+    const title = meta.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
+    const description = meta.description || `${humanizeRoute(pathName)} on ${SITE_NAME}.`;
+    const canonicalUrl = meta.canonicalUrl || toAbsoluteUrl(pathName);
+
+    return `      <div data-seo-static-shell="route" style="min-height:100vh;background:#fff;color:#0f172a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+        <main style="max-width:896px;margin:0 auto;padding:36px 16px 44px">
+          <a href="/" style="display:inline-flex;align-items:center;gap:10px;color:#0f172a;text-decoration:none;font-weight:900">
+            <span style="display:inline-flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:8px;background:#2563eb;color:#fff">M</span>
+            <span>MyeCA.in</span>
+          </a>
+          <section style="margin-top:28px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;padding:18px">
+            <p style="margin:0 0 12px;color:#2563eb;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0">MyeCA public resource</p>
+            <h1 style="margin:0;color:#020617;font-size:30px;line-height:1.14;font-weight:900;letter-spacing:0">${escapeHtml(title)}</h1>
+            <p style="margin:14px 0 0;color:#475569;font-size:15px;line-height:1.7">${escapeHtml(description)}</p>
+            <a href="${escapeHtml(pathName)}" style="display:inline-flex;margin-top:16px;color:#1d4ed8;font-weight:800;text-decoration:none">Open this page <span aria-hidden="true" style="margin-left:6px">-&gt;</span></a>
+          </section>
+          <nav aria-label="Priority filing links" style="display:grid;gap:10px;margin-top:14px">
+            <a href="/itr/form-selector" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border-radius:8px;background:#2563eb;color:#fff;padding:0 14px;text-decoration:none;font-weight:900">Choose ITR Form <span aria-hidden="true">-&gt;</span></a>
+            <a href="/calculators/income-tax" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:900">Income Tax Calculator <span aria-hidden="true">-&gt;</span></a>
+            <a href="/pricing" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:900">Pricing <span aria-hidden="true">-&gt;</span></a>
+          </nav>
+          <p style="margin:18px 0 0;color:#64748b;font-size:12px;line-height:1.6">Canonical URL: ${escapeHtml(canonicalUrl)}</p>
+        </main>
+      </div>`;
   }
 
   return `      <div data-seo-static-shell="home" style="min-height:100vh;background:#fff;color:#0f172a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
@@ -426,7 +457,7 @@ export function renderStaticRootFallback(meta: Pick<RouteMeta, "path" | "robots"
       </div>`;
 }
 
-export function injectStaticRootFallback(html: string, meta: Pick<RouteMeta, "path" | "robots">) {
+export function injectStaticRootFallback(html: string, meta: StaticRootFallbackMeta) {
   const fallback = renderStaticRootFallback(meta);
   if (!fallback) return html;
 
