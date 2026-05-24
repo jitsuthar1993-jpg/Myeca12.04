@@ -23,6 +23,8 @@ import {
   parseGoogleSiteVerificationTxtRecord,
 } from "@shared/search-console-verification";
 import { EMAIL_TEMPLATES } from "../../../server/services/email";
+import { defaultBlogPosts } from "../../../server/data/default-blog-content";
+import { getBlogConversionLinks } from "./blog-conversion-links";
 
 describe("public link audit", () => {
   it("classifies route, anchor, placeholder, and external links", () => {
@@ -254,6 +256,21 @@ describe("public link audit", () => {
       expect(asset.conversionLink.href, asset.slug).toMatch(/^\//);
       expect(asset.relatedBlogLink.href, asset.slug).toMatch(/^\/blog\//);
       expect(asset.learnGuideLink.href, asset.slug).toMatch(/^\/learn\/guide\//);
+    });
+  });
+
+  it("keeps every default blog article linked into calculator, service, pricing, and filing paths", () => {
+    const publishedPosts = defaultBlogPosts.filter((post) => post.status === "published");
+
+    expect(publishedPosts.length).toBeGreaterThan(20);
+
+    publishedPosts.forEach((post) => {
+      const links = getBlogConversionLinks(post).map((link) => link.href);
+
+      expect(links.some((href) => href.startsWith("/calculators/")), post.slug).toBe(true);
+      expect(links.some((href) => href.startsWith("/services/") || href === "/expert-consultation"), post.slug).toBe(true);
+      expect(links, post.slug).toContain("/pricing");
+      expect(links.some((href) => href === "/itr/form-selector" || href.startsWith("/services/")), post.slug).toBe(true);
     });
   });
 

@@ -29,6 +29,7 @@ import {
   type PublicBlogDetailCompat as BlogDetail,
   type PublicBlogSummaryCompat as BlogSummary,
 } from "@/lib/public-blog-data";
+import { getBlogConversionLinks } from "@/lib/blog-conversion-links";
 import { cn } from "@/lib/utils";
 import {
   normalizeBlogContent,
@@ -359,6 +360,7 @@ export default function BlogPostPage() {
   const highlights = post.keyHighlights ?? [];
   const ctaLabel = post.ctaLabel || "Talk to a CA";
   const ctaHref = post.ctaHref || "/expert-consultation";
+  const conversionLinks = getBlogConversionLinks(post);
 
   return (
     <div className="min-h-screen bg-white">
@@ -501,6 +503,31 @@ export default function BlogPostPage() {
           />
 
           <div className="mt-16 space-y-12">
+            <section className="rounded-2xl border border-blue-100 bg-blue-50/60 p-6 shadow-sm sm:p-8">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-100 bg-white text-blue-600">
+                  <TrendingUp className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-950">Continue from this article</h2>
+                  <p className="mt-1 text-sm text-slate-600">Move from reading into calculation, service scope, pricing, or filing.</p>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {conversionLinks.map((link) => (
+                  <Link key={link.href} href={link.href}>
+                    <span className="group flex min-h-24 items-start justify-between gap-4 rounded-xl border border-blue-100 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md">
+                      <span className="min-w-0">
+                        <span className="block text-sm font-bold text-slate-950 group-hover:text-blue-700">{link.label}</span>
+                        <span className="mt-1 block text-sm leading-6 text-slate-600">{link.description}</span>
+                      </span>
+                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-600" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
             <section className="type-support rounded-3xl border border-amber-200 bg-amber-50/50 p-8 text-slate-700 sm:p-10">
               <div className="mb-4 flex items-center gap-3">
                 <ShieldCheck className="h-6 w-6 text-amber-600" />
