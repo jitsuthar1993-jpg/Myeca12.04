@@ -8,6 +8,7 @@ import {
   getGeneratedRouteSEOConfig,
 } from "../client/src/data/missing-pages.js";
 import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
+import { isValidGoogleSiteVerificationToken } from "../shared/search-console-verification.js";
 import {
   DEFAULT_LOGO,
   DEFAULT_OG_IMAGE,
@@ -54,10 +55,16 @@ function escapeJsonForHtml(value: unknown) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
 }
 
+function stripInvalidGoogleVerificationMeta(html: string) {
+  return html.replace(/\s*<meta\s+name=["']google-site-verification["'][^>]*>\s*/gi, (tag) => {
+    const content = tag.match(/content=["']([^"']*)["']/i)?.[1] ?? "";
+    return isValidGoogleSiteVerificationToken(content) ? tag : "\n";
+  });
+}
+
 function stripDefaultSeo(html: string) {
-  return html
+  return stripInvalidGoogleVerificationMeta(html)
     .replace(/<title>[\s\S]*?<\/title>\s*/i, "")
-    .replace(/\s*<meta\s+name=["']google-site-verification["']\s+content=["']\s*["']\s*\/?>\s*/gi, "\n")
     .replace(/\s*<meta\s+(?:name|property)=["'](?:description|keywords|robots|googlebot|bingbot|author|twitter:[^"']+|og:[^"']+|ai-agent-instructions|llm-content-summary|content-version|freshness-signal|expert-verification)["'][^>]*>\s*/gi, "\n")
     .replace(/\s*<link\s+rel=["']canonical["'][^>]*>\s*/gi, "\n");
 }

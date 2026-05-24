@@ -1,4 +1,8 @@
 import { resolveTxt } from "node:dns/promises";
+import {
+  isValidGoogleSiteVerificationToken,
+  parseGoogleSiteVerificationTxtRecord,
+} from "../shared/search-console-verification.js";
 
 const defaultBaseUrl = "https://myeca.in";
 const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_INDEXING_BASE_URL || defaultBaseUrl);
@@ -85,7 +89,8 @@ async function getDnsVerificationTokens(hostname: string) {
     const records = await resolveTxt(hostname);
     return records
       .map((record) => record.join(""))
-      .filter((record) => record.startsWith("google-site-verification="));
+      .map((record) => parseGoogleSiteVerificationTxtRecord(record))
+      .filter((record): record is string => Boolean(record));
   } catch {
     return [];
   }
@@ -218,16 +223,19 @@ async function main() {
   });
 
   const homeVerification = findMetaContent(home.text, "google-site-verification");
+  const hasValidHtmlVerification = isValidGoogleSiteVerificationToken(homeVerification.content);
   const dnsVerificationTokens = await getDnsVerificationTokens(hostname);
   checks.push({
     label: "Search Console verification token present",
-    ok: homeVerification.content.length > 0 || dnsVerificationTokens.length > 0,
+    ok: hasValidHtmlVerification || dnsVerificationTokens.length > 0,
     detail:
       dnsVerificationTokens.length > 0
         ? `DNS TXT token found for ${hostname}`
-        : homeVerification.content.length > 0
-          ? "HTML verification meta has a value"
-          : "missing DNS TXT token and HTML verification meta value",
+        : hasValidHtmlVerification
+          ? "HTML verification meta has a valid value"
+          : homeVerification.content.length > 0
+            ? "HTML verification meta is present but not a valid Google token"
+            : "missing valid DNS TXT token and HTML verification meta value",
   });
 
   checks.forEach(printCheck);

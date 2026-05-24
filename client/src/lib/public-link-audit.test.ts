@@ -17,6 +17,10 @@ import {
   getIndexablePublicRoutes,
   isPrivateRoute,
 } from "@shared/seo-public";
+import {
+  isValidGoogleSiteVerificationToken,
+  parseGoogleSiteVerificationTxtRecord,
+} from "@shared/search-console-verification";
 import { EMAIL_TEMPLATES } from "../../../server/services/email";
 
 describe("public link audit", () => {
@@ -138,6 +142,15 @@ describe("public link audit", () => {
       expect(SEO_CONFIG[route].description, route).toMatch(/ITR|income tax/i);
       expect(SEO_CONFIG[route].keywords.length, route).toBeGreaterThanOrEqual(4);
     });
+  });
+
+  it("rejects placeholder Search Console verification tokens", () => {
+    expect(isValidGoogleSiteVerificationToken("google123_real-token")).toBe(true);
+    expect(isValidGoogleSiteVerificationToken("")).toBe(false);
+    expect(isValidGoogleSiteVerificationToken("%VITE_GOOGLE_SITE_VERIFICATION%")).toBe(false);
+    expect(isValidGoogleSiteVerificationToken("google-site-verification=")).toBe(false);
+    expect(parseGoogleSiteVerificationTxtRecord("google-site-verification=google123_real-token")).toBe("google123_real-token");
+    expect(parseGoogleSiteVerificationTxtRecord("google-site-verification=")).toBeNull();
   });
 
   it("builds the Vercel API sitemap from the full generated public route inventory", () => {
