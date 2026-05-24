@@ -396,6 +396,46 @@ function renderSeoHead(meta: RouteMeta) {
 ${jsonLd}`;
 }
 
+export function renderStaticRootFallback(meta: Pick<RouteMeta, "path" | "robots">) {
+  if (normalizePublicPath(meta.path) !== "/" || meta.robots !== "index, follow") {
+    return "";
+  }
+
+  return `      <div data-seo-static-shell="home" style="min-height:100vh;background:#fff;color:#0f172a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+        <header style="height:60px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;padding:0 16px;background:#fff">
+          <a href="/" style="display:flex;align-items:center;gap:10px;color:#0f172a;text-decoration:none;font-weight:900">
+            <span style="display:inline-flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:8px;background:#2563eb;color:#fff">M</span>
+            <span>MyeCA.in</span>
+          </a>
+        </header>
+        <main style="padding:28px 16px 40px">
+          <section style="max-width:896px;margin:0 auto;border:1px solid #dbeafe;background:#eff6ff;border-radius:8px;padding:18px">
+            <p style="display:inline-flex;margin:0 0 14px;align-items:center;border:1px solid #bfdbfe;background:#fff;border-radius:8px;padding:6px 10px;color:#1d4ed8;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0">AY 2026-27 tax utility</p>
+            <h1 style="margin:0;color:#020617;font-size:34px;line-height:1.08;font-weight:900;letter-spacing:0">Estimate tax, choose your ITR path, then file.</h1>
+            <p style="margin:14px 0 0;color:#475569;font-size:15px;line-height:1.7">Start with the calculator or jump straight into guided filing. Pricing, documents, and review scope stay visible before payment.</p>
+            <div style="display:grid;gap:10px;margin-top:18px">
+              <a href="/itr/form-selector" style="display:flex;min-height:52px;align-items:center;justify-content:space-between;border-radius:8px;background:#2563eb;color:#fff;padding:0 16px;text-decoration:none;font-weight:900">File ITR <span aria-hidden="true">-&gt;</span></a>
+              <a href="/calculators/income-tax" style="display:flex;min-height:52px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 16px;text-decoration:none;font-weight:900">Calculate Tax <span aria-hidden="true">-&gt;</span></a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;font-size:13px;font-weight:800">
+              <a href="/calculators/regime-comparator" style="border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#1e3a8a;padding:12px;text-align:center;text-decoration:none">Compare Regimes</a>
+              <a href="/form16-parser" style="border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#1e3a8a;padding:12px;text-align:center;text-decoration:none">Parse Form 16</a>
+            </div>
+          </section>
+        </main>
+      </div>`;
+}
+
+export function injectStaticRootFallback(html: string, meta: Pick<RouteMeta, "path" | "robots">) {
+  const fallback = renderStaticRootFallback(meta);
+  if (!fallback) return html;
+
+  return html.replace(
+    /<div id="root">[\s\S]*?<\/div>\s*(?=<script src="\/app-bootstrap\.js")/,
+    `<div id="root">\n${fallback}\n    </div>\n    `,
+  );
+}
+
 function routeOutputPath(route: string) {
   const pathName = normalizePublicPath(route);
   if (pathName === "/") return path.join(distDir, "index.html");
@@ -403,7 +443,8 @@ function routeOutputPath(route: string) {
 }
 
 function writeRouteHtml(template: string, meta: RouteMeta) {
-  const html = stripDefaultSeo(template).replace("</head>", `${renderSeoHead(meta)}\n  </head>`);
+  const preparedTemplate = injectStaticRootFallback(stripDefaultSeo(template), meta);
+  const html = preparedTemplate.replace("</head>", `${renderSeoHead(meta)}\n  </head>`);
   const outputPath = routeOutputPath(meta.path);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html, "utf8");
@@ -504,4 +545,6 @@ function main() {
   console.log(`Generated SEO HTML shells for ${publicRoutes.length} public routes and ${PRIVATE_NOINDEX_ROUTES.length} noindex routes.`);
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main();
+}
