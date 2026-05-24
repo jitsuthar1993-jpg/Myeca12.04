@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SEO_CONFIG } from "../config/seo.config";
 import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
+import { TAX_GUIDES } from "../data/tax-guides";
 import {
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
@@ -195,6 +196,22 @@ describe("public link audit", () => {
       expect(routes, route).toContain(route);
       expect(sitemap, route).toContain(`<loc>https://myeca.in${route}</loc>`);
       expect(SEO_CONFIG[route].title, route).not.toBe(SEO_CONFIG["/"].title);
+    });
+  });
+
+  it("keeps high-intent tax guide topics discoverable for topical authority", () => {
+    const expectedGuideSlugs = [
+      "itr-1-filing-guide-ay-2026-27",
+      "section-80c-deductions-ay-2026-27",
+      "ais-explained-ay-2026-27",
+      "gst-notice-handling-guide",
+    ];
+    const guideSlugs = TAX_GUIDES.map((guide) => guide.slug);
+    const sitemap = buildApiSitemapXml();
+
+    expectedGuideSlugs.forEach((slug) => {
+      expect(guideSlugs, slug).toContain(slug);
+      expect(sitemap, slug).toContain(`<loc>https://myeca.in/learn/guide/${slug}</loc>`);
     });
   });
 

@@ -152,6 +152,262 @@ export const TAX_GUIDES: TaxGuide[] = [
     ],
   },
   {
+    id: 'itr-1-ay-2026-guide',
+    slug: 'itr-1-filing-guide-ay-2026-27',
+    title: 'ITR-1 Filing Guide for AY 2026-27',
+    description: 'Eligibility, documents, income checks, AIS/Form 26AS matching, deductions, and e-verification steps before filing ITR-1 Sahaj for AY 2026-27.',
+    category: 'salaried',
+    difficulty: 'beginner',
+    estimatedTime: '25 mins',
+    tags: ['ITR-1', 'Sahaj', 'AY 2026-27', 'salary return'],
+    lastUpdated: '2026-05-24',
+    author: 'MyeCA Tax Desk',
+    relatedCalculators: ['/calculators/income-tax', '/itr/form-selector'],
+    steps: [
+      {
+        id: 'confirm-eligibility',
+        title: 'Confirm ITR-1 Eligibility',
+        description: 'Check whether Sahaj is the right return before you start entering figures.',
+        checklist: [
+          'Confirm you are a resident individual eligible to use ITR-1',
+          'Check total income against the ITR-1 threshold for AY 2026-27',
+          'Confirm income heads fit ITR-1, such as salary, pension, eligible house property income, and other sources',
+          'Use another form if you have business income, ineligible capital gains, foreign assets, directorship, unlisted equity shares, or carried-forward losses',
+        ],
+        tips: [
+          'When in doubt, run the form selector before filing because using the wrong ITR form can delay processing',
+          'The Income Tax Department help page is the source of truth for final eligibility wording',
+        ],
+        links: [
+          { label: 'ITR Form Selector', href: '/itr/form-selector' },
+          { label: 'Income Tax ITR-1 Help', href: 'https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/itr-1' },
+        ],
+      },
+      {
+        id: 'collect-records',
+        title: 'Collect Salary and Tax Records',
+        description: 'Keep every supporting record ready before using the online utility.',
+        checklist: [
+          'Form 16 from each employer for the year',
+          'AIS and Taxpayer Information Summary downloaded from the income tax portal',
+          'Form 26AS for TDS/TCS and tax payment credits',
+          'Bank interest certificates, dividend records, rent details, and home loan interest certificate if applicable',
+          'Proofs for deductions you want to claim under the old regime',
+        ],
+        tips: [
+          'If you changed jobs, check that both employers are captured and deductions are not duplicated',
+          'Keep the final return calculation aligned with AIS/TIS and Form 26AS before e-verification',
+        ],
+        links: [
+          { label: 'Form 16 Parser Tool', href: '/form16-parser' },
+          { label: 'AIS Explained Guide', href: '/learn/guide/ais-explained-ay-2026-27' },
+        ],
+      },
+      {
+        id: 'compare-regimes',
+        title: 'Compare Old and New Tax Regimes',
+        description: 'Choose the regime after checking standard deduction, rebate, and old-regime deduction impact.',
+        checklist: [
+          'Calculate tax under the default new regime',
+          'Calculate tax under the old regime if you have deductions or exemptions',
+          'Check Section 80C, 80D, HRA, home loan interest, and NPS proofs before opting for old regime',
+          'Save the calculation snapshot used for your filing decision',
+        ],
+        tips: [
+          'A regime comparison is most useful before you start the return, not after figures are already submitted',
+          'Do not claim a deduction unless the supporting document is available and matches your records',
+        ],
+        links: [
+          { label: 'Tax Regime Comparator', href: '/calculators/regime-comparator' },
+          { label: 'Section 80C Guide', href: '/learn/guide/section-80c-deductions-ay-2026-27' },
+        ],
+      },
+      {
+        id: 'review-submit',
+        title: 'Review, Submit, and E-Verify',
+        description: 'Complete the final review before submission and e-verify within the required timeline.',
+        checklist: [
+          'Preview the return and match salary, other income, deductions, TDS, and refund/tax payable',
+          'Check bank account validation for refund credit',
+          'Submit only after correcting mismatches or documenting the reason',
+          'E-verify and save the acknowledgement number',
+        ],
+        tips: [
+          'A filed but not e-verified return is not fully completed',
+          'If a mismatch remains, add notes for CA review before submission',
+        ],
+        links: [
+          { label: 'Expert Consultation', href: '/expert-consultation' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'section-80c-ay-2026-guide',
+    slug: 'section-80c-deductions-ay-2026-27',
+    title: 'Section 80C Deduction Guide for AY 2026-27',
+    description: 'Plan and verify Section 80C deductions, common eligible investments, proof checks, old-regime fit, and links to related calculators for AY 2026-27.',
+    category: 'deductions',
+    difficulty: 'beginner',
+    estimatedTime: '20 mins',
+    tags: ['80C', 'deductions', 'old regime', 'tax saving'],
+    lastUpdated: '2026-05-24',
+    author: 'MyeCA Tax Desk',
+    relatedCalculators: ['/calculators/income-tax', '/calculators/elss', '/calculators/ppf'],
+    steps: [
+      {
+        id: 'understand-limit',
+        title: 'Understand the 80C Limit',
+        description: 'Know what 80C can and cannot do before choosing tax-saving investments.',
+        checklist: [
+          'Use Section 80C only when you are comparing or choosing the old tax regime',
+          'Track the aggregate 80C limit across EPF, PPF, ELSS, life insurance, tuition fees, principal repayment, and similar eligible items',
+          'Keep proof for each claim and avoid double-counting the same payment',
+          'Separate 80C from additional NPS deductions and health insurance deductions',
+        ],
+        tips: [
+          'The 80C decision should be driven by your financial goal first, not only tax saving',
+          'EPF contributions from salary often use part of the limit before you invest separately',
+        ],
+        links: [
+          { label: 'Income Tax Department Deduction Reference', href: 'https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1' },
+        ],
+      },
+      {
+        id: 'map-instruments',
+        title: 'Map Eligible Instruments',
+        description: 'Group each payment by purpose and lock-in before finalizing claims.',
+        checklist: [
+          'Retirement-linked: EPF, PPF, approved pension products, and eligible NPS portion',
+          'Market-linked: ELSS with lock-in and market risk',
+          'Protection-linked: eligible life insurance premium',
+          'Family-linked: qualifying tuition fees and eligible home loan principal repayment',
+        ],
+        tips: [
+          'Check premium-to-sum-assured conditions before claiming insurance premium',
+          'ELSS return is market-linked; keep it separate from fixed-return products in planning',
+        ],
+        links: [
+          { label: 'ELSS Calculator', href: '/calculators/elss' },
+          { label: 'PPF Calculator', href: '/calculators/ppf' },
+        ],
+      },
+      {
+        id: 'proof-check',
+        title: 'Prepare Proofs for Filing',
+        description: 'Make sure every deduction figure can be explained if asked later.',
+        checklist: [
+          'Download EPF statement, PPF passbook, ELSS statement, insurance receipts, and tuition fee receipts',
+          'Match payment dates to the relevant financial year',
+          'Use bank statement narration to support unclear receipts',
+          'Keep employer-declared proofs and final return proofs in one folder',
+        ],
+        tips: [
+          'Do not rely only on payroll declarations; file based on actual eligible payments',
+          'Keep a short note for any proof that has a different payer name or delayed posting date',
+        ],
+      },
+      {
+        id: 'compare-benefit',
+        title: 'Compare Final Tax Benefit',
+        description: 'Use the deduction result inside a regime comparison before filing.',
+        checklist: [
+          'Calculate tax with old-regime deductions',
+          'Calculate tax under the new regime without most old-regime deductions',
+          'Choose the lower tax outcome only after checking all other income and rebate effects',
+          'Save the calculator output or CA review note',
+        ],
+        tips: [
+          'A high 80C claim does not automatically make the old regime better for every taxpayer',
+        ],
+        links: [
+          { label: 'Income Tax Calculator', href: '/calculators/income-tax' },
+          { label: 'Tax Regime Comparator', href: '/calculators/regime-comparator' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'ais-ay-2026-guide',
+    slug: 'ais-explained-ay-2026-27',
+    title: 'AIS Explained for AY 2026-27 ITR Filing',
+    description: 'Understand Annual Information Statement, TIS, Form 26AS differences, feedback handling, and the checks to complete before filing your return.',
+    category: 'compliance',
+    difficulty: 'beginner',
+    estimatedTime: '18 mins',
+    tags: ['AIS', 'TIS', 'Form 26AS', 'ITR mismatch'],
+    lastUpdated: '2026-05-24',
+    author: 'MyeCA Tax Desk',
+    relatedCalculators: ['/itr/form-selector', '/expert-consultation'],
+    steps: [
+      {
+        id: 'what-ais-shows',
+        title: 'Understand What AIS Shows',
+        description: 'AIS gives a wider view of reported taxpayer information than Form 26AS alone.',
+        checklist: [
+          'Review general information, TDS/TCS, SFT information, tax payments, demand/refund details, and other reported information',
+          'Use TIS as the category-wise summary used for return prefilling where applicable',
+          'Remember that AIS may not contain every transaction, so your own books and bank records still matter',
+        ],
+        tips: [
+          'AIS is a reconciliation tool, not a substitute for your actual income records',
+        ],
+        links: [
+          { label: 'Income Tax AIS Help', href: 'https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/ais-annual-information-statement' },
+        ],
+      },
+      {
+        id: 'download-compare',
+        title: 'Download and Compare',
+        description: 'Match AIS/TIS, Form 26AS, and your return working before submitting.',
+        checklist: [
+          'Download AIS and TIS from the income tax portal',
+          'Download Form 26AS and match TDS/TCS credits',
+          'Compare salary, interest, dividend, capital gains, tax payments, and refund/demand information',
+          'Mark every difference as corrected, explained, or pending review',
+        ],
+        tips: [
+          'Start with high-value items and tax-credit mismatches because they affect refunds and processing',
+          'Keep source statements from banks, brokers, and employers for mismatches',
+        ],
+      },
+      {
+        id: 'feedback',
+        title: 'Use Feedback Carefully',
+        description: 'Provide AIS feedback only when you have supporting records.',
+        checklist: [
+          'Identify duplicate, incorrect, or not-taxable entries',
+          'Check whether the source has confirmed or modified the information',
+          'Keep evidence for every feedback item',
+          'Re-check the accepted value before filing',
+        ],
+        tips: [
+          'If the same mismatch affects refund or notice risk, use CA review before filing',
+        ],
+        links: [
+          { label: 'Expert Consultation', href: '/expert-consultation' },
+        ],
+      },
+      {
+        id: 'file-clean',
+        title: 'File With a Reconciliation Trail',
+        description: 'Leave a clean trail between data sources and the final return.',
+        checklist: [
+          'Save AIS/TIS and Form 26AS PDFs used for filing',
+          'Save the final computation and return acknowledgement',
+          'Attach notes for mismatches resolved outside AIS feedback',
+          'Track post-filing intimation or demand notices',
+        ],
+        tips: [
+          'Good reconciliation reduces the chance of avoidable notices after processing',
+        ],
+        links: [
+          { label: 'TDS Refund Tracker', href: '/tds-refund-tracker' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'hra-exemption-guide',
     slug: 'hra-exemption-claim',
     title: 'How to Claim HRA Exemption',
@@ -623,6 +879,88 @@ export const TAX_GUIDES: TaxGuide[] = [
         tips: [
           'Late fee: ₹50/day (₹20 for nil return)',
           'Interest: 18% on late tax payment',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'gst-notice-handling',
+    slug: 'gst-notice-handling-guide',
+    title: 'GST Notice Handling Guide',
+    description: 'Step-by-step guide to read a GST notice, gather records, reconcile ledgers, prepare a reply, and decide whether payment or professional review is needed.',
+    category: 'compliance',
+    difficulty: 'intermediate',
+    estimatedTime: '30 mins',
+    tags: ['GST notice', 'DRC-01', 'DRC-03', 'GST compliance'],
+    lastUpdated: '2026-05-24',
+    author: 'MyeCA Tax Desk',
+    relatedCalculators: ['/services/notice-compliance', '/services/gst-returns'],
+    steps: [
+      {
+        id: 'identify-notice',
+        title: 'Identify the Notice and Timeline',
+        description: 'Read the form, period, section, demand amount, and reply deadline first.',
+        checklist: [
+          'Download the notice and attachments from the GST portal',
+          'Note the form type, tax period, section, officer details, and due date',
+          'Separate mismatch, demand, registration, refund, e-way bill, and enforcement issues',
+          'Create a response file with notice PDF, ledger snapshots, returns, invoices, and payment records',
+        ],
+        tips: [
+          'Do not reply from memory; build the response from portal records and books',
+          'Escalate quickly if the notice involves inspection, summons, large demand, or short deadline',
+        ],
+        links: [
+          { label: 'GST Notice Compliance Service', href: '/services/notice-compliance' },
+        ],
+      },
+      {
+        id: 'reconcile-records',
+        title: 'Reconcile GST Records',
+        description: 'Match the notice allegation against returns, ledgers, invoices, and books.',
+        checklist: [
+          'Match GSTR-1, GSTR-3B, input tax credit, cash ledger, credit ledger, and liability ledger',
+          'Check invoice-level differences, amendments, credit notes, debit notes, and reverse charge entries',
+          'Compare books with portal data before drafting the reply',
+          'Prepare a short explanation table for each mismatch',
+        ],
+        tips: [
+          'Most replies are stronger when numbers are presented in a table with document references',
+        ],
+        links: [
+          { label: 'GST Returns Service', href: '/services/gst-returns' },
+        ],
+      },
+      {
+        id: 'decide-response',
+        title: 'Decide Reply, Payment, or Adjustment',
+        description: 'Choose the response path based on whether the demand is accepted, partly accepted, or disputed.',
+        checklist: [
+          'If accepted, compute tax, interest, penalty, and payment route before filing',
+          'If disputed, prepare legal grounds and evidence annexures',
+          'If payment has already been made, map it to the demand or adjustment process where applicable',
+          'Keep acknowledgement and ARN after submitting the response',
+        ],
+        tips: [
+          'Use voluntary payment or adjustment forms only after confirming the demand reference and amount',
+          'Do not admit a demand in the reply unless the taxpayer has approved the position',
+        ],
+        links: [
+          { label: 'GST Portal DRC-03A FAQ', href: 'https://tutorial.gst.gov.in/userguide/demandsandrecovery/FAQs_GST_FORM_DRC-03.htm' },
+        ],
+      },
+      {
+        id: 'post-reply',
+        title: 'Track the Case After Reply',
+        description: 'A reply is not the end of the matter; track hearings, orders, and payment status.',
+        checklist: [
+          'Monitor the GST portal inbox and case history',
+          'Save reply acknowledgement, annexures, and officer communications',
+          'Track order, demand, rectification, appeal, or closure status',
+          'Update books and compliance calendar for recurring issues',
+        ],
+        tips: [
+          'If the same mismatch recurs across periods, fix the filing process rather than only replying to one notice',
         ],
       },
     ],
