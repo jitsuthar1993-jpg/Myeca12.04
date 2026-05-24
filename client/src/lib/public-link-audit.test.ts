@@ -105,6 +105,26 @@ describe("public link audit", () => {
     expect(PRIVATE_NOINDEX_ROUTES).toContain("/itr/filing");
   });
 
+  it("uses filing-specific SEO metadata for public ITR selector routes", () => {
+    const expectedMetadata = [
+      {
+        route: "/itr/form-selector",
+        title: "ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2 or ITR-3 | MyeCA.in",
+      },
+      {
+        route: "/itr/form-recommender",
+        title: "ITR Form Recommender AY 2026-27 | Guided Filing Path | MyeCA.in",
+      },
+    ];
+
+    expectedMetadata.forEach(({ route, title }) => {
+      expect(SEO_CONFIG[route], route).toBeDefined();
+      expect(SEO_CONFIG[route].title, route).toBe(title);
+      expect(SEO_CONFIG[route].description, route).toMatch(/ITR|income tax/i);
+      expect(SEO_CONFIG[route].keywords.length, route).toBeGreaterThanOrEqual(4);
+    });
+  });
+
   it("builds the Vercel API sitemap from the full generated public route inventory", () => {
     const sitemap = buildApiSitemapXml();
 
