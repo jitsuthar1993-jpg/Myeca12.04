@@ -45,6 +45,26 @@ export interface GeneratedStartupPageData {
   relatedLinks: RelatedLink[];
 }
 
+export interface GeneratedRouteSEOConfig {
+  title: string;
+  description: string;
+  keywords: string[];
+  type: "website" | "calculator" | "service" | "article";
+  calculatorData?: {
+    type: string;
+    features: string[];
+    accuracy: string;
+    updates: string;
+  };
+  serviceData?: {
+    price: string;
+    rating: string;
+    reviews: string;
+    availability: string;
+  };
+  breadcrumbs: { name: string; url: string }[];
+}
+
 const standardServiceProcess = [
   "Share your basic details and current requirement.",
   "A MyeCA expert reviews scope, documents, and applicability.",
@@ -594,6 +614,115 @@ export function findGeneratedCalculatorPage(slug: string) {
 
 export function findGeneratedStartupPage(slug: string) {
   return generatedStartupPages.find((page) => page.slug === slug);
+}
+
+function generatedKeywordSet(values: Array<string | string[] | undefined>) {
+  return Array.from(
+    new Set(
+      values
+        .flatMap((value) => (Array.isArray(value) ? value : value ? [value] : []))
+        .map((value) => value.trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+export function getGeneratedRouteSEOConfig(route: string): GeneratedRouteSEOConfig | undefined {
+  const normalizedRoute = route === "/" ? "/" : `/${route.split("?")[0].split("#")[0].split("/").filter(Boolean).join("/")}`;
+
+  if (normalizedRoute.startsWith("/services/")) {
+    const slug = normalizedRoute.replace("/services/", "");
+    const page = findGeneratedServicePage(slug);
+    if (!page) return undefined;
+
+    return {
+      title: `${page.title} Online | ${page.category} | MyeCA.in`,
+      description: page.description,
+      keywords: generatedKeywordSet([
+        page.title,
+        page.subtitle,
+        page.category,
+        page.highlights,
+        page.documents,
+        "MyeCA services",
+      ]),
+      type: "service",
+      serviceData: {
+        price: String(page.priceAmount),
+        rating: "Unrated",
+        reviews: "0",
+        availability: "InStock",
+      },
+      breadcrumbs: [
+        { name: "Home", url: "/" },
+        { name: "Services", url: "/services" },
+        { name: page.title, url: normalizedRoute },
+      ],
+    };
+  }
+
+  if (normalizedRoute.startsWith("/calculators/")) {
+    const slug = normalizedRoute.replace("/calculators/", "");
+    const page = findGeneratedCalculatorPage(slug);
+    if (!page) return undefined;
+
+    return {
+      title: `${page.title} | Checklist & Filing Handoff | MyeCA.in`,
+      description: page.description,
+      keywords: generatedKeywordSet([
+        page.title,
+        page.subtitle,
+        page.highlights,
+        page.inputs,
+        page.outputs,
+        "tax calculator India",
+      ]),
+      type: "calculator",
+      calculatorData: {
+        type: page.title,
+        features: page.highlights,
+        accuracy: "Informational planning guide",
+        updates: "AY 2026-27 supported",
+      },
+      breadcrumbs: [
+        { name: "Home", url: "/" },
+        { name: "Calculators", url: "/calculators" },
+        { name: page.title, url: normalizedRoute },
+      ],
+    };
+  }
+
+  if (normalizedRoute.startsWith("/startup/")) {
+    const slug = normalizedRoute.replace("/startup/", "");
+    const page = findGeneratedStartupPage(slug);
+    if (!page) return undefined;
+
+    return {
+      title: `${page.title} Services India | MyeCA.in`,
+      description: page.description,
+      keywords: generatedKeywordSet([
+        page.title,
+        page.subtitle,
+        page.highlights,
+        page.deliverables,
+        "startup compliance India",
+      ]),
+      type: "service",
+      serviceData: {
+        price: "0",
+        rating: "Unrated",
+        reviews: "0",
+        availability: "InStock",
+      },
+      breadcrumbs: [
+        { name: "Home", url: "/" },
+        { name: "Startup Services", url: "/startup-services" },
+        { name: page.title, url: normalizedRoute },
+      ],
+    };
+  }
+
+  return undefined;
 }
 
 export function getGeneratedPublicRoutes() {

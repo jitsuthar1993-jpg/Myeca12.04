@@ -3,7 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SEO_CONFIG, type SEOConfigItem } from "../client/src/config/seo.config.js";
 import { TAX_GUIDES, type TaxGuide } from "../client/src/data/tax-guides.js";
-import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
+import {
+  getGeneratedPublicRoutes,
+  getGeneratedRouteSEOConfig,
+} from "../client/src/data/missing-pages.js";
 import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
 import {
   DEFAULT_LOGO,
@@ -297,7 +300,7 @@ function guideMeta(guide: TaxGuide): RouteMeta {
 
 function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
-  const config = SEO_CONFIG[pathName];
+  const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
   const title = config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
   const description = config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`;
   const jsonLd = [
