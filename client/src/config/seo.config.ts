@@ -563,6 +563,20 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Form 16 Parser', url: '/form16-parser' }]
   },
+  '/itr/form-selector': {
+    title: 'ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2 or ITR-3 | MyeCA.in',
+    description: 'Choose the right income tax return form for salary, capital gains, business income, foreign assets, and other AY 2026-27 filing scenarios.',
+    keywords: ['ITR form selector', 'which ITR form', 'ITR-1 ITR-2 ITR-3', 'AY 2026-27 ITR filing', 'income tax return form'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Filing', url: '/itr/form-selector' }]
+  },
+  '/itr/form-recommender': {
+    title: 'ITR Form Recommender AY 2026-27 | Guided Filing Path | MyeCA.in',
+    description: 'Answer guided income, deduction, capital gains, and filing questions to understand the ITR form path that may fit your AY 2026-27 return.',
+    keywords: ['ITR form recommender', 'income tax filing path', 'which ITR should I file', 'AY 2026-27 tax return', 'guided ITR filing'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Filing', url: '/itr/form-selector' }, { name: 'Form Recommender', url: '/itr/form-recommender' }]
+  },
   '/tax-assistant': {
     title: 'AI Tax Assistant | Guided Tax Answers & Support | MyeCA.in',
     description: 'Ask the AI Tax Assistant common questions about ITR filing, GST, or business compliance and review important cases with an expert.',
