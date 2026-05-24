@@ -298,6 +298,27 @@ describe("public link audit", () => {
     expect(campaignRunbook).toMatch(/finance forums/i);
   });
 
+  it("keeps a fillable backlink outreach tracker for required channels", () => {
+    const tracker = readFileSync("docs/marketing/itr-season-2026-outreach-tracker.csv", "utf8").trim();
+    const [headerLine, ...rows] = tracker.split(/\r?\n/);
+    const headers = headerLine.split(",");
+    const channelIndex = headers.indexOf("channel");
+    const statusIndex = headers.indexOf("status");
+    const utmIndex = headers.indexOf("utm_url");
+
+    expect(headers).toEqual(expect.arrayContaining(["channel", "segment", "target_url", "utm_url", "rel_attribute", "status", "owner"]));
+    expect(rows.length).toBeGreaterThanOrEqual(6);
+
+    const parsedRows = rows.map((row) => row.split(","));
+    const channels = parsedRows.map((row) => row[channelIndex]);
+
+    expect(channels).toEqual(expect.arrayContaining(["CA blogs", "StartupIndia listings", "Medium articles", "LinkedIn", "Guest posts", "Finance forums"]));
+    parsedRows.forEach((row) => {
+      expect(row[utmIndex]).toContain("utm_campaign=itr-season-2026");
+      expect(row[statusIndex]).toMatch(/prospect|planned|queued/i);
+    });
+  });
+
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
     const indexTemplate = readFileSync("client/index.html", "utf8");
     const glossarySource = readFileSync("client/src/components/seo/FinancialGlossary.tsx", "utf8");
