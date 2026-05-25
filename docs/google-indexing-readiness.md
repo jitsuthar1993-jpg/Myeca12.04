@@ -59,6 +59,8 @@ Keep a dated evidence row whenever Search Console work is performed. The goal is
 date,owner,property_type,verification_method,evidence_link_or_note,status,next_action
 ```
 
+Use `docs/google-search-console-evidence-log.csv` as the fillable tracker for the account-owner work. Keep `pending_external` rows until the Search Console owner adds evidence from the Google UI, DNS provider, Vercel project, CrUX, or Vercel Speed Insights.
+
 Required evidence before calling Search Console setup done:
 
 - Domain property exists for `myeca.in`.

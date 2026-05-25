@@ -330,6 +330,34 @@ describe("public link audit", () => {
     });
   });
 
+  it("keeps a Search Console evidence tracker for external indexing tasks", () => {
+    const tracker = readFileSync("docs/google-search-console-evidence-log.csv", "utf8").trim();
+    const [headerLine, ...rows] = tracker.split(/\r?\n/);
+    const headers = headerLine.split(",");
+    const itemIndex = headers.indexOf("item");
+    const statusIndex = headers.indexOf("status");
+
+    expect(headers).toEqual(expect.arrayContaining(["date", "item", "status", "evidence", "next_action"]));
+    expect(rows.length).toBeGreaterThanOrEqual(7);
+
+    const parsedRows = rows.map((row) => row.split(","));
+    const trackedItems = parsedRows.map((row) => row[itemIndex]);
+
+    expect(trackedItems).toEqual(expect.arrayContaining([
+      "Domain property",
+      "DNS TXT verification",
+      "HTML verification token",
+      "Sitemap submitted",
+      "URL Inspection priority set",
+      "Rendered page view",
+      "Page indexing report",
+      "Field INP evidence",
+    ]));
+    parsedRows.forEach((row) => {
+      expect(row[statusIndex]).toMatch(/pending_external|ready_to_verify|verified|submitted|recorded/i);
+    });
+  });
+
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
     const indexTemplate = readFileSync("client/index.html", "utf8");
     const glossarySource = readFileSync("client/src/components/seo/FinancialGlossary.tsx", "utf8");
