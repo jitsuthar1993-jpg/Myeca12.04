@@ -18,3 +18,16 @@ export function formatCoreWebVitalValue(name: CoreWebVitalName, value: number) {
 
   return value.toFixed(3);
 }
+
+export function medianCoreWebVitalValue(values: Array<number | null | undefined>) {
+  const finiteValues = values
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value))
+    .sort((a, b) => a - b);
+
+  if (finiteValues.length === 0) return null;
+
+  const middle = Math.floor(finiteValues.length / 2);
+  if (finiteValues.length % 2 === 1) return finiteValues[middle];
+
+  return (finiteValues[middle - 1] + finiteValues[middle]) / 2;
+}

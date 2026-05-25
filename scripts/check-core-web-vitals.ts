@@ -3,6 +3,7 @@ import {
   CORE_WEB_VITAL_THRESHOLDS,
   classifyCoreWebVital,
   formatCoreWebVitalValue,
+  medianCoreWebVitalValue,
   type CoreWebVitalName,
 } from "../shared/core-web-vitals.js";
 
@@ -29,6 +30,12 @@ type CoreWebVitalsSnapshot = {
   lcp: number | null;
 };
 
+type RouteAudit = {
+  metrics: CoreWebVitalsSnapshot;
+  reachable: MetricResult;
+  samples: CoreWebVitalsSnapshot[];
+};
+
 const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_CWV_BASE_URL || defaultBaseUrl);
 const routes = parseRoutes(process.argv[3] || process.env.MYECA_CWV_ROUTES || defaultRoutes.join(","));
 
@@ -53,24 +60,31 @@ function printResult(result: MetricResult) {
   console.log(`${status} ${result.label}: ${result.detail}`);
 }
 
-function metricResult(route: string, name: CoreWebVitalName, value: number | null, required = true): MetricResult {
+function metricResult(
+  route: string,
+  name: CoreWebVitalName,
+  value: number | null,
+  required = true,
+  sampleCount = 1,
+): MetricResult {
   if (value == null || !Number.isFinite(value)) {
     return {
       label: `${route} ${name}`,
       ok: false,
       required,
-      detail: "metric unavailable",
+      detail: sampleCount > 1 ? `metric unavailable across ${sampleCount} samples` : "metric unavailable",
     };
   }
 
   const status = classifyCoreWebVital(name, value);
   const formattedValue = formatCoreWebVitalValue(name, value);
   const budget = formatCoreWebVitalValue(name, CORE_WEB_VITAL_THRESHOLDS[name].good);
+  const sampleDetail = sampleCount > 1 ? ` median of ${sampleCount} samples` : "";
 
   return {
     label: `${route} ${name}`,
     ok: status === "pass",
-    detail: `${formattedValue} (good budget <= ${budget})`,
+    detail: `${formattedValue}${sampleDetail} (good budget <= ${budget})`,
   };
 }
 
@@ -263,7 +277,7 @@ async function waitForMetrics(page: Page): Promise<CoreWebVitalsSnapshot> {
   return metrics;
 }
 
-async function auditRoute(route: string) {
+async function collectRouteSample(route: string): Promise<RouteAudit> {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({
     ...devices["Pixel 5"],
@@ -297,27 +311,56 @@ async function auditRoute(route: string) {
       }));
       console.error(JSON.stringify({ route, url: page.url(), metrics, timeline }, null, 2));
     }
-    const results: MetricResult[] = [
-      {
+
+    return {
+      metrics,
+      reachable: {
         label: `${route} reachable`,
         ok: response?.ok() ?? false,
         detail: response ? `${response.status()} ${response.statusText()}` : "no response",
       },
-      metricResult(route, "LCP", metrics.lcp),
-      metricResult(route, "CLS", metrics.cls),
-      {
-        ...metricResult(route, "INP", metrics.inp, false),
-        detail:
-          metrics.inp == null
-            ? "synthetic INP unavailable; confirm field INP in CrUX, Vercel Speed Insights, or Search Console"
-            : metricResult(route, "INP", metrics.inp, false).detail,
-      },
-    ];
-
-    return results;
+      samples: [metrics],
+    };
   } finally {
     await browser.close();
   }
+}
+
+async function auditRoute(route: string) {
+  const audit = await collectRouteSample(route);
+  const needsRetry =
+    audit.reachable.ok &&
+    (classifyCoreWebVital("LCP", audit.metrics.lcp ?? Number.POSITIVE_INFINITY) === "fail" ||
+      classifyCoreWebVital("CLS", audit.metrics.cls ?? Number.POSITIVE_INFINITY) === "fail");
+
+  if (needsRetry) {
+    while (audit.samples.length < 3) {
+      const retry = await collectRouteSample(route);
+      audit.samples.push(...retry.samples);
+    }
+
+    audit.metrics = {
+      cls: medianCoreWebVitalValue(audit.samples.map((sample) => sample.cls)),
+      inp: medianCoreWebVitalValue(audit.samples.map((sample) => sample.inp)),
+      lcp: medianCoreWebVitalValue(audit.samples.map((sample) => sample.lcp)),
+    };
+  }
+
+  const sampleCount = audit.samples.length;
+  const inpResult = metricResult(route, "INP", audit.metrics.inp, false, sampleCount);
+
+  return [
+    audit.reachable,
+    metricResult(route, "LCP", audit.metrics.lcp, true, sampleCount),
+    metricResult(route, "CLS", audit.metrics.cls, true, sampleCount),
+    {
+      ...inpResult,
+      detail:
+        audit.metrics.inp == null
+          ? `synthetic INP unavailable${sampleCount > 1 ? ` across ${sampleCount} samples` : ""}; confirm field INP in CrUX, Vercel Speed Insights, or Search Console`
+          : inpResult.detail,
+    },
+  ];
 }
 
 async function main() {

@@ -72,7 +72,7 @@ Build the list in a spreadsheet with these columns:
 segment,prospect_name,site_or_org,url,contact_name,contact_email,social_url,asset_to_pitch,utm_url,status,last_contacted,next_follow_up,notes
 ```
 
-Use `docs/marketing/itr-season-2026-outreach-tracker.csv` as the starter tracker for the first backlink batch. Replace `TBD` values as prospects are qualified and keep the row for every pitch, reply, earned mention, or rejected placement.
+Use `docs/marketing/itr-season-2026-outreach-tracker.csv` as the starter tracker for the first backlink batch. Use `docs/marketing/itr-season-2026-outreach-kit.md` for the ready-to-send pitch copy. Replace `TBD` values as prospects are qualified and keep the row for every pitch, reply, earned mention, or rejected placement.
 
 Segment quotas:
 

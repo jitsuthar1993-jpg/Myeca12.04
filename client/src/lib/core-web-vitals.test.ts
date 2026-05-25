@@ -3,6 +3,7 @@ import {
   CORE_WEB_VITAL_THRESHOLDS,
   classifyCoreWebVital,
   formatCoreWebVitalValue,
+  medianCoreWebVitalValue,
 } from "@shared/core-web-vitals";
 
 describe("core web vitals budgets", () => {
@@ -25,5 +26,11 @@ describe("core web vitals budgets", () => {
     expect(formatCoreWebVitalValue("LCP", 1234.56)).toBe("1235ms");
     expect(formatCoreWebVitalValue("INP", 42.2)).toBe("42ms");
     expect(formatCoreWebVitalValue("CLS", 0.06789)).toBe("0.068");
+  });
+
+  it("uses the median finite sample for lab metric retries", () => {
+    expect(medianCoreWebVitalValue([3900, 980, 1120])).toBe(1120);
+    expect(medianCoreWebVitalValue([null, Number.NaN, 0.035, 0.021])).toBeCloseTo(0.028);
+    expect(medianCoreWebVitalValue([null, Number.NaN])).toBeNull();
   });
 });

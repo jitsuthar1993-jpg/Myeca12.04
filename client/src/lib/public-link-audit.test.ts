@@ -330,6 +330,26 @@ describe("public link audit", () => {
     });
   });
 
+  it("keeps ready-to-send outreach copy for required backlink channels", () => {
+    const campaignRunbook = readFileSync("docs/marketing/itr-season-2026-content-growth-campaign.md", "utf8");
+    const outreachKit = readFileSync("docs/marketing/itr-season-2026-outreach-kit.md", "utf8");
+
+    expect(campaignRunbook).toContain("docs/marketing/itr-season-2026-outreach-kit.md");
+    ["CA blogs", "StartupIndia listings", "Medium articles", "LinkedIn", "Guest posts", "Finance forums"].forEach((channel) => {
+      expect(outreachKit).toContain(channel);
+    });
+    [
+      "utm_campaign=itr-season-2026",
+      "AIS Form 26AS mismatch checklist",
+      "Form 16 parser workflow",
+      "Income tax calculator",
+      "No paid link",
+      "No exact-match anchor stuffing",
+    ].forEach((requiredText) => {
+      expect(outreachKit).toContain(requiredText);
+    });
+  });
+
   it("keeps a Search Console evidence tracker for external indexing tasks", () => {
     const tracker = readFileSync("docs/google-search-console-evidence-log.csv", "utf8").trim();
     const [headerLine, ...rows] = tracker.split(/\r?\n/);
