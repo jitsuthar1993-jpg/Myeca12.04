@@ -30,6 +30,7 @@ import {
   buildRobotsTxt,
   buildSitemapXml,
   getIndexablePublicRoutes,
+  routeChangefreq,
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
@@ -85,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const trimmedSitemap = buildSitemapXml(routes.map((route) => ({
         loc: toAbsoluteUrl(route),
         lastmod: blogDateMap.get(route) || new Date().toISOString().split("T")[0],
-        changefreq: route === "/" ? "daily" : route.startsWith("/blog/") ? "monthly" : "weekly",
+        changefreq: routeChangefreq(route),
         priority: routePriority(route),
       }))).trim();
       sitemapCache = { xml: trimmedSitemap, generatedAt: Date.now() };

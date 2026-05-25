@@ -12,6 +12,7 @@ import { globalErrorHandler } from "./middleware/error-handler.js";
 import { generalRateLimit } from "./middleware/rateLimiting.js";
 import { getRequestId, requestIdMiddleware } from "./middleware/request-id.js";
 import { initServerSentry, setupServerSentryErrorHandler } from "./telemetry/sentry.js";
+import { isPrivateRoute } from "../shared/seo-public.js";
 
 initServerSentry();
 const app = express();
@@ -37,6 +38,10 @@ app.use(requestIdMiddleware);
 app.use(compress());
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
+app.use((req, res, next) => {
+  res.setHeader("X-Robots-Tag", isPrivateRoute(req.path) ? "noindex, nofollow" : "index, follow");
+  next();
+});
 
 app.use((req, res, next) => {
   const allowLocalOrigins = process.env.NODE_ENV !== "production" || isLocalHost(req.hostname || req.headers.host);

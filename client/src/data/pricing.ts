@@ -126,7 +126,7 @@ export const taxFilingPlans: PricingPlan[] = [
     id: "salary",
     name: "Salary",
     audience: "Single employer, salary and interest income",
-    description: "For simple ITR-1 cases with guided self-filing and checklist support.",
+    description: "For simple ITR-1 cases with guided filing and checklist support.",
     pricing: { qualifier: "fixed", amount: 499, gstTreatment: "excluding" },
     icon: FileText,
     badge: "Starter",

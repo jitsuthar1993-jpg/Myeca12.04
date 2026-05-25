@@ -83,7 +83,7 @@ export function getBlogConversionLinks(post: BlogConversionSource): BlogConversi
     {
       label: "Compare pricing",
       href: "/pricing",
-      description: "See self-service and CA-assisted plan options before starting.",
+      description: "See guided and CA-assisted plan options before starting.",
     },
     {
       label: ctaHref.startsWith("/services/") ? "Start this service" : "Choose your ITR path",

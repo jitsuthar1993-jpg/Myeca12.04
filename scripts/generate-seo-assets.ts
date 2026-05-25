@@ -7,12 +7,10 @@ import {
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
 } from "../client/src/data/missing-pages.js";
-import { itrSeasonCampaignAssets } from "../client/src/data/itr-season-campaign.js";
-import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
+import type { DefaultBlogPost } from "../server/data/default-blog-content.js";
+import { loadStaticBlogPosts, type StaticMdxBlogPost } from "../server/data/static-blog-content.js";
 import { isValidGoogleSiteVerificationToken } from "../shared/search-console-verification.js";
 import {
-  DEFAULT_LOGO,
-  DEFAULT_OG_IMAGE,
   PRIVATE_NOINDEX_ROUTES,
   SITE_NAME,
   SITE_URL,
@@ -20,9 +18,22 @@ import {
   buildSitemapXml,
   getIndexablePublicRoutes,
   normalizePublicPath,
+  routeChangefreq,
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
+import { normalizeBlogContent } from "../shared/blog.js";
+import {
+  DEFAULT_OG_IMAGE as SHARED_DEFAULT_OG_IMAGE,
+  buildAccountingServiceSchema,
+  buildArticleSchema,
+  buildFaqPageSchema,
+  buildHomepageGraph,
+  buildHowToSchema,
+  buildServiceSchema,
+  organizationNode,
+} from "../shared/seo-schema.js";
+import { renderStaticRouteBody, type StaticRouteBodyInput } from "../shared/static-seo-content.js";
 
 type RouteMeta = {
   path: string;
@@ -35,6 +46,7 @@ type RouteMeta = {
   robots: "index, follow" | "noindex, nofollow";
   jsonLd: Record<string, unknown>[];
   aiSummary: string;
+  body?: StaticRouteBodyInput;
   staticHighlights?: string[];
   staticLinks?: Array<{ label: string; href: string }>;
 };
@@ -56,19 +68,6 @@ function escapeHtml(value: string) {
 
 function escapeJsonForHtml(value: unknown) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
-}
-
-function safeStaticLinks(links: Array<{ label: string; href: string }> = []) {
-  const seen = new Set<string>();
-  return links
-    .filter((link) => link.label.trim() && /^(\/|https?:\/\/)/i.test(link.href))
-    .filter((link) => {
-      const key = `${link.label}\n${link.href}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .slice(0, 6);
 }
 
 function stripInvalidGoogleVerificationMeta(html: string) {
@@ -119,27 +118,7 @@ function verifiedRating(serviceData?: SEOConfigItem["serviceData"]) {
 function organizationSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "TaxPreparationService",
-    "@id": `${SITE_URL}/#organization`,
-    name: SITE_NAME,
-    url: SITE_URL,
-    logo: DEFAULT_LOGO,
-    image: DEFAULT_OG_IMAGE,
-    description: "India-wide guided ITR filing, tax calculator, GST compliance, startup registration, and optional CA-assisted review platform.",
-    email: "support@myeca.in",
-    areaServed: { "@type": "Country", name: "India" },
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Mumbai",
-      addressRegion: "Maharashtra",
-      addressCountry: "IN",
-    },
-    priceRange: "Rs 499-Rs 9,999",
-    sameAs: [
-      "https://twitter.com/myecain",
-      "https://www.linkedin.com/company/myecain",
-      "https://www.facebook.com/myecain",
-    ],
+    ...organizationNode(),
   };
 }
 
@@ -167,30 +146,33 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
           ? "Article"
           : "WebPage";
 
-  const base: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": schemaType,
-    "@id": `${toAbsoluteUrl(route)}#primary`,
-    name: title,
-    headline: title,
-    description,
-    url: toAbsoluteUrl(route),
-    image: DEFAULT_OG_IMAGE,
-    inLanguage: "en-IN",
-    isAccessibleForFree: true,
-    publisher: { "@id": `${SITE_URL}/#organization` },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": toAbsoluteUrl(route),
-    },
-  };
+  const base: Record<string, unknown> =
+    config?.type === "service"
+      ? buildServiceSchema({ url: toAbsoluteUrl(route), name: title, description })
+      : {
+          "@context": "https://schema.org",
+          "@type": schemaType,
+          "@id": `${toAbsoluteUrl(route)}#primary`,
+          name: title,
+          headline: title,
+          description,
+          url: toAbsoluteUrl(route),
+          image: SHARED_DEFAULT_OG_IMAGE,
+          inLanguage: "en-IN",
+          isAccessibleForFree: true,
+          publisher: { "@id": `${SITE_URL}/#organization` },
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": toAbsoluteUrl(route),
+          },
+        };
 
   if (config?.type === "calculator" && config.calculatorData) {
     Object.assign(base, {
       applicationCategory: "FinanceApplication",
       operatingSystem: "Web",
       featureList: config.calculatorData.features,
-      offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+      offers: { "@type": "Offer", price: "₹0" },
     });
   }
 
@@ -201,8 +183,7 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
       areaServed: { "@type": "Country", name: "India" },
       offers: {
         "@type": "Offer",
-        price: numericPrice(config.serviceData.price),
-        priceCurrency: "INR",
+        price: config.serviceData.price || numericPrice(config.serviceData.price),
         availability: "https://schema.org/InStock",
       },
       ...(rating ? { aggregateRating: rating } : {}),
@@ -216,6 +197,31 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
   const route = `/blog/${post.slug}`;
   const title = post.seoTitle || `${post.title} | MyeCA.in Blog`;
   const description = post.seoDescription || post.excerpt;
+  const staticPost = post as Partial<StaticMdxBlogPost>;
+  const articleSchema = buildArticleSchema({
+    url: toAbsoluteUrl(route),
+    headline: post.title,
+    description,
+    publishedAt: post.publishedAt,
+    modifiedAt: post.updatedAt || post.publishedAt,
+    image: post.coverImage?.startsWith("http") ? post.coverImage : SHARED_DEFAULT_OG_IMAGE,
+  });
+  articleSchema.about = [post.categoryId, ...post.tags].filter(Boolean);
+  if (post.reviewedBy) {
+    articleSchema.reviewedBy = { "@type": "Organization", name: "Team myeca.in" };
+  }
+  const faqSchema = buildFaqPageSchema(post.faqItems ?? []);
+  const howToSteps = staticPost.howToSteps ?? [];
+  const howToSchema = staticPost.contentType === "how-to" && howToSteps.length
+    ? buildHowToSchema({
+        url: toAbsoluteUrl(route),
+        name: post.title,
+        description,
+        totalTime: staticPost.totalTime,
+        steps: howToSteps,
+      })
+    : null;
+  const normalizedContent = normalizeBlogContent(post.content);
   const jsonLd = [
     organizationSchema(),
     breadcrumbSchema([
@@ -223,40 +229,9 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
       { name: "Blog", url: "/blog" },
       { name: post.title, url: route },
     ], route),
-    {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "@id": `${toAbsoluteUrl(route)}#article`,
-      headline: post.title,
-      name: title,
-      description,
-      url: toAbsoluteUrl(route),
-      image: post.coverImage?.startsWith("http") ? post.coverImage : DEFAULT_OG_IMAGE,
-      datePublished: post.publishedAt,
-      dateModified: post.updatedAt || post.publishedAt,
-      author: {
-        "@type": "Person",
-        name: post.authorName || "MyeCA Editorial Team",
-        jobTitle: post.authorRole || "Tax Editorial Team",
-      },
-      ...(post.reviewedBy ? { reviewedBy: { "@type": "Person", name: post.reviewedBy } } : {}),
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      isAccessibleForFree: true,
-      inLanguage: "en-IN",
-      about: [post.categoryId, ...post.tags],
-      mainEntityOfPage: { "@type": "WebPage", "@id": toAbsoluteUrl(route) },
-    },
-    ...(post.faqItems?.length
-      ? [{
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: post.faqItems.map((faq) => ({
-            "@type": "Question",
-            name: faq.question,
-            acceptedAnswer: { "@type": "Answer", text: faq.answer },
-          })),
-        }]
-      : []),
+    articleSchema,
+    ...(faqSchema ? [faqSchema] : []),
+    ...(howToSchema ? [howToSchema] : []),
   ];
 
   return {
@@ -266,21 +241,110 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
     keywords: post.tags,
     type: "article",
     canonicalUrl: post.canonicalUrl || toAbsoluteUrl(route),
-    image: post.coverImage?.startsWith("http") ? post.coverImage : DEFAULT_OG_IMAGE,
+    image: post.coverImage?.startsWith("http") ? post.coverImage : SHARED_DEFAULT_OG_IMAGE,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${post.title}: ${post.excerpt} Reviewed tax guidance for Indian taxpayers. Verify facts with a CA before filing.`,
-    staticHighlights: post.keyHighlights.slice(0, 5),
-    staticLinks: safeStaticLinks([
-      { label: post.ctaLabel, href: post.ctaHref },
-      ...(post.sourceLinks?.map((source) => ({ label: source.label, href: source.url })) ?? []),
-    ]),
+    staticHighlights: post.keyHighlights,
+    staticLinks: [
+      ...(post.ctaHref ? [{ label: post.ctaLabel || "Start filing", href: post.ctaHref }] : []),
+      ...(post.sourceLinks ?? []).map((link) => ({ label: link.label, href: link.url })),
+    ],
+    body: {
+      route,
+      title: post.title,
+      description,
+      kind: "blog-post",
+      highlights: post.keyHighlights,
+      bodyHtml: normalizedContent.html,
+      publishedAt: post.publishedAt,
+      modifiedAt: post.updatedAt,
+    },
   };
+}
+
+type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> &
+  Partial<Pick<RouteMeta, "title" | "description" | "canonicalUrl" | "body" | "staticHighlights" | "staticLinks">>;
+
+function uniqueLinks(links: Array<{ label: string; href: string }>) {
+  const seen = new Set<string>();
+  return links.filter((link) => {
+    if (!link.href || seen.has(link.href)) return false;
+    seen.add(link.href);
+    return true;
+  });
+}
+
+export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
+  if (meta.robots !== "index, follow") return "";
+
+  const pathName = normalizePublicPath(meta.path);
+
+  if (pathName === "/") {
+    return `<main data-seo-static-shell="home" aria-label="MyeCA public SEO summary">
+      <h1>Estimate tax, choose your ITR path, then file.</h1>
+      <p>MyeCA.in helps Indian taxpayers compare regimes, prepare documents, and choose the right filing workflow before React loads.</p>
+      <nav aria-label="Priority filing links">
+        <a href="/calculators/income-tax">Income tax calculator</a>
+        <a href="/itr/form-selector">Choose ITR form</a>
+        <a href="/services/itr-for-salaried">ITR for salaried</a>
+      </nav>
+    </main>`;
+  }
+
+  const title = meta.title || humanizeRoute(pathName);
+  const description = meta.description || `${title} on MyeCA.in.`;
+  const highlights = meta.staticHighlights ?? meta.body?.highlights ?? [];
+  const links = uniqueLinks([
+    { label: "This page", href: meta.canonicalUrl || toAbsoluteUrl(pathName) },
+    { label: "Tax guides", href: "/learn/guides" },
+    { label: "Choose ITR form", href: "/itr/form-selector" },
+    { label: "Pricing", href: "/pricing" },
+    ...(meta.staticLinks ?? []),
+  ]);
+
+  return `<main data-seo-static-shell="route" aria-label="MyeCA public SEO summary">
+      <h1>${escapeHtml(title)}</h1>
+      <p>${escapeHtml(description)}</p>
+      ${
+        highlights.length
+          ? `<section aria-label="Key points"><h2>Key points</h2><ul>${highlights
+              .map((item) => `<li>${escapeHtml(item)}</li>`)
+              .join("")}</ul></section>`
+          : ""
+      }
+      <section aria-label="Official sources and next steps">
+        <h2>Official sources and next steps</h2>
+        <ul>${links
+          .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+          .join("")}</ul>
+      </section>
+    </main>`;
+}
+
+export function injectStaticRootFallback(html: string, meta: StaticRootFallbackMeta) {
+  if (meta.robots !== "index, follow") return html;
+  const fallback = renderStaticRootFallback(meta);
+  if (!fallback) return html;
+
+  return html.replace(
+    /<div id="root">[\s\S]*?<\/div>\s*<script src="\/app-bootstrap\.js"/i,
+    `<div id="root">\n${fallback}\n    </div>\n    <script src="/app-bootstrap.js"`,
+  );
 }
 
 function guideMeta(guide: TaxGuide): RouteMeta {
   const route = `/learn/guide/${guide.slug}`;
   const title = `${guide.title} | MyeCA.in Tax Guides`;
+  const articleSchema = buildArticleSchema({
+    url: toAbsoluteUrl(route),
+    headline: guide.title,
+    description: guide.description,
+    publishedAt: guide.lastUpdated,
+    modifiedAt: guide.lastUpdated,
+    image: SHARED_DEFAULT_OG_IMAGE,
+  });
+  articleSchema.about = guide.tags;
   const jsonLd = [
     organizationSchema(),
     breadcrumbSchema([
@@ -289,27 +353,7 @@ function guideMeta(guide: TaxGuide): RouteMeta {
       { name: "Guides", url: "/learn/guides" },
       { name: guide.title, url: route },
     ], route),
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "@id": `${toAbsoluteUrl(route)}#guide`,
-      headline: guide.title,
-      name: title,
-      description: guide.description,
-      url: toAbsoluteUrl(route),
-      image: DEFAULT_OG_IMAGE,
-      dateModified: guide.lastUpdated,
-      author: {
-        "@type": "Person",
-        name: guide.author,
-        jobTitle: "Tax Consultant",
-      },
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      isAccessibleForFree: true,
-      inLanguage: "en-IN",
-      about: guide.tags,
-      mainEntityOfPage: { "@type": "WebPage", "@id": toAbsoluteUrl(route) },
-    },
+    articleSchema,
   ];
 
   return {
@@ -319,48 +363,56 @@ function guideMeta(guide: TaxGuide): RouteMeta {
     keywords: guide.tags,
     type: "article",
     canonicalUrl: toAbsoluteUrl(route),
-    image: DEFAULT_OG_IMAGE,
+    image: SHARED_DEFAULT_OG_IMAGE,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${guide.title}: ${guide.description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
-    staticHighlights: guide.steps.slice(0, 5).map((step) => `${step.title}: ${step.description}`),
-    staticLinks: safeStaticLinks([
-      ...guide.relatedCalculators.map((href) => ({ label: humanizeRoute(href), href })),
-      ...(guide.relatedResources?.map((resource) => ({ label: resource.label, href: resource.href })) ?? []),
-      { label: "Pricing", href: "/pricing" },
-    ]),
+    body: {
+      route,
+      title: guide.title,
+      description: guide.description,
+      kind: "article",
+      highlights: guide.tags,
+      publishedAt: guide.lastUpdated,
+      modifiedAt: guide.lastUpdated,
+    },
   };
 }
 
 function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
   const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
-  const campaignAsset = pathName.startsWith("/itr-season-2026/")
-    ? itrSeasonCampaignAssets.find((asset) => `/itr-season-2026/${asset.slug}` === pathName)
-    : undefined;
   const title = config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
   const description = config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`;
-  const jsonLd = [
-    organizationSchema(),
-    breadcrumbSchema(config?.breadcrumbs, pathName),
-    schemaForConfig(pathName, config, title, description),
-  ];
+  const jsonLd: Record<string, unknown>[] = pathName === "/"
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            ...((buildHomepageGraph() as { "@graph": Record<string, unknown>[] })["@graph"] || []),
+            buildAccountingServiceSchema(SITE_URL),
+          ],
+        },
+        breadcrumbSchema(config?.breadcrumbs, pathName),
+      ]
+    : [
+        organizationSchema(),
+        breadcrumbSchema(config?.breadcrumbs, pathName),
+        schemaForConfig(pathName, config, title, description),
+      ];
 
-  if (pathName === "/") {
-    jsonLd.push({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": `${SITE_URL}/#website`,
-      name: SITE_NAME,
-      url: SITE_URL,
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: `${SITE_URL}/search?q={search_term_string}`,
-        "query-input": "required name=search_term_string",
-      },
-    });
+  if (pathName === "/contact") {
+    jsonLd.push(buildAccountingServiceSchema(toAbsoluteUrl(pathName)));
   }
+
+  const kind: StaticRouteBodyInput["kind"] =
+    pathName === "/" ? "homepage" : config?.type === "service" ? "service" : "page";
+  const highlights = config?.keywords?.slice(0, 5) ?? [
+    "CA-led Indian tax support",
+    "ITR e-filing",
+    "GST compliance",
+    "Secure document workflows",
+  ];
 
   return {
     path: pathName,
@@ -369,18 +421,17 @@ function routeMeta(route: string): RouteMeta {
     keywords: config?.keywords,
     type: config?.type || (pathName.startsWith("/legal") ? "legal" : "website"),
     canonicalUrl: toAbsoluteUrl(pathName),
-    image: DEFAULT_OG_IMAGE,
+    image: SHARED_DEFAULT_OG_IMAGE,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify tax actions with a CA.`,
-    staticHighlights: campaignAsset?.checklist.slice(0, 5),
-    staticLinks: safeStaticLinks(campaignAsset ? [
-      campaignAsset.toolLink,
-      campaignAsset.conversionLink,
-      campaignAsset.relatedBlogLink,
-      campaignAsset.learnGuideLink,
-      ...campaignAsset.sourceLinks,
-    ] : []),
+    body: {
+      route: pathName,
+      title,
+      description,
+      kind,
+      highlights,
+    },
   };
 }
 
@@ -393,10 +444,16 @@ function privateMeta(route: string): RouteMeta {
     description,
     type: "private",
     canonicalUrl: toAbsoluteUrl(route),
-    image: DEFAULT_OG_IMAGE,
+    image: SHARED_DEFAULT_OG_IMAGE,
     robots: "noindex, nofollow",
     jsonLd: [],
     aiSummary: description,
+    body: {
+      route: normalizePublicPath(route),
+      title,
+      description,
+      kind: "page",
+    },
   };
 }
 
@@ -434,111 +491,39 @@ function renderSeoHead(meta: RouteMeta) {
 ${jsonLd}`;
 }
 
-type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> &
-  Partial<Pick<RouteMeta, "title" | "description" | "canonicalUrl" | "staticHighlights" | "staticLinks">>;
-
-export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
-  if (meta.robots !== "index, follow") {
-    return "";
-  }
-
-  const pathName = normalizePublicPath(meta.path);
-
-  if (pathName !== "/") {
-    const title = meta.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
-    const description = meta.description || `${humanizeRoute(pathName)} on ${SITE_NAME}.`;
-    const canonicalUrl = meta.canonicalUrl || toAbsoluteUrl(pathName);
-    const highlights = meta.staticHighlights?.filter(Boolean).slice(0, 5) ?? [];
-    const links = safeStaticLinks(meta.staticLinks);
-    const highlightsHtml = highlights.length
-      ? `          <section aria-label="Key points" style="margin-top:14px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;padding:16px">
-            <h2 style="margin:0;color:#0f172a;font-size:18px;line-height:1.3;font-weight:900;letter-spacing:0">Key points</h2>
-            <ul style="margin:12px 0 0;padding-left:20px;color:#334155;font-size:14px;line-height:1.65">
-              ${highlights.map((item) => `<li>${escapeHtml(item)}</li>`).join("\n              ")}
-            </ul>
-          </section>`
-      : "";
-    const linksHtml = links.length
-      ? `          <nav aria-label="Official sources and next steps" style="display:grid;gap:8px;margin-top:14px">
-            <p style="margin:0;color:#475569;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0">Official sources and next steps</p>
-            ${links.map((link) => `<a href="${escapeHtml(link.href)}" style="display:flex;min-height:44px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:800">${escapeHtml(link.label)} <span aria-hidden="true">-&gt;</span></a>`).join("\n            ")}
-          </nav>`
-      : "";
-
-    return `      <div data-seo-static-shell="route" style="min-height:100vh;background:#fff;color:#0f172a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
-        <main style="max-width:896px;margin:0 auto;padding:36px 16px 44px">
-          <a href="/" style="display:inline-flex;align-items:center;gap:10px;color:#0f172a;text-decoration:none;font-weight:900">
-            <span style="display:inline-flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:8px;background:#2563eb;color:#fff">M</span>
-            <span>MyeCA.in</span>
-          </a>
-          <section style="margin-top:28px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;padding:18px">
-            <p style="margin:0 0 12px;color:#2563eb;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0">MyeCA public resource</p>
-            <h1 style="margin:0;color:#020617;font-size:30px;line-height:1.14;font-weight:900;letter-spacing:0">${escapeHtml(title)}</h1>
-            <p style="margin:14px 0 0;color:#475569;font-size:15px;line-height:1.7">${escapeHtml(description)}</p>
-            <a href="${escapeHtml(pathName)}" style="display:inline-flex;margin-top:16px;color:#1d4ed8;font-weight:800;text-decoration:none">Open this page <span aria-hidden="true" style="margin-left:6px">-&gt;</span></a>
-          </section>
-${highlightsHtml}
-${linksHtml}
-          <nav aria-label="Priority filing links" style="display:grid;gap:10px;margin-top:14px">
-            <a href="/itr/form-selector" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border-radius:8px;background:#2563eb;color:#fff;padding:0 14px;text-decoration:none;font-weight:900">Choose ITR Form <span aria-hidden="true">-&gt;</span></a>
-            <a href="/calculators/income-tax" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:900">Income Tax Calculator <span aria-hidden="true">-&gt;</span></a>
-            <a href="/pricing" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:900">Pricing <span aria-hidden="true">-&gt;</span></a>
-          </nav>
-          <p style="margin:18px 0 0;color:#64748b;font-size:12px;line-height:1.6">Canonical URL: ${escapeHtml(canonicalUrl)}</p>
-        </main>
-      </div>`;
-  }
-
-  return `      <div data-seo-static-shell="home" style="min-height:100vh;background:#fff;color:#0f172a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
-        <header style="height:60px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;padding:0 16px;background:#fff">
-          <a href="/" style="display:flex;align-items:center;gap:10px;color:#0f172a;text-decoration:none;font-weight:900">
-            <span style="display:inline-flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:8px;background:#2563eb;color:#fff">M</span>
-            <span>MyeCA.in</span>
-          </a>
-        </header>
-        <main style="padding:28px 16px 40px">
-          <section style="max-width:896px;margin:0 auto;border:1px solid #dbeafe;background:#eff6ff;border-radius:8px;padding:18px">
-            <p style="display:inline-flex;margin:0 0 14px;align-items:center;border:1px solid #bfdbfe;background:#fff;border-radius:8px;padding:6px 10px;color:#1d4ed8;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0">AY 2026-27 tax utility</p>
-            <h1 style="margin:0;color:#020617;font-size:34px;line-height:1.08;font-weight:900;letter-spacing:0">Estimate tax, choose your ITR path, then file.</h1>
-            <p style="margin:14px 0 0;color:#475569;font-size:15px;line-height:1.7">Start with the calculator or jump straight into guided filing. Pricing, documents, and review scope stay visible before payment.</p>
-            <div style="display:grid;gap:10px;margin-top:18px">
-              <a href="/itr/form-selector" style="display:flex;min-height:52px;align-items:center;justify-content:space-between;border-radius:8px;background:#2563eb;color:#fff;padding:0 16px;text-decoration:none;font-weight:900">File ITR <span aria-hidden="true">-&gt;</span></a>
-              <a href="/calculators/income-tax" style="display:flex;min-height:52px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 16px;text-decoration:none;font-weight:900">Calculate Tax <span aria-hidden="true">-&gt;</span></a>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;font-size:13px;font-weight:800">
-              <a href="/calculators/regime-comparator" style="border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#1e3a8a;padding:12px;text-align:center;text-decoration:none">Compare Regimes</a>
-              <a href="/form16-parser" style="border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#1e3a8a;padding:12px;text-align:center;text-decoration:none">Parse Form 16</a>
-            </div>
-          </section>
-        </main>
-      </div>`;
-}
-
-export function injectStaticRootFallback(html: string, meta: StaticRootFallbackMeta) {
-  const fallback = renderStaticRootFallback(meta);
-  if (!fallback) return html;
-
-  return html.replace(
-    /<div id="root">[\s\S]*?<\/div>\s*(?=<script src="\/app-bootstrap\.js")/,
-    `<div id="root">\n${fallback}\n    </div>\n    `,
-  );
-}
-
 function routeOutputPath(route: string) {
   const pathName = normalizePublicPath(route);
   if (pathName === "/") return path.join(distDir, "index.html");
   return path.join(distDir, ...pathName.split("/").filter(Boolean), "index.html");
 }
 
+function injectStaticBody(html: string, meta: RouteMeta) {
+  const body = renderStaticRouteBody(
+    meta.body ?? {
+      route: meta.path,
+      title: meta.title,
+      description: meta.description,
+      kind: meta.type === "service" ? "service" : meta.type === "article" ? "article" : "page",
+    },
+  );
+
+  return html.replace(
+    /<div id="root">[\s\S]*?<\/div>\s*<script src="\/app-bootstrap\.js"/i,
+    `<div id="root">\n${body}\n    </div>\n    <script src="/app-bootstrap.js"`,
+  );
+}
+
 function writeRouteHtml(template: string, meta: RouteMeta) {
-  const preparedTemplate = injectStaticRootFallback(stripDefaultSeo(template), meta);
-  const html = preparedTemplate.replace("</head>", `${renderSeoHead(meta)}\n  </head>`);
+  const html = injectStaticBody(
+    stripDefaultSeo(template).replace("</head>", `${renderSeoHead(meta)}\n  </head>`),
+    meta,
+  );
   const outputPath = routeOutputPath(meta.path);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html, "utf8");
 }
 
-function writeTextAssets(blogPosts: DefaultBlogPost[]) {
+function writeTextAssets(blogPosts: StaticMdxBlogPost[]) {
   const blogEntries = blogPosts
     .filter((post) => post.status === "published")
     .map((post) => ({
@@ -562,7 +547,7 @@ function writeTextAssets(blogPosts: DefaultBlogPost[]) {
   const sitemap = buildSitemapXml(routes.map((route) => ({
     loc: toAbsoluteUrl(route),
     lastmod: dynamicDateMap.get(route) || now,
-    changefreq: route === "/" ? "daily" : route.startsWith("/blog/") ? "monthly" : "weekly",
+    changefreq: routeChangefreq(route),
     priority: routePriority(route),
   })));
   const robots = buildRobotsTxt();
@@ -603,7 +588,7 @@ function main() {
   }
 
   const template = fs.readFileSync(distIndexPath, "utf8");
-  const blogPosts = defaultBlogPosts.filter((post) => post.status === "published");
+  const blogPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
   const blogRoutes = blogPosts.map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const publicRoutes = getIndexablePublicRoutes(
@@ -633,6 +618,4 @@ function main() {
   console.log(`Generated SEO HTML shells for ${publicRoutes.length} public routes and ${PRIVATE_NOINDEX_ROUTES.length} noindex routes.`);
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  main();
-}
+main();

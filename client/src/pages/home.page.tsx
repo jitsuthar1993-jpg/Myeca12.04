@@ -83,7 +83,7 @@ const HomePage = () => {
           },
           {
             question: "How much does it cost to file ITR online?",
-            answer: "ITR filing starts at ₹499 for simple self-service cases, with CA-assisted package levels such as ₹999 and ₹1,499 depending on the return type and support required."
+            answer: "ITR filing starts at ₹499 for simple guided cases, with CA-assisted package levels such as ₹999 and ₹1,499 depending on the return type and support required."
           },
           {
             question: "Can I get a refund for my income tax through MyeCA.in?",
@@ -162,7 +162,7 @@ const HomePage = () => {
                 </div>
 
                 <div className="type-meta mt-3 grid grid-cols-2 gap-2 font-semibold text-slate-600">
-                  {["ERI workflow", "Scope before payment", "Optional CA review", "Secure documents"].map((item) => (
+                  {["Portal workflow", "Scope before payment", "Optional CA review", "Secure documents"].map((item) => (
                     <div key={item} className="rounded-md border border-blue-100 bg-white px-2 py-2 text-center">
                       {item}
                     </div>
@@ -175,7 +175,7 @@ const HomePage = () => {
               {/* Trust Badge */}
               <div className="inline-flex max-w-full items-center gap-2 rounded-lg border border-[var(--color-primary-100)] bg-slate-50 px-3 py-2 text-xs font-medium text-[var(--color-primary-700)] shadow-sm md:rounded-full md:bg-white md:px-4 md:text-sm">
                 <Shield className="w-4 h-4 text-[var(--color-accent-600)]" />
-                <span>ERI Registered</span>
+                <span>Portal-aligned</span>
                 <span className="text-[var(--color-primary-400)]">•</span>
                 <span className="text-[var(--color-success-600)] font-semibold">CA Review Available</span>
               </div>
@@ -273,7 +273,7 @@ const HomePage = () => {
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { icon: Shield, title: "ERI workflow", text: "Filing steps are aligned to official income-tax portal submission flow." },
+                { icon: Shield, title: "Portal workflow", text: "Filing steps are aligned to official income-tax portal submission flow." },
                 { icon: Users, title: "CA review scope", text: "Assisted plans explain what an expert reviews before work starts." },
                 { icon: FileText, title: "Document privacy", text: "Upload only required documents and see missing items before filing." },
                 { icon: Award, title: "Price clarity", text: "Plan scope, GST treatment, and exclusions stay visible before checkout." },
@@ -587,7 +587,7 @@ const HomePage = () => {
               <div className="relative z-10">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100/50 bg-blue-50/50 px-3 py-2 text-xs font-semibold text-brand-600 md:mb-8 md:rounded-full md:px-5">
                   <Award className="w-4 h-4" />
-                  ERI workflow · CA review available · Official portal guidance
+                  Portal workflow · CA review available · Official portal guidance
                 </div>
 
                 <h2 className="type-section-title mb-3 font-extrabold text-slate-900 md:mb-6">

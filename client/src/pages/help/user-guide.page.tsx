@@ -40,7 +40,7 @@ const userGuides = [
       {
         title: 'Understand Our Services',
         content: [
-          'DIY Plan: Free self-filing with basic features',
+          'Basic plan: Guided filing checklist with basic features',
           'CA Assisted: Expert help at ₹1,499',
           'Business Plan: Complete business tax solutions',
           'All plans include tax calculators and support'

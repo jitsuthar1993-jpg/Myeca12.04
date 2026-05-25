@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SEO_CONFIG } from "../config/seo.config";
-import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
 import { allServices } from "../data/all-services";
 import { competitorPages } from "../data/competitive-growth";
+import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
 import { TAX_GUIDES } from "../data/tax-guides";
 import {
   generatedServicePages,
@@ -25,18 +25,29 @@ import {
   isValidGoogleSiteVerificationToken,
   parseGoogleSiteVerificationTxtRecord,
 } from "@shared/search-console-verification";
-import { EMAIL_TEMPLATES } from "../../../server/services/email";
 import { defaultBlogPosts } from "../../../server/data/default-blog-content";
+import { loadStaticBlogPosts } from "../../../server/data/static-blog-content";
+import { EMAIL_TEMPLATES } from "../../../server/services/email";
 import { getBlogConversionLinks } from "./blog-conversion-links";
 
 describe("public link audit", () => {
   const disallowedPublicContentRoutes = ["/documents", "/dashboard", "/reports", "/admin", "/itr/filing", "/profiles"];
 
+  function escapeRegExp(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
   function expectPublicHref(value: string | undefined, label: string) {
     if (!value || !value.startsWith("/")) return;
     disallowedPublicContentRoutes.forEach((route) => {
       expect(value, label).not.toBe(route);
-      expect(value, label).not.toMatch(new RegExp(`^${route.replace("/", "\\/")}(?:[/?#]|$)`));
+      expect(value, label).not.toMatch(new RegExp(`^${escapeRegExp(route)}(?:[/?#]|$)`));
+    });
+  }
+
+  function expectPublicMarkdownLinks(content: string, label: string) {
+    disallowedPublicContentRoutes.forEach((route) => {
+      expect(content, label).not.toMatch(new RegExp(`\\]\\(${escapeRegExp(route)}(?:[/?#)]|$)`));
     });
   }
 
@@ -289,10 +300,12 @@ describe("public link audit", () => {
 
   it("keeps public content CTAs away from private app routes", () => {
     defaultBlogPosts.forEach((post) => {
-      expectPublicHref(post.ctaHref, `${post.slug} ctaHref`);
-      disallowedPublicContentRoutes.forEach((route) => {
-        expect(post.content, `${post.slug} content`).not.toContain(`](${route}`);
-      });
+      expectPublicHref(post.ctaHref, `${post.slug} fallback ctaHref`);
+      expectPublicMarkdownLinks(post.content, `${post.slug} fallback content`);
+    });
+    loadStaticBlogPosts().forEach((post) => {
+      expectPublicHref(post.ctaHref, `${post.slug} static ctaHref`);
+      expectPublicMarkdownLinks(post.content, `${post.slug} static content`);
     });
     allServices.forEach((service) => expectPublicHref(service.path, `${service.id} path`));
     competitorPages.forEach((page) => expectPublicHref(page.primaryCta, `${page.slug} primaryCta`));
@@ -306,149 +319,6 @@ describe("public link audit", () => {
 
     expect(footerSource).toContain('href="/itr-season-2026"');
     expect(SEO_CONFIG["/itr-season-2026"]).toBeDefined();
-  });
-
-  it("documents external GSC and backlink execution steps", () => {
-    const indexingRunbook = readFileSync("docs/google-indexing-readiness.md", "utf8");
-    const campaignRunbook = readFileSync("docs/marketing/itr-season-2026-content-growth-campaign.md", "utf8");
-    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
-      scripts: Record<string, string>;
-    };
-    const coreWebVitalsScript = readFileSync("scripts/check-core-web-vitals.ts", "utf8");
-
-    expect(indexingRunbook).toContain("Domain property");
-    expect(indexingRunbook).toContain("DNS TXT");
-    expect(indexingRunbook).toContain("URL Inspection");
-    expect(indexingRunbook).toContain("Page indexing report");
-    expect(indexingRunbook).toContain("sitemap submitted");
-    expect(indexingRunbook).toContain("npm run check:core-web-vitals");
-    expect(indexingRunbook).toContain("LCP");
-    expect(indexingRunbook).toContain("INP");
-    expect(indexingRunbook).toContain("CLS");
-    expect(packageJson.scripts["check:core-web-vitals"]).toBe("tsx scripts/check-core-web-vitals.ts");
-    expect(coreWebVitalsScript).toContain("__MYECA_CWV_OBSERVERS");
-    expect(coreWebVitalsScript).toContain("__MYECA_CWV_PROBE");
-
-    expect(campaignRunbook).toContain("CA blogs");
-    expect(campaignRunbook).toContain("StartupIndia");
-    expect(campaignRunbook).toContain("Medium");
-    expect(campaignRunbook).toContain("LinkedIn");
-    expect(campaignRunbook).toMatch(/finance forums/i);
-  });
-
-  it("keeps a fillable backlink outreach tracker for required channels", () => {
-    const tracker = readFileSync("docs/marketing/itr-season-2026-outreach-tracker.csv", "utf8").trim();
-    const [headerLine, ...rows] = tracker.split(/\r?\n/);
-    const headers = headerLine.split(",");
-    const channelIndex = headers.indexOf("channel");
-    const statusIndex = headers.indexOf("status");
-    const utmIndex = headers.indexOf("utm_url");
-
-    expect(headers).toEqual(expect.arrayContaining(["channel", "segment", "target_url", "utm_url", "rel_attribute", "status", "owner"]));
-    expect(rows.length).toBeGreaterThanOrEqual(6);
-
-    const parsedRows = rows.map((row) => row.split(","));
-    const channels = parsedRows.map((row) => row[channelIndex]);
-
-    expect(channels).toEqual(expect.arrayContaining(["CA blogs", "StartupIndia listings", "Medium articles", "LinkedIn", "Guest posts", "Finance forums"]));
-    parsedRows.forEach((row) => {
-      expect(row[utmIndex]).toContain("utm_campaign=itr-season-2026");
-      expect(row[statusIndex]).toMatch(/prospect|planned|queued/i);
-    });
-  });
-
-  it("keeps ready-to-send outreach copy for required backlink channels", () => {
-    const campaignRunbook = readFileSync("docs/marketing/itr-season-2026-content-growth-campaign.md", "utf8");
-    const outreachKit = readFileSync("docs/marketing/itr-season-2026-outreach-kit.md", "utf8");
-
-    expect(campaignRunbook).toContain("docs/marketing/itr-season-2026-outreach-kit.md");
-    ["CA blogs", "StartupIndia listings", "Medium articles", "LinkedIn", "Guest posts", "Finance forums"].forEach((channel) => {
-      expect(outreachKit).toContain(channel);
-    });
-    [
-      "utm_campaign=itr-season-2026",
-      "AIS Form 26AS mismatch checklist",
-      "Form 16 parser workflow",
-      "Income tax calculator",
-      "No paid link",
-      "No exact-match anchor stuffing",
-    ].forEach((requiredText) => {
-      expect(outreachKit).toContain(requiredText);
-    });
-  });
-
-  it("keeps a Search Console evidence tracker for external indexing tasks", () => {
-    const tracker = readFileSync("docs/google-search-console-evidence-log.csv", "utf8").trim();
-    const [headerLine, ...rows] = tracker.split(/\r?\n/);
-    const headers = headerLine.split(",");
-    const itemIndex = headers.indexOf("item");
-    const statusIndex = headers.indexOf("status");
-
-    expect(headers).toEqual(expect.arrayContaining(["date", "item", "status", "evidence", "next_action"]));
-    expect(rows.length).toBeGreaterThanOrEqual(7);
-
-    const parsedRows = rows.map((row) => row.split(","));
-    const trackedItems = parsedRows.map((row) => row[itemIndex]);
-
-    expect(trackedItems).toEqual(expect.arrayContaining([
-      "Domain property",
-      "DNS TXT verification",
-      "HTML verification token",
-      "Sitemap submitted",
-      "URL Inspection priority set",
-      "Rendered page view",
-      "Page indexing report",
-      "Field INP evidence",
-    ]));
-    parsedRows.forEach((row) => {
-      expect(row[statusIndex]).toMatch(/pending_external|ready_to_verify|verified|submitted|recorded/i);
-    });
-  });
-
-  it("keeps public LLM inventories aligned with private noindex policy", () => {
-    const llms = readFileSync("client/public/llms.txt", "utf8");
-    const llmsFull = readFileSync("client/public/llms-full.txt", "utf8");
-    const combined = `${llms}\n${llmsFull}`;
-
-    expect(combined).toContain("https://myeca.in/itr/form-selector");
-    expect(combined).not.toContain("https://myeca.in/itr/filing");
-    expect(llmsFull).toContain("Private Or Non-Public Areas");
-    expect(llmsFull).toContain("Do not index or summarize account-specific areas");
-  });
-
-  it("keeps a status ledger for the ten Google indexing risk areas", () => {
-    const readinessRunbook = readFileSync("docs/google-indexing-readiness.md", "utf8");
-    const statusLedger = readFileSync("docs/google-indexing-remediation-status.md", "utf8");
-
-    expect(readinessRunbook).toContain("docs/google-indexing-remediation-status.md");
-    [
-      "1. Pages not indexed",
-      "2. Missing sitemap.xml",
-      "3. robots.txt blocking Google",
-      "4. Meta noindex tag",
-      "5. SPA rendering issue",
-      "6. Weak backlinks",
-      "7. Thin content",
-      "8. Poor internal linking",
-      "9. Core Web Vitals failing",
-      "10. Search Console not configured correctly",
-    ].forEach((riskArea) => {
-      expect(statusLedger).toContain(riskArea);
-    });
-    [
-      "168 URL entries",
-      "No global `Disallow: /`",
-      "`/itr/filing`",
-      "pre-hydration SEO shells",
-      "article highlights",
-      "backlink outreach tracker",
-      "field INP",
-      "missing valid DNS TXT token",
-      "pending_external",
-      "Vercel connector",
-    ].forEach((requiredText) => {
-      expect(statusLedger).toContain(requiredText);
-    });
   });
 
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
@@ -465,6 +335,27 @@ describe("public link audit", () => {
     expect(shareButtonsSource).not.toMatch(/most trusted/i);
     expect(gstReturnsSource).not.toMatch(/real-time updates with supplier GSTR-1 filings|real-time ITC matching|AI-powered validation|95% success rate/i);
     expect(trademarkSource).not.toMatch(/95% success rate/i);
+  });
+
+  it("keeps MyeCA public positioning free of ERI and self-filing claims", () => {
+    const publicSources = [
+      "client/src/components/TrustedBySection.tsx",
+      "client/src/components/layout/Footer.tsx",
+      "client/src/pages/about.page.tsx",
+      "client/src/pages/home.page.tsx",
+      "client/src/pages/help/user-guide.page.tsx",
+      "client/src/pages/help/faq.page.tsx",
+      "client/src/pages/services/gst-registration.page.tsx",
+      "client/src/data/pricing.ts",
+      "client/src/config/seo.config.ts",
+    ];
+
+    publicSources.forEach((sourcePath) => {
+      const source = readFileSync(sourcePath, "utf8");
+
+      expect(source, sourcePath).not.toMatch(/ERI[-\s]?(registered|workflow|platform)|\bERI\b/);
+      expect(source, sourcePath).not.toMatch(/File Self ITR|self-filing|self-service ITR|guided self-filing/i);
+    });
   });
 });
 

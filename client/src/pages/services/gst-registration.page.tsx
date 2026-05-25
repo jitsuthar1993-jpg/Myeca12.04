@@ -820,7 +820,7 @@ export default function GstRegistrationPage() {
           </div>
 
           <p className="text-sm text-gray-600 mt-8">
-            Expert CA team · ERI-registered platform · End-to-end support
+            Expert CA team · Portal-aligned workflow · End-to-end support
           </p>
         </m.div>
 

@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 
 export const competitiveProofPoints = [
-  "Named CA review before filing",
+  "CA-assisted review where applicable",
   "AIS, 26AS and Form 16 mismatch checklist",
   "Written scope before payment",
-  "Secure document vault with case history",
+  "Private document workflow with case history",
 ];
 
 export const caseTimelineStages = [
@@ -99,7 +99,7 @@ export const pricingPlans = [
     icon: Building2,
     badge: "Compliance OS",
     included: ["Service milestones", "Mandatory vs optional cost list", "Compliance calendar", "Founder dashboard"],
-    caTouchpoints: "Dedicated owner for recurring compliance",
+    caTouchpoints: "Assigned workflow owner for recurring compliance",
     sla: "Defined in written scope",
     exclusions: ["Government fees unless stated", "Stamp duty unless stated", "Out-of-scope legal drafting"],
     cta: "/services",
@@ -112,20 +112,20 @@ export const competitorPages = [
     competitor: "ClearTax",
     title: "ClearTax Alternative for CA-Reviewed ITR Filing",
     description:
-      "Compare MyeCA with ClearTax if you want named CA accountability, visible AIS/26AS checks, document history and transparent scope before payment.",
+      "Compare MyeCA with ClearTax if you want CA-assisted review where applicable, visible AIS/26AS checks, document history and transparent scope before payment.",
     goodPoints: ["Large brand recall", "Deep tax guides and calculators", "DIY and CA-assisted filing", "Security and trust messaging"],
-    myeCAEdge: ["Named expert visibility", "Pay-after-review messaging", "Case timeline with issue log", "Document vault tied to every filing"],
+    myeCAEdge: ["Scoped expert visibility", "Pay-after-review messaging", "Case timeline with issue log", "Document workflow tied to filing cases"],
     primaryCta: "/pricing",
     source: "https://cleartax.in/s/pricing",
   },
   {
     slug: "taxbuddy-alternative",
     competitor: "TaxBuddy",
-    title: "TaxBuddy Alternative with Better Case Tracking",
+    title: "TaxBuddy Alternative with Case Tracking",
     description:
       "Use MyeCA when you want assisted filing plus self-serve document status, clear plan scope and post-filing support visibility.",
     goodPoints: ["Strong assisted filing pitch", "AI-powered positioning", "Notice and compliance services", "Affordable entry plans"],
-    myeCAEdge: ["Customer-visible case stages", "Document viewer with extraction review", "No hidden charge proof", "CA comments attached to files"],
+    myeCAEdge: ["Customer-visible case stages", "Document viewer with extraction review", "Visible scope notes", "Review comments attached to files"],
     primaryCta: "/services/document-vault",
     source: "https://www.taxbuddy.com/pricing-itr-app",
   },
@@ -134,7 +134,7 @@ export const competitorPages = [
     competitor: "Quicko",
     title: "Quicko Alternative for Capital Gains with CA Review",
     description:
-      "MyeCA matches investor tooling with broker upload workflows and adds CA review, notice defense and a reusable tax document vault.",
+      "MyeCA matches investor tooling with broker upload workflows and adds CA-assisted review, issue flags and a reusable tax document workflow.",
     goodPoints: ["Investor-first product", "Low-cost paid plans", "App connections", "Tax-loss harvesting and capital gains focus"],
     myeCAEdge: ["CA-reviewed capital gains", "F&O audit flagging", "Crypto/VDA checklist", "AIS mismatch review before filing"],
     primaryCta: "/capital-gains-import",
@@ -154,10 +154,10 @@ export const competitorPages = [
   {
     slug: "best-ca-assisted-itr-filing",
     competitor: "Online filing portals",
-    title: "Best CA-Assisted ITR Filing for Complex Indian Taxpayers",
+    title: "CA-Assisted ITR Filing Comparison for Complex Indian Taxpayers",
     description:
       "A factual guide for choosing MyeCA when your return needs CA review, document reconciliation, capital gains, NRI checks, GST or notice support.",
-    goodPoints: ["Many portals are fast for simple returns", "Low self-filing prices exist", "Large brands have broad content", "Local CAs offer personal trust"],
+    goodPoints: ["Many portals work well for simple returns", "Low-cost assisted filing options exist", "Large brands have broad content", "Local CAs offer personal trust"],
     myeCAEdge: ["Expert-led digital workflow", "Written scope and visible exclusions", "Secure vault and case history", "Tax plus compliance upgrade path"],
     primaryCta: "/pricing",
     source: "https://myeca.in/pricing",
@@ -169,7 +169,7 @@ export const vaultChecklist = [
   { label: "AIS and 26AS checked", detail: "Mismatch queue is visible before CA review", icon: FileSearch },
   { label: "Supporting proofs tagged", detail: "HRA, 80C, 80D and home-loan proofs are linked", icon: FolderCheck },
   { label: "CA comments recorded", detail: "Clarifications stay attached to the case history", icon: BadgeCheck },
-  { label: "Access audit ready", detail: "Downloads and review actions are traceable", icon: ShieldCheck },
+  { label: "Access review ready", detail: "Downloads and review actions can be checked where logging is enabled", icon: ShieldCheck },
 ];
 
 export const businessWorkflowCards = [

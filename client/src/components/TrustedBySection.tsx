@@ -11,7 +11,7 @@ import { Link } from "wouter";
 
 const trustSignals = [
   {
-    label: "ERI workflow",
+    label: "Portal workflow",
     value: "Portal-aligned",
     detail: "Filing steps are structured around the official Income Tax Portal flow.",
     icon: ShieldCheck,

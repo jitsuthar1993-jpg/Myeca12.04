@@ -35,6 +35,7 @@ import {
   buildRobotsTxt,
   buildSitemapXml,
   getIndexablePublicRoutes,
+  routeChangefreq,
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
@@ -249,7 +250,7 @@ function redirectToIncomeTaxForm(req: any, res: any, url: URL) {
 }
 
 export function buildApiSitemapXml() {
-  const blogResponse = listPublicBlogs(new URL("https://myeca.in/api/public/blogs?limit=50"));
+  const blogResponse = listPublicBlogs(new URL("https://myeca.in/api/public/blogs?limit=500"));
   const blogRoutes = blogResponse.posts.map((post: any) => `/blog/${post.slug || post.id}`);
   const blogDateMap = new Map(
     blogResponse.posts.map((post: any) => [
@@ -271,7 +272,7 @@ export function buildApiSitemapXml() {
   return buildSitemapXml(routes.map((route) => ({
     loc: toAbsoluteUrl(route),
     lastmod: blogDateMap.get(route) || new Date().toISOString().split("T")[0],
-    changefreq: route === "/" ? "daily" : route.startsWith("/blog/") ? "monthly" : "weekly",
+    changefreq: routeChangefreq(route),
     priority: routePriority(route),
   })));
 }
@@ -289,6 +290,7 @@ function llmsText(full = false) {
 async function handleRequest(req: any, res: any) {
   ensureRequestId(req, res);
   const { name, url } = routeFor(req);
+  res.setHeader("X-Robots-Tag", name === "sitemap" || name === "robots" ? "index, follow" : "noindex, nofollow");
 
   if (name === "health") {
     res.setHeader("Cache-Control", "no-store");

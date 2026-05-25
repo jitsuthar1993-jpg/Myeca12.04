@@ -57,7 +57,7 @@ export default function Footer() {
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           {[
-            ["ERI", "Filing workflow"],
+            ["Portal", "Filing workflow"],
             ["Privacy", "Document handling"],
             ["CA", "Review option"],
           ].map(([value, label]) => (
@@ -105,7 +105,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">ERI</div>
+              <div className="text-2xl font-black tracking-tight">Portal</div>
               <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">E-filing workflow</div>
             </div>
             <div className="flex flex-col items-center">

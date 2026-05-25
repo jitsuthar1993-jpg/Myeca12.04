@@ -42,7 +42,7 @@ export const testimonials: Testimonial[] = [
     id: "4",
     name: "First-time filer, Delhi",
     role: "First-time ITR-1",
-    content: "The guided filing flow helped me understand the difference between self-service filing and optional CA review.",
+    content: "The guided filing flow helped me understand the difference between guided filing and optional CA review.",
     rating: 5,
     avatar: "FF",
     verified: false,

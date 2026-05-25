@@ -56,7 +56,7 @@ export default function AboutPage() {
                 <ul className="space-y-3 opacity-90">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>ERI-registered filing workflow</span>
+                    <span>Portal-aligned filing workflow</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />

@@ -6,7 +6,18 @@ import { type Server } from "http";
 import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
-import { buildPublicBlogDetail, listPublishedBlogPosts, sortPublishedPosts } from "./services/blog.js";
+import { generateMetadata } from "../client/src/lib/seo.js";
+import {
+  DEFAULT_OG_IMAGE,
+  buildArticleSchema,
+  buildFaqPageSchema,
+} from "../shared/seo-schema.js";
+import {
+  buildPublicBlogDetail,
+  listDefaultPublishedBlogPosts,
+  listPublishedBlogPosts,
+  sortPublishedPosts,
+} from "./services/blog.js";
 
 const viteLogger = createLogger();
 const BLOG_SEO_CACHE_TTL = 5 * 60 * 1000;
@@ -31,6 +42,10 @@ function escapeHtmlAttribute(value: string) {
     .replace(/>/g, "&gt;");
 }
 
+function escapeJsonForHtml(value: unknown) {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
 function replaceOrInsertMeta(content: string, selector: RegExp, tag: string) {
   if (selector.test(content)) return content.replace(selector, tag);
   return content.replace("</head>", `${tag}\n</head>`);
@@ -48,7 +63,8 @@ async function getPublishedBlogPostsForSeo() {
     return blogSeoCache.posts;
   }
 
-  const posts = sortPublishedPosts(await listPublishedBlogPosts());
+  const storedPosts = await listPublishedBlogPosts();
+  const posts = sortPublishedPosts(storedPosts.length ? storedPosts : listDefaultPublishedBlogPosts());
   blogSeoCache = { posts, generatedAt: Date.now() };
   return posts;
 }
@@ -67,61 +83,24 @@ async function getBlogSeoData(cleanPath: string) {
   const title = detail.seoTitle || `${detail.title} | MyeCA.in Knowledge Hub`;
   const description = detail.seoDescription || detail.excerpt || `Read ${detail.title} on MyeCA.in.`;
   const keywords = detail.tags.join(", ");
-  const image = toAbsoluteSiteUrl(detail.coverImage) || "https://myeca.in/og-image.jpg";
-
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: detail.title,
-    name: title,
-    description,
+  const image = toAbsoluteSiteUrl(detail.coverImage) || DEFAULT_OG_IMAGE;
+  const articleJsonLd = buildArticleSchema({
     url: canonical,
+    headline: detail.title,
+    description,
+    publishedAt: detail.publishedAt,
+    modifiedAt: detail.updatedAt ?? detail.publishedAt,
     image,
-    datePublished: detail.publishedAt ?? undefined,
-    dateModified: detail.updatedAt ?? detail.publishedAt ?? undefined,
-    inLanguage: "en-IN",
-    isAccessibleForFree: true,
-    author: {
-      "@type": "Person",
-      name: detail.authorName,
-      jobTitle: detail.authorRole ?? "Tax Filing Desk",
-    },
-    reviewedBy: detail.reviewedBy
-      ? {
-          "@type": "Person",
-          name: detail.reviewedBy,
-        }
-      : undefined,
-    publisher: {
-      "@type": "Organization",
-      name: "MyeCA.in - Expert Tax Filing Services",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://myeca.in/logo.png",
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": canonical,
-    },
-    about: [detail.category?.name, ...detail.tags].filter(Boolean),
-    citation: detail.sourceLinks?.map((source) => source.url) ?? [],
-  };
+  });
+  articleJsonLd.about = [detail.category?.name, ...detail.tags].filter(Boolean);
+  articleJsonLd.citation = detail.sourceLinks?.map((source) => source.url) ?? [];
+  if (detail.reviewedBy) {
+    articleJsonLd.reviewedBy = { "@type": "Organization", name: "Team myeca.in" };
+  }
 
-  const faqJsonLd = detail.faqItems.length
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: detail.faqItems.map((faq) => ({
-          "@type": "Question",
-          name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
-        })),
-      }
-    : null;
+  const faqJsonLd = buildFaqPageSchema(
+    detail.faqItems.filter((faq): faq is { question: string; answer: string } => Boolean(faq.question && faq.answer)),
+  );
 
   return {
     title,
@@ -255,21 +234,28 @@ export function serveStatic(app: Express) {
           description: fallbackSeo.description,
           keywords: fallbackSeo.keywords.join(", "),
           canonical: `https://myeca.in${cleanPath === "/" ? "/" : cleanPath}`,
-          image: "https://myeca.in/og-image.jpg",
+          image: DEFAULT_OG_IMAGE,
           type: fallbackSeo.type === "article" ? "article" : "website",
           noindex: Boolean(fallbackSeo.noindex),
           jsonLd: [],
         };
         
-        const title = seo.title;
-        const description = seo.description;
+        const metadata = generateMetadata({
+          title: seo.title,
+          description: seo.description,
+          slug: seo.canonical,
+          type: seo.type,
+          image: seo.image,
+        });
+        const title = metadata.title;
+        const description = metadata.description;
         const keywords = seo.keywords;
-        const canonical = seo.canonical;
+        const canonical = metadata.alternates?.canonical || seo.canonical;
         const escapedTitle = escapeHtmlAttribute(title);
         const escapedDescription = escapeHtmlAttribute(description);
         const escapedKeywords = escapeHtmlAttribute(keywords);
         const escapedCanonical = escapeHtmlAttribute(canonical);
-        const escapedImage = escapeHtmlAttribute(seo.image);
+        const escapedImage = escapeHtmlAttribute(metadata.openGraph?.images?.[0]?.url || seo.image);
 
         content = content.replace(/<title>.*?<\/title>/, `<title>${escapedTitle}</title>`);
         content = replaceOrInsertMeta(content, /<meta name="description" content=".*?"\s*\/?>/, `<meta name="description" content="${escapedDescription}" />`);
@@ -281,14 +267,18 @@ export function serveStatic(app: Express) {
           <meta property="og:title" content="${escapedTitle}" />
           <meta property="og:description" content="${escapedDescription}" />
           <meta property="og:url" content="${escapedCanonical}" />
-          <meta property="og:type" content="${seo.type}" />
+          <meta property="og:type" content="${metadata.openGraph?.type || seo.type}" />
           <meta property="og:image" content="${escapedImage}" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:site_name" content="${escapeHtmlAttribute(metadata.openGraph?.siteName || "myeca.in")}" />
+          <meta property="og:locale" content="${escapeHtmlAttribute(metadata.openGraph?.locale || "en_IN")}" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content="${escapedTitle}" />
           <meta name="twitter:description" content="${escapedDescription}" />
           <meta name="twitter:image" content="${escapedImage}" />
           <meta name="robots" content="${seo.noindex ? 'noindex, nofollow' : 'index, follow'}" />
-          ${seo.jsonLd.map((block) => `<script type="application/ld+json">${JSON.stringify(block)}</script>`).join("\n")}
+          ${seo.jsonLd.map((block) => `<script type="application/ld+json">${escapeJsonForHtml(block)}</script>`).join("\n")}
         `;
         content = content.replace("</head>", `${metaTags}</head>`);
       }
