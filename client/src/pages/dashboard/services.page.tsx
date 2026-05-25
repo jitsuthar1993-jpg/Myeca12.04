@@ -234,7 +234,7 @@ export default function DashboardServicesPage() {
 
   return (
     <Layout title="Services">
-      <div className="space-y-6 pb-16">
+      <div className="space-y-6">
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-end">
             <div>

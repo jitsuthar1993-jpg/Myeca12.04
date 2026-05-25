@@ -39,12 +39,16 @@ function renderWithQueryClient(ui: ReactElement) {
 
 describe('DashboardServicesPage', () => {
   it('starts with a prompt state before a service is selected', () => {
-    renderWithQueryClient(<DashboardServicesPage />);
+    const { container } = renderWithQueryClient(<DashboardServicesPage />);
 
     expect(screen.getByRole('heading', { name: 'Choose a service' })).toBeInTheDocument();
     expect(screen.getByText('Popular starting points')).toBeInTheDocument();
     expect(screen.getByText('Custom requirement')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Required documents' })).not.toBeInTheDocument();
+
+    const pageBody = container.firstElementChild?.firstElementChild;
+    expect(pageBody).toHaveClass('space-y-6');
+    expect(pageBody).not.toHaveClass('pb-16');
   });
 
   it('shows rich service details after choosing a popular service', async () => {

@@ -8,6 +8,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Input } from '@/components/ui/input';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+import BrandLockup from '@/components/ui/brand-lockup';
 import { ROLE_NAV_GROUPS } from '@/lib/role-workspace';
 import { getRoleHome, getRoleLabel, normalizeAppRole } from '@shared/app-roles';
 
@@ -45,14 +46,14 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
         >
           <div className="flex h-full flex-col">
             <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
-              <Link href={roleHome} className="flex min-w-0 items-center gap-2">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-xs font-black text-white">
-                  M
-                </div>
-                <div className="min-w-0">
-                  <p className="mb-0 truncate text-sm font-bold leading-tight text-slate-950">MyeCA</p>
-                  <p className="type-meta mb-0 truncate font-medium leading-tight text-slate-500">{roleLabel}</p>
-                </div>
+              <Link href={roleHome} className="flex min-w-0 flex-1 items-center">
+                <BrandLockup
+                  logoSize="md"
+                  wordmarkSize="md"
+                  subtitle="SMART TAX SOLUTIONS"
+                  subtitleClassName="whitespace-nowrap !text-[0.58rem] tracking-[0.08em]"
+                  className="min-w-0"
+                />
               </Link>
               <Button
                 variant="ghost"

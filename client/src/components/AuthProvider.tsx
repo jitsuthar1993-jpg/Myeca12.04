@@ -166,12 +166,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<SupabaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const appUserRef = useRef<AppUser | null>(appUser);
+  const authTokenRef = useRef<string | null>(null);
+  const authGenerationRef = useRef(0);
 
   useEffect(() => {
     appUserRef.current = appUser;
   }, [appUser]);
 
   const refreshUser = useCallback(async (nextAuthUser?: SupabaseUser | null) => {
+    const generation = authGenerationRef.current;
     const temporaryUser = readTemporaryUserFromSession();
     if (temporaryUser) {
       setAppUser(temporaryUser);
@@ -189,23 +192,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const token = await getAuthToken();
     if (!token) {
+      authTokenRef.current = null;
       setAppUser(null);
       setAuthUser(null);
       setIsLoading(false);
       return;
     }
 
+    authTokenRef.current = token;
     const { data } = await supabase.auth.getUser(token);
     const resolvedAuthUser = nextAuthUser ?? data.user ?? null;
+    if (authGenerationRef.current !== generation) return;
     setAuthUser(resolvedAuthUser);
 
     if (resolvedAuthUser) {
       setAppUser(appUserFromAuthUser(resolvedAuthUser));
     }
 
-    setAppUser(await fetchAppUserOrFallback(token, resolvedAuthUser));
+    const user = await fetchAppUserOrFallback(token, resolvedAuthUser);
+    if (authGenerationRef.current !== generation) return;
+    setAppUser(user);
     setIsLoading(false);
   }, []);
+
+  const refreshProfileInBackground = useCallback(
+    (token: string, nextAuthUser: SupabaseUser | null, generation: number) => {
+      void fetchAppUserOrFallback(token, nextAuthUser)
+        .then((user) => {
+          if (authGenerationRef.current !== generation) return;
+          setAppUser(user);
+        })
+        .catch((error) => {
+          if (authGenerationRef.current !== generation) return;
+          console.error("Auth profile sync failed:", error);
+        });
+    },
+    [],
+  );
 
   useEffect(() => {
     let active = true;
@@ -238,6 +261,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (!session?.access_token) {
+        authTokenRef.current = null;
+        authGenerationRef.current += 1;
         refreshUser(null).catch((error) => {
           if (!active) return;
           console.error("Auth session recovery failed:", error);
@@ -248,6 +273,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      const generation = authGenerationRef.current + 1;
+      authGenerationRef.current = generation;
+      authTokenRef.current = session.access_token;
       setAuthToken(session.access_token);
       setAuthUser(session.user);
       if (session.user) {
@@ -256,18 +284,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       fetchAppUserOrFallback(session.access_token, session.user)
         .then((user) => {
-          if (!active) return;
+          if (!active || authGenerationRef.current !== generation) return;
           setAuthUser(session.user);
           setAppUser(user);
         })
         .catch((error) => {
-          if (!active) return;
+          if (!active || authGenerationRef.current !== generation) return;
           console.error("Auth profile sync failed:", error);
           setAuthUser(session.user);
           setAppUser(session.user ? appUserFromAuthUser(session.user) : null);
         })
         .finally(() => {
-          if (active) setIsLoading(false);
+          if (active && authGenerationRef.current === generation) setIsLoading(false);
         });
     });
 
@@ -283,6 +311,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const user = createTemporaryAppUser(temporaryTestUser);
       writeTemporaryUserToSession(user);
       setAuthToken(temporaryTestUser.token);
+      authTokenRef.current = temporaryTestUser.token;
+      authGenerationRef.current += 1;
       setAuthUser(null);
       setAppUser(user);
       setIsLoading(false);
@@ -291,6 +321,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     clearTemporaryAuthState();
     clearAuthToken();
+    authTokenRef.current = null;
+    const generation = authGenerationRef.current + 1;
+    authGenerationRef.current = generation;
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
@@ -300,6 +333,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const user = localFallbackUser(email);
       writeTemporaryUserToSession(user);
+      authGenerationRef.current = generation;
       setAppUser(user);
       setAuthUser(null);
       setIsLoading(false);
@@ -318,9 +352,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!data.session?.access_token) throw new Error("Supabase did not return a session.");
 
       setAuthToken(data.session.access_token);
+      authTokenRef.current = data.session.access_token;
       setAuthUser(data.user);
       if (data.user) {
-        setAppUser(appUserFromAuthUser(data.user));
+        const fallbackUser = appUserFromAuthUser(data.user);
+        setAppUser(fallbackUser);
+        refreshProfileInBackground(data.session.access_token, data.user, generation);
+        return fallbackUser;
       }
 
       const user = await fetchAppUserOrFallback(data.session.access_token, data.user);
@@ -334,6 +372,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (email: string, password: string, userData: Partial<AppUser>, redirectPath?: string | null) => {
     clearTemporaryAuthState();
     clearAuthToken();
+    authTokenRef.current = null;
+    authGenerationRef.current += 1;
     setAuthUser(null);
     setAppUser(null);
     setIsLoading(true);
@@ -369,6 +409,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.session?.access_token) {
         setAuthToken(data.session.access_token);
+        authTokenRef.current = data.session.access_token;
         setAuthUser(data.user);
         if (data.user) {
           setAppUser(appUserFromAuthUser(data.user));
@@ -400,6 +441,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async (redirectPath?: string | null) => {
     clearTemporaryAuthState();
     clearAuthToken();
+    authTokenRef.current = null;
+    authGenerationRef.current += 1;
     setAuthUser(null);
     setAppUser(null);
 
@@ -423,9 +466,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = useCallback(async (reason: LogoutReason = "manual") => {
-    const token = await getAuthToken();
+    const token = authTokenRef.current;
+    authTokenRef.current = null;
+    authGenerationRef.current += 1;
+    clearTemporaryAuthState();
+    clearAuthToken();
+    setAuthUser(null);
+    setAppUser(null);
+    setIsLoading(false);
+    navigate("/", { replace: true });
+
     if (token) {
-      await fetch("/api/v1/auth/logout-event", {
+      void fetch("/api/v1/auth/logout-event", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -436,14 +488,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }).catch(() => null);
     }
 
-    clearTemporaryAuthState();
-    clearAuthToken();
     if (isSupabaseEnabled) {
-      await supabase.auth.signOut();
+      void supabase.auth.signOut().catch((error) => {
+        console.error("Supabase sign-out failed:", error);
+      });
     }
-    setAuthUser(null);
-    setAppUser(null);
-    navigate("/", { replace: true });
   }, []);
 
   const sendPasswordReset = async (email: string) => {
