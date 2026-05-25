@@ -2,8 +2,11 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SEO_CONFIG } from "../config/seo.config";
 import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
+import { allServices } from "../data/all-services";
+import { competitorPages } from "../data/competitive-growth";
 import { TAX_GUIDES } from "../data/tax-guides";
 import {
+  generatedServicePages,
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
 } from "../data/missing-pages";
@@ -27,6 +30,16 @@ import { defaultBlogPosts } from "../../../server/data/default-blog-content";
 import { getBlogConversionLinks } from "./blog-conversion-links";
 
 describe("public link audit", () => {
+  const disallowedPublicContentRoutes = ["/documents", "/dashboard", "/reports", "/admin", "/itr/filing", "/profiles"];
+
+  function expectPublicHref(value: string | undefined, label: string) {
+    if (!value || !value.startsWith("/")) return;
+    disallowedPublicContentRoutes.forEach((route) => {
+      expect(value, label).not.toBe(route);
+      expect(value, label).not.toMatch(new RegExp(`^${route.replace("/", "\\/")}(?:[/?#]|$)`));
+    });
+  }
+
   it("classifies route, anchor, placeholder, and external links", () => {
     expect(classifyPublicHref("#", "/compliance-calendar")).toMatchObject({
       kind: "placeholder",
@@ -271,6 +284,20 @@ describe("public link audit", () => {
       expect(links.some((href) => href.startsWith("/services/") || href === "/expert-consultation"), post.slug).toBe(true);
       expect(links, post.slug).toContain("/pricing");
       expect(links.some((href) => href === "/itr/form-selector" || href.startsWith("/services/")), post.slug).toBe(true);
+    });
+  });
+
+  it("keeps public content CTAs away from private app routes", () => {
+    defaultBlogPosts.forEach((post) => {
+      expectPublicHref(post.ctaHref, `${post.slug} ctaHref`);
+      disallowedPublicContentRoutes.forEach((route) => {
+        expect(post.content, `${post.slug} content`).not.toContain(`](${route}`);
+      });
+    });
+    allServices.forEach((service) => expectPublicHref(service.path, `${service.id} path`));
+    competitorPages.forEach((page) => expectPublicHref(page.primaryCta, `${page.slug} primaryCta`));
+    generatedServicePages.forEach((page) => {
+      page.relatedLinks.forEach((link) => expectPublicHref(link.href, `${page.slug} related link ${link.label}`));
     });
   });
 

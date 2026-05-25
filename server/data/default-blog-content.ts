@@ -482,7 +482,7 @@ A tax-ready document vault is not a luxury. It is the foundation for accurate fi
     ],
     relatedPostIds: ["mye-ca-complete-tax-filing-playbook", "itr-filing-mistakes-to-avoid"],
     ctaLabel: "Open Document Vault",
-    ctaHref: "/documents",
+    ctaHref: "/services/document-vault",
     isFeatured: false,
     readingTimeMinutes: 8,
     publishedAt,
