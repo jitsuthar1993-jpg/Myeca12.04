@@ -71,6 +71,21 @@ const submitItrReviewSchema = z.object({
   userNote: z.string().trim().max(3000).optional(),
 }).strict();
 
+type ITRDraftPayload = z.infer<typeof itrDraftSchema>;
+
+function normalizeCaFilingData<T extends Record<string, any>>(data: T): T {
+  const workspaceState =
+    data.workspaceState && typeof data.workspaceState === "object" && !Array.isArray(data.workspaceState)
+      ? { ...data.workspaceState, selectedFilingPath: "ca" }
+      : data.workspaceState;
+
+  return {
+    ...data,
+    filingPath: "ca",
+    ...(workspaceState ? { workspaceState } : {}),
+  };
+}
+
 function normalizeUserService(doc: any): Record<string, any> & { id: string } {
   const data = doc.data() as Record<string, any>;
   const metadata = (data.metadata || {}) as Record<string, any>;
@@ -113,7 +128,7 @@ async function findLatestTaxReturn(userId: string, status?: string) {
 }
 
 function serializeTaxReturn(doc: any) {
-  return { id: doc.id, ...(doc.data() as Record<string, any>) };
+  return { id: doc.id, ...normalizeCaFilingData(doc.data() as Record<string, any>) };
 }
 
 async function linkDraftDocumentsToService(userId: string, taxReturnId: string, userServiceId: string, now: Date) {
@@ -275,7 +290,7 @@ router.put("/itr/draft", requireAnyAuth, validateRequest(itrDraftSchema), async 
     const user = req.user;
     if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const draft = itrDraftSchema.parse(req.body);
+    const draft = normalizeCaFilingData(itrDraftSchema.parse(req.body) as ITRDraftPayload);
     const existing = await findLatestTaxReturn(user.id, "draft");
     const now = new Date();
     const payload = {
@@ -308,7 +323,7 @@ router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrRevie
       return res.status(404).json({ success: false, message: "No ITR draft found to submit." });
     }
 
-    const draftData = draft.data() as Record<string, any>;
+    const draftData = normalizeCaFilingData(draft.data() as Record<string, any>);
     const note = submitItrReviewSchema.parse(req.body).userNote || "";
     const now = new Date();
 
@@ -321,7 +336,7 @@ router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrRevie
       serviceRef = await adminDb.collection("user_services").add({
         userId: user.id,
         serviceId: "itr-filing",
-        serviceTitle: "ITR Filing Review",
+        serviceTitle: "CA ITR Filing Review",
         serviceCategory: "Income Tax",
         profileId: null,
         paymentAmount: null,
@@ -361,7 +376,7 @@ router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrRevie
     await draft.ref.update({
       ...draftData,
       status: "ca_review",
-      filingPath: draftData.filingPath || "ca",
+      filingPath: "ca",
       userServiceId: serviceRef.id,
       submittedForReviewAt: now,
       updatedAt: now,

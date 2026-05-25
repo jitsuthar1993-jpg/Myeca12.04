@@ -96,6 +96,7 @@ export async function getProvisionedRoleForEmail(email?: string | null): Promise
 
 export async function syncRoleClaims(userId: string, role?: string | null) {
   if (!role) return;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId)) return;
 
   try {
     await getSupabaseAdminClient().auth.admin.updateUserById(userId, {

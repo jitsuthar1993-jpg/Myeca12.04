@@ -1,7 +1,6 @@
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star } from "lucide-react";
 import { Link } from "wouter";
 
 export default function HeroSection() {
@@ -17,7 +16,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              India's First <span className="text-[#315efb]">AI-Powered Tax Assistant</span>
+              Guided <span className="text-[#315efb]">Tax Filing Assistant</span>
             </m.h1>
             
             <m.p
@@ -38,19 +37,14 @@ export default function HeroSection() {
               Upload your documents, compare regimes, and add CA review where your filing package or facts require it.
             </m.p>
             
-            {/* Rating */}
+            {/* Filing support note */}
             <m.div
               className="flex items-center justify-center lg:justify-start space-x-2 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="flex text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-current" />
-                ))}
-              </div>
-              <span className="text-gray-600 font-medium">AY 2026-27 filing support</span>
+              <span className="rounded-full border border-blue-100 bg-white px-3 py-1 text-sm font-semibold text-gray-600">AY 2026-27 filing support</span>
             </m.div>
 
             {/* Assessment Year Selector */}

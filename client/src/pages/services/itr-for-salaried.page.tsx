@@ -463,7 +463,7 @@ export default function ITRForSalariedPage() {
             <div className="grid md:grid-cols-4 gap-8 relative z-10">
               {[
                 { no: "01", title: "Share Documents", desc: "Upload Form 16, bank statements & investment proofs securely.", icon: Upload, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" },
-                { no: "02", title: "Expert Review", desc: "A dedicated CA reviews your file to uncover maximum tax savings.", icon: Shield, color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-200" },
+                { no: "02", title: "Expert Review", desc: "An assigned tax expert reviews your file to identify eligible deductions and issues to check.", icon: Shield, color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-200" },
                 { no: "03", title: "Review Draft", desc: "We prepare the computation and share it with you for approval.", icon: FileText, color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-200" },
                 { no: "04", title: "E-Filing", desc: "We e-file the return and share the ITR-V acknowledgment with you.", icon: CheckCircle, color: "text-green-600", bg: "bg-green-50", border: "border-green-200" }
               ].map((step, i) => (
@@ -623,36 +623,36 @@ export default function ITRForSalariedPage() {
                   </div>
                 </div>
                 
-                <div className="md:col-span-2 bg-blue-700 p-8 lg:p-10 text-white flex flex-col justify-center relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl" />
-                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl" />
+                <div className="md:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 p-8 lg:p-10 text-slate-900 flex flex-col justify-center relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/60 rounded-full blur-2xl" />
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-100/60 rounded-full blur-2xl" />
                   
                   <div className="relative z-10">
-                    <h3 className="text-xl font-semibold mb-8 text-white flex items-center gap-2">
-                      <Receipt className="w-5 h-5 text-blue-400" />
+                    <h3 className="text-xl font-semibold mb-8 text-slate-900 flex items-center gap-2">
+                      <Receipt className="w-5 h-5 text-blue-600" />
                       Computation
                     </h3>
                     
                     <div className="space-y-6 flex-1">
                       <div>
-                        <p className="text-slate-400 text-sm mb-1">Gross Salary</p>
-                        <p className="text-2xl font-semibold text-white">₹{grossSalary.toLocaleString('en-IN')}</p>
+                        <p className="text-slate-500 text-sm mb-1">Gross Salary</p>
+                        <p className="text-2xl font-semibold text-slate-900">₹{grossSalary.toLocaleString('en-IN')}</p>
                       </div>
                       
                       <div className="space-y-2">
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-slate-400">Standard Deduction</span>
-                          <span className="text-red-400">- ₹50,000</span>
+                          <span className="text-slate-500">Standard Deduction</span>
+                          <span className="text-red-600">- ₹50,000</span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-slate-400">Other Deductions</span>
-                          <span className="text-red-400">- ₹{(totalDeductions - STANDARD_DEDUCTION_BY_REGIME.old).toLocaleString('en-IN')}</span>
+                          <span className="text-slate-500">Other Deductions</span>
+                          <span className="text-red-600">- ₹{(totalDeductions - STANDARD_DEDUCTION_BY_REGIME.old).toLocaleString('en-IN')}</span>
                         </div>
                       </div>
                       
-                      <div className="pt-6 border-t border-slate-700/50">
-                        <p className="text-slate-300 font-medium mb-1">Estimated Taxable Income</p>
-                        <p className="text-4xl font-bold text-green-400">₹{taxableIncome.toLocaleString('en-IN')}</p>
+                      <div className="pt-6 border-t border-blue-100">
+                        <p className="text-slate-600 font-medium mb-1">Estimated Taxable Income</p>
+                        <p className="text-4xl font-bold text-green-700">₹{taxableIncome.toLocaleString('en-IN')}</p>
                         <p className="text-xs text-slate-500 mt-2">*Calculation based on Old Tax Regime for AY {DEFAULT_ASSESSMENT_YEAR} estimation.</p>
                       </div>
                     </div>
@@ -702,25 +702,25 @@ export default function ITRForSalariedPage() {
         </section>
 
         {/* Client Lead Funnel */}
-        <section className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 lg:p-12 relative overflow-hidden shadow-2xl max-w-5xl mx-auto">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 rounded-full blur-3xl" />
+        <section className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-3xl p-8 lg:p-12 relative overflow-hidden border border-blue-100 shadow-lg shadow-blue-900/5 max-w-5xl mx-auto">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/70 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-100/60 rounded-full blur-3xl" />
           
           <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
-            <div className="text-white">
-              <h2 className="text-3xl md:text-4xl font-semibold mb-4">Get a Free Tax Draft</h2>
-              <p className="text-blue-100 text-lg mb-6 leading-relaxed">
-                Not sure about your tax savings? Share your details and our expert CAs will prepare a free preliminary tax computation for you. No credit card required.
+            <div>
+              <h2 className="text-3xl md:text-4xl font-semibold mb-4 text-slate-900">Get a Free Tax Draft</h2>
+              <p className="text-slate-600 text-lg mb-6 leading-relaxed">
+                Not sure about your eligible deductions? Share your details and our tax experts can review the inputs for a preliminary estimate before you choose a paid filing scope.
               </p>
               <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3 text-blue-50">
-                  <CheckCircle className="w-5 h-5 text-green-400" /> Eligible Deduction Review
+                <li className="flex items-center gap-3 text-slate-700">
+                  <CheckCircle className="w-5 h-5 text-green-600" /> Eligible Deduction Review
                 </li>
-                <li className="flex items-center gap-3 text-blue-50">
-                  <CheckCircle className="w-5 h-5 text-green-400" /> Secure Document Handling
+                <li className="flex items-center gap-3 text-slate-700">
+                  <CheckCircle className="w-5 h-5 text-green-600" /> Authenticated Document Handling
                 </li>
-                <li className="flex items-center gap-3 text-blue-50">
-                  <CheckCircle className="w-5 h-5 text-green-400" /> Free Preliminary Draft
+                <li className="flex items-center gap-3 text-slate-700">
+                  <CheckCircle className="w-5 h-5 text-green-600" /> Free Preliminary Draft
                 </li>
               </ul>
             </div>
@@ -739,7 +739,7 @@ export default function ITRForSalariedPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleLeadSubmit} className="space-y-4">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Claim Your Free Draft</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Request a Preliminary Review</h3>
                     {leadError && (
                       <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                         {leadError}

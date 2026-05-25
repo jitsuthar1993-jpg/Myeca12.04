@@ -262,8 +262,8 @@ export default function CompanyRegistrationPage() {
         type={seo?.type || "service"}
         serviceData={{
           price: getServicePriceForSchema("company-registration", seo?.serviceData?.price || "6999"),
-          rating: seo?.serviceData?.rating || "4.8",
-          reviews: seo?.serviceData?.reviews || "25000",
+          rating: seo?.serviceData?.rating || "Unrated",
+          reviews: seo?.serviceData?.reviews || "0",
           availability: "https://schema.org/InStock"
         }}
         breadcrumbs={seo?.breadcrumbs}
@@ -274,7 +274,7 @@ export default function CompanyRegistrationPage() {
           },
           {
             question: "How long does it take for company incorporation in India?",
-            answer: "The entire process, from name reservation to receiving the Certificate of Incorporation, typically takes 10–15 working days."
+            answer: "The process from name reservation to Certificate of Incorporation is commonly planned around 10–15 working days after document readiness, subject to MCA processing and approvals."
           },
           {
             question: "Is a physical office required for company registration?",
@@ -296,7 +296,7 @@ export default function CompanyRegistrationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Incorporate as Pvt Ltd, OPC, Public Ltd or LLP in 10–15 days with expert guidance.
+                Incorporate as Pvt Ltd, OPC, Public Ltd or LLP with expert guidance. Timeline depends on document readiness and MCA approvals.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button 
@@ -343,7 +343,7 @@ export default function CompanyRegistrationPage() {
                   </li>
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
-                    Expect 10–15 days for full approval.
+                    Plan for 10–15 days after document readiness, subject to approvals.
                   </li>
                 </ul>
               </CardContent>
@@ -640,7 +640,7 @@ export default function CompanyRegistrationPage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Your information is secure and handled by qualified professionals
+                  Share information only through the authenticated workflow; assigned professionals handle the selected scope
                 </AlertDescription>
               </Alert>
 
@@ -765,8 +765,8 @@ export default function CompanyRegistrationPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Company Registration Pricing</h3>
               <div className="flex justify-center items-baseline gap-2 mb-2">
                 <span className="text-4xl font-bold text-blue-600">₹6,999</span>
-                <span className="text-lg text-gray-600">all inclusive</span>
-                <Badge className="bg-green-100 text-green-800">Best Value</Badge>
+                <span className="text-lg text-gray-600">starting package</span>
+                <Badge className="bg-green-100 text-green-800">Scope first</Badge>
               </div>
               <p className="text-gray-600">Complete Private Limited Company registration</p>
             </div>
@@ -782,7 +782,7 @@ export default function CompanyRegistrationPage() {
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                MCA filing & approval
+                MCA filing support
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
@@ -794,7 +794,7 @@ export default function CompanyRegistrationPage() {
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                Expert CA support
+                Expert-assisted support
               </div>
             </div>
 

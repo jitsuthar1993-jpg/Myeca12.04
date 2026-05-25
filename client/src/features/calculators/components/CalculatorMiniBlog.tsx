@@ -39,7 +39,7 @@ export function CalculatorMiniBlog({
   howItWorks = { title: "How it Works", description: "Learn how the calculations are performed." },
   faqs = [],
   ctaTitle = "Maximise Your Tax Savings",
-  ctaDescription = "Our CA experts can review your financial profile and find additional savings worth ₹50,000+",
+  ctaDescription = "MyeCA tax experts can review your financial profile and identify deduction questions worth checking before filing.",
   ctaButtonText = "Get Expert Advisory",
   ctaLink = "/auth/register",
   ctaIcon = <TrendingDown className="w-7 h-7" />

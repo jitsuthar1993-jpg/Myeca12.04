@@ -6,7 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import Breadcrumb from "@/components/Breadcrumb";
 import {
-  TrendingUp, IndianRupee, Shield, Star, CheckCircle,
+  TrendingUp, IndianRupee, Shield, CheckCircle,
   Lock, Info, Sparkles, ShieldCheck, ArrowRight
 } from "lucide-react";
 import {
@@ -34,17 +34,17 @@ function calcSIP(monthly: number, years: number, rate: number) {
 interface FundData {
   id: string; name: string; amc: string; category: string;
   returns: { "1Y": number; "3Y": number; "5Y": number; "10Y": number };
-  expense: number; rating: number; minSIP: number; aum: string;
+  expense: number; minSIP: number; aum: string;
   tag?: string; tagColor?: string;
 }
 
 const FUNDS: FundData[] = [
-  { id: "mirae", name: "Mirae Asset ELSS Tax Saver", amc: "Mirae Asset", category: "Flexi Cap", returns: { "1Y": 22.4, "3Y": 18.1, "5Y": 19.2, "10Y": 20.1 }, expense: 0.55, rating: 5, minSIP: 500, aum: "₹24,300 Cr", tag: "Top Rated", tagColor: "bg-indigo-50 text-indigo-600 border-indigo-100" },
-  { id: "quant", name: "Quant ELSS Tax Saver", amc: "Quant MF", category: "Flexi Cap", returns: { "1Y": 31.2, "3Y": 28.4, "5Y": 31.1, "10Y": 21.3 }, expense: 0.57, rating: 5, minSIP: 500, aum: "₹10,200 Cr", tag: "High Return", tagColor: "bg-emerald-50 text-emerald-600 border-emerald-100" },
-  { id: "axis", name: "Axis Long Term Equity", amc: "Axis MF", category: "Multi Cap", returns: { "1Y": 14.8, "3Y": 10.2, "5Y": 14.1, "10Y": 18.2 }, expense: 0.78, rating: 3, minSIP: 500, aum: "₹33,100 Cr" },
-  { id: "sbi", name: "SBI Long Term Equity", amc: "SBI MF", category: "Flexi Cap", returns: { "1Y": 19.3, "3Y": 15.6, "5Y": 17.4, "10Y": 15.8 }, expense: 1.12, rating: 4, minSIP: 500, aum: "₹26,500 Cr", tag: "Popular", tagColor: "bg-violet-50 text-violet-600 border-violet-100" },
-  { id: "hdfc", name: "HDFC ELSS Tax Saver", amc: "HDFC MF", category: "Large & Mid Cap", returns: { "1Y": 25.1, "3Y": 19.8, "5Y": 20.3, "10Y": 18.9 }, expense: 0.79, rating: 4, minSIP: 500, aum: "₹15,800 Cr" },
-  { id: "dsp", name: "DSP Tax Saver", amc: "DSP MF", category: "Flexi Cap", returns: { "1Y": 18.7, "3Y": 16.3, "5Y": 18.1, "10Y": 16.4 }, expense: 0.88, rating: 4, minSIP: 500, aum: "₹14,200 Cr" },
+  { id: "mirae", name: "Mirae Asset ELSS Tax Saver", amc: "Mirae Asset", category: "Flexi Cap", returns: { "1Y": 22.4, "3Y": 18.1, "5Y": 19.2, "10Y": 20.1 }, expense: 0.55, minSIP: 500, aum: "₹24,300 Cr", tag: "Reference", tagColor: "bg-indigo-50 text-indigo-600 border-indigo-100" },
+  { id: "quant", name: "Quant ELSS Tax Saver", amc: "Quant MF", category: "Flexi Cap", returns: { "1Y": 31.2, "3Y": 28.4, "5Y": 31.1, "10Y": 21.3 }, expense: 0.57, minSIP: 500, aum: "₹10,200 Cr", tag: "Higher-return history", tagColor: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+  { id: "axis", name: "Axis Long Term Equity", amc: "Axis MF", category: "Multi Cap", returns: { "1Y": 14.8, "3Y": 10.2, "5Y": 14.1, "10Y": 18.2 }, expense: 0.78, minSIP: 500, aum: "₹33,100 Cr" },
+  { id: "sbi", name: "SBI Long Term Equity", amc: "SBI MF", category: "Flexi Cap", returns: { "1Y": 19.3, "3Y": 15.6, "5Y": 17.4, "10Y": 15.8 }, expense: 1.12, minSIP: 500, aum: "₹26,500 Cr", tag: "Reference", tagColor: "bg-violet-50 text-violet-600 border-violet-100" },
+  { id: "hdfc", name: "HDFC ELSS Tax Saver", amc: "HDFC MF", category: "Large & Mid Cap", returns: { "1Y": 25.1, "3Y": 19.8, "5Y": 20.3, "10Y": 18.9 }, expense: 0.79, minSIP: 500, aum: "₹15,800 Cr" },
+  { id: "dsp", name: "DSP Tax Saver", amc: "DSP MF", category: "Flexi Cap", returns: { "1Y": 18.7, "3Y": 16.3, "5Y": 18.1, "10Y": 16.4 }, expense: 0.88, minSIP: 500, aum: "₹14,200 Cr" },
 ];
 
 const PERIOD_KEYS = ["1Y", "3Y", "5Y", "10Y"] as const;
@@ -100,14 +100,14 @@ export default function ELSSCalculatorPage() {
     <>
       <MetaSEO
         title="ELSS Tax Saver Fund Comparator 2025 | Section 80C | MyeCA.in"
-        description="Compare best ELSS mutual funds for Section 80C tax saving. Calculate SIP returns, tax savings, and find your ideal fund."
-        keywords={["ELSS calculator", "best ELSS funds 2025", "tax saver mutual fund", "80C investment", "ELSS SIP returns"]}
+        description="Compare ELSS mutual funds for Section 80C tax saving. Estimate SIP returns, tax savings, and suitability inputs."
+        keywords={["ELSS calculator", "ELSS funds 2025", "tax saver mutual fund", "80C investment", "ELSS SIP returns"]}
         type="calculator"
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Calculators", url: "/calculators" }, { name: "ELSS Comparator", url: "/elss-comparator" }]}
         faqPageData={[
           { question: "What is ELSS?", answer: "ELSS (Equity Linked Savings Scheme) is a mutual fund qualifying for tax deduction under Section 80C up to ₹1.5 lakh with only 3 years lock-in." },
-          { question: "How much tax can I save with ELSS?", answer: "Investing ₹1.5L/year saves ₹46,800 tax (30% bracket + cess). Your effective investment cost becomes just ₹1,03,200." },
-          { question: "ELSS vs PPF — which is better?", answer: "ELSS offers higher potential returns (~15-18%) vs PPF (7.1%) with shorter lock-in (3 vs 15 years). ELSS is market-linked while PPF is risk-free." },
+          { question: "How much tax can I save with ELSS?", answer: "ELSS can qualify for Section 80C deduction up to ₹1.5 lakh per year. Actual tax impact depends on your slab, regime, and eligibility." },
+          { question: "How is ELSS different from PPF?", answer: "ELSS is market-linked with a 3-year lock-in, while PPF uses government-notified rates and a longer lock-in. Review risk, liquidity, and tax rules before investing." },
         ]}
       />
 
@@ -128,7 +128,7 @@ export default function ELSSCalculatorPage() {
             </m.h1>
             <m.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
               className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
-              Compare top ELSS funds, calculate real SIP returns after LTCG tax, and find your ideal tax-saving investment.
+              Compare sample ELSS fund inputs, estimate SIP outcomes after LTCG tax, and review suitability factors before investing.
             </m.p>
 
             {/* Quick Stats */}
@@ -136,8 +136,8 @@ export default function ELSSCalculatorPage() {
               className="mt-8 flex flex-wrap justify-center gap-3">
               {[
                 { icon: Shield, label: "80C Deduction", val: "Up to ₹1.5L/yr", c: "text-indigo-600", bg: "bg-indigo-50 border-indigo-100" },
-                { icon: Lock, label: "Lock-in Period", val: "Just 3 Years", c: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
-                { icon: TrendingUp, label: "Avg 10Y CAGR", val: "~16-18%", c: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
+                { icon: Lock, label: "Lock-in Period", val: "3 Years", c: "text-emerald-600", bg: "bg-emerald-50 border-emerald-100" },
+                { icon: TrendingUp, label: "Return Inputs", val: "Market-linked", c: "text-violet-600", bg: "bg-violet-50 border-violet-100" },
                 { icon: ShieldCheck, label: "Tax Saved/yr", val: fmt(taxSavedPerYear), c: "text-rose-600", bg: "bg-rose-50 border-rose-100" },
               ].map(({ icon: Icon, label, val, c, bg }) => (
                 <div key={label} className={`flex items-center gap-2.5 ${bg} border rounded-2xl px-5 py-3`}>
@@ -229,11 +229,7 @@ export default function ELSSCalculatorPage() {
                     </div>
 
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                      <span className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map(s => (
-                          <Star key={s} className={`w-3 h-3 ${s <= fund.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`} />
-                        ))}
-                      </span>
+                      <span className="type-meta font-bold text-slate-400">Min SIP: ₹{fund.minSIP}</span>
                       <span className="type-meta font-bold text-slate-400">Exp: {fund.expense}% · AUM: {fund.aum}</span>
                     </div>
                   </m.div>
@@ -309,19 +305,19 @@ export default function ELSSCalculatorPage() {
           {/* ELSS vs Others */}
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12">
             <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">ELSS vs Other 80C Options</h3>
-            <p className="text-slate-500 text-sm font-medium mb-8">Projected corpus on ₹1.5L/year over 15 years</p>
+            <p className="text-slate-500 text-sm font-medium mb-8">Illustrative corpus inputs on ₹1.5L/year over 15 years</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { name: "ELSS", ret: "~15% avg", corpus: "₹81.4 L", lockin: "3 yrs", best: true, c: "from-emerald-50 to-teal-50 border-emerald-200" },
-                { name: "PPF", ret: "7.1% guaranteed", corpus: "₹40.6 L", lockin: "15 yrs", best: false, c: "from-blue-50 to-indigo-50 border-blue-200" },
-                { name: "Tax-Saver FD", ret: "~6.5% avg", corpus: "₹37.0 L", lockin: "5 yrs", best: false, c: "from-amber-50 to-orange-50 border-amber-200" },
-                { name: "NSC", ret: "7.7% avg", corpus: "₹43.2 L", lockin: "5 yrs", best: false, c: "from-violet-50 to-purple-50 border-violet-200" },
-              ].map(({ name, ret, corpus, lockin, best, c }) => (
+                { name: "ELSS", ret: "Market-linked", corpus: "Varies", lockin: "3 yrs", highlighted: true, c: "from-emerald-50 to-teal-50 border-emerald-200" },
+                { name: "PPF", ret: "Notified rate", corpus: "Rule-based", lockin: "15 yrs", highlighted: false, c: "from-blue-50 to-indigo-50 border-blue-200" },
+                { name: "Tax-Saver FD", ret: "Bank rate", corpus: "Rate-based", lockin: "5 yrs", highlighted: false, c: "from-amber-50 to-orange-50 border-amber-200" },
+                { name: "NSC", ret: "Notified rate", corpus: "Rule-based", lockin: "5 yrs", highlighted: false, c: "from-violet-50 to-purple-50 border-violet-200" },
+              ].map(({ name, ret, corpus, lockin, highlighted, c }) => (
                 <div key={name} className={`rounded-2xl bg-gradient-to-br ${c} border p-5`}>
-                  {best && <Badge className="bg-emerald-100 text-emerald-700 border-0 type-meta font-black mb-3 hover:bg-emerald-100">Best Returns</Badge>}
+                  {highlighted && <Badge className="bg-emerald-100 text-emerald-700 border-0 type-meta font-black mb-3 hover:bg-emerald-100">Market-linked option</Badge>}
                   <p className="text-slate-900 font-black text-xl">{name}</p>
                   <p className="text-slate-500 text-xs font-bold mt-1">{ret}</p>
-                  <p className={`font-black text-2xl mt-3 ${best ? "text-emerald-700" : "text-slate-700"}`}>{corpus}</p>
+                  <p className={`font-black text-2xl mt-3 ${highlighted ? "text-emerald-700" : "text-slate-700"}`}>{corpus}</p>
                   <p className="text-slate-400 type-meta font-black uppercase tracking-widest mt-2">{lockin} lock-in</p>
                 </div>
               ))}
@@ -337,7 +333,7 @@ export default function ELSSCalculatorPage() {
               {[
                 { q: "What is the minimum SIP for ELSS?", a: "Most ELSS funds allow SIP from ₹500/month. Tax benefit is capped at ₹1.5L/year under 80C." },
                 { q: "Are ELSS gains taxable?", a: "Yes. Gains above ₹1.25 lakh/year are taxed at 12.5% LTCG. Below ₹1.25L, gains are completely exempt." },
-                { q: "Which is better: ELSS Lump Sum or SIP?", a: "SIP is generally better — it averages cost via rupee-cost averaging, reducing risk in volatile markets." },
+                { q: "How should I compare ELSS lump sum and SIP?", a: "SIP can spread entry points over time, while lump sum depends more on the entry date. Compare liquidity, risk, and investment horizon." },
                 { q: "Can I stop my ELSS SIP before 3 years?", a: "You can stop future installments, but each SIP installment has its own 3-year lock-in from its investment date." },
               ].map(({ q, a }, i) => (
                 <div key={i} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">

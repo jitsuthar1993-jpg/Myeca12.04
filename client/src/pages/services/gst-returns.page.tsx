@@ -730,30 +730,30 @@ export default function GSTReturnsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.6 }}
         >
-          <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <Card className="border-blue-100 bg-gradient-to-br from-white to-blue-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Need Expert GST Filing Assistance?
               </h3>
-              <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 Our GST experts ensure accurate and timely filing of all returns with complete 
                 compliance to 2025 regulations. Avoid penalties with professional assistance.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 shadow-lg">
+                <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 px-8 shadow-sm">
                   <Receipt className="w-5 h-5 mr-2" />
                   File GST Returns Rs 590/month
                 </Button>
                 <Link href="/expert-consultation?service=gst-returns">
-                  <Button size="lg" className="bg-blue-700 hover:bg-blue-800 text-white border-0 px-8 shadow-lg font-semibold">
+                  <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 px-8 shadow-sm font-semibold">
                     <Phone className="w-5 h-5 mr-2" />
                     Get Expert Consultation
                   </Button>
                 </Link>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-blue-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span>Validation before filing</span>

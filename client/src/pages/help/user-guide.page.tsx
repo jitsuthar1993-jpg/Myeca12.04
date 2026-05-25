@@ -40,8 +40,8 @@ const userGuides = [
       {
         title: 'Understand Our Services',
         content: [
-          'DIY Plan: Free self-filing with basic features',
-          'CA Assisted: Expert help at ₹1,499',
+          'Starter Plan: Document checklist with CA-assisted review path',
+          'CA Assisted: Expert help with clear review scope',
           'Business Plan: Complete business tax solutions',
           'All plans include tax calculators and support'
         ]
@@ -101,7 +101,7 @@ const userGuides = [
   {
     id: 'tax-planning',
     title: 'Tax Planning Strategies',
-    description: 'Maximize your tax savings with smart planning',
+    description: 'Estimate eligible tax savings with smart planning',
     icon: Calculator,
     readTime: '12 min',
     sections: [
@@ -186,7 +186,7 @@ const quickTips = [
   },
   {
     title: 'Keep Records',
-    description: 'Maintain documents for 7 years',
+    description: 'Maintain documents for required recordkeeping',
     icon: FileText
   },
   {

@@ -411,9 +411,9 @@ export default function ServicesMarketplacePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
             {[
               { icon: Shield,  label: "Secure workflow",   sub: "Protected document handling" },
-              { icon: Award,   label: "Expert CAs",    sub: "Certified professionals" },
+              { icon: Award,   label: "Expert help",    sub: "Credential-checked where applicable" },
               { icon: Clock,   label: "Quick Delivery", sub: "Never miss deadlines" },
-              { icon: TrendingUp, label: "Best Prices",   sub: "Transparent pricing" },
+              { icon: TrendingUp, label: "Clear pricing",   sub: "Transparent pricing" },
             ].map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex flex-col items-center">
                 <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center mb-4 shadow-sm">

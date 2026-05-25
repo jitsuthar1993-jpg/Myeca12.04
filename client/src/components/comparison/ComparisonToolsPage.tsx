@@ -234,7 +234,7 @@ export default function ComparisonToolsPage() {
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg">Old Tax Regime</CardTitle>
                       {taxSaving > 0 && (
-                        <Badge className="w-fit" variant="outline">Better Option</Badge>
+                        <Badge className="w-fit" variant="outline">Suggested Option</Badge>
                       )}
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -270,7 +270,7 @@ export default function ComparisonToolsPage() {
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg">New Tax Regime</CardTitle>
                       {taxSaving < 0 && (
-                        <Badge className="w-fit" variant="outline">Better Option</Badge>
+                        <Badge className="w-fit" variant="outline">Suggested Option</Badge>
                       )}
                     </CardHeader>
                     <CardContent className="space-y-4">

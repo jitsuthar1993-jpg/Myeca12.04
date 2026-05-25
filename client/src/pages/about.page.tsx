@@ -23,7 +23,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
             MyeCA.in was built to bridge the gap between complex government portals 
-            and the personalized expertise of a Chartered Accountant.
+            and expert-assisted review where the selected service scope includes it.
           </p>
         </div>
       </section>
@@ -44,7 +44,7 @@ export default function AboutPage() {
                   and professional judgment for capital gains, NRI matters, business income, notices, and high-value cases.
                 </p>
                 <p>
-                  Today, MyeCA.in focuses on guided filing workflows, secure document handling, and expert review paths
+                  Today, MyeCA.in focuses on guided filing workflows, authenticated document handling, and expert review paths
                   for freelancers, NRIs, and small businesses across India.
                 </p>
               </div>
@@ -56,7 +56,7 @@ export default function AboutPage() {
                 <ul className="space-y-3 opacity-90">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                    <span>ERI-registered filing workflow</span>
+                    <span>CA-assisted filing workflow</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-200" />

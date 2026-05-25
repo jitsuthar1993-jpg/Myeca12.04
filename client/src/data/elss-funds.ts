@@ -17,7 +17,6 @@ export interface ELSSFund {
     sinceInception: number;
   };
   riskLevel: 'Low' | 'Moderate' | 'Moderately High' | 'High' | 'Very High';
-  rating: number; // 1-5 stars
   minSIP: number;
   minLumpsum: number;
   exitLoad: string;
@@ -44,7 +43,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 17.8,
     },
     riskLevel: 'Moderately High',
-    rating: 5,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -68,7 +66,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 19.2,
     },
     riskLevel: 'Moderately High',
-    rating: 5,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -92,7 +89,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 21.3,
     },
     riskLevel: 'Moderately High',
-    rating: 5,
     minSIP: 1000,
     minLumpsum: 1000,
     exitLoad: 'Nil',
@@ -117,7 +113,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 16.2,
     },
     riskLevel: 'Moderately High',
-    rating: 4,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -142,7 +137,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 15.5,
     },
     riskLevel: 'Moderately High',
-    rating: 4,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -167,7 +161,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 18.2,
     },
     riskLevel: 'Moderately High',
-    rating: 3,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -192,7 +185,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 16.8,
     },
     riskLevel: 'Moderately High',
-    rating: 4,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -217,7 +209,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 14.8,
     },
     riskLevel: 'Moderately High',
-    rating: 4,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -242,7 +233,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 14.2,
     },
     riskLevel: 'Moderately High',
-    rating: 3,
     minSIP: 100,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -266,7 +256,6 @@ export const ELSS_FUNDS: ELSSFund[] = [
       sinceInception: 18.5,
     },
     riskLevel: 'Very High',
-    rating: 5,
     minSIP: 500,
     minLumpsum: 500,
     exitLoad: 'Nil',
@@ -284,10 +273,6 @@ export function getTopFundsByReturns(period: '1Y' | '3Y' | '5Y', limit: number =
     const bReturn = period === '1Y' ? b.returns.oneYear : period === '3Y' ? b.returns.threeYear : b.returns.fiveYear;
     return bReturn - aReturn;
   }).slice(0, limit);
-}
-
-export function getTopFundsByRating(limit: number = 5): ELSSFund[] {
-  return [...ELSS_FUNDS].sort((a, b) => b.rating - a.rating).slice(0, limit);
 }
 
 export function getLowExpenseRatioFunds(limit: number = 5): ELSSFund[] {

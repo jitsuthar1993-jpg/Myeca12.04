@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Shield className="w-6 h-6 text-green-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Secure Document Handling</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">Authenticated Document Handling</h3>
                   <p className="text-gray-600 text-sm">Document access is limited to authorized workflows and assigned service teams.</p>
                 </div>
                 
@@ -243,10 +243,10 @@ export default function PrivacyPolicyPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">Data retention:</h3>
                     <ul className="text-gray-600 space-y-1 text-sm">
-                      <li>• Tax returns: 7 years (as per IT Act)</li>
-                      <li>• KYC documents: As per regulatory requirements</li>
-                      <li>• Communication records: 3 years</li>
-                      <li>• Technical logs: 1 year</li>
+                      <li>• Tax and service records: retained as needed for service delivery, legal, tax, accounting, or dispute obligations</li>
+                      <li>• KYC documents: as per applicable regulatory requirements</li>
+                      <li>• Communication records: retained as needed for support and legal recordkeeping</li>
+                      <li>• Technical logs: retained for security, debugging, and compliance needs</li>
                     </ul>
                   </div>
                 </div>
@@ -298,7 +298,7 @@ export default function PrivacyPolicyPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
                     <p className="text-gray-600">
-                      MyeCA Technologies Pvt Ltd<br />
+                      MyeCA Technologies Private Limited<br />
                       Bangalore, Karnataka<br />
                       India
                     </p>

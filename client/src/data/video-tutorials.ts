@@ -173,8 +173,8 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
   // Investment Videos
   {
     id: 'elss-comparison',
-    title: 'Best ELSS Funds 2024 - Tax Saving Mutual Funds Compared',
-    description: 'Comprehensive comparison of top ELSS funds. Learn about returns, expense ratios, and how to choose the best tax-saving mutual fund.',
+    title: 'ELSS Funds 2024 - Tax Saving Mutual Funds Compared',
+    description: 'Comprehensive comparison of ELSS funds. Learn about returns, expense ratios, and how to choose a suitable tax-saving mutual fund.',
     duration: '16:45',
     category: 'investments',
     tags: ['ELSS', 'mutual funds', 'tax saving', 'comparison'],

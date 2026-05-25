@@ -1391,7 +1391,7 @@ export default function ITRStepByStepGuide() {
                               <Button variant="outline" className="h-auto p-4 justify-start text-left">
                                 <div className="flex-1">
                                   <div className="font-medium mb-1">Aadhaar OTP</div>
-                                  <div className="text-sm text-gray-500">Instant verification using Aadhaar linked mobile</div>
+                                  <div className="text-sm text-gray-500">Aadhaar OTP verification where available</div>
                                 </div>
                                 <Badge className="bg-green-100 text-green-800">Recommended</Badge>
                               </Button>

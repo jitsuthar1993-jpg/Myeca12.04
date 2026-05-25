@@ -307,7 +307,7 @@ export default function ActivationPage() {
                     <ShieldCheck className="h-5 w-5 text-blue-600" />
                   </div>
                   <h4 className="font-black text-slate-900 text-sm mb-1">End-to-End Encrypted</h4>
-                  <p className="type-support font-bold text-slate-600">Your data is secured with enterprise-grade AES-256 encryption.</p>
+                  <p className="type-support font-bold text-slate-600">Your data should be shared through authenticated workflows with secure transport controls.</p>
                 </div>
                 <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-4">

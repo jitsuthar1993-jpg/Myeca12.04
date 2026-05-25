@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const supportedDocs = [
-  { name: "Form 16 / 16A", desc: "Employer-issued TDS certificate — salary and TDS data extracted automatically." },
-  { name: "AIS / TIS", desc: "Annual Information Statement from the Income Tax portal parsed field-by-field." },
-  { name: "Bank Statements", desc: "Interest income and high-value transactions identified for reporting." },
-  { name: "Mutual Fund CAS", desc: "CAMS / KFintech statements read for capital gains computation." },
+  { name: "Form 16 / 16A", desc: "Employer-issued TDS certificate — supported fields can be extracted for review." },
+  { name: "AIS / TIS", desc: "Annual Information Statement from the Income Tax portal organized for review." },
+  { name: "Bank Statements", desc: "Interest income and tax-relevant transactions can be highlighted for review." },
+  { name: "Mutual Fund CAS", desc: "CAMS / KFintech statements can support capital gains organization." },
   { name: "Property Documents", desc: "Sale deed and registry data for capital gains on immovable property." },
   { name: "Investment Proofs", desc: "LIC, ELSS, PPF, NPS receipts mapped to the correct 80C/80D sections." },
 ];
@@ -20,21 +20,21 @@ const howItWorks = [
   },
   {
     num: "02",
-    title: "Automatic Extraction",
-    desc: "Our system reads the documents and extracts income figures, TDS amounts, deductions, and interest — without manual entry.",
+    title: "Assisted Extraction",
+    desc: "The workflow can read supported documents and suggest income figures, TDS amounts, deductions, and interest for review.",
   },
   {
     num: "03",
     title: "Pre-filled ITR Form",
-    desc: "Extracted data is mapped to the correct ITR schedule fields. You review, confirm, and hand off to your CA.",
+    desc: "Extracted data is organized against ITR schedule fields. You review, confirm, and choose CA assistance where eligible.",
   },
 ];
 
 const trustPoints = [
-  "Documents processed server-side and deleted after extraction",
-  "No document data stored beyond your active filing session",
-  "TLS 1.3 in transit, AES-256 at rest",
-  "Compliant with IT Act data handling requirements",
+  "Authenticated access for uploaded documents",
+  "Private document workflow tied to your account and filing case",
+  "Secure transport for document uploads",
+  "Download and delete controls where available in the workspace",
 ];
 
 export default function DocumentScannerPage() {
@@ -47,13 +47,13 @@ export default function DocumentScannerPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-6">
             <ScanLine className="w-4 h-4" />
-            Zero Manual Entry
+            Assisted document extraction
           </div>
           <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
             Upload Your Documents. <span className="text-[#315efb]">We Read Them.</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
-            Form 16, AIS, bank statements, CAS — our scanner extracts all the data and maps it to your ITR form automatically.
+            Form 16, AIS, bank statements, CAS — supported extraction helps organize details before you review and confirm them.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/itr/form-selector">
@@ -73,7 +73,7 @@ export default function DocumentScannerPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="type-section-title font-extrabold text-slate-900">From upload to pre-filled form</h2>
-            <p className="text-slate-500 mt-3 text-lg">Three steps. No spreadsheets.</p>
+            <p className="text-slate-500 mt-3 text-lg">Three steps with review before filing.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((step) => (
@@ -139,7 +139,7 @@ export default function DocumentScannerPage() {
             <div className="space-y-4">
               {[
                 { icon: Upload, label: "Supported Formats", desc: "PDF, JPG, PNG — up to 10 MB per file. No special export needed." },
-                { icon: Zap, label: "Fast Extraction", desc: "Most documents are read within 30 seconds of upload." },
+                { icon: Zap, label: "Assisted Extraction", desc: "Supported documents are processed to suggest fields for review." },
                 { icon: ScanLine, label: "Accuracy Check", desc: "Extracted values are flagged if they appear inconsistent with other documents." },
                 { icon: FileText, label: "Review Output", desc: "Check extracted data before your return is filed, with CA assistance available on eligible plans." },
               ].map(({ icon: Icon, label, desc }) => (
@@ -162,8 +162,8 @@ export default function DocumentScannerPage() {
       <section className="py-16 bg-[#315efb] text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <ScanLine className="w-8 h-8 mx-auto mb-4 text-blue-300" />
-          <h2 className="text-3xl font-extrabold mb-4">Stop entering numbers manually.</h2>
-          <p className="text-blue-100 mb-8">Upload your documents and let the scanner do the work. A CA reviews before filing.</p>
+          <h2 className="text-3xl font-extrabold mb-4">Organize your filing documents faster.</h2>
+          <p className="text-blue-100 mb-8">Upload supported documents, review suggested fields, and choose CA assistance where your plan includes it.</p>
           <Link href="/itr/form-selector">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start with Document Upload <ArrowRight className="w-5 h-5" />

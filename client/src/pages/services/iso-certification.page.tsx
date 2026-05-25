@@ -311,22 +311,22 @@ export default function ISOCertificationPage() {
                 <Link href="/expert-consultation?service=iso-certification">
                   <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 px-5 py-2.5 font-semibold">
                     <Phone className="w-4 h-4 mr-2" />
-                    Free ISO Consultation
+                    Request ISO Consultation
                   </Button>
                 </Link>
               </div>
               <div className="flex flex-wrap gap-6 mt-6 text-sm">
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  20+ Years ISO Expertise
+                  Documentation-led ISO guidance
                 </div>
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  1,000+ Companies Certified
+                  Certification-body coordination
                 </div>
                 <div className="flex items-center text-gray-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  98% Success Rate
+                  Scope-based readiness review
                 </div>
               </div>
             </div>
@@ -632,7 +632,7 @@ export default function ISOCertificationPage() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm mb-2">Best For:</h4>
+                    <h4 className="font-semibold text-sm mb-2">Suitable For:</h4>
                     <p className="text-sm text-gray-600">{body.suitability}</p>
                   </div>
                 </CardContent>
@@ -687,37 +687,37 @@ export default function ISOCertificationPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.4 }}
         >
-          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <Card className="border-blue-100 bg-gradient-to-br from-white via-blue-50 to-purple-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Ready to Get ISO Certified?
               </h3>
-              <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 Our ISO experts provide complete certification support from gap analysis to certificate 
-                issuance. Get internationally recognized standards compliance with 98% success rate.
+                issuance. Certification outcome and timing depend on readiness, audit findings, and the selected certification body.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 shadow-lg">
+                <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 px-8 shadow-sm">
                   <Award className="w-5 h-5 mr-2" />
                   Start from {"₹"}2,00,000
                 </Button>
                 <Link href="/expert-consultation?service=iso-certification">
-                  <Button size="lg" className="bg-blue-700 hover:bg-blue-800 text-white border-0 px-8 shadow-lg font-semibold">
+                  <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 px-8 shadow-sm font-semibold">
                     <Phone className="w-5 h-5 mr-2" />
                     Get Expert Consultation
                   </Button>
                 </Link>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-blue-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span>Complete Documentation Support</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>98% Certification Success</span>
+                  <span>Certification Readiness Support</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

@@ -229,7 +229,7 @@ export const startupTooltips: TooltipData[] = [
   {
     id: "welcome",
     title: "Welcome to Startup Services!",
-    message: "Discover how our expert CA team can help you leverage Indian government schemes like Startup India, SISFS, and PMMY for maximum benefits.",
+    message: "Discover how our expert-assisted team can help you review eligibility for Indian government schemes like Startup India, SISFS, and PMMY.",
     icon: Lightbulb,
     actionText: "Get Started",
     position: { x: 400, y: 200 },
@@ -250,7 +250,7 @@ export const startupTooltips: TooltipData[] = [
   {
     id: "benefits",
     title: "Tax Benefits & Savings",
-    message: "Get 3-year tax holiday under Section 80-IAC through Startup India registration. Maximize your tax savings with expert guidance.",
+    message: "Review Section 80-IAC eligibility through Startup India recognition support with expert guidance.",
     icon: Target,
     actionText: "Learn More",
     actionUrl: "#tax-benefits",
@@ -260,8 +260,8 @@ export const startupTooltips: TooltipData[] = [
   },
   {
     id: "success",
-    title: "Join 2,500+ Successful Startups",
-    message: "Our clients have successfully raised ₹850+ crores through government schemes. Let us help you achieve similar success.",
+    title: "Plan Your Startup Applications",
+    message: "Organize scheme eligibility, documents, and next steps before submitting funding or recognition applications.",
     icon: CheckCircle,
     actionText: "Start Your Journey",
     actionUrl: "#get-started",

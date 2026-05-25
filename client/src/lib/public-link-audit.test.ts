@@ -232,6 +232,27 @@ describe("public link audit", () => {
     expect(gstReturnsSource).not.toMatch(/real-time updates with supplier GSTR-1 filings|real-time ITC matching|AI-powered validation|95% success rate/i);
     expect(trademarkSource).not.toMatch(/95% success rate/i);
   });
+
+  it("keeps MyeCA public positioning free of ERI and self-filing claims", () => {
+    const publicSources = [
+      "client/src/components/TrustedBySection.tsx",
+      "client/src/components/layout/Footer.tsx",
+      "client/src/pages/about.page.tsx",
+      "client/src/pages/home.page.tsx",
+      "client/src/pages/help/user-guide.page.tsx",
+      "client/src/pages/help/faq.page.tsx",
+      "client/src/pages/services/gst-registration.page.tsx",
+      "client/src/data/pricing.ts",
+      "client/src/config/seo.config.ts",
+    ];
+
+    publicSources.forEach((sourcePath) => {
+      const source = readFileSync(sourcePath, "utf8");
+
+      expect(source, sourcePath).not.toMatch(/ERI[-\s]?(registered|workflow|platform)|\bERI\b/);
+      expect(source, sourcePath).not.toMatch(/File Self ITR|self-filing|self-service ITR|guided self-filing/i);
+    });
+  });
 });
 
 describe("public email links", () => {

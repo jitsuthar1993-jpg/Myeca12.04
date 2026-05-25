@@ -263,7 +263,7 @@ export default function GstRegistrationPage() {
         "Everything in Basic",
         "First 3 months returns filing",
         "HSN/SAC code mapping",
-        "Dedicated CA support"
+        "Assigned expert support"
       ],
       popular: true
     },
@@ -285,13 +285,13 @@ export default function GstRegistrationPage() {
     <div className="min-h-screen bg-gradient-to-br from-white to-emerald-50 service-page">
       <MetaSEO
         title={seo?.title || "GST Registration Online India | MyeCA.in"}
-        description={seo?.description || "Get your GST registration online within 3-5 days."}
+        description={seo?.description || "Get GST registration support with document preparation and portal filing guidance."}
         keywords={seo?.keywords}
         type={seo?.type || "service"}
         serviceData={{
           price: getServicePriceForSchema("gst-registration", seo?.serviceData?.price || "2999"),
-          rating: seo?.serviceData?.rating || "4.9",
-          reviews: seo?.serviceData?.reviews || "50000",
+          rating: seo?.serviceData?.rating || "Unrated",
+          reviews: seo?.serviceData?.reviews || "0",
           availability: "https://schema.org/InStock"
         }}
         breadcrumbs={seo?.breadcrumbs}
@@ -324,7 +324,7 @@ export default function GstRegistrationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Complete registration with expert guidance and documentation support in 7–10 days.
+                Registration support with expert guidance, documentation help, and portal filing support. Timelines depend on document readiness and department processing.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button 
@@ -642,7 +642,7 @@ export default function GstRegistrationPage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Your business information is secure and handled by our expert CA team
+                  Your business information should be shared only through the secure workflow and handled by assigned experts.
                 </AlertDescription>
               </Alert>
 
@@ -767,7 +767,7 @@ export default function GstRegistrationPage() {
               GST Registration Pricing
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose the package that best suits your business needs
+              Choose a package after reviewing scope, exclusions, and document needs.
             </p>
           </div>
 
@@ -820,7 +820,7 @@ export default function GstRegistrationPage() {
           </div>
 
           <p className="text-sm text-gray-600 mt-8">
-            Expert CA team · ERI-registered platform · End-to-end support
+            Expert-assisted workflow · Scope-first pricing · Document-based support
           </p>
         </m.div>
 

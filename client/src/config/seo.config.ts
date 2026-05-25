@@ -23,7 +23,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Core Pages
   '/': {
     title: 'Expert Income Tax Filing & ITR e-Filing Services India AY 2026-27',
-    description: 'File your Income Tax Return (ITR) for AY 2026-27 with guided workflows, secure document handling, and optional CA-assisted review.',
+    description: 'File your Income Tax Return (ITR) for AY 2026-27 with guided workflows, private document access, and optional CA-assisted review.',
     keywords: ['ITR filing India', 'income tax return online', 'CA assisted tax filing', 'e-filing 2026', 'tax consultant near me'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }]
@@ -45,7 +45,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/dashboard': {
     title: 'User Dashboard | MyeCA.in',
-    description: 'Manage your tax returns, service orders, documents, and notifications in one secure place.',
+    description: 'Manage your tax returns, service orders, documents, and notifications in a signed-in workspace.',
     keywords: ['tax dashboard', 'manage ITR', 'service status', 'tax documents'],
     type: 'website',
     noindex: true,
@@ -426,7 +426,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/experts': {
     title: 'Expert CA Consultation Online | MyeCA.in Professional Network',
-    description: 'Connect with experienced Chartered Accountants and tax experts for personalized consultations and professional advice.',
+    description: 'Connect with credential-checked tax professionals and MyeCA reviewers for personalized consultations and scoped professional advice.',
     keywords: ['online CA consultation', 'hire tax expert', 'CA network India', 'professional tax advice'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Experts', url: '/experts' }]
@@ -538,9 +538,9 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compliance Calendar', url: '/compliance-calendar' }]
   },
   '/elss-comparator': {
-    title: 'ELSS Mutual Fund Comparator | Best Tax Saving Funds 2025 | MyeCA.in',
+    title: 'ELSS Mutual Fund Comparator | Tax Saving Funds 2025 | MyeCA.in',
     description: 'Compare top-performing ELSS mutual funds. Analyze returns, risk ratios, and tax-saving potential under Section 80C.',
-    keywords: ['elss comparator', 'best tax saving funds', 'compare elss mutual funds', '80C investments'],
+    keywords: ['elss comparator', 'tax saving funds', 'compare elss mutual funds', '80C investments'],
     type: 'calculator',
     calculatorData: {
       type: 'ELSS Comparator',
@@ -606,7 +606,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/pricing': {
     title: 'Transparent Tax Filing Pricing | ITR, GST & CA Review | MyeCA.in',
-    description: 'Compare MyeCA.in pricing for self-service ITR filing, CA-assisted review, GST, startup, and compliance services.',
+    description: 'Compare MyeCA.in pricing for CA-assisted ITR filing, GST, startup, and compliance services.',
     keywords: ['ITR filing pricing', 'CA assisted filing fees', 'tax filing plans India', 'GST service pricing'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Pricing', url: '/pricing' }]
@@ -678,7 +678,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/pan-card': {
     title: 'PAN Card Assistance Online | Correction & Business PAN Support | MyeCA.in',
-    description: 'Get PAN application, correction readiness, business PAN documentation, status guidance, and tax identity support from MyeCA experts.',
+    description: 'Get PAN application, correction readiness, business PAN documentation, status guidance, and tax identity support from MyeCA reviewers.',
     keywords: ['PAN card assistance', 'PAN correction support', 'business PAN card', 'PAN application guidance', 'tax identity documentation'],
     type: 'service',
     serviceData: { price: '499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -756,7 +756,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/compare/cleartax-alternative': {
     title: 'ClearTax Alternative for CA-Reviewed ITR Filing | MyeCA.in',
-    description: 'Compare MyeCA with ClearTax for named CA accountability, AIS/26AS checks, document history, case tracking, and visible scope before payment.',
+    description: 'Compare MyeCA with ClearTax for CA-assisted review where applicable, AIS/26AS checks, document history, case tracking, and visible scope before payment.',
     keywords: ['ClearTax alternative', 'CA assisted ITR filing', 'MyeCA vs ClearTax', 'tax filing comparison'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'ClearTax Alternative', url: '/compare/cleartax-alternative' }]
@@ -783,11 +783,11 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'IndiaFilings Alternative', url: '/compare/indiafilings-alternative' }]
   },
   '/compare/best-ca-assisted-itr-filing': {
-    title: 'Best CA-Assisted ITR Filing for Complex Taxpayers | MyeCA.in',
+    title: 'CA-Assisted ITR Filing Comparison for Complex Taxpayers | MyeCA.in',
     description: 'Choose a CA-assisted ITR filing workflow for capital gains, business income, foreign assets, notices, and document-heavy returns.',
-    keywords: ['best CA assisted ITR filing', 'complex ITR filing India', 'expert tax review', 'MyeCA ITR filing'],
+    keywords: ['CA assisted ITR filing comparison', 'complex ITR filing India', 'expert tax review', 'MyeCA ITR filing'],
     type: 'website',
-    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'Best CA-Assisted ITR Filing', url: '/compare/best-ca-assisted-itr-filing' }]
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'CA-Assisted ITR Filing Comparison', url: '/compare/best-ca-assisted-itr-filing' }]
   }
 };
 

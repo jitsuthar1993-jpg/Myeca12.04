@@ -561,7 +561,7 @@ The acknowledgement alone is not enough. Save the final computation, ITR copy, c
 
 ## 15. Not asking for help when facts are complex
 
-Capital gains, business income, foreign assets, and notices are not ideal DIY cases. CA review can prevent expensive corrections.
+Capital gains, business income, foreign assets, and notices are not ideal unreviewed cases. CA review can prevent expensive corrections.
 
 ## Final takeaway
 

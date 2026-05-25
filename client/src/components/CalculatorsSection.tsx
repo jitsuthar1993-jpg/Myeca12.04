@@ -354,7 +354,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <p className="text-lg text-gray-600 mb-6">
-            Need personalized tax advice? Our expert CAs are here to help.
+            Need personalized tax advice? MyeCA tax experts can help review your facts.
           </p>
           <Button
             size="lg"
@@ -362,7 +362,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
             asChild
           >
             <Link href="/pricing">
-              Consult an Expert CA
+              Consult a Tax Expert
             </Link>
           </Button>
         </m.div>

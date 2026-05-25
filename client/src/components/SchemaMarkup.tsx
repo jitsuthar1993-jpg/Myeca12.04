@@ -19,7 +19,7 @@ export default function SchemaMarkup({ type, data }: SchemaMarkupProps) {
         name: data.name || "MyeCA.in",
         url: data.url || "https://myeca.in",
         logo: data.logo || "https://myeca.in/favicon.svg",
-        description: data.description || "India's trusted platform for expert income tax filing and business services",
+        description: data.description || "MyeCA platform for income tax filing and business service workflows",
         address: {
           "@type": "PostalAddress",
           addressLocality: "Mumbai",

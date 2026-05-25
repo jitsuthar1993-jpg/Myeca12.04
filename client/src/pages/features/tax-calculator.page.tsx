@@ -6,7 +6,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 const calculators = [
   {
     title: "Income Tax Calculator",
-    desc: "Old vs. New Tax Regime comparison with exact liability breakdown.",
+    desc: "Old vs. New Tax Regime comparison with an estimated liability breakdown.",
     href: "/calculators/income-tax",
     badge: "Most Used",
   },
@@ -48,7 +48,7 @@ const features = [
   "Section-wise deduction breakdown (80C, 80D, 24b, and more)",
   "Surcharge and cess computed automatically",
   "Results exportable to PDF for CA review",
-  "Updated for the current assessment year",
+  "Reviewed for the current assessment year assumptions",
 ];
 
 export default function TaxCalculatorFeaturePage() {
@@ -67,7 +67,7 @@ export default function TaxCalculatorFeaturePage() {
             Know Your Tax <span className="text-[#315efb]">Before You File</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
-            Six calculators built for Indian taxpayers — income tax, HRA, capital gains, deductions, and more. No guesswork, no spreadsheets.
+            Six calculators built for Indian taxpayers — income tax, HRA, capital gains, deductions, and more. Use them as estimates before review.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/calculators/income-tax">
@@ -118,10 +118,10 @@ export default function TaxCalculatorFeaturePage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="type-section-title mb-4 font-extrabold text-slate-900">
-                Built on the actual tax code, not estimates
+                Built around current tax-law assumptions
               </h2>
               <p className="text-slate-500 mb-8">
-                Every calculator uses the Finance Act provisions in force for the current assessment year — including the revised New Regime slabs, surcharge thresholds, and section-by-section deduction limits.
+                Each calculator uses maintained assessment-year assumptions, including regime slabs, surcharge thresholds, and common deduction limits. Complex facts can still change the final position.
               </p>
               <ul className="space-y-3">
                 {features.map((f) => (
@@ -134,7 +134,7 @@ export default function TaxCalculatorFeaturePage() {
             </div>
             <div className="space-y-4">
               {[
-                { icon: TrendingDown, label: "Old vs. New Regime", desc: "Side-by-side tax liability comparison so you pick the regime that saves more." },
+                { icon: TrendingDown, label: "Old vs. New Regime", desc: "Side-by-side estimate to help compare which regime may suit your inputs." },
                 { icon: PieChart, label: "Section-wise Breakdown", desc: "See exactly which deductions are applied and how each one reduces your tax." },
                 { icon: RefreshCw, label: "AY Updated Annually", desc: "Rates, slabs, and limits are updated every year when the Finance Bill is passed." },
                 { icon: Zap, label: "Browser-Based Results", desc: "Calculations run in the browser with no form submission required." },
@@ -159,7 +159,7 @@ export default function TaxCalculatorFeaturePage() {
         <div className="max-w-2xl mx-auto px-4">
           <Calculator className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Calculated your tax? File it with a CA.</h2>
-          <p className="text-blue-100 mb-8">A licensed Chartered Accountant reviews every return before submission. Starting at ₹499.</p>
+          <p className="text-blue-100 mb-8">CA-assisted review is available where the filing plan scope includes it. Simple salary filing starts at ₹499.</p>
           <Link href="/itr/form-selector">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start ITR Filing <ArrowRight className="w-5 h-5" />

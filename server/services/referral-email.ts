@@ -234,7 +234,7 @@ export async function sendReferralReminder(data: ReferralEmailData) {
           <p>Use code: <strong style="font-size: 20px; color: #d97706;">${data.referralCode}</strong></p>
         </div>
         
-        <p>Don't wait until the last minute to file your taxes. Our expert CAs are ready to help you maximize your refund.</p>
+        <p>Don't wait until the last minute to file your taxes. Our tax reviewers can help you check eligible refund and adjustment steps.</p>
         
         <div style="text-align: center;">
           <a href="${data.referralLink}" class="button">Claim Your Discount Now</a>
@@ -243,7 +243,7 @@ export async function sendReferralReminder(data: ReferralEmailData) {
       
       <div class="footer">
         <p>This is a reminder email. Your referral was originally sent by ${data.referrerName}.</p>
-        <p>(c) 2025 MyeCA.in - Your Trusted Tax Partner</p>
+        <p>(c) 2025 MyeCA.in - Guided tax filing workflows</p>
       </div>
     </body>
     </html>

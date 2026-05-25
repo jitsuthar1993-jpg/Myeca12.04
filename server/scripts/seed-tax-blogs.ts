@@ -368,7 +368,7 @@ The portal will flag any errors (missing mandatory fields, mismatches). Resolve 
 
 Once validated, click **Submit**. After submission, you must **e-Verify** within **30 days** to complete the process. Verification options:
 
-- **Aadhaar OTP** (fastest - instant)
+- **Aadhaar OTP** (often quick, subject to UIDAI and portal availability)
 - **Net Banking** (through your bank's portal)
 - **Demat Account** (via CDSL/NSDL)
 - **Bank ATM** (some banks)
@@ -571,7 +571,7 @@ No. Any capital gains (even a small amount) disqualify you from ITR-1. Use **ITR
       title: "Section 80C and 80D Deductions: The Complete Guide for FY 2025-26",
       slug: "section-80c-80d-deductions-complete-guide",
       excerpt:
-        "Maximize your tax savings with a complete guide to Section 80C and 80D deductions - eligible investments, limits, sub-limits, and exactly how to claim them in your ITR for FY 2025-26.",
+        "Review eligible Section 80C and 80D deductions with a complete guide to investments, limits, sub-limits, and how to claim them in your ITR for FY 2025-26.",
       featuredImage: "article",
       readTime: "11 min read",
       tags: JSON.stringify(["Section 80C", "Section 80D", "Tax Deductions", "Tax Savings", "FY 2025-26", "PPF", "ELSS"]),

@@ -21,7 +21,7 @@ export const EMAIL_TEMPLATES = {
             <ul style="color: #4b5563; line-height: 1.8;">
               <li>Complete your profile to get personalized tax advice</li>
               <li>Upload your documents for faster processing</li>
-              <li>Connect with our expert CAs for assistance</li>
+              <li>Connect with tax reviewers when your plan includes assisted review</li>
               <li>Review refund-status steps from your dashboard and official sources</li>
             </ul>
           </div>
@@ -47,7 +47,7 @@ export const EMAIL_TEMPLATES = {
       What's Next?
       - Complete your profile to get personalized tax advice
       - Upload your documents for faster processing
-      - Connect with our expert CAs for assistance
+      - Connect with tax reviewers when your plan includes assisted review
       - Review refund-status steps from your dashboard and official sources
       
       Visit your dashboard: https://myeca.in/dashboard

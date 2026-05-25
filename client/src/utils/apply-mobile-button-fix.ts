@@ -63,7 +63,7 @@ export function applyImmediateMobileButtonFix(): void {
 
 /**
  * CSS injection for immediate mobile button fixes
- * This provides instant CSS fixes without modifying component code
+ * This provides quick CSS fixes without modifying component code
  */
 export function injectMobileButtonFixCSS(): void {
   if (typeof window === 'undefined') return;

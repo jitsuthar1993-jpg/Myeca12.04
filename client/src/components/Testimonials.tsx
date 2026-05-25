@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, FileText, Star } from "lucide-react";
+import { CheckCircle2, FileText } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 
 export default function Testimonials() {
@@ -16,7 +16,7 @@ export default function Testimonials() {
             </h2>
           </div>
           <p className="max-w-xl text-sm leading-6 text-slate-600 md:text-base">
-            Anonymized feedback is shown as workflow evidence, not as public client endorsement. Named case studies can be added once approvals exist.
+            Anonymized feedback is shown as workflow evidence, not as public client endorsement. Identified case studies can be added once approvals exist.
           </p>
         </div>
 
@@ -30,10 +30,8 @@ export default function Testimonials() {
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-extrabold text-blue-700">
                   {testimonial.avatar}
                 </div>
-                <div className="flex items-center gap-1 text-amber-500" aria-label={`${testimonial.rating} star workflow feedback`}>
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                  ))}
+                <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700" aria-label="Anonymized workflow feedback">
+                  Workflow example
                 </div>
               </div>
               <p className="text-sm font-medium leading-6 text-slate-700">"{testimonial.content}"</p>

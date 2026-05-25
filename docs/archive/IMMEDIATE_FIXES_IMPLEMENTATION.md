@@ -151,7 +151,7 @@ export default function HomePage() {
     <>
       <SEO 
         title="Expert Income Tax Filing & ITR e-Filing Services India 2025-26"
-        description="File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. ITR filing starts at ₹499. File AY 2025-26 returns now!"
+        description="File ITR online with MyeCA.in. Guided filing workflows with assisted review where applicable. Simple plans may start at ₹499 for AY 2025-26."
         keywords="ITR filing, income tax return, tax filing India, e-filing, AY 2025-26, tax consultant, CA services"
       />
       {/* Page content */}
@@ -164,7 +164,7 @@ export default function HomePage() {
 
 | Page | Title | Description |
 |------|-------|-------------|
-| Home | Expert Income Tax Filing & ITR e-Filing Services India 2025-26 | File ITR online with MyeCA.in. Expert CA assistance, maximum refund guarantee, 15L+ happy customers. |
+| Home | Income Tax Filing & ITR e-Filing Services India 2025-26 | File ITR online with MyeCA.in. Guided filing workflows with assisted review where applicable. |
 | Services | 50+ Business Services - GST, Company Registration, Compliance | Complete business services including GST registration, company incorporation, trademark, ISO certification. |
 | Calculators | Free Tax & Investment Calculators - Income Tax, SIP, EMI | Calculate income tax, compare tax regimes, plan investments with our free calculators. Updated for 2025-26. |
 | Pricing | ITR Filing Pricing - Plans Starting ₹499 | Transparent pricing for tax filing. Free DIY plan or CA assisted filing at ₹1,499. No hidden charges. |

@@ -57,7 +57,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   {
     id: '80c',
     patterns: ['80c', 'section 80c', 'tax saving', 'elss', 'ppf', 'nsc', 'tax deduction'],
-    response: "💰 **Section 80C Tax Saving Options (Max ₹1.5 Lakh):**\n\n• **ELSS Funds:** 3-year lock-in, best returns\n• **PPF:** 15-year lock-in, 7.1% interest, tax-free\n• **NSC:** 5-year, 7.7% interest\n• **Tax Saver FD:** 5-year lock-in\n• **Life Insurance Premium**\n• **Children's Tuition Fees**\n• **Home Loan Principal**\n• **Sukanya Samriddhi:** For girl child\n\n💡 Tip: Invest early in the year for maximum benefit!",
+    response: "💰 **Section 80C Tax Saving Options (Max ₹1.5 Lakh):**\n\n• **ELSS Funds:** 3-year lock-in, market-linked returns\n• **PPF:** 15-year lock-in, government-notified interest, tax-free under current rules\n• **NSC:** 5-year, government-notified interest\n• **Tax Saver FD:** 5-year lock-in\n• **Life Insurance Premium**\n• **Children's Tuition Fees**\n• **Home Loan Principal**\n• **Sukanya Samriddhi:** For girl child\n\n💡 Tip: Review eligibility, lock-in, and risk before investing.",
     quickActions: [
       { label: 'PPF Calculator', action: 'ppf_calc', href: '/calculators/ppf' },
       { label: 'SIP Calculator', action: 'sip_calc', href: '/calculators/sip' },
@@ -148,7 +148,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   {
     id: 'everify',
     patterns: ['e-verify', 'everify', 'verification', 'itr-v', 'aadhaar otp'],
-    response: "✅ **e-Verification Methods:**\n\n1. **Aadhaar OTP** (Recommended) - Instant\n2. **Net Banking** - Login via bank\n3. **Demat Account** - Via NSDL/CDSL\n4. **Bank ATM** - Generate EVC at ATM\n5. **Physical ITR-V** - Send to CPC Bengaluru\n\n⚠️ **Important:**\n• Complete within 30 days of filing\n• Without verification, ITR is invalid!\n• Aadhaar OTP is fastest method",
+    response: "✅ **e-Verification Methods:**\n\n1. **Aadhaar OTP** - subject to UIDAI and portal availability\n2. **Net Banking** - Login via bank\n3. **Demat Account** - Via NSDL/CDSL\n4. **Bank ATM** - Generate EVC at ATM\n5. **Physical ITR-V** - Send to CPC Bengaluru\n\n⚠️ **Important:**\n• Complete within 30 days of filing\n• Without verification, ITR is invalid!\n• Portal processing time can vary by method",
     quickActions: [
       { label: 'Check Verification Status', action: 'verify_status', href: '/itr/status-tracker' },
     ],
@@ -178,7 +178,7 @@ export const TAX_INTENTS: ChatIntent[] = [
   },
 ];
 
-// Find the best matching intent for user input
+// Find the closest matching intent for user input
 export function findIntent(userMessage: string): ChatIntent | null {
   const normalizedMessage = userMessage.toLowerCase().trim();
   

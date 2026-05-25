@@ -673,7 +673,7 @@ const FundingPage = () => {
             Need Help with Funding Applications?
           </h2>
           <p className="text-lg mb-6 text-gray-600">
-            Our expert CAs help you navigate the funding landscape and maximize your chances
+            MyeCA reviewers help you review the funding landscape, eligibility, and application readiness
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Link href="/services/funding-assistance">

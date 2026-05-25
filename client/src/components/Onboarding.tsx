@@ -40,7 +40,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     icon: <Sparkles className="h-12 w-12 text-blue-500" />,
     tips: [
       'We help you save tax legally',
-      'Expert CAs available for consultation',
+      'Expert review available where applicable',
       'All your compliance needs in one place'
     ]
   },
@@ -62,7 +62,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 'itr-filing',
     title: 'Easy ITR Filing',
-    description: 'File your Income Tax Return with expert CA assistance at affordable prices.',
+    description: 'File your Income Tax Return with guided workflows and expert assistance where applicable.',
     icon: <FileText className="h-12 w-12 text-purple-500" />,
     action: {
       label: 'Start Filing ITR',

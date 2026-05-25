@@ -641,7 +641,7 @@ export default function BlogPage() {
                     Get free advice from a tax expert.
                   </h2>
                   <p className="mt-3 text-sm leading-6 text-slate-600">
-                    Ask MyeCA experts to review your tax position, deductions, GST compliance, or
+                    Ask MyeCA reviewers to review your tax position, deductions, GST compliance, or
                     business filing path.
                   </p>
                   <Link href="/expert-consultation">

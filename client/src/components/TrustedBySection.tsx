@@ -11,15 +11,15 @@ import { Link } from "wouter";
 
 const trustSignals = [
   {
-    label: "ERI workflow",
-    value: "Portal-aligned",
-    detail: "Filing steps are structured around the official Income Tax Portal flow.",
+    label: "CA-assisted workflow",
+    value: "Portal-aware",
+    detail: "Review and filing steps are structured around official Income Tax portal requirements.",
     icon: ShieldCheck,
   },
   {
     label: "Review model",
-    value: "Optional CA help",
-    detail: "Assisted plans show the review scope and document needs before paid work.",
+    value: "CA review",
+    detail: "Assisted plans show the CA review scope and document needs before paid work.",
     icon: Users2,
   },
   {

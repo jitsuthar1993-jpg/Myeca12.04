@@ -58,7 +58,7 @@ const VERIFICATION_METHODS = [
   {
     icon: Smartphone,
     title: "Aadhaar OTP",
-    desc: "Instant verification using Aadhaar-linked mobile",
+    desc: "Aadhaar OTP verification where available",
     recommended: true,
   },
   {

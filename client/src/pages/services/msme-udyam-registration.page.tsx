@@ -237,7 +237,7 @@ export default function MSMEUdyamRegistrationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Free government portal registration. Unlock loans, subsidies, and tender benefits.
+                Free government portal registration. Benefits depend on eligibility, scheme rules, and lender or department review.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 font-semibold">
@@ -276,7 +276,7 @@ export default function MSMEUdyamRegistrationPage() {
                   </li>
                   <li className="flex items-start">
                     <Award className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
-                    Certificate delivered via email within a few days.
+                    Certificate delivery depends on portal verification and submitted details.
                   </li>
                 </ul>
               </CardContent>
@@ -437,7 +437,7 @@ export default function MSMEUdyamRegistrationPage() {
               MSME Registration Benefits 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Unlock extensive government support, financing, and growth opportunities
+              Review government support, financing, and growth opportunities subject to eligibility
             </p>
           </div>
 
@@ -510,7 +510,7 @@ export default function MSMEUdyamRegistrationPage() {
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span><strong>No consultancy needed:</strong> Process is simple</span>
+                    <span><strong>Self-service available:</strong> Use the official free portal where you are comfortable completing the process.</span>
                   </li>
                 </ul>
               </CardContent>
@@ -524,25 +524,25 @@ export default function MSMEUdyamRegistrationPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.0 }}
         >
-          <Card className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+          <Card className="border-green-100 bg-gradient-to-br from-white via-green-50 to-blue-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Need Help with MSME Registration?
               </h3>
-              <p className="text-green-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 While registration is free and simple, our experts can guide you through the process 
                 and help you understand all available benefits and schemes.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-green-600 hover:bg-green-50 px-8">
+                <Button size="lg" className="bg-green-600 text-white hover:bg-green-700 px-8">
                   <Factory className="w-5 h-5 mr-2" />
                   Register Now - FREE
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-green-600 px-8"
+                  className="border-green-200 bg-white text-green-700 hover:bg-green-50 px-8"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
                   <Phone className="w-5 h-5 mr-2" />
@@ -550,10 +550,10 @@ export default function MSMEUdyamRegistrationPage() {
                 </Button>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-green-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>4.7+ Crore Businesses Registered</span>
+                  <span>Official Udyam Portal Guidance</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -561,7 +561,7 @@ export default function MSMEUdyamRegistrationPage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Lifetime Validity</span>
+                  <span>Validity subject to current Udyam rules</span>
                 </div>
               </div>
             </CardContent>

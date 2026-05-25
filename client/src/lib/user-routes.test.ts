@@ -491,6 +491,31 @@ describe("ITR draft and handoff routes", () => {
     });
   });
 
+  it("normalizes legacy self-filing draft input to CA-assisted filing", async () => {
+    const saved = await request("/api/itr/draft", {
+      method: "PUT",
+      body: JSON.stringify({
+        ...draftPayload,
+        filingPath: "self",
+        workspaceState: { ...draftPayload.workspaceState, selectedFilingPath: "self" },
+      }),
+    });
+
+    expect(saved.response.status).toBe(200);
+    expect(saved.json.draft).toMatchObject({
+      filingPath: "ca",
+      workspaceState: expect.objectContaining({ selectedFilingPath: "ca" }),
+    });
+
+    const loaded = await request("/api/itr/draft");
+
+    expect(loaded.response.status).toBe(200);
+    expect(loaded.json.draft).toMatchObject({
+      filingPath: "ca",
+      workspaceState: expect.objectContaining({ selectedFilingPath: "ca" }),
+    });
+  });
+
   it("submits the MY ITR draft for CA review and creates linked service and notifications", async () => {
     seed("users", "admin_1", {
       email: "admin@example.com",
@@ -532,7 +557,7 @@ describe("ITR draft and handoff routes", () => {
     expect(submitted.json.service).toMatchObject({
       userId: "user_1",
       serviceId: "itr-filing",
-      serviceTitle: "ITR Filing Review",
+      serviceTitle: "CA ITR Filing Review",
       assignedCaId: "ca_1",
       status: "pending",
     });
@@ -578,7 +603,7 @@ describe("role case queues", () => {
     seed("user_services", "service_1", {
       userId: "user_1",
       serviceId: "itr-filing",
-      serviceTitle: "ITR Filing Review",
+      serviceTitle: "CA ITR Filing Review",
       serviceCategory: "Income Tax",
       status: "pending",
       assignedCaId: "ca_1",

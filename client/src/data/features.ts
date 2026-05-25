@@ -24,7 +24,7 @@ export const features: Feature[] = [
   {
     id: "support",
     title: "Expert Support",
-    description: "Get guidance from certified Chartered Accountants and tax experts throughout your filing process.",
+    description: "Get guidance from credential-checked tax professionals where your selected workflow includes expert review.",
     icon: "UserCheck",
     color: "yellow"
   },

@@ -55,9 +55,9 @@ export default function ExpertsIndexPage() {
     <>
       <div className="min-h-screen bg-slate-50">
       <MetaSEO
-        title="Expert CA Review And Tax Advisory | MyeCA.in"
+        title="Expert Review And Tax Advisory | MyeCA.in"
         description="Understand the review scope available from credential-checked tax, GST, and compliance professionals through MyeCA.in."
-        keywords={["CA profiles", "tax experts India", "startup consultants", "certified chartered accountants"]}
+        keywords={["tax experts India", "startup consultants", "credential checked tax professionals"]}
         breadcrumbs={[
           { name: "Home", url: "/" },
           { name: "Experts", url: "/experts" }
@@ -72,15 +72,14 @@ export default function ExpertsIndexPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <Badge className="bg-blue-100 text-blue-600 mb-6 px-4 py-1 text-sm font-bold border-blue-200">
-              Verified Professionals
+              Credential-Checked Professionals
             </Badge>
             <h1 className="type-page-title text-slate-900 mb-6">
-              Guidance from India's <br />
-              <span className="text-blue-600">Top-Tier Financial Minds</span>
+              Guidance from <br />
+              <span className="text-blue-600">Tax And Compliance Reviewers</span>
             </h1>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Every filing is supervised by a licensed professional. Professionalism, 
-              Transparency, and Expertise at your service.
+              Review scope, credentials, and document requirements are shared for eligible engagements before paid work begins.
             </p>
           </m.div>
         </div>

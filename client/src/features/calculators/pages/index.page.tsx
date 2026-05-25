@@ -152,7 +152,7 @@ const calculatorCategories: CalculatorCategory[] = [
     icon: Bot,
     color: "indigo",
     calculators: [
-      { name: "AI Tax Assistant", href: "/tax-assistant", icon: Bot, isNew: true, isPopular: true, description: "Instant answers to tax questions" },
+      { name: "AI Tax Assistant", href: "/tax-assistant", icon: Bot, isNew: true, isPopular: true, description: "Guided answers to common tax questions" },
       { name: "Form 16 Parser", href: "/form16-parser", icon: Scan, isNew: true, description: "Extract salary data from Form 16" },
       { name: "Bank Statement Analyzer", href: "/bank-analyzer", icon: FileSpreadsheet, isNew: true, description: "Auto-categorize transactions" },
       { name: "AIS / 26AS Viewer", href: "/ais-viewer", icon: FileText, isNew: true, description: "Analyze your tax credit statement" },

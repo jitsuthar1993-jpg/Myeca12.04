@@ -47,7 +47,7 @@ export default function FeaturedResources() {
             Expert <span className="text-blue-600 italic">Knowledge Hub</span>
           </h2>
           <p className="text-lg text-slate-600">
-            Deep-dive guides authored by our expert CAs to help you scale your business safely.
+            Deep-dive guides from MyeCA tax and compliance reviewers to help you plan carefully.
           </p>
         </div>
 

@@ -351,7 +351,7 @@ export default function DashboardServicesPage() {
                </div>
                <div>
                   <p className="type-meta font-black text-emerald-800 uppercase tracking-widest mb-1">Expert Availability</p>
-                  <p className="type-meta text-emerald-700 font-semibold">Verified CA experts are active. Anticipated response window: 120 minutes.</p>
+                  <p className="type-meta text-emerald-700 font-semibold">Assigned tax reviewers are active. Response window depends on scope and queue.</p>
                </div>
             </div>
           </div>

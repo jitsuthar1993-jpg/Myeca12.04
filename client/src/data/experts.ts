@@ -80,7 +80,7 @@ export const EXPERTS: Expert[] = [
     languages: ['English', 'Hindi'],
     image: '/images/experts/rajesh.jpg',
     bio: 'Credential-checked professionals review income tax planning and compliance cases using the documents shared for the consultation.',
-    qualifications: ['FCA', 'B.Com (Hons)', 'DISA'],
+    qualifications: ['Credentials checked during scoped engagement'],
     consultationFee: 999,
     availability: {
       days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -97,7 +97,7 @@ export const EXPERTS: Expert[] = [
     languages: ['English', 'Hindi', 'Gujarati'],
     image: '/images/experts/priya.jpg',
     bio: 'Business compliance professionals help with GST, startup taxation, and compliance questions based on your business profile.',
-    qualifications: ['ACA', 'B.Com', 'CS (Executive)'],
+    qualifications: ['Credentials checked during scoped engagement'],
     consultationFee: 1199,
     availability: {
       days: ['Monday', 'Wednesday', 'Friday', 'Saturday'],
@@ -114,7 +114,7 @@ export const EXPERTS: Expert[] = [
     languages: ['English', 'Hindi'],
     image: '/images/experts/amit.jpg',
     bio: 'NRI tax professionals support India tax compliance and FEMA-related questions where specialist review is requested.',
-    qualifications: ['FCA', 'MBA (Finance)', 'DISA'],
+    qualifications: ['Credentials checked during scoped engagement'],
     consultationFee: 1499,
     availability: {
       days: ['Tuesday', 'Thursday', 'Saturday'],
@@ -131,7 +131,7 @@ export const EXPERTS: Expert[] = [
     languages: ['English', 'Hindi', 'Marathi'],
     image: '/images/experts/sneha.jpg',
     bio: 'Salary tax professionals help review HRA, deductions, Form 16, and investment proofs for eligible claims.',
-    qualifications: ['ACA', 'B.Com (Hons)'],
+    qualifications: ['Credentials checked during scoped engagement'],
     consultationFee: 799,
     availability: {
       days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -148,7 +148,7 @@ export const EXPERTS: Expert[] = [
     languages: ['English', 'Hindi', 'Punjabi'],
     image: '/images/experts/vikram.jpg',
     bio: 'Tax notice professionals help review notice sections, deadlines, documents, and draft response positions.',
-    qualifications: ['FCA', 'LLB', 'DISA'],
+    qualifications: ['Credentials checked during scoped engagement'],
     consultationFee: 1999,
     availability: {
       days: ['Monday', 'Wednesday', 'Friday'],

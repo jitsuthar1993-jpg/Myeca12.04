@@ -385,19 +385,19 @@ const AuditServicesPage = () => {
 
         {/* CTA Section */}
         <section className="text-center">
-          <Card className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0">
+          <Card className="border-purple-100 bg-gradient-to-br from-white to-purple-50 shadow-sm">
             <CardContent className="py-12">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Ready for Your Next Audit?
               </h3>
-              <p className="text-lg mb-8 text-purple-100 max-w-2xl mx-auto">
+              <p className="text-lg mb-8 text-slate-600 max-w-2xl mx-auto">
                 Get a clean audit report and build investor confidence. Our startup-focused 
                 CAs ensure smooth and timely audit completion.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
-                  className="bg-white text-purple-600 hover:bg-purple-50 font-semibold"
+                  className="bg-purple-600 text-white hover:bg-purple-700 font-semibold"
                 >
                   Schedule Audit
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -405,7 +405,7 @@ const AuditServicesPage = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="text-white border-white hover:bg-white/10"
+                  className="border-purple-200 bg-white text-purple-700 hover:bg-purple-50"
                 >
                   Get Quote
                 </Button>

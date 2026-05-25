@@ -214,7 +214,7 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
           
           <div class="footer">
             <p>Calculate your taxes at <strong>myeca.in</strong></p>
-            <p>India's trusted tax filing platform</p>
+            <p>MyeCA tax filing and calculator platform</p>
           </div>
         </body>
       </html>
@@ -301,4 +301,3 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
 export function ExportButtons({ title, data }: CalculatorExportProps) {
   return <CalculatorExport title={title} data={data} />;
 }
-

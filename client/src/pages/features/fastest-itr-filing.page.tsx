@@ -21,7 +21,7 @@ const steps = [
   {
     num: "03",
     title: "CA Review",
-    desc: "A licensed Chartered Accountant checks your return for errors, missed deductions, and compliance issues.",
+    desc: "A credential-checked tax professional can review eligible assisted returns for document issues and deduction questions.",
     icon: UserCheck,
     color: "bg-emerald-600",
   },
@@ -155,7 +155,7 @@ export default function FastestITRFilingPage() {
         <div className="max-w-2xl mx-auto px-4">
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
           <h2 className="text-3xl font-extrabold mb-4">Ready to file your ITR?</h2>
-          <p className="text-blue-100 mb-8">A CA will review your return before it's submitted. Starts at ₹499.</p>
+          <p className="text-blue-100 mb-8">CA-assisted review is available where your selected plan scope includes it. Simple filing starts at ₹499.</p>
           <Link href="/itr/form-selector">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Get Started <ArrowRight className="w-5 h-5" />

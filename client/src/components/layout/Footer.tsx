@@ -57,9 +57,9 @@ export default function Footer() {
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           {[
-            ["ERI", "Filing workflow"],
+            ["CA", "Assisted filing"],
             ["Privacy", "Document handling"],
-            ["CA", "Review option"],
+            ["Scope", "Before payment"],
           ].map(([value, label]) => (
             <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
               <div className="text-base font-black tracking-tight text-slate-950">{value}</div>
@@ -105,8 +105,8 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-black tracking-tight">ERI</div>
-              <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">E-filing workflow</div>
+              <div className="text-2xl font-black tracking-tight">CA</div>
+              <div className="text-slate-500 type-meta font-bold uppercase tracking-wider mt-1">Assisted filing</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-2xl font-black tracking-tight">Privacy</div>

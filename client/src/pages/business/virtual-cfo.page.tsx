@@ -77,7 +77,7 @@ const services = [
   },
   {
     title: "Tax & Compliance HQ",
-    desc: "Comprehensive GST, TDS, and Income Tax management handled by expert CAs.",
+    desc: "Comprehensive GST, TDS, and Income Tax management supported by assigned tax experts.",
     icon: ShieldCheck,
     color: "bg-purple-50 text-purple-600",
   },
@@ -167,14 +167,14 @@ export default function VirtualCFOPage() {
               </Button>
             </m.div>
 
-            {/* Trusted By / Proof */}
+            {/* Illustrative proof placeholders */}
             <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.8 }}
               className="mt-16 flex flex-wrap justify-center items-center gap-8 opacity-40 grayscale"
             >
-              <span className="text-sm font-black uppercase tracking-widest text-slate-400">Trusted by founders at</span>
+              <span className="text-sm font-black uppercase tracking-widest text-slate-400">Illustrative founder workflows</span>
               <div className="h-8 w-24 bg-slate-300 rounded-lg" />
               <div className="h-8 w-32 bg-slate-300 rounded-lg" />
               <div className="h-8 w-28 bg-slate-300 rounded-lg" />
@@ -226,15 +226,15 @@ export default function VirtualCFOPage() {
                 Finance Telemetry at Your <span className="text-blue-600">Fingertips</span>
               </h2>
               <p className="text-lg text-slate-600 mb-10 leading-relaxed">
-                Our platform view is designed to give teams faster access to business vitals,
-                reconciliation signals, and CA-reviewed reporting workflows.
+                Our platform view is designed to give teams organized access to business vitals,
+                reconciliation signals, and expert-reviewed reporting workflows where scoped.
               </p>
 
               <div className="space-y-6">
                 {[
-                  { title: "Automated Reconciliation", desc: "Bank-to-Book reconciliation handled daily." },
-                  { title: "Anomaly Detection", desc: "Identify expense leaks and GST risks before they impact you." },
-                  { title: "Predictive Burn Rate", desc: "Always know your runway with high-precision forecasting." }
+                  { title: "Reconciliation Workflow", desc: "Bank-to-book reconciliation tasks organized for review." },
+                  { title: "Exception Review", desc: "Highlight expense and GST items that may need attention." },
+                  { title: "Runway View", desc: "Estimate runway from the data and assumptions you provide." }
                 ].map((f, i) => (
                   <div key={i} className="flex gap-4 items-start">
                     <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-1">
@@ -328,10 +328,10 @@ export default function VirtualCFOPage() {
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 className="absolute -bottom-6 -left-10 p-5 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 max-w-[200px]"
               >
-                <p className="text-xs font-bold text-slate-600 mb-2 italic">"Switching to MyeCA Virtual CFO was the best strategic move we made this year."</p>
+                <p className="text-xs font-bold text-slate-600 mb-2 italic">"The virtual CFO workflow helped us review monthly finance tasks in one place."</p>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-blue-100" />
-                  <span className="type-meta font-bold text-slate-900">Rohit S., CEO at TechFlow</span>
+                  <span className="type-meta font-bold text-slate-900">Anonymized founder note</span>
                 </div>
               </m.div>
             </m.div>
@@ -376,7 +376,7 @@ export default function VirtualCFOPage() {
               <ul className="space-y-6 relative z-10">
                 {[
                   "Affordable: Starting at Rs 49k per month",
-                  "Team of Experts: Dedicated CA + Tech stack",
+                  "Team of Experts: Assigned reviewer + tech stack",
                   "Unified Tech: Finance dashboard workflow",
                   "Faster Reporting: Shared monthly operating view",
                   "Cross-Industry: Advisory patterns for growing businesses"

@@ -104,7 +104,7 @@ Enhanced settings for personalization.
     *   Lighthouse score >90 (Performance, Accessibility, SEO, Best Practices).
     *   Load time <2s for LCP.
 *   **Compatibility**: Chrome, Firefox, Safari, Edge (last 2 versions).
-*   **Security**: HTTPS, Input validation, Data encryption at rest and in transit.
+*   **Security**: HTTPS, input validation, and encryption controls where implemented.
 
 ## 7. Implementation Roadmap
 

@@ -21,15 +21,15 @@ const faqCategories = {
     questions: [
       {
         question: 'What is MyeCA.in?',
-        answer: 'MyeCA.in is India\'s premier digital platform for professional tax filing services. We provide expert Chartered Accountant assistance, smart calculators, and comprehensive tax-related tools to help individuals and businesses file their taxes efficiently and maximize their refunds.'
+        answer: 'MyeCA.in is a digital platform for tax filing, calculators, and business compliance workflows. We provide guided filing, expert-assisted review where applicable, and tax-related tools to help individuals and businesses organize filings and documents.'
       },
       {
         question: 'Is MyeCA.in safe and secure?',
-        answer: 'MyeCA.in uses encrypted document handling and access controls for tax documents. Your personal and financial information should be shared only through the secure workflow, and we do not sell your data.'
+        answer: 'MyeCA.in uses authenticated workflows, private document access, and secure transport controls for tax documents. Your personal and financial information should be shared only through the secure workflow, and we do not sell your data.'
       },
       {
         question: 'How much does it cost to use MyeCA.in?',
-        answer: 'We offer multiple pricing plans: FREE DIY plan for self-filers with basic features, CA Assisted plan at ₹1,499 (including taxes) for expert guidance, and Business plan at ₹2,999 for comprehensive business tax solutions. All plans include access to our tax calculators and basic support.'
+        answer: 'We offer multiple pricing plans: starter ITR intake, CA Assisted plans for expert guidance, and Business plans for comprehensive business tax solutions. All plans show scope before payment and include access to our tax calculators and support.'
       },
       {
         question: 'What documents do I need to file my ITR?',
@@ -47,7 +47,7 @@ const faqCategories = {
     questions: [
       {
         question: 'Which ITR form should I use?',
-        answer: 'ITR form selection depends on your income sources: ITR-1 (Sahaj) for salary/pension up to ₹50 lakhs, ITR-2 for capital gains and foreign income, ITR-3 for business income, ITR-4 for presumptive taxation. Our form selector tool automatically recommends the right form based on your profile.'
+        answer: 'ITR form selection depends on your income sources: ITR-1 (Sahaj) for salary/pension up to ₹50 lakhs, ITR-2 for capital gains and foreign income, ITR-3 for business income, ITR-4 for presumptive taxation. Our form selector suggests a likely form based on your profile, and complex cases should be reviewed before filing.'
       },
       {
         question: 'What is the deadline for filing ITR?',
@@ -77,7 +77,7 @@ const faqCategories = {
       },
       {
         question: 'Which tax regime should I choose - Old or New?',
-        answer: 'It depends on your deductions. New regime offers lower tax rates but no deductions except NPS. Old regime allows deductions under 80C, 80D, HRA, etc. Our Tax Regime Calculator compares both and shows exact savings. Generally, if your deductions exceed ₹2.5 lakhs, old regime is beneficial.'
+        answer: 'It depends on your deductions. New regime offers lower tax rates but fewer deductions. Old regime allows deductions under 80C, 80D, HRA, and other sections. Our Tax Regime Calculator estimates both regimes based on your inputs, and the final choice should consider your actual documents.'
       },
       {
         question: 'How is HRA exemption calculated?',
@@ -115,7 +115,7 @@ const faqCategories = {
       },
       {
         question: 'Are there any hidden charges?',
-        answer: 'No hidden charges. Prices shown include GST and all service fees. Government fees (if any) are clearly mentioned separately. Additional services like revised returns or extra consultations are priced transparently. One-time payment covers complete filing process.'
+        answer: 'Plan pages show GST treatment, inclusions, exclusions, and government fees where relevant before checkout. Additional services such as revised returns, objections, or extra consultations are scoped and priced separately.'
       }
     ]
   },
@@ -129,19 +129,19 @@ const faqCategories = {
       },
       {
         question: 'Who can access my tax information?',
-        answer: 'Only you and assigned CA professionals (for assisted plans) can access your data. Our staff signs strict NDAs. We use role-based access control. No third-party access without explicit consent. You can download and delete your data anytime from the dashboard.'
+        answer: 'Access is scoped to you and assigned professionals for the selected workflow. Use the dashboard for supported download and delete controls, and do not share sensitive tax information outside the secure workflow.'
       },
       {
         question: 'Is my Aadhaar information safe?',
-        answer: 'Yes, Aadhaar data is masked and encrypted. We only store last 4 digits for verification. Full Aadhaar is never stored. We\'re compliant with UIDAI guidelines and use secure APIs for e-verification. Aadhaar is used only for ITR e-filing as mandated by law.'
+        answer: 'Aadhaar details should be shared only where required for the selected tax or compliance workflow. Use the secure dashboard workflow and review the request before uploading or submitting sensitive identity details.'
       },
       {
         question: 'How long do you retain my data?',
-        answer: 'Active user data retained for 7 years as per tax law requirements. Inactive accounts anonymized after 3 years. Payment information retained as per RBI guidelines. You can request data deletion anytime, except for legally required records. Automatic cleanup of temporary files.'
+        answer: 'Retention depends on account status, service requirements, and legal recordkeeping obligations. You can request deletion or use available dashboard controls where supported, except for records that must be retained for legal, tax, accounting, or dispute purposes.'
       },
       {
         question: 'What happens to my documents after filing?',
-        answer: 'Documents are encrypted and archived after successful filing. Available for download for 7 years. Used only for your tax purposes and never shared. You can delete documents manually. We maintain audit trail of all document access for security.'
+        answer: 'Documents remain available in your workspace subject to account, service, and legal retention requirements. Download and delete controls are available where implemented, and access is handled through authenticated workflows.'
       }
     ]
   },
@@ -155,19 +155,19 @@ const faqCategories = {
       },
       {
         question: 'How long does company registration take?',
-        answer: 'Private Limited: 7-10 days, LLP: 7-8 days, OPC: 7-10 days, Partnership: 3-5 days. Timeline includes name approval, document preparation, and ROC filing. Our experts handle entire process including DIN, DSC, and post-incorporation compliances.'
+        answer: 'Company and LLP registration timelines depend on document readiness, name approval, MCA processing, and state-specific requirements. MyeCA provides scope-first support for DIN/DSC, document preparation, filing, and post-incorporation checklist items.'
       },
       {
         question: 'What is GST registration and who needs it?',
-        answer: 'GST registration is mandatory if annual turnover exceeds ₹40 lakhs (₹20 lakhs for special states) or ₹20 lakhs for services (₹10 lakhs special states). Also required for inter-state supply, e-commerce sellers, and certain specified businesses. We handle complete registration in 3-7 days.'
+        answer: 'GST registration is mandatory if turnover or activity crosses applicable thresholds, and can also apply for inter-state supply, e-commerce sellers, and specified businesses. Registration timelines depend on document readiness and department verification.'
       },
       {
         question: 'Do you provide ongoing compliance support?',
-        answer: 'Yes, we offer annual compliance packages covering: Monthly GST returns, TDS returns, Annual ROC filings, Labour law compliance, Income tax returns, Audit support, and compliance calendar with reminders. Packages start from ₹9,999/year with dedicated CA support.'
+        answer: 'Yes, annual compliance packages can cover GST returns, TDS returns, ROC filings, labour-law compliance, income-tax returns, audit support, and compliance calendars. Pricing and assigned expert support are confirmed after scope review.'
       },
       {
         question: 'How much does trademark registration cost?',
-        answer: 'Government fees: ₹4,500 (online) per class for startups/individuals, ₹9,000 for others. Our professional fees: ₹5,999 including trademark search, application filing, and response to objections. Total process takes 8-12 months with regular status updates.'
+        answer: 'Trademark government fees vary by applicant type and class. MyeCA professional fees start after scope review and can include search, application filing, and objection-response support where selected. Registry timelines depend on examination, publication, objections, and opposition.'
       }
     ]
   }

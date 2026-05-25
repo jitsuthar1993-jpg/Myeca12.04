@@ -35,8 +35,8 @@ import { invalidateDocumentCaches, invalidateWorkspaceCaseCaches } from "@/lib/w
 export const ITR_FILING_STEPS = [
   {
     id: "filing-path",
-    title: "Choose Filing Path",
-    description: "Choose File Self ITR or File ITR by CA first, then upload only the records needed for that path.",
+    title: "CA-Assisted Intake",
+    description: "Start the CA-assisted filing workflow, then upload only the records needed for review and official portal filing.",
   },
   {
     id: "documents",
@@ -65,20 +65,14 @@ export function getITRFilingSectionStatuses(
   }, {} as Record<ITRFilingStepId, ITRFilingSectionStatus>);
 }
 
-export type ITRFilingPathId = "self" | "ca";
+export type ITRFilingPathId = "ca";
 
 export const ITR_FILING_PATHS = [
   {
-    id: "self",
-    title: "File Self ITR",
-    description: "Use the recommended form, document checklist, and status tracker while preparing the return yourself.",
-    actionLabel: "Select self filing",
-  },
-  {
     id: "ca",
-    title: "File ITR by CA",
-    description: "Send the uploaded records for CA-assisted preparation, review, filing handoff, and status tracking.",
-    actionLabel: "Select CA filing",
+    title: "CA-Assisted ITR Filing",
+    description: "Send uploaded records for CA preparation, review, user approval, official portal filing support, and acknowledgement tracking.",
+    actionLabel: "Start CA review",
   },
 ] as const satisfies ReadonlyArray<{
   id: ITRFilingPathId;
@@ -88,7 +82,7 @@ export const ITR_FILING_PATHS = [
 }>;
 
 export function canViewITRStatus(requiredDocumentsReady: boolean, selectedFilingPath: ITRFilingPathId | null) {
-  return requiredDocumentsReady && Boolean(selectedFilingPath);
+  return requiredDocumentsReady && selectedFilingPath === "ca";
 }
 
 export const ITR_DOCUMENT_CHECKLIST = [
@@ -507,7 +501,7 @@ export function buildITRDraftWorkspaceState(input: ITRDraftWorkspaceInput) {
     profileDraft: input.profileDraft,
     documentFiles: input.documentFiles,
     updatedSections: input.updatedSections,
-    selectedFilingPath: input.selectedFilingPath,
+    selectedFilingPath: "ca",
     salaryIncome: input.salaryIncome,
     interestIncome: input.interestIncome,
     capitalGainsIncome: input.capitalGainsIncome,
@@ -523,7 +517,7 @@ export function buildITRDraftApiPayload(input: ITRDraftApiInput) {
   const workspaceState = buildITRDraftWorkspaceState(input);
   return {
     assessmentYear: "2026-27",
-    filingPath: input.selectedFilingPath,
+    filingPath: "ca",
     recommendedForm: input.recommendation.recommendedForm,
     sourceSelections: input.sourceSelections,
     filingFacts: input.filingFacts,
@@ -760,7 +754,7 @@ export default function ITRFilingPage() {
   });
   const [documentFiles, setDocumentFiles] = useState<Record<string, string>>({});
   const [updatedSections, setUpdatedSections] = useState<Partial<Record<ITRFilingStepId, boolean>>>({});
-  const [selectedFilingPath, setSelectedFilingPath] = useState<ITRFilingPathId | null>(null);
+  const [selectedFilingPath, setSelectedFilingPath] = useState<ITRFilingPathId | null>("ca");
   const [salaryIncome, setSalaryIncome] = useState(1200000);
   const [interestIncome, setInterestIncome] = useState(25000);
   const [capitalGainsIncome, setCapitalGainsIncome] = useState(0);
@@ -810,7 +804,7 @@ export default function ITRFilingPage() {
   const missingRequiredDocuments = uploadableDocuments.filter((document) => !documentFiles[document.id]);
   const requiredDocumentsReady = missingRequiredDocuments.length === 0;
   const statusReady = canViewITRStatus(requiredDocumentsReady, selectedFilingPath);
-  const canContinueFromCurrentStep = currentStepId !== "filing-path" || Boolean(selectedFilingPath);
+  const canContinueFromCurrentStep = currentStepId !== "filing-path" || selectedFilingPath === "ca";
 
   const regime = useMemo(() => {
     const newTax = estimateNewRegimeTax(totalIncome);
@@ -954,7 +948,7 @@ export default function ITRFilingPage() {
     }
     const restoredPath = draft.filingPath || workspace.selectedFilingPath;
     if (restoredPath === "self" || restoredPath === "ca") {
-      setSelectedFilingPath(restoredPath);
+      setSelectedFilingPath("ca");
     }
     if (typeof workspace.salaryIncome === "number") setSalaryIncome(workspace.salaryIncome);
     if (typeof workspace.interestIncome === "number") setInterestIncome(workspace.interestIncome);
@@ -1061,6 +1055,7 @@ export default function ITRFilingPage() {
 
   const nextStep = () => {
     if (currentStep < ITR_FILING_STEPS.length - 1) {
+      if (currentStepId === "filing-path") markSectionUpdated("filing-path");
       const next = currentStep + 1;
       setCurrentStep(next);
       trackProductionEvent("itr_wizard_step_next", { step: ITR_FILING_STEPS[next].id });
@@ -1089,14 +1084,14 @@ export default function ITRFilingPage() {
               </p>
               <h1 className="type-page-title mt-2 font-black text-slate-950">MY ITR filing workspace</h1>
               <p className="type-body mt-3 max-w-3xl text-slate-600">
-                A compact AY 2026-27 flow: choose File Self ITR or File ITR by CA, upload only the required documents, then track your ITR status.
+                A compact AY 2026-27 CA-assisted flow: upload required records, send them for CA review, approve the final computation, and track official filing steps.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 md:min-w-[360px] md:grid-cols-1">
               <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3">
-                <p className="type-meta font-black uppercase text-blue-700">Likely return</p>
+                <p className="type-meta font-black uppercase text-blue-700">Suggested return</p>
                 <p className="mt-1 text-2xl font-black text-slate-950">{itrRecommendation.recommendedForm}</p>
-                <p className="mt-1 type-support text-blue-900">Auto-selected from your current income profile.</p>
+                <p className="mt-1 type-support text-blue-900">A CA will confirm this from your documents before filing.</p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 type-support text-slate-700">
                 <Save className="mr-2 inline h-4 w-4" />
@@ -1375,7 +1370,7 @@ export default function ITRFilingPage() {
               <div className="mt-6 space-y-5">
                 <div className="rounded-2xl border border-amber-200 bg-white p-5">
                   <p className="font-black text-slate-950">
-                    AY 2026-27 required uploads for {selectedFilingPathDetails?.title ?? "your selected filing path"}
+                    AY 2026-27 required uploads for {selectedFilingPathDetails?.title ?? "CA filing intake"}
                   </p>
                   <p className="mt-1 type-support text-slate-600">
                     Upload the evidence records needed for {itrRecommendation.recommendedForm}. Details such as PAN, Aadhaar status, and refund bank account are confirmed separately instead of asking for attachments.
@@ -1490,15 +1485,15 @@ export default function ITRFilingPage() {
                     <div>
                       <p className="type-meta font-black uppercase text-blue-700">Start here</p>
                       <h3 className="mt-1 type-card-title font-black text-slate-950">
-                        Choose how you want to file this return
+                        Start CA-assisted filing
                       </h3>
                       <p className="mt-1 type-support text-blue-900">
-                        MY ITR will show the upload checklist and status tracker based on this selection. You can change it before final filing.
+                        MY ITR uses a CA review path for ITR preparation, user approval, official portal filing support, e-verification, and acknowledgement upload.
                       </p>
                     </div>
                     <StatusBadge
                       status={selectedFilingPath ? "filed" : "in_progress"}
-                      label={selectedFilingPathDetails?.title ?? "Choose path"}
+                      label={selectedFilingPathDetails?.title ?? "CA intake"}
                     />
                   </div>
                 </div>
@@ -1531,10 +1526,10 @@ export default function ITRFilingPage() {
                         <button
                           type="button"
                           onClick={() => {
-                            setSelectedFilingPath(path.id);
+                            setSelectedFilingPath("ca");
                             markSectionUpdated("filing-path");
                             setCurrentStep(ITR_FILING_STEPS.findIndex((step) => step.id === "documents"));
-                            trackProductionEvent("itr_filing_path_selected", { path: path.id });
+                            trackProductionEvent("itr_filing_path_selected", { path: "ca" });
                           }}
                           className={cn(
                             "mt-5 flex h-10 w-full items-center justify-center gap-2 rounded-lg border px-4 text-sm font-bold transition",
@@ -1543,7 +1538,7 @@ export default function ITRFilingPage() {
                               : "border-amber-200 bg-white text-slate-800 hover:bg-amber-50",
                           )}
                         >
-                          {path.actionLabel}
+                          {selected ? "Continue to documents" : path.actionLabel}
                           <ArrowRight className="h-4 w-4" />
                         </button>
                       </div>
@@ -1560,8 +1555,8 @@ export default function ITRFilingPage() {
                       </h3>
                       <p className="mt-1 type-support text-slate-600">
                         {statusReady
-                          ? "Your document upload and filing path are ready. Open the ITR status tracker for acknowledgement, e-verification, and refund updates."
-                          : "Choose a filing path and upload the required evidence records before opening the ITR status tracker."}
+                          ? "Your CA intake documents are ready. Open the ITR status tracker for review, acknowledgement, e-verification, and refund updates."
+                          : "Upload the required evidence records before opening the ITR status tracker."}
                       </p>
                     </div>
                     {statusReady ? (
@@ -1936,7 +1931,7 @@ export default function ITRFilingPage() {
                     : "border-amber-200 bg-white text-slate-500",
                 )}
               >
-                {currentStepId === "filing-path" ? "Choose a path" : "Continue"}
+                Continue
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : (

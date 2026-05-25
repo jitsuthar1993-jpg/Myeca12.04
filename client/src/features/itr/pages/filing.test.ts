@@ -14,22 +14,22 @@ import {
 } from "./filing.page";
 
 describe("ITR filing workspace", () => {
-  it("starts with filing path selection before document upload", () => {
+  it("starts with CA intake before document upload", () => {
     expect(ITR_FILING_STEPS.map((step) => step.id)).toEqual([
       "filing-path",
       "documents",
     ]);
   });
 
-  it("offers the two filing paths as the entry choice", () => {
-    expect(ITR_FILING_PATHS.map((path) => path.id)).toEqual(["self", "ca"]);
-    expect(ITR_FILING_PATHS.map((path) => path.title)).toEqual(["File Self ITR", "File ITR by CA"]);
+  it("offers only the CA-assisted filing path as the entry choice", () => {
+    expect(ITR_FILING_PATHS.map((path) => path.id)).toEqual(["ca"]);
+    expect(ITR_FILING_PATHS.map((path) => path.title)).toEqual(["CA-Assisted ITR Filing"]);
+    expect(ITR_FILING_PATHS.map((path) => path.title).join(" ")).not.toMatch(/self/i);
   });
 
-  it("allows status viewing only after document upload and filing path selection", () => {
+  it("allows status viewing only after CA intake documents are ready", () => {
     expect(canViewITRStatus(false, null)).toBe(false);
     expect(canViewITRStatus(true, null)).toBe(false);
-    expect(canViewITRStatus(false, "self")).toBe(false);
     expect(canViewITRStatus(true, "ca")).toBe(true);
   });
 
@@ -48,7 +48,7 @@ describe("ITR filing workspace", () => {
       isPresumptiveBusiness: false,
     });
 
-    const uploadableIds = getUploadableITRDocuments(recommendation.requiredDocuments, "self").map(
+    const uploadableIds = getUploadableITRDocuments(recommendation.requiredDocuments, "ca").map(
       (document) => document.id,
     );
 

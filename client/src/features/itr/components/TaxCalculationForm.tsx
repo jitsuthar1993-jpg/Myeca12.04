@@ -118,7 +118,7 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
             Tax Regime Comparison
           </CardTitle>
           <CardDescription>
-            Compare old vs new tax regime to choose the best option
+            Compare old vs new tax regime to choose a suitable option
           </CardDescription>
         </CardHeader>
         <CardContent>

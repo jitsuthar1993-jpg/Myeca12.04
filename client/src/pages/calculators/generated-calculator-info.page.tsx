@@ -52,7 +52,7 @@ export default function GeneratedCalculatorInfoPage() {
           type: page.title,
           features: page.highlights,
           accuracy: "Planning guide",
-          updates: "Reviewed by MyeCA experts",
+          updates: "Maintained by MyeCA reviewers",
         }}
         breadcrumbs={[
           { name: "Home", url: "/" },

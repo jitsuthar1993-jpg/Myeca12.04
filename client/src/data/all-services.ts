@@ -192,7 +192,7 @@ export const allServices: Service[] = [
   {
     id: "document-vault",
     title: "Document Vault", 
-    description: "Manage documents securely",
+    description: "Manage documents with signed-in access",
     category: "ITR Filing Services",
     section: "ITR Filing",
     icon: "FileText",

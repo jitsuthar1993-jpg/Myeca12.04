@@ -184,7 +184,7 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
       "name": expertAuthor,
       "jobTitle": expertAuthor === "CA Ankit S." ? "Founder & Chief Auditor" : "Tax Consultant",
       "url": "https://myeca.in/about",
-      "description": expertAuthor === "CA Ankit S." ? "CA Ankit is a practicing Chartered Accountant with 10+ years of experience in Indian taxation." : "Expert tax advisor at MyeCA.in"
+      "description": expertAuthor === "CA Ankit S." ? "MyeCA tax reviewer focused on Indian taxation." : "Expert tax advisor at MyeCA.in"
     },
     "copyrightHolder": {
       "@type": "Organization",
@@ -294,7 +294,7 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
       {aiSummary && <meta name="llm-content-summary" content={aiSummary} />}
       <meta name="content-version" content="2025-Q1-V2" />
       <meta name="freshness-signal" content={new Date().toISOString().split('T')[0]} />
-      <meta name="expert-verification" content="Certified Chartered Accountant" />
+      <meta name="expert-verification" content="Credential-checked tax reviewer where applicable" />
     </Helmet>
   );
 };

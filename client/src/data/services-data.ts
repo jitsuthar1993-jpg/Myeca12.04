@@ -42,7 +42,7 @@ export const servicesData: ServiceCategory[] = [
           "Eligible deduction review",
           "Form 16 Processing",
           "Investment Optimization",
-          "Free Consultation"
+          "Consultation Request"
         ],
         documents: [
           "PAN Card",
@@ -122,7 +122,7 @@ export const servicesData: ServiceCategory[] = [
           "GSTIN Certificate",
           "HSN Code Mapping",
           "Compliance Calendar",
-          "First Return Free"
+          "First Return Scope Review"
         ],
         documents: [
           "PAN Card",
@@ -471,7 +471,6 @@ export interface ServiceTestimonial {
   id: string;
   name: string;
   location: string;
-  rating: number;
   comment: string;
   serviceType: string;
   avatar?: string;
@@ -483,7 +482,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "1",
     name: "Anonymized taxpayer",
     location: "Mumbai, Maharashtra", 
-    rating: 5,
     comment: "The ITR workflow made form selection and document review easier to follow.",
     serviceType: "income-tax"
   },
@@ -491,7 +489,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "2", 
     name: "Anonymized taxpayer",
     location: "Delhi, NCR",
-    rating: 5,
     comment: "The individual filing workflow helped me move from form selection to e-filing with clearer next steps.",
     serviceType: "income-tax"
   },
@@ -499,7 +496,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "3",
     name: "Anonymized taxpayer",
     location: "Ahmedabad, Gujarat",
-    rating: 5,
     comment: "The capital gains review helped organize the calculation inputs before filing.",
     serviceType: "income-tax"
   },
@@ -509,7 +505,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "4",
     name: "Anonymized business",
     location: "Pune, Maharashtra",
-    rating: 5, 
     comment: "The PF and ESI checklist made the registration documents easier to prepare.",
     serviceType: "labour-law"
   },
@@ -517,7 +512,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "5",
     name: "Anonymized business",
     location: "Chennai, Tamil Nadu", 
-    rating: 5,
     comment: "The labour compliance workflow helped us track PF registration and monthly return tasks.",
     serviceType: "labour-law"
   },
@@ -525,7 +519,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "6",
     name: "Anonymized business",
     location: "Bangalore, Karnataka",
-    rating: 5,
     comment: "The compliance review clarified employee benefit setup documents and filing steps.",
     serviceType: "labour-law"
   },
@@ -535,7 +528,6 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "7",
     name: "Anonymized startup",
     location: "Hyderabad, Telangana",
-    rating: 5,
     comment: "The company registration checklist helped us understand the required documents and approval stages.",
     serviceType: "company-services"
   },
@@ -543,15 +535,13 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     id: "8",
     name: "Anonymized company",
     location: "Kolkata, West Bengal", 
-    rating: 5,
-    comment: "Handled our company registration and GST setup together. The CA team knew exactly what documents we needed and kept us updated throughout.",
+    comment: "The company registration and GST setup workflow made document needs and status updates easier to follow.",
     serviceType: "company-services"
   },
   {
     id: "9",
     name: "Anonymized company",
     location: "Jaipur, Rajasthan",
-    rating: 5,
     comment: "The GST registration and return workflow kept documents, reminders, and review steps in one place.",
     serviceType: "company-services"
   }
