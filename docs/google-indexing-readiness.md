@@ -8,6 +8,7 @@ Run:
 
 ```bash
 npm run check:google-indexing
+npm run check:core-web-vitals
 ```
 
 The command checks the live site for:
@@ -21,6 +22,14 @@ The command checks the live site for:
 - Homepage `index, follow`.
 - `/itr/filing` and `/dashboard` `noindex`.
 - Google Search Console verification through either DNS TXT or a non-empty `google-site-verification` HTML meta tag.
+
+The Core Web Vitals command runs a mobile Chromium lab pass against priority public URLs and checks:
+
+- LCP <= 2500ms.
+- CLS <= 0.100.
+- Synthetic INP <= 200ms when Chromium exposes event timing for the route.
+
+If the synthetic INP result is unavailable, record the field INP value from CrUX, Vercel Speed Insights, or Search Console Core Web Vitals before calling performance verification complete.
 
 Run the command against `https://myeca.in` for the final launch gate. Temporary Vercel aliases may fail sitemap and canonical checks because the production SEO shell intentionally points crawlers to `https://myeca.in`.
 
@@ -59,6 +68,7 @@ Required evidence before calling Search Console setup done:
 - URL Inspection rendered page view shows page content, not only an app-loading skeleton.
 - Page indexing report is checked after Google recrawls the sitemap; record excluded/duplicate/crawled-not-indexed reasons separately.
 - Request indexing is used for the priority URLs that pass live inspection.
+- Core Web Vitals evidence includes LCP, INP, and CLS for priority public pages, with INP sourced from field data when the lab audit cannot observe a synthetic interaction.
 
 If `npm run check:google-indexing` only fails on the verification token, treat that as an account/DNS dependency until the property owner completes the DNS TXT or HTML verification step.
 

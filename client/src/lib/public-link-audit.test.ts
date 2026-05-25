@@ -284,12 +284,23 @@ describe("public link audit", () => {
   it("documents external GSC and backlink execution steps", () => {
     const indexingRunbook = readFileSync("docs/google-indexing-readiness.md", "utf8");
     const campaignRunbook = readFileSync("docs/marketing/itr-season-2026-content-growth-campaign.md", "utf8");
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
+      scripts: Record<string, string>;
+    };
+    const coreWebVitalsScript = readFileSync("scripts/check-core-web-vitals.ts", "utf8");
 
     expect(indexingRunbook).toContain("Domain property");
     expect(indexingRunbook).toContain("DNS TXT");
     expect(indexingRunbook).toContain("URL Inspection");
     expect(indexingRunbook).toContain("Page indexing report");
     expect(indexingRunbook).toContain("sitemap submitted");
+    expect(indexingRunbook).toContain("npm run check:core-web-vitals");
+    expect(indexingRunbook).toContain("LCP");
+    expect(indexingRunbook).toContain("INP");
+    expect(indexingRunbook).toContain("CLS");
+    expect(packageJson.scripts["check:core-web-vitals"]).toBe("tsx scripts/check-core-web-vitals.ts");
+    expect(coreWebVitalsScript).toContain("__MYECA_CWV_OBSERVERS");
+    expect(coreWebVitalsScript).toContain("__MYECA_CWV_PROBE");
 
     expect(campaignRunbook).toContain("CA blogs");
     expect(campaignRunbook).toContain("StartupIndia");
