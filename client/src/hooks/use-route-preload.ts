@@ -72,7 +72,7 @@ const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
     '/profiles': () => import('@/pages/profiles.page'),
     '/documents': () => import('@/pages/documents.page'),
     '/payments': () => import('@/pages/payments.page'),
-    '/settings': () => import('@/pages/settings.page'),
+    '/settings': () => import('@/pages/dashboard/account.page'),
     '/itr': () => import('@/features/itr/pages/filing.page'),
     '/itr/filing': () => import('@/features/itr/pages/filing.page'),
     '/itr/status-tracker': () => import('@/features/itr/pages/status-tracker.page'),

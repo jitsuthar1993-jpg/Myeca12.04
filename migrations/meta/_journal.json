@@ -29,6 +29,13 @@
       "when": 1779531000000,
       "tag": "0003_workspace_case_queue_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779717600000,
+      "tag": "0004_workflow_events_reminders",
+      "breakpoints": true
     }
   ]
 }

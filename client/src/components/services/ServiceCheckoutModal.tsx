@@ -62,6 +62,8 @@ export function ServiceCheckoutModal({
           metadata: {
             ...requirementData,
             source: "service_checkout",
+            formId: "service-checkout-modal",
+            serviceIntent: serviceId,
             requestedAt: new Date().toISOString(),
             requestDescription: `Service checkout request for ${serviceTitle}`,
           }

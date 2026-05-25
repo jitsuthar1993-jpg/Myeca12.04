@@ -10,8 +10,11 @@ describe("route preloading", () => {
     const importMap = hookSource.match(/const importMap: Record<string, \(\) => Promise<unknown>> = \{([\s\S]*?)\};/)?.[1] ?? "";
 
     expect(dashboardRelationship).toContain("'/payments'");
+    expect(dashboardRelationship).toContain("'/settings'");
     expect(privatePrefixes).toContain("'/payments'");
+    expect(privatePrefixes).toContain("'/settings'");
     expect(importMap).toContain("'/payments': () => import('@/pages/payments.page')");
+    expect(importMap).toContain("'/settings': () => import('@/pages/dashboard/account.page')");
   });
 
   it("treats MY ITR filing as a private workspace route while keeping form selector public", () => {

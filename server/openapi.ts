@@ -159,6 +159,18 @@ export function buildOpenApiSpec() {
       "/api/admin/requests/cases": path({
         get: operation("List submitted service and MY ITR cases for admin review", { tags: ["admin", "requests"], auth: true, status: "production" }),
       }),
+      "/api/admin/requests/consultations": path({
+        get: operation("List consultation intake requests for admin review", { tags: ["admin", "requests"], auth: true, status: "production" }),
+      }),
+      "/api/admin/requests/consultations/{id}": path({
+        patch: operation("Update a consultation intake request", { tags: ["admin", "requests"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/admin/requests/payment-links": path({
+        get: operation("List payment-link requests for admin review", { tags: ["admin", "requests", "payments"], auth: true, status: "production" }),
+      }),
+      "/api/admin/requests/payment-links/{id}": path({
+        patch: operation("Update a payment-link request", { tags: ["admin", "requests", "payments"], auth: true, requestBody: true, status: "production" }),
+      }),
       "/api/admin/feedback": path({
         get: operation("List submitted feedback", { tags: ["admin", "feedback"], auth: true, status: "production" }),
       }),
@@ -187,6 +199,21 @@ export function buildOpenApiSpec() {
       }),
       "/api/notifications": path({
         get: operation("List notifications", { tags: ["notifications"], auth: true, status: "production" }),
+      }),
+      "/api/reminders": path({
+        get: operation("List role-aware workflow reminders", { tags: ["reminders"], auth: true, status: "production" }),
+      }),
+      "/api/reminders/process-due": path({
+        post: operation("Process due workflow reminders", { tags: ["reminders"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/workflow-events": path({
+        get: operation("List role-aware workflow activity events", { tags: ["workflow-events"], auth: true, status: "production" }),
+      }),
+      "/api/team/triage": path({
+        get: operation("List team triage intake items", { tags: ["team", "triage"], auth: true, status: "production" }),
+      }),
+      "/api/team/triage/consultation_requests/{id}": path({
+        patch: operation("Update a team triage intake item", { tags: ["team", "triage"], auth: true, requestBody: true, status: "production" }),
       }),
       "/api/teams": path({
         get: operation("List teams visible to current user", { tags: ["teams"], auth: true, status: "mixed" }),
@@ -225,6 +252,7 @@ export function buildOpenApiSpec() {
       }),
       "/api/ca/cases/{id}": path({
         get: operation("Get an assigned CA service case with linked documents", { tags: ["ca"], auth: true, status: "production" }),
+        patch: operation("Update an assigned CA service case", { tags: ["ca"], auth: true, requestBody: true, status: "production" }),
       }),
       "/api/whatsapp/webhook": path({
         post: operation("Receive WhatsApp webhook", { tags: ["webhooks"], status: "production" }),

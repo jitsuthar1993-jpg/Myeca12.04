@@ -42,6 +42,15 @@ export async function notifyAdmins(input: Omit<NotificationInput, "userId">) {
   await Promise.all(admins.map((admin) => createNotification({ ...input, userId: admin.id })));
 }
 
+export async function notifyRole(role: "admin" | "team_member" | "ca" | "user", input: Omit<NotificationInput, "userId">) {
+  const snapshot = await adminDb.collection("users").where("role", "==", role).get();
+  const users = snapshot.docs
+    .map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, unknown>) } as Record<string, unknown> & { id: string }))
+    .filter((user) => String(user.status || "active").toLowerCase() !== "inactive");
+
+  await Promise.all(users.map((user) => createNotification({ ...input, userId: user.id })));
+}
+
 export async function notifyUser(userId: string | null | undefined, input: Omit<NotificationInput, "userId">) {
   if (!userId) return;
   await createNotification({ ...input, userId });

@@ -58,6 +58,12 @@ vi.mock("../../../server/data-admin.js", () => ({
     collection: (name: string) => ({
       ...makeQuery(name),
       doc: (id?: string) => makeDocRef(name, id || `${name}_generated`),
+      add: async (data: Record<string, any>) => {
+        const records = collectionStore(name);
+        const id = `${name}_${records.size + 1}`;
+        records.set(id, { ...data });
+        return { id };
+      },
     }),
   },
 }));

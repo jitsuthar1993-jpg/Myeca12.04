@@ -1,9 +1,12 @@
 import express from "express";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const ORIGINAL_PII_ENCRYPTION_KEY = process.env.PII_ENCRYPTION_KEY;
+
 const mockState = vi.hoisted(() => ({
   store: new Map<string, Map<string, Record<string, any>>>(),
   counter: 0,
+  failAdds: new Set<string>(),
 }));
 
 function collectionStore(name: string) {
@@ -60,6 +63,9 @@ vi.mock("../../../server/data-admin.js", () => ({
       ...makeQuery(name),
       doc: (id?: string) => makeDocRef(name, id || `${name}_${++mockState.counter}`),
       add: async (data: Record<string, any>) => {
+        if (mockState.failAdds.has(name)) {
+          throw new Error(`Simulated ${name} write failure`);
+        }
         const id = `${name}_${++mockState.counter}`;
         const records = collectionStore(name);
         records.set(id, { ...data });
@@ -96,6 +102,9 @@ vi.mock("../../../server/middleware/auth.js", () => {
     requireAdmin: (_req: any, _res: any, next: any) => {
       next();
     },
+    requireTeamMember: (_req: any, _res: any, next: any) => {
+      next();
+    },
     requireCA: (_req: any, _res: any, next: any) => {
       next();
     },
@@ -103,16 +112,33 @@ vi.mock("../../../server/middleware/auth.js", () => {
       attachUser(req);
       next();
     },
+    authenticateToken: (req: any, _res: any, next: any) => {
+      attachUser(req);
+      next();
+    },
   };
 });
 
+vi.mock("../../../server/services/email.js", () => ({
+  EMAIL_TEMPLATES: {},
+  getEmailTemplates: () => [],
+  sendBulkEmails: vi.fn(async () => ({ sent: 0, failed: 0, errors: [] })),
+  sendEmail: vi.fn(async () => ({ success: true, messageId: "test-email" })),
+  sendWorkflowEmail: vi.fn(async () => ({ success: true, messageId: "test-workflow-email" })),
+}));
+
 const { default: userRouter } = await import("../../../server/routes/user.js");
+const { default: profilesRouter } = await import("../../../server/routes/profiles.js");
 const { default: adminRouter } = await import("../../../server/routes/admin.js");
 const { default: caRouter } = await import("../../../server/routes/ca.js");
+const { default: remindersRouter } = await import("../../../server/routes/reminders.js");
+const { default: teamTriageRouter } = await import("../../../server/routes/team-triage.js");
+const { default: workflowEventsRouter } = await import("../../../server/routes/workflow-events.js");
 
 function resetStore() {
   mockState.store.clear();
   mockState.counter = 0;
+  mockState.failAdds.clear();
 }
 
 function seed(collection: string, id: string, data: Record<string, any>) {
@@ -127,8 +153,12 @@ async function request(path: string, options: RequestInit = {}) {
   const app = express();
   app.use(express.json());
   app.use("/api", userRouter);
+  app.use("/api/profiles", profilesRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/ca", caRouter);
+  app.use("/api/reminders", remindersRouter);
+  app.use("/api/team/triage", teamTriageRouter);
+  app.use("/api/workflow-events", workflowEventsRouter);
 
   const server = app.listen(0, "127.0.0.1");
   await new Promise<void>((resolve) => server.once("listening", resolve));
@@ -157,9 +187,48 @@ async function request(path: string, options: RequestInit = {}) {
 beforeEach(resetStore);
 afterEach(() => {
   vi.clearAllMocks();
+  if (ORIGINAL_PII_ENCRYPTION_KEY === undefined) {
+    delete process.env.PII_ENCRYPTION_KEY;
+  } else {
+    process.env.PII_ENCRYPTION_KEY = ORIGINAL_PII_ENCRYPTION_KEY;
+  }
 });
 
 describe("user service routes", () => {
+  it("updates the signed-in account profile when last name and phone are blank", async () => {
+    seed("users", "user_1", {
+      id: "user_1",
+      email: "user_1@example.com",
+      firstName: "Old",
+      lastName: "Name",
+      phoneNumber: "9999999999",
+      role: "user",
+      status: "active",
+    });
+
+    const { response, json } = await request("/api/profile", {
+      method: "PUT",
+      body: JSON.stringify({
+        firstName: "Asha",
+        lastName: "",
+        phoneNumber: "   ",
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json.data.user).toMatchObject({
+      id: "user_1",
+      firstName: "Asha",
+      lastName: "",
+      phoneNumber: null,
+    });
+    expect(collectionStore("users").get("user_1")).toMatchObject({
+      firstName: "Asha",
+      lastName: "",
+      phoneNumber: null,
+    });
+  });
+
   it("derives dashboard pending tasks and recent activity from real records", async () => {
     seed("user_services", "service_1", {
       userId: "user_1",
@@ -376,6 +445,14 @@ describe("user service routes", () => {
   });
 
   it("validates and persists consultation requests with optional signed-in linkage", async () => {
+    seed("users", "team_1", {
+      email: "team@example.com",
+      firstName: "Team",
+      lastName: "Ops",
+      role: "team_member",
+      status: "active",
+    });
+
     const invalid = await request("/api/consultation-requests", {
       method: "POST",
       body: JSON.stringify({
@@ -395,6 +472,8 @@ describe("user service routes", () => {
         phone: "9999999999",
         email: "asha@example.com",
         service: "GST Returns",
+        formId: "expert-consultation-form",
+        serviceIntent: "gst-returns",
         preferredTime: "Tomorrow morning",
         message: "Need support with GST return filing.",
       }),
@@ -407,11 +486,120 @@ describe("user service routes", () => {
       userId: "user_9",
       status: "new",
       service: "GST Returns",
+      formId: "expert-consultation-form",
+      serviceIntent: "gst-returns",
       preferredTime: "Tomorrow morning",
     });
+    expect(readCollection("workflow_events")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "form_submitted",
+          sourceType: "consultation_request",
+          sourceId: valid.json.id,
+          targetRole: "team_member",
+        }),
+      ]),
+    );
+    expect(readCollection("reminders")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceType: "consultation_request",
+          sourceId: valid.json.id,
+          targetRole: "team_member",
+          status: "pending",
+          channels: ["in_app", "email"],
+        }),
+      ]),
+    );
+    expect(readCollection("notifications")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ userId: "team_1", title: "New intake request" }),
+      ]),
+    );
+  });
+
+  it("creates workflow and reminder records for a service request when operational tables are available", async () => {
+    const { response, json } = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "gst-registration",
+        serviceTitle: "GST Registration",
+        serviceCategory: "GST",
+        metadata: {
+          requestDescription: "Need GST registration for a new business",
+          source: "dashboard_services",
+          formId: "dashboard-service-modal",
+          serviceIntent: "gst-registration",
+        },
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(readCollection("workflow_events")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "service_requested",
+          sourceType: "user_service",
+          sourceId: json.id,
+          caseId: json.id,
+          targetRole: "ca",
+        }),
+      ]),
+    );
+    expect(readCollection("reminders")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "New service intake",
+          sourceType: "user_service",
+          sourceId: json.id,
+          caseId: json.id,
+          status: "pending",
+        }),
+      ]),
+    );
+  });
+
+  it("returns the saved service case even if workflow side effects fail", async () => {
+    mockState.failAdds.add("workflow_events");
+
+    const { response, json } = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "gst-registration",
+        serviceTitle: "GST Registration",
+        serviceCategory: "GST",
+        metadata: {
+          requestDescription: "Need GST registration for a new business",
+          source: "dashboard_services",
+        },
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json).toMatchObject({
+      success: true,
+      id: "user_services_1",
+      service: {
+        id: "user_services_1",
+        userId: "user_1",
+        serviceId: "gst-registration",
+        serviceTitle: "GST Registration",
+      },
+    });
+    expect(readCollection("user_services")).toHaveLength(1);
   });
 
   it("records payment-link requests and updates the linked service payment state", async () => {
+    seed("users", "admin_1", {
+      email: "admin@example.com",
+      role: "admin",
+      status: "active",
+    });
+    seed("users", "ca_1", {
+      email: "ca@example.com",
+      role: "ca",
+      status: "active",
+    });
     seed("user_services", "service_1", {
       userId: "user_1",
       serviceId: "notice-compliance",
@@ -445,6 +633,242 @@ describe("user service routes", () => {
         paymentLinkRequestId: "payment_link_requests_1",
       },
     });
+    expect(readCollection("workflow_events")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "payment_link_requested",
+          caseId: "service_1",
+          sourceType: "payment_link_request",
+        }),
+      ]),
+    );
+  });
+});
+
+describe("tax profile routes", () => {
+  it("encrypts PAN and Aadhaar before saving a tax profile", async () => {
+    process.env.PII_ENCRYPTION_KEY = "test-profile-encryption-key";
+
+    const { response, json } = await request("/api/profiles", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Asha Shah",
+        relation: "self",
+        pan: "ABCDE1234F",
+        aadhaar: "123456789012",
+        dateOfBirth: "1990-01-01",
+        address: "Mumbai",
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json).toMatchObject({
+      id: "profiles_1",
+      userId: "user_1",
+      pan: "XXXXX1234F",
+      aadhaar: "XXXXXXXX9012",
+    });
+    expect(collectionStore("profiles").get("profiles_1")).toMatchObject({
+      userId: "user_1",
+      pan: expect.stringMatching(/^enc:v1:/),
+      aadhaar: expect.stringMatching(/^enc:v1:/),
+    });
+    expect(collectionStore("profiles").get("profiles_1")?.pan).not.toBe("ABCDE1234F");
+    expect(collectionStore("profiles").get("profiles_1")?.aadhaar).not.toBe("123456789012");
+  });
+
+  it("returns a clear configuration error when PII encryption is missing", async () => {
+    delete process.env.PII_ENCRYPTION_KEY;
+
+    const { response, json } = await request("/api/profiles", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Asha Shah",
+        relation: "self",
+        pan: "ABCDE1234F",
+      }),
+    });
+
+    expect(response.status).toBe(503);
+    expect(json.error).toBe("Secure profile encryption is not configured.");
+    expect(readCollection("profiles")).toHaveLength(0);
+  });
+});
+
+describe("workflow activity, reminders, and team triage routes", () => {
+  beforeEach(() => {
+    seed("users", "admin_1", {
+      email: "admin@example.com",
+      firstName: "Admin",
+      role: "admin",
+      status: "active",
+    });
+    seed("users", "team_1", {
+      email: "team@example.com",
+      firstName: "Team",
+      role: "team_member",
+      status: "active",
+    });
+    seed("users", "ca_1", {
+      email: "ca@example.com",
+      firstName: "Case",
+      role: "ca",
+      status: "active",
+    });
+    seed("users", "user_1", {
+      email: "user_1@example.com",
+      firstName: "Test",
+      role: "user",
+      assignedCaId: "ca_1",
+      status: "active",
+    });
+  });
+
+  it("records service-case activity and exposes it to the owning user", async () => {
+    const created = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "custom-request",
+        serviceTitle: "Custom Tax Help",
+        serviceCategory: "Custom",
+        metadata: {
+          requestDescription: "Need a careful review.",
+          source: "dashboard_services",
+          formId: "dashboard-service-modal",
+          serviceIntent: "custom-request",
+        },
+      }),
+    });
+
+    expect(created.response.status).toBe(200);
+    const caseId = created.json.id;
+
+    const note = await request(`/api/user-services/${caseId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ metadata: { userNote: "Please call after 4 PM." } }),
+    });
+
+    expect(note.response.status).toBe(200);
+
+    const listed = await request(`/api/workflow-events?caseId=${caseId}`);
+    expect(listed.response.status).toBe(200);
+    expect(listed.json.events).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ type: "service_requested", caseId }),
+        expect.objectContaining({ type: "case_note_added", caseId }),
+      ]),
+    );
+  });
+
+  it("lets team triage public intake without exposing private documents", async () => {
+    seed("consultation_requests", "consult_1", {
+      name: "Asha",
+      phone: "9999999999",
+      email: "asha@example.com",
+      service: "GST Returns",
+      message: "Need a callback",
+      source: "contact_page",
+      formId: "contact-form",
+      serviceIntent: "gst-returns",
+      status: "new",
+      createdAt: new Date("2026-05-15T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-15T08:00:00.000Z"),
+    });
+    seed("documents", "doc_1", {
+      userId: "user_1",
+      userServiceId: "service_1",
+      name: "Private Form 16",
+      status: "active",
+    });
+
+    const listed = await request("/api/team/triage", {
+      headers: { "x-test-user-id": "team_1", "x-test-role": "team_member" },
+    });
+
+    expect(listed.response.status).toBe(200);
+    expect(listed.json.items).toEqual([
+      expect.objectContaining({
+        id: "consult_1",
+        sourceType: "consultation_request",
+        status: "new",
+      }),
+    ]);
+    expect(JSON.stringify(listed.json.items)).not.toContain("Private Form 16");
+
+    const updated = await request("/api/team/triage/consultation_requests/consult_1", {
+      method: "PATCH",
+      headers: { "x-test-user-id": "team_1", "x-test-role": "team_member" },
+      body: JSON.stringify({
+        status: "needs_info",
+        internalNote: "Need GSTIN before escalation.",
+      }),
+    });
+
+    expect(updated.response.status).toBe(200);
+    expect(updated.json.item).toMatchObject({
+      id: "consult_1",
+      status: "needs_info",
+      internalNote: "Need GSTIN before escalation.",
+      triagedBy: "team_1",
+    });
+    expect(readCollection("workflow_events")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "intake_triaged",
+          sourceType: "consultation_request",
+          sourceId: "consult_1",
+          actorUserId: "team_1",
+        }),
+      ]),
+    );
+  });
+
+  it("processes due reminders once and records email delivery state", async () => {
+    seed("reminders", "reminder_1", {
+      title: "Missing Form 16",
+      message: "Please upload Form 16 for your case.",
+      targetRole: "user",
+      targetUserId: "user_1",
+      caseId: "service_1",
+      sourceType: "user_service",
+      sourceId: "service_1",
+      dueAt: new Date("2026-05-15T08:00:00.000Z"),
+      priority: "high",
+      channels: ["in_app", "email"],
+      status: "pending",
+      createdAt: new Date("2026-05-14T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-14T08:00:00.000Z"),
+    });
+
+    const processed = await request("/api/reminders/process-due", {
+      method: "POST",
+      headers: { "x-test-user-id": "admin_1", "x-test-role": "admin" },
+      body: JSON.stringify({ now: "2026-05-16T08:00:00.000Z" }),
+    });
+
+    expect(processed.response.status).toBe(200);
+    expect(processed.json).toMatchObject({ processed: 1 });
+    expect(collectionStore("reminders").get("reminder_1")).toMatchObject({
+      status: "sent",
+      lastDelivery: {
+        inApp: "sent",
+        email: "sent",
+      },
+    });
+    expect(readCollection("notifications")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ userId: "user_1", title: "Missing Form 16" }),
+      ]),
+    );
+
+    const secondRun = await request("/api/reminders/process-due", {
+      method: "POST",
+      headers: { "x-test-user-id": "admin_1", "x-test-role": "admin" },
+      body: JSON.stringify({ now: "2026-05-16T09:00:00.000Z" }),
+    });
+
+    expect(secondRun.response.status).toBe(200);
+    expect(secondRun.json).toMatchObject({ processed: 0 });
   });
 });
 

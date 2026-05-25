@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import {
+  Bell,
   CalendarClock,
   Briefcase,
   CheckCircle2,
@@ -13,6 +14,7 @@ import {
   Phone,
   ReceiptText,
   RefreshCw,
+  UsersRound,
 } from "lucide-react";
 import { Layout } from "@/components/admin/Layout";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +44,7 @@ type ConsultationRequest = {
   service?: string;
   preferredTime?: string;
   message?: string;
-  status?: "new" | "contacted" | "converted" | "closed";
+  status?: "new" | "contacted" | "needs_info" | "escalated_admin" | "escalated_ca" | "converted" | "closed";
   internalNote?: string;
   createdAt?: string;
 };
@@ -80,7 +82,33 @@ type ServiceCaseRequest = {
   } | null;
 };
 
-const consultationStatuses = ["all", "new", "contacted", "converted", "closed"];
+type WorkflowReminder = {
+  id: string;
+  title?: string;
+  message?: string;
+  targetRole?: string;
+  targetUserId?: string | null;
+  caseId?: string | null;
+  sourceType?: string;
+  dueAt?: string | null;
+  status?: string;
+  priority?: string;
+  createdAt?: string;
+};
+
+type TriageItem = {
+  id: string;
+  name?: string;
+  email?: string | null;
+  phone?: string | null;
+  service?: string;
+  status?: string;
+  formId?: string | null;
+  serviceIntent?: string | null;
+  createdAt?: string;
+};
+
+const consultationStatuses = ["all", "new", "contacted", "needs_info", "escalated_admin", "escalated_ca", "converted", "closed"];
 const paymentStatuses = ["all", "requested", "link_sent", "paid", "cancelled"];
 
 function dateLabel(value?: string) {
@@ -102,10 +130,15 @@ function statusBadgeClass(status?: string) {
   switch (status) {
     case "new":
     case "requested":
+    case "needs_info":
       return "bg-amber-50 text-amber-700 border-amber-100";
     case "contacted":
     case "link_sent":
       return "bg-blue-50 text-blue-700 border-blue-100";
+    case "escalated_admin":
+      return "bg-violet-50 text-violet-700 border-violet-100";
+    case "escalated_ca":
+      return "bg-cyan-50 text-cyan-700 border-cyan-100";
     case "converted":
     case "paid":
       return "bg-emerald-50 text-emerald-700 border-emerald-100";
@@ -160,9 +193,27 @@ export default function AdminRequestsPage() {
     },
   });
 
+  const remindersQuery = useQuery<{ reminders: WorkflowReminder[]; total: number }>({
+    queryKey: ["/api/reminders"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/reminders");
+      return response.json();
+    },
+  });
+
+  const teamTriageQuery = useQuery<{ items: TriageItem[]; total: number }>({
+    queryKey: ["/api/team/triage"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/team/triage");
+      return response.json();
+    },
+  });
+
   const consultationRequests = consultationQuery.data?.requests ?? [];
   const paymentRequests = paymentQuery.data?.requests ?? [];
   const caseRequests = caseQuery.data?.cases ?? [];
+  const reminders = remindersQuery.data?.reminders ?? [];
+  const triageItems = teamTriageQuery.data?.items ?? [];
   const openConsultations = useMemo(
     () => consultationRequests.filter((request) => !["converted", "closed"].includes(request.status || "")).length,
     [consultationRequests],
@@ -175,6 +226,14 @@ export default function AdminRequestsPage() {
     () => caseRequests.filter((request) => !["completed", "closed", "cancelled"].includes(request.status || "")).length,
     [caseRequests],
   );
+  const openReminders = useMemo(
+    () => reminders.filter((reminder) => (reminder.status || "pending") === "pending").length,
+    [reminders],
+  );
+  const openTriageItems = useMemo(
+    () => triageItems.filter((item) => !["converted", "closed"].includes(item.status || "")).length,
+    [triageItems],
+  );
 
   const updateConsultation = useMutation({
     mutationFn: async ({ id, ...payload }: { id: string; status?: string; internalNote?: string }) => {
@@ -186,6 +245,8 @@ export default function AdminRequestsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/requests/consultations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/team/triage"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workflow-events"] });
       setSelectedConsultation(null);
       setConsultationNote("");
       toast({ title: "Consultation updated", description: "The request is ready for the next team action." });
@@ -206,6 +267,8 @@ export default function AdminRequestsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/requests/payment-links"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workflow-events"] });
       setSelectedPayment(null);
       setPaymentLink("");
       setPaymentNote("");
@@ -237,9 +300,11 @@ export default function AdminRequestsPage() {
                 consultationQuery.refetch();
                 paymentQuery.refetch();
                 caseQuery.refetch();
+                remindersQuery.refetch();
+                teamTriageQuery.refetch();
               }}
             >
-              <RefreshCw className={cn("mr-2 h-4 w-4", (consultationQuery.isFetching || paymentQuery.isFetching || caseQuery.isFetching) && "animate-spin")} />
+              <RefreshCw className={cn("mr-2 h-4 w-4", (consultationQuery.isFetching || paymentQuery.isFetching || caseQuery.isFetching || remindersQuery.isFetching || teamTriageQuery.isFetching) && "animate-spin")} />
               Refresh
             </Button>
           </div>
@@ -250,8 +315,8 @@ export default function AdminRequestsPage() {
             { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-blue-600 bg-blue-50" },
             { label: "Open Payments", value: openPayments, icon: CreditCard, color: "text-emerald-600 bg-emerald-50" },
             { label: "Open Cases", value: openCases, icon: Briefcase, color: "text-violet-600 bg-violet-50" },
-            { label: "Consultations Shown", value: consultationRequests.length, icon: Phone, color: "text-amber-600 bg-amber-50" },
-            { label: "Payments Shown", value: paymentRequests.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100" },
+            { label: "Open Reminders", value: openReminders, icon: Bell, color: "text-rose-600 bg-rose-50" },
+            { label: "Team Triage", value: openTriageItems, icon: UsersRound, color: "text-amber-600 bg-amber-50" },
           ].map((item) => (
             <Card key={item.label} className="rounded-[22px] border-slate-100 shadow-sm">
               <CardContent className="flex items-center gap-4 p-5">
@@ -327,6 +392,115 @@ export default function AdminRequestsPage() {
                     <TableRow>
                       <TableCell colSpan={5} className="h-32 text-center text-sm font-medium text-slate-500">
                         No submitted service or MY ITR cases yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[26px] border-slate-100 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
+              <CardTitle className="text-base font-black">Reminder Queue</CardTitle>
+              <Badge variant="outline" className="border-rose-100 bg-rose-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-rose-700">
+                {openReminders} open
+              </Badge>
+            </CardHeader>
+            <CardContent className="overflow-x-auto p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Reminder</TableHead>
+                    <TableHead>Target</TableHead>
+                    <TableHead>Due</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {remindersQuery.isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-32 text-center text-slate-500">
+                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
+                        Loading reminders...
+                      </TableCell>
+                    </TableRow>
+                  ) : reminders.length ? (
+                    reminders.slice(0, 8).map((reminder) => (
+                      <TableRow key={reminder.id}>
+                        <TableCell>
+                          <p className="font-black text-slate-900">{reminder.title || "Workflow reminder"}</p>
+                          <p className="mt-1 line-clamp-2 text-xs text-slate-500">{reminder.message || reminder.sourceType || "No message recorded"}</p>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={cn("border px-2 py-1 text-[10px] font-black uppercase tracking-widest", statusBadgeClass(reminder.status))}>
+                            {label(reminder.targetRole)}
+                          </Badge>
+                          {reminder.caseId && (
+                            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">Case linked</p>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <p className="text-xs font-semibold text-slate-600">{reminder.dueAt ? dateLabel(reminder.dueAt) : "Immediate"}</p>
+                          <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{label(reminder.priority)}</p>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-32 text-center text-sm font-medium text-slate-500">
+                        No active reminders yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[26px] border-slate-100 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
+              <CardTitle className="text-base font-black">Team Triage</CardTitle>
+              <Badge variant="outline" className="border-amber-100 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-700">
+                {openTriageItems} open
+              </Badge>
+            </CardHeader>
+            <CardContent className="overflow-x-auto p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Intake</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {teamTriageQuery.isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-32 text-center text-slate-500">
+                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
+                        Loading triage...
+                      </TableCell>
+                    </TableRow>
+                  ) : triageItems.length ? (
+                    triageItems.slice(0, 8).map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          <p className="font-black text-slate-900">{item.name || "Customer"}</p>
+                          <p className="mt-1 text-xs text-slate-500">{item.serviceIntent || item.service || item.formId || "General intake"}</p>
+                          <p className="mt-1 text-xs text-slate-400">{item.phone || item.email || "No contact captured"}</p>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={cn("border px-2 py-1 text-[10px] font-black uppercase tracking-widest", statusBadgeClass(item.status))}>
+                            {label(item.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-xs text-slate-500">{dateLabel(item.createdAt)}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-32 text-center text-sm font-medium text-slate-500">
+                        Team triage is clear.
                       </TableCell>
                     </TableRow>
                   )}

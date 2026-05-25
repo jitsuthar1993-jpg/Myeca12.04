@@ -183,6 +183,8 @@ export default function ExpertConsultationPage() {
         body: JSON.stringify({
           ...formData,
           source: `expert_consultation:${serviceKey}`,
+          formId: "expert-consultation-form",
+          serviceIntent: serviceKey,
         }),
       });
       toast({

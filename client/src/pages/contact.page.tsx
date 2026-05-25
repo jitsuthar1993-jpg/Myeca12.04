@@ -71,6 +71,8 @@ export default function ContactPage() {
           preferredTime: "Business hours",
           message: formData.message.trim(),
           source: "contact_page",
+          formId: "contact-form",
+          serviceIntent: formData.subject.trim(),
         }),
       });
       toast({

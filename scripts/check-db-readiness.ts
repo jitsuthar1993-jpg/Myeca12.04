@@ -23,6 +23,7 @@ export const REQUIRED_DB_TABLES = [
   "payment_link_requests",
   "profiles",
   "referrals",
+  "reminders",
   "reports",
   "site_settings",
   "tax_returns",
@@ -30,6 +31,7 @@ export const REQUIRED_DB_TABLES = [
   "user_services",
   "users",
   "webhooks",
+  "workflow_events",
   "workflows",
 ];
 
@@ -45,6 +47,8 @@ export const REQUIRED_DB_INDEXES = [
   "notifications_data_user_read_idx",
   "profiles_data_status_idx",
   "profiles_data_user_id_idx",
+  "reminders_data_due_status_idx",
+  "reminders_data_target_status_idx",
   "tax_returns_data_profile_idx",
   "tax_returns_data_user_service_idx",
   "tax_returns_data_user_status_idx",
@@ -56,6 +60,8 @@ export const REQUIRED_DB_INDEXES = [
   "users_data_email_idx",
   "users_data_role_idx",
   "users_data_status_idx",
+  "workflow_events_data_case_idx",
+  "workflow_events_data_source_idx",
 ];
 
 export type DbReadinessSnapshot = {

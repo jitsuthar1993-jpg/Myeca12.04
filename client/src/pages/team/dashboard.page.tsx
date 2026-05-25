@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   FileText, 
@@ -10,37 +11,104 @@ import {
   Layers,
   Search,
   Filter,
-  LayoutGrid,
-  List,
-  ChevronRight,
-  Briefcase,
-  Sparkles,
-  ArrowUpRight,
   Zap,
-  TrendingUp,
   ArrowRight
 } from 'lucide-react';
-import { m } from 'framer-motion';
-import { useAuth } from '@/components/AuthProvider';
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
 import { Input } from "@/components/ui/input";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
+type TriageItem = {
+  id: string;
+  sourceType: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  service?: string;
+  message?: string;
+  status?: string;
+  preferredTime?: string;
+  source?: string;
+  formId?: string | null;
+  serviceIntent?: string | null;
+  createdAt?: string;
+};
+
+function triagePriority(status?: string) {
+  if (status === "needs_info") return "High";
+  if (status === "new") return "Medium";
+  return "Low";
+}
+
+function triageLabel(value?: string) {
+  return (value || "new").replace(/_/g, " ");
+}
+
+function triageTitle(item: TriageItem) {
+  return item.serviceIntent || item.service || item.source || "Customer intake";
+}
+
+function triageContact(item: TriageItem) {
+  return item.phone || item.email || "No contact captured";
+}
+
+function triageTime(value?: string) {
+  if (!value) return "New";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "New";
+  return new Intl.DateTimeFormat("en-IN", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
 
 export default function TeamDashboard() {
-  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const activeTasks = [
-    { id: 1, title: "Review 'Section 80C' Article", assignedBy: "Admin", priority: "High", deadline: "Today", color: "red", status: "Pending" },
-    { id: 2, title: "Upload Daily Tax Updates", assignedBy: "System", priority: "Medium", deadline: "2 PM", color: "blue", status: "Active" },
-    { id: 3, title: "Respond to Help Center Tickets", assignedBy: "Admin", priority: "Low", deadline: "EOD", color: "emerald", status: "Active" }
-  ];
+  const triageQuery = useQuery<{ items: TriageItem[]; total: number }>({
+    queryKey: ["/api/team/triage"],
+    queryFn: async () => {
+      const response = await apiRequest("/api/team/triage");
+      return response.json();
+    },
+  });
+
+  const updateTriage = useMutation({
+    mutationFn: async ({ id, status, internalNote }: { id: string; status: string; internalNote?: string }) => {
+      const response = await apiRequest(`/api/team/triage/consultation_requests/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status, internalNote }),
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/team/triage"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/requests/consultations"] });
+      toast({ title: "Triage updated", description: "The intake queue is ready for the next action." });
+    },
+    onError: (error: any) => {
+      toast({ title: "Update failed", description: error?.message || "Please try again.", variant: "destructive" });
+    },
+  });
+
+  const activeTasks = (triageQuery.data?.items || []).filter((item) => {
+    const haystack = `${item.name || ""} ${item.email || ""} ${item.phone || ""} ${item.service || ""} ${item.message || ""}`.toLowerCase();
+    return !searchTerm || haystack.includes(searchTerm.toLowerCase());
+  });
 
   const contentStats = [
-    { label: "Blog Posts", value: "24", change: "+3", icon: FileText, color: "blue" },
-    { label: "Reviews", value: "05", change: "-2", icon: Clock, color: "amber" },
-    { label: "Total Reach", value: "12.5k", change: "+12%", icon: Activity, color: "indigo" },
-    { label: "Comments", value: "82", change: "+14", icon: MessageSquare, color: "emerald" }
+    { label: "Open Intake", value: String(activeTasks.length).padStart(2, "0"), change: "Live", icon: MessageSquare, color: "blue" },
+    { label: "Needs Info", value: String(activeTasks.filter((item) => item.status === "needs_info").length).padStart(2, "0"), change: "Follow", icon: Clock, color: "amber" },
+    { label: "Escalated", value: String(activeTasks.filter((item) => String(item.status || "").startsWith("escalated")).length).padStart(2, "0"), change: "Review", icon: Activity, color: "indigo" },
+    { label: "New Today", value: String(activeTasks.filter((item) => item.status === "new").length).padStart(2, "0"), change: "Now", icon: FileText, color: "emerald" }
   ];
 
   return (
@@ -55,7 +123,7 @@ export default function TeamDashboard() {
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Team Portal</h1>
             <p className="text-slate-500 max-w-2xl text-sm font-medium">
-              Collaborate on content, manage tax updates, and maintain the platform's knowledge base.
+              Triage new consultations, follow up on missing information, and escalate cases to admin or CA owners.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -104,6 +172,8 @@ export default function TeamDashboard() {
                     <Input 
                       placeholder="Search tasks..." 
                       className="h-9 w-full rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium sm:w-60"
+                      value={searchTerm}
+                      onChange={(event) => setSearchTerm(event.target.value)}
                     />
                  </div>
                  <Button variant="outline" size="sm" className="h-9 w-full rounded-lg border-slate-200 text-slate-500 hover:bg-slate-50 sm:w-9">
@@ -134,31 +204,77 @@ export default function TeamDashboard() {
                                  <Layers className="h-4 w-4" />
                               </div>
                               <div>
-                                 <p className="text-sm font-bold text-slate-900 leading-tight mb-0.5">{task.title}</p>
-                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">{task.status}</p>
+                                 <p className="text-sm font-bold text-slate-900 leading-tight mb-0.5">{triageTitle(task)}</p>
+                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">{task.name || "Customer"} / {task.formId || task.sourceType}</p>
                               </div>
                            </div>
                          </td>
                          <td className="px-8 py-5">
-                           <p className="text-xs font-bold text-slate-600">{task.assignedBy}</p>
+                           <p className="text-xs font-bold text-slate-600">{triageContact(task)}</p>
+                           <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">{triageLabel(task.status)}</p>
                          </td>
                          <td className="px-8 py-5">
                            <Badge className={cn(
                              "rounded-full px-3 py-1 text-[9px] font-bold border-none shadow-sm",
-                             task.priority === 'High' ? "bg-red-50 text-red-600" :
-                             task.priority === 'Medium' ? "bg-blue-50 text-blue-600" :
+                             triagePriority(task.status) === 'High' ? "bg-red-50 text-red-600" :
+                             triagePriority(task.status) === 'Medium' ? "bg-blue-50 text-blue-600" :
                              "bg-emerald-50 text-emerald-600"
                            )}>
-                             {task.priority.toUpperCase()}
+                             {triagePriority(task.status).toUpperCase()}
                            </Badge>
                          </td>
                          <td className="px-8 py-5">
-                           <p className="text-xs font-bold text-slate-900">{task.deadline}</p>
+                           <p className="text-xs font-bold text-slate-900">{triageTime(task.createdAt)}</p>
                          </td>
                          <td className="px-8 py-5 text-right">
-                           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50">
-                             <ArrowRight className="h-4 w-4" />
-                           </Button>
+                           <div className="flex flex-wrap justify-end gap-2">
+                             <Button
+                               variant="outline"
+                               size="sm"
+                               className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                               disabled={updateTriage.isPending}
+                               onClick={() => updateTriage.mutate({ id: task.id, status: "contacted" })}
+                             >
+                               Contacted
+                             </Button>
+                             <Button
+                               variant="outline"
+                               size="sm"
+                               className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                               disabled={updateTriage.isPending}
+                               onClick={() => updateTriage.mutate({ id: task.id, status: "needs_info" })}
+                             >
+                               Need info
+                             </Button>
+                             <Button
+                               variant="outline"
+                               size="sm"
+                               className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                               disabled={updateTriage.isPending}
+                               onClick={() => updateTriage.mutate({ id: task.id, status: "escalated_ca" })}
+                             >
+                               Escalate CA
+                             </Button>
+                             <Button
+                               variant="outline"
+                               size="sm"
+                               className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                               disabled={updateTriage.isPending}
+                               onClick={() => updateTriage.mutate({ id: task.id, status: "closed" })}
+                             >
+                               Close
+                             </Button>
+                             <Button
+                               variant="ghost"
+                               size="icon"
+                               className="h-8 w-8 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50"
+                               disabled={updateTriage.isPending}
+                               onClick={() => updateTriage.mutate({ id: task.id, status: "escalated_admin" })}
+                               title="Escalate to admin"
+                             >
+                               <ArrowRight className="h-4 w-4" />
+                             </Button>
+                           </div>
                          </td>
                        </tr>
                      ))}
@@ -174,26 +290,73 @@ export default function TeamDashboard() {
                          <Layers className="h-4 w-4" />
                        </div>
                        <div className="min-w-0 flex-1">
-                         <p className="text-sm font-bold leading-tight text-slate-900">{task.title}</p>
-                         <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-slate-400">{task.status}</p>
+                         <p className="text-sm font-bold leading-tight text-slate-900">{triageTitle(task)}</p>
+                         <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-slate-400">{task.name || "Customer"} / {triageLabel(task.status)}</p>
                        </div>
                      </div>
                      <div className="flex items-center justify-between gap-3">
                        <div className="min-w-0">
                          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">Coordinator</p>
-                         <p className="truncate text-xs font-bold text-slate-700">{task.assignedBy}</p>
+                         <p className="truncate text-xs font-bold text-slate-700">{triageContact(task)}</p>
                        </div>
                        <div className="flex shrink-0 items-center gap-2">
                          <Badge className={cn(
                            "rounded-full border-none px-3 py-1 text-[9px] font-bold",
-                           task.priority === 'High' ? "bg-red-50 text-red-600" :
-                           task.priority === 'Medium' ? "bg-blue-50 text-blue-600" :
+                           triagePriority(task.status) === 'High' ? "bg-red-50 text-red-600" :
+                           triagePriority(task.status) === 'Medium' ? "bg-blue-50 text-blue-600" :
                            "bg-emerald-50 text-emerald-600"
                          )}>
-                           {task.priority.toUpperCase()}
+                           {triagePriority(task.status).toUpperCase()}
                          </Badge>
-                         <span className="text-xs font-bold text-slate-900">{task.deadline}</span>
+                         <span className="text-xs font-bold text-slate-900">{triageTime(task.createdAt)}</span>
                        </div>
+                     </div>
+                     <div className="flex flex-wrap gap-2">
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                         disabled={updateTriage.isPending}
+                         onClick={() => updateTriage.mutate({ id: task.id, status: "contacted" })}
+                       >
+                         Contacted
+                       </Button>
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                         disabled={updateTriage.isPending}
+                         onClick={() => updateTriage.mutate({ id: task.id, status: "needs_info" })}
+                       >
+                         Need info
+                       </Button>
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                         disabled={updateTriage.isPending}
+                         onClick={() => updateTriage.mutate({ id: task.id, status: "escalated_admin" })}
+                       >
+                         Escalate admin
+                       </Button>
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                         disabled={updateTriage.isPending}
+                         onClick={() => updateTriage.mutate({ id: task.id, status: "escalated_ca" })}
+                       >
+                         Escalate CA
+                       </Button>
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="h-8 rounded-lg border-slate-200 px-3 text-[10px] font-bold uppercase tracking-widest"
+                         disabled={updateTriage.isPending}
+                         onClick={() => updateTriage.mutate({ id: task.id, status: "closed" })}
+                       >
+                         Close
+                       </Button>
                      </div>
                    </div>
                  ))}

@@ -20,6 +20,8 @@ export const auditLogs = pgTable("audit_logs", documentColumns());
 export const referrals = pgTable("referrals", documentColumns());
 export const teams = pgTable("teams", documentColumns());
 export const notifications = pgTable("notifications", documentColumns());
+export const workflowEvents = pgTable("workflow_events", documentColumns());
+export const reminders = pgTable("reminders", documentColumns());
 export const workflows = pgTable("workflows", documentColumns());
 export const reports = pgTable("reports", documentColumns());
 export const chatSessions = pgTable("chat_sessions", documentColumns());
@@ -58,6 +60,8 @@ export const schema = {
   referrals,
   teams,
   notifications,
+  workflowEvents,
+  reminders,
   workflows,
   reports,
   chatSessions,

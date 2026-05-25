@@ -1,5 +1,5 @@
 import { Switch, Route } from "wouter";
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import HomePage from "@/pages/home.page";
@@ -105,8 +105,6 @@ const AuthCallbackPage = lazyWithRetry(() => import("@/pages/auth/callback.page"
 const ForgotPasswordPage = lazyWithRetry(() => import("@/pages/auth/forgot-password.page"));
 const AdminLoginPage = lazyWithRetry(() => import("@/pages/auth/admin-login.page"));
 const UserDashboard = lazyWithRetry(() => import("@/pages/user-dashboard.page"));
-const AccountSettingsPage = lazyWithRetry(() => import("@/pages/settings/account.page"));
-const ProfilePage = lazyWithRetry(() => import("@/pages/profile.page"));
 const ProfilesPage = lazyWithRetry(() => import("@/pages/profiles.page"));
 const ExpertsIndexPage = lazyWithRetry(() => import("@/pages/experts/index.page"));
 const ExpertProfilePage = lazyWithRetry(() => import("@/pages/experts/profile.page"));
@@ -150,7 +148,6 @@ const CompactFilingGuidePage = lazyWithRetry(() => import("@/features/itr/pages/
 const SearchPage = lazyWithRetry(() => import("@/pages/search.page"));
 const AnalyticsPage = lazyWithRetry(() => import("@/pages/analytics.page"));
 const AnalyticsDashboardPage = lazyWithRetry(() => import("@/pages/analytics-dashboard.page"));
-const SettingsPage = lazyWithRetry(() => import("@/pages/settings.page"));
 const ApiDocsPage = lazyWithRetry(() => import("@/pages/api-docs.page"));
 const ExportCenterPage = lazyWithRetry(() => import("@/pages/export-center.page"));
 const IntegrationsPage = lazyWithRetry(() => import("@/pages/integrations.page"));
@@ -315,7 +312,7 @@ export default function Routes() {
         )} />
         <Route path="/experts" component={ExpertsIndexPage} />
         <Route path="/experts/:id" component={ExpertProfilePage} />
-        <Route path="/profiles" component={ProfilesPage} />
+        <Route path="/profiles" component={() => <RequireAuth><ProfilesPage /></RequireAuth>} />
         <Route path="/documents" component={() => <RequireAuth><DocumentsPage /></RequireAuth>} />
         <Route path="/admin/blog-management" component={() => (
           <RequireRole roles={['admin', 'team_member']}>

@@ -13,6 +13,7 @@ describe("app layout routing", () => {
 
     expect(dashboardPaths).toContain("/itr/filing");
     expect(dashboardPaths).toContain("/payments");
+    expect(dashboardPaths).toContain("/settings");
     expect(dashboardPaths).not.toContain("/itr");
   });
 });

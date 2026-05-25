@@ -327,6 +327,33 @@ export const EMAIL_TEMPLATES = {
       
       Secure My Account: https://myeca.in/settings/account
     `
+  },
+
+  workflowNotification: {
+    subject: "MyeCA.in workflow update",
+    html: (data: { title: string; message: string; actionUrl?: string }) => `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="padding: 28px; background-color: #eff6ff; border-bottom: 1px solid #dbeafe;">
+          <h1 style="color: #172554; margin: 0; font-size: 22px;">${data.title}</h1>
+        </div>
+        <div style="padding: 28px; background-color: #ffffff;">
+          <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+            ${data.message}
+          </p>
+          ${data.actionUrl ? `<p style="margin: 28px 0 0;"><a href="${data.actionUrl}" style="background-color: #2563eb; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Open MyeCA workspace</a></p>` : ""}
+        </div>
+        <div style="padding: 18px 28px; background-color: #f8fafc; color: #64748b; font-size: 13px;">
+          This update was sent for a MyeCA.in workflow or reminder.
+        </div>
+      </div>
+    `,
+    text: (data: { title: string; message: string; actionUrl?: string }) => `
+      ${data.title}
+
+      ${data.message}
+
+      ${data.actionUrl ? `Open MyeCA workspace: ${data.actionUrl}` : ""}
+    `
   }
 };
 
@@ -385,7 +412,7 @@ export async function sendEmail(
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@myeca.in',
       to: data.to,
-      subject: emailTemplate.subject,
+      subject: data.subject || emailTemplate.subject,
       html: emailTemplate.html(data),
       text: emailTemplate.text ? emailTemplate.text(data) : undefined
     };
@@ -438,4 +465,17 @@ export async function sendBulkEmails(
   }
   
   return { sent, failed, errors };
+}
+
+export async function sendWorkflowEmail(
+  to: string,
+  data: { subject?: string; title: string; message: string; actionUrl?: string },
+): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const result = await sendEmail("workflowNotification", { ...data, to });
+  return result.success
+    ? result
+    : {
+        ...result,
+        error: result.error || `Failed to send workflow email: ${data.subject || data.title}`,
+      };
 }

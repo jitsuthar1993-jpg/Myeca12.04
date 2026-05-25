@@ -71,6 +71,8 @@ export default function ActivationPage() {
               ? `Activation started after confirming documents: ${uploadedDocs.join(", ")}`
               : "Activation started from the guided service flow.",
             source: "service_activation",
+            formId: "service-activation-flow",
+            serviceIntent: service.id,
             requestedAt,
             originalServicePath: `/services/activate/${service.id}`,
           }

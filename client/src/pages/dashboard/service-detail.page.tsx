@@ -3,6 +3,7 @@ import { Link, useParams } from 'wouter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft,
+  Bell,
   Briefcase,
   CheckCircle2,
   Clock,
@@ -53,10 +54,29 @@ type LinkedDocument = {
   createdAt?: string;
 };
 
+type WorkflowActivity = {
+  id: string;
+  type?: string;
+  title?: string;
+  message?: string;
+  createdAt?: string;
+};
+
+type Reminder = {
+  id: string;
+  title?: string;
+  message?: string;
+  status?: string;
+  priority?: string;
+  dueAt?: string;
+};
+
 type ServiceCaseResponse = {
   success: boolean;
   service: ServiceCase;
   documents: LinkedDocument[];
+  activity?: WorkflowActivity[];
+  reminders?: Reminder[];
 };
 
 function statusLabel(value?: string | null) {
@@ -92,6 +112,8 @@ export default function ServiceDetailPage() {
 
   const service = data?.service;
   const documents = data?.documents || [];
+  const activity = data?.activity || [];
+  const reminders = data?.reminders || [];
   const requestDescription = service?.metadata?.requestDescription || '';
 
   const noteMutation = useMutation({
@@ -287,6 +309,36 @@ export default function ServiceDetailPage() {
 
             <Card className="rounded-[28px] border-slate-100 shadow-sm">
               <CardHeader className="border-b border-slate-50 p-6">
+                <CardTitle className="type-card-title font-black">Activity</CardTitle>
+                <CardDescription className="type-support">Updates from forms, uploads, payments, reminders, and expert actions.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {activity.length ? (
+                  <div className="divide-y divide-slate-50">
+                    {activity.slice(0, 8).map((item) => (
+                      <div key={item.id} className="flex gap-3 p-5">
+                        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-blue-600">
+                          <MessageSquare className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="type-support font-black text-slate-900">{item.title || statusLabel(item.type)}</p>
+                          <p className="mt-1 type-meta font-medium text-slate-500">{item.message || 'Workflow activity recorded.'}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-8 text-center">
+                    <MessageSquare className="mx-auto mb-3 h-9 w-9 text-slate-300" />
+                    <p className="type-support font-black text-slate-900">No activity recorded yet</p>
+                    <p className="mt-1 type-meta font-medium text-slate-500">Updates will appear here as the case moves.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-[28px] border-slate-100 shadow-sm">
+              <CardHeader className="border-b border-slate-50 p-6">
                 <CardTitle className="type-card-title font-black">Linked Documents</CardTitle>
                 <CardDescription className="type-support">Files uploaded here stay attached to this service case.</CardDescription>
               </CardHeader>
@@ -324,6 +376,37 @@ export default function ServiceDetailPage() {
           </div>
 
           <div className="space-y-8">
+            <Card className="rounded-[28px] border-slate-100 shadow-sm">
+              <CardHeader className="border-b border-slate-50 p-6">
+                <CardTitle className="type-card-title font-black">Reminders</CardTitle>
+                <CardDescription className="type-support">Open follow-ups linked to this service case.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 p-6">
+                {reminders.length ? (
+                  reminders.slice(0, 5).map((reminder) => (
+                    <div key={reminder.id} className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <Bell className="h-4 w-4 text-amber-700" />
+                          <p className="type-support font-black text-amber-950">{reminder.title || 'Reminder'}</p>
+                        </div>
+                        <Badge variant="outline" className="type-meta border-amber-200 bg-white px-2 py-1 font-black text-amber-700">
+                          {statusLabel(reminder.status)}
+                        </Badge>
+                      </div>
+                      <p className="mt-2 type-meta font-medium text-amber-800">{reminder.message || 'Follow-up is pending.'}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-center">
+                    <Bell className="mx-auto mb-2 h-8 w-8 text-slate-300" />
+                    <p className="type-support font-black text-slate-900">No reminders yet</p>
+                    <p className="mt-1 type-meta font-medium text-slate-500">We will show missing information, payment, and expert follow-ups here.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <Card className="rounded-[28px] border-slate-100 shadow-sm">
               <CardHeader className="border-b border-slate-50 p-6">
                 <CardTitle className="type-card-title font-black">Case Upload</CardTitle>
