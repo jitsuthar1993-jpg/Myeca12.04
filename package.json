@@ -18,6 +18,7 @@
     "test:cloudflare-pages": "npm run build && tsx scripts/check-cloudflare-pages.ts",
     "test:e2e": "npm.cmd run build && playwright test",
     "check:env": "tsx scripts/check-env.ts",
+    "check:static-seo": "tsx scripts/validate-static-seo.ts",
     "check:typography": "tsx scripts/check-typography.ts",
     "check:itr-campaign": "tsx scripts/check-itr-campaign-ops.ts",
     "db:generate": "dotenv -e .env -- drizzle-kit generate",

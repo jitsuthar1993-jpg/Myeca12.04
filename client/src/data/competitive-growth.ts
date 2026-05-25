@@ -126,7 +126,7 @@ export const competitorPages = [
       "Use MyeCA when you want assisted filing plus self-serve document status, clear plan scope and post-filing support visibility.",
     goodPoints: ["Strong assisted filing pitch", "AI-powered positioning", "Notice and compliance services", "Affordable entry plans"],
     myeCAEdge: ["Customer-visible case stages", "Document viewer with extraction review", "Visible scope notes", "Review comments attached to files"],
-    primaryCta: "/documents",
+    primaryCta: "/services/document-vault",
     source: "https://www.taxbuddy.com/pricing-itr-app",
   },
   {

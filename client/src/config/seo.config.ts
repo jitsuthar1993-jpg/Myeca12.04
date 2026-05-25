@@ -22,8 +22,8 @@ export interface SEOConfigItem {
 export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Core Pages
   '/': {
-    title: 'Expert Income Tax Filing & ITR e-Filing Services India AY 2026-27',
-    description: 'File your Income Tax Return (ITR) for AY 2026-27 with guided workflows, private document access, and optional CA-assisted review.',
+    title: 'ITR Filing Services India AY 2026-27 | CA Help | myeca.in',
+    description: 'File ITR for FY 2025-26 and AY 2026-27 with CA-led review, secure uploads, AIS and Form 26AS checks, refund guidance, salary, MSME, GST support online.',
     keywords: ['ITR filing India', 'income tax return online', 'CA assisted tax filing', 'e-filing 2026', 'tax consultant near me'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }]
@@ -356,6 +356,22 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
 
   // Service Pages
+  '/itr-filing': {
+    title: 'ITR Filing Services AY 2026-27 | CA-Led Review | myeca.in',
+    description: 'File ITR for FY 2025-26 and AY 2026-27 with CA-led review, Form 16, AIS, refund checks, secure document handling, and guided filing support online now.',
+    keywords: ['ITR filing services', 'AY 2026-27 ITR filing', 'FY 2025-26 tax return', 'CA assisted ITR filing'],
+    type: 'service',
+    serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Filing', url: '/itr-filing' }]
+  },
+  '/gst-filing': {
+    title: 'GST Filing Services India | Returns, ITC Review | myeca.in',
+    description: 'Manage GST filing for FY 2025-26 with return prep, ITC review, invoice checks, due-date tracking, and CA-led support for MSMEs and manufacturers in India.',
+    keywords: ['GST filing services', 'GST return filing India', 'FY 2025-26 GST filing', 'ITC review support'],
+    type: 'service',
+    serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'GST Filing', url: '/gst-filing' }]
+  },
   '/services/gst-registration': {
     title: 'GST Registration Online India | Fast & Easy Process | MyeCA.in',
     description: 'Get GST registration support online with document preparation, portal filing guidance, query support, and transparent pricing.',
@@ -397,8 +413,8 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'MSME Registration', url: '/services/msme-udyam-registration' }]
   },
   '/about': {
-    title: 'About Us | MyeCA.in Tax Filing Platform',
-    description: 'Learn about MyeCA.in, our mission to simplify tax filing, and the team building practical tax and compliance workflows.',
+    title: 'About myeca.in CA Tax Filing Platform | Rajasthan India',
+    description: 'Learn how myeca.in blends CA-led tax filing, secure document workflows, and practical FY 2025-26 / AY 2026-27 compliance support from Bikaner, Rajasthan.',
     keywords: ['about myeca', 'tax experts India', 'fintech startup India', 'tax filing company'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'About Us', url: '/about' }]
@@ -411,17 +427,17 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Trust & Security', url: '/trust' }]
   },
   '/contact': {
-    title: 'Contact Us | MyeCA.in Support & Consultation',
-    description: 'Get in touch with MyeCA.in for tax consultation, support, and business inquiries during business hours.',
+    title: 'Contact myeca.in CA Tax Filing Help | Bikaner Rajasthan',
+    description: 'Contact myeca.in for FY 2025-26 and AY 2026-27 ITR filing, GST compliance, secure document support, and CA-led tax advisory from Bikaner, Rajasthan CA.',
     keywords: ['contact tax expert', 'myeca support', 'tax helpline India', 'CA consultation online'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Contact Us', url: '/contact' }]
   },
   '/blog': {
-    title: 'AY 2026-27 ITR Filing Guides | MyeCA.in Blog',
-    description: 'CA-reviewed AY 2026-27 ITR filing guides on due dates, ITR forms, Form 16, AIS, refunds, tax regime, capital gains, NRI filing, and notices.',
+    title: 'ITR Filing Blog AY 2026-27 | CA Tax Guides India | myeca.in',
+    description: 'Read CA-reviewed FY 2025-26 and AY 2026-27 tax guides on ITR forms, Form 16, AIS, refunds, GST, capital gains, NRI filing, and notices from myeca.in now.',
     keywords: ['AY 2026-27 ITR filing', 'ITR filing guide', 'income tax return India', 'Form 16 guide', 'AIS Form 26AS', 'tax regime comparison'],
-    type: 'article',
+    type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Blog', url: '/blog' }]
   },
   '/experts': {
@@ -716,7 +732,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     title: 'AY 2026-27 ITR Season Hub | Checklists, Tools & Filing Paths',
     description: 'Use MyeCA checklists and tools for AY 2026-27 ITR filing, including Form 16, AIS/Form 26AS, capital gains, refund status, and expert review.',
     keywords: ['AY 2026-27 ITR season', 'ITR filing checklist', 'Form 16 parser', 'AIS Form 26AS mismatch', 'capital gains ITR checklist'],
-    type: 'article',
+    type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Season 2026', url: '/itr-season-2026' }]
   },
   '/itr-season-2026/ais-form-26as-mismatch-checklist': {

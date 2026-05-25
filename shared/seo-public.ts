@@ -1,6 +1,6 @@
 export const SITE_URL = "https://myeca.in";
 export const SITE_NAME = "MyeCA.in";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
 export const DEFAULT_LOGO = `${SITE_URL}/favicon.svg`;
 
 export const PRIVATE_ROUTE_PREFIXES = [
@@ -119,6 +119,8 @@ export const PUBLIC_STATIC_ROUTES = [
   "/help/faq",
   "/help/knowledge-base",
   "/help/user-guide",
+  "/gst-filing",
+  "/itr-filing",
   "/itr/form-recommender",
   "/itr/form-selector",
   "/itr-season-2026",
@@ -167,7 +169,7 @@ export const PUBLIC_STATIC_ROUTES = [
 export type SitemapEntry = {
   loc: string;
   lastmod?: string;
-  changefreq?: "daily" | "weekly" | "monthly";
+  changefreq?: "daily" | "weekly" | "monthly" | "yearly";
   priority?: string;
 };
 
@@ -208,11 +210,24 @@ export function toAbsoluteUrl(route: string) {
 export function routePriority(route: string) {
   const path = normalizePublicPath(route);
   if (path === "/") return "1.0";
+  if (path === "/itr-filing" || path === "/gst-filing") return "0.9";
+  if (path === "/blog") return "0.8";
+  if (path === "/contact") return "0.6";
   if (path.startsWith("/itr-season-2026")) return "0.7";
+  if (path.startsWith("/blog/")) return "0.7";
   if (path.startsWith("/services") || path.startsWith("/calculators") || path.startsWith("/itr")) return "0.8";
-  if (path.startsWith("/blog/")) return "0.6";
   if (path.startsWith("/compare/")) return "0.6";
   return "0.5";
+}
+
+export function routeChangefreq(route: string): SitemapEntry["changefreq"] {
+  const path = normalizePublicPath(route);
+  if (path === "/") return "weekly";
+  if (path === "/itr-filing" || path === "/gst-filing") return "monthly";
+  if (path === "/blog") return "daily";
+  if (path === "/contact") return "yearly";
+  if (path.startsWith("/blog/")) return "monthly";
+  return "weekly";
 }
 
 export function buildSitemapXml(entries: SitemapEntry[]) {
@@ -235,30 +250,29 @@ export function buildRobotsTxt() {
   const disallowLines = PRIVATE_ROUTE_PREFIXES
     .map((prefix) => `Disallow: ${prefix}/`)
     .join("\n");
+  const aiCrawlerAgents = [
+    "GPTBot",
+    "Google-Extended",
+    "PerplexityBot",
+    "ClaudeBot",
+    "anthropic-ai",
+  ];
+  const aiCrawlerRules = aiCrawlerAgents
+    .map(
+      (agent) => `User-agent: ${agent}
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/`,
+    )
+    .join("\n\n");
 
   return `User-agent: *
 Allow: /
 ${disallowLines}
+Disallow: /_next/
 Sitemap: ${SITE_URL}/sitemap.xml
+Host: ${SITE_URL}
 
-User-agent: GPTBot
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /documents/
-
-User-agent: ClaudeBot
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /documents/
-
-User-agent: PerplexityBot
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /documents/`;
+${aiCrawlerRules}`;
 }

@@ -7,11 +7,9 @@ import {
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
 } from "../client/src/data/missing-pages.js";
-import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
+import { loadStaticBlogPosts, type StaticMdxBlogPost } from "../server/data/static-blog-content.js";
 import { isValidGoogleSiteVerificationToken } from "../shared/search-console-verification.js";
 import {
-  DEFAULT_LOGO,
-  DEFAULT_OG_IMAGE,
   PRIVATE_NOINDEX_ROUTES,
   SITE_NAME,
   SITE_URL,
@@ -19,9 +17,22 @@ import {
   buildSitemapXml,
   getIndexablePublicRoutes,
   normalizePublicPath,
+  routeChangefreq,
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
+import { normalizeBlogContent } from "../shared/blog.js";
+import {
+  DEFAULT_OG_IMAGE as SHARED_DEFAULT_OG_IMAGE,
+  buildAccountingServiceSchema,
+  buildArticleSchema,
+  buildFaqPageSchema,
+  buildHomepageGraph,
+  buildHowToSchema,
+  buildServiceSchema,
+  organizationNode,
+} from "../shared/seo-schema.js";
+import { renderStaticRouteBody, type StaticRouteBodyInput } from "../shared/static-seo-content.js";
 
 type RouteMeta = {
   path: string;
@@ -34,6 +45,7 @@ type RouteMeta = {
   robots: "index, follow" | "noindex, nofollow";
   jsonLd: Record<string, unknown>[];
   aiSummary: string;
+  body?: StaticRouteBodyInput;
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -103,27 +115,7 @@ function verifiedRating(serviceData?: SEOConfigItem["serviceData"]) {
 function organizationSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "TaxPreparationService",
-    "@id": `${SITE_URL}/#organization`,
-    name: SITE_NAME,
-    url: SITE_URL,
-    logo: DEFAULT_LOGO,
-    image: DEFAULT_OG_IMAGE,
-    description: "India-wide guided ITR filing, tax calculator, GST compliance, startup registration, and optional CA-assisted review platform.",
-    email: "support@myeca.in",
-    areaServed: { "@type": "Country", name: "India" },
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Mumbai",
-      addressRegion: "Maharashtra",
-      addressCountry: "IN",
-    },
-    priceRange: "Rs 499-Rs 9,999",
-    sameAs: [
-      "https://twitter.com/myecain",
-      "https://www.linkedin.com/company/myecain",
-      "https://www.facebook.com/myecain",
-    ],
+    ...organizationNode(),
   };
 }
 
@@ -151,30 +143,33 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
           ? "Article"
           : "WebPage";
 
-  const base: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": schemaType,
-    "@id": `${toAbsoluteUrl(route)}#primary`,
-    name: title,
-    headline: title,
-    description,
-    url: toAbsoluteUrl(route),
-    image: DEFAULT_OG_IMAGE,
-    inLanguage: "en-IN",
-    isAccessibleForFree: true,
-    publisher: { "@id": `${SITE_URL}/#organization` },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": toAbsoluteUrl(route),
-    },
-  };
+  const base: Record<string, unknown> =
+    config?.type === "service"
+      ? buildServiceSchema({ url: toAbsoluteUrl(route), name: title, description })
+      : {
+          "@context": "https://schema.org",
+          "@type": schemaType,
+          "@id": `${toAbsoluteUrl(route)}#primary`,
+          name: title,
+          headline: title,
+          description,
+          url: toAbsoluteUrl(route),
+          image: SHARED_DEFAULT_OG_IMAGE,
+          inLanguage: "en-IN",
+          isAccessibleForFree: true,
+          publisher: { "@id": `${SITE_URL}/#organization` },
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": toAbsoluteUrl(route),
+          },
+        };
 
   if (config?.type === "calculator" && config.calculatorData) {
     Object.assign(base, {
       applicationCategory: "FinanceApplication",
       operatingSystem: "Web",
       featureList: config.calculatorData.features,
-      offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+      offers: { "@type": "Offer", price: "₹0" },
     });
   }
 
@@ -185,8 +180,7 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
       areaServed: { "@type": "Country", name: "India" },
       offers: {
         "@type": "Offer",
-        price: numericPrice(config.serviceData.price),
-        priceCurrency: "INR",
+        price: config.serviceData.price || numericPrice(config.serviceData.price),
         availability: "https://schema.org/InStock",
       },
       ...(rating ? { aggregateRating: rating } : {}),
@@ -196,10 +190,33 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
   return base;
 }
 
-function blogMeta(post: DefaultBlogPost): RouteMeta {
+function blogMeta(post: StaticMdxBlogPost): RouteMeta {
   const route = `/blog/${post.slug}`;
   const title = post.seoTitle || `${post.title} | MyeCA.in Blog`;
   const description = post.seoDescription || post.excerpt;
+  const articleSchema = buildArticleSchema({
+    url: toAbsoluteUrl(route),
+    headline: post.title,
+    description,
+    publishedAt: post.publishedAt,
+    modifiedAt: post.updatedAt || post.publishedAt,
+    image: post.coverImage?.startsWith("http") ? post.coverImage : SHARED_DEFAULT_OG_IMAGE,
+  });
+  articleSchema.about = [post.categoryId, ...post.tags].filter(Boolean);
+  if (post.reviewedBy) {
+    articleSchema.reviewedBy = { "@type": "Organization", name: "Team myeca.in" };
+  }
+  const faqSchema = buildFaqPageSchema(post.faqItems ?? []);
+  const howToSchema = post.contentType === "how-to" && post.howToSteps.length
+    ? buildHowToSchema({
+        url: toAbsoluteUrl(route),
+        name: post.title,
+        description,
+        totalTime: post.totalTime,
+        steps: post.howToSteps,
+      })
+    : null;
+  const normalizedContent = normalizeBlogContent(post.content);
   const jsonLd = [
     organizationSchema(),
     breadcrumbSchema([
@@ -207,40 +224,9 @@ function blogMeta(post: DefaultBlogPost): RouteMeta {
       { name: "Blog", url: "/blog" },
       { name: post.title, url: route },
     ], route),
-    {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "@id": `${toAbsoluteUrl(route)}#article`,
-      headline: post.title,
-      name: title,
-      description,
-      url: toAbsoluteUrl(route),
-      image: post.coverImage?.startsWith("http") ? post.coverImage : DEFAULT_OG_IMAGE,
-      datePublished: post.publishedAt,
-      dateModified: post.updatedAt || post.publishedAt,
-      author: {
-        "@type": "Person",
-        name: post.authorName || "MyeCA Editorial Team",
-        jobTitle: post.authorRole || "Tax Editorial Team",
-      },
-      ...(post.reviewedBy ? { reviewedBy: { "@type": "Person", name: post.reviewedBy } } : {}),
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      isAccessibleForFree: true,
-      inLanguage: "en-IN",
-      about: [post.categoryId, ...post.tags],
-      mainEntityOfPage: { "@type": "WebPage", "@id": toAbsoluteUrl(route) },
-    },
-    ...(post.faqItems?.length
-      ? [{
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: post.faqItems.map((faq) => ({
-            "@type": "Question",
-            name: faq.question,
-            acceptedAnswer: { "@type": "Answer", text: faq.answer },
-          })),
-        }]
-      : []),
+    articleSchema,
+    ...(faqSchema ? [faqSchema] : []),
+    ...(howToSchema ? [howToSchema] : []),
   ];
 
   return {
@@ -250,16 +236,35 @@ function blogMeta(post: DefaultBlogPost): RouteMeta {
     keywords: post.tags,
     type: "article",
     canonicalUrl: post.canonicalUrl || toAbsoluteUrl(route),
-    image: post.coverImage?.startsWith("http") ? post.coverImage : DEFAULT_OG_IMAGE,
+    image: post.coverImage?.startsWith("http") ? post.coverImage : SHARED_DEFAULT_OG_IMAGE,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${post.title}: ${post.excerpt} Reviewed tax guidance for Indian taxpayers. Verify facts with a CA before filing.`,
+    body: {
+      route,
+      title: post.title,
+      description,
+      kind: "blog-post",
+      highlights: post.keyHighlights,
+      bodyHtml: normalizedContent.html,
+      publishedAt: post.publishedAt,
+      modifiedAt: post.updatedAt,
+    },
   };
 }
 
 function guideMeta(guide: TaxGuide): RouteMeta {
   const route = `/learn/guide/${guide.slug}`;
   const title = `${guide.title} | MyeCA.in Tax Guides`;
+  const articleSchema = buildArticleSchema({
+    url: toAbsoluteUrl(route),
+    headline: guide.title,
+    description: guide.description,
+    publishedAt: guide.lastUpdated,
+    modifiedAt: guide.lastUpdated,
+    image: SHARED_DEFAULT_OG_IMAGE,
+  });
+  articleSchema.about = guide.tags;
   const jsonLd = [
     organizationSchema(),
     breadcrumbSchema([
@@ -268,27 +273,7 @@ function guideMeta(guide: TaxGuide): RouteMeta {
       { name: "Guides", url: "/learn/guides" },
       { name: guide.title, url: route },
     ], route),
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "@id": `${toAbsoluteUrl(route)}#guide`,
-      headline: guide.title,
-      name: title,
-      description: guide.description,
-      url: toAbsoluteUrl(route),
-      image: DEFAULT_OG_IMAGE,
-      dateModified: guide.lastUpdated,
-      author: {
-        "@type": "Person",
-        name: guide.author,
-        jobTitle: "Tax Consultant",
-      },
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      isAccessibleForFree: true,
-      inLanguage: "en-IN",
-      about: guide.tags,
-      mainEntityOfPage: { "@type": "WebPage", "@id": toAbsoluteUrl(route) },
-    },
+    articleSchema,
   ];
 
   return {
@@ -298,10 +283,19 @@ function guideMeta(guide: TaxGuide): RouteMeta {
     keywords: guide.tags,
     type: "article",
     canonicalUrl: toAbsoluteUrl(route),
-    image: DEFAULT_OG_IMAGE,
+    image: SHARED_DEFAULT_OG_IMAGE,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${guide.title}: ${guide.description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
+    body: {
+      route,
+      title: guide.title,
+      description: guide.description,
+      kind: "article",
+      highlights: guide.tags,
+      publishedAt: guide.lastUpdated,
+      modifiedAt: guide.lastUpdated,
+    },
   };
 }
 
@@ -310,27 +304,35 @@ function routeMeta(route: string): RouteMeta {
   const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
   const title = config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
   const description = config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`;
-  const jsonLd = [
-    organizationSchema(),
-    breadcrumbSchema(config?.breadcrumbs, pathName),
-    schemaForConfig(pathName, config, title, description),
-  ];
+  const jsonLd: Record<string, unknown>[] = pathName === "/"
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            ...((buildHomepageGraph() as { "@graph": Record<string, unknown>[] })["@graph"] || []),
+            buildAccountingServiceSchema(SITE_URL),
+          ],
+        },
+        breadcrumbSchema(config?.breadcrumbs, pathName),
+      ]
+    : [
+        organizationSchema(),
+        breadcrumbSchema(config?.breadcrumbs, pathName),
+        schemaForConfig(pathName, config, title, description),
+      ];
 
-  if (pathName === "/") {
-    jsonLd.push({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": `${SITE_URL}/#website`,
-      name: SITE_NAME,
-      url: SITE_URL,
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: `${SITE_URL}/search?q={search_term_string}`,
-        "query-input": "required name=search_term_string",
-      },
-    });
+  if (pathName === "/contact") {
+    jsonLd.push(buildAccountingServiceSchema(toAbsoluteUrl(pathName)));
   }
+
+  const kind: StaticRouteBodyInput["kind"] =
+    pathName === "/" ? "homepage" : config?.type === "service" ? "service" : "page";
+  const highlights = config?.keywords?.slice(0, 5) ?? [
+    "CA-led Indian tax support",
+    "ITR e-filing",
+    "GST compliance",
+    "Secure document workflows",
+  ];
 
   return {
     path: pathName,
@@ -339,10 +341,17 @@ function routeMeta(route: string): RouteMeta {
     keywords: config?.keywords,
     type: config?.type || (pathName.startsWith("/legal") ? "legal" : "website"),
     canonicalUrl: toAbsoluteUrl(pathName),
-    image: DEFAULT_OG_IMAGE,
+    image: SHARED_DEFAULT_OG_IMAGE,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify tax actions with a CA.`,
+    body: {
+      route: pathName,
+      title,
+      description,
+      kind,
+      highlights,
+    },
   };
 }
 
@@ -355,10 +364,16 @@ function privateMeta(route: string): RouteMeta {
     description,
     type: "private",
     canonicalUrl: toAbsoluteUrl(route),
-    image: DEFAULT_OG_IMAGE,
+    image: SHARED_DEFAULT_OG_IMAGE,
     robots: "noindex, nofollow",
     jsonLd: [],
     aiSummary: description,
+    body: {
+      route: normalizePublicPath(route),
+      title,
+      description,
+      kind: "page",
+    },
   };
 }
 
@@ -402,14 +417,33 @@ function routeOutputPath(route: string) {
   return path.join(distDir, ...pathName.split("/").filter(Boolean), "index.html");
 }
 
+function injectStaticBody(html: string, meta: RouteMeta) {
+  const body = renderStaticRouteBody(
+    meta.body ?? {
+      route: meta.path,
+      title: meta.title,
+      description: meta.description,
+      kind: meta.type === "service" ? "service" : meta.type === "article" ? "article" : "page",
+    },
+  );
+
+  return html.replace(
+    /<div id="root">[\s\S]*?<\/div>\s*<script src="\/app-bootstrap\.js"/i,
+    `<div id="root">\n${body}\n    </div>\n    <script src="/app-bootstrap.js"`,
+  );
+}
+
 function writeRouteHtml(template: string, meta: RouteMeta) {
-  const html = stripDefaultSeo(template).replace("</head>", `${renderSeoHead(meta)}\n  </head>`);
+  const html = injectStaticBody(
+    stripDefaultSeo(template).replace("</head>", `${renderSeoHead(meta)}\n  </head>`),
+    meta,
+  );
   const outputPath = routeOutputPath(meta.path);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html, "utf8");
 }
 
-function writeTextAssets(blogPosts: DefaultBlogPost[]) {
+function writeTextAssets(blogPosts: StaticMdxBlogPost[]) {
   const blogEntries = blogPosts
     .filter((post) => post.status === "published")
     .map((post) => ({
@@ -433,7 +467,7 @@ function writeTextAssets(blogPosts: DefaultBlogPost[]) {
   const sitemap = buildSitemapXml(routes.map((route) => ({
     loc: toAbsoluteUrl(route),
     lastmod: dynamicDateMap.get(route) || now,
-    changefreq: route === "/" ? "daily" : route.startsWith("/blog/") ? "monthly" : "weekly",
+    changefreq: routeChangefreq(route),
     priority: routePriority(route),
   })));
   const robots = buildRobotsTxt();
@@ -474,7 +508,7 @@ function main() {
   }
 
   const template = fs.readFileSync(distIndexPath, "utf8");
-  const blogPosts = defaultBlogPosts.filter((post) => post.status === "published");
+  const blogPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
   const blogRoutes = blogPosts.map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const publicRoutes = getIndexablePublicRoutes(

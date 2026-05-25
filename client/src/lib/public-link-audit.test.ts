@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SEO_CONFIG } from "../config/seo.config";
+import { allServices } from "../data/all-services";
+import { competitorPages } from "../data/competitive-growth";
 import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
 import {
+  generatedServicePages,
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
 } from "../data/missing-pages";
@@ -21,9 +24,31 @@ import {
   isValidGoogleSiteVerificationToken,
   parseGoogleSiteVerificationTxtRecord,
 } from "@shared/search-console-verification";
+import { defaultBlogPosts } from "../../../server/data/default-blog-content";
+import { loadStaticBlogPosts } from "../../../server/data/static-blog-content";
 import { EMAIL_TEMPLATES } from "../../../server/services/email";
 
 describe("public link audit", () => {
+  const disallowedPublicContentRoutes = ["/documents", "/dashboard", "/reports", "/admin", "/itr/filing", "/profiles"];
+
+  function escapeRegExp(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function expectPublicHref(value: string | undefined, label: string) {
+    if (!value || !value.startsWith("/")) return;
+    disallowedPublicContentRoutes.forEach((route) => {
+      expect(value, label).not.toBe(route);
+      expect(value, label).not.toMatch(new RegExp(`^${escapeRegExp(route)}(?:[/?#]|$)`));
+    });
+  }
+
+  function expectPublicMarkdownLinks(content: string, label: string) {
+    disallowedPublicContentRoutes.forEach((route) => {
+      expect(content, label).not.toMatch(new RegExp(`\\]\\(${escapeRegExp(route)}(?:[/?#)]|$)`));
+    });
+  }
+
   it("classifies route, anchor, placeholder, and external links", () => {
     expect(classifyPublicHref("#", "/compliance-calendar")).toMatchObject({
       kind: "placeholder",
@@ -207,6 +232,22 @@ describe("public link audit", () => {
       expect(asset.conversionLink.href, asset.slug).toMatch(/^\//);
       expect(asset.relatedBlogLink.href, asset.slug).toMatch(/^\/blog\//);
       expect(asset.learnGuideLink.href, asset.slug).toMatch(/^\/learn\/guide\//);
+    });
+  });
+
+  it("keeps public content CTAs away from private app routes", () => {
+    defaultBlogPosts.forEach((post) => {
+      expectPublicHref(post.ctaHref, `${post.slug} fallback ctaHref`);
+      expectPublicMarkdownLinks(post.content, `${post.slug} fallback content`);
+    });
+    loadStaticBlogPosts().forEach((post) => {
+      expectPublicHref(post.ctaHref, `${post.slug} static ctaHref`);
+      expectPublicMarkdownLinks(post.content, `${post.slug} static content`);
+    });
+    allServices.forEach((service) => expectPublicHref(service.path, `${service.id} path`));
+    competitorPages.forEach((page) => expectPublicHref(page.primaryCta, `${page.slug} primaryCta`));
+    generatedServicePages.forEach((page) => {
+      page.relatedLinks.forEach((link) => expectPublicHref(link.href, `${page.slug} related link ${link.label}`));
     });
   });
 

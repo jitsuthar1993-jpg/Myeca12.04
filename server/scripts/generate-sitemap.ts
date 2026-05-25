@@ -3,10 +3,11 @@ import path from "path";
 import { SEO_CONFIG } from "../../client/src/config/seo.config";
 import { getGeneratedPublicRoutes } from "../../client/src/data/missing-pages";
 import { TAX_GUIDES } from "../../client/src/data/tax-guides";
-import { defaultBlogPosts } from "../data/default-blog-content.js";
+import { loadStaticBlogPosts } from "../data/static-blog-content.js";
 import {
   buildSitemapXml,
   getIndexablePublicRoutes,
+  routeChangefreq,
   routePriority,
   toAbsoluteUrl,
 } from "../../shared/seo-public.js";
@@ -17,11 +18,12 @@ const SITEMAP_PATH = path.join(PUBLIC_DIR, "sitemap.xml");
 function generateSitemap() {
   console.log("Generating sitemap...");
 
-  const blogRoutes = defaultBlogPosts
+  const blogPosts = loadStaticBlogPosts();
+  const blogRoutes = blogPosts
     .filter((post) => post.status === "published")
     .map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
-  const blogDateMap = new Map(defaultBlogPosts.map((post) => [`/blog/${post.slug}`, post.updatedAt || post.publishedAt]));
+  const blogDateMap = new Map(blogPosts.map((post) => [`/blog/${post.slug}`, post.updatedAt || post.publishedAt]));
   const urls = getIndexablePublicRoutes(
     [
       ...Object.keys(SEO_CONFIG).filter((url) => !SEO_CONFIG[url].noindex),
@@ -33,7 +35,7 @@ function generateSitemap() {
   const sitemapContent = buildSitemapXml(urls.map((url) => ({
     loc: toAbsoluteUrl(url),
     lastmod: blogDateMap.get(url)?.split("T")[0] || new Date().toISOString().split("T")[0],
-    changefreq: url === "/" ? "daily" : url.startsWith("/blog/") ? "monthly" : "weekly",
+    changefreq: routeChangefreq(url),
     priority: routePriority(url),
   })));
 

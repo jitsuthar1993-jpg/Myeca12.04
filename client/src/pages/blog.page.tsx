@@ -184,7 +184,15 @@ function preloadBlogArticle(slug: string) {
   }
 }
 
-function ArticleCard({ post, compact = false }: { post: BlogSummary; compact?: boolean }) {
+function ArticleCard({
+  post,
+  compact = false,
+  priority = false,
+}: {
+  post: BlogSummary;
+  compact?: boolean;
+  priority?: boolean;
+}) {
   const coverImage = getCoverImage(post);
   const authorName = getAuthorName(post);
 
@@ -211,6 +219,11 @@ function ArticleCard({ post, compact = false }: { post: BlogSummary; compact?: b
             <img
               src={coverImage ?? ''}
               alt={post.title}
+              width={compact ? 480 : 640}
+              height={compact ? 240 : 420}
+              loading={priority ? 'eager' : 'lazy'}
+              fetchPriority={priority ? 'high' : 'auto'}
+              decoding="async"
               className={cn(
                 'h-full w-full transition duration-500',
                 isGeneratedBlogCover(coverImage)
@@ -368,6 +381,11 @@ export default function BlogPage() {
                   <img
                     src={getCoverImage(featuredPost) ?? ''}
                     alt={featuredPost.title}
+                    width={640}
+                    height={360}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className={cn(
                       'h-28 w-full',
                       isGeneratedBlogCover(getCoverImage(featuredPost))
@@ -551,7 +569,7 @@ export default function BlogPage() {
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="min-w-0 space-y-8">
-                {featuredPost && <ArticleCard post={featuredPost} />}
+                {featuredPost && <ArticleCard post={featuredPost} priority />}
                 {regularPosts.map((post) => (
                   <ArticleCard key={post.id} post={post} />
                 ))}
@@ -587,6 +605,10 @@ export default function BlogPage() {
                     <img
                       src="/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg"
                       alt="AY 2026-27 ITR season hub"
+                      width={640}
+                      height={360}
+                      loading="lazy"
+                      decoding="async"
                       className="aspect-[16/9] w-full rounded-xl bg-white object-contain p-1.5"
                     />
                   </div>

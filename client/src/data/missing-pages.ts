@@ -388,7 +388,7 @@ export const generatedServicePages: GeneratedServicePageData[] = [
     faqs: standardServiceFaqs("document storage support"),
     relatedLinks: [
       { label: "Document vault", href: "/services/document-vault" },
-      { label: "Documents", href: "/documents" },
+      { label: "Document scanner", href: "/features/document-scanner" },
     ],
   },
   {

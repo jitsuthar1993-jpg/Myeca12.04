@@ -27,25 +27,36 @@ Disallow: /team/
 Disallow: /teams/
 Disallow: /user/
 Disallow: /workflows/
+Disallow: /_next/
 Sitemap: https://myeca.in/sitemap.xml
+Host: https://myeca.in
 
 User-agent: GPTBot
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /documents/
+Disallow: /_next/
 
-User-agent: ClaudeBot
+User-agent: Google-Extended
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /documents/
+Disallow: /_next/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /documents/
+Disallow: /_next/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/

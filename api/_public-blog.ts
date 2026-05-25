@@ -1,4 +1,5 @@
-import { defaultBlogCategories, defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
+import { defaultBlogCategories, type DefaultBlogPost } from "../server/data/default-blog-content.js";
+import { loadStaticBlogPosts } from "../server/data/static-blog-content.js";
 import { normalizeBlogContent, normalizeBlogCta } from "../shared/blog.js";
 
 const CACHE_HEADER = "public, s-maxage=300, stale-while-revalidate=3600";
@@ -70,6 +71,10 @@ function sortPosts(posts: DefaultBlogPost[]) {
     });
 }
 
+function staticBlogPosts() {
+  return loadStaticBlogPosts() as DefaultBlogPost[];
+}
+
 function categoryTokens(post: DefaultBlogPost) {
   const category = categoryFor(post);
   return [category?.id, category?.slug, category?.name].map(normalizeKey).filter(Boolean);
@@ -117,7 +122,7 @@ export function listPublicBlogs(url: URL) {
   const search = url.searchParams.get("search");
   const audience = url.searchParams.get("audience");
 
-  const filtered = sortPosts(defaultBlogPosts).filter(
+  const filtered = sortPosts(staticBlogPosts()).filter(
     (post) => matchesCategory(post, category) && matchesAudience(post, audience) && matchesSearch(post, search),
   );
   const start = (page - 1) * limit;
@@ -132,7 +137,7 @@ export function listPublicBlogs(url: URL) {
 }
 
 export function getPublicBlogBySlug(slug: string) {
-  const posts = sortPosts(defaultBlogPosts);
+  const posts = sortPosts(staticBlogPosts());
   const post = posts.find((candidate) => candidate.slug === slug);
   if (!post) return null;
 

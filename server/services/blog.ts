@@ -1,5 +1,6 @@
 ﻿import { adminDb, type DataAdminDb } from "../data-admin.js";
-import { defaultBlogCategories, defaultBlogPosts } from "../data/default-blog-content.js";
+import { defaultBlogCategories } from "../data/default-blog-content.js";
+import { loadStaticBlogPosts } from "../data/static-blog-content.js";
 import {
   type BlogCategory,
   type BlogFaqItem,
@@ -270,7 +271,7 @@ export async function listPublishedBlogPosts(db: DataAdminDb = adminDb): Promise
 
 export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
   const lookup = getDefaultCategoryLookup();
-  return defaultBlogPosts
+  return loadStaticBlogPosts()
     .filter((post) => post.status === "published")
     .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
 }

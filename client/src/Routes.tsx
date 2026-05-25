@@ -252,6 +252,8 @@ export default function Routes() {
 
         <Route path="/services/notice-compliance" component={NoticeCompliancePage} />
         <Route path="/services/tds-filing" component={TdsFilingPage} />
+        <Route path="/itr-filing" component={GeneratedServicePage} />
+        <Route path="/gst-filing" component={GSTReturnsPage} />
         <Route path="/salary" component={ITRForSalariedPage} />
         <Route path="/services/itr-for-salaried" component={ITRForSalariedPage} />
         <Route path="/services/gst-registration" component={GstRegistrationPage} />

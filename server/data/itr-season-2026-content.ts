@@ -616,7 +616,7 @@ const topics: TopicSpec[] = [
       { question: "Can a CA prepare this?", answer: "Yes. Foreign asset valuation is a good candidate for CA review because errors can be costly." },
     ],
     highlights: ["Foreign valuation is date-specific.", "Peak and closing values may differ.", "Preserve every calculation."],
-    internalLinks: [{ label: "Consult a CA", href: "/expert-consultation" }, { label: "Document vault", href: "/documents" }],
+    internalLinks: [{ label: "Consult a CA", href: "/expert-consultation" }, { label: "Document vault", href: "/services/document-vault" }],
     seoTitle: "SBI TT Buying Rate for Schedule FA",
     seoDescription: "How to calculate Schedule FA foreign asset values using SBI TT buying rate concepts, peak value, closing value, and cost.",
     audience: "individuals",

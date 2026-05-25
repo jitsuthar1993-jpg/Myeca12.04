@@ -187,7 +187,7 @@ export const allServices: Service[] = [
     category: "ITR Filing Services", 
     section: "ITR Filing",
     icon: "BarChart3",
-    path: "/dashboard"
+    path: "/services/itr-filing"
   },
   {
     id: "document-vault",
@@ -196,7 +196,7 @@ export const allServices: Service[] = [
     category: "ITR Filing Services",
     section: "ITR Filing",
     icon: "FileText",
-    path: "/documents"
+    path: "/services/document-vault"
   },
   {
     id: "manage-profiles",
@@ -205,7 +205,7 @@ export const allServices: Service[] = [
     category: "ITR Filing Services",
     section: "ITR Filing", 
     icon: "Users",
-    path: "/profiles"
+    path: "/itr/form-selector"
   },
 
   // ITR FILING SECTION - Support & Resources
