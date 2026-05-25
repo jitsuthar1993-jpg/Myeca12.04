@@ -378,6 +378,40 @@ describe("public link audit", () => {
     });
   });
 
+  it("keeps a status ledger for the ten Google indexing risk areas", () => {
+    const readinessRunbook = readFileSync("docs/google-indexing-readiness.md", "utf8");
+    const statusLedger = readFileSync("docs/google-indexing-remediation-status.md", "utf8");
+
+    expect(readinessRunbook).toContain("docs/google-indexing-remediation-status.md");
+    [
+      "1. Pages not indexed",
+      "2. Missing sitemap.xml",
+      "3. robots.txt blocking Google",
+      "4. Meta noindex tag",
+      "5. SPA rendering issue",
+      "6. Weak backlinks",
+      "7. Thin content",
+      "8. Poor internal linking",
+      "9. Core Web Vitals failing",
+      "10. Search Console not configured correctly",
+    ].forEach((riskArea) => {
+      expect(statusLedger).toContain(riskArea);
+    });
+    [
+      "168 URL entries",
+      "No global `Disallow: /`",
+      "`/itr/filing`",
+      "pre-hydration SEO shells",
+      "backlink outreach tracker",
+      "field INP",
+      "missing valid DNS TXT token",
+      "pending_external",
+      "Vercel connector",
+    ].forEach((requiredText) => {
+      expect(statusLedger).toContain(requiredText);
+    });
+  });
+
   it("keeps the public HTML template free of unverifiable SEO claims", () => {
     const indexTemplate = readFileSync("client/index.html", "utf8");
     const glossarySource = readFileSync("client/src/components/seo/FinancialGlossary.tsx", "utf8");

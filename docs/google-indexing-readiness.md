@@ -2,6 +2,8 @@
 
 Use this checklist after any SEO, Vercel, or Search Console change for `myeca.in`.
 
+For the latest risk-by-risk status, update `docs/google-indexing-remediation-status.md` alongside the evidence log.
+
 ## Automated Check
 
 Run:
