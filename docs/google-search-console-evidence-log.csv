@@ -5,6 +5,7 @@ date,item,status,evidence,next_action
 2026-05-25,Domain property,pending_external,TBD,Add or confirm myeca.in Domain property in Google Search Console
 2026-05-25,DNS TXT verification,pending_external,Resolve-DnsName -Type TXT myeca.in shows no Google verification token,Add Google DNS TXT in domain DNS then rerun npm run check:google-indexing
 2026-05-25,HTML verification token,pending_external,Accessible Vercel Production env lacks VITE_GOOGLE_SITE_VERIFICATION and live homepage has no valid Google verification token,Set VITE_GOOGLE_SITE_VERIFICATION only if DNS TXT is not used
+2026-05-25,Vercel domain access,pending_external,vercel teams ls shows only enon3101s-projects and vercel domains ls under that scope returns 0 Domains; no local saved Google verification token found,Use the Vercel or DNS account that owns myeca.in to add Search Console DNS TXT or HTML verification token
 2026-05-25,Sitemap submitted,pending_external,Technical sitemap is available at https://myeca.in/sitemap.xml,Submit sitemap in Search Console
 2026-05-25,URL Inspection priority set,pending_external,Priority URLs listed in google indexing runbook,Inspect and request indexing for priority URLs that pass live inspection
 2026-05-25,Rendered page view,pending_external,Static SEO shells pass live technical check,Confirm rendered page view shows content in URL Inspection

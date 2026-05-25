@@ -153,6 +153,7 @@ Technical evidence:
 - `npm run check:google-indexing` passes the live robots, sitemap, public route, canonical, static shell, private sitemap-exclusion, and noindex checks.
 - The only current required failure is Search Console verification: missing valid DNS TXT token and missing non-empty HTML verification meta value.
 - The accessible Vercel production env list does not include `VITE_GOOGLE_SITE_VERIFICATION`, live DNS TXT lookup for `myeca.in` has no Google verification token, and `vercel domains inspect myeca.in` under the accessible scope reports no domain access.
+- A refreshed Vercel access check on May 25, 2026 shows this token only has `enon3101s-projects`, `vercel domains ls --scope enon3101s-projects` returns `0 Domains`, and the local repo/search scan found no saved Google verification token beyond empty examples.
 
 Remaining owner action:
 
