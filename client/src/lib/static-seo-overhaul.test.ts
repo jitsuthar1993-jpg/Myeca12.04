@@ -162,6 +162,7 @@ describe("static SEO overhaul", () => {
     });
 
     expect(body).toContain("<main");
+    expect(body).toContain('data-seo-static-shell="route"');
     expect(body).toContain("ITR Filing Services AY 2026-27");
     expect(body).toContain("FY 2025-26");
     expect(body).toContain("CA-led review");

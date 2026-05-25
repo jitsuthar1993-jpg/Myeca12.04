@@ -406,7 +406,7 @@ function routeMeta(route: string): RouteMeta {
   }
 
   const kind: StaticRouteBodyInput["kind"] =
-    pathName === "/" ? "homepage" : config?.type === "service" ? "service" : "page";
+    pathName === "/" ? "home" : config?.type === "service" ? "service" : "page";
   const highlights = config?.keywords?.slice(0, 5) ?? [
     "CA-led Indian tax support",
     "ITR e-filing",

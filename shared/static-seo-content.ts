@@ -4,7 +4,7 @@ export type StaticRouteBodyInput = {
   route: string;
   title: string;
   description: string;
-  kind: "home" | "service" | "blog-index" | "blog-post" | "about" | "contact" | "page";
+  kind: "home" | "homepage" | "service" | "article" | "blog-index" | "blog-post" | "about" | "contact" | "page";
   highlights?: string[];
   bodyHtml?: string;
   publishedAt?: string | null;
@@ -27,8 +27,9 @@ function renderHighlights(highlights: string[] = []) {
 }
 
 function labelForKind(kind: StaticRouteBodyInput["kind"]) {
-  if (kind === "home") return "CA-led tax-tech platform";
+  if (kind === "home" || kind === "homepage") return "CA-led tax-tech platform";
   if (kind === "service") return "Tax filing service";
+  if (kind === "article") return "Tax guide";
   if (kind === "blog-index") return "Tax knowledge hub";
   if (kind === "blog-post") return "Tax guide";
   if (kind === "about") return "About myeca.in";
@@ -38,13 +39,14 @@ function labelForKind(kind: StaticRouteBodyInput["kind"]) {
 
 export function renderStaticRouteBody(input: StaticRouteBodyInput) {
   const description = escapeHtml(stripHtml(input.description));
+  const shell = input.route === "/" ? "home" : "route";
   const safeBody = input.bodyHtml?.trim() || "";
   const dateLine =
     input.publishedAt || input.modifiedAt
       ? `<p class="static-seo-meta">Published ${escapeHtml(input.publishedAt || input.modifiedAt || "")}</p>`
       : "";
 
-  return `<main class="static-seo-shell" data-static-route="${escapeHtml(input.route)}">
+  return `<main class="static-seo-shell" data-seo-static-shell="${shell}" data-static-route="${escapeHtml(input.route)}">
   <section>
     <p class="static-seo-eyebrow">${escapeHtml(labelForKind(input.kind))}</p>
     <h1>${escapeHtml(input.title)}</h1>
