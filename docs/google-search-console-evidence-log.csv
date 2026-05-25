@@ -1,10 +1,12 @@
 date,item,status,evidence,next_action
+2026-05-25,Deployed SEO baseline,recorded,main 05a50a6 deployed as Vercel dpl_4udZHEaYyArrUvtvaADvSwsAbPKZ and myeca.in serves static SEO shell,Use this as the baseline before Search Console inspection
+2026-05-25,Live technical indexing check,repo_resolved,npm run check:google-indexing passes robots sitemap public route canonical static shell private exclusion and noindex checks; only verification token fails,Add Google DNS TXT or valid HTML verification token then rerun
 2026-05-25,Domain property,pending_external,TBD,Add or confirm myeca.in Domain property in Google Search Console
-2026-05-25,DNS TXT verification,pending_external,Missing valid DNS TXT token on live readiness check,Add Google DNS TXT in domain DNS then rerun npm run check:google-indexing
-2026-05-25,HTML verification token,pending_external,Live homepage has no valid Google verification token,Set VITE_GOOGLE_SITE_VERIFICATION only if DNS TXT is not used
+2026-05-25,DNS TXT verification,pending_external,Resolve-DnsName -Type TXT myeca.in shows no Google verification token,Add Google DNS TXT in domain DNS then rerun npm run check:google-indexing
+2026-05-25,HTML verification token,pending_external,Accessible Vercel Production env lacks VITE_GOOGLE_SITE_VERIFICATION and live homepage has no valid Google verification token,Set VITE_GOOGLE_SITE_VERIFICATION only if DNS TXT is not used
 2026-05-25,Sitemap submitted,pending_external,Technical sitemap is available at https://myeca.in/sitemap.xml,Submit sitemap in Search Console
 2026-05-25,URL Inspection priority set,pending_external,Priority URLs listed in google indexing runbook,Inspect and request indexing for priority URLs that pass live inspection
 2026-05-25,Rendered page view,pending_external,Static SEO shells pass live technical check,Confirm rendered page view shows content in URL Inspection
 2026-05-25,Page indexing report,pending_external,Awaiting Search Console data,Review excluded duplicate and crawled not indexed reasons after recrawl
 2026-05-25,Field INP evidence,pending_external,Lab INP may be unavailable in Chromium,Record CrUX Vercel Speed Insights or Search Console Core Web Vitals INP
-2026-05-25,Core Web Vitals lab,recorded,npm run check:core-web-vitals passes priority public routes,Repeat after deploys and record field INP separately
+2026-05-25,Core Web Vitals lab,recorded,npm run check:core-web-vitals passes priority public routes with mobile LCP <= 1436ms and CLS <= 0.023; synthetic INP unavailable,Repeat after deploys and record field INP separately

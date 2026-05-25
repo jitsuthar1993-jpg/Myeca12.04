@@ -1,6 +1,6 @@
 # Google Indexing Remediation Status
 
-Last live technical check: May 25, 2026.
+Last live technical check: May 25, 2026 against `https://myeca.in` after `main` commit `05a50a6` and Vercel deployment `dpl_4udZHEaYyArrUvtvaADvSwsAbPKZ`.
 
 This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof.
 
@@ -14,7 +14,7 @@ The remaining blockers are external:
 - Sitemap submission, URL Inspection, rendered-page confirmation, request-indexing clicks, and Page indexing report review must be completed in the Google Search Console UI.
 - Field INP must be recorded from CrUX, Vercel Speed Insights, or Search Console because synthetic Chromium may not expose route interaction timing.
 - Real backlink placements still need owner/operator outreach; the repo has the backlink outreach tracker and ready-to-send pitch kit, not earned external links.
-- Vercel connector access does not currently reach the owning MyECA project from this workspace, so DNS TXT records and production `VITE_GOOGLE_SITE_VERIFICATION` cannot be set here.
+- This workspace can deploy `enon3101s-projects/myeca12-04`, and `https://myeca.in` now serves the deployed static SEO shell. The same Vercel token still cannot inspect or manage the `myeca.in` domain, DNS TXT records, or Search Console ownership, so verification remains an account-owner action.
 
 ## Ten-Risk Status
 
@@ -25,7 +25,7 @@ Status: pending_external.
 Technical evidence:
 
 - Priority public URLs return `200`, are indexable, have canonical metadata, and include static SEO shell content before hydration.
-- The live sitemap check on May 25, 2026 found 168 URL entries.
+- The live sitemap check on May 25, 2026 found 170 URL entries.
 
 Remaining owner action:
 
@@ -150,7 +150,7 @@ Technical evidence:
 
 - `npm run check:google-indexing` passes the live robots, sitemap, public route, canonical, static shell, private sitemap-exclusion, and noindex checks.
 - The only current required failure is Search Console verification: missing valid DNS TXT token and missing non-empty HTML verification meta value.
-- Vercel connector access from this workspace can list another project but cannot fetch the MyECA project, so the owning Vercel account/team must add DNS TXT or `VITE_GOOGLE_SITE_VERIFICATION`.
+- The accessible Vercel production env list does not include `VITE_GOOGLE_SITE_VERIFICATION`, live DNS TXT lookup for `myeca.in` has no Google verification token, and `vercel domains inspect myeca.in` under the accessible scope reports no domain access.
 
 Remaining owner action:
 
