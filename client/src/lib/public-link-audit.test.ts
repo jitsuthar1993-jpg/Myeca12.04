@@ -402,6 +402,7 @@ describe("public link audit", () => {
       "No global `Disallow: /`",
       "`/itr/filing`",
       "pre-hydration SEO shells",
+      "article highlights",
       "backlink outreach tracker",
       "field INP",
       "missing valid DNS TXT token",

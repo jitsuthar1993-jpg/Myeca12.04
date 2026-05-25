@@ -7,6 +7,7 @@ import {
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
 } from "../client/src/data/missing-pages.js";
+import { itrSeasonCampaignAssets } from "../client/src/data/itr-season-campaign.js";
 import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
 import { isValidGoogleSiteVerificationToken } from "../shared/search-console-verification.js";
 import {
@@ -34,6 +35,8 @@ type RouteMeta = {
   robots: "index, follow" | "noindex, nofollow";
   jsonLd: Record<string, unknown>[];
   aiSummary: string;
+  staticHighlights?: string[];
+  staticLinks?: Array<{ label: string; href: string }>;
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -53,6 +56,19 @@ function escapeHtml(value: string) {
 
 function escapeJsonForHtml(value: unknown) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
+function safeStaticLinks(links: Array<{ label: string; href: string }> = []) {
+  const seen = new Set<string>();
+  return links
+    .filter((link) => link.label.trim() && /^(\/|https?:\/\/)/i.test(link.href))
+    .filter((link) => {
+      const key = `${link.label}\n${link.href}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 6);
 }
 
 function stripInvalidGoogleVerificationMeta(html: string) {
@@ -196,7 +212,7 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
   return base;
 }
 
-function blogMeta(post: DefaultBlogPost): RouteMeta {
+export function blogMeta(post: DefaultBlogPost): RouteMeta {
   const route = `/blog/${post.slug}`;
   const title = post.seoTitle || `${post.title} | MyeCA.in Blog`;
   const description = post.seoDescription || post.excerpt;
@@ -254,6 +270,11 @@ function blogMeta(post: DefaultBlogPost): RouteMeta {
     robots: "index, follow",
     jsonLd,
     aiSummary: `${post.title}: ${post.excerpt} Reviewed tax guidance for Indian taxpayers. Verify facts with a CA before filing.`,
+    staticHighlights: post.keyHighlights.slice(0, 5),
+    staticLinks: safeStaticLinks([
+      { label: post.ctaLabel, href: post.ctaHref },
+      ...(post.sourceLinks?.map((source) => ({ label: source.label, href: source.url })) ?? []),
+    ]),
   };
 }
 
@@ -302,12 +323,21 @@ function guideMeta(guide: TaxGuide): RouteMeta {
     robots: "index, follow",
     jsonLd,
     aiSummary: `${guide.title}: ${guide.description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
+    staticHighlights: guide.steps.slice(0, 5).map((step) => `${step.title}: ${step.description}`),
+    staticLinks: safeStaticLinks([
+      ...guide.relatedCalculators.map((href) => ({ label: humanizeRoute(href), href })),
+      ...(guide.relatedResources?.map((resource) => ({ label: resource.label, href: resource.href })) ?? []),
+      { label: "Pricing", href: "/pricing" },
+    ]),
   };
 }
 
 function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
   const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
+  const campaignAsset = pathName.startsWith("/itr-season-2026/")
+    ? itrSeasonCampaignAssets.find((asset) => `/itr-season-2026/${asset.slug}` === pathName)
+    : undefined;
   const title = config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
   const description = config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`;
   const jsonLd = [
@@ -343,6 +373,14 @@ function routeMeta(route: string): RouteMeta {
     robots: "index, follow",
     jsonLd,
     aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify tax actions with a CA.`,
+    staticHighlights: campaignAsset?.checklist.slice(0, 5),
+    staticLinks: safeStaticLinks(campaignAsset ? [
+      campaignAsset.toolLink,
+      campaignAsset.conversionLink,
+      campaignAsset.relatedBlogLink,
+      campaignAsset.learnGuideLink,
+      ...campaignAsset.sourceLinks,
+    ] : []),
   };
 }
 
@@ -396,7 +434,8 @@ function renderSeoHead(meta: RouteMeta) {
 ${jsonLd}`;
 }
 
-type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> & Partial<Pick<RouteMeta, "title" | "description" | "canonicalUrl">>;
+type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> &
+  Partial<Pick<RouteMeta, "title" | "description" | "canonicalUrl" | "staticHighlights" | "staticLinks">>;
 
 export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
   if (meta.robots !== "index, follow") {
@@ -409,6 +448,22 @@ export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
     const title = meta.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
     const description = meta.description || `${humanizeRoute(pathName)} on ${SITE_NAME}.`;
     const canonicalUrl = meta.canonicalUrl || toAbsoluteUrl(pathName);
+    const highlights = meta.staticHighlights?.filter(Boolean).slice(0, 5) ?? [];
+    const links = safeStaticLinks(meta.staticLinks);
+    const highlightsHtml = highlights.length
+      ? `          <section aria-label="Key points" style="margin-top:14px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;padding:16px">
+            <h2 style="margin:0;color:#0f172a;font-size:18px;line-height:1.3;font-weight:900;letter-spacing:0">Key points</h2>
+            <ul style="margin:12px 0 0;padding-left:20px;color:#334155;font-size:14px;line-height:1.65">
+              ${highlights.map((item) => `<li>${escapeHtml(item)}</li>`).join("\n              ")}
+            </ul>
+          </section>`
+      : "";
+    const linksHtml = links.length
+      ? `          <nav aria-label="Official sources and next steps" style="display:grid;gap:8px;margin-top:14px">
+            <p style="margin:0;color:#475569;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0">Official sources and next steps</p>
+            ${links.map((link) => `<a href="${escapeHtml(link.href)}" style="display:flex;min-height:44px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:800">${escapeHtml(link.label)} <span aria-hidden="true">-&gt;</span></a>`).join("\n            ")}
+          </nav>`
+      : "";
 
     return `      <div data-seo-static-shell="route" style="min-height:100vh;background:#fff;color:#0f172a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
         <main style="max-width:896px;margin:0 auto;padding:36px 16px 44px">
@@ -422,6 +477,8 @@ export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
             <p style="margin:14px 0 0;color:#475569;font-size:15px;line-height:1.7">${escapeHtml(description)}</p>
             <a href="${escapeHtml(pathName)}" style="display:inline-flex;margin-top:16px;color:#1d4ed8;font-weight:800;text-decoration:none">Open this page <span aria-hidden="true" style="margin-left:6px">-&gt;</span></a>
           </section>
+${highlightsHtml}
+${linksHtml}
           <nav aria-label="Priority filing links" style="display:grid;gap:10px;margin-top:14px">
             <a href="/itr/form-selector" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border-radius:8px;background:#2563eb;color:#fff;padding:0 14px;text-decoration:none;font-weight:900">Choose ITR Form <span aria-hidden="true">-&gt;</span></a>
             <a href="/calculators/income-tax" style="display:flex;min-height:48px;align-items:center;justify-content:space-between;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;padding:0 14px;text-decoration:none;font-weight:900">Income Tax Calculator <span aria-hidden="true">-&gt;</span></a>

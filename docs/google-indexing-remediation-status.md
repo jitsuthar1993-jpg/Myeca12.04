@@ -6,7 +6,7 @@ This ledger maps the original Google Search and Search Console risk list to the 
 
 ## Current Summary
 
-Repo-side technical remediation is in place for sitemap coverage, robots policy, public/private indexability, pre-hydration SEO shells, internal linking, ITR-season content assets, backlink planning, and lab Core Web Vitals checks.
+Repo-side technical remediation is in place for sitemap coverage, robots policy, public/private indexability, pre-hydration SEO shells with article highlights, internal linking, ITR-season content assets, backlink planning, and lab Core Web Vitals checks.
 
 The remaining blockers are external:
 
@@ -80,6 +80,7 @@ Status: mitigated, pending_external rendered-page proof.
 Technical evidence:
 
 - Public priority URLs include pre-hydration SEO shells, so Google can see titles, descriptions, body copy, and crawlable links before the React app finishes loading.
+- Blog, Learn guide, and ITR-season asset shells now expose article highlights plus official sources and next-step links before hydration, reducing reliance on JavaScript rendering for deeper content signals.
 - The current Vite/React stack is preserved; a Next.js migration is not required unless URL Inspection shows Google cannot render meaningful content.
 
 Remaining owner action:
@@ -109,6 +110,7 @@ Technical evidence:
 - High-intent guides exist for ITR-1, Section 80C, AIS, and GST notice handling.
 - The ITR-season hub and four campaign assets target AY 2026-27 filing intent.
 - Comparison and campaign pages have unique titles and sitemap entries.
+- Static article shells surface key highlights and source links from the existing content inventory, so thin pre-rendered bodies are no longer limited to a single summary paragraph.
 
 Remaining owner action:
 
