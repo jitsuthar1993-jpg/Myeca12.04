@@ -26,10 +26,12 @@ Technical evidence:
 
 - Priority public URLs return `200`, are indexable, have canonical metadata, and include static SEO shell content before hydration.
 - The live sitemap check on May 25, 2026 found 170 URL entries.
+- Manual `site:myeca.in` search checks on May 25, 2026 showed limited visible Google coverage: the homepage appears, while exact checks for priority deep URLs such as `/blog/when-will-itr-filing-start-ay-2026-27`, `/itr/form-selector`, `/services/itr-for-salaried`, and `/calculators/income-tax` did not surface those URLs in the checked results. The visible homepage snippet also reflects an older crawl snapshot, while the live HTML no longer serves the old public ERI/self-filing copy.
 
 Remaining owner action:
 
 - Use Search Console URL Inspection and the Page indexing report to confirm Google coverage for `/`, `/blog`, `/blog/when-will-itr-filing-start-ay-2026-27`, `/services/itr-for-salaried`, `/calculators/income-tax`, and `/itr/form-selector`.
+- After Search Console verification, request recrawl/indexing for priority deep URLs that pass live inspection so Google replaces stale snippets with the current static SEO shell.
 
 ### 2. Missing sitemap.xml
 
