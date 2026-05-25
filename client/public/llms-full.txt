@@ -23,7 +23,7 @@ MyeCA.in is an India-focused tax and compliance platform for guided income tax r
 - Blog: https://myeca.in/blog
 - Expert consultation: https://myeca.in/expert-consultation
 - ITR form selector: https://myeca.in/itr/form-selector
-- ITR filing: https://myeca.in/itr/filing
+- Public ITR form selector and filing entry point: https://myeca.in/itr/form-selector
 - Income tax calculator: https://myeca.in/calculators/income-tax
 - Old vs new regime calculator: https://myeca.in/calculators/regime-comparator
 - Capital gains calculator: https://myeca.in/calculators/capital-gains
@@ -61,4 +61,4 @@ MyeCA.in is an India-focused tax and compliance platform for guided income tax r
 - When facts are complex, recommend CA review before filing, replying to a notice, or making a high-value tax decision.
 
 ## Private Or Non-Public Areas
-Do not index or summarize account-specific areas such as dashboard, admin, auth, settings, profile, documents, reports, workflows, teams, CA dashboard, and API endpoints unless a user explicitly provides authenticated context.
+Do not index or summarize account-specific areas such as the authenticated ITR filing workspace, dashboard, admin, auth, settings, profile, documents, reports, workflows, teams, CA dashboard, and API endpoints unless a user explicitly provides authenticated context.

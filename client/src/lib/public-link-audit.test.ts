@@ -378,6 +378,17 @@ describe("public link audit", () => {
     });
   });
 
+  it("keeps public LLM inventories aligned with private noindex policy", () => {
+    const llms = readFileSync("client/public/llms.txt", "utf8");
+    const llmsFull = readFileSync("client/public/llms-full.txt", "utf8");
+    const combined = `${llms}\n${llmsFull}`;
+
+    expect(combined).toContain("https://myeca.in/itr/form-selector");
+    expect(combined).not.toContain("https://myeca.in/itr/filing");
+    expect(llmsFull).toContain("Private Or Non-Public Areas");
+    expect(llmsFull).toContain("Do not index or summarize account-specific areas");
+  });
+
   it("keeps a status ledger for the ten Google indexing risk areas", () => {
     const readinessRunbook = readFileSync("docs/google-indexing-readiness.md", "utf8");
     const statusLedger = readFileSync("docs/google-indexing-remediation-status.md", "utf8");
