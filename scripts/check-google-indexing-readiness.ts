@@ -20,6 +20,7 @@ const requiredPublicRoutes = [
   "/calculators/regime-comparator",
   "/calculators/vda-tax",
   "/startup/planning",
+  "/learn/guide/salary-tax-calculator-guide-ay-2026-27",
   "/itr-season-2026",
   "/itr-season-2026/ais-form-26as-mismatch-checklist",
   "/itr-season-2026/form-16-parser-guide",
