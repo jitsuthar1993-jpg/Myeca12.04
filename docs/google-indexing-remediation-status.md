@@ -127,7 +127,7 @@ Status: repo_resolved for current inventory.
 
 Technical evidence:
 
-- Tests enforce that high-intent guides and default blog articles link into calculators, service/expert routes, pricing, and filing paths.
+- Tests enforce that high-intent guides, fallback default blog articles, and the static MDX blog inventory link into calculators, service/expert routes, pricing, and filing paths.
 - ITR-season assets link to tools, conversion routes, related blog content, and Learn guides.
 
 Remaining owner action:

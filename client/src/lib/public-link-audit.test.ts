@@ -300,6 +300,21 @@ describe("public link audit", () => {
     });
   });
 
+  it("keeps every static MDX blog article linked into calculator, service, pricing, and filing paths", () => {
+    const staticPosts = loadStaticBlogPosts();
+
+    expect(staticPosts.length).toBeGreaterThan(30);
+
+    staticPosts.forEach((post) => {
+      const links = getBlogConversionLinks(post).map((link) => link.href);
+
+      expect(links.some((href) => href.startsWith("/calculators/")), post.slug).toBe(true);
+      expect(links.some((href) => href.startsWith("/services/") || href === "/expert-consultation"), post.slug).toBe(true);
+      expect(links, post.slug).toContain("/pricing");
+      expect(links.some((href) => href === "/itr/form-selector" || href.startsWith("/services/")), post.slug).toBe(true);
+    });
+  });
+
   it("keeps public content CTAs away from private app routes", () => {
     defaultBlogPosts.forEach((post) => {
       expectPublicHref(post.ctaHref, `${post.slug} fallback ctaHref`);
