@@ -1,6 +1,6 @@
 # Google Indexing Remediation Status
 
-Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `e49a24e`.
+Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `9fb0e07` and Vercel deployment `dpl_3eyr79Y6ymFNdYNf527bQAvtD5r9`.
 
 This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof.
 
@@ -25,7 +25,7 @@ Status: pending_external.
 Technical evidence:
 
 - Priority public URLs return `200`, are indexable, have canonical metadata, and include static SEO shell content before hydration.
-- The live sitemap check on May 25, 2026 found 170 URL entries.
+- The live sitemap check on May 26, 2026 found 171 URL entries.
 - Manual `site:myeca.in` search checks on May 25 and May 26, 2026 showed limited visible Google coverage: the homepage appears, while exact checks for priority deep URLs such as `/blog/when-will-itr-filing-start-ay-2026-27`, `/itr/form-selector`, `/services/itr-for-salaried`, and `/calculators/income-tax` did not surface those URLs in the checked results. The visible homepage snippet also reflects an older crawl snapshot, while the live HTML no longer serves the old public ERI/self-filing copy.
 
 Remaining owner action:
@@ -112,6 +112,7 @@ Technical evidence:
 
 - High-intent guides exist for ITR-1, salary tax calculator use, Section 80C, AIS, and GST notice handling.
 - The objective's example coverage is test-enforced in `client/src/lib/public-link-audit.test.ts`: `itr-1-filing-guide-ay-2026-27`, `salary-tax-calculator-guide-ay-2026-27`, `section-80c-deductions-ay-2026-27`, `ais-explained-ay-2026-27`, and `gst-notice-handling-guide` must remain in `TAX_GUIDES`, must appear in the generated sitemap, and must link into calculator, service or expert, pricing, and filing paths.
+- The salary tax calculator guide is live at `/learn/guide/salary-tax-calculator-guide-ay-2026-27` with a `200` response, indexable robots, canonical `https://myeca.in/learn/guide/salary-tax-calculator-guide-ay-2026-27`, and a pre-hydration static SEO shell.
 - The ITR-season hub and four campaign assets target AY 2026-27 filing intent.
 - Comparison and campaign pages have unique titles and sitemap entries.
 - Static article shells surface key highlights and source links from the existing content inventory, so thin pre-rendered bodies are no longer limited to a single summary paragraph.
