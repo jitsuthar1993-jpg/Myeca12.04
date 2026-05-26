@@ -141,6 +141,7 @@ Technical evidence:
 
 - `npm run check:core-web-vitals` audits priority public routes for mobile LCP and CLS, and checks synthetic INP when available.
 - The audit uses median finite samples for lab retries so single cold-load spikes do not create false failures.
+- A refreshed May 26, 2026 lab run passed priority public routes with mobile LCP at or below `1308ms` and CLS at or below `0.003`; synthetic INP was unavailable, and a PageSpeed Insights probe from this workspace returned HTTP `429`.
 
 Remaining owner action:
 

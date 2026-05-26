@@ -15,3 +15,5 @@ date,item,status,evidence,next_action
 2026-05-25,Page indexing report,pending_external,Awaiting Search Console data,Review excluded duplicate and crawled not indexed reasons after recrawl
 2026-05-25,Field INP evidence,pending_external,Lab INP may be unavailable in Chromium,Record CrUX Vercel Speed Insights or Search Console Core Web Vitals INP
 2026-05-25,Core Web Vitals lab,recorded,npm run check:core-web-vitals passes priority public routes with mobile LCP <= 1436ms and CLS <= 0.023; synthetic INP unavailable,Repeat after deploys and record field INP separately
+2026-05-26,Core Web Vitals lab,recorded,npm run check:core-web-vitals passes priority public routes with mobile LCP <= 1308ms and CLS <= 0.003; synthetic INP unavailable,Repeat after deploys and record field INP separately
+2026-05-26,Field INP evidence,pending_external,PageSpeed Insights probe from this workspace returned HTTP 429 and no CrUX Search Console or Vercel field INP is available here,Retry PageSpeed later or record CrUX Vercel Speed Insights or Search Console field INP
