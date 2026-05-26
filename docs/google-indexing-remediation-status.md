@@ -1,12 +1,12 @@
 # Google Indexing Remediation Status
 
-Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `9fb0e07` and Vercel deployment `dpl_3eyr79Y6ymFNdYNf527bQAvtD5r9`.
+Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `f307276` and Vercel deployment `dpl_BDUt3zcPRb9anhHwrXGWq7LsbGjN`.
 
 This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof, and use `docs/google-search-console-owner-runbook.md` for the exact owner-side Search Console session.
 
 ## Current Summary
 
-Repo-side technical remediation is in place for sitemap coverage, robots policy, public/private indexability, pre-hydration SEO shells with article highlights, internal linking, ITR-season content assets, backlink planning, and lab Core Web Vitals checks.
+Repo-side technical remediation is in place for sitemap coverage, robots policy, public/private indexability, pre-hydration SEO shells with article highlights, internal linking, ITR-season content assets, backlink planning, Vercel cache-header hardening, and lab Core Web Vitals checks.
 
 The remaining blockers are external:
 
@@ -29,6 +29,7 @@ Technical evidence:
 - Priority public URLs return `200`, are indexable, have canonical metadata, and include static SEO shell content before hydration.
 - The live sitemap check on May 26, 2026 found 171 URL entries.
 - Manual `site:myeca.in` search checks on May 25 and May 26, 2026 showed limited visible Google coverage: the homepage appears, while exact checks for priority deep URLs such as `/blog/when-will-itr-filing-start-ay-2026-27`, `/itr/form-selector`, `/services/itr-for-salaried`, and `/calculators/income-tax` did not surface those URLs in the checked results. The visible homepage snippet also reflects an older crawl snapshot, while the live HTML no longer serves the old public ERI/self-filing copy.
+- A refreshed May 26, 2026 web search check after deployment `dpl_BDUt3zcPRb9anhHwrXGWq7LsbGjN` still surfaced the homepage for `site:myeca.in`, with no visible priority deep-route results in the checked search result set.
 
 Remaining owner action:
 
@@ -146,6 +147,7 @@ Technical evidence:
 - `npm run check:core-web-vitals` audits priority public routes for mobile LCP and CLS, and checks synthetic INP when available.
 - The audit uses median finite samples for lab retries so single cold-load spikes do not create false failures.
 - A refreshed May 26, 2026 lab run passed priority public routes, including `/learn/guide/salary-tax-calculator-guide-ay-2026-27`, with mobile LCP at or below `1340ms` and CLS at `0.000`; the new salary guide measured `688ms` median LCP and `0.000` median CLS, synthetic INP was unavailable, and a PageSpeed Insights probe from this workspace returned HTTP `429`.
+- A follow-up May 26, 2026 canonical lab run after `f307276` passed `/` with `808ms` median LCP and `0.000` CLS, and `/blog` with `532ms` LCP and `0.000` CLS. Synthetic INP was still unavailable and must be confirmed from field data.
 
 Remaining owner action:
 
@@ -162,6 +164,7 @@ Technical evidence:
 - The accessible Vercel production env list does not include `VITE_GOOGLE_SITE_VERIFICATION`, live DNS TXT lookup for `myeca.in` has no Google verification token, and `vercel domains inspect myeca.in` under the accessible scope reports no domain access.
 - A refreshed Vercel access check on May 25, 2026 shows this token only has `enon3101s-projects`, `vercel domains ls --scope enon3101s-projects` returns `0 Domains`, and the local repo/search scan found no saved Google verification token beyond empty examples.
 - A refreshed check on May 26, 2026 still shows `0 Domains` under `enon3101s-projects`, no production `VITE_GOOGLE_SITE_VERIFICATION` in the accessible Vercel project, no valid DNS TXT token for `myeca.in`, and no live homepage verification meta tag.
+- The currently inspectable Vercel production alias is ready at deployment `dpl_BDUt3zcPRb9anhHwrXGWq7LsbGjN`; the accessible Vercel scope still cannot manage the canonical `myeca.in` DNS/domain ownership needed for Search Console Domain-property verification.
 
 Remaining owner action:
 
