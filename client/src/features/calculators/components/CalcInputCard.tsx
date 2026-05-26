@@ -5,6 +5,7 @@ interface CalcInputCardProps {
   children: React.ReactNode;
   title?: string;
   className?: string;
+  contentClassName?: string;
   icon?: React.ReactNode;
 }
 
@@ -12,6 +13,7 @@ export default function CalcInputCard({
   children, 
   title, 
   className,
+  contentClassName,
   icon 
 }: CalcInputCardProps) {
   return (
@@ -32,7 +34,7 @@ export default function CalcInputCard({
         </div>
       )}
       
-      <div className="space-y-10">
+      <div className={cn("space-y-10", contentClassName)}>
         {children}
       </div>
     </div>
@@ -43,15 +45,19 @@ export function CalcInputGroup({
   label, 
   children, 
   badgeValue,
-  onBadgeClick 
+  onBadgeClick,
+  className,
+  controlClassName
 }: { 
   label: React.ReactNode; 
   children: React.ReactNode; 
   badgeValue?: string;
   onBadgeClick?: () => void;
+  className?: string;
+  controlClassName?: string;
 }) {
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", className)}>
       <div className="flex items-center justify-between">
         <label className="type-meta font-normal uppercase tracking-widest text-slate-500">
           {label}
@@ -65,7 +71,7 @@ export function CalcInputGroup({
           </button>
         )}
       </div>
-      <div className="px-2">
+      <div className={cn("px-2", controlClassName)}>
         {children}
       </div>
     </div>

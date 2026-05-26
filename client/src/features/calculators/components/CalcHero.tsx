@@ -12,6 +12,7 @@ interface CalcHeroProps {
   variant?: "blue" | "emerald" | "indigo" | "violet" | "amber";
   breadcrumbItems?: { name: string; href?: string }[];
   hideBreadcrumbs?: boolean;
+  compact?: boolean;
 }
 
 const variantStyles = {
@@ -29,10 +30,11 @@ export default function CalcHero({
   icon, 
   variant = "blue",
   breadcrumbItems = [],
-  hideBreadcrumbs = false
+  hideBreadcrumbs = false,
+  compact = false
 }: CalcHeroProps) {
   return (
-    <div className="relative pt-8 pb-12 overflow-hidden">
+    <div className={cn("relative overflow-hidden", compact ? "pt-5 pb-7" : "pt-8 pb-12")}>
       {/* Background Aura */}
       <div className={cn(
         "absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b blur-[120px] -z-10 opacity-60",
@@ -42,7 +44,7 @@ export default function CalcHero({
       <div className="max-w-7xl mx-auto px-4">
         {/* Breadcrumbs */}
         {!hideBreadcrumbs && (
-          <Breadcrumb className="mb-8">
+          <Breadcrumb className={compact ? "mb-5" : "mb-8"}>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
