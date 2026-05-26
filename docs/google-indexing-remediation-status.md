@@ -26,7 +26,7 @@ Technical evidence:
 
 - Priority public URLs return `200`, are indexable, have canonical metadata, and include static SEO shell content before hydration.
 - The live sitemap check on May 25, 2026 found 170 URL entries.
-- Manual `site:myeca.in` search checks on May 25, 2026 showed limited visible Google coverage: the homepage appears, while exact checks for priority deep URLs such as `/blog/when-will-itr-filing-start-ay-2026-27`, `/itr/form-selector`, `/services/itr-for-salaried`, and `/calculators/income-tax` did not surface those URLs in the checked results. The visible homepage snippet also reflects an older crawl snapshot, while the live HTML no longer serves the old public ERI/self-filing copy.
+- Manual `site:myeca.in` search checks on May 25 and May 26, 2026 showed limited visible Google coverage: the homepage appears, while exact checks for priority deep URLs such as `/blog/when-will-itr-filing-start-ay-2026-27`, `/itr/form-selector`, `/services/itr-for-salaried`, and `/calculators/income-tax` did not surface those URLs in the checked results. The visible homepage snippet also reflects an older crawl snapshot, while the live HTML no longer serves the old public ERI/self-filing copy.
 
 Remaining owner action:
 
