@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { SEO_CONFIG } from "../config/seo.config";
 import { getGeneratedPublicRoutes } from "../data/missing-pages";
 import { buildApiSitemapXml } from "../../../api/index";
@@ -9,6 +11,31 @@ import {
 } from "@shared/seo-public";
 
 describe("SEO indexing policy", () => {
+  it("keeps Vercel CA noindex headers from shadowing calculator routes", () => {
+    const vercelConfig = JSON.parse(
+      readFileSync(path.join(process.cwd(), "vercel.json"), "utf8"),
+    ) as {
+      headers: Array<{
+        source: string;
+        headers: Array<{ key: string; value: string }>;
+      }>;
+    };
+
+    const noindexSources = vercelConfig.headers
+      .filter((entry) =>
+        entry.headers.some(
+          (header) =>
+            header.key.toLowerCase() === "x-robots-tag" &&
+            header.value.toLowerCase() === "noindex, nofollow",
+        ),
+      )
+      .map((entry) => entry.source);
+
+    expect(noindexSources).toContain("/ca");
+    expect(noindexSources).toContain("/ca/(.*)");
+    expect(noindexSources).not.toContain("/ca(.*)");
+  });
+
   it("keeps authenticated ITR filing private while preserving the public selector entry point", () => {
     const routes = getIndexablePublicRoutes(
       [
