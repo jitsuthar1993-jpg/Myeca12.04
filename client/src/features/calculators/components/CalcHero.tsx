@@ -13,6 +13,7 @@ interface CalcHeroProps {
   breadcrumbItems?: { name: string; href?: string }[];
   hideBreadcrumbs?: boolean;
   compact?: boolean;
+  alignIconWithTitle?: boolean;
 }
 
 const variantStyles = {
@@ -31,7 +32,8 @@ export default function CalcHero({
   variant = "blue",
   breadcrumbItems = [],
   hideBreadcrumbs = false,
-  compact = false
+  compact = false,
+  alignIconWithTitle = false
 }: CalcHeroProps) {
   return (
     <div className={cn("relative overflow-hidden", compact ? "pt-5 pb-7" : "pt-8 pb-12")}>
@@ -80,16 +82,17 @@ export default function CalcHero({
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
+            <div className={cn("flex gap-3", alignIconWithTitle ? "items-stretch" : "items-center")}>
               {icon && (
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-slate-100",
+                  "w-12 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-slate-100",
+                  alignIconWithTitle ? "min-h-12 self-stretch" : "h-12",
                   variantStyles[variant].split(" ").pop()
                 )}>
                   {icon}
                 </div>
               )}
-              <div className="space-y-1">
+              <div className={cn("space-y-1", alignIconWithTitle && "flex flex-col justify-center")}>
                 {category && (
                   <span className={cn(
                     "type-meta font-normal uppercase tracking-[0.2em]",

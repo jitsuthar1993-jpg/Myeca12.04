@@ -181,6 +181,7 @@ export default function UnifiedLoanCalculatorPage() {
         variant={loanConfig[activeTab].variant}
         breadcrumbItems={[{ name: "Loan EMI Calculator" }]}
         compact
+        alignIconWithTitle
       />
 
       <CalcLayout
@@ -234,7 +235,7 @@ export default function UnifiedLoanCalculatorPage() {
         }
       >
         <div className="space-y-6">
-          <CalcInputCard className="p-5 sm:p-6 lg:p-7 rounded-[2rem]" contentClassName="space-y-7">
+          <CalcInputCard className="p-5 sm:p-6 lg:p-7 rounded-[2rem]" contentClassName="space-y-4">
             <div className="flex p-1.5 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
               {(Object.keys(loanConfig) as LoanType[]).map((type) => {
                 const isSelected = activeTab === type;
@@ -260,7 +261,7 @@ export default function UnifiedLoanCalculatorPage() {
             <CalcInputGroup 
               label="Loan Amount" 
               badgeValue={fmt(principal)}
-              className="space-y-4"
+              className="space-y-2"
             >
               <Slider 
                 value={[principal]} 
@@ -274,7 +275,7 @@ export default function UnifiedLoanCalculatorPage() {
             <CalcInputGroup 
               label="Annual Interest Rate" 
               badgeValue={`${rate}%`}
-              className="space-y-4"
+              className="space-y-2"
             >
               <Slider 
                 value={[rate]} 
@@ -289,7 +290,7 @@ export default function UnifiedLoanCalculatorPage() {
               <CalcInputGroup 
                 label={`Tenure (${tenureType})`} 
                 badgeValue={`${tenure} ${tenureType === 'years' ? 'Yrs' : 'Mos'}`}
-                className="space-y-4"
+                className="space-y-2"
               >
                 <Slider 
                   value={[tenure]} 
@@ -304,7 +305,7 @@ export default function UnifiedLoanCalculatorPage() {
                 <CalcInputGroup 
                   label="Monthly Income" 
                   badgeValue={fmt(monthlyIncome)}
-                  className="space-y-4"
+                  className="space-y-2"
                 >
                   <Slider 
                     value={[monthlyIncome]} 
@@ -318,7 +319,7 @@ export default function UnifiedLoanCalculatorPage() {
             </div>
 
             {activeTab === 'education' && (
-              <div className="pt-5 border-t border-slate-50 space-y-5">
+              <div className="pt-3 border-t border-slate-50 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-normal text-slate-800">Moratorium Period</p>
@@ -342,7 +343,7 @@ export default function UnifiedLoanCalculatorPage() {
                   <CalcInputGroup 
                     label="Moratorium Duration (Years)" 
                     badgeValue={`${moratoriumPeriod} Yrs`}
-                    className="space-y-4"
+                    className="space-y-2"
                   >
                     <Slider 
                       value={[moratoriumPeriod]} 
