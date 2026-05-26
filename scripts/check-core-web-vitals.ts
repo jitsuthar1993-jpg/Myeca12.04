@@ -1,4 +1,4 @@
-import { chromium, devices, type Page } from "playwright";
+import { chromium, devices, type Browser, type Page } from "playwright";
 import {
   CORE_WEB_VITAL_THRESHOLDS,
   classifyCoreWebVital,
@@ -39,6 +39,7 @@ type RouteAudit = {
 
 const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_CWV_BASE_URL || defaultBaseUrl);
 const routes = parseRoutes(process.argv[3] || process.env.MYECA_CWV_ROUTES || defaultRoutes.join(","));
+const sampleDelayMs = parseDelay(process.env.MYECA_CWV_SAMPLE_DELAY_MS, 1_200);
 
 function normalizeBaseUrl(value: string) {
   return value.replace(/\/+$/, "");
@@ -50,6 +51,16 @@ function parseRoutes(value: string) {
     .map((route) => route.trim())
     .filter(Boolean)
     .map((route) => (route.startsWith("/") ? route : `/${route}`));
+}
+
+function parseDelay(value: string | undefined, fallback: number) {
+  if (!value) return fallback;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function routeUrl(route: string) {
@@ -278,11 +289,11 @@ async function waitForMetrics(page: Page): Promise<CoreWebVitalsSnapshot> {
   return metrics;
 }
 
-async function collectRouteSample(route: string): Promise<RouteAudit> {
-  const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({
+async function collectRouteSample(browser: Browser, route: string): Promise<RouteAudit> {
+  const context = await browser.newContext({
     ...devices["Pixel 5"],
   });
+  const page = await context.newPage();
 
   try {
     await installMetricObservers(page);
@@ -323,12 +334,12 @@ async function collectRouteSample(route: string): Promise<RouteAudit> {
       samples: [metrics],
     };
   } finally {
-    await browser.close();
+    await context.close();
   }
 }
 
-async function auditRoute(route: string) {
-  const audit = await collectRouteSample(route);
+async function auditRoute(browser: Browser, route: string) {
+  const audit = await collectRouteSample(browser, route);
   const needsRetry =
     audit.reachable.ok &&
     (classifyCoreWebVital("LCP", audit.metrics.lcp ?? Number.POSITIVE_INFINITY) === "fail" ||
@@ -336,7 +347,8 @@ async function auditRoute(route: string) {
 
   if (needsRetry) {
     while (audit.samples.length < 3) {
-      const retry = await collectRouteSample(route);
+      await wait(sampleDelayMs);
+      const retry = await collectRouteSample(browser, route);
       audit.samples.push(...retry.samples);
     }
 
@@ -366,9 +378,15 @@ async function auditRoute(route: string) {
 
 async function main() {
   const routeResults: MetricResult[] = [];
+  const browser = await chromium.launch({ headless: true });
 
-  for (const route of routes) {
-    routeResults.push(...await auditRoute(route));
+  try {
+    for (const [index, route] of routes.entries()) {
+      if (index > 0) await wait(sampleDelayMs);
+      routeResults.push(...await auditRoute(browser, route));
+    }
+  } finally {
+    await browser.close();
   }
 
   console.log(`Core Web Vitals mobile lab audit for ${baseUrl}`);
