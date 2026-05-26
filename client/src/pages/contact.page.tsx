@@ -108,7 +108,7 @@ export default function ContactPage() {
           <div className="mx-auto max-w-4xl px-4 text-center">
             <div className="type-meta mx-auto mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1 font-normal uppercase text-blue-700">
               <ShieldCheck className="h-3.5 w-3.5" />
-              Scope-first support
+              Summary first, documents later
             </div>
             <h1 className="type-hero-title mb-5 font-extrabold text-slate-950">
               Contact MyeCA support and tax experts.
@@ -118,7 +118,7 @@ export default function ContactPage() {
             </p>
             <div className="mt-6 grid gap-3 text-left sm:grid-cols-3">
               {[
-                { icon: BadgeCheck, label: "Scope before quote" },
+                { icon: BadgeCheck, label: "Review before quote" },
                 { icon: FileText, label: "Document checklist after review" },
                 { icon: ShieldCheck, label: "No payment on this page" },
               ].map(({ icon: Icon, label }) => (
@@ -190,7 +190,7 @@ export default function ContactPage() {
                       <span className="transition group-open:rotate-180">v</span>
                     </summary>
                     <p className="mt-2 border-l-2 border-blue-200 pl-4 text-sm leading-6 text-slate-600">
-                      No. Use this form for a summary only. The team will tell you what to share after the case scope is clear.
+                      No. Use this form for a summary only. The team will tell you what to share after the right service route is clear.
                     </p>
                   </details>
                   <details className="group">

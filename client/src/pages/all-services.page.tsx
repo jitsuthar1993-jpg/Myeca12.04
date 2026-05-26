@@ -1,119 +1,177 @@
-import { useState } from "react";
-import { m, AnimatePresence } from "framer-motion";
-import { 
-  Building2, FileText, Calculator, Receipt, PiggyBank, Shield, 
-  CreditCard, Award, Home, TrendingUp, Grid, BarChart3, Users,
-  HelpCircle, BookOpen, Bot, MessageCircle, AlertTriangle,
-  Search, Code2, ExternalLink, Activity, TerminalSquare,
-  KeyRound, CreditCard as CreditCardIcon, FileQuestion, Grid3X3,
-  ChevronRight, Sparkles, Building, User
+import { useMemo, useState } from "react";
+import { AnimatePresence, m } from "framer-motion";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  Building2,
+  Calculator,
+  CheckCircle2,
+  Clock3,
+  CreditCard,
+  FileText,
+  Home,
+  MessageCircle,
+  PiggyBank,
+  Receipt,
+  Search,
+  Shield,
+  TrendingUp,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { allServices, Service } from "@/data/all-services";
-import { getSEOConfig } from "@/config/seo.config";
-import MetaSEO from "@/components/seo/MetaSEO";
 import { Link } from "wouter";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import MetaSEO from "@/components/seo/MetaSEO";
+import { getSEOConfig } from "@/config/seo.config";
+import { allServices, type Service } from "@/data/all-services";
 
 const iconMap = {
-  Building2, FileText, Calculator, Receipt, PiggyBank, Shield, 
-  CreditCard, Award, Home, TrendingUp, Grid, BarChart3, Users,
-  HelpCircle, BookOpen, Bot, MessageCircle, AlertTriangle
+  AlertTriangle,
+  Award,
+  Building2,
+  Calculator,
+  CreditCard,
+  FileText,
+  Home,
+  MessageCircle,
+  PiggyBank,
+  Receipt,
+  Shield,
+  TrendingUp,
 };
 
-const SIDEBAR_NAV = [
-  { id: "all", label: "All Services Catalogue", icon: Grid3X3 },
-  { id: "Services", label: "Tax & Filing", icon: FileText },
-  { id: "Startup", label: "Business Setup", icon: Building },
-  { id: "Calculators", label: "Calculators", icon: Calculator },
-  { id: "ITR Filing", label: "ITR Ecosystem", icon: Receipt },
-  { id: "Analytics", label: "Analytics", icon: Activity },
+const sectionLabels: Record<string, string> = {
+  Services: "Tax and compliance",
+  Startup: "Business setup",
+  Calculators: "Calculators",
+  "ITR Filing": "ITR preparation",
+};
+
+const proofItems = [
+  "Upload Form 16 and AIS first for ITR work.",
+  "CA review starts after the document checklist is complete.",
+  "No PAN, passwords, or full records are needed in public contact forms.",
 ];
 
-const BOTTOM_NAV = [
-  { id: "docs", label: "Documentation", icon: FileQuestion },
-  { id: "status", label: "System Status", icon: Activity },
-];
+function ServiceCard({ service }: { service: Service }) {
+  const IconComponent = iconMap[service.icon as keyof typeof iconMap] ?? FileText;
+  const price = service.price ?? (service.ctaLabel === "Open calculator" ? "Free calculator" : "Price shown after review");
 
-export default function AllServicesPage() {
-  const seo = getSEOConfig('/all-services');
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [userMode, setUserMode] = useState<"individual" | "business">("individual");
-
-  // Filter services based on active category and search
-  const filteredServices = allServices.filter(service => {
-    const matchesSearch = service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeCategory === "all" || service.section === activeCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
-  const renderServiceCard = (service: Service) => {
-    const IconComponent = iconMap[service.icon as keyof typeof iconMap] || Grid;
-    const isPremium = service.price !== undefined;
-    
-    return (
-      <m.div
-        layout
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.2 }}
-        key={service.id}
-      >
-        <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-300 border-gray-200/60 bg-white group hover:-translate-y-1">
-          <CardContent className="p-6 flex-1 flex flex-col">
-            <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                <IconComponent className="w-6 h-6 text-slate-600 group-hover:text-indigo-600 transition-colors" />
-              </div>
-              <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-medium text-xs rounded-full px-3 cursor-default hover:bg-slate-200">
-                {isPremium ? "Premium" : "Free Tools"}
-              </Badge>
+  return (
+    <m.div
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 12 }}
+      transition={{ duration: 0.18 }}
+      className="h-full"
+    >
+      <Card className="flex h-full flex-col rounded-lg border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+        <CardContent className="flex h-full flex-col p-5 md:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+              <IconComponent className="h-5 w-5" />
             </div>
-            
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">{service.title}</h3>
-            <p className="text-sm text-slate-500 mb-6 flex-1 line-clamp-3 leading-relaxed">
-              {service.description}
-            </p>
+            <Badge variant="outline" className="border-slate-200 bg-slate-50 text-slate-600">
+              {service.category}
+            </Badge>
+          </div>
 
-            <div className="flex items-center gap-4 mt-auto">
-              <Link href="/learn/videos" className="flex items-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <BookOpen className="w-4 h-4 mr-1.5" />
-                Lesson Guide
-              </Link>
-              <Link href="/help" className="flex items-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors">
-                <Code2 className="w-4 h-4 mr-1.5" />
-                Documentation
-              </Link>
+          <h2 className="mt-5 text-lg font-extrabold leading-snug text-slate-950">{service.title}</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">{service.description}</p>
+
+          <div className="mt-5 grid gap-3 text-sm">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Price cue</p>
+              <p className="mt-1 font-bold text-slate-900">{price}</p>
             </div>
-          </CardContent>
-          <CardFooter className="p-6 pt-0">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                <Clock3 className="h-3.5 w-3.5" />
+                Turnaround
+              </p>
+              <p className="mt-1 leading-5 text-slate-700">{service.turnaround}</p>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">Documents commonly needed</p>
+              <ul className="mt-3 space-y-2">
+                {service.documents.slice(0, 3).map((item) => (
+                  <li key={item} className="flex gap-2 text-sm leading-5 text-slate-600">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">MyeCA checks</p>
+              <ul className="mt-3 space-y-2">
+                {service.checks.slice(0, 3).map((item) => (
+                  <li key={item} className="flex gap-2 text-sm leading-5 text-slate-600">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-auto pt-6">
             {service.path ? (
-              <Link href={service.path} className="w-full">
-                <Button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-6 rounded-xl transition-all shadow-md hover:shadow-lg">
-                  {isPremium ? "Subscribe Now" : "Explore Now"}
-                  {!isPremium && <ChevronRight className="w-4 h-4 ml-1.5" />}
+              <Link href={service.path}>
+                <Button className="h-11 w-full rounded-lg bg-blue-700 font-bold text-white hover:bg-blue-800">
+                  {service.ctaLabel}
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             ) : (
-              <Button disabled className="w-full bg-slate-100 text-slate-400 font-medium py-6 rounded-xl">
-                Coming Soon
+              <Button disabled className="h-11 w-full rounded-lg">
+                Request details
               </Button>
             )}
-          </CardFooter>
-        </Card>
-      </m.div>
-    );
-  };
+          </div>
+        </CardContent>
+      </Card>
+    </m.div>
+  );
+}
+
+export default function AllServicesPage() {
+  const seo = getSEOConfig("/all-services");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeSection, setActiveSection] = useState("all");
+
+  const sections = useMemo(() => ["all", ...Array.from(new Set(allServices.map((service) => service.section)))], []);
+
+  const filteredServices = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+
+    return allServices.filter((service) => {
+      const searchable = [
+        service.title,
+        service.description,
+        service.category,
+        service.section,
+        ...service.documents,
+        ...service.checks,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      const matchesSearch = !query || searchable.includes(query);
+      const matchesSection = activeSection === "all" || service.section === activeSection;
+      return matchesSearch && matchesSection;
+    });
+  }, [activeSection, searchTerm]);
 
   return (
-    <div className="min-h-[calc(100vh-74px)] bg-slate-50/50 flex">
-      <MetaSEO 
+    <main className="min-h-screen bg-[#F8FAFC]">
+      <MetaSEO
         title={seo?.title}
         description={seo?.description}
         keywords={seo?.keywords}
@@ -121,166 +179,108 @@ export default function AllServicesPage() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      {/* Sidebar Navigation */}
-      <aside className="w-72 bg-white border-r border-slate-200 hidden lg:flex flex-col flex-shrink-0 sticky top-[74px] h-[calc(100vh-74px)]">
-        <div className="p-6">
-          <div className="flex items-center gap-3 px-2 mb-8">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <Grid3X3 className="w-5 h-5 text-white" />
+      <section className="border-b border-slate-200 bg-white px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 lg:grid-cols-[0.96fr_1.04fr] lg:items-end">
+            <div>
+              <Badge className="mb-5 border-blue-100 bg-blue-50 text-blue-700">Public services catalogue</Badge>
+              <h1 className="type-hero-title max-w-4xl font-extrabold text-slate-950">
+                Choose the tax service by the documents you already have.
+              </h1>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg">
+                Browse ITR filing, GST, notices, startup compliance, and calculators with the document list and review checks visible before you begin.
+              </p>
             </div>
-            <span className="font-bold text-xl tracking-tight text-slate-900">MyeCA<span className="text-indigo-600 font-light">Hub</span></span>
-          </div>
 
-          <div className="space-y-1">
-            {SIDEBAR_NAV.map((nav) => (
-              <button
-                key={nav.id}
-                onClick={() => setActiveCategory(nav.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200
-                  ${activeCategory === nav.id 
-                    ? "bg-indigo-50 text-indigo-600 font-semibold shadow-sm" 
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
-                  }`}
-              >
-                <nav.icon className={`w-5 h-5 ${activeCategory === nav.id ? "text-indigo-600" : "text-slate-400"}`} />
-                <span>{nav.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-auto p-6 space-y-1">
-          {BOTTOM_NAV.map((nav) => (
-            <button
-              key={nav.id}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-all"
-            >
-              <div className="flex items-center space-x-3">
-                <nav.icon className="w-5 h-5 text-slate-400" />
-                <span>{nav.label}</span>
-              </div>
-              <ExternalLink className="w-4 h-4 text-slate-300" />
-            </button>
-          ))}
-          
-          <div className="pt-6 mt-4 border-t border-slate-100">
-            <div className="flex items-center space-x-3 px-4 py-2">
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-semibold">
-                JS
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-sm font-semibold text-slate-900">Jitendra Suthar</span>
-                <span className="text-xs text-slate-500">cajsuthar@gmail.com</span>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 md:p-5">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Before you choose</p>
+              <div className="mt-4 grid gap-3">
+                {proofItems.map((item) => (
+                  <div key={item} className="flex gap-3 text-sm leading-6 text-slate-700">
+                    <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
-      </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Top Navbar */}
-        <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-[74px] z-10 flex-shrink-0">
-          <div className="flex items-center space-x-4 flex-1">
-            <div className="relative w-full max-w-md hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input 
-                placeholder="Search services, APIs, calculators..." 
-                className="pl-10 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 h-10 rounded-xl"
+          <div className="mt-8 grid gap-4 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search ITR, GST, notice, capital gains..."
+                className="h-12 rounded-lg border-slate-200 bg-white pl-10 shadow-sm"
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-                <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-slate-200 bg-slate-100 px-1.5 font-mono type-meta font-medium text-slate-500">
-                  <span className="text-xs">⌘</span>K
-                </kbd>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-4 pl-4 shrink-0">
-            {/* Environment Toggle */}
-            <div className="bg-slate-100 p-1 rounded-xl flex items-center hidden sm:flex">
-              <button 
-                onClick={() => setUserMode("individual")}
-                className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${userMode === "individual" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
-              >
-                <User className="w-4 h-4" />
-                <span>Individual</span>
-              </button>
-              <button 
-                onClick={() => setUserMode("business")}
-                className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${userMode === "business" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
-              >
-                <Building className="w-4 h-4" />
-                <span>Business</span>
-              </button>
             </div>
 
-            <Button variant="outline" className="hidden lg:flex gap-2 h-10 rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold px-5">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              Buy Credits
-            </Button>
-            
-            <Button size="icon" variant="ghost" className="rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 h-10 w-10">
-              <Grid3X3 className="w-5 h-5" />
-            </Button>
-          </div>
-        </header>
-
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Header Area */}
-            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
-                  {SIDEBAR_NAV.find(nav => nav.id === activeCategory)?.label || "Services Catalogue"}
-                </h1>
-                <p className="text-slate-500 text-lg">
-                  Integrate, subscribe, or explore our curated selection of professional tools.
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg text-sm font-medium">
-                  {filteredServices.length} Services Available
-                </Badge>
-              </div>
-            </div>
-
-            {/* Grid Area */}
-            {filteredServices.length > 0 ? (
-              <m.div layout>
-                  <AnimatePresence mode="popLayout">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-                  {filteredServices.map(renderServiceCard)}
-                </div>
-                </AnimatePresence>
-              </m.div>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-16 bg-white border border-slate-200 border-dashed rounded-2xl">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex flex-col items-center justify-center mb-4 text-slate-400">
-                  <Search className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">No services found</h3>
-                <p className="text-slate-500 text-center max-w-md">
-                  We couldn't find any services matching your search criteria. Try using different keywords or selecting a different category.
-                </p>
-                <Button 
-                  variant="outline" 
-                  className="mt-6 rounded-xl"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setActiveCategory("all");
-                  }}
+            <div className="flex gap-2 overflow-x-auto pb-1 lg:justify-end">
+              {sections.map((section) => (
+                <button
+                  key={section}
+                  type="button"
+                  onClick={() => setActiveSection(section)}
+                  className={`h-10 shrink-0 rounded-lg border px-4 text-sm font-bold transition-colors ${
+                    activeSection === section
+                      ? "border-blue-700 bg-blue-700 text-white"
+                      : "border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50"
+                  }`}
                 >
-                  Clear Filters
-                </Button>
-              </div>
-            )}
+                  {section === "all" ? "All services" : sectionLabels[section] ?? section}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="px-4 py-10 sm:px-6 md:py-12 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+                {activeSection === "all" ? "All categories" : sectionLabels[activeSection] ?? activeSection}
+              </p>
+              <h2 className="mt-2 text-2xl font-extrabold text-slate-950">
+                {filteredServices.length} matching service{filteredServices.length === 1 ? "" : "s"}
+              </h2>
+            </div>
+            <Link href="/contact" className="text-sm font-bold text-blue-700 hover:text-blue-800">
+              Not sure where to start? Send a short summary
+            </Link>
+          </div>
+
+          {filteredServices.length > 0 ? (
+            <m.div layout className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
+              <AnimatePresence mode="popLayout">
+                {filteredServices.map((service) => (
+                  <ServiceCard key={service.id} service={service} />
+                ))}
+              </AnimatePresence>
+            </m.div>
+          ) : (
+            <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+              <Search className="mx-auto h-8 w-8 text-slate-400" />
+              <h2 className="mt-4 text-xl font-extrabold text-slate-950">No services found</h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+                Try a different keyword such as Form 16, GST, notice, capital gains, or company registration.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-5 rounded-lg"
+                onClick={() => {
+                  setSearchTerm("");
+                  setActiveSection("all");
+                }}
+              >
+                Clear filters
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }

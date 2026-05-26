@@ -11,35 +11,35 @@ import { Link } from "wouter";
 
 const trustSignals = [
   {
-    label: "CA-assisted workflow",
-    value: "Portal-aware",
-    detail: "Review and filing steps are structured around official Income Tax portal requirements.",
-    icon: ShieldCheck,
+    label: "Documents",
+    value: "Requested after the path is clear",
+    detail: "Upload Form 16, AIS, broker reports, notice PDFs, or GST records only when the selected service asks for them.",
+    icon: FileCheck,
   },
   {
-    label: "Review model",
-    value: "CA review",
-    detail: "Assisted plans show the CA review scope and document needs before paid work.",
+    label: "Review",
+    value: "CA-assisted where suitable",
+    detail: "Professional review begins after the checklist is complete and the service type supports it.",
     icon: Users2,
   },
   {
-    label: "Data handling",
-    value: "Required docs only",
-    detail: "The workflow asks for documents needed to prepare or review the case.",
+    label: "Public forms",
+    value: "Summary first",
+    detail: "Contact and consultation forms ask for the situation, not PAN, passwords, or complete financial records.",
     icon: Lock,
   },
   {
-    label: "Price visibility",
-    value: "Scope first",
-    detail: "Simple pricing is visible, while complex returns are scoped before quoting.",
-    icon: FileCheck,
+    label: "Claims",
+    value: "Clear limits",
+    detail: "MyeCA avoids refund guarantees, government timeline promises, and unsupported security superlatives.",
+    icon: ShieldCheck,
   },
 ];
 
 const businessSignals = [
-  "Scope review before quoting for business income, GST, TDS, audit-linked, or notice cases.",
-  "Document checklist, owner, expected next step, and timeline are clarified before paid work.",
-  "Credential details are made available during scoped engagements where applicable.",
+  "Business income, GST, TDS, audit-linked, and notice matters start with facts and documents.",
+  "The next step should name the owner, required records, payment status, and likely filing dependency.",
+  "Credential details and sensitive records are handled inside the selected service process when applicable.",
 ];
 
 export default function TrustedBySection() {
@@ -48,12 +48,12 @@ export default function TrustedBySection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
           <div className="flex h-full flex-col">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Trust architecture</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Trust checks</p>
             <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
-              Built for filing confidence, not blind checkout.
+              What you can check before sharing tax papers.
             </h2>
             <p className="mt-4 text-sm leading-6 text-slate-600 md:text-base">
-              MyeCA earns trust by showing the filing process, review scope, data handling, and pricing rules before a taxpayer shares sensitive financial documents.
+              Tax work should make the next step visible: what document is needed, why it is needed, who may review it, and where the user should avoid sharing sensitive details.
             </p>
 
             <div className="mt-6 flex flex-1 flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -62,8 +62,8 @@ export default function TrustedBySection() {
                   <Building2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-950">₹1Cr+ business readiness</p>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Scope first for high-value cases</p>
+                  <p className="text-sm font-bold text-slate-950">Business and notice cases</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Document review before quote</p>
                 </div>
               </div>
               <div className="mt-5 space-y-3">
@@ -78,7 +78,7 @@ export default function TrustedBySection() {
                 href="/expert-consultation?service=business-tax-review"
                 className="mt-auto inline-flex items-center pt-5 text-sm font-bold text-blue-700 hover:text-blue-800"
               >
-                Request business scope review <ArrowRight className="ml-2 h-4 w-4" />
+                Request business review <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </div>
           </div>

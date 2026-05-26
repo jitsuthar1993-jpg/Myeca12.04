@@ -105,10 +105,10 @@ export default function PricingPage() {
                   <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">Scope promise</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">Before payment</p>
                   <h2 className="mt-2 text-xl font-extrabold text-slate-900 md:text-2xl">Know the scope before checkout.</h2>
                   <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Plans explain what is included, where CA review applies, and when a case needs scope-first quoting.
+                    Plans explain what is included, where CA review applies, and when a case needs review before quoting.
                   </p>
                 </div>
               </div>
@@ -172,11 +172,11 @@ export default function PricingPage() {
           <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 md:p-6">
             <Badge className="bg-white text-emerald-700">Included workflow</Badge>
             <h2 className="type-section-title mt-4 font-extrabold text-slate-900">
-              Every paid service moves through a visible case path.
+              Every paid service shows the next visible filing step.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              This is the core difference from a plain checkout page: users can see the stage,
-              pending documents, CA review status and post-filing support path.
+              Users can see the stage, pending documents, CA review status where applicable,
+              and the post-filing support route before more work continues.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
