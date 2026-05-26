@@ -70,6 +70,7 @@ export default function WithdrawalPlannerPage() {
         icon={<PiggyBank className="w-6 h-6" />}
         variant="indigo"
         breadcrumbItems={[{ name: "Withdrawal Planner" }]}
+        compact
       />
 
       <CalcLayout
@@ -108,7 +109,7 @@ export default function WithdrawalPlannerPage() {
               <CalcResultRow label="Total Withdrawn" value={formatCurrency(result.totalWithdrawn)} variant="success" />
               <CalcResultRow label="Total Interest Earned" value={formatCurrency(result.totalInterestAccrued)} />
               
-              <div className="h-32 mt-6">
+              <div className="h-44 mt-5">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />

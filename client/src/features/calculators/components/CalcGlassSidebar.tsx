@@ -7,6 +7,8 @@ interface CalcGlassSidebarProps {
   description?: string;
   variant?: string;
   className?: string;
+  contentClassName?: string;
+  bodyClassName?: string;
 }
 
 export default function CalcGlassSidebar({ 
@@ -14,7 +16,9 @@ export default function CalcGlassSidebar({
   title = "Result Summary",
   description,
   variant,
-  className 
+  className,
+  contentClassName,
+  bodyClassName
 }: CalcGlassSidebarProps) {
   return (
     <div className={cn(
@@ -25,7 +29,7 @@ export default function CalcGlassSidebar({
         {/* Glass Container */}
         <div className="absolute inset-0 bg-white/40 backdrop-blur-2xl rounded-[2.5rem] -z-10 border border-white/50 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] transition-all group-hover:bg-white/60" />
         
-        <div className="p-8 lg:p-10 space-y-8">
+        <div className={cn("p-8 lg:p-10 space-y-8", contentClassName)}>
           {(title || description) && (
             <div className="space-y-1">
               {title && (
@@ -42,7 +46,7 @@ export default function CalcGlassSidebar({
             </div>
           )}
           
-          <div className="space-y-6">
+          <div className={cn("space-y-6", bodyClassName)}>
             {children}
           </div>
         </div>

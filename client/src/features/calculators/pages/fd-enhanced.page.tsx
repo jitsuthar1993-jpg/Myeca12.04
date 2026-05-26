@@ -89,6 +89,7 @@ export default function EnhancedFDCalculator() {
         icon={<PiggyBank className="w-6 h-6" />}
         variant="indigo"
         breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced FD" : "FD Calculator" }]}
+        compact
       />
 
       <CalcLayout

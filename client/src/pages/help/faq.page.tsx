@@ -193,12 +193,12 @@ export default function FAQPage() {
       
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12">
+        <section className="border-b border-slate-200 bg-white py-12 text-slate-950 shadow-sm">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <HelpCircle className="w-16 h-16 mx-auto mb-4 text-blue-200" />
+              <HelpCircle className="w-16 h-16 mx-auto mb-4 text-blue-600" />
               <h1 className="type-page-title mb-4 font-bold">Frequently Asked Questions</h1>
-              <p className="text-xl text-blue-100 mb-8">
+              <p className="text-xl text-slate-600 mb-8">
                 Get answers to common questions about our tax filing services
               </p>
               
@@ -215,7 +215,7 @@ export default function FAQPage() {
                       trackContentSearch({ query: e.target.value });
                     }
                   }}
-                  className="pl-12 pr-4 py-4 text-lg bg-white text-gray-900 placeholder-gray-500 rounded-lg"
+                  className="pl-12 pr-4 py-4 text-lg bg-white text-gray-900 placeholder-gray-500 rounded-lg border-slate-200 shadow-sm"
                 />
               </div>
             </div>

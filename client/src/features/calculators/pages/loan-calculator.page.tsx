@@ -1,27 +1,19 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Slider } from "@/components/ui/slider";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "@/components/charts/lightweight-recharts";
 import {
-  Sparkles,
   Zap,
-  ChevronRight,
-  Calculator,
   TrendingDown,
   Wallet,
   GraduationCap,
   Car,
   Home,
-  ShieldCheck,
-  Banknote,
-  PieChart as PieChartIcon,
   CheckCircle2,
-  TrendingUp,
-  Info
+  TrendingUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +27,49 @@ import { CalculatorMiniBlog } from "@/features/calculators/components/Calculator
 type LoanType = 'home' | 'personal' | 'car' | 'education';
 
 const CHART_COLORS = ["#3b82f6", "#ef4444"]; 
+
+function LoanBreakdownDonut({ principal, interest }: { principal: number; interest: number }) {
+  const total = Math.max(1, principal + interest);
+  const principalPct = Math.max(0, Math.min(100, (principal / total) * 100));
+  const interestPct = Math.max(0, 100 - principalPct);
+
+  return (
+    <svg
+      viewBox="0 0 44 44"
+      role="img"
+      aria-label={`Loan split: ${Math.round(principalPct)}% principal and ${Math.round(interestPct)}% interest`}
+      className="h-20 w-20"
+    >
+      <circle cx="22" cy="22" r="15.5" fill="none" stroke="#e2e8f0" strokeWidth="7" />
+      <circle
+        cx="22"
+        cy="22"
+        r="15.5"
+        fill="none"
+        stroke={CHART_COLORS[0]}
+        strokeWidth="7"
+        pathLength="100"
+        strokeDasharray={`${principalPct} ${100 - principalPct}`}
+        strokeLinecap="round"
+        transform="rotate(-90 22 22)"
+      />
+      <circle
+        cx="22"
+        cy="22"
+        r="15.5"
+        fill="none"
+        stroke={CHART_COLORS[1]}
+        strokeWidth="7"
+        pathLength="100"
+        strokeDasharray={`${interestPct} ${100 - interestPct}`}
+        strokeDashoffset={-principalPct}
+        strokeLinecap="round"
+        transform="rotate(-90 22 22)"
+      />
+      <circle cx="22" cy="22" r="9.5" fill="#ffffff" />
+    </svg>
+  );
+}
 
 export default function UnifiedLoanCalculatorPage() {
   const [location] = useLocation();
@@ -117,11 +152,6 @@ export default function UnifiedLoanCalculatorPage() {
   const activePath = `/calculators/${activeTab === 'home' ? 'home-loan' : activeTab === 'car' ? 'car-loan' : activeTab === 'personal' ? 'personal-loan' : 'education-loan'}`;
   const seo = getSEOConfig(activePath);
 
-  const chartData = [
-    { name: "Principal", value: principal },
-    { name: "Total Interest", value: result.totalInterest },
-  ];
-
   const fmt = (n: number) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -129,9 +159,6 @@ export default function UnifiedLoanCalculatorPage() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(n);
-
-  const principalPct = result.totalPayment > 0 ? Math.round((principal / (principal + result.totalInterest)) * 100) : 0;
-  const interestPct = result.totalPayment > 0 ? Math.round((result.totalInterest / (principal + result.totalInterest)) * 100) : 0;
 
   const ActiveIcon = loanConfig[activeTab].icon;
 
@@ -153,6 +180,7 @@ export default function UnifiedLoanCalculatorPage() {
         icon={<ActiveIcon className="w-6 h-6" />}
         variant={loanConfig[activeTab].variant}
         breadcrumbItems={[{ name: "Loan EMI Calculator" }]}
+        compact
       />
 
       <CalcLayout
@@ -163,18 +191,10 @@ export default function UnifiedLoanCalculatorPage() {
           { title: "Credit Score", content: "A credit score above 750 can reduce your interest rates by up to 0.5%, saving lakhs in long-term interest." }
         ]}
         sidebar={
-          <CalcGlassSidebar title="EMI Breakdown">
-            <div className="flex items-center gap-6 pb-6 border-b border-white/20">
-              <div className="w-24 h-24 relative shrink-0">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={chartData} cx="50%" cy="50%" innerRadius={32} outerRadius={46} paddingAngle={4} dataKey="value" stroke="none">
-                      {chartData.map((_, i) => (
-                        <Cell key={i} fill={CHART_COLORS[i]} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+          <CalcGlassSidebar title="EMI Breakdown" contentClassName="p-6 lg:p-7 space-y-6" bodyClassName="space-y-5">
+            <div className="flex items-center gap-4 pb-4 border-b border-white/20">
+              <div className="shrink-0">
+                <LoanBreakdownDonut principal={principal} interest={result.totalInterest} />
               </div>
               <div className="space-y-1">
                 <p className="type-meta font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
@@ -191,10 +211,10 @@ export default function UnifiedLoanCalculatorPage() {
               </div>
             </div>
 
-            <div className="space-y-4 pt-2">
+            <div className="space-y-3 pt-1">
               <CalcResultRow label="Total Principal" value={fmt(principal)} />
               <CalcResultRow label="Total Interest" value={fmt(result.totalInterest)} variant="warning" />
-              <CalcResultRow label="Total Payment" value={fmt(result.totalPayment)} variant="highlight" className="pt-4 border-t border-white/20" />
+              <CalcResultRow label="Total Payment" value={fmt(result.totalPayment)} variant="highlight" className="pt-3 border-t border-white/20" />
               
               {activeTab === 'personal' && (
                 <div className="mt-4 pt-4 border-t border-white/20">
@@ -205,7 +225,7 @@ export default function UnifiedLoanCalculatorPage() {
             </div>
 
             <Link href="/services/advisory">
-              <button className="w-full py-4 rounded-2xl bg-blue-700 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-6 flex items-center justify-center gap-2">
+              <button className="w-full py-3.5 rounded-xl bg-blue-700 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-5 flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 Plan with CA Advisory
               </button>
@@ -213,9 +233,9 @@ export default function UnifiedLoanCalculatorPage() {
           </CalcGlassSidebar>
         }
       >
-        <div className="space-y-8">
-          <CalcInputCard>
-            <div className="flex p-1.5 bg-slate-50 rounded-2xl border border-slate-100 mb-8">
+        <div className="space-y-6">
+          <CalcInputCard className="p-5 sm:p-6 lg:p-7 rounded-[2rem]" contentClassName="space-y-7">
+            <div className="flex p-1.5 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
               {(Object.keys(loanConfig) as LoanType[]).map((type) => {
                 const isSelected = activeTab === type;
                 const Icon = loanConfig[type].icon;
@@ -224,7 +244,7 @@ export default function UnifiedLoanCalculatorPage() {
                     key={type}
                     onClick={() => setActiveTab(type)}
                     className={cn(
-                      "flex-1 py-3 px-1 flex flex-col items-center gap-1.5 transition-all rounded-xl",
+                      "flex-1 py-2.5 px-1 flex flex-col items-center gap-1.5 transition-all rounded-xl",
                       isSelected 
                         ? "bg-white shadow-sm text-slate-900" 
                         : "text-slate-400 hover:text-slate-600"
@@ -240,6 +260,7 @@ export default function UnifiedLoanCalculatorPage() {
             <CalcInputGroup 
               label="Loan Amount" 
               badgeValue={fmt(principal)}
+              className="space-y-4"
             >
               <Slider 
                 value={[principal]} 
@@ -253,6 +274,7 @@ export default function UnifiedLoanCalculatorPage() {
             <CalcInputGroup 
               label="Annual Interest Rate" 
               badgeValue={`${rate}%`}
+              className="space-y-4"
             >
               <Slider 
                 value={[rate]} 
@@ -263,10 +285,11 @@ export default function UnifiedLoanCalculatorPage() {
               />
             </CalcInputGroup>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
               <CalcInputGroup 
                 label={`Tenure (${tenureType})`} 
                 badgeValue={`${tenure} ${tenureType === 'years' ? 'Yrs' : 'Mos'}`}
+                className="space-y-4"
               >
                 <Slider 
                   value={[tenure]} 
@@ -281,6 +304,7 @@ export default function UnifiedLoanCalculatorPage() {
                 <CalcInputGroup 
                   label="Monthly Income" 
                   badgeValue={fmt(monthlyIncome)}
+                  className="space-y-4"
                 >
                   <Slider 
                     value={[monthlyIncome]} 
@@ -294,7 +318,7 @@ export default function UnifiedLoanCalculatorPage() {
             </div>
 
             {activeTab === 'education' && (
-              <div className="pt-6 border-t border-slate-50 space-y-6">
+              <div className="pt-5 border-t border-slate-50 space-y-5">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-normal text-slate-800">Moratorium Period</p>
@@ -318,6 +342,7 @@ export default function UnifiedLoanCalculatorPage() {
                   <CalcInputGroup 
                     label="Moratorium Duration (Years)" 
                     badgeValue={`${moratoriumPeriod} Yrs`}
+                    className="space-y-4"
                   >
                     <Slider 
                       value={[moratoriumPeriod]} 

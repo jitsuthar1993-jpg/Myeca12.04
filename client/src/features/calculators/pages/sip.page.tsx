@@ -71,6 +71,7 @@ export default function SIPCalculator() {
         icon={<TrendingUp className="w-6 h-6" />}
         variant="blue"
         breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced SIP Calculator" : "SIP Calculator" }]}
+        compact
       />
 
       <CalcLayout

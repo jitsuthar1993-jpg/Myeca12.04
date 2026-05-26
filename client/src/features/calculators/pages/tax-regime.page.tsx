@@ -259,13 +259,13 @@ export default function TaxRegimeCalculator() {
         <Breadcrumb items={[{ name: "Calculators", href: "/calculators" }, { name: pageLabel }]} />
 
         {/* --- HERO SECTION --- */}
-        <section className="relative pt-12 pb-16 overflow-hidden">
+        <section className="relative pt-6 pb-9 overflow-hidden">
           <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] -z-10" />
           <div className="max-w-7xl mx-auto px-4 text-center">
             <m.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="type-meta mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100/50 bg-blue-50 px-4 py-1.5 font-normal uppercase text-blue-600 shadow-sm"
+              className="type-meta mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100/50 bg-blue-50 px-4 py-1.5 font-normal uppercase text-blue-600 shadow-sm"
             >
               <Scale className="w-3.5 h-3.5" />
               {pageLabel}
@@ -273,7 +273,7 @@ export default function TaxRegimeCalculator() {
             <m.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="type-page-title mb-6 font-normal text-slate-900"
+              className="type-page-title mb-4 font-normal text-slate-900"
             >
               Old vs <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">New Regime</span>
             </m.h1>
@@ -288,7 +288,7 @@ export default function TaxRegimeCalculator() {
           </div>
         </section>
 
-        <main className="max-w-7xl mx-auto px-4 -mt-8">
+        <main className="max-w-7xl mx-auto px-4 -mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Left: Input Panel */}
