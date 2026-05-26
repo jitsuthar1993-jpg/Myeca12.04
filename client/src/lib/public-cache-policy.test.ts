@@ -6,7 +6,7 @@ function read(path: string) {
 }
 
 describe("public performance cache policy", () => {
-  it("keeps hashed Vercel assets cacheable for repeat crawls and visits", () => {
+  it("keeps Vercel assets cacheable without long-lived fallback poisoning", () => {
     const vercel = JSON.parse(read("vercel.json")) as {
       headers: Array<{ source: string; headers: Array<{ key: string; value: string }> }>;
     };
@@ -15,7 +15,7 @@ describe("public performance cache policy", () => {
 
     expect(assetHeaders).toContainEqual({
       key: "Cache-Control",
-      value: "public, max-age=31556952, immutable",
+      value: "public, max-age=86400, stale-while-revalidate=604800",
     });
     expect(bootstrapHeaders).toContainEqual({
       key: "Cache-Control",
