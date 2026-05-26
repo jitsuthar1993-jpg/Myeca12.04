@@ -1,6 +1,6 @@
 # ITR Season 2026 Outreach Kit
 
-Use this kit with `docs/marketing/itr-season-2026-outreach-tracker.csv`. Personalize every pitch before sending. No paid link, link exchange, link farm, PBN, irrelevant directory, or automated posting campaign is allowed. No exact-match anchor stuffing; prefer natural anchors such as the guide title, tool name, or MyeCA resource name.
+Use this kit with `docs/marketing/itr-season-2026-outreach-tracker.csv`. Personalize every pitch before sending. Use `docs/marketing/itr-season-2026-owner-publishing-pack.md` for owner-controlled Medium, LinkedIn, and community post drafts. No paid link, link exchange, link farm, PBN, irrelevant directory, or automated posting campaign is allowed. No exact-match anchor stuffing; prefer natural anchors such as the guide title, tool name, or MyeCA resource name.
 
 ## Quality Rules
 
