@@ -84,6 +84,7 @@
     "@sendgrid/mail": "^8.1.5",
     "@sentry/node": "^10.53.1",
     "@sentry/react": "^10.53.1",
+    "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "@tanstack/react-query": "^5.60.5",
     "@types/bcryptjs": "^2.4.6",
