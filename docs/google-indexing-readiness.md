@@ -2,7 +2,7 @@
 
 Use this checklist after any SEO, Vercel, or Search Console change for `myeca.in`.
 
-For the latest risk-by-risk status, update `docs/google-indexing-remediation-status.md` alongside the evidence log.
+For the latest risk-by-risk status, update `docs/google-indexing-remediation-status.md` alongside the evidence log. Use `docs/google-search-console-owner-runbook.md` for the account-owner Search Console session.
 
 ## Automated Check
 
@@ -61,7 +61,7 @@ Keep a dated evidence row whenever Search Console work is performed. The goal is
 date,owner,property_type,verification_method,evidence_link_or_note,status,next_action
 ```
 
-Use `docs/google-search-console-evidence-log.csv` as the fillable tracker for the account-owner work. Keep `pending_external` rows until the Search Console owner adds evidence from the Google UI, DNS provider, Vercel project, CrUX, or Vercel Speed Insights.
+Use `docs/google-search-console-evidence-log.csv` as the fillable tracker for the account-owner work. Keep `pending_external` rows until the Search Console owner adds evidence from the Google UI, DNS provider, Vercel project, CrUX, or Vercel Speed Insights. Use `docs/google-search-console-owner-runbook.md` for the exact per-URL inspection queue and evidence fields.
 
 Required evidence before calling Search Console setup done:
 

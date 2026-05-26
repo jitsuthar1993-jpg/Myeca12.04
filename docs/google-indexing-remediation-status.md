@@ -2,7 +2,7 @@
 
 Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `9fb0e07` and Vercel deployment `dpl_3eyr79Y6ymFNdYNf527bQAvtD5r9`.
 
-This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof.
+This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof, and use `docs/google-search-console-owner-runbook.md` for the exact owner-side Search Console session.
 
 ## Current Summary
 
@@ -12,6 +12,7 @@ The remaining blockers are external:
 
 - Search Console Domain property verification is still pending because the live check reports a missing valid DNS TXT token and no non-empty HTML verification meta value.
 - Sitemap submission, URL Inspection, rendered-page confirmation, request-indexing clicks, and Page indexing report review must be completed in the Google Search Console UI.
+- `docs/google-search-console-owner-runbook.md` now defines the required owner-side verification, sitemap, URL Inspection, rendered-page, field INP, and outreach evidence fields.
 - Field INP must be recorded from CrUX, Vercel Speed Insights, or Search Console because synthetic Chromium may not expose route interaction timing.
 - Real backlink placements still need owner/operator outreach; the repo has the backlink outreach tracker and ready-to-send pitch kit, not earned external links.
 - This workspace can deploy `enon3101s-projects/myeca12-04`, and `https://myeca.in` now serves the deployed static SEO shell. The same Vercel token still cannot inspect or manage the `myeca.in` domain, DNS TXT records, or Search Console ownership, so verification remains an account-owner action.
