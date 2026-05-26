@@ -106,6 +106,18 @@ function printCheck(check: Check) {
   console.log(`${status} ${check.label}: ${check.detail}`);
 }
 
+function printFailureHints(failed: Check[]) {
+  const labels = new Set(failed.map((check) => check.label));
+
+  if (labels.has("Search Console verification token present")) {
+    console.error("\nSearch Console owner action required:");
+    console.error("- Preferred: verify the myeca.in Domain property with Google's DNS TXT record.");
+    console.error("- Alternative: set VITE_GOOGLE_SITE_VERIFICATION in the owning Vercel Production project and redeploy.");
+    console.error("- Then submit https://myeca.in/sitemap.xml and inspect the priority URLs in Search Console.");
+    console.error("- Owner runbook: docs/google-search-console-owner-runbook.md");
+  }
+}
+
 async function main() {
   const checks: Check[] = [];
   const { hostname } = new URL(baseUrl);
@@ -255,6 +267,7 @@ async function main() {
   const failed = checks.filter((check) => check.required !== false && !check.ok);
   if (failed.length > 0) {
     console.error(`\nGoogle indexing readiness failed: ${failed.length} required check(s) need attention.`);
+    printFailureHints(failed);
     process.exit(1);
   }
 

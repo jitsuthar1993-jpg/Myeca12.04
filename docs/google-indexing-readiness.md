@@ -79,6 +79,8 @@ Required evidence before calling Search Console setup done:
 
 If `npm run check:google-indexing` only fails on the verification token, treat that as an account/DNS dependency until the property owner completes the DNS TXT or HTML verification step.
 
+When the verification-token check fails, the command prints the owner handoff path directly: add the Google DNS TXT record for the Domain property, or set `VITE_GOOGLE_SITE_VERIFICATION` in the owning Vercel Production project, redeploy, submit the sitemap, and follow `docs/google-search-console-owner-runbook.md`.
+
 ## Known Access Boundary
 
 The active `myeca.in` deployment has previously been under the Vercel scope `jitsuthar1993-gmailcoms-projects`. If the local Vercel token only has access to another team, the DNS TXT record and production env var cannot be set from this workspace.
