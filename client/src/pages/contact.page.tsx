@@ -1,4 +1,3 @@
-import { m } from "framer-motion";
 import { useState, type FormEvent } from "react";
 import { BadgeCheck, Clock, FileText, Mail, MessageSquare, Phone, Send, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -111,21 +110,12 @@ export default function ContactPage() {
               <ShieldCheck className="h-3.5 w-3.5" />
               Scope-first support
             </div>
-            <m.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="type-hero-title mb-5 font-normal text-slate-950"
-            >
+            <h1 className="type-hero-title mb-5 font-extrabold text-slate-950">
               Contact MyeCA support and tax experts.
-            </m.h1>
-            <m.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mx-auto max-w-2xl text-base leading-7 text-slate-600 sm:text-lg"
-            >
+            </h1>
+            <p className="mx-auto max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Share the situation, not sensitive documents. We review requests during business hours, confirm the scope, and then guide you to the right filing or consultation path.
-            </m.p>
+            </p>
             <div className="mt-6 grid gap-3 text-left sm:grid-cols-3">
               {[
                 { icon: BadgeCheck, label: "Scope before quote" },
@@ -143,12 +133,7 @@ export default function ContactPage() {
 
         <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-6"
-            >
+            <div className="space-y-6">
               <div>
                 <h2 className="mb-4 text-2xl font-normal text-slate-950">Contact information</h2>
                 <div className="grid gap-4">
@@ -223,13 +208,9 @@ export default function ContactPage() {
                   <ShieldCheck className="h-4 w-4" />
                 </a>
               </div>
-            </m.div>
+            </div>
 
-            <m.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
+            <div>
               <Card className="h-full rounded-lg border-slate-200 shadow-lg shadow-slate-950/5">
                 <CardContent className="p-6 sm:p-8">
                   <div className="mb-6">
@@ -289,7 +270,7 @@ export default function ContactPage() {
                   </form>
                 </CardContent>
               </Card>
-            </m.div>
+            </div>
           </div>
         </div>
       </div>

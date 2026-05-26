@@ -179,7 +179,7 @@ function routeRows(categoryId: string) {
 function standaloneTechnicalNotes(post: DefaultBlogPost) {
   const notes: Record<string, string> = {
     "mye-ca-guides":
-      "For MyeCA guide articles, the CA review should verify that the workflow maps to a real filing file: source documents, AIS/Form 26AS reconciliation, ITR form selection, deduction support, computation, review notes, e-verification, and final acknowledgement. The technical file should also show where the taxpayer moved from self-service to assisted review.",
+      "For MyeCA guide articles, the CA review should verify that the workflow maps to a real filing file: source documents, AIS/Form 26AS reconciliation, ITR form selection, deduction support, computation, review notes, e-verification, and final acknowledgement. The technical file should also show where the taxpayer moved from guided workflow to assisted review.",
     "itr-filing":
       "For ITR filing articles, the CA review should verify assessment year, filing section, ITR form, residential status, income heads, deductions, TDS/TCS credits, self-assessment tax, refund bank validation, e-verification, and whether any return is original, belated, revised, or updated.",
     "business-compliance":

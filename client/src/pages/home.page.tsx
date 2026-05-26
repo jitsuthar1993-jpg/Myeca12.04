@@ -79,11 +79,11 @@ const HomePage = () => {
           },
           {
             question: "Is CA review mandatory for all tax filings on MyeCA.in?",
-            answer: "No. Self-service filing and CA-assisted packages are separate options, so choose the review level that fits your facts and document readiness."
+            answer: "No. Entry guided filing and CA-assisted packages are separate options, so choose the review level that fits your facts and document readiness."
           },
           {
             question: "How much does it cost to file ITR online?",
-            answer: "ITR filing starts at ₹499 for simple self-service cases, with CA-assisted package levels such as ₹999 and ₹1,499 depending on the return type and support required."
+            answer: "ITR filing starts at ₹499 for simple guided salary cases, with CA-assisted package levels such as ₹999 and ₹1,499 depending on the return type and support required."
           },
           {
             question: "Can I get a refund for my income tax through MyeCA.in?",
@@ -252,7 +252,7 @@ const HomePage = () => {
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
                 {[
-                  { title: "Self-guided", price: "₹499", detail: "Simple salary filing", note: "Checklist and guided workflow" },
+                  { title: "Entry guided", price: "₹499", detail: "Simple salary filing", note: "Checklist and guided workflow" },
                   { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", note: "Review scope shown upfront" },
                   { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", note: "Documents reviewed before quote" },
                 ].map((plan) => (
@@ -422,16 +422,6 @@ const HomePage = () => {
           </div>
         </section>
 
-        <div className="hidden md:block">
-          <Suspense fallback={<SectionFallback />}>
-            <Testimonials />
-          </Suspense>
-
-          <Suspense fallback={<SectionFallback />}>
-            <TrustedBySection />
-          </Suspense>
-        </div>
-
         {/* Planning Tools Section */}
         <section className="bg-white py-8 md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -569,6 +559,16 @@ const HomePage = () => {
           <Suspense fallback={<SectionFallback />}>
             <GSTNoticeSection />
           </Suspense>
+
+          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
+            <Suspense fallback={<SectionFallback />}>
+              <Testimonials />
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
+              <TrustedBySection />
+            </Suspense>
+          </section>
 
           <Suspense fallback={<SectionFallback />}>
             <FinancialGlossary />

@@ -76,7 +76,7 @@ function CampaignHubPage() {
         ]}
         faqPageData={[
           {
-            question: "What is the fastest way to prepare for AY 2026-27 ITR filing?",
+            question: "What is a practical way to prepare for AY 2026-27 ITR filing?",
             answer:
               "Start by organizing Form 16, AIS, Form 26AS, deduction proofs, bank validation, and capital-gains records, then use a calculator or parser before filing.",
           },

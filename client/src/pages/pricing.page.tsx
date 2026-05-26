@@ -17,14 +17,14 @@ const trustRows = [
 ];
 
 const heroHighlights = [
-  ["Starting point", "Rs 499", "Simple salary filing"],
+  ["Entry plan", "Rs 499", "Simple guided salary filing"],
   ["Review path", "CA-assisted", "For eligible complex returns"],
   ["Scope clarity", "Before pay", "GST, SLA, inclusions and exclusions"],
 ];
 
 const comparisonColumns = ["Salary", "Expert", "Capital Gains", "Business"];
 const comparisonRows = [
-  ["CA-assisted review", "Optional add-on", "Included where eligible", "Included where eligible", "Assigned owner"],
+  ["CA-assisted review", "Available where eligible", "Included where eligible", "Included where eligible", "Assigned owner"],
   ["AIS / 26AS check", "Checklist", "Yes", "Yes", "As applicable"],
   ["Document vault", "Basic", "Advanced", "Advanced", "Advanced"],
   ["Case timeline", "Basic", "Full", "Full", "Milestone based"],
@@ -105,7 +105,7 @@ export default function PricingPage() {
                   <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">MyeCA promise</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">Scope promise</p>
                   <h2 className="mt-2 text-xl font-extrabold text-slate-900 md:text-2xl">Know the scope before checkout.</h2>
                   <p className="mt-2 text-sm leading-6 text-slate-600">
                     Plans explain what is included, where CA review applies, and when a case needs scope-first quoting.
@@ -172,7 +172,7 @@ export default function PricingPage() {
           <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 md:p-6">
             <Badge className="bg-white text-emerald-700">Included workflow</Badge>
             <h2 className="type-section-title mt-4 font-extrabold text-slate-900">
-              Every paid action becomes a trackable case.
+              Every paid service moves through a visible case path.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
               This is the core difference from a plain checkout page: users can see the stage,

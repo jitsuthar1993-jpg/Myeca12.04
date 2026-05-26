@@ -132,7 +132,7 @@ export const taxFilingPlans: PricingPlan[] = [
     badge: "Starter",
     included: ["ITR-1 guidance", "Regime comparison", "Form 16 checklist", "Basic document vault"],
     exclusions: ["Capital gains", "Business income", "Foreign assets"],
-    caTouchpoints: "Optional CA review add-on",
+    caTouchpoints: "CA review available where eligible",
     sla: "After complete document review",
     cta: { label: "Start this workflow", href: "/itr/form-selector" },
     consultationCta: { label: "Consult expert", href: "/expert-consultation?service=salary-itr" },

@@ -268,7 +268,7 @@ export default function Form16ParserPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <CardTitle className="text-lg font-bold text-slate-950">Add Form 16 data</CardTitle>
-                    <p className="mt-1 text-sm leading-6 text-slate-600">Fastest path: copy all text from the PDF and paste it here.</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">Simple path: copy all text from the PDF and paste it here.</p>
                   </div>
                   <Badge className="shrink-0 border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50">No login</Badge>
                 </div>
