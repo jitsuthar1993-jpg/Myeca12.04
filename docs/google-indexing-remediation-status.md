@@ -98,7 +98,7 @@ Technical evidence:
 - `docs/marketing/itr-season-2026-content-growth-campaign.md` defines the backlink policy, UTM convention, target channels, and weekly reporting.
 - `docs/marketing/itr-season-2026-outreach-tracker.csv` is the backlink outreach tracker for CA blogs, StartupIndia listings, Medium articles, LinkedIn, guest posts, and finance forums.
 - `docs/marketing/itr-season-2026-outreach-kit.md` contains channel-specific pitch copy and quality rules.
-- On May 26, 2026 the outreach tracker was expanded with a first researched prospect batch covering CAclubindia, TaxGuru, TaxCrux, SuperLaunch, StartupBaaz, RevenueFast, and Reddit r/IndiaTax. These are queued prospects only; no external placement is claimed until the owner records outreach and earned links.
+- On May 26, 2026 the outreach tracker was expanded with researched prospect batches covering CAclubindia, TaxGuru, TaxCrux, SuperLaunch, StartupBaaz, RevenueFast, KaroStartup, Udharaa, UpForge, ViksitHub, DesiSalary, Priyanka Personal Finance, Reddit r/IndiaTax, and Reddit r/IncomeTax_India. These are queued prospects only; no external placement is claimed until the owner records outreach and earned links.
 
 Remaining owner action:
 
