@@ -1,6 +1,6 @@
 # Google Indexing Remediation Status
 
-Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `8d3c708`.
+Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `e49a24e`.
 
 This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof.
 
