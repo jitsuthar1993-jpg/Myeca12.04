@@ -14,6 +14,7 @@ const defaultRoutes = [
   "/itr/form-selector",
   "/services/itr-for-salaried",
   "/calculators/income-tax",
+  "/learn/guide/salary-tax-calculator-guide-ay-2026-27",
   "/itr-season-2026",
 ] as const;
 
