@@ -1,6 +1,6 @@
 # Google Indexing Remediation Status
 
-Last live technical check: May 25, 2026 against `https://myeca.in` after `main` commit `05a50a6` and Vercel deployment `dpl_4udZHEaYyArrUvtvaADvSwsAbPKZ`.
+Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `8d3c708`.
 
 This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof.
 
@@ -154,6 +154,7 @@ Technical evidence:
 - The only current required failure is Search Console verification: missing valid DNS TXT token and missing non-empty HTML verification meta value.
 - The accessible Vercel production env list does not include `VITE_GOOGLE_SITE_VERIFICATION`, live DNS TXT lookup for `myeca.in` has no Google verification token, and `vercel domains inspect myeca.in` under the accessible scope reports no domain access.
 - A refreshed Vercel access check on May 25, 2026 shows this token only has `enon3101s-projects`, `vercel domains ls --scope enon3101s-projects` returns `0 Domains`, and the local repo/search scan found no saved Google verification token beyond empty examples.
+- A refreshed check on May 26, 2026 still shows `0 Domains` under `enon3101s-projects`, no production `VITE_GOOGLE_SITE_VERIFICATION` in the accessible Vercel project, no valid DNS TXT token for `myeca.in`, and no live homepage verification meta tag.
 
 Remaining owner action:
 
