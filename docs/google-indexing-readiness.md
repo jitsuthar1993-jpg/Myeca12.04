@@ -10,6 +10,7 @@ Run:
 
 ```bash
 npm run check:google-indexing
+npm run check:google-indexing-evidence
 npm run check:core-web-vitals
 ```
 
@@ -32,6 +33,8 @@ The Core Web Vitals command runs a mobile Chromium lab pass against priority pub
 - Synthetic INP <= 200ms when Chromium exposes event timing for the route.
 
 If the synthetic INP result is unavailable, record the field INP value from CrUX, Vercel Speed Insights, or Search Console Core Web Vitals before calling performance verification complete.
+
+The evidence command validates that `docs/google-search-console-evidence-log.csv` has the required owner-side evidence rows, per-URL inspection targets, known statuses, and explicit `pending_external` blockers. It can pass while Search Console work remains pending; it proves the evidence tracker is structurally ready, not that Google account work is complete.
 
 Run the command against `https://myeca.in` for the final launch gate. Temporary Vercel aliases may fail sitemap and canonical checks because the production SEO shell intentionally points crawlers to `https://myeca.in`.
 

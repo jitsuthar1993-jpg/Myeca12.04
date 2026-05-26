@@ -13,6 +13,7 @@ The remaining blockers are external:
 - Search Console Domain property verification is still pending because the live check reports a missing valid DNS TXT token and no non-empty HTML verification meta value.
 - Sitemap submission, URL Inspection, rendered-page confirmation, request-indexing clicks, and Page indexing report review must be completed in the Google Search Console UI.
 - `docs/google-search-console-owner-runbook.md` now defines the required owner-side verification, sitemap, URL Inspection, rendered-page, field INP, and outreach evidence fields.
+- `npm run check:google-indexing-evidence` validates the owner evidence log structure and confirms remaining `pending_external` blockers stay explicit.
 - Field INP must be recorded from CrUX, Vercel Speed Insights, or Search Console because synthetic Chromium may not expose route interaction timing.
 - Real backlink placements still need owner/operator outreach; the repo has the backlink outreach tracker and ready-to-send pitch kit, not earned external links.
 - This workspace can deploy `enon3101s-projects/myeca12-04`, and `https://myeca.in` now serves the deployed static SEO shell. The same Vercel token still cannot inspect or manage the `myeca.in` domain, DNS TXT records, or Search Console ownership, so verification remains an account-owner action.

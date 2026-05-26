@@ -212,7 +212,7 @@ function ArticleCard({
         <div
           className={cn(
             'relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50',
-            compact ? 'h-36' : 'h-40 md:h-full md:min-h-[210px]'
+            compact ? 'h-36' : 'h-32 sm:h-40 md:h-full md:min-h-[210px]'
           )}
         >
           {isImageUrl(coverImage) ? (

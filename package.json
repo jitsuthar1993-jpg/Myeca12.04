@@ -37,6 +37,7 @@
     "upload:pdf-assets": "tsx scripts/upload-income-tax-form-pdfs.ts",
     "check:size": "tsx scripts/check-size-budget.ts",
     "check:google-indexing": "tsx scripts/check-google-indexing-readiness.ts",
+    "check:google-indexing-evidence": "tsx scripts/check-google-indexing-evidence-log.ts",
     "check:core-web-vitals": "tsx scripts/check-core-web-vitals.ts",
     "analyze": "set NODE_ENV=production&& set ANALYZE_BUNDLE=1&& vite build",
     "android:sync": "npm run build:android && cap sync android",
