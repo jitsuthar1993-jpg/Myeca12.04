@@ -86,6 +86,25 @@ MyeCA has a Form 16 parser workflow to help users structure the first review bef
 
 This is educational, not a replacement for CA review where facts are complex.
 
+## HR/payroll resource pages
+
+Resource: Form 16 parser workflow
+Target URL: `https://myeca.in/form16-parser?utm_campaign=itr-season-2026&utm_medium=outreach&utm_content=hr-payroll-form16-parser`
+
+Subject: Employee Form 16 readiness resource for your payroll guide
+
+Pitch:
+
+Hello `NAME`,
+
+I saw your employee payroll resource on Form 16 and salary tax filing. MyeCA has a free Form 16 parser workflow that helps employees structure their salary and TDS details before choosing an ITR filing path.
+
+The workflow can be a useful companion link for readers who have received Form 16 and want to compare it with AIS/Form 26AS before filing:
+
+`TRACKED_URL`
+
+It is educational and does not promise a refund outcome or replace case-specific CA review.
+
 ## Guest posts
 
 Resource: Capital gains broker statement checklist
