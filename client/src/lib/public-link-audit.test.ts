@@ -228,6 +228,7 @@ describe("public link audit", () => {
   it("keeps high-intent tax guide topics discoverable for topical authority", () => {
     const expectedGuideSlugs = [
       "itr-1-filing-guide-ay-2026-27",
+      "salary-tax-calculator-guide-ay-2026-27",
       "section-80c-deductions-ay-2026-27",
       "ais-explained-ay-2026-27",
       "gst-notice-handling-guide",
@@ -245,13 +246,14 @@ describe("public link audit", () => {
     const highIntentGuides = TAX_GUIDES.filter((guide) =>
       [
         "itr-1-filing-guide-ay-2026-27",
+        "salary-tax-calculator-guide-ay-2026-27",
         "section-80c-deductions-ay-2026-27",
         "ais-explained-ay-2026-27",
         "gst-notice-handling-guide",
       ].includes(guide.slug),
     );
 
-    expect(highIntentGuides).toHaveLength(4);
+    expect(highIntentGuides).toHaveLength(5);
 
     highIntentGuides.forEach((guide) => {
       const links = [

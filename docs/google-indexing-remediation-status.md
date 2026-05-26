@@ -110,8 +110,8 @@ Status: repo_mitigated, ongoing content campaign.
 
 Technical evidence:
 
-- High-intent guides exist for ITR-1, Section 80C, AIS, and GST notice handling.
-- The objective's example coverage is test-enforced in `client/src/lib/public-link-audit.test.ts`: `itr-1-filing-guide-ay-2026-27`, `section-80c-deductions-ay-2026-27`, `ais-explained-ay-2026-27`, and `gst-notice-handling-guide` must remain in `TAX_GUIDES`, must appear in the generated sitemap, and must link into calculator, service or expert, pricing, and filing paths.
+- High-intent guides exist for ITR-1, salary tax calculator use, Section 80C, AIS, and GST notice handling.
+- The objective's example coverage is test-enforced in `client/src/lib/public-link-audit.test.ts`: `itr-1-filing-guide-ay-2026-27`, `salary-tax-calculator-guide-ay-2026-27`, `section-80c-deductions-ay-2026-27`, `ais-explained-ay-2026-27`, and `gst-notice-handling-guide` must remain in `TAX_GUIDES`, must appear in the generated sitemap, and must link into calculator, service or expert, pricing, and filing paths.
 - The ITR-season hub and four campaign assets target AY 2026-27 filing intent.
 - Comparison and campaign pages have unique titles and sitemap entries.
 - Static article shells surface key highlights and source links from the existing content inventory, so thin pre-rendered bodies are no longer limited to a single summary paragraph.

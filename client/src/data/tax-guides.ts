@@ -249,6 +249,102 @@ export const TAX_GUIDES: TaxGuide[] = [
     ],
   },
   {
+    id: 'salary-tax-calculator-ay-2026-guide',
+    slug: 'salary-tax-calculator-guide-ay-2026-27',
+    title: 'Salary Tax Calculator Guide for AY 2026-27',
+    description: 'Use salary, Form 16, deductions, TDS, old vs new regime comparison, and take-home salary checks to estimate tax before choosing an ITR filing path.',
+    category: 'salaried',
+    difficulty: 'beginner',
+    estimatedTime: '20 mins',
+    tags: ['salary tax calculator', 'Form 16', 'tax regime', 'AY 2026-27'],
+    lastUpdated: '2026-05-26',
+    author: 'MyeCA Tax Desk',
+    relatedCalculators: ['/calculators/salary', '/calculators/income-tax', '/calculators/regime-comparator'],
+    relatedResources: [
+      { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
+      { label: 'Tax Planning Service', href: '/services/tax-planning' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Start Filing', href: '/itr/form-selector' },
+    ],
+    steps: [
+      {
+        id: 'collect-salary-inputs',
+        title: 'Collect Salary Inputs Before Calculating',
+        description: 'Start with source documents instead of estimating from memory.',
+        checklist: [
+          'Keep Form 16, latest salary slips, employer tax statement, and annual CTC breakup together',
+          'Separate basic pay, HRA, special allowance, bonus, employer PF, employee PF, professional tax, and other taxable benefits',
+          'Download AIS/TIS and Form 26AS so salary TDS and other reported income can be compared',
+          'List bank interest, dividends, rent, capital gains, and other income that may change the final tax result',
+        ],
+        tips: [
+          'A salary calculator is only as reliable as the salary breakup entered into it',
+          'If you changed jobs, combine both employers before comparing regimes',
+        ],
+        links: [
+          { label: 'Form 16 Parser Tool', href: '/form16-parser' },
+          { label: 'AIS Explained Guide', href: '/learn/guide/ais-explained-ay-2026-27' },
+        ],
+      },
+      {
+        id: 'estimate-take-home',
+        title: 'Estimate Take-Home Salary and Taxable Salary',
+        description: 'Use CTC and payroll components to understand monthly cash flow and annual taxable salary.',
+        checklist: [
+          'Use the salary calculator for CTC to monthly in-hand estimates',
+          'Check employee PF, professional tax, employer benefits, and variable pay assumptions',
+          'Compare monthly payroll TDS with the annual tax estimate so a shortfall is visible early',
+          'Keep one saved estimate for personal planning and one final estimate for ITR review',
+        ],
+        tips: [
+          'Payroll in-hand salary and final ITR taxable income can differ because of other income and deductions',
+        ],
+        links: [
+          { label: 'Salary Calculator', href: '/calculators/salary' },
+        ],
+      },
+      {
+        id: 'compare-regimes',
+        title: 'Compare Old and New Regime Tax',
+        description: 'Run both regimes before choosing the filing path or requesting CA review.',
+        checklist: [
+          'Calculate tax under the default new regime using salary and other income',
+          'Calculate tax under the old regime only after entering eligible HRA, 80C, 80D, NPS, home loan, and other deduction proofs',
+          'Check rebate, surcharge, cess, and standard deduction impact for the income level',
+          'Save the comparison and note why one regime was selected',
+        ],
+        tips: [
+          'Do not choose old regime just because deductions exist; compare the final tax payable',
+          'Avoid claiming payroll-declared deductions unless actual proof is available for the financial year',
+        ],
+        links: [
+          { label: 'Income Tax Calculator', href: '/calculators/income-tax' },
+          { label: 'Tax Regime Comparator', href: '/calculators/regime-comparator' },
+          { label: 'Section 80C Guide', href: '/learn/guide/section-80c-deductions-ay-2026-27' },
+        ],
+      },
+      {
+        id: 'choose-filing-path',
+        title: 'Choose the Filing Path',
+        description: 'Use the calculator output as a pre-filing check, not as a substitute for return review.',
+        checklist: [
+          'Use ITR-1 only if the salary case fits ITR-1 eligibility',
+          'Use the form selector if there are capital gains, foreign assets, business income, multiple properties, or other complexity',
+          'Send salary, AIS, Form 26AS, deduction proofs, and calculator output for CA review when figures do not reconcile',
+          'Keep the final acknowledgement and e-verification proof after filing',
+        ],
+        tips: [
+          'A calculator can flag the likely tax outcome; the final return must still match official records',
+        ],
+        links: [
+          { label: 'ITR Form Selector', href: '/itr/form-selector' },
+          { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
+          { label: 'Pricing', href: '/pricing' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'section-80c-ay-2026-guide',
     slug: 'section-80c-deductions-ay-2026-27',
     title: 'Section 80C Deduction Guide for AY 2026-27',
