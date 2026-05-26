@@ -7,8 +7,24 @@ Official references:
 - Google ownership verification: <https://support.google.com/webmasters/answer/9008080?hl=en>
 - Sitemaps report: <https://support.google.com/webmasters/answer/7451001?hl=en>
 - URL Inspection tool: <https://support.google.com/webmasters/answer/9012289?hl=en>
+- Rendered source in URL Inspection: <https://support.google.com/webmasters/answer/11626894?hl=en-EN>
 - Core Web Vitals report: <https://support.google.com/webmasters/answer/9205520?hl=en>
 - Ask Google to recrawl: <https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl>
+
+## Owner Session Quick Path
+
+Use this order when the owner has one focused Search Console session:
+
+1. Add or open the Domain property for `myeca.in`.
+2. Add the Google DNS TXT value in the DNS account that owns `myeca.in`.
+3. Keep the TXT record in DNS after verification so ownership remains durable.
+4. Verify the Domain property in Search Console.
+5. Submit `https://myeca.in/sitemap.xml` in the Sitemaps report.
+6. Inspect the priority URL queue below, run `Test live URL`, open `View tested page`, confirm rendered content is visible, and request indexing only for URLs that are live-indexable.
+7. Record each result in `docs/google-search-console-evidence-log.csv`.
+8. Re-run `npm.cmd run check:google-indexing` from the repo after DNS propagation.
+
+Google's live URL test proves Google can access and parse a page at test time; it does not guarantee the page will be indexed or ranked. For many new or updated pages, sitemap submission is the safer bulk recrawl signal, while request indexing is best reserved for the priority queue.
 
 ## Property And Verification
 
@@ -56,6 +72,8 @@ https://myeca.in/sitemap.xml
 3. Wait until Search Console shows a submitted sitemap row.
 4. Record the submitted date, status, discovered URL count, and any parsing errors.
 
+Search Console requires owner permissions on the property to submit a sitemap from the Sitemaps report. If the owner does not see the submit field, fix property ownership first instead of changing the repository.
+
 Expected current repo evidence:
 
 ```text
@@ -68,6 +86,8 @@ Private routes excluded: /itr/filing, /dashboard, /documents, /reports, /admin
 ## URL Inspection Queue
 
 Inspect these URLs in this order. For each URL, click `Test live URL`, open the rendered-page view, then request indexing only if the live test reports that indexing is allowed.
+
+In `View tested page`, check both the screenshot and HTML/resource details when available. The rendered page should show real MyeCA content, not only a loading shell. If the rendered page is empty but the live repo check passes, capture the Search Console screenshot/details before changing code so the failure reason is evidence-backed.
 
 | Priority | URL | Why It Matters | Evidence To Record |
 | --- | --- | --- | --- |

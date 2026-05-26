@@ -1,6 +1,6 @@
 # Google Indexing Remediation Status
 
-Last live technical check: May 26, 2026 against `https://myeca.in` after `main` commit `f307276` and Vercel deployment `dpl_BDUt3zcPRb9anhHwrXGWq7LsbGjN`.
+Last live technical check: May 26, 2026 against `https://myeca.in` after deployed application commit `f307276` and Vercel deployment `dpl_BDUt3zcPRb9anhHwrXGWq7LsbGjN`. Later docs-only commits may update this evidence ledger without changing the deployed application bundle.
 
 This ledger maps the original Google Search and Search Console risk list to the current repo and live-deployment evidence. Keep `docs/google-search-console-evidence-log.csv` as the fillable owner log for account-side proof, and use `docs/google-search-console-owner-runbook.md` for the exact owner-side Search Console session.
 
