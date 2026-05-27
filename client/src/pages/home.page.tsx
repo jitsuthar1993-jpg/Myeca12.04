@@ -96,8 +96,8 @@ const HomePage = () => {
         {/* Hero Section - Compact & Focused */}
         <section className="bg-white py-7 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/30 md:to-white md:py-12 lg:py-14">
           <div className="container mx-auto px-4">
-            <div className="md:hidden">
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
+            <div className="mx-auto max-w-4xl">
+              <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 md:p-8 md:text-center">
                 <div className="type-meta inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1.5 font-bold text-blue-700">
                   <Shield className="h-3.5 w-3.5" />
                   AY 2026-27 tax utility
@@ -105,11 +105,11 @@ const HomePage = () => {
                 <h1 className="type-hero-title mt-4 font-extrabold text-slate-950">
                   Estimate tax, choose your ITR path, then file.
                 </h1>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
+                <p className="mt-3 text-sm leading-6 text-slate-600 md:mx-auto md:max-w-2xl md:text-lg">
                   Start with the calculator or jump straight into guided filing. Pricing, documents, and review scope stay visible before payment.
                 </p>
 
-                <div className="mt-4 grid gap-2">
+                <div className="mt-4 grid gap-2 md:mx-auto md:max-w-2xl md:grid-cols-2">
                   {[
                     { label: "File ITR", helper: "Choose form and start", href: "/itr/form-selector", icon: Rocket, className: "border-blue-600 bg-blue-600 text-white shadow-blue-200" },
                     { label: "Calculate Tax", helper: "Estimate payable amount", href: "/calculators/income-tax", icon: Calculator, className: "border-slate-200 bg-white text-slate-950" },
@@ -133,7 +133,7 @@ const HomePage = () => {
                   ))}
                 </div>
 
-                <div className="mt-2 grid grid-cols-2 gap-2">
+                <div className="mt-2 grid grid-cols-2 gap-2 md:mx-auto md:max-w-2xl">
                   {[
                     { label: "Compare Regimes", href: "/calculators/regime-comparator", icon: TrendingUp },
                     { label: "Parse Form 16", href: "/form16-parser", icon: FileText },
@@ -149,7 +149,7 @@ const HomePage = () => {
                   ))}
                 </div>
 
-                <div className="mt-4 rounded-lg border border-blue-100 bg-white p-3">
+                <div className="mt-4 rounded-lg border border-blue-100 bg-white p-3 md:mx-auto md:max-w-2xl">
                   <p className="type-meta font-bold text-slate-500">Before you start</p>
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700">
                     {["PAN", "Form 16", "AIS / 26AS", "Deductions"].map((item) => (
@@ -161,7 +161,7 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                <div className="type-meta mt-3 grid grid-cols-2 gap-2 font-semibold text-slate-600">
+                <div className="type-meta mt-3 grid grid-cols-2 gap-2 font-semibold text-slate-600 md:grid-cols-4">
                   {["Portal workflow", "Scope before payment", "Optional CA review", "Secure documents"].map((item) => (
                     <div key={item} className="rounded-md border border-blue-100 bg-white px-2 py-2 text-center">
                       {item}
@@ -171,58 +171,6 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="hidden max-w-4xl space-y-6 text-center md:mx-auto md:block">
-              {/* Trust Badge */}
-              <div className="inline-flex max-w-full items-center gap-2 rounded-lg border border-[var(--color-primary-100)] bg-slate-50 px-3 py-2 text-xs font-medium text-[var(--color-primary-700)] shadow-sm md:rounded-full md:bg-white md:px-4 md:text-sm">
-                <Shield className="w-4 h-4 text-[var(--color-accent-600)]" />
-                <span>Portal-aligned</span>
-                <span className="text-[var(--color-primary-400)]">•</span>
-                <span className="text-[var(--color-success-600)] font-semibold">CA Review Available</span>
-              </div>
-
-              {/* Headline */}
-              <h1 className="type-hero-title font-bold text-[var(--color-primary-900)]">
-                <span>File Your <span className="text-[var(--color-accent-600)]">AY 2026-27 ITR</span></span>
-                <span className="block">Guided Filing from ₹499</span>
-              </h1>
-
-              <p className="max-w-2xl text-sm leading-6 text-slate-600 md:mx-auto md:text-lg">
-                Start with a structured ITR workflow, see documents and pricing before payment, and add CA-assisted review when your facts need a closer look.
-              </p>
-
-              {/* CTA Buttons */}
-              <MobileActionBar className="pt-1 md:justify-center md:pt-2" primary={
-                <Link href="/itr/form-selector">
-                  <Button variant="brand" size="lg" className="h-11 w-full rounded-lg px-6 shadow-sm shadow-brand-600/20 transition-all sm:w-auto md:px-8">
-                    <Rocket className="w-4 h-4 mr-2" />
-                    Start Filing Now
-                  </Button>
-                </Link>
-              } secondary={
-                <Link href="/calculators/income-tax">
-                  <Button variant="outline" size="lg" className="h-11 w-full rounded-lg border-slate-200 px-6 text-slate-700 transition-all hover:bg-slate-50 sm:w-auto md:px-8">
-                    <Calculator className="w-4 h-4 mr-2" />
-                    Free Tax Calculator
-                  </Button>
-                </Link>
-              } />
-
-              {/* Trust Indicators */}
-              <div className="grid gap-2 pt-1 text-sm text-slate-700 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center md:gap-6 md:pt-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-600" />
-                  Official portal workflow
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-600" />
-                  Document checklist first
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-600" />
-                  Optional CA review
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
