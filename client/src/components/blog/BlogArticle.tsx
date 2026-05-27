@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ShareButtons from "@/components/ShareButtons";
 import BlogCard from "@/components/blog/BlogCard";
+import { getBlogCoverImageSrc, isGeneratedBlogCover } from "@/lib/blog-cover-assets";
 import { cn } from "@/lib/utils";
 import { type BlogSourceLink, type BlogTocItem, type PublicBlogDetail, type PublicBlogSummary, normalizeBlogContent } from "@shared/blog";
 
@@ -276,7 +277,16 @@ function RightSidebar({
                   <div className="group flex items-start gap-3 rounded-xl border border-slate-100 bg-white p-2.5 hover:border-blue-200 hover:bg-blue-50/30 transition-all duration-200 cursor-pointer">
                     <div className="w-14 h-11 rounded-lg overflow-hidden shrink-0 bg-gradient-to-br from-blue-50 to-slate-100">
                       {isImageUrl(rel.coverImage) ? (
-                        <img src={rel.coverImage ?? ""} alt={rel.title} className="w-full h-full object-cover" />
+                        <img
+                          src={getBlogCoverImageSrc(rel.coverImage)}
+                          alt={rel.title}
+                          className={cn(
+                            "h-full w-full",
+                            isGeneratedBlogCover(rel.coverImage)
+                              ? "bg-white object-contain"
+                              : "object-cover",
+                          )}
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-lg opacity-40">
                           {rel.coverImage || <FileText className="h-5 w-5" aria-hidden="true" />}

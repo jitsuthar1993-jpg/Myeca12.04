@@ -1,3 +1,5 @@
+import { indexNowKeyValidationMessage } from "../../shared/indexnow.js";
+
 export type EnvRequirementLevel = "required" | "recommended" | "optional";
 
 export type EnvRequirement = {
@@ -174,6 +176,12 @@ export const ENV_REQUIREMENTS: EnvRequirement[] = [
     key: "VITE_GOOGLE_SITE_VERIFICATION",
     level: "optional",
     description: "Google Search Console HTML meta verification token exposed to the Vite build.",
+  },
+  {
+    key: "INDEXNOW_KEY",
+    level: "optional",
+    description: "IndexNow ownership key served at /<key>.txt and used by the URL submission script.",
+    validate: indexNowKeyValidationMessage,
   },
   {
     key: "VITE_CLARITY_PROJECT_ID",

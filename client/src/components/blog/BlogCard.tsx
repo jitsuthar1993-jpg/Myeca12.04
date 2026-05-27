@@ -1,16 +1,13 @@
 import { Link } from "wouter";
 import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getBlogCoverImageSrc, isGeneratedBlogCover } from "@/lib/blog-cover-assets";
 import { cn } from "@/lib/utils";
 import type { PublicBlogSummary } from "@shared/blog";
 
 function isImageUrl(value: string | null | undefined) {
   if (!value) return false;
   return /^(https?:\/\/|\/)/.test(value);
-}
-
-function isGeneratedBlogCover(value: string | null | undefined) {
-  return Boolean(value?.includes("/assets/blog/text-covers/"));
 }
 
 function formatDate(value: string | null | undefined) {
@@ -33,6 +30,7 @@ export interface BlogCardProps {
 export default function BlogCard({ post, variant = "default", className }: BlogCardProps) {
   const featured = variant === "featured";
   const compact = variant === "compact";
+  const generatedCover = isGeneratedBlogCover(post.coverImage);
 
   return (
     <Link href={`/blog/${post.slug}`}>
@@ -52,12 +50,12 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
         >
           {isImageUrl(post.coverImage) ? (
             <img
-              src={post.coverImage ?? ""}
+              src={getBlogCoverImageSrc(post.coverImage)}
               alt={post.title}
               className={cn(
                 "h-full w-full transition-transform duration-500",
-                isGeneratedBlogCover(post.coverImage)
-                  ? "bg-white object-contain p-2"
+                generatedCover
+                  ? "bg-white object-contain p-0"
                   : "object-cover group-hover:scale-105",
               )}
             />
@@ -67,28 +65,32 @@ export default function BlogCard({ post, variant = "default", className }: BlogC
             </div>
           )}
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent pointer-events-none" />
+          {!generatedCover && (
+            <>
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent pointer-events-none" />
 
-          {/* Category badge */}
-          <div className="absolute top-3 left-3 flex items-center gap-2">
-            <Badge className="rounded-full border border-white/50 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 type-meta font-semibold text-slate-700 shadow-sm">
-              {post.category?.name || "Insights"}
-            </Badge>
-            {post.isFeatured && (
-              <Badge className="rounded-full bg-blue-600/90 backdrop-blur-sm px-2.5 py-0.5 type-meta font-semibold text-white shadow-sm">
-                Featured
-              </Badge>
-            )}
-          </div>
+              {/* Category badge */}
+              <div className="absolute top-3 left-3 flex items-center gap-2">
+                <Badge className="rounded-full border border-white/50 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 type-meta font-semibold text-slate-700 shadow-sm">
+                  {post.category?.name || "Insights"}
+                </Badge>
+                {post.isFeatured && (
+                  <Badge className="rounded-full bg-blue-600/90 backdrop-blur-sm px-2.5 py-0.5 type-meta font-semibold text-white shadow-sm">
+                    Featured
+                  </Badge>
+                )}
+              </div>
 
-          {/* Read time badge bottom-right */}
-          <div className="absolute bottom-3 right-3">
-            <span className="inline-flex items-center gap-1 rounded-full bg-blue-900/50 backdrop-blur-sm px-2.5 py-1 type-meta font-medium text-white">
-              <Clock3 className="h-3 w-3" />
-              {post.readingTimeMinutes} min
-            </span>
-          </div>
+              {/* Read time badge bottom-right */}
+              <div className="absolute bottom-3 right-3">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-900/50 backdrop-blur-sm px-2.5 py-1 type-meta font-medium text-white">
+                  <Clock3 className="h-3 w-3" />
+                  {post.readingTimeMinutes} min
+                </span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Content */}

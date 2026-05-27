@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { HTMLAttributes, ReactElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Layout } from "@/components/admin/Layout";
@@ -71,5 +72,38 @@ describe("role-aware dashboard shell alignment", () => {
     renderWithQueryClient(<NotificationCenter />);
 
     expect(screen.getByRole("button")).toHaveClass("h-9", "w-9", "rounded-lg", "p-0");
+  });
+
+  it("renders the user mobile app navigation with the planned primary destinations", () => {
+    renderWithQueryClient(
+      <Layout>
+        <div>Dashboard content</div>
+      </Layout>,
+    );
+
+    const mobileNav = screen.getByLabelText("Mobile primary navigation");
+
+    expect(mobileNav).toHaveClass("md:hidden");
+    expect(screen.getByTestId("workspace-main-shell")).toHaveClass("pb-[calc(5.5rem+env(safe-area-inset-bottom))]");
+    expect(screen.getByTestId("mobile-nav-more")).toHaveTextContent("More");
+    expect(
+      Array.from(mobileNav.querySelectorAll("a,button")).map((item) => item.textContent?.trim()),
+    ).toEqual(["Home", "MY ITR", "Services", "Docs", "More"]);
+  });
+
+  it("keeps secondary user destinations inside the mobile More menu", async () => {
+    renderWithQueryClient(
+      <Layout>
+        <div>Dashboard content</div>
+      </Layout>,
+    );
+
+    await userEvent.click(screen.getByTestId("mobile-nav-more"));
+
+    const moreMenu = screen.getByRole("dialog", { name: "More workspace options" });
+
+    for (const label of ["Search workspace", "Payments", "Account", "Help", "Support Request", "Sign Out"]) {
+      expect(moreMenu).toHaveTextContent(label);
+    }
   });
 });

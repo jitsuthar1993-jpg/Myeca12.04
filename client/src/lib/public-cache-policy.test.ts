@@ -10,9 +10,14 @@ describe("public performance cache policy", () => {
     const vercel = JSON.parse(read("vercel.json")) as {
       headers: Array<{ source: string; headers: Array<{ key: string; value: string }> }>;
     };
+    const textCoverHeaders = vercel.headers.find((entry) => entry.source === "/assets/blog/text-covers/(.*)")?.headers ?? [];
     const assetHeaders = vercel.headers.find((entry) => entry.source === "/assets/(.*)")?.headers ?? [];
     const bootstrapHeaders = vercel.headers.find((entry) => entry.source === "/app-bootstrap.js")?.headers ?? [];
 
+    expect(textCoverHeaders).toContainEqual({
+      key: "Cache-Control",
+      value: "no-cache",
+    });
     expect(assetHeaders).toContainEqual({
       key: "Cache-Control",
       value: "public, max-age=86400, stale-while-revalidate=604800",

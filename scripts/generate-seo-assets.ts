@@ -23,6 +23,7 @@ import {
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
 import { normalizeBlogContent } from "../shared/blog.js";
+import { PRIORITY_ITR_ROUTE_CONTENT } from "../shared/priority-itr-seo-content.js";
 import {
   DEFAULT_OG_IMAGE as SHARED_DEFAULT_OG_IMAGE,
   buildAccountingServiceSchema,
@@ -81,7 +82,8 @@ function stripDefaultSeo(html: string) {
   return stripInvalidGoogleVerificationMeta(html)
     .replace(/<title>[\s\S]*?<\/title>\s*/i, "")
     .replace(/\s*<meta\s+(?:name|property)=["'](?:description|keywords|robots|googlebot|bingbot|author|twitter:[^"']+|og:[^"']+|ai-agent-instructions|llm-content-summary|content-version|freshness-signal|expert-verification)["'][^>]*>\s*/gi, "\n")
-    .replace(/\s*<link\s+rel=["']canonical["'][^>]*>\s*/gi, "\n");
+    .replace(/\s*<link\s+rel=["']canonical["'][^>]*>\s*/gi, "\n")
+    .replace(/\s*<script[^>]+type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>\s*/gi, "\n");
 }
 
 function humanizeRoute(route: string) {
@@ -282,8 +284,8 @@ export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
 
   if (pathName === "/") {
     return `<main data-seo-static-shell="home" aria-label="MyeCA public SEO summary">
-      <h1>Estimate tax, choose your ITR path, then file.</h1>
-      <p>MyeCA.in helps Indian taxpayers compare regimes, prepare documents, and choose the right filing workflow before React loads.</p>
+      <h1>File your Tax Returns with expert CA assistance</h1>
+      <p>MyeCA.in helps Indian taxpayers start guided ITR filing, estimate tax, and review documents before payment.</p>
       <nav aria-label="Priority filing links">
         <a href="/calculators/income-tax">Income tax calculator</a>
         <a href="/itr/form-selector">Choose ITR form</a>
@@ -373,6 +375,16 @@ function guideMeta(guide: TaxGuide): RouteMeta {
       description: guide.description,
       kind: "article",
       highlights: guide.tags,
+      sections: guide.steps.slice(0, 4).map((step) => ({
+        heading: step.title,
+        body: step.description,
+        items: step.checklist?.slice(0, 5),
+      })),
+      links: uniqueLinks([
+        ...guide.relatedCalculators.map((href) => ({ label: humanizeRoute(href), href })),
+        ...(guide.relatedResources ?? []),
+        ...guide.steps.flatMap((step) => step.links ?? []),
+      ]),
       publishedAt: guide.lastUpdated,
       modifiedAt: guide.lastUpdated,
     },
@@ -382,6 +394,7 @@ function guideMeta(guide: TaxGuide): RouteMeta {
 function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
   const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
+  const priorityContent = PRIORITY_ITR_ROUTE_CONTENT[pathName as keyof typeof PRIORITY_ITR_ROUTE_CONTENT];
   const title = config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
   const description = config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`;
   const jsonLd: Record<string, unknown>[] = pathName === "/"
@@ -407,7 +420,7 @@ function routeMeta(route: string): RouteMeta {
 
   const kind: StaticRouteBodyInput["kind"] =
     pathName === "/" ? "home" : config?.type === "service" ? "service" : "page";
-  const highlights = config?.keywords?.slice(0, 5) ?? [
+  const highlights = priorityContent?.highlights ?? config?.keywords?.slice(0, 5) ?? [
     "CA-led Indian tax support",
     "ITR e-filing",
     "GST compliance",
@@ -425,12 +438,15 @@ function routeMeta(route: string): RouteMeta {
     robots: "index, follow",
     jsonLd,
     aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify tax actions with a CA.`,
+    staticLinks: priorityContent?.links,
     body: {
       route: pathName,
       title,
       description,
       kind,
       highlights,
+      sections: priorityContent?.sections,
+      links: priorityContent?.links,
     },
   };
 }

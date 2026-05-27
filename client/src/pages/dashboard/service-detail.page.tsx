@@ -204,23 +204,23 @@ export default function ServiceDetailPage() {
 
   return (
     <Layout title="Service Case">
-      <div className="space-y-8 pb-20">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Link href="/dashboard">
-            <Button variant="ghost" className="h-10 rounded-xl px-3 text-slate-500 hover:text-slate-900">
+      <div className="space-y-5 pb-20 md:space-y-8">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <Link href="/dashboard" className="w-full sm:w-auto">
+            <Button variant="ghost" className="h-10 w-full justify-start rounded-lg px-3 text-slate-500 hover:text-slate-900 sm:w-auto sm:rounded-xl">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Dashboard
             </Button>
           </Link>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             <Link href="/payments">
-              <Button variant="outline" className="h-10 rounded-xl border-slate-200">
+              <Button variant="outline" className="h-10 w-full rounded-lg border-slate-200 sm:w-auto sm:rounded-xl">
                 <CreditCard className="mr-2 h-4 w-4" />
                 Payments
               </Button>
             </Link>
             <Link href="/help">
-              <Button className="h-10 rounded-xl bg-blue-700 text-white hover:bg-blue-600">
+              <Button className="h-10 w-full rounded-lg bg-blue-700 text-white hover:bg-blue-600 sm:w-auto sm:rounded-xl">
                 <HelpCircle className="mr-2 h-4 w-4" />
                 Help
               </Button>
@@ -228,8 +228,8 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
-        <section className="rounded-[32px] border border-slate-100 bg-white p-8 shadow-sm">
-          <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
+        <section className="rounded-lg border border-slate-100 bg-white p-4 shadow-sm md:rounded-[32px] md:p-8">
+          <div className="grid gap-5 lg:grid-cols-[1fr_340px] lg:gap-8">
             <div>
               <Badge className="border-none bg-blue-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-blue-700">
                 {statusLabel(service.status)}
@@ -239,21 +239,21 @@ export default function ServiceDetailPage() {
                 {service.serviceCategory || 'General service'} case workspace for documents, payment state, expert handoff, and next action.
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-100 bg-amber-50 p-5">
+            <div className="rounded-lg border border-amber-100 bg-amber-50 p-4 md:rounded-2xl md:p-5">
               <p className="type-meta font-black uppercase tracking-widest text-amber-700">Next action</p>
               <p className="mt-2 type-support font-bold text-amber-950">{nextAction(service, documents)}</p>
             </div>
           </div>
         </section>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-3 md:gap-6">
           {[
             { label: 'Assigned CA', value: service.assignedCaName || 'Not assigned yet', icon: ShieldCheck },
             { label: 'Payment', value: statusLabel(service.paymentStatus || 'pending'), icon: CreditCard },
             { label: 'Documents', value: `${documents.length} linked`, icon: FileText },
           ].map((item) => (
-            <Card key={item.label} className="rounded-[24px] border-slate-100 shadow-sm">
-              <CardContent className="flex items-center gap-4 p-6">
+            <Card key={item.label} className="rounded-lg border-slate-100 shadow-sm md:rounded-[24px]">
+              <CardContent className="flex items-center gap-4 p-4 md:p-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                   <item.icon className="h-6 w-6" />
                 </div>
@@ -266,14 +266,14 @@ export default function ServiceDetailPage() {
           ))}
         </div>
 
-        <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
-          <div className="space-y-8">
-            <Card className="rounded-[28px] border-slate-100 shadow-sm">
-              <CardHeader className="border-b border-slate-50 p-6">
+        <div className="grid gap-5 xl:grid-cols-[1fr_420px] xl:gap-8">
+          <div className="space-y-5 md:space-y-8">
+            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+              <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Case Timeline</CardTitle>
                 <CardDescription className="type-support">What has happened and what still needs attention.</CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-5">
+              <CardContent className="grid gap-3 p-4 sm:grid-cols-2 md:p-6 lg:grid-cols-5">
                 {timeline.map((stage, index) => (
                   <div key={stage.label} className={cn('rounded-2xl border p-4', stage.active ? 'border-blue-100 bg-blue-50 text-blue-900' : 'border-slate-100 bg-slate-50 text-slate-500')}>
                     <div className="flex items-center gap-2">
@@ -286,8 +286,8 @@ export default function ServiceDetailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[28px] border-slate-100 shadow-sm">
-              <CardHeader className="border-b border-slate-50 p-6">
+            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+              <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Linked Documents</CardTitle>
                 <CardDescription className="type-support">Files uploaded here stay attached to this service case.</CardDescription>
               </CardHeader>
@@ -295,7 +295,7 @@ export default function ServiceDetailPage() {
                 {documents.length ? (
                   <div className="divide-y divide-slate-50">
                     {documents.map((doc) => (
-                      <div key={doc.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
+                      <div key={doc.id} className="flex items-center justify-between gap-3 p-4 md:gap-4 md:p-5">
                         <div className="flex min-w-0 items-center gap-3">
                           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-blue-600">
                             <FileText className="h-5 w-5" />
@@ -324,13 +324,13 @@ export default function ServiceDetailPage() {
             </Card>
           </div>
 
-          <div className="space-y-8">
-            <Card className="rounded-[28px] border-slate-100 shadow-sm">
-              <CardHeader className="border-b border-slate-50 p-6">
+          <div className="space-y-5 md:space-y-8">
+            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+              <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Case Upload</CardTitle>
                 <CardDescription className="type-support">Attach a document directly to this service.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-5 p-6">
+              <CardContent className="space-y-5 p-4 md:p-6">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -356,12 +356,12 @@ export default function ServiceDetailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[28px] border-slate-100 shadow-sm">
-              <CardHeader className="border-b border-slate-50 p-6">
+            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+              <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Request Notes</CardTitle>
                 <CardDescription className="type-support">Original brief and your latest update.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-5 p-6">
+              <CardContent className="space-y-5 p-4 md:p-6">
                 <div className="rounded-2xl bg-slate-50 p-4">
                   <p className="type-meta font-black uppercase tracking-widest text-slate-400">Original request</p>
                   <p className="mt-2 type-support font-medium text-slate-700">{requestDescription || 'No detailed brief was added.'}</p>

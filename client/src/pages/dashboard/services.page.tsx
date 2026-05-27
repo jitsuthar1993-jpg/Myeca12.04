@@ -140,10 +140,10 @@ export default function DashboardServicesPage() {
         transition={{ duration: 0.3 }}
         key={service.id}
       >
-        <Card className="h-full border border-slate-100 shadow-none bg-white hover:border-blue-600/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 rounded-[32px] group relative">
-          <CardContent className="p-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all duration-300">
+        <Card className="group relative h-full rounded-lg border border-slate-100 bg-white shadow-none transition-all duration-300 hover:border-blue-600/30 hover:shadow-xl hover:shadow-blue-500/5 md:rounded-[32px]">
+          <CardContent className="p-4 md:p-8">
+            <div className="mb-4 flex items-center justify-between md:mb-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-50 text-slate-400 transition-all duration-300 group-hover:bg-blue-50 group-hover:text-blue-600 md:h-12 md:w-12 md:rounded-2xl">
                 <IconComponent className="h-6 w-6" />
               </div>
               {service.popular && (
@@ -153,14 +153,14 @@ export default function DashboardServicesPage() {
               )}
             </div>
 
-            <div className="space-y-2 mb-6">
+            <div className="mb-5 space-y-2 md:mb-6">
               <h3 className="type-card-title text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight">{service.title}</h3>
               <p className="type-support text-slate-500 line-clamp-2 font-medium">
                 {service.description}
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+            <div className="flex items-center justify-between gap-3 border-t border-slate-50 pt-4 md:pt-6">
                <div className="flex flex-col">
                   <span className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Fee Starts From</span>
                   <span className="type-body font-bold text-slate-900">{service.price || "Free"}</span>
@@ -172,7 +172,7 @@ export default function DashboardServicesPage() {
                 }}
                 variant="outline"
                 size="sm" 
-                className="h-10 px-5 rounded-xl border-slate-200 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all font-black type-meta uppercase tracking-widest"
+                className="h-10 rounded-lg border-slate-200 px-4 type-meta font-black uppercase tracking-widest text-slate-600 transition-all hover:border-blue-600 hover:bg-blue-600 hover:text-white md:rounded-xl md:px-5"
                >
                  Enroll
                </Button>
@@ -185,9 +185,9 @@ export default function DashboardServicesPage() {
 
   return (
     <Layout title="Service Catalog">
-      <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
+      <div className="flex flex-col items-start gap-5 bg-slate-50/50 p-0 lg:flex-row lg:gap-12 lg:rounded-[48px] lg:p-2">
         {/* Sticky Left Category Section */}
-        <div className="lg:w-80 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
+        <div className="hidden w-full shrink-0 space-y-6 lg:sticky lg:top-[112px] lg:block lg:w-80">
           <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm">
              <div className="mb-10">
                 <h2 className="type-section-title font-black text-slate-900 tracking-tight mb-2">Marketplace</h2>
@@ -235,9 +235,9 @@ export default function DashboardServicesPage() {
         </div>
 
         {/* Main Content Area - Full Page Scroll */}
-        <div className="flex-1 min-w-0 w-full lg:max-w-7xl space-y-8 pb-20">
+        <div className="min-w-0 flex-1 w-full space-y-5 pb-20 lg:max-w-7xl lg:space-y-8">
           {/* Page Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-6">
             <div className="flex flex-col gap-1">
               <h1 className="type-page-title font-black text-slate-900">Service Catalog</h1>
               <p className="text-slate-500 max-w-2xl type-body font-medium">
@@ -249,21 +249,39 @@ export default function DashboardServicesPage() {
                 setSelectedServiceId("custom");
                 setIsRequestModalOpen(true);
               }}
-              className="h-14 px-8 rounded-2xl bg-blue-700 hover:bg-blue-600 text-white font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:-translate-y-1"
+              className="h-11 w-full rounded-lg bg-blue-700 px-5 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all hover:-translate-y-1 hover:bg-blue-600 md:h-14 md:w-auto md:rounded-2xl md:px-8"
             >
               <Plus className="h-4 w-4 mr-3" />
               Custom Request
             </Button>
           </div>
 
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:hidden">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                className={cn(
+                  "min-h-[40px] shrink-0 rounded-lg border px-3 text-xs font-black capitalize",
+                  activeCategory === cat
+                    ? "border-blue-700 bg-blue-700 text-white"
+                    : "border-slate-200 bg-white text-slate-600",
+                )}
+              >
+                {cat === 'all' ? 'All Services' : cat}
+              </button>
+            ))}
+          </div>
+
           {/* Action Bar */}
-          <div className="bg-white px-8 py-6 rounded-[32px] border border-slate-100 flex flex-wrap items-center justify-between gap-8">
-            <div className="flex items-center gap-6 flex-1 min-w-[300px]">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-slate-100 bg-white px-4 py-4 md:gap-8 md:rounded-[32px] md:px-8 md:py-6">
+            <div className="flex min-w-0 flex-1 items-center gap-6">
               <div className="relative flex-1">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                 <Input 
                   placeholder="Search for ITR, GST, Trademark, Audit..." 
-                  className="pl-14 h-14 border-slate-100 focus-visible:ring-blue-100 rounded-2xl bg-slate-50/30 font-medium text-base transition-all"
+                  className="h-12 rounded-lg border-slate-100 bg-slate-50/30 pl-12 text-sm font-medium transition-all focus-visible:ring-blue-100 md:h-14 md:rounded-2xl md:pl-14 md:text-base"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -272,7 +290,7 @@ export default function DashboardServicesPage() {
           </div>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 xl:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {filteredServices.map(renderServiceCard)}
             </AnimatePresence>
@@ -280,7 +298,7 @@ export default function DashboardServicesPage() {
 
           {/* No Results */}
           {filteredServices.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-32 px-4 bg-white rounded-[48px] border border-slate-100/50 shadow-sm">
+            <div className="flex flex-col items-center justify-center rounded-lg border border-slate-100/50 bg-white px-4 py-20 shadow-sm md:rounded-[48px] md:py-32">
                <div className="h-24 w-24 rounded-[32px] bg-slate-50 flex items-center justify-center mb-8">
                   <Search className="h-12 w-12 text-slate-300" />
                </div>
@@ -305,7 +323,7 @@ export default function DashboardServicesPage() {
 
       {/* Request Modal */}
       <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
-        <DialogContent className="sm:max-w-[550px] rounded-[48px] p-10 border-none shadow-2xl overflow-hidden">
+        <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border-none p-5 shadow-2xl sm:max-w-[550px] sm:rounded-[48px] sm:p-10">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600" />
           <DialogHeader className="mb-8">
             <DialogTitle className="type-section-title font-black text-slate-900 tracking-tight">Service Enrollment</DialogTitle>
@@ -358,14 +376,14 @@ export default function DashboardServicesPage() {
             </div>
           </div>
 
-          <DialogFooter className="mt-10 gap-4 sm:justify-between">
-            <Button variant="ghost" onClick={() => setIsRequestModalOpen(false)} className="h-14 px-8 rounded-2xl text-slate-400 hover:text-slate-900 font-black text-xs uppercase tracking-widest">
+          <DialogFooter className="mt-8 gap-3 sm:mt-10 sm:justify-between">
+            <Button variant="ghost" onClick={() => setIsRequestModalOpen(false)} className="h-12 w-full rounded-lg px-6 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 sm:h-14 sm:w-auto sm:rounded-2xl sm:px-8">
               Discard
             </Button>
             <Button 
               onClick={handleRaiseRequest}
               disabled={requestMutation.isPending}
-              className="h-14 px-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-100 hover:-translate-y-1"
+              className="h-12 w-full rounded-lg bg-blue-600 px-6 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-blue-100 transition-all hover:-translate-y-1 hover:bg-blue-700 sm:h-14 sm:w-auto sm:rounded-2xl sm:px-12"
             >
               {requestMutation.isPending ? 'Creating Case...' : 'Submit Engagement Request'}
             </Button>

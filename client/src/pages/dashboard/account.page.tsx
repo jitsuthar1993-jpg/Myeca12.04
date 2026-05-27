@@ -144,9 +144,9 @@ export default function UnifiedAccountPage() {
 
   return (
     <Layout title="Account Settings">
-      <div className="max-w-6xl mx-auto space-y-10">
+      <div className="mx-auto max-w-6xl space-y-6 md:space-y-10">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-6">
           <div className="space-y-1">
              <div className="flex items-center gap-2 text-blue-600 mb-1">
                 <Sparkles className="h-4 w-4" />
@@ -158,16 +158,16 @@ export default function UnifiedAccountPage() {
           <Button 
             onClick={() => logout()}
             variant="ghost" 
-            className="h-11 px-6 rounded-2xl bg-red-50 hover:bg-red-100 text-red-600 font-bold gap-2 transition-all border border-red-100/50"
+            className="h-11 w-full rounded-lg border border-red-100/50 bg-red-50 px-6 font-bold text-red-600 transition-all hover:bg-red-100 md:w-auto md:rounded-2xl"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
           </Button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
+        <div className="flex flex-col items-start gap-5 bg-slate-50/50 p-0 lg:flex-row lg:gap-12 lg:rounded-[48px] lg:p-2">
           {/* Sticky Left Sidebar Menu */}
-          <div className="lg:w-80 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
+          <div className="hidden w-full shrink-0 space-y-6 lg:sticky lg:top-[112px] lg:block lg:w-80">
             <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
                <div className="h-32 bg-gradient-to-br from-blue-500 to-indigo-500 relative">
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
@@ -234,8 +234,42 @@ export default function UnifiedAccountPage() {
             </Card>
           </div>
 
+          <div className="w-full rounded-lg border border-slate-100 bg-white p-4 shadow-sm lg:hidden">
+            <div className="flex items-center gap-3">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-xl font-black text-blue-600">
+                {getInitials()}
+              </div>
+              <div className="min-w-0">
+                <h2 className="truncate text-base font-black text-slate-900">{displayName}</h2>
+                <p className="truncate text-xs font-semibold text-slate-500">{displayEmail}</p>
+                <p className="mt-1 text-xs font-semibold text-slate-500">{displayPhone}</p>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {[
+                { id: 'profile', label: 'Profile', icon: User },
+                { id: 'security', label: 'Security', icon: ShieldCheck },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "flex min-h-[44px] items-center justify-center gap-2 rounded-lg border text-sm font-black",
+                    activeTab === tab.id
+                      ? "border-blue-700 bg-blue-700 text-white"
+                      : "border-slate-200 bg-white text-slate-600",
+                  )}
+                >
+                  <tab.icon className="h-4 w-4" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Main Content Area - Full Page Scroll */}
-          <div className="flex-1 min-w-0 w-full lg:max-w-4xl space-y-8 pb-20">
+          <div className="min-w-0 flex-1 w-full space-y-5 pb-20 lg:max-w-4xl lg:space-y-8">
             <AnimatePresence mode="wait">
                {activeTab === 'profile' && (
                   <m.div
@@ -245,8 +279,8 @@ export default function UnifiedAccountPage() {
                      exit={{ opacity: 0, y: -20 }}
                      className="space-y-8"
                   >
-                     <Card className="border-none shadow-sm rounded-[40px] overflow-hidden bg-white border border-slate-100/50">
-                        <CardHeader className="p-10 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                     <Card className="overflow-hidden rounded-lg border border-slate-100/50 bg-white shadow-sm md:rounded-[40px]">
+                        <CardHeader className="flex flex-col justify-between gap-4 border-b border-slate-50 p-5 md:flex-row md:items-center md:gap-6 md:p-10">
                            <div>
                               <div className="flex items-center gap-3 mb-2">
                                  <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
@@ -257,15 +291,15 @@ export default function UnifiedAccountPage() {
                            </div>
                            <Badge variant="outline" className="type-meta border-none bg-emerald-50 px-4 py-1.5 font-black uppercase text-emerald-700">Active Profile</Badge>
                         </CardHeader>
-                        <CardContent className="p-10">
+                        <CardContent className="p-5 md:p-10">
                            {isLoadingProfile ? (
                               <div className="flex justify-center py-20">
                                  <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
                               </div>
                            ) : (
                               <Form {...profileForm}>
-                                 <form onSubmit={profileForm.handleSubmit((d) => updateProfileMutation.mutate(d))} className="space-y-10">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                 <form onSubmit={profileForm.handleSubmit((d) => updateProfileMutation.mutate(d))} className="space-y-6 md:space-y-10">
+                                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-10">
                                        <FormField
                                           control={profileForm.control}
                                           name="firstName"
@@ -300,7 +334,7 @@ export default function UnifiedAccountPage() {
                                        />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-10">
                                        <FormField
                                           control={profileForm.control}
                                           name="email"
@@ -335,8 +369,8 @@ export default function UnifiedAccountPage() {
                                        />
                                     </div>
 
-                                    <div className="pt-6 flex justify-end">
-                                       <Button type="submit" disabled={updateProfileMutation.isPending} className="h-14 px-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-blue-200 transition-all hover:-translate-y-1">
+                                    <div className="flex justify-end pt-2 md:pt-6">
+                                       <Button type="submit" disabled={updateProfileMutation.isPending} className="h-12 w-full rounded-lg bg-blue-600 px-6 text-xs font-black uppercase tracking-widest text-white shadow-2xl shadow-blue-200 transition-all hover:-translate-y-1 hover:bg-blue-700 md:h-14 md:w-auto md:rounded-2xl md:px-12">
                                           {updateProfileMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-3" /> : <Save className="h-4 w-4 mr-3" />}
                                           Save Profile Changes
                                        </Button>
@@ -347,13 +381,13 @@ export default function UnifiedAccountPage() {
                         </CardContent>
                      </Card>
 
-                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                     <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-8">
                         {[
                            { icon: Calendar, label: 'Member Since', value: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }), color: 'blue' },
                            { icon: Shield, label: 'Security Level', value: 'High (Verified)', color: 'emerald' },
                            { icon: Globe, label: 'Account Locale', value: 'India (IST)', color: 'violet' },
                         ].map((stat, idx) => (
-                           <div key={idx} className="p-8 rounded-[40px] bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center group hover:shadow-md transition-all">
+                           <div key={idx} className="group flex flex-col items-center rounded-lg border border-slate-100 bg-white p-5 text-center shadow-sm transition-all hover:shadow-md md:rounded-[40px] md:p-8">
                               <div className={cn(
                                  "h-14 w-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110",
                                  stat.color === 'blue' && "bg-blue-50 text-blue-600",
@@ -378,8 +412,8 @@ export default function UnifiedAccountPage() {
                      exit={{ opacity: 0, y: -20 }}
                      className="space-y-8"
                   >
-                     <Card className="border-none shadow-sm rounded-[40px] overflow-hidden bg-white border border-slate-100/50">
-                        <CardHeader className="p-10 border-b border-slate-50">
+                     <Card className="overflow-hidden rounded-lg border border-slate-100/50 bg-white shadow-sm md:rounded-[40px]">
+                        <CardHeader className="border-b border-slate-50 p-5 md:p-10">
                            <div className="flex items-center gap-3 mb-2">
                               <div className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
                               <span className="type-meta font-black uppercase text-red-600">Secure Access</span>
@@ -387,9 +421,9 @@ export default function UnifiedAccountPage() {
                            <CardTitle className="type-section-title font-black text-slate-900">Security Credentials</CardTitle>
                            <CardDescription className="text-sm font-medium text-slate-500 mt-2">Manage your authentication protocols and password security.</CardDescription>
                         </CardHeader>
-                        <CardContent className="p-10">
+                        <CardContent className="p-5 md:p-10">
                            <Form {...passwordForm}>
-                              <form onSubmit={passwordForm.handleSubmit((d) => changePasswordMutation.mutate(d))} className="space-y-10 max-w-2xl">
+                              <form onSubmit={passwordForm.handleSubmit((d) => changePasswordMutation.mutate(d))} className="max-w-2xl space-y-6 md:space-y-10">
                                  <FormField
                                     control={passwordForm.control}
                                     name="current_password"
@@ -407,7 +441,7 @@ export default function UnifiedAccountPage() {
                                     )}
                                  />
 
-                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-10">
                                     <FormField
                                        control={passwordForm.control}
                                        name="new_password"
@@ -437,7 +471,7 @@ export default function UnifiedAccountPage() {
                                  </div>
 
                                  <div className="pt-4">
-                                    <Button type="submit" disabled={changePasswordMutation.isPending} className="h-14 px-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-red-100 transition-all hover:-translate-y-1">
+                                    <Button type="submit" disabled={changePasswordMutation.isPending} className="h-12 w-full rounded-lg bg-red-600 px-6 text-xs font-black uppercase tracking-widest text-white shadow-2xl shadow-red-100 transition-all hover:-translate-y-1 hover:bg-red-700 md:h-14 md:w-auto md:rounded-2xl md:px-12">
                                        {changePasswordMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-3" /> : <ShieldCheck className="h-5 w-5 mr-3" />}
                                        Update Security Credentials
                                     </Button>
@@ -450,8 +484,8 @@ export default function UnifiedAccountPage() {
                            </div>
 
                            <div className="space-y-10">
-                              <div className="flex items-center gap-6">
-                                 <div className="h-16 w-16 rounded-[24px] bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm">
+                              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+                                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 shadow-sm md:h-16 md:w-16 md:rounded-[24px]">
                                     <Fingerprint className="h-8 w-8" />
                                  </div>
                                  <div>
@@ -459,7 +493,7 @@ export default function UnifiedAccountPage() {
                                     <p className="text-sm font-medium text-slate-500 mt-1">Fortify your account with biometrics or authenticator apps.</p>
                                  </div>
                               </div>
-                              <div className="bg-slate-50/50 p-10 rounded-[40px] border border-slate-100/50">
+                              <div className="rounded-lg border border-slate-100/50 bg-slate-50/50 p-4 md:rounded-[40px] md:p-10">
                                  <MfaEnrollment />
                               </div>
                            </div>

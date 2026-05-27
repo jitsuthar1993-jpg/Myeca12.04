@@ -36,6 +36,31 @@ describe("SEO indexing policy", () => {
     expect(noindexSources).not.toContain("/ca(.*)");
   });
 
+  it("routes the IndexNow key file through the API before the static app fallback", () => {
+    const vercelConfig = JSON.parse(
+      readFileSync(path.join(process.cwd(), "vercel.json"), "utf8"),
+    ) as {
+      rewrites: Array<{
+        destination: string;
+        source: string;
+      }>;
+    };
+
+    const indexNowRewriteIndex = vercelConfig.rewrites.findIndex(
+      (rewrite) =>
+        rewrite.source === "/:indexNowKey.txt" &&
+        rewrite.destination === "/api/index?route=indexnow-key&key=:indexNowKey",
+    );
+    const appFallbackIndex = vercelConfig.rewrites.findIndex((rewrite) => rewrite.source === "/(.*)");
+    const llmsIndex = vercelConfig.rewrites.findIndex((rewrite) => rewrite.source === "/llms.txt");
+    const llmsFullIndex = vercelConfig.rewrites.findIndex((rewrite) => rewrite.source === "/llms-full.txt");
+
+    expect(indexNowRewriteIndex).toBeGreaterThanOrEqual(0);
+    expect(indexNowRewriteIndex).toBeGreaterThan(llmsIndex);
+    expect(indexNowRewriteIndex).toBeGreaterThan(llmsFullIndex);
+    expect(appFallbackIndex).toBeGreaterThan(indexNowRewriteIndex);
+  });
+
   it("keeps authenticated ITR filing private while preserving the public selector entry point", () => {
     const routes = getIndexablePublicRoutes(
       [

@@ -188,6 +188,13 @@ export function serveStatic(app: Express) {
         return;
       }
 
+      // Blog text covers keep stable filenames while editorial artwork changes.
+      // Revalidate them so redesigned covers are not pinned by asset caching.
+      if (rel.startsWith("/assets/blog/text-covers/")) {
+        res.setHeader("Cache-Control", "no-cache");
+        return;
+      }
+
       // Long cache for hashed assets and fonts
       const isHashedAsset = /-[a-f0-9]{8,}\./i.test(base) || rel.includes("/assets/");
       const isFont = ext === ".woff2" || ext === ".woff" || ext === ".ttf" || ext === ".otf";

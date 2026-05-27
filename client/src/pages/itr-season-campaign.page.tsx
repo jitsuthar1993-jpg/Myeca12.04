@@ -13,6 +13,7 @@ import {
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getBlogCoverImageSrc } from "@/lib/blog-cover-assets";
 import {
   ITR_SEASON_CAMPAIGN_BASE,
   buildCampaignUrl,
@@ -113,7 +114,7 @@ function CampaignHubPage() {
 
           <div className="overflow-hidden rounded-2xl border border-blue-100 bg-blue-50 p-3 shadow-sm">
             <img
-              src="/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg"
+              src={getBlogCoverImageSrc("/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg")}
               alt="AY 2026-27 ITR filing season checklist"
               className="aspect-[16/10] w-full rounded-xl bg-white object-contain p-2"
             />
@@ -230,7 +231,7 @@ function CampaignAssetPage({ asset }: { asset: ItrSeasonCampaignAsset }) {
           </div>
 
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-            <img src={asset.coverImage} alt={asset.title} className="aspect-[16/10] w-full rounded-xl object-contain p-2" />
+            <img src={getBlogCoverImageSrc(asset.coverImage)} alt={asset.title} className="aspect-[16/10] w-full rounded-xl object-contain p-2" />
             <div className="mt-3 rounded-xl bg-slate-50 p-4">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                 <Icon className="h-6 w-6" />
@@ -326,7 +327,7 @@ function AssetCard({ asset }: { asset: ItrSeasonCampaignAsset }) {
     <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-200 hover:shadow-lg">
       <div className="grid h-full md:grid-cols-[180px_1fr]">
         <div className="bg-blue-50 p-3">
-          <img src={asset.coverImage} alt={asset.title} className="h-full min-h-[170px] w-full rounded-xl bg-white object-contain p-2" />
+          <img src={getBlogCoverImageSrc(asset.coverImage)} alt={asset.title} className="h-full min-h-[170px] w-full rounded-xl bg-white object-contain p-2" />
         </div>
         <div className="flex h-full flex-col p-5">
           <div className="mb-4 flex items-center gap-3">

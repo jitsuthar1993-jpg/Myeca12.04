@@ -6,6 +6,7 @@ import { adminDb } from "../data-admin.js";
 import { getDatabaseUrl } from "../db.js";
 import { defaultBlogPosts } from "../data/default-blog-content.js";
 import { blogTextCoverPath } from "../data/blog-cover-paths.js";
+import { loadStaticMdxBlogPosts } from "../data/static-blog-content.js";
 
 type CoverPost = {
   id: string;
@@ -38,6 +39,13 @@ const OUTPUT_DIR = path.resolve(
 );
 
 const applyMode = process.argv.includes("--apply");
+const onlySlugsArg = process.argv.find((arg) => arg.startsWith("--slugs="));
+const onlySlugs = new Set(
+  (onlySlugsArg?.slice("--slugs=".length) ?? "")
+    .split(",")
+    .map((slug) => normalizeSlug(slug, ""))
+    .filter(Boolean),
+);
 
 function escapeXml(value: string) {
   return value
@@ -531,11 +539,26 @@ async function run() {
     });
   }
 
+  for (const post of loadStaticMdxBlogPosts()) {
+    postsBySlug.set(post.slug, {
+      id: post.id,
+      title: post.title,
+      slug: normalizeSlug(post.slug, post.id),
+      excerpt: post.excerpt,
+      content: post.content,
+      categoryId: post.categoryId,
+      keyHighlights: post.keyHighlights,
+      tags: post.tags,
+    });
+  }
+
   for (const post of databasePosts) {
     postsBySlug.set(post.slug, post);
   }
 
-  const posts = Array.from(postsBySlug.values()).sort((left, right) => left.slug.localeCompare(right.slug));
+  const posts = Array.from(postsBySlug.values())
+    .filter((post) => onlySlugs.size === 0 || onlySlugs.has(post.slug))
+    .sort((left, right) => left.slug.localeCompare(right.slug));
 
   if (!applyMode) {
     console.log(`Dry run: would generate ${posts.length} black-and-white blog covers.`);
@@ -551,7 +574,10 @@ async function run() {
 
   let updated = 0;
   if (databasePosts.length > 0) {
-    updated = await updateDatabaseCoverImages(databasePosts);
+    const databasePostsToUpdate = onlySlugs.size
+      ? databasePosts.filter((post) => onlySlugs.has(post.slug))
+      : databasePosts;
+    updated = await updateDatabaseCoverImages(databasePostsToUpdate);
   }
 
   console.log(`Generated ${posts.length} SVG covers in ${OUTPUT_DIR}`);

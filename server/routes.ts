@@ -34,6 +34,11 @@ import {
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
+import {
+  indexNowKeyResponse,
+  isIndexNowKeyRequest,
+  normalizedIndexNowKey,
+} from "../shared/indexnow.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -141,6 +146,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/robots.txt", (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/plain');
     res.status(200).send(buildRobotsTxt());
+  });
+
+  app.get("/:indexNowKey.txt", (req: Request, res: Response) => {
+    const configuredKey = normalizedIndexNowKey(process.env.INDEXNOW_KEY);
+    if (!configuredKey || !isIndexNowKeyRequest(req.path, configuredKey)) {
+      return res.status(404).type("text/plain").send("IndexNow key not found");
+    }
+
+    res.setHeader("Content-Type", "text/plain");
+    res.setHeader("Cache-Control", "public, max-age=300");
+    return res.status(200).send(indexNowKeyResponse(configuredKey));
   });
 
 

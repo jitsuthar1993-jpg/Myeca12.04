@@ -111,6 +111,7 @@ export const ITR_DOCUMENT_CHECKLIST = [
 export const ITR_FILING_LAYOUT = {
   usesDedicatedLeftRail: false,
   usesAuthenticatedWorkspaceShell: true,
+  mobileActionBarOffset: "above-user-bottom-nav",
   tone: "professional",
 } as const;
 
@@ -310,7 +311,7 @@ export default function ITRFilingPage() {
             <StatusBadge status="in_progress" label={ITR_FILING_STEPS[currentStep].title} />
           </div>
           <Progress value={progress} className="mt-4 h-2" />
-          <div className="mt-4 grid gap-2 md:grid-cols-4">
+          <div className="-mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:grid md:grid-cols-4 md:px-0">
             {ITR_FILING_STEPS.map((step, index) => (
               <button
                 key={step.id}
@@ -318,7 +319,7 @@ export default function ITRFilingPage() {
                 aria-current={index === currentStep ? "step" : undefined}
                 onClick={() => setCurrentStep(index)}
                 className={cn(
-                  "flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition",
+                  "flex w-[220px] shrink-0 items-start gap-3 rounded-2xl border p-3 text-left transition md:w-full",
                   index === currentStep && "border-blue-200 bg-blue-50 text-slate-950 shadow-sm",
                   index < currentStep && "border-emerald-200 bg-emerald-50 text-emerald-900",
                   index > currentStep && "border-slate-200 bg-white text-slate-600 hover:bg-slate-50",
@@ -720,7 +721,7 @@ export default function ITRFilingPage() {
             )}
           </MyeCard>
 
-          <div className="fixed inset-x-4 bottom-20 z-40 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-[0_16px_50px_-35px_rgba(15,23,42,0.6)] backdrop-blur md:sticky md:inset-x-auto md:z-20 md:pr-48 lg:bottom-4">
+          <div className="fixed inset-x-4 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-40 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-[0_16px_50px_-35px_rgba(15,23,42,0.6)] backdrop-blur md:sticky md:inset-x-auto md:bottom-auto md:z-20 md:pr-48 lg:bottom-4">
             <button
               type="button"
               onClick={previousStep}

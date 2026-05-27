@@ -30,6 +30,7 @@ describe("ITR filing workspace", () => {
     expect(ITR_FILING_LAYOUT).toEqual({
       usesDedicatedLeftRail: false,
       usesAuthenticatedWorkspaceShell: true,
+      mobileActionBarOffset: "above-user-bottom-nav",
       tone: "professional",
     });
   });

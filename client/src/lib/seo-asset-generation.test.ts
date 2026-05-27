@@ -14,7 +14,7 @@ describe("SEO asset static root fallback", () => {
     });
 
     expect(fallback).toContain('data-seo-static-shell="home"');
-    expect(fallback).toContain("Estimate tax, choose your ITR path, then file.");
+    expect(fallback).toContain("File your Tax Returns with expert CA assistance");
     expect(fallback).toContain("/itr/form-selector");
     expect(fallback).toContain("/calculators/income-tax");
   });
@@ -54,7 +54,7 @@ describe("SEO asset static root fallback", () => {
     const template = `<body><div id="root"><div><div>Loading</div></div></div><script src="/app-bootstrap.js" defer></script></body>`;
 
     expect(injectStaticRootFallback(template, { path: "/", robots: "index, follow" })).toContain(
-      "Estimate tax, choose your ITR path, then file.",
+      "File your Tax Returns with expert CA assistance",
     );
     expect(
       injectStaticRootFallback(template, {

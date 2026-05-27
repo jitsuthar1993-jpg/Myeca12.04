@@ -75,23 +75,23 @@ export default function UserDashboard() {
 
   return (
     <Layout>
-      <div className="space-y-6 pb-12">
-        <div className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-5 md:flex-row md:items-center md:justify-between">
+      <div className="space-y-5 pb-12 md:space-y-6">
+        <div className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-4 md:flex-row md:items-center md:justify-between md:p-5">
           <div className="space-y-2">
             <h1 className="type-page-title text-slate-900">Welcome, {displayName}</h1>
             <p className="type-body max-w-2xl font-medium text-slate-500">
               Track active filings, document progress, assigned CA support, and service payments from one workspace.
             </p>
           </div>
-          <Link href="/dashboard/services">
-            <Button className="h-10 rounded-lg bg-blue-700 px-5 text-sm font-bold text-white hover:bg-blue-800">
+          <Link href="/dashboard/services" className="w-full md:w-auto">
+            <Button className="h-11 w-full rounded-lg bg-blue-700 px-5 text-sm font-bold text-white hover:bg-blue-800 md:h-10 md:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               New Filing
             </Button>
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {[
             { label: 'Returns', value: stats.totalReturns ?? 0, icon: FileText, color: 'blue' },
             { label: 'Documents', value: stats.documentsUploaded ?? 0, icon: Briefcase, color: 'indigo' },
@@ -99,7 +99,7 @@ export default function UserDashboard() {
             { label: 'Active Services', value: activeServices.length, icon: Target, color: 'emerald' },
           ].map((stat) => (
             <Card key={stat.label} className="rounded-lg border-slate-200 shadow-none">
-              <CardContent className="flex items-center gap-4 p-5">
+              <CardContent className="flex min-h-[112px] flex-col items-start gap-3 p-4 sm:min-h-0 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
                 <div
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-lg',
@@ -120,13 +120,13 @@ export default function UserDashboard() {
           ))}
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white px-5 py-4">
+        <div className="rounded-lg border border-slate-200 bg-white px-4 py-4 md:px-5">
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div>
               <h2 className="type-card-title text-slate-900">Active Services</h2>
               <p className="type-support mt-1 font-medium text-slate-500">Each service shows its current status and assigned CA.</p>
             </div>
-            <div className="relative min-w-[260px]">
+            <div className="relative w-full min-w-0 sm:w-auto sm:min-w-[260px]">
               <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300" />
               <Input
                 placeholder="Search applications..."
@@ -136,7 +136,57 @@ export default function UserDashboard() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="grid gap-3 md:hidden">
+          {isLoading ? (
+            <div className="rounded-lg border border-slate-200 bg-white px-5 py-12 text-center text-sm font-bold text-slate-400">
+              Loading your workspace...
+            </div>
+          ) : activeServices.length ? (
+            activeServices.map((service) => (
+              <Link key={service.id} href={`/dashboard/services/${service.id}`}>
+                <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                      <Briefcase className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-slate-900">
+                        {service.serviceTitle || service.serviceId || 'Service request'}
+                      </p>
+                      <p className="type-meta mt-1 font-bold uppercase text-slate-400">
+                        {service.serviceCategory || 'General service'}
+                      </p>
+                    </div>
+                    <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-slate-300" />
+                  </div>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <div className="rounded-lg bg-slate-50 p-3">
+                      <p className="type-meta font-bold uppercase text-slate-400">CA</p>
+                      <p className="mt-1 truncate text-xs font-bold text-slate-800">{assignedCaLabel(service)}</p>
+                    </div>
+                    <div className="rounded-lg bg-slate-50 p-3">
+                      <p className="type-meta font-bold uppercase text-slate-400">Status</p>
+                      <p className="mt-1 truncate text-xs font-bold capitalize text-blue-700">{serviceStatus(service)}</p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="rounded-lg border border-slate-200 bg-white px-6 py-12 text-center">
+              <Briefcase className="mx-auto mb-4 h-10 w-10 text-slate-300" />
+              <h3 className="text-lg font-bold text-slate-900">No active services yet</h3>
+              <p className="mt-2 text-sm font-medium text-slate-500">Start a filing or service request to see it here.</p>
+              <Link href="/dashboard/services">
+                <Button className="mt-6 h-10 rounded-lg bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700">
+                  Browse Services
+                </Button>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="hidden overflow-hidden rounded-lg border border-slate-200 bg-white md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>

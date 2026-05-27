@@ -39,6 +39,10 @@ import {
   routePriority,
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
+import {
+  indexNowKeyResponse,
+  normalizedIndexNowKey,
+} from "../shared/indexnow.js";
 import { captureServerException, initServerSentry } from "../server/telemetry/sentry.js";
 
 initServerSentry();
@@ -304,6 +308,14 @@ async function handleRequest(req: any, res: any) {
 
   if (name === "sitemap") return sendText(res, 200, buildApiSitemapXml(), "application/xml", "public, s-maxage=86400");
   if (name === "robots") return sendText(res, 200, robotsTxt(), "text/plain", "public, s-maxage=86400");
+  if (name === "indexnow-key") {
+    const configuredKey = normalizedIndexNowKey(process.env.INDEXNOW_KEY);
+    const requestedKey = normalizedIndexNowKey(url.searchParams.get("key"));
+    if (!configuredKey || requestedKey !== configuredKey) {
+      return sendText(res, 404, "IndexNow key not found", "text/plain", "no-store");
+    }
+    return sendText(res, 200, indexNowKeyResponse(configuredKey), "text/plain", "public, s-maxage=300");
+  }
   if (name === "openapi") return sendJson(res, 200, buildOpenApiSpec());
   if (name === "llms") return sendText(res, 200, llmsText(false), "text/plain", "public, s-maxage=3600");
   if (name === "llms-full") return sendText(res, 200, llmsText(true), "text/plain", "public, s-maxage=3600");

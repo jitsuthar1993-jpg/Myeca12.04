@@ -5,7 +5,7 @@ test("shows the redesigned homepage hero on desktop and mobile", async ({ page }
 
   await expect(
     page.getByRole("heading", {
-      name: "Estimate tax, choose your ITR path, then file.",
+      name: "File your Tax Returns with expert CA assistance",
     }),
   ).toBeVisible();
 });

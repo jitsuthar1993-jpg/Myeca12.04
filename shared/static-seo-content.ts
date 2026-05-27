@@ -6,9 +6,22 @@ export type StaticRouteBodyInput = {
   description: string;
   kind: "home" | "homepage" | "service" | "article" | "blog-index" | "blog-post" | "about" | "contact" | "page";
   highlights?: string[];
+  sections?: StaticRouteBodySection[];
+  links?: StaticRouteBodyLink[];
   bodyHtml?: string;
   publishedAt?: string | null;
   modifiedAt?: string | null;
+};
+
+export type StaticRouteBodySection = {
+  heading: string;
+  body: string;
+  items?: string[];
+};
+
+export type StaticRouteBodyLink = {
+  label: string;
+  href: string;
 };
 
 function escapeHtml(value: string) {
@@ -24,6 +37,36 @@ function renderHighlights(highlights: string[] = []) {
   if (!items.length) return "";
 
   return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
+function renderSections(sections: StaticRouteBodySection[] = []) {
+  const rendered = sections
+    .filter((section) => section.heading.trim() && section.body.trim())
+    .map((section) => {
+      const items = section.items?.filter(Boolean).slice(0, 6) ?? [];
+      return `<section>
+    <h2>${escapeHtml(section.heading)}</h2>
+    <p>${escapeHtml(section.body)}</p>
+    ${items.length ? `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}
+  </section>`;
+    })
+    .join("\n");
+
+  return rendered;
+}
+
+function renderLinks(links: StaticRouteBodyLink[] = []) {
+  const items = links
+    .filter((link) => link.label.trim() && link.href.trim())
+    .slice(0, 10);
+  if (!items.length) return "";
+
+  return `<nav aria-label="Related tax filing resources">
+    <h2>Related tax filing resources</h2>
+    <ul>${items
+      .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+      .join("")}</ul>
+  </nav>`;
 }
 
 function labelForKind(kind: StaticRouteBodyInput["kind"]) {
@@ -54,6 +97,8 @@ export function renderStaticRouteBody(input: StaticRouteBodyInput) {
     ${dateLine}
   </section>
   ${renderHighlights(input.highlights)}
+  ${renderSections(input.sections)}
+  ${renderLinks(input.links)}
   ${safeBody ? `<article>${safeBody}</article>` : ""}
 </main>`;
 }

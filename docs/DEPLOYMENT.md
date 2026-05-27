@@ -23,6 +23,11 @@ Set these in Vercel and in `.env` for local development:
 - `SECURITY_EXTERNAL_NAME`, `SECURITY_EXTERNAL_ORGANIZATION`, `SECURITY_EXTERNAL_CONTACT` - optional external incident-response provider details.
 - `APP_URL` and `VITE_APP_URL` - deployed or local app URL.
 
+Optional search-engine variables:
+
+- `VITE_GOOGLE_SITE_VERIFICATION` - Google Search Console HTML verification token when DNS TXT verification is not used.
+- `INDEXNOW_KEY` - IndexNow key for Bing and participating search engines. Use 8-128 letters, numbers, or dashes; the server exposes it at `/<INDEXNOW_KEY>.txt`.
+
 Run the local readiness check before deploying. It reports only variable names
 and validation errors; it never prints secret values.
 
@@ -67,6 +72,31 @@ Use a fresh Supabase database for this migration. Legacy provider data is not im
 npm run build
 vercel build
 ```
+
+After a production deploy, verify that the canonical domain and the Vercel alias
+serve the same SEO shell for priority search routes:
+
+```bash
+npm run check:priority-structured-data
+npm run check:seo-deployment-parity
+npm run check:indexnow-key
+npm run check:search-goal-readiness
+```
+
+`check:priority-structured-data` verifies that priority ITR shells emit the
+expected JSON-LD types without duplicate `@id` identities or relative schema
+URLs. `check:seo-deployment-parity` compares `https://myeca.in` with
+`https://myeca12-04.vercel.app` by default and fails when the custom domain is
+still on an older deployment. If it fails with a domain-access problem, update
+the alias from the Vercel account that owns `myeca.in`, then rerun the parity
+check. `check:search-goal-readiness` is the final evidence gate; it is expected
+to fail until Google/Bing owner evidence, field INP, IndexNow submission,
+custom-domain parity, and a live-valid ITR outreach tracker are all recorded.
+It requires the full Google and Bing evidence checklist, and rejects repo-only
+statuses for owner-side milestones, so account evidence rows need `recorded` or
+`live_verified` proof before completion can be claimed.
+Run `check:indexnow-key` only after `INDEXNOW_KEY` is set in the deployment
+environment; the output redacts the key-file URL while proving the file is live.
 
 ## Cloudflare Pages Build
 Cloudflare Pages should use the same frontend build output as Vercel:

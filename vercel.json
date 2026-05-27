@@ -8,6 +8,15 @@
   },
   "headers": [
     {
+      "source": "/assets/blog/text-covers/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
       "source": "/assets/(.*)",
       "headers": [
         {
@@ -163,6 +172,7 @@
     { "source": "/openapi.json", "destination": "/api/index?route=openapi" },
     { "source": "/llms.txt", "destination": "/api/index?route=llms" },
     { "source": "/llms-full.txt", "destination": "/api/index?route=llms-full" },
+    { "source": "/:indexNowKey.txt", "destination": "/api/index?route=indexnow-key&key=:indexNowKey" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

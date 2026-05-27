@@ -159,6 +159,7 @@ Weeks 7-13:
 
 Before outreach starts:
 
+- Run `npm run check:seo-outreach-readiness` and fix any active tracker row that still has placeholder source fields, missing UTM parameters, or missing required channel coverage.
 - Generate and submit the sitemap.
 - Inspect `/itr-season-2026`, all four campaign asset pages, and competitor-capture URLs in Search Console.
 - Confirm priority URLs return `200`, have self-referencing canonicals, and are not `noindex`.

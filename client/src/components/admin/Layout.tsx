@@ -1,6 +1,21 @@
 import { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Command, HelpCircle, LogOut, Menu, MessageSquare, Search, X } from 'lucide-react';
+import {
+  Command,
+  CreditCard,
+  FileText,
+  FolderOpen,
+  HelpCircle,
+  LayoutGrid,
+  LogOut,
+  Menu,
+  MessageSquare,
+  MoreHorizontal,
+  Search,
+  Settings,
+  X,
+  Zap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -10,6 +25,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { ROLE_NAV_GROUPS } from '@/lib/role-workspace';
 import { getRoleHome, getRoleLabel, normalizeAppRole } from '@shared/app-roles';
+import { MobileBottomNav, MobileMoreSheet, type MobileNavItem } from '@/components/mobile';
 
 interface LayoutProps {
   children: ReactNode;
@@ -18,6 +34,7 @@ interface LayoutProps {
 
 export function Layout({ children, title = 'Workspace' }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [location, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
@@ -25,6 +42,25 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
   const roleGroups = ROLE_NAV_GROUPS[role];
   const roleHome = getRoleHome(role);
   const roleLabel = getRoleLabel(role);
+  const isUserRole = role === 'user';
+  const userName = user?.firstName || user?.email?.split('@')[0] || 'User';
+  const isActivePath = (href: string) => location === href || location.startsWith(`${href}/`);
+
+  const mobileNavItems: MobileNavItem[] = [
+    { icon: LayoutGrid, label: 'Home', href: '/dashboard', active: isActivePath('/dashboard') && !isActivePath('/dashboard/services') },
+    { icon: FileText, label: 'MY ITR', href: '/itr/filing', active: isActivePath('/itr/filing') },
+    { icon: Zap, label: 'Services', href: '/dashboard/services', active: isActivePath('/dashboard/services') },
+    { icon: FolderOpen, label: 'Docs', href: '/documents', active: isActivePath('/documents') },
+    { icon: MoreHorizontal, label: 'More', onClick: () => setMoreOpen(true), active: moreOpen, testId: 'mobile-nav-more' },
+  ];
+
+  const moreActions = [
+    { icon: CreditCard, label: 'Payments', href: '/payments' },
+    { icon: Settings, label: 'Account', href: '/settings' },
+    { icon: HelpCircle, label: 'Help', href: '/help' },
+    { icon: MessageSquare, label: 'Support Request', href: '/expert-consultation' },
+    { icon: LogOut, label: 'Sign Out', href: '/logout' },
+  ];
 
   const submitSearch = () => {
     const query = searchTerm.trim();
@@ -145,7 +181,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-lg lg:hidden"
+                className={cn('h-9 w-9 rounded-lg lg:hidden', isUserRole && 'hidden md:inline-flex')}
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open navigation"
               >
@@ -177,17 +213,42 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
               <p className="mb-0 hidden text-sm font-bold leading-none text-slate-700 md:block">{title}</p>
               <NotificationCenter />
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-sm font-bold text-white">
-                {user?.firstName?.[0] || 'U'}
+                {userName[0] || 'U'}
               </div>
             </div>
           </header>
 
-          <main className="flex-1 bg-slate-50">
+          <main
+            data-testid="workspace-main-shell"
+            className={cn(
+              'flex-1 bg-slate-50',
+              isUserRole && 'pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0',
+            )}
+          >
             <div className="mx-auto max-w-[1440px] p-4 sm:p-6 lg:p-8">
               {children}
             </div>
           </main>
         </div>
+
+        {isUserRole && (
+          <>
+            <MobileBottomNav items={mobileNavItems} />
+            <MobileMoreSheet
+              open={moreOpen}
+              onOpenChange={setMoreOpen}
+              actions={moreActions}
+              searchTerm={searchTerm}
+              onSearchTermChange={setSearchTerm}
+              onSearchSubmit={() => {
+                submitSearch();
+                setMoreOpen(false);
+              }}
+              userName={userName}
+              roleLabel={roleLabel}
+            />
+          </>
+        )}
       </TooltipProvider>
     </div>
   );

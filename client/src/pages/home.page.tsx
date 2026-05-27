@@ -94,90 +94,57 @@ const HomePage = () => {
 
       <div className="bg-white min-h-screen">
         {/* Hero Section - Compact & Focused */}
-        <section className="bg-white py-7 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/30 md:to-white md:py-12 lg:py-14">
+        <section className="bg-white py-10 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-16 lg:py-20">
           <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl">
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 md:p-8 md:text-center">
-                <div className="type-meta inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1.5 font-bold text-blue-700">
-                  <Shield className="h-3.5 w-3.5" />
-                  AY 2026-27 tax utility
-                </div>
-                <h1 className="type-hero-title mt-4 font-extrabold text-slate-950">
-                  Estimate tax, choose your ITR path, then file.
-                </h1>
-                <p className="mt-3 text-sm leading-6 text-slate-600 md:mx-auto md:max-w-2xl md:text-lg">
-                  Start with the calculator or jump straight into guided filing. Pricing, documents, and review scope stay visible before payment.
-                </p>
+            <div className="mx-auto max-w-5xl text-center">
+              <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
+                <Shield className="h-4 w-4 shrink-0 text-blue-600" />
+                <span>CA assisted tax filing</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-300" aria-hidden="true" />
+                <span className="text-emerald-600">AY 2026-27</span>
+              </div>
 
-                <div className="mt-4 grid gap-2 md:mx-auto md:max-w-2xl md:grid-cols-2">
-                  {[
-                    { label: "File ITR", helper: "Choose form and start", href: "/itr/form-selector", icon: Rocket, className: "border-blue-600 bg-blue-600 text-white shadow-blue-200" },
-                    { label: "Calculate Tax", helper: "Estimate payable amount", href: "/calculators/income-tax", icon: Calculator, className: "border-slate-200 bg-white text-slate-950" },
-                  ].map((action) => (
-                    <Link
-                      key={action.href}
-                      href={action.href}
-                      className={cn(
-                        "flex min-h-14 items-center justify-between gap-3 rounded-lg border px-4 text-left shadow-sm",
-                        action.className
-                      )}
-                    >
-                      <span>
-                        <span className="block text-sm font-black">{action.label}</span>
-                        <span className={cn("mt-0.5 block text-xs font-semibold", action.href === "/itr/form-selector" ? "text-blue-100" : "text-slate-500")}>
-                          {action.helper}
-                        </span>
-                      </span>
-                      <action.icon className="h-4 w-4 shrink-0" />
-                    </Link>
-                  ))}
-                </div>
+              <h1 className="mx-auto mt-8 max-w-4xl text-4xl font-extrabold leading-tight text-slate-950 md:text-6xl">
+                File your <span className="text-blue-600">Tax Returns</span> with expert CA assistance
+              </h1>
+              <p className="mx-auto mt-6 max-w-4xl text-lg leading-8 text-slate-600 md:text-2xl">
+                Guided filing with document checks and review scope before payment.
+              </p>
 
-                <div className="mt-2 grid grid-cols-2 gap-2 md:mx-auto md:max-w-2xl">
-                  {[
-                    { label: "Compare Regimes", href: "/calculators/regime-comparator", icon: TrendingUp },
-                    { label: "Parse Form 16", href: "/form16-parser", icon: FileText },
-                  ].map((action) => (
-                    <Link
-                      key={action.href}
-                      href={action.href}
-                      className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-center text-xs font-bold text-slate-800 shadow-sm"
-                    >
-                      <action.icon className="h-3.5 w-3.5 shrink-0 text-blue-700" />
-                      <span>{action.label}</span>
-                    </Link>
-                  ))}
-                </div>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link
+                  href="/itr/form-selector"
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-slate-800 px-8 text-base font-black text-white shadow-lg shadow-slate-300 transition-colors hover:bg-slate-900 sm:w-auto"
+                >
+                  <Rocket className="h-5 w-5" />
+                  Start Filing Now
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/calculators/income-tax"
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-8 text-base font-black text-slate-800 shadow-sm transition-colors hover:border-blue-200 hover:text-blue-700 sm:w-auto"
+                >
+                  <Calculator className="h-5 w-5" />
+                  Free Tax Calculator
+                </Link>
+              </div>
 
-                <div className="mt-4 rounded-lg border border-blue-100 bg-white p-3 md:mx-auto md:max-w-2xl">
-                  <p className="type-meta font-bold text-slate-500">Before you start</p>
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700">
-                    {["PAN", "Form 16", "AIS / 26AS", "Deductions"].map((item) => (
-                      <div key={item} className="flex items-center gap-2 rounded-md bg-slate-50 px-2 py-2">
-                        <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                        {item}
-                      </div>
-                    ))}
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 text-sm font-semibold text-slate-600 sm:flex-row sm:gap-8 md:text-base">
+                {["Secure documents", "Scope before payment", "Expert support"].map((item) => (
+                  <div key={item} className="inline-flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" />
+                    <span>{item}</span>
                   </div>
-                </div>
-
-                <div className="type-meta mt-3 grid grid-cols-2 gap-2 font-semibold text-slate-600 md:grid-cols-4">
-                  {["Portal workflow", "Scope before payment", "Optional CA review", "Secure documents"].map((item) => (
-                    <div key={item} className="rounded-md border border-blue-100 bg-white px-2 py-2 text-center">
-                      {item}
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
-
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-[#F8FAFC] py-5 md:py-8">
+        <section className="border-t border-slate-100 bg-white py-8 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="mx-auto grid max-w-6xl gap-3 lg:grid-cols-[1fr_1.35fr] lg:items-stretch">
-              <div className="rounded-lg border border-blue-100 bg-white p-5 shadow-sm md:p-7">
+            <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_1.35fr] lg:items-center">
+              <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
                   <Shield className="h-3.5 w-3.5" />
                   Transparent pricing
@@ -204,7 +171,7 @@ const HomePage = () => {
                   { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", note: "Review scope shown upfront" },
                   { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", note: "Documents reviewed before quote" },
                 ].map((plan) => (
-                  <div key={plan.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200 md:p-6">
+                  <div key={plan.title} className="rounded-lg border border-slate-100 bg-slate-50/70 p-5 transition-colors hover:border-blue-100 hover:bg-white md:p-6">
                     <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{plan.title}</p>
                     <p className="mt-3 text-2xl font-extrabold text-slate-950">{plan.price}</p>
                     <p className="mt-2 text-sm font-semibold text-slate-800">{plan.detail}</p>
@@ -381,10 +348,10 @@ const HomePage = () => {
         </div>
 
         {/* Planning Tools Section */}
-        <section className="bg-white py-8 md:py-16">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-              <div className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-5 md:p-7">
+        <section className="border-b border-slate-200 bg-white py-12 md:py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
+              <div className="flex max-w-2xl flex-col lg:max-w-none">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Planning tools</p>
                 <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
                   Estimate first. File with fewer surprises.
@@ -394,6 +361,26 @@ const HomePage = () => {
                 </p>
                 <Link href="/calculators" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
                   View all calculators <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+
+                <Link href="/tax-assistant" className="mt-6 hidden md:block">
+                  <div className="group rounded-lg border border-blue-100 bg-blue-50/70 p-5 transition-colors hover:border-blue-200 hover:bg-blue-50">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
+                        <Bot className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-bold tracking-tight text-slate-950">AI Tax Assistant</h3>
+                          <span className="type-meta rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 font-bold text-amber-700">Beta</span>
+                        </div>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">Ask tax questions, prepare documents, and understand next steps before filing.</p>
+                        <div className="mt-4 inline-flex items-center text-sm font-bold text-blue-700">
+                          Try Assistant <Sparkles className="ml-2 h-4 w-4" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </Link>
               </div>
 
@@ -406,7 +393,7 @@ const HomePage = () => {
                     { title: "Form 16", desc: "Parse salary data", href: "/form16-parser", icon: FileText, tone: "bg-indigo-50 text-indigo-700" },
                   ].map((calc) => (
                     <Link key={calc.title} href={calc.href}>
-                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-100 bg-slate-50/70 shadow-none transition-colors hover:border-blue-100 hover:bg-white">
                         <CardContent className="p-4">
                           <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg", calc.tone)}>
                             <calc.icon className="h-4 w-4" strokeWidth={2} />
@@ -428,7 +415,7 @@ const HomePage = () => {
                     { title: "SIP", desc: "Investment planning", href: "/calculators/sip", icon: TrendingUp, tone: "bg-amber-50 text-amber-700" },
                   ].map((calc) => (
                     <Link key={calc.title} href={calc.href}>
-                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-200">
+                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-100 bg-slate-50/70 shadow-none transition-colors hover:border-blue-100 hover:bg-white">
                         <CardContent className="p-5">
                           <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg", calc.tone)}>
                             <calc.icon className="h-5 w-5" strokeWidth={2} />
@@ -445,27 +432,6 @@ const HomePage = () => {
                     </Link>
                   ))}
                 </div>
-
-                <Link href="/tax-assistant" className="hidden md:block">
-                  <div className="group grid gap-4 rounded-lg border border-blue-100 bg-blue-50 p-5 transition-colors hover:border-blue-200 md:grid-cols-[1fr_auto] md:items-center">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
-                        <Bot className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-base font-bold tracking-tight text-slate-950">AI Tax Assistant</h3>
-                          <span className="type-meta rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 font-bold text-amber-700">Beta</span>
-                        </div>
-                        <p className="mt-1 text-sm leading-6 text-slate-600">Ask tax questions, prepare documents, and understand next steps before filing.</p>
-                      </div>
-                    </div>
-                    <Button variant="brand" className="h-11 w-full rounded-lg px-5 transition-all md:w-auto">
-                      Try Assistant
-                      <Sparkles className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </Link>
 
                 <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 md:hidden">
                   <p className="type-meta font-bold text-blue-700">Next step</p>

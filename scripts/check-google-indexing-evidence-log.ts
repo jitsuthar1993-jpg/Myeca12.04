@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import {
+  GOOGLE_SEARCH_REQUIRED_EVIDENCE_ITEMS,
+  evaluateSearchGoalReadiness,
+} from "../shared/search-goal-readiness.js";
 
 type EvidenceRow = {
   date: string;
@@ -27,31 +31,7 @@ const knownStatuses = new Set([
   "repo_updated",
 ]);
 
-const requiredItems = [
-  "Search Console owner runbook",
-  "Live technical indexing check",
-  "Google visible coverage",
-  "Search Console verification access",
-  "Domain property",
-  "DNS TXT verification",
-  "HTML verification token",
-  "Vercel domain access",
-  "Sitemap submitted",
-  "URL Inspection homepage",
-  "URL Inspection blog hub",
-  "URL Inspection priority blog article",
-  "URL Inspection salaried service",
-  "URL Inspection income tax calculator",
-  "URL Inspection form selector",
-  "URL Inspection Form 16 parser",
-  "URL Inspection ITR season hub",
-  "URL Inspection salary guide",
-  "Rendered page view",
-  "Page indexing report",
-  "Field INP evidence",
-  "Core Web Vitals lab",
-  "First outreach/publishing batch",
-] as const;
+const requiredItems = GOOGLE_SEARCH_REQUIRED_EVIDENCE_ITEMS;
 
 const urlInspectionExpectations = new Map([
   ["URL Inspection homepage", "https://myeca.in/"],
@@ -199,7 +179,8 @@ function main() {
     detail: emptyFields.length === 0 ? "all required fields filled" : emptyFields.join("; "),
   });
 
-  const pendingRows = rows.filter((row) => row.status === "pending_external");
+  const readiness = evaluateSearchGoalReadiness([{ name: "Google", csv, requiredItems }]);
+  const latestPendingRows = readiness.pendingExternalEvidence;
   const completionClaims = rows.filter((row) => row.status !== "pending_external" && /TBD|awaiting/i.test(row.evidence));
   checks.push({
     label: "resolved evidence is concrete",
@@ -222,7 +203,12 @@ function main() {
   checks.push({
     label: "pending external evidence remains explicit",
     ok: true,
-    detail: `${pendingRows.length} pending_external row(s) remain before completion can be claimed`,
+    detail: `${latestPendingRows.length} latest pending_external item(s) remain before completion can be claimed`,
+  });
+  checks.push({
+    label: "latest evidence readiness policy",
+    ok: readiness.issues.length === 0,
+    detail: readiness.issues.length === 0 ? "latest rows satisfy completion status and placeholder policy" : readiness.issues.join("; "),
   });
 
   checks.forEach(printCheck);

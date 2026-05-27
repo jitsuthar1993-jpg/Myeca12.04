@@ -24,6 +24,7 @@ import {
   type PublicBlogCategoryResponse,
   type PublicBlogSummaryCompat as BlogSummary,
 } from '@/lib/public-blog-data';
+import { getBlogCoverImageSrc, isGeneratedBlogCover } from '@/lib/blog-cover-assets';
 import { queryClient } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
 import type { BlogCategory } from '@shared/blog';
@@ -62,10 +63,6 @@ const HUB_FAQS = [
 
 function isImageUrl(value: string | null | undefined) {
   return Boolean(value && /^(https?:\/\/|\/)/.test(value));
-}
-
-function isGeneratedBlogCover(value: string | null | undefined) {
-  return Boolean(value?.includes('/assets/blog/text-covers/'));
 }
 
 function normalizeKey(value: string | null | undefined) {
@@ -194,6 +191,7 @@ function ArticleCard({
   priority?: boolean;
 }) {
   const coverImage = getCoverImage(post);
+  const generatedCover = isGeneratedBlogCover(coverImage);
   const authorName = getAuthorName(post);
 
   return (
@@ -217,7 +215,7 @@ function ArticleCard({
         >
           {isImageUrl(coverImage) ? (
             <img
-              src={coverImage ?? ''}
+              src={getBlogCoverImageSrc(coverImage)}
               alt={post.title}
               width={compact ? 480 : 640}
               height={compact ? 240 : 420}
@@ -226,8 +224,8 @@ function ArticleCard({
               decoding="async"
               className={cn(
                 'h-full w-full transition duration-500',
-                isGeneratedBlogCover(coverImage)
-                  ? 'bg-white object-contain p-2'
+                generatedCover
+                  ? 'bg-white object-contain p-0'
                   : 'object-cover group-hover:scale-105'
               )}
             />
@@ -236,9 +234,11 @@ function ArticleCard({
               <FileText className="h-14 w-14 text-blue-200" />
             </div>
           )}
-          <div className="absolute left-3 top-3 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur">
-            {getCategoryName(post)}
-          </div>
+          {!generatedCover && (
+            <div className="absolute left-3 top-3 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur">
+              {getCategoryName(post)}
+            </div>
+          )}
         </div>
 
         <div className={cn('flex flex-1 flex-col', compact ? 'p-4' : 'p-5 sm:p-6')}>
@@ -379,7 +379,7 @@ export default function BlogPage() {
               <div className="overflow-hidden rounded-xl bg-white">
                 {featuredPost && isImageUrl(getCoverImage(featuredPost)) ? (
                   <img
-                    src={getCoverImage(featuredPost) ?? ''}
+                    src={getBlogCoverImageSrc(getCoverImage(featuredPost))}
                     alt={featuredPost.title}
                     width={640}
                     height={360}
@@ -603,7 +603,7 @@ export default function BlogPage() {
                 <div className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
                   <div className="bg-emerald-50 p-3">
                     <img
-                      src="/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg"
+                      src={getBlogCoverImageSrc("/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg")}
                       alt="AY 2026-27 ITR season hub"
                       width={640}
                       height={360}

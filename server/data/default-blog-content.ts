@@ -70,6 +70,12 @@ export const defaultBlogCategories: DefaultBlogCategory[] = [
     slug: "tax-planning",
     description: "Year-round tax planning strategies for individuals, founders, and growing businesses.",
   },
+  {
+    id: "government-schemes",
+    name: "Government Schemes",
+    slug: "government-schemes",
+    description: "Official scheme eligibility, document, and application-readiness guides for Indian users.",
+  },
   ...itrSeason2026Categories,
 ];
 

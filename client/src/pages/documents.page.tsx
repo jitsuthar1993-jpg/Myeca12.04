@@ -182,9 +182,9 @@ export default function DocumentsPage() {
         keywords="document vault, form 16 upload, AIS, secure tax documents"
       />
 
-      <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
+      <div className="flex flex-col items-start gap-5 bg-slate-50/50 p-0 xl:flex-row xl:gap-12 xl:rounded-[48px] xl:p-2">
         {/* Sticky Left Summary Section */}
-        <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
+        <div className="hidden w-full shrink-0 space-y-6 xl:sticky xl:top-[112px] xl:block xl:w-96">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-28 bg-gradient-to-br from-blue-500 to-indigo-500 relative">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
@@ -267,9 +267,9 @@ export default function DocumentsPage() {
         </div>
 
         {/* Main Content Area - Full Page Scroll */}
-        <div className="flex-1 min-w-0 w-full lg:max-w-7xl space-y-10 pb-20">
+        <div className="min-w-0 flex-1 w-full space-y-5 pb-20 xl:max-w-7xl xl:space-y-10">
           {/* Page Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-12 rounded-[48px] shadow-sm border border-slate-100/50">
+          <div className="flex flex-col justify-between gap-5 rounded-lg border border-slate-100/50 bg-white p-4 shadow-sm md:flex-row md:items-center md:gap-6 md:rounded-[48px] md:p-12">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 mb-2">
                  <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
@@ -282,27 +282,27 @@ export default function DocumentsPage() {
             </div>
             <Button 
               onClick={() => fileInputRef.current?.click()}
-              className="h-16 px-10 rounded-3xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-100 hover:-translate-y-1"
+              className="h-11 w-full rounded-lg bg-blue-600 px-5 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-blue-100 transition-all hover:-translate-y-1 hover:bg-blue-700 md:h-16 md:w-auto md:rounded-3xl md:px-10"
             >
               <Plus className="h-5 w-5 mr-3" />
               Upload Document
             </Button>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr]">
+          <div className="grid gap-5 xl:grid-cols-[1fr_0.8fr] xl:gap-8">
             {/* Main Vault Table */}
             <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
-              <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col gap-4 border-b border-slate-50 p-4 md:flex-row md:items-center md:justify-between md:p-8">
                 <div>
                   <CardTitle className="text-lg font-bold">Authenticated Files</CardTitle>
                   <CardDescription className="text-xs font-medium text-slate-500">Search and manage your private compliance documents.</CardDescription>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="relative group">
+                  <div className="relative group w-full md:w-auto">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
                     <Input 
                       placeholder="Search vault..." 
-                      className="h-9 w-40 rounded-xl bg-slate-50 border-none pl-9 text-xs font-medium"
+                      className="h-10 w-full rounded-lg border-none bg-slate-50 pl-9 text-xs font-medium md:h-9 md:w-40 md:rounded-xl"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -310,7 +310,51 @@ export default function DocumentsPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="overflow-x-auto">
+                <div className="grid gap-3 p-4 md:hidden">
+                  {documents.map((doc) => (
+                    <div key={doc.id} className="rounded-lg border border-slate-100 bg-white p-4 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
+                          <FileText className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate type-support font-bold text-slate-900">{doc.name}</p>
+                          <p className="type-meta mt-1 font-medium uppercase tracking-tight text-slate-500">
+                            {doc.category} - {formatFileSize(doc.size)}
+                          </p>
+                        </div>
+                        <Badge className="border-none bg-slate-50 px-2.5 py-1 type-meta font-bold uppercase tracking-widest text-slate-600">
+                          {doc.status}
+                        </Badge>
+                      </div>
+                      <div className="mt-4 grid grid-cols-3 gap-2">
+                        <Button variant="outline" className="h-10 rounded-lg text-xs font-bold" onClick={() => setSelectedDoc(doc)}>
+                          <Eye className="mr-1 h-4 w-4" />
+                          View
+                        </Button>
+                        <Button variant="outline" className="h-10 rounded-lg text-xs font-bold" onClick={() => handleDownload(doc)}>
+                          <Download className="mr-1 h-4 w-4" />
+                          Save
+                        </Button>
+                        <Button variant="outline" className="h-10 rounded-lg text-xs font-bold text-red-500" onClick={() => deleteMutation.mutate(doc.id)}>
+                          <Trash2 className="mr-1 h-4 w-4" />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {documents.length === 0 && (
+                    <div className="px-4 py-10 text-center">
+                      <FolderOpen className="mx-auto mb-3 h-10 w-10 text-slate-300" />
+                      <p className="type-support font-bold text-slate-900">No documents uploaded yet</p>
+                      <p className="mt-1 type-support font-medium text-slate-500">
+                        Upload Form 16, AIS, bank statements, or investment proofs to build your private vault.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="hidden overflow-x-auto md:block">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-slate-50">
@@ -373,13 +417,13 @@ export default function DocumentsPage() {
             </Card>
 
             {/* Right Column: Upload & Generators */}
-            <div className="space-y-8">
+            <div className="space-y-5 xl:space-y-8">
               <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
-                <CardHeader className="p-8 border-b border-slate-50">
+                <CardHeader className="border-b border-slate-50 p-5 md:p-8">
                   <CardTitle className="type-card-title font-bold">Quick Upload</CardTitle>
                   <CardDescription className="type-support font-medium text-slate-500">Securely ingest new compliance documents.</CardDescription>
                 </CardHeader>
-                <CardContent className="p-8 space-y-6">
+                <CardContent className="space-y-5 p-5 md:space-y-6 md:p-8">
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -391,7 +435,7 @@ export default function DocumentsPage() {
                     }}
                   />
                   <div 
-                    className="group flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-100 bg-slate-50/50 p-10 text-center transition hover:border-blue-200 hover:bg-blue-50/30 cursor-pointer"
+                    className="group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-100 bg-slate-50/50 p-6 text-center transition hover:border-blue-200 hover:bg-blue-50/30 md:rounded-3xl md:p-10"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <div className="p-4 rounded-2xl bg-white shadow-sm mb-4 text-blue-600 transition group-hover:-translate-y-1">
@@ -463,8 +507,8 @@ export default function DocumentsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
-                <CardHeader className="p-8 border-b border-slate-50">
+              <Card className="overflow-hidden rounded-lg border-none bg-white shadow-sm md:rounded-[32px]">
+                <CardHeader className="border-b border-slate-50 p-5 md:p-8">
                   <CardTitle className="type-card-title font-bold">Internal Generators</CardTitle>
                   <CardDescription className="type-support font-medium text-slate-500">Documents created within MyeCA.</CardDescription>
                 </CardHeader>
@@ -489,8 +533,8 @@ export default function DocumentsPage() {
             </div>
           </div>
 
-          <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-blue-700 text-white">
-            <CardHeader className="p-8 border-b border-white/10">
+          <Card className="overflow-hidden rounded-lg border-none bg-blue-700 text-white shadow-sm md:rounded-[32px]">
+            <CardHeader className="border-b border-white/10 p-5 md:p-8">
               <CardTitle className="text-xl font-black">Case workflow preview</CardTitle>
               <CardDescription className="text-slate-400">
                 When a file is linked to a service, it appears on that case workspace and helps the team move the case forward.
@@ -509,7 +553,7 @@ export default function DocumentsPage() {
       </div>
 
       <Dialog open={!!selectedDoc} onOpenChange={(open) => !open && setSelectedDoc(null)}>
-        <DialogContent className="max-w-4xl rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="max-h-[calc(100vh-2rem)] max-w-4xl overflow-y-auto rounded-2xl border-none p-0 shadow-2xl md:rounded-[32px]">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="bg-blue-700 p-8 flex flex-col justify-center items-center text-center">
                <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-6 border border-white/10">

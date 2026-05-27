@@ -59,6 +59,7 @@ export const DEFAULT_PUBLIC_BLOG_CATEGORIES: Array<Pick<BlogCategory, "id" | "na
   { id: "income-tax", name: "Income Tax", slug: "income-tax" },
   { id: "tax-regime", name: "Tax Regime", slug: "tax-regime" },
   { id: "tax-planning", name: "Tax Planning", slug: "tax-planning" },
+  { id: "government-schemes", name: "Government Schemes", slug: "government-schemes" },
   { id: "capital-gains", name: "Capital Gains", slug: "capital-gains" },
   {
     id: "foreign-assets-nri-tax",

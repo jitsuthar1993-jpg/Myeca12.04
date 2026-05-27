@@ -67,46 +67,46 @@ export default function PaymentsPage() {
 
   return (
     <Layout title="Payments">
-      <div className="space-y-8 pb-20">
-        <section className="rounded-[32px] border border-slate-100 bg-white p-8 shadow-sm">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="space-y-5 pb-20 md:space-y-8">
+        <section className="rounded-lg border border-slate-100 bg-white p-4 shadow-sm md:rounded-[32px] md:p-8">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-6">
             <div>
               <Badge className="border-none bg-blue-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-blue-700">
                 Service-linked payments
               </Badge>
-              <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-900">Payments</h1>
+              <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-900 md:text-4xl">Payments</h1>
               <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-500">
                 Track pending service fees, request secure payment links, and see receipts once a gateway or manual confirmation is connected.
               </p>
             </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-700 text-white shadow-xl shadow-slate-200">
+            <div className="hidden h-16 w-16 items-center justify-center rounded-3xl bg-blue-700 text-white shadow-xl shadow-slate-200 md:flex">
               <CreditCard className="h-8 w-8" />
             </div>
           </div>
         </section>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-3 gap-3 md:gap-6">
           {[
             { title: 'Pending', value: payableServices.length, icon: ReceiptText },
             { title: 'Paid', value: paidServices.length, icon: ShieldCheck },
             { title: 'Total Services', value: services.length, icon: FileText },
           ].map((item) => (
-            <Card key={item.title} className="rounded-[24px] border-slate-100 shadow-sm">
-              <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                  <item.icon className="h-6 w-6" />
+            <Card key={item.title} className="rounded-lg border-slate-100 shadow-sm md:rounded-[24px]">
+              <CardContent className="flex min-h-[104px] flex-col items-start gap-3 p-3 md:min-h-0 md:flex-row md:items-center md:gap-4 md:p-6">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 md:h-12 md:w-12 md:rounded-2xl">
+                  <item.icon className="h-5 w-5 md:h-6 md:w-6" />
                 </div>
                 <div>
                   <p className="type-meta font-black uppercase tracking-widest text-slate-400">{item.title}</p>
-                  <p className="mt-1 text-2xl font-black text-slate-900">{item.value}</p>
+                  <p className="mt-1 text-xl font-black text-slate-900 md:text-2xl">{item.value}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <Card className="rounded-[28px] border-slate-100 shadow-sm">
-          <CardHeader className="border-b border-slate-50 p-6">
+        <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+          <CardHeader className="border-b border-slate-50 p-4 md:p-6">
             <CardTitle className="text-lg font-black">Service Payment Queue</CardTitle>
             <CardDescription>Payment links are requested per service case until a live gateway is configured.</CardDescription>
           </CardHeader>
@@ -119,18 +119,21 @@ export default function PaymentsPage() {
             ) : services.length ? (
               <div className="divide-y divide-slate-50">
                 {services.map((service) => (
-                  <div key={service.id} className="grid gap-4 p-6 lg:grid-cols-[1fr_160px_180px_220px] lg:items-center">
+                  <div key={service.id} className="grid gap-3 p-4 md:gap-4 md:p-6 lg:grid-cols-[1fr_160px_180px_220px] lg:items-center">
                     <div className="min-w-0">
                       <p className="truncate text-base font-black text-slate-900">{service.serviceTitle || service.serviceId || 'Service request'}</p>
                       <p className="mt-1 type-meta font-black uppercase tracking-widest text-slate-400">{service.serviceCategory || 'General service'}</p>
                     </div>
-                    <p className="text-sm font-black text-slate-900">{amountLabel(service.paymentAmount)}</p>
+                    <p className="text-sm font-black text-slate-900">
+                      <span className="type-meta mr-2 font-black uppercase text-slate-400 lg:hidden">Amount</span>
+                      {amountLabel(service.paymentAmount)}
+                    </p>
                     <Badge variant="outline" className="w-fit border-none bg-slate-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-slate-600">
                       {statusLabel(service.paymentStatus)}
                     </Badge>
-                    <div className="flex flex-wrap gap-2 lg:justify-end">
-                      <Link href={`/dashboard/services/${service.id}`}>
-                        <Button variant="outline" className="h-10 rounded-xl border-slate-200 text-xs font-black">
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap lg:justify-end">
+                      <Link href={`/dashboard/services/${service.id}`} className="min-w-0">
+                        <Button variant="outline" className="h-10 w-full rounded-lg border-slate-200 text-xs font-black sm:w-auto sm:rounded-xl">
                           View Case
                         </Button>
                       </Link>
@@ -138,7 +141,7 @@ export default function PaymentsPage() {
                         <Button
                           disabled={paymentMutation.isPending}
                           onClick={() => paymentMutation.mutate(service.id)}
-                          className="h-10 rounded-xl bg-blue-600 text-xs font-black text-white hover:bg-blue-700"
+                          className="h-10 w-full rounded-lg bg-blue-600 text-xs font-black text-white hover:bg-blue-700 sm:w-auto sm:rounded-xl"
                         >
                           <LinkIcon className="mr-2 h-4 w-4" />
                           Request Link

@@ -54,6 +54,10 @@ DNS TXT verification: verified
 Live checker: passes with zero required failures
 ```
 
+Use `recorded` or `live_verified` for owner-side milestones that are proven in Search Console, CrUX, Vercel Speed Insights, or an external placement URL. Keep `pending_external` until the evidence exists. Do not use `repo_updated` for sitemap submission, URL Inspection, rendered page view, Page indexing report, field INP, or outreach completion rows; the final `npm.cmd run check:search-goal-readiness` gate rejects repo-only statuses for those milestones.
+
+If proof is recorded on the same date as an earlier `pending_external` row, add a new row for the same item with `recorded` or `live_verified` and concrete evidence. The final readiness gate treats that same-day proof as superseding the stale pending row, but it still rejects placeholder evidence and repo-only owner statuses.
+
 Alternative verification:
 
 Use HTML-tag verification only if DNS TXT access is not available. Set `VITE_GOOGLE_SITE_VERIFICATION` in the owning Vercel Production project, redeploy, then confirm the homepage source has a non-empty `google-site-verification` meta tag.
