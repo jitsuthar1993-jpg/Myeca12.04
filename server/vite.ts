@@ -6,6 +6,7 @@ import { type Server } from "http";
 import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { allServices } from "../client/src/data/all-services.js";
 import { generateMetadata } from "../client/src/lib/seo.js";
 import {
   DEFAULT_OG_IMAGE,
@@ -18,10 +19,16 @@ import {
   listPublishedBlogPosts,
   sortPublishedPosts,
 } from "./services/blog.js";
+import {
+  buildNoindexNotFoundHtml,
+  classifySpaFallbackPath,
+  injectNoindexFallbackMeta,
+} from "../shared/spa-fallback-policy.js";
 
 const viteLogger = createLogger();
 const BLOG_SEO_CACHE_TTL = 5 * 60 * 1000;
 let blogSeoCache: { generatedAt: number; posts: Awaited<ReturnType<typeof listPublishedBlogPosts>> } | null = null;
+const activationServiceIds = allServices.map((service) => service.id);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -233,14 +240,28 @@ export function serveStatic(app: Express) {
   app.use("*", async (req, res) => {
     const distPath = path.resolve(process.cwd(), "dist", "public");
     const indexPath = path.resolve(distPath, "index.html");
+    const url = req.originalUrl;
+    const cleanPath = url.split("?")[0];
+    const fallback = classifySpaFallbackPath(cleanPath, { activationServiceIds });
     
     if (!fs.existsSync(indexPath)) {
       return res.status(404).send("Index file not found");
     }
 
+    res.setHeader("X-Robots-Tag", fallback.robots);
+
+    if (!fallback.known) {
+      return res
+        .status(404)
+        .set({
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html; charset=utf-8",
+        })
+        .send(buildNoindexNotFoundHtml(fallback.path));
+    }
+
     try {
       let content = await fs.promises.readFile(indexPath, "utf-8");
-      const url = req.originalUrl;
       const userAgent = req.headers["user-agent"] || "";
       const isBot = /bot|googlebot|crawler|spider|robot|crawling|bingbot|duckduckbot|yandexbot|slurp|facebot|ia_archiver/i.test(userAgent);
 
@@ -248,7 +269,6 @@ export function serveStatic(app: Express) {
       if (isBot) {
         log(`Bot detected: ${userAgent} on ${url}`, "seo");
         
-        const cleanPath = url.split("?")[0];
         const blogSeo = await getBlogSeoData(cleanPath);
         const fallbackSeo = SEO_CONFIG[cleanPath] || SEO_CONFIG["/"];
         const seo = blogSeo || {
@@ -258,7 +278,7 @@ export function serveStatic(app: Express) {
           canonical: `https://myeca.in${cleanPath === "/" ? "/" : cleanPath}`,
           image: DEFAULT_OG_IMAGE,
           type: fallbackSeo.type === "article" ? "article" : "website",
-          noindex: Boolean(fallbackSeo.noindex),
+          noindex: true,
           jsonLd: [],
         };
         
@@ -304,6 +324,8 @@ export function serveStatic(app: Express) {
         `;
         content = content.replace("</head>", `${metaTags}</head>`);
       }
+
+      content = injectNoindexFallbackMeta(content, fallback.path);
 
       res.status(200).set({ "Content-Type": "text/html; charset=utf-8" }).send(content);
     } catch (err) {

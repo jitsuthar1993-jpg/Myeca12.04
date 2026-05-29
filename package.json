@@ -40,6 +40,7 @@
     "check:google-indexing": "tsx scripts/check-google-indexing-readiness.ts",
     "check:google-indexing-evidence": "tsx scripts/check-google-indexing-evidence-log.ts",
     "check:search-engines": "tsx scripts/check-search-engines.ts",
+    "check:spa-fallback-indexing": "tsx scripts/check-spa-fallback-indexing.ts",
     "check:itr-season-seo-content": "tsx scripts/check-itr-season-seo-content.ts",
     "check:priority-structured-data": "tsx scripts/check-priority-structured-data.ts",
     "check:seo-deployment-parity": "tsx scripts/check-seo-deployment-parity.ts",

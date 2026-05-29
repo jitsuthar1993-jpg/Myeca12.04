@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import crypto from "node:crypto";
 import path from "node:path";
 import multer from "multer";
@@ -26,6 +26,7 @@ import {
   setPublicCache,
 } from "./_public-blog.js";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { allServices } from "../client/src/data/all-services.js";
 import { TAX_GUIDES } from "../client/src/data/tax-guides.js";
 import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
 import { buildOpenApiSpec } from "../server/openapi.js";
@@ -43,11 +44,19 @@ import {
   indexNowKeyResponse,
   normalizedIndexNowKey,
 } from "../shared/indexnow.js";
+import {
+  buildNoindexNotFoundHtml,
+  classifySpaFallbackPath,
+  injectNoindexFallbackMeta,
+} from "../shared/spa-fallback-policy.js";
 import { captureServerException, initServerSentry } from "../server/telemetry/sentry.js";
 
 initServerSentry();
 const PUBLIC_CACHE = "public, s-maxage=300, stale-while-revalidate=3600";
 const PRIVATE_CACHE = "private, no-cache";
+const FALLBACK_APP_CACHE = "no-store";
+const activationServiceIds = allServices.map((service) => service.id);
+let appShellHtmlCache: string | null = null;
 const documentUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -148,6 +157,54 @@ function sendText(res: any, status: number, body: string, contentType: string, c
   res.setHeader("Content-Type", contentType);
   res.setHeader("Cache-Control", cacheControl);
   return res.status(status).send(body);
+}
+
+function appShellHtml() {
+  if (appShellHtmlCache) return appShellHtmlCache;
+
+  const candidates = [
+    path.resolve(process.cwd(), "dist", "public", "index.html"),
+    path.resolve(process.cwd(), "client", "index.html"),
+  ];
+  const indexPath = candidates.find((candidate) => existsSync(candidate));
+
+  if (!indexPath) {
+    throw new Error(`App shell not found in ${candidates.join(", ")}`);
+  }
+
+  appShellHtmlCache = readFileSync(indexPath, "utf8");
+  return appShellHtmlCache;
+}
+
+function fallbackRequestPath(req: any, url: URL) {
+  const value = url.searchParams.get("path") || req.headers?.["x-original-path"] || req.url || "/";
+  const pathValue = Array.isArray(value) ? value[0] : String(value);
+  return pathValue.startsWith("/") ? pathValue : `/${pathValue}`;
+}
+
+function sendAppFallback(req: any, res: any, url: URL) {
+  const requestedPath = fallbackRequestPath(req, url);
+  const fallback = classifySpaFallbackPath(requestedPath, { activationServiceIds });
+
+  res.setHeader("X-Robots-Tag", fallback.robots);
+
+  if (!fallback.known) {
+    return sendText(
+      res,
+      404,
+      buildNoindexNotFoundHtml(fallback.path),
+      "text/html; charset=utf-8",
+      FALLBACK_APP_CACHE,
+    );
+  }
+
+  return sendText(
+    res,
+    200,
+    injectNoindexFallbackMeta(appShellHtml(), fallback.path),
+    "text/html; charset=utf-8",
+    FALLBACK_APP_CACHE,
+  );
 }
 
 function requestBody(req: any) {
@@ -320,6 +377,7 @@ async function handleRequest(req: any, res: any) {
   if (name === "llms") return sendText(res, 200, llmsText(false), "text/plain", "public, s-maxage=3600");
   if (name === "llms-full") return sendText(res, 200, llmsText(true), "text/plain", "public, s-maxage=3600");
   if (name === "income-tax-form-download") return redirectToIncomeTaxForm(req, res, url);
+  if (name === "app-fallback") return sendAppFallback(req, res, url);
 
   if (name === "public-categories") {
     setPublicCache(res);
