@@ -14,7 +14,7 @@ import {
   Bot
 } from "lucide-react";
 import { Link } from "wouter";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -36,6 +36,63 @@ const ProfessionalServicesSection = lazyWithRetry(() => import("@/components/Pro
 const OtherServicesSection = lazyWithRetry(() => import("@/components/OtherServicesSection"));
 const FinancialGlossary = lazyWithRetry(() => import("@/components/seo/FinancialGlossary"));
 const FeaturedResources = lazyWithRetry(() => import("@/components/seo/FeaturedResources"));
+
+const heroTypingPhrases = ["Tax Returns", "GST Returns", "Notices", "Everything"];
+
+const HeroTypingPhrase = () => {
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [visibleLength, setVisibleLength] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  const phrase = heroTypingPhrases[phraseIndex];
+  const visiblePhrase = phrase.slice(0, visibleLength);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    setReduceMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setVisibleLength(heroTypingPhrases[0].length);
+      setPhraseIndex(0);
+      setIsDeleting(false);
+      return;
+    }
+
+    const hasTypedPhrase = visibleLength === phrase.length;
+    const hasDeletedPhrase = visibleLength === 0;
+    const delay = hasTypedPhrase && !isDeleting ? 1400 : hasDeletedPhrase && isDeleting ? 260 : isDeleting ? 45 : 80;
+
+    const timeoutId = window.setTimeout(() => {
+      if (hasTypedPhrase && !isDeleting) {
+        setIsDeleting(true);
+        return;
+      }
+
+      if (hasDeletedPhrase && isDeleting) {
+        setIsDeleting(false);
+        setPhraseIndex((currentIndex) => (currentIndex + 1) % heroTypingPhrases.length);
+        return;
+      }
+
+      setVisibleLength((currentLength) => currentLength + (isDeleting ? -1 : 1));
+    }, delay);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isDeleting, phrase.length, reduceMotion, visibleLength]);
+
+  return (
+    <span aria-hidden="true" className="inline-flex min-w-[10.5ch] items-baseline justify-end text-blue-600">
+      <span className="font-mono font-black" style={{ WebkitTextStroke: "0.018em currentColor" }}>{visiblePhrase || "\u00a0"}</span>
+      <span className="ml-1 inline-block h-[0.9em] w-[0.08em] translate-y-[0.08em] animate-pulse bg-blue-600" />
+    </span>
+  );
+};
 
 const SectionFallback = () => (
   <div className="py-12">
@@ -107,12 +164,23 @@ const HomePage = () => {
                 <span className="text-emerald-600">AY 2026-27</span>
               </div>
 
-              <h1 className="type-hero-title mx-auto mt-8 max-w-4xl text-slate-950">
-                File your <span className="text-blue-600">Tax Returns</span> with expert CA assistance
-              </h1>
-              <p className="mx-auto mt-6 max-w-4xl text-lg leading-8 text-slate-600 md:text-2xl">
-                Guided filing with document checks and review scope before payment.
-              </p>
+              <div className="relative mx-auto mt-8 max-w-5xl">
+                <span className="hero-filing-stamp pointer-events-none absolute -left-28 top-[5.75rem] hidden rounded-[3px] border-2 border-dashed border-blue-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-blue-700/85 ring-1 ring-blue-500/20 ring-offset-2 ring-offset-white xl:inline-flex">
+                  ITR Filing Started
+                </span>
+
+                <h1 className="type-hero-title mx-auto max-w-4xl text-slate-950">
+                  File your{" "}
+                  <span className="sr-only">Tax Returns, GST Returns, Notices, and Everything</span>
+                  <HeroTypingPhrase /> with expert CA assistance
+                </h1>
+                <p className="mx-auto mt-4 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
+                  With <span className="font-bold text-slate-700">Free Notice Assistance</span> for tax, GST, notices &amp; other services.
+                </p>
+                <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-blue-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-blue-700/85 ring-1 ring-blue-500/20 ring-offset-2 ring-offset-white xl:hidden">
+                  ITR Filing Started
+                </span>
+              </div>
 
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
