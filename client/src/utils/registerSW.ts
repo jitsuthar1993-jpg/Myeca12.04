@@ -7,6 +7,37 @@ interface ServiceWorkerConfig {
   onOnline?: () => void;
 }
 
+type BeforeInstallPromptOutcome = 'accepted' | 'dismissed';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{
+    outcome: BeforeInstallPromptOutcome;
+    platform: string;
+  }>;
+}
+
+let isReloadingForServiceWorkerUpdate = false;
+let shouldReloadForServiceWorkerUpdate = false;
+
+function applyWaitingServiceWorkerUpdate(registration?: ServiceWorkerRegistration) {
+  const waitingWorker = registration?.waiting;
+
+  if (!waitingWorker) {
+    window.location.reload();
+    return;
+  }
+
+  shouldReloadForServiceWorkerUpdate = true;
+  waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+
+  window.setTimeout(() => {
+    if (!isReloadingForServiceWorkerUpdate) {
+      window.location.reload();
+    }
+  }, 3000);
+}
+
 export async function registerServiceWorker(config?: ServiceWorkerConfig) {
   if (!('serviceWorker' in navigator)) {
     console.log('[SW] Service workers not supported');
@@ -40,6 +71,12 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
 
     console.log('[SW] Registration successful:', registration.scope);
 
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!shouldReloadForServiceWorkerUpdate || isReloadingForServiceWorkerUpdate) return;
+      isReloadingForServiceWorkerUpdate = true;
+      window.location.reload();
+    });
+
     // Check for updates
     registration.addEventListener('updatefound', () => {
       const newWorker = registration.installing;
@@ -52,10 +89,15 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
           config?.onUpdate?.(registration);
           
           // Show update notification
-          showUpdateNotification();
+          showUpdateNotification(registration);
         }
       });
     });
+
+    if (registration.waiting && navigator.serviceWorker.controller) {
+      config?.onUpdate?.(registration);
+      showUpdateNotification(registration);
+    }
 
     // Handle successful registration
     if (registration.active) {
@@ -85,7 +127,7 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
 }
 
 // Show notification when update is available
-function showUpdateNotification() {
+function showUpdateNotification(registration?: ServiceWorkerRegistration) {
   document.getElementById('sw-update-notification')?.remove();
 
   const notification = document.createElement('div');
@@ -153,7 +195,7 @@ function showUpdateNotification() {
     cursor: 'pointer',
   });
   refresh.textContent = 'Refresh';
-  refresh.addEventListener('click', () => window.location.reload());
+  refresh.addEventListener('click', () => applyWaitingServiceWorkerUpdate(registration));
 
   const dismiss = document.createElement('button');
   dismiss.id = 'sw-update-dismiss';
@@ -258,15 +300,24 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 
 // Check if app can be installed (PWA)
 export function canInstallPWA(): boolean {
-  return 'BeforeInstallPromptEvent' in window || 
-         (navigator as any).standalone === false;
+  return Boolean(deferredInstallPrompt) ||
+         ((navigator as any).standalone === false && !isStandalone());
 }
 
 // PWA Install prompt handler
-let deferredInstallPrompt: any = null;
+let deferredInstallPrompt: BeforeInstallPromptEvent | null = null;
+let installPromptListenersReady = false;
+
+export function hasDeferredInstallPrompt(): boolean {
+  return Boolean(deferredInstallPrompt);
+}
 
 export function setupInstallPrompt() {
-  window.addEventListener('beforeinstallprompt', (e) => {
+  if (installPromptListenersReady) return;
+  installPromptListenersReady = true;
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    const e = event as BeforeInstallPromptEvent;
     e.preventDefault();
     deferredInstallPrompt = e;
     
@@ -301,8 +352,9 @@ export async function promptInstall(): Promise<boolean> {
     return false;
   }
 
-  deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
+  const promptEvent = deferredInstallPrompt;
+  await promptEvent.prompt();
+  const { outcome } = await promptEvent.userChoice;
   
   console.log('[PWA] Install prompt outcome:', outcome);
   deferredInstallPrompt = null;

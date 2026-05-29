@@ -1,7 +1,6 @@
-import type { PRIORITY_ITR_SEARCH_ROUTES } from "./search-engine-readiness";
 import type { StaticRouteBodyLink, StaticRouteBodySection } from "./static-seo-content";
 
-type PriorityItrSearchRoute = (typeof PRIORITY_ITR_SEARCH_ROUTES)[number];
+type PriorityItrSearchRoute = string;
 
 export const PRIORITY_ITR_CONTENT_MIN_WORDS = 120;
 export const PRIORITY_ITR_CONTENT_MIN_INTERNAL_LINKS = 2;
@@ -12,6 +11,90 @@ export type PriorityItrRouteContent = {
   links: StaticRouteBodyLink[];
   requiredTerms: string[];
 };
+
+type CommercialRouteSpec = {
+  route: string;
+  label: string;
+  audience: string;
+  task: string;
+  proof: string;
+  links: StaticRouteBodyLink[];
+  requiredTerms: string[];
+};
+
+const commercialRouteSpecs: CommercialRouteSpec[] = [
+  { route: "/calculators/capital-gains", label: "Capital gains calculator", audience: "investors and property sellers", task: "estimate STCG, LTCG, exemptions, and ITR form impact", proof: "broker statements, purchase dates, sale values, and AIS capital gains entries", links: [{ label: "Capital gains import", href: "/capital-gains-import" }, { label: "Capital gains guide", href: "/blog/capital-gains-trading-income-itr-guide-ay-2026-27" }], requiredTerms: ["capital gains", "STCG", "LTCG"] },
+  { route: "/capital-gains-import", label: "Capital gains import tool", audience: "active investors", task: "turn broker tax P&L files into review-ready summaries", proof: "broker reports, tradebooks, AIS, and corporate action checks", links: [{ label: "Capital gains calculator", href: "/calculators/capital-gains" }, { label: "Quicko alternative", href: "/compare/quicko-capital-gains-alternative" }], requiredTerms: ["broker", "capital gains", "AIS"] },
+  { route: "/calculators/hra", label: "HRA calculator", audience: "salaried tenants", task: "estimate house rent allowance exemption before choosing a tax regime", proof: "rent receipts, landlord details, salary breakup, and Form 16", links: [{ label: "Income tax calculator", href: "/calculators/income-tax" }, { label: "Salaried ITR service", href: "/services/itr-for-salaried" }], requiredTerms: ["HRA", "rent", "Form 16"] },
+  { route: "/calculators/tax-regime", label: "Tax regime calculator", audience: "salaried taxpayers", task: "compare old and new regime outcomes for AY 2026-27", proof: "deduction proofs, Form 16 values, HRA, NPS, and home-loan certificates", links: [{ label: "Income tax calculator", href: "/calculators/income-tax" }, { label: "Regime comparator", href: "/calculators/regime-comparator" }], requiredTerms: ["old regime", "new regime", "AY 2026-27"] },
+  { route: "/calculators/regime-comparator", label: "Regime comparator", audience: "taxpayers with deductions", task: "make a regime decision using a side-by-side estimate", proof: "eligible deductions, exemptions, salary details, and rebate checks", links: [{ label: "Tax regime calculator", href: "/calculators/tax-regime" }, { label: "Choose ITR form", href: "/itr/form-selector" }], requiredTerms: ["regime", "deductions", "rebate"] },
+  { route: "/calculators/gst", label: "GST calculator", audience: "business owners", task: "estimate inclusive and exclusive GST values", proof: "invoice value, GST rate, place of supply, and HSN/SAC classification", links: [{ label: "GST filing", href: "/gst-filing" }, { label: "GST registration", href: "/services/gst-registration" }], requiredTerms: ["GST", "invoice", "CGST"] },
+  { route: "/calculators/sip", label: "SIP calculator", audience: "long-term investors", task: "project monthly investment growth with compounding assumptions", proof: "investment horizon, expected return, contribution amount, and tax treatment", links: [{ label: "Capital gains calculator", href: "/calculators/capital-gains" }, { label: "Tax planning", href: "/services/tax-planning" }], requiredTerms: ["SIP", "mutual fund", "investment"] },
+  { route: "/calculators/nps", label: "NPS calculator", audience: "retirement planners", task: "estimate NPS corpus and annuity outcomes", proof: "contribution amount, retirement age, expected return, and deduction eligibility", links: [{ label: "Tax regime calculator", href: "/calculators/tax-regime" }, { label: "Tax planning", href: "/services/tax-planning" }], requiredTerms: ["NPS", "retirement", "deduction"] },
+  { route: "/calculators/ppf", label: "PPF calculator", audience: "old-regime savers", task: "estimate PPF maturity and 80C planning value", proof: "deposit pattern, tenure, interest assumption, and 80C limit", links: [{ label: "Tax regime calculator", href: "/calculators/tax-regime" }, { label: "NPS calculator", href: "/calculators/nps" }], requiredTerms: ["PPF", "80C", "maturity"] },
+  { route: "/calculators/fd", label: "FD calculator", audience: "deposit investors", task: "estimate fixed deposit maturity and taxable interest", proof: "deposit amount, tenure, compounding, AIS interest, and TDS credit", links: [{ label: "TDS calculator", href: "/calculators/tds" }, { label: "Income tax calculator", href: "/calculators/income-tax" }], requiredTerms: ["FD", "interest", "TDS"] },
+  { route: "/calculators/tds", label: "TDS calculator", audience: "deductors and taxpayers", task: "estimate tax deduction on selected payment types", proof: "payment nature, threshold, PAN, rate, and Form 26AS credit", links: [{ label: "GST filing", href: "/gst-filing" }, { label: "Income tax calculator", href: "/calculators/income-tax" }], requiredTerms: ["TDS", "Form 26AS", "deduction"] },
+  { route: "/calculators/gratuity", label: "Gratuity calculator", audience: "employees leaving or retiring", task: "estimate gratuity and possible tax exposure", proof: "basic salary, DA, completed service, employer type, and settlement letter", links: [{ label: "Income tax calculator", href: "/calculators/income-tax" }, { label: "Salaried ITR service", href: "/services/itr-for-salaried" }], requiredTerms: ["gratuity", "salary", "exemption"] },
+  { route: "/calculators/emi", label: "EMI calculator", audience: "borrowers", task: "estimate loan EMI and repayment burden", proof: "loan amount, interest rate, tenure, fees, and prepayment assumptions", links: [{ label: "Home loan calculator", href: "/calculators/home-loan" }, { label: "Tax planning", href: "/services/tax-planning" }], requiredTerms: ["EMI", "loan", "interest"] },
+  { route: "/calculators/home-loan", label: "Home loan calculator", audience: "home buyers", task: "estimate EMI and possible housing-loan tax planning inputs", proof: "loan certificate, interest component, property use, and regime choice", links: [{ label: "EMI calculator", href: "/calculators/emi" }, { label: "Tax regime calculator", href: "/calculators/tax-regime" }], requiredTerms: ["home loan", "EMI", "interest"] },
+  { route: "/calculators/advance-tax", label: "Advance tax calculator", audience: "taxpayers with non-salary income", task: "estimate advance-tax installments and interest risk", proof: "income estimate, TDS credits, due dates, and capital gains timing", links: [{ label: "Income tax calculator", href: "/calculators/income-tax" }, { label: "TDS calculator", href: "/calculators/tds" }], requiredTerms: ["advance tax", "installment", "234C"] },
+  { route: "/gst-filing", label: "GST filing service", audience: "GST-registered businesses", task: "prepare recurring return filing with invoice and ITC review", proof: "sales invoices, purchase register, GSTR-2B, e-way bills, and ledger balances", links: [{ label: "GST calculator", href: "/calculators/gst" }, { label: "GST registration", href: "/services/gst-registration" }], requiredTerms: ["GST", "GSTR", "ITC"] },
+  { route: "/services/gst-registration", label: "GST registration service", audience: "new and growing businesses", task: "prepare registration documents and first-compliance steps", proof: "PAN, address proof, bank proof, constitution documents, and business activity", links: [{ label: "GST filing", href: "/gst-filing" }, { label: "Company registration", href: "/services/company-registration" }], requiredTerms: ["GST registration", "business", "documents"] },
+  { route: "/services/gst-returns", label: "GST returns service", audience: "monthly and quarterly filers", task: "organize GSTR filing, reconciliation, and compliance cadence", proof: "sales data, purchase data, GSTR-2B, credit notes, and payment challans", links: [{ label: "GST calculator", href: "/calculators/gst" }, { label: "GST filing", href: "/gst-filing" }], requiredTerms: ["GST returns", "GSTR", "reconciliation"] },
+  { route: "/services/company-registration", label: "Company registration service", audience: "founders and small businesses", task: "plan incorporation documents, name approval, and compliance setup", proof: "director KYC, address proof, object clause, capital details, and DSC/DIN readiness", links: [{ label: "Startup services", href: "/startup-services" }, { label: "Startup registration", href: "/startup/registration" }], requiredTerms: ["company registration", "startup", "documents"] },
+  { route: "/services/msme-udyam-registration", label: "MSME Udyam registration", audience: "small businesses", task: "prepare MSME registration and record alignment", proof: "Aadhaar, PAN, GST details where applicable, business activity, and turnover records", links: [{ label: "Startup services", href: "/startup-services" }, { label: "Government schemes", href: "/blog/government-schemes-msme-startup-eligibility-document-checklist" }], requiredTerms: ["MSME", "Udyam", "registration"] },
+  { route: "/services/tax-planning", label: "Tax planning service", audience: "individuals and founders", task: "review regime choice, deductions, capital gains, and compliance timing", proof: "income records, deduction proofs, investment data, and expected transactions", links: [{ label: "Tax regime calculator", href: "/calculators/tax-regime" }, { label: "Income tax calculator", href: "/calculators/income-tax" }], requiredTerms: ["tax planning", "deductions", "capital gains"] },
+  { route: "/services/tds-filing", label: "TDS filing service", audience: "employers and deductors", task: "prepare TDS returns, challan checks, and deductee records", proof: "TAN, challans, deductee PAN, payment register, and Form 26Q or 24Q data", links: [{ label: "TDS calculator", href: "/calculators/tds" }, { label: "GST filing", href: "/gst-filing" }], requiredTerms: ["TDS filing", "TAN", "challan"] },
+  { route: "/services/trademark-registration", label: "Trademark registration service", audience: "brands and founders", task: "prepare class search, application details, and objection readiness", proof: "brand name, logo, class selection, applicant proof, and use evidence", links: [{ label: "Startup services", href: "/startup-services" }, { label: "Company registration", href: "/services/company-registration" }], requiredTerms: ["trademark", "startup", "registration"] },
+  { route: "/services/notice-compliance", label: "Notice compliance service", audience: "taxpayers with department communication", task: "organize response facts, documents, and deadline tracking", proof: "notice copy, return data, AIS/Form 26AS, computation, and supporting documents", links: [{ label: "Expert consultation", href: "/expert-consultation" }, { label: "ITR filing", href: "/itr-filing" }], requiredTerms: ["notice", "compliance", "AIS"] },
+  { route: "/services/startup-india-registration", label: "Startup India registration", audience: "eligible startups", task: "prepare DPIIT recognition and supporting documents", proof: "incorporation records, business model note, founder details, and innovation evidence", links: [{ label: "Startup services", href: "/startup-services" }, { label: "Startup funding", href: "/startup/funding" }], requiredTerms: ["Startup India", "DPIIT", "registration"] },
+  { route: "/compare/cleartax-alternative", label: "ClearTax alternative", audience: "taxpayers comparing assisted filing", task: "compare document review, CA assistance, case tracking, and scope visibility", proof: "filing complexity, support needs, document readiness, and post-filing expectations", links: [{ label: "Compare filing options", href: "/compare" }, { label: "CA-assisted comparison", href: "/compare/best-ca-assisted-itr-filing" }], requiredTerms: ["ClearTax alternative", "CA assisted", "ITR"] },
+  { route: "/compare/taxbuddy-alternative", label: "TaxBuddy alternative", audience: "taxpayers comparing expert support", task: "compare filing support, communication, tracking, and review workflow", proof: "return complexity, notice history, document gaps, and support preference", links: [{ label: "Compare filing options", href: "/compare" }, { label: "Salaried ITR service", href: "/services/itr-for-salaried" }], requiredTerms: ["TaxBuddy alternative", "case tracking", "ITR"] },
+  { route: "/compare/indiafilings-alternative", label: "IndiaFilings alternative", audience: "founders and businesses", task: "compare startup, GST, and compliance service workflows", proof: "business stage, registration need, filing cadence, and document ownership", links: [{ label: "Startup services", href: "/startup-services" }, { label: "Company registration", href: "/services/company-registration" }], requiredTerms: ["IndiaFilings alternative", "startup", "GST"] },
+  { route: "/compare/quicko-capital-gains-alternative", label: "Quicko capital gains alternative", audience: "investors with complex statements", task: "compare capital gains import, review, and assisted filing paths", proof: "broker statements, AIS mismatch, F&O/VDA facts, and ITR form needs", links: [{ label: "Capital gains import", href: "/capital-gains-import" }, { label: "Capital gains calculator", href: "/calculators/capital-gains" }], requiredTerms: ["Quicko alternative", "capital gains", "broker"] },
+  { route: "/compare/best-ca-assisted-itr-filing", label: "Best CA-assisted ITR filing comparison", audience: "complex taxpayers", task: "compare assisted filing workflows for salary, gains, business income, and notices", proof: "income heads, document volume, review needs, and expected turnaround", links: [{ label: "ITR filing", href: "/itr-filing" }, { label: "Expert consultation", href: "/expert-consultation" }], requiredTerms: ["CA assisted", "ITR filing", "complex"] },
+];
+
+function commercialRouteContent(spec: CommercialRouteSpec): PriorityItrRouteContent {
+  return {
+    highlights: [
+      spec.label,
+      `Built for ${spec.audience}`,
+      `Use it to ${spec.task}`,
+      `Review ${spec.proof}`,
+    ],
+    sections: [
+      {
+        heading: `${spec.label} workflow`,
+        body:
+          `${spec.label} helps ${spec.audience} ${spec.task}. The page is designed as a practical step in the MyeCA filing and compliance journey, not as a standalone promise. Users should treat the result as a structured estimate or checklist and then compare it with official records before taking a tax or compliance position.`,
+        items: [`Collect ${spec.proof}`, "Check the result against the relevant return, registration, or compliance workflow"],
+      },
+      {
+        heading: "Records to verify before acting",
+        body:
+          `For stronger filing confidence, keep ${spec.proof} ready before relying on this page. MyeCA links this route to related calculators, guides, and services so users and crawlers can follow the complete topical path from estimate to evidence review to assisted action where needed.`,
+        table: spec.route.startsWith("/compare/")
+          ? {
+              headers: ["Decision area", "MyeCA review path", "What to verify"],
+              rows: [
+                ["Scope clarity", "Visible service, calculator, and expert-review routes", "Confirm what is included before payment"],
+                ["Document handling", "Upload and case-tracking workflow where applicable", spec.proof],
+                ["Post-filing support", "Use consultation or notice-compliance routes for follow-up", "Check timelines, notices, and revised-return needs"],
+              ],
+            }
+          : undefined,
+        items: ["Do not use estimates as final filing advice", "Ask for expert review when records conflict or the case is document-heavy"],
+      },
+    ],
+    links: spec.links,
+    requiredTerms: spec.requiredTerms,
+  };
+}
+
+const COMMERCIAL_ROUTE_CONTENT = Object.fromEntries(
+  commercialRouteSpecs.map((spec) => [spec.route, commercialRouteContent(spec)]),
+) as Record<string, PriorityItrRouteContent>;
 
 export const PRIORITY_ITR_ROUTE_CONTENT = {
   "/": {
@@ -212,4 +295,5 @@ export const PRIORITY_ITR_ROUTE_CONTENT = {
     ],
     requiredTerms: ["AY 2026-27", "ITR", "Form 16", "AIS"],
   },
+  ...COMMERCIAL_ROUTE_CONTENT,
 } satisfies Partial<Record<PriorityItrSearchRoute, PriorityItrRouteContent>>;

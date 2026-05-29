@@ -49,6 +49,11 @@ export interface StoredBlogPost {
   audience: BlogAudience;
   reviewedBy: string | null;
   reviewedAt: string | null;
+  reviewerName: string | null;
+  reviewerRole: string | null;
+  reviewerCredentialName: string | null;
+  reviewerCredentialId: string | null;
+  reviewerCredentialAuthority: string | null;
   sourceLinks: BlogSourceLink[];
   serviceSlug: string | null;
   calculatorSlug: string | null;
@@ -227,6 +232,11 @@ export function normalizeStoredBlogPostRecord(
     audience: normalizeAudience(data.audience),
     reviewedBy: trimNullable(data.reviewedBy),
     reviewedAt: toIsoDate(data.reviewedAt) ?? null,
+    reviewerName: trimNullable(data.reviewerName),
+    reviewerRole: trimNullable(data.reviewerRole),
+    reviewerCredentialName: trimNullable(data.reviewerCredentialName),
+    reviewerCredentialId: trimNullable(data.reviewerCredentialId),
+    reviewerCredentialAuthority: trimNullable(data.reviewerCredentialAuthority),
     sourceLinks,
     serviceSlug: trimNullable(data.serviceSlug),
     calculatorSlug: trimNullable(data.calculatorSlug),
@@ -252,7 +262,10 @@ export async function listAllBlogPosts(db: DataAdminDb = adminDb): Promise<Store
 }
 
 /** Optimized: only fetch published posts from DB instead of all posts */
-export async function listPublishedBlogPosts(db: DataAdminDb = adminDb): Promise<StoredBlogPost[]> {
+export async function listPublishedBlogPosts(
+  db: DataAdminDb = adminDb,
+  options: { strict?: boolean } = {},
+): Promise<StoredBlogPost[]> {
   const lookup = await getCategoryLookup(db);
   let storedPosts: StoredBlogPost[] = [];
 
@@ -263,6 +276,9 @@ export async function listPublishedBlogPosts(db: DataAdminDb = adminDb): Promise
     );
     storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
   } catch (error) {
+    if (options.strict) {
+      throw error;
+    }
     console.warn("Unable to load published blog posts:", error);
   }
 
@@ -344,6 +360,11 @@ export async function buildBlogPostWriteData(
     audience: normalizeAudience(input.audience),
     reviewedBy: trimNullable(input.reviewedBy),
     reviewedAt: input.reviewedAt ? new Date(input.reviewedAt) : null,
+    reviewerName: trimNullable(input.reviewerName),
+    reviewerRole: trimNullable(input.reviewerRole),
+    reviewerCredentialName: trimNullable(input.reviewerCredentialName),
+    reviewerCredentialId: trimNullable(input.reviewerCredentialId),
+    reviewerCredentialAuthority: trimNullable(input.reviewerCredentialAuthority),
     sourceLinks: normalizeSourceLinks(input.sourceLinks),
     serviceSlug: trimNullable(input.serviceSlug),
     calculatorSlug: trimNullable(input.calculatorSlug),
@@ -389,6 +410,11 @@ export function toPublicBlogSummary(post: StoredBlogPost) {
     audience: post.audience,
     reviewedBy: post.reviewedBy,
     reviewedAt: post.reviewedAt,
+    reviewerName: post.reviewerName,
+    reviewerRole: post.reviewerRole,
+    reviewerCredentialName: post.reviewerCredentialName,
+    reviewerCredentialId: post.reviewerCredentialId,
+    reviewerCredentialAuthority: post.reviewerCredentialAuthority,
     serviceSlug: post.serviceSlug,
     calculatorSlug: post.calculatorSlug,
     canonicalUrl: post.canonicalUrl,

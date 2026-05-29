@@ -8,20 +8,36 @@ export type StaticRouteBodyInput = {
   highlights?: string[];
   sections?: StaticRouteBodySection[];
   links?: StaticRouteBodyLink[];
+  faqItems?: StaticRouteBodyFaqItem[];
   bodyHtml?: string;
   publishedAt?: string | null;
   modifiedAt?: string | null;
+  authorName?: string | null;
+  authorRole?: string | null;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  reviewerCredentialName?: string | null;
+  reviewerCredentialId?: string | null;
 };
 
 export type StaticRouteBodySection = {
   heading: string;
   body: string;
   items?: string[];
+  table?: {
+    headers: string[];
+    rows: string[][];
+  };
 };
 
 export type StaticRouteBodyLink = {
   label: string;
   href: string;
+};
+
+export type StaticRouteBodyFaqItem = {
+  question: string;
+  answer: string;
 };
 
 function escapeHtml(value: string) {
@@ -44,9 +60,18 @@ function renderSections(sections: StaticRouteBodySection[] = []) {
     .filter((section) => section.heading.trim() && section.body.trim())
     .map((section) => {
       const items = section.items?.filter(Boolean).slice(0, 6) ?? [];
+      const table = section.table && section.table.headers.length && section.table.rows.length
+        ? `<table>
+      <thead><tr>${section.table.headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>
+      <tbody>${section.table.rows
+        .map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`)
+        .join("")}</tbody>
+    </table>`
+        : "";
       return `<section>
     <h2>${escapeHtml(section.heading)}</h2>
     <p>${escapeHtml(section.body)}</p>
+    ${table}
     ${items.length ? `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}
   </section>`;
     })
@@ -67,6 +92,41 @@ function renderLinks(links: StaticRouteBodyLink[] = []) {
       .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
       .join("")}</ul>
   </nav>`;
+}
+
+function renderFaqs(faqItems: StaticRouteBodyFaqItem[] = []) {
+  const items = faqItems
+    .filter((faq) => faq.question.trim() && faq.answer.trim())
+    .slice(0, 8);
+  if (!items.length) return "";
+
+  return `<section>
+    <h2>Frequently asked questions</h2>
+    ${items
+      .map((faq) => `<article>
+      <h3>${escapeHtml(faq.question)}</h3>
+      <p>${escapeHtml(faq.answer)}</p>
+    </article>`)
+      .join("")}
+  </section>`;
+}
+
+function renderByline(input: StaticRouteBodyInput) {
+  const lines: string[] = [];
+  if (input.authorName?.trim()) {
+    lines.push(`Written by ${input.authorName.trim()}${input.authorRole?.trim() ? `, ${input.authorRole.trim()}` : ""}`);
+  }
+  if (input.reviewedBy?.trim()) {
+    const credential =
+      input.reviewerCredentialName?.trim() && input.reviewerCredentialId?.trim()
+        ? `, ${input.reviewerCredentialName.trim()} ${input.reviewerCredentialId.trim()}`
+        : "";
+    const reviewedDate = input.reviewedAt?.trim() ? ` on ${input.reviewedAt.trim().split("T")[0]}` : "";
+    lines.push(`Reviewed by ${input.reviewedBy.trim()}${credential}${reviewedDate}`);
+  }
+  if (!lines.length) return "";
+
+  return `<p class="static-seo-byline">${lines.map(escapeHtml).join(" | ")}</p>`;
 }
 
 function labelForKind(kind: StaticRouteBodyInput["kind"]) {
@@ -94,10 +154,12 @@ export function renderStaticRouteBody(input: StaticRouteBodyInput) {
     <p class="static-seo-eyebrow">${escapeHtml(labelForKind(input.kind))}</p>
     <h1>${escapeHtml(input.title)}</h1>
     <p>${description}</p>
+    ${renderByline(input)}
     ${dateLine}
   </section>
   ${renderHighlights(input.highlights)}
   ${renderSections(input.sections)}
+  ${renderFaqs(input.faqItems)}
   ${renderLinks(input.links)}
   ${safeBody ? `<article>${safeBody}</article>` : ""}
 </main>`;

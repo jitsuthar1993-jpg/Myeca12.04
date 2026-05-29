@@ -316,7 +316,7 @@ export const generatedServicePages: GeneratedServicePageData[] = [
     title: "MSME Registration",
     subtitle: "Udyam support",
     description:
-      "Get guided support for MSME/Udyam registration readiness and business benefit documentation.",
+      "Get guided MSME/Udyam registration readiness support with business detail review, certificate workflow guidance, and benefit documentation checks.",
     category: "Business Registration",
     priceAmount: 999,
     priceLabel: "Starting ₹999 excluding GST",

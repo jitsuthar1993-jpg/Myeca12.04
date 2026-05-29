@@ -9,6 +9,7 @@ import {
 } from "../client/src/data/missing-pages.js";
 import type { DefaultBlogPost } from "../server/data/default-blog-content.js";
 import { loadStaticBlogPosts, type StaticMdxBlogPost } from "../server/data/static-blog-content.js";
+import { listPublishedBlogPosts, type StoredBlogPost } from "../server/services/blog.js";
 import { isValidGoogleSiteVerificationToken } from "../shared/search-console-verification.js";
 import {
   PRIVATE_NOINDEX_ROUTES,
@@ -23,6 +24,7 @@ import {
   toAbsoluteUrl,
 } from "../shared/seo-public.js";
 import { normalizeBlogContent } from "../shared/blog.js";
+import { topicalInternalLinksForRoute } from "../shared/internal-links.js";
 import { PRIORITY_ITR_ROUTE_CONTENT } from "../shared/priority-itr-seo-content.js";
 import {
   DEFAULT_OG_IMAGE as SHARED_DEFAULT_OG_IMAGE,
@@ -59,6 +61,98 @@ const clientPublicDir = path.join(rootDir, "client", "public");
 const distIndexPath = path.join(distDir, "index.html");
 const now = new Date().toISOString().split("T")[0];
 
+type SeoFaqItem = { question: string; answer: string };
+
+function absoluteSiteUrl(value: string | null | undefined) {
+  if (!value) return SHARED_DEFAULT_OG_IMAGE;
+  if (/^https?:\/\//i.test(value)) return value;
+  return `${SITE_URL}${value.startsWith("/") ? value : `/${value}`}`;
+}
+
+function normalizeFaqItems(faqItems: SEOConfigItem["faqItems"] | undefined): SeoFaqItem[] {
+  return (faqItems ?? [])
+    .map((item) => ({
+      question: item.q.trim(),
+      answer: item.a.trim(),
+    }))
+    .filter((item) => item.question && item.answer);
+}
+
+function storedPostToBuildPost(post: StoredBlogPost): StaticMdxBlogPost {
+  const fallbackDate = post.updatedAt || post.publishedAt || post.createdAt || new Date().toISOString();
+  const excerpt = post.excerpt || post.seoDescription || `${post.title} on MyeCA.in.`;
+  const tags = post.tags.length ? post.tags : [post.categoryId || "itr-filing"];
+
+  return {
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt,
+    content: post.content,
+    status: "published",
+    categoryId: post.categoryId || "itr-filing",
+    coverImage: post.coverImage,
+    authorId: post.authorId || "mye-ca-editorial",
+    authorName: post.authorName || "MyeCA Editorial Team",
+    authorRole: post.authorRole || "CA-led tax editorial team",
+    authorBio: post.authorBio || "Reviewed Indian tax and compliance guidance from the MyeCA editorial desk.",
+    seoTitle: post.seoTitle || `${post.title} | MyeCA.in Blog`,
+    seoDescription: post.seoDescription || excerpt,
+    keyHighlights: post.keyHighlights.length ? post.keyHighlights : tags.slice(0, 5),
+    faqItems: post.faqItems,
+    relatedPostIds: post.relatedPostIds,
+    ctaLabel: post.ctaLabel || "Talk to a Tax Expert",
+    ctaHref: post.ctaHref || "/expert-consultation",
+    isFeatured: post.isFeatured,
+    readingTimeMinutes: post.readingTimeMinutes,
+    publishedAt: post.publishedAt || fallbackDate,
+    createdAt: post.createdAt || fallbackDate,
+    updatedAt: post.updatedAt || fallbackDate,
+    tags,
+    audience: post.audience,
+    reviewedBy: post.reviewedBy,
+    reviewedAt: post.reviewedAt,
+    reviewerName: post.reviewerName,
+    reviewerRole: post.reviewerRole,
+    reviewerCredentialName: post.reviewerCredentialName,
+    reviewerCredentialId: post.reviewerCredentialId,
+    reviewerCredentialAuthority: post.reviewerCredentialAuthority,
+    sourceLinks: post.sourceLinks,
+    serviceSlug: post.serviceSlug,
+    calculatorSlug: post.calculatorSlug,
+    canonicalUrl: post.canonicalUrl,
+    primaryKeyword: tags[0] || post.title,
+    secondaryKeywords: tags.slice(1),
+    contentType: "explainer",
+    howToSteps: [],
+    totalTime: null,
+  };
+}
+
+export function mergeBlogPostsForPrerender(
+  staticPosts: DefaultBlogPost[],
+  databasePosts: DefaultBlogPost[],
+): DefaultBlogPost[] {
+  const bySlug = new Map<string, DefaultBlogPost>();
+  staticPosts.forEach((post) => bySlug.set(post.slug, post));
+  databasePosts.forEach((post) => bySlug.set(post.slug, post));
+  return [...bySlug.values()].sort((left, right) => {
+    const leftTime = new Date(left.updatedAt || left.publishedAt || 0).getTime();
+    const rightTime = new Date(right.updatedAt || right.publishedAt || 0).getTime();
+    return rightTime - leftTime || left.slug.localeCompare(right.slug);
+  });
+}
+
+async function loadBlogPostsForPrerender(): Promise<DefaultBlogPost[]> {
+  const staticPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
+  if (process.env.USE_DATABASE_PUBLIC_BLOGS !== "true") {
+    return staticPosts;
+  }
+
+  const databasePosts = await listPublishedBlogPosts(undefined, { strict: true });
+  return mergeBlogPostsForPrerender(staticPosts, databasePosts.map(storedPostToBuildPost));
+}
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -76,6 +170,38 @@ function stripInvalidGoogleVerificationMeta(html: string) {
     const content = tag.match(/content=["']([^"']*)["']/i)?.[1] ?? "";
     return isValidGoogleSiteVerificationToken(content) ? tag : "\n";
   });
+}
+
+export function minifyStaticRouteHtml(html: string) {
+  const scriptBlocks: string[] = [];
+  const withScriptTokens = html.replace(/<script\b[\s\S]*?<\/script>/gi, (script) => {
+    const token = `@@MYECA_SCRIPT_${scriptBlocks.length}@@`;
+    scriptBlocks.push(script);
+    return token;
+  });
+
+  const compactHtml = withScriptTokens
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/>\s+(@@MYECA_SCRIPT_\d+@@)\s+</g, ">$1<")
+    .replace(/>\s+</g, "><")
+    .trim();
+
+  return compactHtml.replace(/@@MYECA_SCRIPT_(\d+)@@/g, (_match, index) => scriptBlocks[Number(index)] ?? "");
+}
+
+export function prepareStaticRouteTemplate(html: string) {
+  const withoutDefaultSeo = stripDefaultSeo(html)
+    .replace(/\s*<link\s+rel=["'](?:apple-touch-icon|mask-icon)["'][^>]*>\s*/gi, "\n")
+    .replace(/\s*<meta\s+name=["'](?:apple-mobile-web-app-capable|apple-mobile-web-app-status-bar-style|apple-mobile-web-app-title|format-detection|mobile-web-app-capable|application-name|msapplication-[^"']+|msapplication-tap-highlight)["'][^>]*>\s*/gi, "\n")
+    .replace(/\s*<link\s+rel=["']modulepreload["'][^>]*>\s*/gi, "\n")
+    .replace(/\s*<style>\s*@keyframes skel[\s\S]*?<\/style>\s*/i, "\n")
+    .replace(/\s*<style>\s*\.static-seo-shell[\s\S]*?<\/style>\s*/i, "\n");
+
+  if (withoutDefaultSeo.includes('href="/static-seo-shell.css"')) {
+    return withoutDefaultSeo;
+  }
+
+  return withoutDefaultSeo.replace("</head>", '<link rel="stylesheet" href="/static-seo-shell.css" />\n</head>');
 }
 
 function stripDefaultSeo(html: string) {
@@ -138,7 +264,7 @@ function breadcrumbSchema(breadcrumbs: SEOConfigItem["breadcrumbs"] | undefined,
   };
 }
 
-function schemaForConfig(route: string, config: SEOConfigItem | undefined, title: string, description: string) {
+function schemaForConfig(route: string, config: SEOConfigItem | undefined, title: string, description: string, image: string) {
   const schemaType =
     config?.type === "calculator"
       ? "SoftwareApplication"
@@ -159,7 +285,7 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
           headline: title,
           description,
           url: toAbsoluteUrl(route),
-          image: SHARED_DEFAULT_OG_IMAGE,
+          image,
           inLanguage: "en-IN",
           isAccessibleForFree: true,
           publisher: { "@id": `${SITE_URL}/#organization` },
@@ -197,21 +323,34 @@ function schemaForConfig(route: string, config: SEOConfigItem | undefined, title
 
 export function blogMeta(post: DefaultBlogPost): RouteMeta {
   const route = `/blog/${post.slug}`;
-  const title = post.seoTitle || `${post.title} | MyeCA.in Blog`;
-  const description = post.seoDescription || post.excerpt;
+  const title = normalizeSeoTitle(post.seoTitle || `${post.title} | MyeCA.in Blog`);
+  const description = normalizeSeoDescription(post.seoDescription || post.excerpt, title);
   const staticPost = post as Partial<StaticMdxBlogPost>;
+  const image = absoluteSiteUrl(post.coverImage);
+  const reviewer =
+    post.reviewerName && post.reviewerCredentialName && post.reviewerCredentialId
+      ? {
+          name: post.reviewerName,
+          role: post.reviewerRole,
+          credentialName: post.reviewerCredentialName,
+          credentialId: post.reviewerCredentialId,
+          credentialAuthority: post.reviewerCredentialAuthority,
+        }
+      : null;
   const articleSchema = buildArticleSchema({
     url: toAbsoluteUrl(route),
     headline: post.title,
     description,
     publishedAt: post.publishedAt,
     modifiedAt: post.updatedAt || post.publishedAt,
-    image: post.coverImage?.startsWith("http") ? post.coverImage : SHARED_DEFAULT_OG_IMAGE,
+    image,
+    author: {
+      name: post.authorName,
+      role: post.authorRole,
+    },
+    reviewer,
   });
   articleSchema.about = [post.categoryId, ...post.tags].filter(Boolean);
-  if (post.reviewedBy) {
-    articleSchema.reviewedBy = { "@type": "Organization", name: "Team myeca.in" };
-  }
   const faqSchema = buildFaqPageSchema(post.faqItems ?? []);
   const howToSteps = staticPost.howToSteps ?? [];
   const howToSchema = staticPost.contentType === "how-to" && howToSteps.length
@@ -243,7 +382,7 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
     keywords: post.tags,
     type: "article",
     canonicalUrl: post.canonicalUrl || toAbsoluteUrl(route),
-    image: post.coverImage?.startsWith("http") ? post.coverImage : SHARED_DEFAULT_OG_IMAGE,
+    image,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${post.title}: ${post.excerpt} Reviewed tax guidance for Indian taxpayers. Verify facts with a CA before filing.`,
@@ -261,8 +400,37 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
       bodyHtml: normalizedContent.html,
       publishedAt: post.publishedAt,
       modifiedAt: post.updatedAt,
+      authorName: post.authorName,
+      authorRole: post.authorRole,
+      reviewedBy: post.reviewedBy || post.reviewerName,
+      reviewedAt: post.reviewedAt,
+      reviewerCredentialName: post.reviewerCredentialName,
+      reviewerCredentialId: post.reviewerCredentialId,
     },
   };
+}
+
+function normalizeSeoTitle(value: string) {
+  let title = value.trim();
+  if (title.length < 30) {
+    const base = title.replace(/\s*\|\s*MyeCA\.in\s*$/i, "").trim();
+    title = `${base} Tax Tools | MyeCA.in`;
+  }
+  if (title.length > 80) {
+    title = `${title.slice(0, 77).trimEnd()}...`;
+  }
+  return title;
+}
+
+function normalizeSeoDescription(value: string, title: string) {
+  let description = value.trim();
+  if (description.length < 100) {
+    description = `${description} Use MyeCA to verify records, compare related tools, and choose the next filing or compliance step for India.`;
+  }
+  if (description.length > 180) {
+    description = `${description.slice(0, 177).trimEnd()}...`;
+  }
+  return description || `${title} on MyeCA.in with Indian tax, GST, startup, and compliance guidance.`;
 }
 
 type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> &
@@ -271,10 +439,22 @@ type StaticRootFallbackMeta = Pick<RouteMeta, "path" | "robots"> &
 function uniqueLinks(links: Array<{ label: string; href: string }>) {
   const seen = new Set<string>();
   return links.filter((link) => {
-    if (!link.href || seen.has(link.href)) return false;
-    seen.add(link.href);
+    const href = link.href.trim();
+    if (!href || href === "#" || seen.has(href)) return false;
+    seen.add(href);
     return true;
   });
+}
+
+export function buildStaticRouteLinks(route: string, links: Array<{ label: string; href: string }> = []) {
+  const pathName = normalizePublicPath(route);
+  return uniqueLinks([
+    ...links,
+    ...topicalInternalLinksForRoute(pathName),
+    { label: "Tax guides", href: "/learn/guides" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Contact MyeCA", href: "/contact" },
+  ]).filter((link) => normalizePublicPath(link.href) !== pathName || link.href.startsWith("http"));
 }
 
 export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
@@ -337,14 +517,16 @@ export function injectStaticRootFallback(html: string, meta: StaticRootFallbackM
 
 function guideMeta(guide: TaxGuide): RouteMeta {
   const route = `/learn/guide/${guide.slug}`;
-  const title = `${guide.title} | MyeCA.in Tax Guides`;
+  const title = normalizeSeoTitle(`${guide.title} | MyeCA.in Tax Guides`);
+  const description = normalizeSeoDescription(guide.description, title);
+  const image = SHARED_DEFAULT_OG_IMAGE;
   const articleSchema = buildArticleSchema({
     url: toAbsoluteUrl(route),
     headline: guide.title,
-    description: guide.description,
+    description,
     publishedAt: guide.lastUpdated,
     modifiedAt: guide.lastUpdated,
-    image: SHARED_DEFAULT_OG_IMAGE,
+    image,
   });
   articleSchema.about = guide.tags;
   const jsonLd = [
@@ -361,18 +543,18 @@ function guideMeta(guide: TaxGuide): RouteMeta {
   return {
     path: route,
     title,
-    description: guide.description,
+    description,
     keywords: guide.tags,
     type: "article",
     canonicalUrl: toAbsoluteUrl(route),
-    image: SHARED_DEFAULT_OG_IMAGE,
+    image,
     robots: "index, follow",
     jsonLd,
-    aiSummary: `${guide.title}: ${guide.description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
+    aiSummary: `${guide.title}: ${description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
     body: {
       route,
       title: guide.title,
-      description: guide.description,
+      description,
       kind: "article",
       highlights: guide.tags,
       sections: guide.steps.slice(0, 4).map((step) => ({
@@ -380,7 +562,7 @@ function guideMeta(guide: TaxGuide): RouteMeta {
         body: step.description,
         items: step.checklist?.slice(0, 5),
       })),
-      links: uniqueLinks([
+      links: buildStaticRouteLinks(route, [
         ...guide.relatedCalculators.map((href) => ({ label: humanizeRoute(href), href })),
         ...(guide.relatedResources ?? []),
         ...guide.steps.flatMap((step) => step.links ?? []),
@@ -391,12 +573,18 @@ function guideMeta(guide: TaxGuide): RouteMeta {
   };
 }
 
-function routeMeta(route: string): RouteMeta {
+export function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
   const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
   const priorityContent = PRIORITY_ITR_ROUTE_CONTENT[pathName as keyof typeof PRIORITY_ITR_ROUTE_CONTENT];
-  const title = config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`;
-  const description = config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`;
+  const title = normalizeSeoTitle(config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`);
+  const description = normalizeSeoDescription(
+    config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`,
+    title,
+  );
+  const image = SHARED_DEFAULT_OG_IMAGE;
+  const faqItems = normalizeFaqItems(config?.faqItems);
+  const faqSchema = buildFaqPageSchema(faqItems);
   const jsonLd: Record<string, unknown>[] = pathName === "/"
     ? [
         {
@@ -411,7 +599,8 @@ function routeMeta(route: string): RouteMeta {
     : [
         organizationSchema(),
         breadcrumbSchema(config?.breadcrumbs, pathName),
-        schemaForConfig(pathName, config, title, description),
+        schemaForConfig(pathName, config, title, description, image),
+        ...(faqSchema ? [faqSchema] : []),
       ];
 
   if (pathName === "/contact") {
@@ -434,11 +623,11 @@ function routeMeta(route: string): RouteMeta {
     keywords: config?.keywords,
     type: config?.type || (pathName.startsWith("/legal") ? "legal" : "website"),
     canonicalUrl: toAbsoluteUrl(pathName),
-    image: SHARED_DEFAULT_OG_IMAGE,
+    image,
     robots: "index, follow",
     jsonLd,
     aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify tax actions with a CA.`,
-    staticLinks: priorityContent?.links,
+    staticLinks: buildStaticRouteLinks(pathName, priorityContent?.links),
     body: {
       route: pathName,
       title,
@@ -446,7 +635,8 @@ function routeMeta(route: string): RouteMeta {
       kind,
       highlights,
       sections: priorityContent?.sections,
-      links: priorityContent?.links,
+      faqItems,
+      links: buildStaticRouteLinks(pathName, priorityContent?.links),
     },
   };
 }
@@ -474,14 +664,12 @@ function privateMeta(route: string): RouteMeta {
 }
 
 function renderSeoHead(meta: RouteMeta) {
-  const keywordStr = meta.keywords?.filter(Boolean).join(", ");
   const jsonLd = meta.jsonLd
     .map((block) => `    <script type="application/ld+json">${escapeJsonForHtml(block)}</script>`)
     .join("\n");
 
   return `    <title>${escapeHtml(meta.title)}</title>
     <meta name="description" content="${escapeHtml(meta.description)}" />
-    ${keywordStr ? `<meta name="keywords" content="${escapeHtml(keywordStr)}" />` : ""}
     <meta name="robots" content="${meta.robots}, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="googlebot" content="${meta.robots}, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="${escapeHtml(meta.canonicalUrl)}" />
@@ -529,17 +717,43 @@ function injectStaticBody(html: string, meta: RouteMeta) {
   );
 }
 
-function writeRouteHtml(template: string, meta: RouteMeta) {
+async function writeRouteHtml(template: string, meta: RouteMeta) {
   const html = injectStaticBody(
-    stripDefaultSeo(template).replace("</head>", `${renderSeoHead(meta)}\n  </head>`),
+    prepareStaticRouteTemplate(template).replace("</head>", `${renderSeoHead(meta)}\n  </head>`),
     meta,
   );
   const outputPath = routeOutputPath(meta.path);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, html, "utf8");
+  fs.writeFileSync(outputPath, minifyStaticRouteHtml(html), "utf8");
 }
 
-function writeTextAssets(blogPosts: StaticMdxBlogPost[]) {
+function routeNeighborLinks(route: string, publicRoutes: string[]) {
+  if (publicRoutes.length < 2) return [];
+  const index = publicRoutes.indexOf(route);
+  const safeIndex = index >= 0 ? index : 0;
+  const previous = publicRoutes[(safeIndex + publicRoutes.length - 1) % publicRoutes.length];
+  const next = publicRoutes[(safeIndex + 1) % publicRoutes.length];
+  return uniqueLinks([
+    previous ? { label: humanizeRoute(previous), href: previous } : null,
+    next ? { label: humanizeRoute(next), href: next } : null,
+  ].filter((link): link is { label: string; href: string } => Boolean(link)));
+}
+
+function withGeneratedRouteLinks(meta: RouteMeta, publicRoutes: string[]): RouteMeta {
+  if (meta.robots !== "index, follow") return meta;
+  const links = buildStaticRouteLinks(meta.path, [
+    ...(meta.body?.links ?? []),
+    ...routeNeighborLinks(meta.path, publicRoutes),
+  ]);
+
+  return {
+    ...meta,
+    staticLinks: links,
+    body: meta.body ? { ...meta.body, links } : meta.body,
+  };
+}
+
+function writeTextAssets(blogPosts: DefaultBlogPost[]) {
   const blogEntries = blogPosts
     .filter((post) => post.status === "published")
     .map((post) => ({
@@ -598,13 +812,13 @@ function pruneUnusedPublicAssets() {
   });
 }
 
-function main() {
+async function main() {
   if (!fs.existsSync(distIndexPath)) {
     throw new Error(`Build output not found: ${distIndexPath}`);
   }
 
   const template = fs.readFileSync(distIndexPath, "utf8");
-  const blogPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
+  const blogPosts = await loadBlogPostsForPrerender();
   const blogRoutes = blogPosts.map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const publicRoutes = getIndexablePublicRoutes(
@@ -617,21 +831,29 @@ function main() {
     [...blogRoutes, ...guideRoutes],
   );
 
-  publicRoutes.forEach((route) => {
+  for (const route of publicRoutes) {
     const post = route.startsWith("/blog/")
       ? blogPosts.find((candidate) => `/blog/${candidate.slug}` === route)
       : undefined;
     const guide = route.startsWith("/learn/guide/")
       ? TAX_GUIDES.find((candidate) => `/learn/guide/${candidate.slug}` === route)
       : undefined;
-    writeRouteHtml(template, post ? blogMeta(post) : guide ? guideMeta(guide) : routeMeta(route));
-  });
+    const meta = withGeneratedRouteLinks(post ? blogMeta(post) : guide ? guideMeta(guide) : routeMeta(route), publicRoutes);
+    await writeRouteHtml(template, meta);
+  }
 
-  PRIVATE_NOINDEX_ROUTES.forEach((route) => writeRouteHtml(template, privateMeta(route)));
+  for (const route of PRIVATE_NOINDEX_ROUTES) {
+    await writeRouteHtml(template, privateMeta(route));
+  }
   writeTextAssets(blogPosts);
   pruneUnusedPublicAssets();
 
   console.log(`Generated SEO HTML shells for ${publicRoutes.length} public routes and ${PRIVATE_NOINDEX_ROUTES.length} noindex routes.`);
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

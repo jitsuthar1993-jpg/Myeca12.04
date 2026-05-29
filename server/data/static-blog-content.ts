@@ -56,6 +56,11 @@ type StaticBlogFrontmatter = {
   audience?: BlogAudience;
   reviewedBy?: string | null;
   reviewedAt?: string | null;
+  reviewerName?: string | null;
+  reviewerRole?: string | null;
+  reviewerCredentialName?: string | null;
+  reviewerCredentialId?: string | null;
+  reviewerCredentialAuthority?: string | null;
   sourceLinks: BlogSourceLink[];
   serviceSlug?: string | null;
   calculatorSlug?: string | null;
@@ -173,6 +178,11 @@ function frontmatterToPost(meta: StaticBlogFrontmatter, body: string): StaticMdx
     audience: meta.audience === "individuals" || meta.audience === "businesses" || meta.audience === "both" ? meta.audience : "both",
     reviewedBy: readNullableString(meta.reviewedBy),
     reviewedAt: toIsoDate(meta.reviewedAt),
+    reviewerName: readNullableString(meta.reviewerName),
+    reviewerRole: readNullableString(meta.reviewerRole),
+    reviewerCredentialName: readNullableString(meta.reviewerCredentialName),
+    reviewerCredentialId: readNullableString(meta.reviewerCredentialId),
+    reviewerCredentialAuthority: readNullableString(meta.reviewerCredentialAuthority),
     sourceLinks: meta.sourceLinks
       .map((source) => ({ label: source.label ?? "", url: source.url ?? "" }))
       .filter((source) => source.label && source.url),

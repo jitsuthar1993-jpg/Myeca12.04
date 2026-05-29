@@ -687,7 +687,10 @@ export default function BlogPage() {
           </div>
         )}
 
-        <section className="mt-12 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+        <section
+          className="mt-12 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"
+          style={{ contentVisibility: 'auto', contain: 'content', containIntrinsicSize: '0 480px' }}
+        >
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">
               Quick answers

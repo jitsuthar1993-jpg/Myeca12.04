@@ -2,7 +2,6 @@ import { useLocation } from 'wouter';
 import { useState, useEffect } from 'react';
 import { queryClient } from './lib/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from '@/contexts/LanguageContext';
@@ -27,6 +26,12 @@ const UnifiedFAB = lazyWithRetry(() =>
 const GlobalSearch = lazyWithRetry(() => import('@/components/search/GlobalSearch'));
 const KeyboardShortcutsModal = lazyWithRetry(() => import('@/components/keyboard/KeyboardShortcutsModal'));
 const ProdOnlyComponents = lazyWithRetry(() => import('@/components/ProdOnlyComponents'));
+const Toaster = lazyWithRetry(() =>
+  import('@/components/ui/toaster').then((m) => ({ default: m.Toaster }))
+);
+const PwaInstallBanner = lazyWithRetry(() =>
+  import('@/components/pwa/PwaInstallBanner').then((m) => ({ default: m.PwaInstallBanner }))
+);
 
 const AppLoading = () => <PageSkeleton />;
 const HeaderLoadingShell = () => (
@@ -197,10 +202,17 @@ function AppContent() {
 
   return (
     <LazyMotion features={domAnimation} strict={false}>
-      <Toaster />
+      <Suspense fallback={null}>
+        <Toaster />
+      </Suspense>
       <ErrorBoundary>
         <Router />
       </ErrorBoundary>
+      {showDeferredGlobalChrome && (
+        <Suspense fallback={null}>
+          <PwaInstallBanner currentPath={location} />
+        </Suspense>
+      )}
       {loadProductionTelemetry && showDeferredGlobalChrome && (
         <Suspense fallback={null}>
           <ProdOnlyComponents />

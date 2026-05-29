@@ -91,12 +91,22 @@ async function getBlogSeoData(cleanPath: string) {
     publishedAt: detail.publishedAt,
     modifiedAt: detail.updatedAt ?? detail.publishedAt,
     image,
+    author: {
+      name: detail.authorName,
+      role: detail.authorRole,
+    },
+    reviewer: detail.reviewerName && detail.reviewerCredentialName && detail.reviewerCredentialId
+      ? {
+          name: detail.reviewerName,
+          role: detail.reviewerRole,
+          credentialName: detail.reviewerCredentialName,
+          credentialId: detail.reviewerCredentialId,
+          credentialAuthority: detail.reviewerCredentialAuthority,
+        }
+      : null,
   });
   articleJsonLd.about = [detail.category?.name, ...detail.tags].filter(Boolean);
   articleJsonLd.citation = detail.sourceLinks?.map((source) => source.url) ?? [];
-  if (detail.reviewedBy) {
-    articleJsonLd.reviewedBy = { "@type": "Organization", name: "Team myeca.in" };
-  }
 
   const faqJsonLd = buildFaqPageSchema(
     detail.faqItems.filter((faq): faq is { question: string; answer: string } => Boolean(faq.question && faq.answer)),
@@ -184,6 +194,11 @@ export function serveStatic(app: Express) {
 
       // Service worker should not be cached to allow immediate updates
       if (base === "service-worker.js" || base === "sw.js") {
+        res.setHeader("Cache-Control", "no-cache");
+        return;
+      }
+
+      if (base === "manifest.json") {
         res.setHeader("Cache-Control", "no-cache");
         return;
       }

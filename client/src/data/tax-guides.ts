@@ -604,7 +604,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     id: 'stock-gains-guide',
     slug: 'stock-capital-gains-tax',
     title: 'Capital Gains Tax on Stocks & Mutual Funds',
-    description: 'Understanding STCG and LTCG on equity investments including calculation, exemptions, and filing.',
+    description: 'Understand STCG and LTCG on equity investments, broker statements, holding periods, exemptions, AIS checks, and filing handoff steps.',
     category: 'capital-gains',
     difficulty: 'intermediate',
     estimatedTime: '25 mins',

@@ -100,6 +100,14 @@ export const queryClient = new QueryClient({
 
 queryClient.setQueryDefaults(["/api/public/blogs"], CACHE_TIMES.content);
 queryClient.setQueryDefaults(["/api/public/categories"], CACHE_TIMES.content);
-queryClient.setQueryDefaults(["/api/user/dashboard"], CACHE_TIMES.user);
-queryClient.setQueryDefaults(["/api/admin/stats"], CACHE_TIMES.user);
-queryClient.setQueryDefaults(["/api/ca/stats"], CACHE_TIMES.user);
+
+const USER_FOCUS_REFETCH_OPTIONS = {
+  ...CACHE_TIMES.user,
+  refetchOnWindowFocus: true,
+};
+
+queryClient.setQueryDefaults(["/api/user/dashboard"], USER_FOCUS_REFETCH_OPTIONS);
+queryClient.setQueryDefaults(["/api/profiles"], USER_FOCUS_REFETCH_OPTIONS);
+queryClient.setQueryDefaults(["/api/user-services"], USER_FOCUS_REFETCH_OPTIONS);
+queryClient.setQueryDefaults(["/api/admin/stats"], USER_FOCUS_REFETCH_OPTIONS);
+queryClient.setQueryDefaults(["/api/ca/stats"], USER_FOCUS_REFETCH_OPTIONS);

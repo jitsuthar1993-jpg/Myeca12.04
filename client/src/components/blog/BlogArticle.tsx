@@ -36,6 +36,11 @@ export interface EditorialArticleData {
   audience?: "individuals" | "businesses" | "both" | null;
   reviewedBy?: string | null;
   reviewedAt?: string | null;
+  reviewerName?: string | null;
+  reviewerRole?: string | null;
+  reviewerCredentialName?: string | null;
+  reviewerCredentialId?: string | null;
+  reviewerCredentialAuthority?: string | null;
   sourceLinks?: BlogSourceLink[];
   serviceSlug?: string | null;
   calculatorSlug?: string | null;
@@ -351,6 +356,12 @@ function RightSidebar({
                   <CalendarDays className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                   <span>{formatDate(post.publishedAt)}</span>
                 </div>
+                {post.reviewedBy && (
+                  <div className="flex items-center gap-2">
+                    <BriefcaseBusiness className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                    <span>Reviewed by {post.reviewedBy}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <Clock3 className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                   <span>{post.readingTimeMinutes} min read</span>
@@ -494,6 +505,12 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
               <CalendarDays className="h-4 w-4 text-blue-400" />
               {formatDate(post.publishedAt)}
             </span>
+            {post.reviewedBy && (
+              <span className="flex items-center gap-1.5">
+                <BriefcaseBusiness className="h-4 w-4 text-blue-400" />
+                Reviewed by {post.reviewedBy}
+              </span>
+            )}
             <span className="flex items-center gap-1.5">
               <Clock3 className="h-4 w-4 text-blue-400" />
               {post.readingTimeMinutes} min read

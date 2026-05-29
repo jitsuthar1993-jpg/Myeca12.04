@@ -15,6 +15,7 @@ export interface SEOConfigItem {
     reviews: string;
     availability: string;
   };
+  faqItems?: { q: string; a: string }[];
   breadcrumbs: { name: string; url: string }[];
   noindex?: boolean;
 }
@@ -34,6 +35,13 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     keywords: ['tax services', 'business registration India', 'GST consultant', 'company registration', 'legal compliance'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]
+  },
+  '/calculators': {
+    title: 'Tax and Finance Calculators for Indian Filing | MyeCA.in',
+    description: 'Use MyeCA.in calculators for income tax, GST, capital gains, TDS, loans, SIP, NPS, HRA, and other planning checks before filing or expert review.',
+    keywords: ['tax calculators India', 'income tax calculator', 'GST calculator', 'capital gains calculator', 'financial calculators'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }]
   },
 
   '/all-services': {
@@ -185,7 +193,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/calculators/gratuity': {
     title: 'Gratuity Calculator India 2026 | 15/26 Formula | MyeCA.in',
-    description: 'Calculate gratuity payable using Basic plus DA, service years and the statutory 15/26 formula.',
+    description: 'Calculate gratuity payable using Basic plus DA, service years, statutory 15/26 formula, tax treatment notes, and exit document checks.',
     keywords: ['gratuity calculator', 'gratuity formula India', '15/26 gratuity calculation', 'employee gratuity calculator'],
     type: 'calculator',
     calculatorData: {
@@ -224,7 +232,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/calculators/lumpsum': {
     title: 'Lumpsum Calculator 2026 | Mutual Fund Return Calculator | MyeCA.in',
-    description: 'Project one-time mutual fund investment growth with expected return and inflation-adjusted value.',
+    description: 'Project one-time mutual fund investment growth with expected return, wealth gain, investment horizon, and inflation-adjusted value for planning.',
     keywords: ['lumpsum calculator', 'mutual fund lumpsum calculator', 'investment return calculator', 'future value calculator'],
     type: 'calculator',
     calculatorData: {
@@ -406,7 +414,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/msme-udyam-registration': {
     title: 'MSME Udyam Registration Online | Govt Certificate | MyeCA.in',
-    description: 'Get MSME / Udyam registration support with document guidance and official portal process notes.',
+    description: 'Get MSME or Udyam registration support with document guidance, business-detail review, certificate workflow notes, and benefit-readiness checks.',
     keywords: ['MSME registration', 'udyam registration', 'msme certificate online', 'udyam portal India'],
     type: 'service',
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -622,7 +630,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/pricing': {
     title: 'Transparent Tax Filing Pricing | ITR, GST & CA Review | MyeCA.in',
-    description: 'Compare MyeCA.in pricing for CA-assisted ITR filing, GST, startup, and compliance services.',
+    description: 'Compare MyeCA.in pricing for CA-assisted ITR filing, GST, startup, and compliance services with scope notes before you request expert help.',
     keywords: ['ITR filing pricing', 'CA assisted filing fees', 'tax filing plans India', 'GST service pricing'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Pricing', url: '/pricing' }]
@@ -640,6 +648,13 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     keywords: ['income tax guides', 'ITR guide India', 'AIS Form 26AS guide', 'tax regime guide'],
     type: 'article',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Learn', url: '/learn' }, { name: 'Guides', url: '/learn/guides' }]
+  },
+  '/learn/glossary': {
+    title: 'Income Tax Glossary for Indian Filing Terms | MyeCA.in',
+    description: 'Understand common ITR, GST, TDS, AIS, refund, deduction, capital gains, and compliance terms before using calculators or filing workflows.',
+    keywords: ['income tax glossary', 'ITR terms', 'GST glossary', 'TDS terms', 'tax filing definitions'],
+    type: 'article',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Learn', url: '/learn' }, { name: 'Glossary', url: '/learn/glossary' }]
   },
   '/learn/videos': {
     title: 'Tax Lesson Outlines | ITR Filing & Compliance | MyeCA.in',
@@ -676,6 +691,20 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'service',
     serviceData: { price: '₹499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'ITR for Salaried', url: '/services/itr-for-salaried' }]
+  },
+  '/legal/disclaimer': {
+    title: 'Legal Disclaimer for MyeCA Tax Guidance | MyeCA.in',
+    description: 'Read the MyeCA.in disclaimer for educational tax, GST, calculator, and filing guidance before relying on case-specific professional advice.',
+    keywords: ['MyeCA disclaimer', 'tax guidance disclaimer', 'legal disclaimer India', 'calculator disclaimer'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Legal', url: '/legal/disclaimer' }]
+  },
+  '/mobile-app': {
+    title: 'MyeCA Mobile App for Tax Filing Workspace | MyeCA.in',
+    description: 'Access MyeCA filing workflows, document upload, calculators, service tracking, and account updates from a mobile-friendly tax workspace.',
+    keywords: ['MyeCA mobile app', 'tax filing app India', 'ITR mobile workspace', 'document upload tax app'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Mobile App', url: '/mobile-app' }]
   },
   '/services/tax-planning': {
     title: 'Tax Planning Services India | Salary, Business & Investments | MyeCA.in',
@@ -727,6 +756,21 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'service',
     serviceData: { price: '4999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }, { name: 'Business Planning', url: '/startup/planning' }]
+  },
+  '/startup/funding': {
+    title: 'Startup Funding Readiness Services India | MyeCA.in',
+    description: 'Prepare startup funding records with finance hygiene, compliance documents, investor-ready summaries, and founder action notes before outreach.',
+    keywords: ['startup funding readiness', 'startup finance documents', 'investor readiness India', 'funding compliance checklist'],
+    type: 'service',
+    serviceData: { price: '0', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }, { name: 'Funding', url: '/startup/funding' }]
+  },
+  '/tds-refund-tracker': {
+    title: 'TDS Refund Tracker for ITR Filing Status | MyeCA.in',
+    description: 'Track TDS refund readiness with AIS, Form 26AS, return status, bank validation, demand notices, and follow-up checks after ITR filing.',
+    keywords: ['TDS refund tracker', 'income tax refund status', 'ITR refund check', 'Form 26AS refund', 'AIS TDS refund'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'TDS Refund Tracker', url: '/tds-refund-tracker' }]
   },
   '/itr-season-2026': {
     title: 'AY 2026-27 ITR Season Hub | Checklists, Tools & Filing Paths',
@@ -806,6 +850,90 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'CA-Assisted ITR Filing Comparison', url: '/compare/best-ca-assisted-itr-filing' }]
   }
 };
+
+const CALCULATOR_FAQ_ITEMS: Record<string, { q: string; a: string }[]> = {
+  '/calculators/income-tax': [
+    { q: 'How does the income tax calculator estimate AY 2026-27 tax?', a: 'It applies the selected income, deduction, rebate, surcharge, and cess inputs to compare old and new regime estimates for common resident individual cases.' },
+    { q: 'Is the income tax calculator result my final ITR tax?', a: 'No. Use it as a planning estimate and verify Form 16, AIS, Form 26AS, bank interest, capital gains, and eligible deductions before filing.' },
+    { q: 'Can I compare old and new tax regimes before filing?', a: 'Yes. The calculator is designed to help compare regime outcomes before you choose the filing path or request CA review.' },
+  ],
+  '/calculators/capital-gains': [
+    { q: 'What capital gains can this calculator estimate?', a: 'It helps estimate common short-term and long-term capital gains on equity, mutual funds, property, gold, and similar assets before ITR review.' },
+    { q: 'Do I still need broker statements for capital gains filing?', a: 'Yes. Calculator output should be matched with broker statements, AIS, purchase dates, sale values, and exemption details before filing.' },
+    { q: 'Which ITR form usually applies for capital gains?', a: 'Capital gains commonly require ITR-2 or ITR-3 depending on business income and other facts. The final form depends on your full income profile.' },
+  ],
+  '/capital-gains-import': [
+    { q: 'What does the capital gains import tool do?', a: 'It organizes broker capital gains files into an ITR-ready review summary, including STCG, LTCG, and statement-level checks where supported.' },
+    { q: 'Can imported broker data be filed without review?', a: 'No. Imported values should be checked against AIS, trade reports, corporate actions, and tax rules before final filing.' },
+    { q: 'Which brokers are suitable for import?', a: 'The workflow is intended for common broker statements and CSV-style reports from Indian investing platforms where the file structure is supported.' },
+  ],
+  '/calculators/hra': [
+    { q: 'How is HRA exemption calculated?', a: 'HRA exemption is estimated using salary, actual HRA, rent paid, city type, and the rule-based limits applicable for the financial year.' },
+    { q: 'Do I need rent receipts for HRA?', a: 'Yes. Keep rent receipts, landlord details, and PAN where required so the claimed exemption can be supported during return review.' },
+    { q: 'Can HRA be claimed in the new tax regime?', a: 'HRA exemption is generally relevant to old-regime planning. Confirm the final regime and eligibility before filing.' },
+  ],
+  '/calculators/tax-regime': [
+    { q: 'What does the tax regime calculator compare?', a: 'It compares estimated tax under old and new regimes using salary, deductions, rebate, and common planning inputs for AY 2026-27.' },
+    { q: 'Which regime should I choose?', a: 'Choose based on verified deductions, exemptions, income level, and employment facts. The calculator gives an estimate, not a filing instruction.' },
+    { q: 'Can salaried taxpayers switch regimes every year?', a: 'Salaried taxpayers usually have more flexibility than business taxpayers, but the final choice should be checked against current filing rules.' },
+  ],
+  '/calculators/regime-comparator': [
+    { q: 'Is this different from the tax regime calculator?', a: 'The comparator focuses on side-by-side regime decision support, while the tax calculator estimates tax details from broader income inputs.' },
+    { q: 'What deductions matter most for regime comparison?', a: 'Common old-regime inputs include 80C, 80D, HRA, home-loan interest, NPS, and other eligible deductions or exemptions.' },
+    { q: 'Should I use Form 16 values in the comparator?', a: 'Yes. Form 16, AIS, and salary breakup values improve the usefulness of the comparison before filing.' },
+  ],
+  '/calculators/gst': [
+    { q: 'What can the GST calculator estimate?', a: 'It estimates tax-inclusive or tax-exclusive GST values and splits CGST, SGST, or IGST based on the selected rate and transaction type.' },
+    { q: 'Does the GST calculator replace GST return filing?', a: 'No. It is a calculation aid. GSTR data, invoices, place of supply, ITC, and return rules still need proper review.' },
+    { q: 'Which GST rates can I use?', a: 'Use the rate applicable to the goods or services after checking HSN/SAC classification and current GST notifications.' },
+  ],
+  '/calculators/sip': [
+    { q: 'How does the SIP calculator estimate returns?', a: 'It projects future value using monthly contribution, expected annual return, and investment period with compounding assumptions.' },
+    { q: 'Are SIP returns guaranteed?', a: 'No. SIP output is an estimate only. Mutual fund returns depend on market performance, expenses, taxation, and investor behavior.' },
+    { q: 'Can SIP estimates help tax planning?', a: 'They can help plan investment goals, but capital gains taxation and ELSS deduction eligibility should be reviewed separately.' },
+  ],
+  '/calculators/nps': [
+    { q: 'What does the NPS calculator estimate?', a: 'It estimates retirement corpus and pension-like outcomes from contribution, tenure, return assumptions, and annuity inputs.' },
+    { q: 'Can NPS reduce taxable income?', a: 'NPS may support deductions under applicable old-regime provisions, subject to limits and eligibility. Verify before claiming.' },
+    { q: 'Is the annuity value final?', a: 'No. It depends on annuity provider rates, retirement age, market returns, and final withdrawal choices.' },
+  ],
+  '/calculators/ppf': [
+    { q: 'How does the PPF calculator work?', a: 'It estimates maturity value using annual contribution, tenure, and the applicable PPF interest assumption for long-term planning.' },
+    { q: 'Is PPF useful for old-regime tax planning?', a: 'PPF can be part of 80C planning under the old regime, subject to overall limits and eligibility.' },
+    { q: 'Can I change PPF contribution every year?', a: 'Contributions can vary within permitted limits, but the actual account rules and deposit timing should be checked.' },
+  ],
+  '/calculators/fd': [
+    { q: 'What does the FD calculator estimate?', a: 'It estimates fixed deposit maturity value using principal, interest rate, compounding frequency, and tenure.' },
+    { q: 'Is FD interest taxable?', a: 'FD interest is generally taxable according to the taxpayer income slab and should be matched with AIS and Form 26AS TDS data.' },
+    { q: 'Should senior citizens check FD tax separately?', a: 'Yes. Senior citizens may have different deduction and TDS considerations, so final tax treatment should be reviewed.' },
+  ],
+  '/calculators/tds': [
+    { q: 'What can the TDS calculator estimate?', a: 'It estimates tax deduction amounts for selected payment types and rates where the user provides the taxable base and relevant assumptions.' },
+    { q: 'Can TDS rates change by transaction?', a: 'Yes. TDS depends on payment type, status, threshold, PAN availability, treaty cases, and current law.' },
+    { q: 'Should TDS be matched before ITR filing?', a: 'Yes. Always match TDS credits with AIS and Form 26AS before final filing or refund claims.' },
+  ],
+  '/calculators/gratuity': [
+    { q: 'How is gratuity estimated?', a: 'The calculator estimates gratuity using salary, completed service, employer type, and common formula assumptions.' },
+    { q: 'Is gratuity fully tax-free?', a: 'Not always. Taxability depends on government or non-government employment, exemption limits, and service facts.' },
+    { q: 'What records are needed for gratuity review?', a: 'Keep salary breakup, service period, employer details, and settlement documents before using the result in a tax return.' },
+  ],
+  '/calculators/emi': [
+    { q: 'How does the EMI calculator work?', a: 'It estimates monthly loan EMI using loan amount, interest rate, and tenure with standard amortization math.' },
+    { q: 'Does EMI output include all loan charges?', a: 'No. Processing fees, insurance, prepayment, floating-rate changes, and lender charges may change the actual cost.' },
+    { q: 'Can EMI planning affect tax filing?', a: 'Home-loan interest and principal repayment may affect old-regime tax planning where eligible, but documents must be verified.' },
+  ],
+  '/calculators/home-loan': [
+    { q: 'What does the home loan calculator estimate?', a: 'It estimates EMI and repayment patterns for home loans using principal, interest rate, and tenure inputs.' },
+    { q: 'Can home loan interest be claimed in ITR?', a: 'Eligible interest may be claimable based on property type, regime choice, and limits. Verify the loan certificate before filing.' },
+    { q: 'Should I compare EMI and tax benefit together?', a: 'Yes. EMI affordability and eligible tax treatment should be reviewed together for better planning.' },
+  ],
+};
+
+Object.entries(CALCULATOR_FAQ_ITEMS).forEach(([route, faqItems]) => {
+  if (SEO_CONFIG[route]) {
+    SEO_CONFIG[route].faqItems = faqItems;
+  }
+});
 
 export const getSEOConfig = (path: string): SEOConfigItem | undefined => {
   return SEO_CONFIG[path];

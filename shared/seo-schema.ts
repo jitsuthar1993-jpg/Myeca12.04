@@ -1,6 +1,6 @@
 export const SITE_URL = "https://myeca.in";
 export const SITE_NAME = "myeca.in";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 export const LOGO_URL = `${SITE_URL}/logo.png`;
 
 type Thing = Record<string, any>;
@@ -17,6 +17,16 @@ export type ArticleSchemaInput = {
   publishedAt?: string | null;
   modifiedAt?: string | null;
   image?: string | null;
+  author?: PersonSchemaInput | null;
+  reviewer?: PersonSchemaInput | null;
+};
+
+export type PersonSchemaInput = {
+  name?: string | null;
+  role?: string | null;
+  credentialName?: string | null;
+  credentialId?: string | null;
+  credentialAuthority?: string | null;
 };
 
 export type HowToSchemaInput = {
@@ -31,6 +41,39 @@ function absoluteUrl(value: string | null | undefined) {
   if (!value) return DEFAULT_OG_IMAGE;
   if (/^https?:\/\//i.test(value)) return value;
   return `${SITE_URL}${value.startsWith("/") ? value : `/${value}`}`;
+}
+
+function personSchema(input: PersonSchemaInput | null | undefined): Thing | null {
+  const name = input?.name?.trim();
+  if (!name) return null;
+
+  const credentialName = input?.credentialName?.trim();
+  const credentialId = input?.credentialId?.trim();
+  const credentialAuthority = input?.credentialAuthority?.trim();
+  const hasVerifiedCredential = Boolean(credentialName && credentialId);
+
+  return {
+    "@type": "Person",
+    name,
+    ...(input?.role?.trim() ? { jobTitle: input.role.trim() } : {}),
+    ...(hasVerifiedCredential
+      ? {
+          hasCredential: {
+            "@type": "EducationalOccupationalCredential",
+            credentialCategory: credentialName,
+            identifier: credentialId,
+            ...(credentialAuthority
+              ? {
+                  recognizedBy: {
+                    "@type": "Organization",
+                    name: credentialAuthority,
+                  },
+                }
+              : {}),
+          },
+        }
+      : {}),
+  };
 }
 
 export function bikanerAddress(): Thing {
@@ -153,6 +196,8 @@ export function buildServiceSchema(input: {
 
 export function buildArticleSchema(input: ArticleSchemaInput): Thing {
   const modifiedAt = input.modifiedAt || input.publishedAt || undefined;
+  const author = personSchema(input.author);
+  const reviewer = personSchema(input.reviewer);
 
   return {
     "@context": "https://schema.org",
@@ -163,10 +208,11 @@ export function buildArticleSchema(input: ArticleSchemaInput): Thing {
     image: absoluteUrl(input.image),
     datePublished: input.publishedAt || undefined,
     dateModified: modifiedAt,
-    author: {
+    author: author ?? {
       "@type": "Organization",
       name: "Team myeca.in",
     },
+    ...(reviewer?.hasCredential ? { reviewedBy: reviewer } : {}),
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,

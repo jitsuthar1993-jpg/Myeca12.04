@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   blogMeta,
   injectStaticRootFallback,
+  minifyStaticRouteHtml,
+  prepareStaticRouteTemplate,
   renderStaticRootFallback,
 } from "../../../scripts/generate-seo-assets";
 import { defaultBlogPosts } from "../../../server/data/default-blog-content";
@@ -66,5 +68,44 @@ describe("SEO asset static root fallback", () => {
       }),
     ).toContain("Tax Guides | MyeCA.in");
     expect(injectStaticRootFallback(template, { path: "/dashboard", robots: "noindex, nofollow" })).toContain("Loading");
+  });
+
+  it("minifies generated route shells without changing SEO text or JSON-LD script content", () => {
+    const html = `
+      <html>
+        <head>
+          <script type="application/ld+json">{"@type":"WebPage","name":"MyeCA"}</script>
+        </head>
+        <body>
+          <main>
+            <h1>Income Tax Filing</h1>
+            <p>Guided filing with CA review.</p>
+          </main>
+        </body>
+      </html>
+    `;
+
+    expect(minifyStaticRouteHtml(html)).toBe(
+      '<html><head><script type="application/ld+json">{"@type":"WebPage","name":"MyeCA"}</script></head><body><main><h1>Income Tax Filing</h1><p>Guided filing with CA review.</p></main></body></html>',
+    );
+  });
+
+  it("moves generated-route-only CSS to the shared static SEO stylesheet", () => {
+    const template = `<html><head>
+      <style>
+        @keyframes skel{0%{background-position:-200% 0}100%{background-position:200% 0}}
+        .skel{animation:skel 1.5s infinite}
+      </style>
+      <style>
+        .static-seo-shell{min-height:100vh}
+        .static-seo-shell h1{font-weight:900}
+      </style>
+    </head><body></body></html>`;
+
+    const prepared = prepareStaticRouteTemplate(template);
+
+    expect(prepared).toContain('<link rel="stylesheet" href="/static-seo-shell.css" />');
+    expect(prepared).not.toContain("@keyframes skel");
+    expect(prepared).not.toContain(".static-seo-shell{min-height:100vh}");
   });
 });

@@ -70,6 +70,7 @@ async function fetchText(path: string) {
 
   return {
     contentType: response.headers.get("content-type") || "",
+    cacheControl: response.headers.get("cache-control") || "",
     text,
   };
 }
@@ -97,13 +98,28 @@ async function assertAssetEndpoints() {
   }
 
   const manifestJson = JSON.parse(manifest.text) as {
+    id?: string;
     name?: string;
     short_name?: string;
+    lang?: string;
     start_url?: string;
-    icons?: Array<{ src?: string; sizes?: string; type?: string }>;
+    display?: string;
+    display_override?: string[];
+    categories?: string[];
+    icons?: Array<{ src?: string; sizes?: string; type?: string; purpose?: string }>;
+    shortcuts?: Array<{ name?: string; url?: string }>;
   };
   if (!manifestJson.name || !manifestJson.short_name || !manifestJson.start_url || !manifestJson.icons?.length) {
     throw new Error("/manifest.json is missing required PWA fields");
+  }
+  if (manifestJson.id !== "/" || manifestJson.lang !== "en-IN" || manifestJson.display !== "standalone") {
+    throw new Error("/manifest.json is missing production app identity fields");
+  }
+  if (!manifestJson.display_override?.includes("standalone") || !manifestJson.categories?.includes("finance")) {
+    throw new Error("/manifest.json is missing install display/category metadata");
+  }
+  if (!manifestJson.shortcuts?.some((shortcut) => shortcut.url === "/itr/form-selector")) {
+    throw new Error("/manifest.json is missing the ITR launch shortcut");
   }
   const requiredIcons = ["/icons/icon-192.png", "/icons/icon-512.png"];
   for (const iconSrc of requiredIcons) {
@@ -115,6 +131,18 @@ async function assertAssetEndpoints() {
     if (!response.ok || !response.headers.get("content-type")?.includes("image/png")) {
       throw new Error(`${iconSrc} is not served as a PNG asset`);
     }
+  }
+  const iconPurposes = new Set(manifestJson.icons.map((entry) => entry.purpose).filter(Boolean));
+  if (!iconPurposes.has("any") || !iconPurposes.has("maskable")) {
+    throw new Error("/manifest.json must include separate any and maskable icon purposes");
+  }
+
+  const serviceWorker = await fetchText("/service-worker.js");
+  if (!serviceWorker.contentType.includes("javascript") || serviceWorker.text.length < 1000) {
+    throw new Error("/service-worker.js is not a generated production service worker");
+  }
+  if (!serviceWorker.cacheControl.includes("no-cache")) {
+    throw new Error("/service-worker.js must be served with no-cache");
   }
 
   const robots = await fetchText("/robots.txt");

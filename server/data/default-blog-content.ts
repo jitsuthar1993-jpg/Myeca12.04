@@ -37,6 +37,11 @@ export type DefaultBlogPost = {
   audience?: "individuals" | "businesses" | "both";
   reviewedBy?: string | null;
   reviewedAt?: string | null;
+  reviewerName?: string | null;
+  reviewerRole?: string | null;
+  reviewerCredentialName?: string | null;
+  reviewerCredentialId?: string | null;
+  reviewerCredentialAuthority?: string | null;
   sourceLinks?: Array<{ label: string; url: string }>;
   serviceSlug?: string | null;
   calculatorSlug?: string | null;

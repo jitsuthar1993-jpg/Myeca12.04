@@ -114,8 +114,8 @@ class ErrorBoundary extends Component<Props, State> {
     const { hasError, error, errorInfo, isOffline } = this.state;
     const { children, fallback, showDetails = process.env.NODE_ENV === 'development' } = this.props;
 
-    // Offline state
-    if (isOffline) {
+    // Offline errors get a lighter recovery surface, but offline mode alone should not hide cached pages.
+    if (hasError && isOffline) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
           <Card className="max-w-md w-full">

@@ -187,6 +187,26 @@ test.describe("release smoke", () => {
     const manifest = await request.get("/manifest.json");
     expect(manifest.ok()).toBeTruthy();
     expect(manifest.headers()["content-type"]).toMatch(/application\/(manifest\+json|json)/);
+    expect(manifest.headers()["cache-control"]).toContain("no-cache");
+    const manifestJson = await manifest.json();
+    expect(manifestJson).toMatchObject({
+      id: "/",
+      lang: "en-IN",
+      start_url: "/",
+      display: "standalone",
+      theme_color: "#2563eb",
+    });
+    expect(manifestJson.display_override).toContain("standalone");
+    expect(manifestJson.categories).toContain("finance");
+    expect(manifestJson.shortcuts?.some((shortcut: { url?: string }) => shortcut.url === "/itr/form-selector")).toBeTruthy();
+    expect(manifestJson.icons?.some((icon: { purpose?: string }) => icon.purpose === "any")).toBeTruthy();
+    expect(manifestJson.icons?.some((icon: { purpose?: string }) => icon.purpose === "maskable")).toBeTruthy();
+
+    const serviceWorker = await request.get("/service-worker.js");
+    expect(serviceWorker.ok()).toBeTruthy();
+    expect(serviceWorker.headers()["content-type"]).toMatch(/javascript/);
+    expect(serviceWorker.headers()["cache-control"]).toContain("no-cache");
+    expect((await serviceWorker.text()).length).toBeGreaterThan(1000);
 
     const robots = await request.get("/robots.txt");
     expect(robots.ok()).toBeTruthy();

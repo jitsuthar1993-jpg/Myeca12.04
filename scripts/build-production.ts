@@ -33,3 +33,5 @@ function run(binName: string, args: string[]) {
 
 run("vite", ["build"]);
 run("tsx", ["scripts/generate-seo-assets.ts"]);
+run("tsx", ["scripts/audit-seo-metadata.ts"]);
+run("tsx", ["scripts/validate-static-seo.ts"]);

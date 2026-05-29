@@ -1,6 +1,6 @@
 export const SITE_URL = "https://myeca.in";
 export const SITE_NAME = "MyeCA.in";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 export const DEFAULT_LOGO = `${SITE_URL}/favicon.svg`;
 
 export const PRIVATE_ROUTE_PREFIXES = [

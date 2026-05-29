@@ -60,6 +60,9 @@ const HomePage = () => {
         title={seo?.title || "Income Tax Filing & ITR e-Filing Services India AY 2026-27"}
         description={seo?.description || "File ITR online with MyeCA.in using guided workflows, tax calculators, and optional CA-assisted review. ITR filing starts at ₹499 for AY 2026-27."}
         keywords={seo?.keywords}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+        ]}
         aiSummary="MyeCA.in offers guided ITR filing, GST compliance, startup registration, AY 2026-27 tax calculators, Form 16 parsing, and optional expert support for eligible plans."
         localBusinessData={{
           "name": "MyeCA.in",
@@ -104,7 +107,7 @@ const HomePage = () => {
                 <span className="text-emerald-600">AY 2026-27</span>
               </div>
 
-              <h1 className="mx-auto mt-8 max-w-4xl text-4xl font-extrabold leading-tight text-slate-950 md:text-6xl">
+              <h1 className="type-hero-title mx-auto mt-8 max-w-4xl text-slate-950">
                 File your <span className="text-blue-600">Tax Returns</span> with expert CA assistance
               </h1>
               <p className="mx-auto mt-6 max-w-4xl text-lg leading-8 text-slate-600 md:text-2xl">
@@ -456,7 +459,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section className="hidden md:block" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
+        <section className="hidden md:block" style={{ contentVisibility: 'auto', contain: 'content', containIntrinsicSize: '0 500px' }}>
           <Suspense fallback={<SectionFallback />}>
             <FeaturesSection />
           </Suspense>
@@ -471,7 +474,7 @@ const HomePage = () => {
             <EverythingSection />
           </Suspense>
 
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
+          <section style={{ contentVisibility: 'auto', contain: 'content', containIntrinsicSize: '0 500px' }}>
             <Suspense fallback={<SectionFallback />}>
               <ProfessionalServicesSection />
             </Suspense>
