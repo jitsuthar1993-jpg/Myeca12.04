@@ -13,6 +13,12 @@ import {
   normalizePublicPath,
 } from "@shared/seo-public";
 import { classifySpaFallbackPath } from "@shared/spa-fallback-policy";
+import { buildHostileSpaFallbackAuditRoutes, parseSpaFallbackProbeSlugs } from "@shared/spa-fallback-audit-routes";
+import {
+  formatSpaFallbackAuditScope,
+  getSpaFallbackAuditFailureSamples,
+  summarizeSpaFallbackAuditChecks,
+} from "@shared/spa-fallback-audit-summary";
 
 describe("SEO indexing policy", () => {
   it("keeps Vercel CA noindex headers from shadowing calculator routes", () => {
@@ -103,6 +109,119 @@ describe("SEO indexing policy", () => {
     expect(packageConfig.scripts["check:spa-fallback-indexing"]).toBe(
       "tsx scripts/check-spa-fallback-indexing.ts",
     );
+  });
+
+  it("builds bogus fallback audit routes from every public route family", () => {
+    const routes = buildHostileSpaFallbackAuditRoutes(
+      [
+        "/",
+        "/blog",
+        "/blog/finance-act-2025-new-regime-slabs-ay-2026-27",
+        "/services/pan-card",
+        "/calculators/income-tax",
+        "/legal/privacy-policy",
+      ],
+      { probeSlugs: ["face-serum-gxrcld"] },
+    );
+
+    expect(routes).toEqual(
+      expect.arrayContaining([
+        "/face-serum-gxrcld",
+        "/blog/face-serum-gxrcld",
+        "/blog/finance-act-2025-new-regime-slabs-ay-2026-27/face-serum-gxrcld",
+        "/services/pan-card/face-serum-gxrcld",
+        "/calculators/income-tax/face-serum-gxrcld",
+        "/legal/privacy-policy/face-serum-gxrcld",
+        "/shop/face-serum-gxrcld",
+        "/wp-admin",
+      ]),
+    );
+  });
+
+  it("parses extra bogus probe slugs for broader fallback audits", () => {
+    expect(parseSpaFallbackProbeSlugs(" face-serum-gxrcld, random-product-gxrcld\n/wp-admin ,, face-serum-gxrcld "))
+      .toEqual(["face-serum-gxrcld", "random-product-gxrcld", "wp-admin"]);
+    expect(parseSpaFallbackProbeSlugs("")).toEqual(["face-serum-gxrcld"]);
+  });
+
+  it("summarizes SPA fallback audit failures by route category", () => {
+    const summary = summarizeSpaFallbackAuditChecks([
+      { ok: true, label: "sitemap reachable", detail: "200 OK" },
+      { ok: false, label: "/face-serum-gxrcld returns 404", detail: "200 OK" },
+      {
+        ok: false,
+        label: "/face-serum-gxrcld has noindex signal",
+        detail: "meta=index, follow; x-robots=index, follow",
+      },
+      {
+        ok: false,
+        label: "/face-serum-gxrcld is not marked indexable by header",
+        detail: "index, follow",
+      },
+      {
+        ok: false,
+        label: "/services/activate/partnership-deed app-only control stays noindex",
+        detail: "meta=index, follow; x-robots=index, follow",
+      },
+      { ok: true, label: "/ public control stays indexable", detail: "meta=index, follow" },
+    ]);
+
+    expect(summary).toMatchObject({
+      appOnlyNoindexFailures: 1,
+      checks: 6,
+      failures: 4,
+      hostileIndexHeaderFailures: 1,
+      hostileNoindexFailures: 1,
+      hostileStatusFailures: 1,
+      passes: 2,
+      publicControlFailures: 0,
+    });
+  });
+
+  it("samples SPA fallback audit failures by category for concise live reports", () => {
+    const samples = getSpaFallbackAuditFailureSamples(
+      [
+        { ok: false, label: "/about/face-serum-gxrcld returns 404", detail: "200 OK" },
+        {
+          ok: false,
+          label: "/about/face-serum-gxrcld has noindex signal",
+          detail: "meta=index, follow; x-robots=index, follow",
+        },
+        {
+          ok: false,
+          label: "/about/face-serum-gxrcld is not marked indexable by header",
+          detail: "index, follow",
+        },
+        {
+          ok: false,
+          label: "/services/activate/partnership-deed app-only control stays noindex",
+          detail: "meta=index, follow; x-robots=index, follow",
+        },
+        { ok: false, label: "/ public control stays indexable", detail: "meta=noindex" },
+      ],
+      1,
+    );
+
+    expect(samples.map((sample) => sample.category)).toEqual([
+      "hostile_status",
+      "hostile_noindex",
+      "hostile_index_header",
+      "app_only_noindex",
+      "public_control",
+    ]);
+    expect(samples.map((sample) => sample.check.label)).toContain(
+      "/services/activate/partnership-deed app-only control stays noindex",
+    );
+  });
+
+  it("formats SPA fallback audit scope metadata for reproducible reports", () => {
+    expect(
+      formatSpaFallbackAuditScope({
+        hostileRoutes: 740,
+        probeSlugs: ["face-serum-gxrcld", "random-product-gxrcld"],
+        publicRoutes: 355,
+      }),
+    ).toBe("public_routes=355\nhostile_routes=740\nprobe_slugs=face-serum-gxrcld,random-product-gxrcld");
   });
 
   it("classifies bogus public slugs as noindex 404 fallback routes", () => {

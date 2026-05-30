@@ -1,40 +1,39 @@
 import { allServices } from "../client/src/data/all-services.js";
+import { SEO_CONFIG } from "../client/src/config/seo.config.js";
+import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
+import { loadStaticBlogPosts } from "../server/data/static-blog-content.js";
+import {
+  buildHostileSpaFallbackAuditRoutes,
+  parseSpaFallbackProbeSlugs,
+} from "../shared/spa-fallback-audit-routes.js";
+import {
+  formatSpaFallbackAuditScope,
+  formatSpaFallbackAuditSummary,
+  getSpaFallbackAuditFailureSamples,
+  summarizeSpaFallbackAuditChecks,
+  type SpaFallbackAuditCheck,
+} from "../shared/spa-fallback-audit-summary.js";
 import { classifySpaFallbackPath } from "../shared/spa-fallback-policy.js";
-import { toAbsoluteUrl } from "../shared/seo-public.js";
+import { getIndexablePublicRoutes, toAbsoluteUrl } from "../shared/seo-public.js";
 
 const defaultBaseUrl = "https://myeca.in";
 const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_FALLBACK_BASE_URL || defaultBaseUrl);
 const activationServiceIds = allServices.map((service) => service.id);
 const requestDelayMs = parsePositiveInteger(process.env.MYECA_FALLBACK_REQUEST_DELAY_MS, 150);
-
-const hostileFallbackRoutes = [
-  "/face-serum-gxrcld",
-  "/face-serum-gxrcld/",
-  "/random-product-gxrcld",
-  "/best-face-serum-india",
-  "/buy-face-serum-online",
-  "/shop",
-  "/shop/face-serum-gxrcld",
-  "/store/face-serum-gxrcld",
-  "/products/face-serum-gxrcld",
-  "/product/face-serum-gxrcld",
-  "/collections/face-serum-gxrcld",
-  "/category/face-serum-gxrcld",
-  "/tag/face-serum-gxrcld",
-  "/author/face-serum-gxrcld",
-  "/wp-admin",
-  "/wp-login.php",
-  "/wp-content/uploads/face-serum-gxrcld",
-  "/blog/face-serum-gxrcld",
-  "/learn/guide/face-serum-gxrcld",
-  "/services/face-serum-gxrcld",
-  "/services/activate/face-serum-gxrcld",
-  "/services/company-registration/face-serum-gxrcld",
-  "/calculators/face-serum-gxrcld",
-  "/startup/face-serum-gxrcld",
-  "/compare/face-serum-gxrcld",
-  "/itr-season-2026/face-serum-gxrcld",
-] as const;
+const summaryOnly = process.env.MYECA_FALLBACK_SUMMARY_ONLY === "1";
+const summaryFailureLimit = parsePositiveInteger(process.env.MYECA_FALLBACK_SUMMARY_FAILURE_LIMIT, 40);
+const probeSlugs = parseSpaFallbackProbeSlugs(process.env.MYECA_FALLBACK_PROBE_SLUGS);
+const blogRoutes = loadStaticBlogPosts().map((post) => `/blog/${post.slug || post.id}`);
+const publicRoutes = getIndexablePublicRoutes(
+  [
+    ...Object.entries(SEO_CONFIG)
+      .filter(([, config]) => !config.noindex)
+      .map(([route]) => route),
+    ...getGeneratedPublicRoutes(),
+  ],
+  blogRoutes,
+);
+const hostileFallbackRoutes = buildHostileSpaFallbackAuditRoutes(publicRoutes, { probeSlugs });
 
 const indexableControlRoutes = [
   "/",
@@ -52,12 +51,6 @@ const appOnlyNoindexControls = [
   "/services/company-registration/mumbai",
   "/experts/ca-amit-verma",
 ] as const;
-
-type Check = {
-  detail: string;
-  label: string;
-  ok: boolean;
-};
 
 type FetchedText = {
   response: Response;
@@ -136,12 +129,12 @@ function robotsDetail(result: FetchedText) {
   return `meta=${robotsMeta}; x-robots=${xRobots}`;
 }
 
-function printCheck(check: Check) {
+function printCheck(check: SpaFallbackAuditCheck) {
   console.log(`${check.ok ? "PASS" : "FAIL"} ${check.label}: ${check.detail}`);
 }
 
 async function main() {
-  const checks: Check[] = [];
+  const checks: SpaFallbackAuditCheck[] = [];
   const sitemap = await fetchText("/sitemap.xml");
 
   checks.push({
@@ -237,9 +230,35 @@ async function main() {
     });
   }
 
-  checks.forEach(printCheck);
-
   const failures = checks.filter((check) => !check.ok);
+  const summary = summarizeSpaFallbackAuditChecks(checks);
+
+  if (summaryOnly) {
+    console.log(formatSpaFallbackAuditSummary(baseUrl, summary));
+    console.log(formatSpaFallbackAuditScope({
+      hostileRoutes: hostileFallbackRoutes.length,
+      probeSlugs,
+      publicRoutes: publicRoutes.length,
+    }));
+    const samples = getSpaFallbackAuditFailureSamples(checks, summaryFailureLimit);
+    for (const sample of samples) {
+      console.log(`[${sample.category}]`);
+      printCheck(sample.check);
+    }
+    const sampleCount = samples.length;
+    if (failures.length > sampleCount) {
+      console.log(`... ${failures.length - sampleCount} more failing checks omitted`);
+    }
+  } else {
+    checks.forEach(printCheck);
+    console.log(`\n${formatSpaFallbackAuditSummary(baseUrl, summary)}`);
+    console.log(formatSpaFallbackAuditScope({
+      hostileRoutes: hostileFallbackRoutes.length,
+      probeSlugs,
+      publicRoutes: publicRoutes.length,
+    }));
+  }
+
   if (failures.length > 0) {
     console.error(`\nSPA fallback indexing check failed for ${baseUrl}: ${failures.length} failing checks.`);
     process.exit(1);
