@@ -41,6 +41,14 @@ export type SpaFallbackAuditFailureSample = {
   check: SpaFallbackAuditCheck;
 };
 
+export type SpaFallbackAuditReport = {
+  baseUrl: string;
+  failureSamples: SpaFallbackAuditFailureSample[];
+  omittedFailures: number;
+  scope: SpaFallbackAuditScope;
+  summary: SpaFallbackAuditSummary;
+};
+
 function countFailures(failures: SpaFallbackAuditCheck[], pattern: RegExp) {
   return failures.filter((check) => pattern.test(check.label)).length;
 }
@@ -124,4 +132,27 @@ export function formatSpaFallbackAuditScope(scope: SpaFallbackAuditScope) {
     `hostile_routes=${scope.hostileRoutes}`,
     `probe_slugs=${scope.probeSlugs.join(",")}`,
   ].join("\n");
+}
+
+export function buildSpaFallbackAuditReport({
+  baseUrl,
+  checks,
+  sampleLimit = 2,
+  scope,
+}: {
+  baseUrl: string;
+  checks: readonly SpaFallbackAuditCheck[];
+  sampleLimit?: number;
+  scope: SpaFallbackAuditScope;
+}): SpaFallbackAuditReport {
+  const summary = summarizeSpaFallbackAuditChecks(checks);
+  const failureSamples = getSpaFallbackAuditFailureSamples(checks, sampleLimit);
+
+  return {
+    baseUrl,
+    failureSamples,
+    omittedFailures: Math.max(0, summary.failures - failureSamples.length),
+    scope,
+    summary,
+  };
 }

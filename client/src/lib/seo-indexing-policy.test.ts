@@ -15,10 +15,12 @@ import {
 import { classifySpaFallbackPath } from "@shared/spa-fallback-policy";
 import { buildHostileSpaFallbackAuditRoutes, parseSpaFallbackProbeSlugs } from "@shared/spa-fallback-audit-routes";
 import {
+  buildSpaFallbackAuditReport,
   formatSpaFallbackAuditScope,
   getSpaFallbackAuditFailureSamples,
   summarizeSpaFallbackAuditChecks,
 } from "@shared/spa-fallback-audit-summary";
+import { fetchTextWithRetry } from "@shared/spa-fallback-audit-fetch";
 
 describe("SEO indexing policy", () => {
   it("keeps Vercel CA noindex headers from shadowing calculator routes", () => {
@@ -214,6 +216,45 @@ describe("SEO indexing policy", () => {
     );
   });
 
+  it("builds durable SPA fallback audit reports for owner handoff", () => {
+    const report = buildSpaFallbackAuditReport({
+      baseUrl: "https://myeca.in",
+      checks: [
+        { ok: true, label: "sitemap reachable", detail: "200 OK" },
+        { ok: false, label: "/about/face-serum-gxrcld returns 404", detail: "200 OK" },
+        {
+          ok: false,
+          label: "/about/face-serum-gxrcld has noindex signal",
+          detail: "meta=index, follow; x-robots=index, follow",
+        },
+      ],
+      sampleLimit: 1,
+      scope: {
+        hostileRoutes: 370,
+        probeSlugs: ["face-serum-gxrcld"],
+        publicRoutes: 355,
+      },
+    });
+
+    expect(report).toMatchObject({
+      baseUrl: "https://myeca.in",
+      omittedFailures: 0,
+      scope: {
+        hostileRoutes: 370,
+        probeSlugs: ["face-serum-gxrcld"],
+        publicRoutes: 355,
+      },
+      summary: {
+        checks: 3,
+        failures: 2,
+        hostileNoindexFailures: 1,
+        hostileStatusFailures: 1,
+        passes: 1,
+      },
+    });
+    expect(report.failureSamples.map((sample) => sample.category)).toEqual(["hostile_status", "hostile_noindex"]);
+  });
+
   it("formats SPA fallback audit scope metadata for reproducible reports", () => {
     expect(
       formatSpaFallbackAuditScope({
@@ -222,6 +263,39 @@ describe("SEO indexing policy", () => {
         publicRoutes: 355,
       }),
     ).toBe("public_routes=355\nhostile_routes=740\nprobe_slugs=face-serum-gxrcld,random-product-gxrcld");
+  });
+
+  it("retries transient audit fetch failures and reports the exact failed URL", async () => {
+    let attempts = 0;
+    const eventuallyHealthyFetch: typeof fetch = async () => {
+      attempts += 1;
+      if (attempts === 1) {
+        throw new Error("socket reset");
+      }
+
+      return new Response("ok", { status: 200 });
+    };
+
+    const recovered = await fetchTextWithRetry("https://example.test/about/face-serum-gxrcld", {
+      attempts: 2,
+      fetchImpl: eventuallyHealthyFetch,
+      retryDelayMs: 0,
+      timeoutMs: 0,
+    });
+
+    expect(recovered.text).toBe("ok");
+    expect(recovered.attempts).toBe(2);
+
+    await expect(
+      fetchTextWithRetry("https://example.test/face-serum-gxrcld", {
+        attempts: 2,
+        fetchImpl: async () => {
+          throw new Error("socket reset");
+        },
+        retryDelayMs: 0,
+        timeoutMs: 0,
+      }),
+    ).rejects.toThrow("https://example.test/face-serum-gxrcld failed after 2 attempts: socket reset");
   });
 
   it("classifies bogus public slugs as noindex 404 fallback routes", () => {

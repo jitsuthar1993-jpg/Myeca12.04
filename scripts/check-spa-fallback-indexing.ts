@@ -1,3 +1,4 @@
+import { writeFileSync } from "node:fs";
 import { allServices } from "../client/src/data/all-services.js";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
 import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
@@ -7,12 +8,13 @@ import {
   parseSpaFallbackProbeSlugs,
 } from "../shared/spa-fallback-audit-routes.js";
 import {
+  buildSpaFallbackAuditReport,
   formatSpaFallbackAuditScope,
   formatSpaFallbackAuditSummary,
-  getSpaFallbackAuditFailureSamples,
   summarizeSpaFallbackAuditChecks,
   type SpaFallbackAuditCheck,
 } from "../shared/spa-fallback-audit-summary.js";
+import { fetchTextWithRetry } from "../shared/spa-fallback-audit-fetch.js";
 import { classifySpaFallbackPath } from "../shared/spa-fallback-policy.js";
 import { getIndexablePublicRoutes, toAbsoluteUrl } from "../shared/seo-public.js";
 
@@ -20,8 +22,12 @@ const defaultBaseUrl = "https://myeca.in";
 const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_FALLBACK_BASE_URL || defaultBaseUrl);
 const activationServiceIds = allServices.map((service) => service.id);
 const requestDelayMs = parsePositiveInteger(process.env.MYECA_FALLBACK_REQUEST_DELAY_MS, 150);
+const requestRetryDelayMs = parsePositiveInteger(process.env.MYECA_FALLBACK_RETRY_DELAY_MS, 300);
+const requestTimeoutMs = parsePositiveInteger(process.env.MYECA_FALLBACK_REQUEST_TIMEOUT_MS, 20_000);
+const requestAttempts = parsePositiveInteger(process.env.MYECA_FALLBACK_FETCH_ATTEMPTS, 3);
 const summaryOnly = process.env.MYECA_FALLBACK_SUMMARY_ONLY === "1";
 const summaryFailureLimit = parsePositiveInteger(process.env.MYECA_FALLBACK_SUMMARY_FAILURE_LIMIT, 40);
+const reportPath = process.env.MYECA_FALLBACK_REPORT_PATH;
 const probeSlugs = parseSpaFallbackProbeSlugs(process.env.MYECA_FALLBACK_PROBE_SLUGS);
 const blogRoutes = loadStaticBlogPosts().map((post) => `/blog/${post.slug || post.id}`);
 const publicRoutes = getIndexablePublicRoutes(
@@ -87,13 +93,18 @@ function delay(ms: number) {
 async function fetchText(route: string): Promise<FetchedText> {
   if (requestDelayMs > 0) await delay(requestDelayMs);
 
-  const response = await fetch(fetchUrl(route), {
-    headers: {
-      "user-agent": "MyeCA SPA fallback indexing check",
+  const result = await fetchTextWithRetry(fetchUrl(route), {
+    attempts: requestAttempts,
+    init: {
+      headers: {
+        "user-agent": "MyeCA SPA fallback indexing check",
+      },
     },
+    retryDelayMs: requestRetryDelayMs,
+    timeoutMs: requestTimeoutMs,
   });
-  const text = await response.text();
-  return { response, text };
+
+  return { response: result.response, text: result.text };
 }
 
 function findMetaContent(html: string, name: string) {
@@ -232,31 +243,37 @@ async function main() {
 
   const failures = checks.filter((check) => !check.ok);
   const summary = summarizeSpaFallbackAuditChecks(checks);
+  const scope = {
+    hostileRoutes: hostileFallbackRoutes.length,
+    probeSlugs,
+    publicRoutes: publicRoutes.length,
+  };
+  const report = buildSpaFallbackAuditReport({
+    baseUrl,
+    checks,
+    sampleLimit: summaryFailureLimit,
+    scope,
+  });
 
   if (summaryOnly) {
     console.log(formatSpaFallbackAuditSummary(baseUrl, summary));
-    console.log(formatSpaFallbackAuditScope({
-      hostileRoutes: hostileFallbackRoutes.length,
-      probeSlugs,
-      publicRoutes: publicRoutes.length,
-    }));
-    const samples = getSpaFallbackAuditFailureSamples(checks, summaryFailureLimit);
-    for (const sample of samples) {
+    console.log(formatSpaFallbackAuditScope(scope));
+    for (const sample of report.failureSamples) {
       console.log(`[${sample.category}]`);
       printCheck(sample.check);
     }
-    const sampleCount = samples.length;
-    if (failures.length > sampleCount) {
-      console.log(`... ${failures.length - sampleCount} more failing checks omitted`);
+    if (report.omittedFailures > 0) {
+      console.log(`... ${report.omittedFailures} more failing checks omitted`);
     }
   } else {
     checks.forEach(printCheck);
     console.log(`\n${formatSpaFallbackAuditSummary(baseUrl, summary)}`);
-    console.log(formatSpaFallbackAuditScope({
-      hostileRoutes: hostileFallbackRoutes.length,
-      probeSlugs,
-      publicRoutes: publicRoutes.length,
-    }));
+    console.log(formatSpaFallbackAuditScope(scope));
+  }
+
+  if (reportPath) {
+    writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+    console.log(`SPA fallback audit report written to ${reportPath}`);
   }
 
   if (failures.length > 0) {
