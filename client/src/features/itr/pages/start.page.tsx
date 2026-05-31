@@ -282,9 +282,9 @@ export default function ITRStartPage() {
               <span className="text-emerald-600">AY 2026-27</span>
             </div>
             <h1 className="mt-8 text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
-              File your{" "}
+              Start your{" "}
               <span className="inline-flex items-center text-blue-600">
-                GST Returns
+                ITR filing
                 <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" aria-hidden="true" />
               </span>{" "}
               with expert CA assistance

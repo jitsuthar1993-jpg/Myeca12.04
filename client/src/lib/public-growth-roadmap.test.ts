@@ -78,6 +78,11 @@ describe("public growth roadmap implementation", () => {
   });
 
   it("uses stronger route-level conversion and SEO copy", () => {
+    const itrStartSource = readSource("client/src/features/itr/pages/start.page.tsx");
+
+    expect(itrStartSource).toContain("Start your");
+    expect(itrStartSource).toContain("ITR filing");
+    expect(itrStartSource).not.toContain("GST Returns");
     expect(readSource("client/src/pages/blog.page.tsx")).toContain(
       "ITR Filing & Tax Guides AY 2026-27"
     );
