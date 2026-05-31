@@ -116,6 +116,32 @@ export function buildOpenApiSpec() {
       "/api/profiles/{id}": path({
         patch: operation("Update a saved profile", { tags: ["profiles"], auth: true, requestBody: true, status: "production" }),
       }),
+      "/api/tax-returns": path({
+        get: operation("List current user's ITR filing drafts", { tags: ["tax returns"], auth: true, status: "production" }),
+        post: operation("Create an AY 2026-27 ITR filing draft", { tags: ["tax returns"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}": path({
+        get: operation("Get an ITR filing draft or CA review case", { tags: ["tax returns"], auth: true, status: "production" }),
+        patch: operation("Update an ITR filing draft", { tags: ["tax returns"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}/recommendation": path({
+        post: operation("Snapshot the automatic ITR form recommendation", { tags: ["tax returns"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}/documents": path({
+        post: operation("Link a document-vault record to an ITR filing draft", { tags: ["tax returns"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}/submit-review": path({
+        post: operation("Submit an ITR draft packet for CA review", { tags: ["tax returns"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}/review-status": path({
+        patch: operation("Update CA/admin ITR review lifecycle status", { tags: ["tax returns"], auth: true, requestBody: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}/review-packet": path({
+        get: operation("Get the readable CA review packet for an ITR draft", { tags: ["tax returns"], auth: true, status: "production" }),
+      }),
+      "/api/tax-returns/{id}/export-json": path({
+        get: operation("Export official-schema ITR JSON when supported", { tags: ["tax returns"], auth: true, status: "production" }),
+      }),
       "/api/documents": path({
         get: operation("List current user's documents", { tags: ["documents"], auth: true, status: "production" }),
         post: operation("Create document metadata", { tags: ["documents"], auth: true, requestBody: true, status: "production" }),

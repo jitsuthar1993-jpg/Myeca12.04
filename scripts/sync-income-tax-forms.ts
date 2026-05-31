@@ -13,7 +13,7 @@ type IncomeTaxFormDownload = {
   version?: string;
   size?: string;
   latestReleaseDate?: string;
-  localPath?: string;
+  downloadUrl?: string;
   officialUrl: string;
   tags: string[];
 };
@@ -21,10 +21,12 @@ type IncomeTaxFormDownload = {
 const PORTAL_ORIGIN = "https://www.incometax.gov.in";
 const FORMS_PATH = "/iec/foportal/downloads/income-tax-returns";
 const SOURCE_URL = `${PORTAL_ORIGIN}${FORMS_PATH}`;
-const ASSESSMENT_YEAR = "2025-26";
-const ASSESSMENT_YEAR_TARGET_ID = "54";
-const ASSET_DIR = path.join(process.cwd(), "client", "public", "assets", "income-tax-forms");
+const ASSESSMENT_YEAR = "2026-27";
+const FINANCIAL_YEAR_LABEL = "2025-26";
+const ASSESSMENT_YEAR_TARGET_ID: string | null = null;
+const ASSET_DIR = path.join(process.cwd(), "assets", "income-tax-forms");
 const DATA_FILE = path.join(process.cwd(), "client", "src", "data", "income-tax-forms.ts");
+const SHARED_ASSET_FILE = path.join(process.cwd(), "shared", "income-tax-form-assets.ts");
 
 const ENTITY_MAP: Record<string, string> = {
   amp: "&",
@@ -81,7 +83,7 @@ function getTags(title: string, linkText: string, fileType: IncomeTaxFormFileTyp
     "income tax",
     "income tax return",
     `ay ${ASSESSMENT_YEAR}`,
-    `fy ${ASSESSMENT_YEAR}`,
+    `fy ${FINANCIAL_YEAR_LABEL}`,
     act === "Income Tax Act 2025" ? "act 2025" : act === "Income Tax Act 1961" ? "act 1961" : "return",
     fileType,
   ]);
@@ -102,7 +104,7 @@ function getTags(title: string, linkText: string, fileType: IncomeTaxFormFileTyp
 function extractMetadata(afterLinkHtml: string, linkText: string) {
   const metadataWindow = afterLinkHtml.slice(0, 1300);
   const version = metadataWindow.match(/\(Version\s*([^)]+)\)/i)?.[1]?.trim();
-  const sizeMatches = [...metadataWindow.matchAll(/\(([\d.]+\s*(?:KB|MB|GB))\)/gi)];
+  const sizeMatches = [...metadataWindow.matchAll(/\(([\d.]+\s*(?:KB|MB|GB))\s*\)/gi)];
   const size = sizeMatches[0]?.[1]?.trim();
 
   const utilityDate =
@@ -172,13 +174,18 @@ async function downloadPdf(record: IncomeTaxFormDownload) {
 
   return {
     ...record,
-    localPath: `/assets/income-tax-forms/${filename}`,
+    downloadUrl: `/downloads/income-tax-forms/${record.id}`,
     size: record.size ?? `${Math.max(1, Math.round(buffer.length / 1024))} KB`,
   };
 }
 
+function sourceUrlForAssessmentYear() {
+  if (!ASSESSMENT_YEAR_TARGET_ID) return SOURCE_URL;
+  return `${SOURCE_URL}?field_assessment_year_taxonomy_t_target_id=${ASSESSMENT_YEAR_TARGET_ID}`;
+}
+
 async function scrapeSource() {
-  const sourceUrl = `${SOURCE_URL}?field_assessment_year_taxonomy_t_target_id=${ASSESSMENT_YEAR_TARGET_ID}`;
+  const sourceUrl = sourceUrlForAssessmentYear();
   const response = await fetch(sourceUrl);
 
   if (!response.ok) {
@@ -232,7 +239,7 @@ function renderDataFile(records: IncomeTaxFormDownload[]) {
   version?: string;
   size?: string;
   latestReleaseDate?: string;
-  localPath?: string;
+  downloadUrl?: string;
   officialUrl: string;
   tags: string[];
 };
@@ -240,23 +247,44 @@ function renderDataFile(records: IncomeTaxFormDownload[]) {
 export const incomeTaxFormsSourceUrl = ${JSON.stringify(SOURCE_URL)};
 export const incomeTaxFormsLastSynced = ${JSON.stringify(syncedAt)};
 export const incomeTaxFormsAssessmentYear = ${JSON.stringify(ASSESSMENT_YEAR)};
-export const incomeTaxFormsFinancialYearLabel = ${JSON.stringify("2025-26")};
+export const incomeTaxFormsFinancialYearLabel = ${JSON.stringify(FINANCIAL_YEAR_LABEL)};
 
 export const incomeTaxFormDownloads: IncomeTaxFormDownload[] = ${JSON.stringify(records, null, 2)};
 `;
 }
 
-async function main() {
-  await mkdir(ASSET_DIR, { recursive: true });
-  const { rm, readdir } = await import("node:fs/promises");
-  const existingAssets = await readdir(ASSET_DIR).catch(() => []);
-  await Promise.all(
-    existingAssets
-      .filter((filename) => filename.toLowerCase().endsWith(".pdf"))
-      .map((filename) => rm(path.join(ASSET_DIR, filename), { force: true })),
+function renderSharedAssetFile(records: IncomeTaxFormDownload[]) {
+  const assets = Object.fromEntries(
+    records
+      .filter((record) => record.fileType === "pdf" && record.downloadUrl)
+      .map((record) => [
+        record.id,
+        {
+          slug: record.id,
+          fileName: `${record.id}.pdf`,
+          officialUrl: record.officialUrl,
+        },
+      ]),
   );
 
+  return `export type IncomeTaxFormAsset = {
+  slug: string;
+  fileName: string;
+  officialUrl: string;
+};
+
+export const incomeTaxFormAssets: Record<string, IncomeTaxFormAsset> = ${JSON.stringify(assets, null, 2)};
+
+export function getIncomeTaxFormAsset(slug: string) {
+  return incomeTaxFormAssets[slug] || null;
+}
+`;
+}
+
+async function main() {
   const scrapedRecords = await scrapeSource();
+
+  await mkdir(ASSET_DIR, { recursive: true });
 
   const records = [];
   for (const record of scrapedRecords) {
@@ -264,12 +292,27 @@ async function main() {
   }
 
   await writeFile(DATA_FILE, renderDataFile(records));
+  await writeFile(SHARED_ASSET_FILE, renderSharedAssetFile(records));
+
+  const { rm, readdir } = await import("node:fs/promises");
+  const expectedPdfNames = new Set(
+    records
+      .filter((record) => record.fileType === "pdf" && record.downloadUrl)
+      .map((record) => `${record.id}.pdf`),
+  );
+  const existingAssets = await readdir(ASSET_DIR).catch(() => []);
+  await Promise.all(
+    existingAssets
+      .filter((filename) => filename.toLowerCase().endsWith(".pdf") && !expectedPdfNames.has(filename))
+      .map((filename) => rm(path.join(ASSET_DIR, filename), { force: true })),
+  );
 
   const pdfCount = records.filter((record) => record.fileType === "pdf").length;
   console.log(
     `Synced ${records.length} Income Tax return downloads for AY ${ASSESSMENT_YEAR} (${pdfCount} PDFs mirrored locally).`,
   );
   console.log(`Wrote ${path.relative(process.cwd(), DATA_FILE)}`);
+  console.log(`Wrote ${path.relative(process.cwd(), SHARED_ASSET_FILE)}`);
 }
 
 main().catch((error) => {

@@ -1,28 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { ITR_DOCUMENT_CHECKLIST, ITR_FILING_LAYOUT, ITR_FILING_STEPS } from "./filing.page";
+import { ITR_FILING_LAYOUT, ITR_FILING_STEPS, WORKSPACE_ITR_REVIEW_STATUSES } from "./filing.page";
 
 describe("ITR filing workspace", () => {
-  it("follows the signed-in guided filing sequence from documents to e-verification", () => {
+  it("follows the signed-in draft-to-CA-review filing sequence", () => {
     expect(ITR_FILING_STEPS.map((step) => step.id)).toEqual([
-      "sources",
       "profile",
+      "income-sources",
       "documents",
-      "income",
+      "income-details",
       "deductions",
       "tax-paid",
-      "review",
+      "form-selection",
+      "ca-review",
       "e-verify",
     ]);
   });
 
-  it("asks for the core documents needed before filing an ITR", () => {
-    expect(ITR_DOCUMENT_CHECKLIST.map((document) => document.id)).toEqual([
-      "form16",
-      "ais",
-      "form26as",
-      "bank",
-      "deductions",
-      "capital-gains",
+  it("surfaces the full CA review status lifecycle", () => {
+    expect(WORKSPACE_ITR_REVIEW_STATUSES).toEqual([
+      "draft",
+      "ready_for_review",
+      "ca_review",
+      "changes_requested",
+      "approved_for_filing",
+      "filed",
+      "e_verified",
+      "refund_or_demand_tracking",
     ]);
   });
 

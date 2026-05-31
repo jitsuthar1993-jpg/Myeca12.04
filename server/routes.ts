@@ -16,6 +16,7 @@ import analyticsRouter from "./routes/analytics.js";
 import systemRouter from "./routes/system.js";
 import userRouter from "./routes/user.js";
 import profilesRouter from "./routes/profiles.js";
+import taxReturnsRouter from "./routes/tax-returns.js";
 import adminRouter from "./routes/admin.js";
 import auditRouter from "./routes/audit.js";
 import publicRouter from "./routes/public.js";
@@ -213,6 +214,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User-facing routes
   app.use("/api", userRouter);
   app.use("/api/profiles", profilesRouter);
+  app.use("/api/tax-returns", taxReturnsRouter);
   app.use("/api/public", publicRouter);
 
   // Admin routes
