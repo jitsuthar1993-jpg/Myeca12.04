@@ -588,11 +588,11 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Form 16 Parser', url: '/form16-parser' }]
   },
   '/itr/start': {
-    title: 'Start ITR Filing AY 2026-27 | Check Salary or CA-Assisted Plan | MyeCA.in',
-    description: 'Check your ITR filing path in 60 seconds. Salary ITR starts at Rs 499, CA-assisted ITR starts at Rs 999, and complex cases are scoped before payment.',
-    keywords: ['start ITR filing', 'ITR filing price', 'CA assisted ITR', 'salary ITR filing', 'AY 2026-27 ITR'],
+    title: 'ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2, ITR-3 or ITR-4 | MyeCA.in',
+    description: 'Answer public filing facts and get an AY 2026-27 ITR-1, ITR-2, ITR-3, ITR-4, or CA scope review recommendation before continuing to the filing draft.',
+    keywords: ['ITR form selector', 'which ITR form', 'ITR-1 ITR-2 ITR-3 ITR-4', 'AY 2026-27 ITR', 'income tax return form'],
     type: 'website',
-    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Start ITR', url: '/itr/start' }]
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Form Selector', url: '/itr/start' }]
   },
   '/itr/form-selector': {
     title: 'ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2 or ITR-3 | MyeCA.in',

@@ -2,7 +2,9 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { trackPublicCtaClick } from "@/lib/public-conversion-events";
 
-export default function PublicMobileConversionBar() {
+export default function PublicMobileConversionBar({ currentPath = "/" }: { currentPath?: string }) {
+  if (currentPath.startsWith("/itr/start")) return null;
+
   return (
     <nav
       aria-label="Public conversion actions"

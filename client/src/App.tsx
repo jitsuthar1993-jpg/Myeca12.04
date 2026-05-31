@@ -115,6 +115,7 @@ function Router() {
 
   const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath;
   const hideFooter = currentPath === '/tax-assistant';
+  const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/itr/start');
 
   useRoutePreload();
 
@@ -127,7 +128,7 @@ function Router() {
       )}
       {showLayoutComponents && <div className="h-[60px] md:h-[74px]"></div>}
       <main
-        className={`flex-1 bg-white ${showLayoutComponents && !hideFooter ? 'pb-20 md:pb-0' : ''}`}
+        className={`flex-1 bg-white ${showMobileConversionBar ? 'pb-20 md:pb-0' : ''}`}
         data-clarity-mask={shouldMaskTelemetryRoute(currentPath) ? "true" : undefined}
         data-telemetry-sensitive={shouldMaskTelemetryRoute(currentPath) ? "true" : undefined}
       >
@@ -138,9 +139,9 @@ function Router() {
           <Footer />
         </Suspense>
       )}
-      {showLayoutComponents && !hideFooter && (
+      {showMobileConversionBar && (
         <Suspense fallback={null}>
-          <PublicMobileConversionBar />
+          <PublicMobileConversionBar currentPath={currentPath} />
         </Suspense>
       )}
     </div>
