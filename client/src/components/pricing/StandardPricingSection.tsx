@@ -100,7 +100,7 @@ export function StandardPricingCompactCard({ service }: { service: ServicePricin
 function SectionHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
   return (
     <div className="mb-9 max-w-3xl">
-      <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-700">{eyebrow}</p>
+      <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">{eyebrow}</p>
       <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">{title}</h2>
       <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">{description}</p>
     </div>
@@ -112,13 +112,13 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
   return (
     <Card
       className={cn(
-        "rounded-[28px] border-slate-200 shadow-sm",
-        plan.featured && "border-blue-500 shadow-xl shadow-blue-100"
+        "overflow-hidden rounded-lg border-slate-200 shadow-sm hover:border-blue-100",
+        plan.featured && "border-blue-500 shadow-lg shadow-blue-100/70"
       )}
     >
       <CardContent className="flex h-full flex-col p-6">
         <div className="flex items-start justify-between gap-4">
-          <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
+          <div className="rounded-lg bg-blue-50 p-3 text-blue-700">
             <Icon className="h-6 w-6" />
           </div>
           {plan.badge && (
@@ -150,11 +150,11 @@ function ServicePackageCard({
   const Icon = service.icon || ShieldCheck;
 
   return (
-    <Card className="overflow-hidden rounded-[28px] border-slate-200 shadow-sm">
+    <Card className="overflow-hidden rounded-lg border-slate-200 shadow-sm">
       <CardContent className="grid gap-8 p-6 lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
         <div>
           <div className="flex items-center gap-4">
-            <div className="rounded-2xl bg-blue-50 p-4 text-blue-700">
+            <div className="rounded-lg bg-blue-50 p-4 text-blue-700">
               <Icon className="h-8 w-8" />
             </div>
             <div>
@@ -216,7 +216,7 @@ function FeeBreakdownCard({
   const professional = service.feeBreakdown?.professional || [];
 
   return (
-    <Card className="rounded-[28px] border-slate-200 shadow-sm">
+    <Card className="rounded-lg border-slate-200 shadow-sm">
       <CardContent className="grid gap-6 p-6 md:grid-cols-3 lg:p-8">
         <FeeColumn title="Government / Statutory Fees" items={government} tone="red" />
         <FeeColumn title="MyeCA Professional Fees" items={professional} tone="blue" />
@@ -237,7 +237,7 @@ function PriceBlock({ pricing }: { pricing: PricingPlan["pricing"] | ServicePric
   return (
     <div className="mt-5">
       <div className="flex flex-wrap items-baseline gap-2">
-        <p className="text-4xl font-black tracking-tight text-slate-950">{formatPricingLabel(pricing)}</p>
+        <p className="break-words text-3xl font-black tracking-tight text-slate-950 md:text-4xl">{formatPricingLabel(pricing)}</p>
         {pricing.originalAmount && (
           <span className="text-sm font-bold text-slate-400 line-through">{formatINR(pricing.originalAmount)}</span>
         )}

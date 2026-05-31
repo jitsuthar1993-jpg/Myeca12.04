@@ -1,10 +1,8 @@
 import { Link } from "wouter";
-import { FileCheck2, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileCheck2, ShieldCheck, Sparkles } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import Logo from "@/components/ui/logo";
 import StandardPricingSection from "@/components/pricing/StandardPricingSection";
 import { caseTimelineStages } from "@/data/competitive-growth";
 import { getTaxFilingPlans } from "@/data/pricing";
@@ -17,6 +15,14 @@ const trustRows = [
   ["Mandatory vs optional charges", "Separated on business services"],
 ];
 
+const pricingHighlights = [
+  ["Starts at", "₹499", "Guided salary filing"],
+  ["Assisted from", "₹999", "Named CA review on eligible plans"],
+  ["Complex cases", "Scope first", "Capital gains, NRI, business and GST"],
+];
+
+const proofPoints = ["Scope before payment", "GST treatment visible", "CA touchpoints shown"];
+
 const comparisonColumns = ["Salary", "Expert", "Capital Gains", "Business"];
 const comparisonRows = [
   ["Named CA review", "Add-on", "Yes", "Yes", "Dedicated owner"],
@@ -28,7 +34,7 @@ const comparisonRows = [
 
 export default function PricingPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <MetaSEO
         title="Transparent ITR Filing Pricing by Complexity | MyeCA.in"
         description="Compare MyeCA pricing for salary, multiple Form 16, capital gains, F&O, freelancer, NRI, foreign assets, notice and business GST compliance cases."
@@ -57,65 +63,105 @@ export default function PricingPage() {
         ]}
       />
 
-      <header className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 font-black text-blue-700">
-            <Logo size="sm" />
-            MyeCA.in
-          </Link>
-          <Link href="/services">
-            <Button variant="outline">View services</Button>
-          </Link>
-        </div>
-      </header>
+      <section className="border-b border-slate-100 bg-white px-4 py-10 sm:px-6 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.03fr_0.97fr] lg:items-start">
+          <div className="max-w-4xl">
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" />
+              <span>Transparent pricing</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-300" aria-hidden="true" />
+              <span className="text-emerald-600">Scope before payment</span>
+            </div>
 
-      <section className="bg-blue-700 px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
-          <div>
-            <Badge className="mb-5 border-blue-400/20 bg-blue-400/10 text-blue-200">
-              No hidden-cost anxiety
-            </Badge>
-            <h1 className="type-hero-title max-w-4xl font-black">
-              Transparent tax filing plans mapped to real return complexity.
+            <h1 className="type-hero-title mt-7 max-w-4xl text-slate-950">
+              Tax filing plans priced by real return complexity.
             </h1>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-              Pick a plan by the work your return actually needs: salary, multiple Form 16,
-              capital gains, F&O/crypto, freelancer income, NRI/foreign assets or business compliance.
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600 md:text-xl">
+              Compare guided, assisted, investor, NRI, freelancer, and business compliance plans with CA touchpoints,
+              GST treatment, timelines, and exclusions visible before you start.
             </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/itr/form-selector" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full bg-slate-800 hover:bg-slate-900 sm:w-auto">
+                  Start filing
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/services" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                  View services
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-8 flex flex-col gap-3 text-sm font-semibold text-slate-600 sm:flex-row sm:flex-wrap">
+              {proofPoints.map((point) => (
+                <span key={point} className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  {point}
+                </span>
+              ))}
+            </div>
           </div>
-          <Card className="rounded-[28px] border-white/10 bg-white/10 text-white backdrop-blur">
-            <CardContent className="p-6">
-              <ShieldCheck className="h-8 w-8 text-blue-200" />
-              <h2 className="mt-4 text-2xl font-black">MyeCA promise</h2>
+
+          <div className="grid gap-4">
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-slate-950">MyeCA pricing promise</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Every paid plan separates included work, exclusions, SLA, and review scope before payment.
+                  </p>
+                </div>
+              </div>
               <div className="mt-5 space-y-3">
                 {trustRows.map(([label, value]) => (
-                  <div key={label} className="rounded-2xl bg-white/10 p-4">
-                    <p className="text-sm font-black">{label}</p>
-                    <p className="mt-1 text-xs font-semibold text-slate-300">{value}</p>
+                  <div key={label} className="grid gap-1 rounded-lg border border-slate-100 bg-slate-50/70 p-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                    <p className="text-sm font-bold text-slate-900">{label}</p>
+                    <p className="text-xs font-bold text-blue-700 sm:text-right">{value}</p>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {pricingHighlights.map(([label, value, note]) => (
+                <div key={label} className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{label}</p>
+                  <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">{note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       <StandardPricingSection
         mode="plan-grid"
         title="Choose by return complexity, not guesswork"
-        description="Scope, CA review, GST treatment, timelines, and exclusions are visible before the user starts filing."
+        description="Scope, CA review, GST treatment, timelines, and exclusions are visible before you start filing."
         plans={getTaxFilingPlans()}
+        className="bg-white py-12 md:py-16"
       />
 
-      <section className="bg-slate-50 px-4 py-14 sm:px-6 lg:px-8">
+      <section className="border-y border-slate-100 bg-slate-50 px-4 py-12 sm:px-6 md:py-16 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-700">Plan comparison</p>
-            <h2 className="type-section-title mt-3 font-black text-slate-950">
-              Make scope visible before the user starts filing.
-            </h2>
+          <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
+            <div className="max-w-3xl">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">Plan comparison</p>
+              <h2 className="type-section-title mt-3 text-slate-950">
+                See the right support level before you start filing.
+              </h2>
+            </div>
+            <p className="text-sm leading-7 text-slate-600 lg:max-w-xl">
+              The comparison keeps the purchase decision simple: choose the plan that matches documents, review depth,
+              and post-filing support instead of guessing from a flat price list.
+            </p>
           </div>
-          <div className="mt-8 overflow-x-auto rounded-[24px] border border-slate-200 bg-white">
+          <div className="mt-8 overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="grid min-w-[760px] grid-cols-5 bg-slate-100 p-4 text-xs font-black uppercase tracking-widest text-slate-500">
               <span>Capability</span>
               {comparisonColumns.map((column) => (
@@ -135,29 +181,34 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
             <Badge className="bg-emerald-50 text-emerald-700">Included workflow</Badge>
-            <h2 className="type-section-title mt-4 font-black text-slate-950">
+            <h2 className="type-section-title mt-4 text-slate-950">
               Every paid action becomes a trackable case.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
               This is the core difference from a plain checkout page: users can see the stage,
               pending documents, CA review status and post-filing support path.
             </p>
+            <Link href="/expert-consultation?service=pricing-help" className="mt-6 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+              Need help choosing a plan <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {caseTimelineStages.map((stage, index) => (
-              <div key={stage} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <FileCheck2 className="h-5 w-5 text-blue-600" />
-                <p className="mt-3 text-xs font-black text-slate-400">Stage {index + 1}</p>
+              <div key={stage} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                  <FileCheck2 className="h-4 w-4" />
+                </div>
+                <p className="mt-3 text-xs font-black uppercase tracking-[0.14em] text-slate-400">Stage {index + 1}</p>
                 <p className="text-sm font-black text-slate-900">{stage}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
