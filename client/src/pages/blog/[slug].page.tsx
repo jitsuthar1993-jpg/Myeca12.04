@@ -152,12 +152,12 @@ function TocPanel({ toc, activeId }: { toc: BlogTocItem[]; activeId: string }) {
       aria-label="Article index"
       className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"
     >
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <BookOpen className="h-4 w-4 text-blue-600" />
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Index</p>
+      <div className="mb-4 flex flex-nowrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <BookOpen className="h-4 w-4 shrink-0 text-blue-600" />
+          <p className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Index</p>
         </div>
-        <span className="type-meta rounded-full bg-blue-50 px-2.5 py-0.5 font-semibold text-blue-700">
+        <span className="type-meta shrink-0 whitespace-nowrap rounded-full bg-blue-50 px-2.5 py-0.5 font-semibold text-blue-700">
           {toc.length} sections
         </span>
       </div>
