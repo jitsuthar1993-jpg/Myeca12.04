@@ -84,6 +84,13 @@ const ASSESSMENT_YEARS = [
   { value: '2022-23', label: 'AY 2022-23 (FY 2021-22 - archive)', period: '1st April 2021 to 31st March 2022' }
 ];
 
+const GUIDED_INTAKE_PROMPTS = [
+  { label: 'Income type', detail: 'Salary, freelance, business, rental or interest income', icon: Users },
+  { label: 'Capital gains', detail: 'Stocks, mutual funds, property, ESOPs or VDA', icon: TrendingUp },
+  { label: 'Risk flags', detail: 'NRI, notice, foreign assets, GST or audit possibility', icon: AlertCircle },
+  { label: 'Documents ready', detail: 'Form 16, AIS/26AS, bank details and proofs', icon: FileText },
+];
+
 export default function ITRFormSelectorPage() {
   const [selectedForm, setSelectedForm] = useState('');
   const [assessmentYear, setAssessmentYear] = useState('2026-27');
@@ -122,6 +129,54 @@ export default function ITRFormSelectorPage() {
             Choose the assessment year and ITR path that matches your income profile.
           </p>
         </motion.div>
+
+        <section className="mb-6 rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:mb-10 md:rounded-2xl md:p-6">
+          <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-blue-700">
+                <HelpCircle className="h-3.5 w-3.5" />
+                Plan-first intake
+              </div>
+              <h2 className="mt-3 text-xl font-black leading-tight text-slate-950 md:text-2xl">
+                Not sure which ITR plan or form applies?
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Answer public, non-sensitive questions first. Salary and CA-assisted cases move faster, while capital gains, business, NRI, foreign assets and notices stay scope-first.
+              </p>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <Link href="/itr/start?source=form_selector_rescue">
+                  <Button className="h-11 w-full rounded-lg bg-blue-600 px-5 text-sm font-black text-white hover:bg-blue-700 sm:w-auto">
+                    Check my ITR plan in 60 sec
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/expert-consultation?service=itr-filing&source=form_selector_rescue">
+                  <Button variant="outline" className="h-11 w-full rounded-lg border-blue-100 bg-blue-50 px-5 text-sm font-black text-blue-700 hover:bg-blue-100 sm:w-auto">
+                    Ask CA before paying
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {GUIDED_INTAKE_PROMPTS.map((prompt) => {
+                const Icon = prompt.icon;
+                return (
+                  <div key={prompt.label} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <div>
+                        <p className="text-sm font-black text-slate-950">{prompt.label}</p>
+                        <p className="mt-1 text-xs leading-5 text-slate-600">{prompt.detail}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         {/* Year Selection Section - Two Box Layout */}
         <div className="grid grid-cols-1 gap-3 mb-6 md:grid-cols-2 md:gap-6 md:mb-12">
@@ -241,7 +296,7 @@ export default function ITRFormSelectorPage() {
                   </button>
                   <Link href={`/itr/filing?form=${form.id}&ay=${assessmentYear}`} className="shrink-0 self-center">
                     <Button size="sm" className="h-9 rounded-lg bg-indigo-600 px-3 type-support font-bold text-white hover:bg-indigo-700">
-                      Start
+                      Start ITR
                     </Button>
                   </Link>
                 </div>
@@ -352,7 +407,7 @@ export default function ITRFormSelectorPage() {
                   
                   <Link href={`/itr/filing?form=${selectedFormData.id}&ay=${assessmentYear}`} className="w-full md:w-auto">
                     <Button size="lg" className="w-full bg-white text-indigo-700 hover:bg-slate-50 px-5 h-12 font-extrabold text-base shadow-lg group md:h-14 md:px-10 md:text-lg">
-                      Start Filing Now
+                      Start ITR Filing
                       <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
@@ -371,9 +426,9 @@ export default function ITRFormSelectorPage() {
         >
           <div className="flex flex-col items-start gap-2 rounded-lg border border-slate-200 bg-slate-200/50 p-4 text-left md:inline-flex md:flex-row md:items-center md:rounded-full md:px-6 md:py-3">
             <HelpCircle className="h-4 w-4 text-slate-500" />
-            <span className="type-support text-slate-600 font-medium">Confused about which form to pick?</span>
-            <Link href="/itr/form-recommender">
-              <button className="type-support text-indigo-600 font-bold hover:underline">Tell me which form to select</button>
+            <span className="type-support text-slate-600 font-medium">Confused about which plan or form to pick?</span>
+            <Link href="/itr/start?source=form_selector_footer">
+               <button className="type-support text-indigo-600 font-bold hover:underline">Check my ITR plan in 60 sec</button>
             </Link>
           </div>
         </motion.div>

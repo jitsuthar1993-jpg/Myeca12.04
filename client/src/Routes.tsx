@@ -142,6 +142,7 @@ const UpdatesManagementPage = lazyWithRetry(() => import("@/pages/admin/updates-
 const MediaManagementPage = lazyWithRetry(() => import("@/pages/admin/media-management.page"));
 const TeamDashboard = lazyWithRetry(() => import("@/pages/team/dashboard.page"));
 const ITRFilingPage = lazyWithRetry(() => import("@/features/itr/pages/filing.page"));
+const ITRStartPage = lazyWithRetry(() => import("@/features/itr/pages/start.page"));
 const ITRFormSelectorPage = lazyWithRetry(() => import("@/features/itr/pages/form-selector.page"));
 const ITRFormRecommenderPage = lazyWithRetry(() => import("@/features/itr/pages/form-recommender.page"));
 const ITRSuccessPage = lazyWithRetry(() => import("@/features/itr/pages/success.page"));
@@ -416,6 +417,7 @@ export default function Routes() {
             <CADashboard />
           </RequireRole>
         )} />
+        <Route path="/itr/start" component={ITRStartPage} />
         <Route path="/itr/form-selector" component={ITRFormSelectorPage} />
         <Route path="/itr/form-recommender" component={ITRFormRecommenderPage} />
         <Route path="/itr/filing" component={() => <RequireAuth><ITRFilingPage /></RequireAuth>} />

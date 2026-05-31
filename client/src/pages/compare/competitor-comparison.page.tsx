@@ -50,13 +50,13 @@ export default function CompetitorComparisonPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={page.primaryCta}>
                 <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700">
-                  See MyeCA workflow
+                  Start ITR Filing
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/pricing">
                 <Button size="lg" variant="outline">
-                  Compare plans
+                  Compare Pricing
                 </Button>
               </Link>
             </div>
@@ -150,7 +150,7 @@ export default function CompetitorComparisonPage() {
         </div>
         <Link href={page.primaryCta}>
           <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700">
-            Start with MyeCA
+            Start ITR Filing
             <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>

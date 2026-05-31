@@ -356,15 +356,15 @@ export default function BlogPage() {
             <div>
               <div className="relative mb-3">
                 <span className="type-hero-title absolute -left-1 -top-4 select-none font-black text-slate-100">
-                  Blogs
+                  Guides
                 </span>
                 <h1 className="type-page-title relative font-black text-blue-700">
-                  Blogs
+                  ITR Filing & Tax Guides AY 2026-27
                 </h1>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
                 Fresh CA-reviewed explainers for ITR filing, tax planning, refunds, notices, GST,
-                capital gains, and business compliance.
+                capital gains, and business compliance, with filing paths when you need expert help.
               </p>
               <div className="mt-5 flex items-center gap-2 text-sm font-black">
                 <Link href="/">
@@ -524,6 +524,34 @@ export default function BlogPage() {
             );
           })}
         </div>
+
+        <section className="mb-7 rounded-2xl border border-blue-100 bg-white p-4 shadow-sm md:p-5">
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
+                ITR readiness check
+              </p>
+              <h2 className="mt-2 text-xl font-black text-slate-950">
+                Turn a guide into the right filing path.
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Check your ITR form, AIS mismatch risk, documents and expert-review need before you start.
+              </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 md:w-[360px]">
+              <Link href="/itr/form-recommender">
+                <span className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-black text-white transition hover:bg-blue-700">
+                  Check my ITR form in 60 sec <ArrowRight className="h-4 w-4" />
+                </span>
+              </Link>
+              <Link href="/expert-consultation?service=blog-reader">
+                <span className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-4 text-sm font-black text-blue-700 transition hover:bg-blue-100">
+                  Talk to Expert
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
 
         {showPostsLoader ? (
           <div className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-blue-100 bg-white">

@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  User, LogOut, Settings, BarChart3, FileText, Users, Gift,
+  LogOut, Settings, BarChart3, FileText, Users, Gift,
   Calculator, TrendingUp, Building2, Coins,
   Search, ArrowRight, Shield, HelpCircle, Home, Grid, Bot, Sparkles, X, Menu,
   Phone, Mail, ChevronRight, Briefcase, FileCheck, Scale, Zap, Target, PieChart,
@@ -147,8 +147,8 @@ export default function Header() {
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 Guided filing and CA review available
               </span>
-              <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full type-meta font-bold hover:bg-blue-800 transition-colors ml-2">
-                FILE NOW →
+              <Link href="/itr/start?source=promo_banner" onMouseEnter={() => preloadOnHover('/itr/start')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full type-meta font-bold hover:bg-blue-800 transition-colors ml-2">
+                CHECK PLAN →
               </Link>
             </div>
             <button
@@ -803,6 +803,22 @@ export default function Header() {
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
+                    <Link href="/pricing" onMouseEnter={() => preloadOnHover('/pricing')}>
+                      <div className="relative group">
+                        {location === '/pricing' && (
+                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
+                        )}
+                        <span className={cn(
+                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
+                          location === '/pricing' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
+                        )}>
+                          Pricing
+                        </span>
+                      </div>
+                    </Link>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
                     <Link href="/trust" onMouseEnter={() => preloadOnHover('/trust')}>
                       <div className="relative group">
                         {location === '/trust' && (
@@ -819,6 +835,22 @@ export default function Header() {
                     </Link>
                   </NavigationMenuItem>
 
+                  <NavigationMenuItem>
+                    <Link href="/contact" onMouseEnter={() => preloadOnHover('/contact')}>
+                      <div className="relative group">
+                        {location === '/contact' && (
+                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
+                        )}
+                        <span className={cn(
+                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
+                          location === '/contact' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
+                        )}>
+                          Contact
+                        </span>
+                      </div>
+                    </Link>
+                  </NavigationMenuItem>
+
 
 
 
@@ -827,25 +859,32 @@ export default function Header() {
 
               {/* Right Side Actions - Pill Style */}
               <div className="flex items-center gap-3">
-                {/* Search - Desktop */}
-                <Button 
-                  type="button"
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={openSearch}
-                  aria-label="Open search"
-                  className="hidden lg:flex text-slate-400 hover:text-[#2563eb] hover:bg-blue-50/80 rounded-xl w-10 h-10 transition-all duration-300 border border-transparent hover:border-blue-100/50"
-                >
-                  <Search className="w-[18px] h-[18px]" />
-                </Button>
+                {!isLoading && !isAuthenticated && (
+                  <Link
+                    href="/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file"
+                    onMouseEnter={() => {
+                      preloadOnHover('/auth/login');
+                      preloadOnHover('/itr/start');
+                    }}
+                    className="hidden lg:block"
+                  >
+                    <Button className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-normal text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)]">
+                      <FileText className="mr-2 h-4 w-4" />
+                      Login &amp; File
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
 
-                <Link href="/itr/form-selector" onMouseEnter={() => preloadOnHover('/itr/form-selector')} className="hidden lg:block">
-                  <Button className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-normal text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)]">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Start ITR
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                {!isLoading && isAuthenticated && (
+                  <Link href="/itr/start?source=header_desktop" onMouseEnter={() => preloadOnHover('/itr/start')} className="hidden lg:block">
+                    <Button className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-normal text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)]">
+                      <FileText className="mr-2 h-4 w-4" />
+                      File ITR
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
 
                 {!isLoading && isAuthenticated && (
                   <div className="flex items-center gap-2">
@@ -923,17 +962,6 @@ export default function Header() {
                   </div>
                 )}
 
-                {!isLoading && !isAuthenticated && (
-                  <div className="hidden lg:flex items-center gap-3">
-                    <Link href="/auth/login">
-                      <Button variant="outline" className="h-10 rounded-xl border-slate-200 bg-white px-4 text-sm font-normal text-slate-700 transition-all duration-300 hover:border-blue-100 hover:bg-blue-50 hover:text-blue-700">
-                        <User className="w-[18px] h-[18px]" />
-                        <span>Log in</span>
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-
                 {/* Mobile Menu Trigger (Sheet) */}
                 <Button
                   type="button"
@@ -982,7 +1010,7 @@ export default function Header() {
                           <p className="mb-3 type-meta font-bold uppercase tracking-[0.14em] text-blue-700">Start here</p>
                           <div className="grid grid-cols-2 gap-2">
                             {[
-                              { href: "/itr/form-selector", label: "File ITR", icon: FileText },
+                              { href: "/itr/start?source=mobile_menu", label: "File ITR", icon: FileText },
                               { href: "/calculators/income-tax", label: "Income Tax", icon: Calculator },
                               { href: "/calculators/regime-comparator", label: "Regime", icon: Scale },
                               { href: "/calculators/hra", label: "HRA", icon: Home },
@@ -1136,10 +1164,10 @@ export default function Header() {
                     </div>
 
                     <div className="mt-auto border-t bg-slate-50/50 p-4">
-                      <Link href="/itr/form-selector" onTouchStart={() => preloadOnHover("/itr/form-selector")} onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/itr/start?source=mobile_menu_footer" onTouchStart={() => preloadOnHover("/itr/start")} onClick={() => setMobileMenuOpen(false)}>
                         <Button className="mb-3 h-11 w-full justify-center gap-2 rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-200 hover:bg-blue-700">
                           <FileText className="h-4 w-4" />
-                          Start ITR filing
+                          Check ITR plan
                         </Button>
                       </Link>
                       {!isLoading && !isAuthenticated && (

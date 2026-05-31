@@ -27,61 +27,132 @@ import { Badge } from "@/components/ui/badge";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 import { CONTACT } from "@/config/contact";
 
+export const noticeLawTransitionRows = [
+  {
+    title: "Processing intimation",
+    oldSection: "143(1)",
+    newSection: "270(1)",
+    trigger: "CPC processing, refund adjustment, tax demand, or visible mismatch after return filing.",
+    responseFocus: "Compare the processed computation with ITR, AIS, TIS, Form 26AS, challans, and bank validation.",
+  },
+  {
+    title: "Scrutiny notice",
+    oldSection: "143(2)",
+    newSection: "270(8)",
+    trigger: "Return selected for deeper examination of income, loss, tax paid, or supporting evidence.",
+    responseFocus: "Prepare evidence bundles, source-wise reconciliations, explanations, and hearing-ready submissions.",
+  },
+  {
+    title: "Defective return",
+    oldSection: "139(9)",
+    newSection: "263(7)",
+    trigger: "Return is treated as defective because mandatory details, schedules, reports, or fields need correction.",
+    responseFocus: "Identify the defect code, fix the return data, preserve proof, and respond before invalidation risk.",
+  },
+  {
+    title: "Inquiry before assessment",
+    oldSection: "142(1)",
+    newSection: "268(1)",
+    trigger: "Department asks for return filing, accounts, statements, or documents before assessment.",
+    responseFocus: "Match every document request to a numbered evidence file and keep portal submission proof.",
+  },
+  {
+    title: "Best judgment assessment",
+    oldSection: "144",
+    newSection: "271",
+    trigger: "Non-filing, incomplete response, or failure to comply with assessment notices.",
+    responseFocus: "Act quickly with missing returns, explanations, documents, and a timeline note to reduce adverse inference.",
+  },
+  {
+    title: "Reassessment / escaped income",
+    oldSection: "147 / 148 / 148A",
+    newSection: "279 / 280 / 281",
+    trigger: "Information suggests income escaped assessment, followed by show-cause or reassessment notice.",
+    responseFocus: "Check limitation, approval, information relied upon, prior filings, and whether updated return is available.",
+  },
+  {
+    title: "Rectification",
+    oldSection: "154",
+    newSection: "287",
+    trigger: "Mistake apparent from the record in an order, intimation, demand, refund, or credit computation.",
+    responseFocus: "Use rectification only for clear record-based mistakes, not for issues needing fresh evidence or appeal.",
+  },
+  {
+    title: "Penalty for under-reporting",
+    oldSection: "270A / 271",
+    newSection: "439",
+    trigger: "Penalty proceedings after assessment, reassessment, misreporting, or under-reporting allegations.",
+    responseFocus: "Separate tax-demand response from penalty defence, immunity review, and evidence against misreporting.",
+  },
+] as const;
+
+const noticeTypes = [
+  {
+    id: "scrutiny",
+    title: "Scrutiny Assessment",
+    description: "Detailed examination of your ITR by the tax department.",
+    urgency: "High",
+    timeLimit: "30 days",
+    oldSection: "143(2)",
+    newSection: "270(8)",
+    color: "red"
+  },
+  {
+    id: "mismatch",
+    title: "Defective Return / Mismatch Notice",
+    description: "Return data, tax credits, schedules, or documents need correction.",
+    urgency: "Medium",
+    timeLimit: "15 days",
+    oldSection: "139(9)",
+    newSection: "263(7)",
+    color: "orange"
+  },
+  {
+    id: "default_assessment",
+    title: "Best Judgment Assessment",
+    description: "Issued for non-filing or incomplete ITR submission.",
+    urgency: "High",
+    timeLimit: "30 days",
+    oldSection: "144",
+    newSection: "271",
+    color: "red"
+  },
+  {
+    id: "penalty",
+    title: "Penalty / Under-reporting Notice",
+    description: "For under-reporting, misreporting, or concealment allegations.",
+    urgency: "High",
+    timeLimit: "Notice-specific",
+    oldSection: "270A / 271",
+    newSection: "439",
+    color: "red"
+  },
+  {
+    id: "rectification",
+    title: "Rectification",
+    description: "For correction of arithmetic or clerical mistakes.",
+    urgency: "Low",
+    timeLimit: "60 days",
+    oldSection: "154",
+    newSection: "287",
+    color: "green"
+  },
+  {
+    id: "intimation",
+    title: "Processing Intimation",
+    description: "Processing intimation with tax demand, refund, or adjustment.",
+    urgency: "Medium",
+    timeLimit: "30 days",
+    oldSection: "143(1)",
+    newSection: "270(1)",
+    color: "blue"
+  }
+];
+
 export default function NoticeCompliancePage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedNoticeType, setSelectedNoticeType] = useState<string>("");
   const [urgencyLevel, setUrgencyLevel] = useState<string>("");
-
-  const noticeTypes = [
-    {
-      id: "scrutiny",
-      title: "Scrutiny Assessment (Section 143(2))",
-      description: "Detailed examination of your ITR by the tax department.",
-      urgency: "High",
-      timeLimit: "30 days",
-      color: "red"
-    },
-    {
-      id: "mismatch",
-      title: "Mismatch Notice (Section 139(9))",
-      description: "Discrepancy found between ITR and TDS/TCS data.",
-      urgency: "Medium",
-      timeLimit: "15 days",
-      color: "orange"
-    },
-    {
-      id: "default_assessment",
-      title: "Best Judgment (Section 144)",
-      description: "Issued for non-filing or incomplete ITR submission.",
-      urgency: "High",
-      timeLimit: "30 days",
-      color: "red"
-    },
-    {
-      id: "penalty",
-      title: "Penalty Notice (Section 271)",
-      description: "For concealment of income or inaccurate particulars.",
-      urgency: "High",
-      timeLimit: "21 days",
-      color: "red"
-    },
-    {
-      id: "rectification",
-      title: "Rectification (Section 154)",
-      description: "For correction of arithmetic or clerical mistakes.",
-      urgency: "Low",
-      timeLimit: "60 days",
-      color: "green"
-    },
-    {
-      id: "intimation",
-      title: "Intimation u/s 143(1)",
-      description: "Processing intimation with tax demand or refund.",
-      urgency: "Medium",
-      timeLimit: "30 days",
-      color: "blue"
-    }
-  ];
 
   const processSteps = [
     {
@@ -128,7 +199,8 @@ export default function NoticeCompliancePage() {
         description="Received an Income Tax notice? Get expert help with scrutiny, defective returns, and mismatch notices. Response drafting timelines depend on facts and document readiness."
         keywords={[
           "income tax notice response", "scrutiny notice help", "Section 143(2) response", 
-          "tax compliance India", "defective return notice", "income tax department notice"
+          "tax compliance India", "defective return notice", "income tax department notice",
+          "Income-tax Act 2025 notice sections", "old new income tax sections"
         ]}
         type="service"
         serviceData={{
@@ -150,6 +222,10 @@ export default function NoticeCompliancePage() {
           {
             question: "Is it mandatory to reply to a tax notice online?",
             answer: "Yes, most notices must now be replied to through the official e-filing portal under the faceless assessment scheme. We help you file these responses professionally."
+          },
+          {
+            question: "Why do tax notices show old and new section references?",
+            answer: "Notices for older assessment years may continue to mention Income-tax Act, 1961 sections, while matters governed by the Income-tax Act, 2025 use renumbered provisions. Always follow the section printed on the actual notice and assessment year."
           }
         ]}
       />
@@ -204,7 +280,7 @@ export default function NoticeCompliancePage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <Shield className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                    <span>Always reply via the <strong>official e-filing portal</strong>.</span>
+                    <span>Confirm the <strong>assessment year and Act</strong>, then reply via the official e-filing portal.</span>
                   </li>
                 </ul>
               </CardContent>
@@ -267,8 +343,18 @@ export default function NoticeCompliancePage() {
                         {notice.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-4">
                       <p className="text-sm text-gray-600">{notice.description}</p>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                          <span className="block font-semibold uppercase tracking-wide text-slate-500">1961 Act</span>
+                          <span className="mt-1 block font-bold text-slate-900">u/s {notice.oldSection}</span>
+                        </div>
+                        <div className="rounded-lg border border-red-100 bg-red-50 px-3 py-2">
+                          <span className="block font-semibold uppercase tracking-wide text-red-500">2025 Act</span>
+                          <span className="mt-1 block font-bold text-red-700">u/s {notice.newSection}</span>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -393,6 +479,45 @@ export default function NoticeCompliancePage() {
               However, with the shift towards <span className="font-bold underline decoration-blue-300">Faceless Assessment</span> and digital communication, 
               responding to these notices has become more structured. The key is acting fast and providing precise documentation.
             </p>
+
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-12">
+              <div className="border-b border-slate-200 bg-slate-50 p-6">
+                <Badge variant="outline" className="border-red-200 bg-white text-red-700 font-bold">
+                  Old and new sections
+                </Badge>
+                <h3 className="mt-3 text-2xl font-black text-slate-900 tracking-tight">
+                  Income-tax notice section transition
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  For tax years before 1 April 2026, many communications still refer to the Income-tax Act, 1961.
+                  From 1 April 2026, the Income-tax Act, 2025 uses renumbered provisions. Use the section printed
+                  on your actual notice first; this comparison helps you read both references together.
+                </p>
+              </div>
+
+              <div className="divide-y divide-slate-100">
+                {noticeLawTransitionRows.map((row) => (
+                  <div key={`${row.oldSection}-${row.newSection}`} className="grid gap-5 p-5 lg:grid-cols-[1fr_0.9fr_1.35fr] lg:items-start">
+                    <div>
+                      <h4 className="font-bold text-slate-950">{row.title}</h4>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">{row.trigger}</p>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm font-bold">
+                      <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800">
+                        1961: {row.oldSection}
+                      </span>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-red-500" aria-hidden="true" />
+                      <span className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-red-700">
+                        2025: {row.newSection}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-6 text-slate-600">
+                      <span className="font-semibold text-slate-900">Response focus:</span> {row.responseFocus}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-12">
                <div className="space-y-6">

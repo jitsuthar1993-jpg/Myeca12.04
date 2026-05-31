@@ -169,18 +169,18 @@ function CampaignHubPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
-        <div className="rounded-2xl border border-blue-100 bg-blue-700 p-6 text-white md:p-8">
+        <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-emerald-50 p-6 shadow-sm md:p-8">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">Complex case?</p>
-              <h2 className="type-section-title mt-2 font-black">Get a scoped CA review before filing.</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-blue-50">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">Complex case?</p>
+              <h2 className="type-section-title mt-2 font-black text-blue-800">Get a scoped CA review before filing.</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
                 AIS mismatches, multiple employers, capital gains, business income, foreign assets, and notices
                 should be reviewed before the return is submitted.
               </p>
             </div>
             <Link href="/expert-consultation">
-              <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+              <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:border-blue-300 hover:bg-blue-50">
                 Request expert review <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

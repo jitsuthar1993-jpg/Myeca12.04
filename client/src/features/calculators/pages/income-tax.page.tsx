@@ -295,19 +295,23 @@ export default function IncomeTaxCalculator() {
           <div className="mt-4 grid gap-2">
             <Link href="/itr/form-selector">
               <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
-                File ITR with this estimate
+                File with this estimate
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setCurrentStep(1)}
-              className="h-11 w-full rounded-lg border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50"
-            >
-              Review deductions and regime
-            </Button>
+            <Link href="/expert-consultation?service=income-tax-estimate">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 w-full rounded-lg border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50"
+              >
+                Ask CA before paying
+              </Button>
+            </Link>
           </div>
+          <p className="mt-3 text-xs leading-5 text-slate-500">
+            Estimate only. Final filing depends on AIS, Form 16, TDS credits and supporting documents.
+          </p>
         </div>
 
         {/* Main Calculator Grid */}
@@ -851,10 +855,10 @@ export default function IncomeTaxCalculator() {
                 </div>
                 <div>
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Need expert help?</h4>
-                  <p className="text-xs text-[#667085] mb-2">Plan your tax with our expert CA</p>
-                  <Link href="/services/tax-planning">
+                  <p className="text-xs text-[#667085] mb-2">Confirm scope before paying for filing or advisory.</p>
+                  <Link href="/expert-consultation?service=income-tax-estimate">
                     <button className="text-sm font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
-                      Book Free Consultation
+                      Ask CA before paying
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </Link>

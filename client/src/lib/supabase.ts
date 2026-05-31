@@ -1,9 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from "@shared/supabase-public";
+import { isSupabaseEnabled, supabaseAnonKey, supabaseUrl } from "./supabase-config";
 
-export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || PUBLIC_SUPABASE_URL;
-export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || PUBLIC_SUPABASE_ANON_KEY;
-export const isSupabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
+export { isSupabaseEnabled, supabaseAnonKey, supabaseUrl };
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

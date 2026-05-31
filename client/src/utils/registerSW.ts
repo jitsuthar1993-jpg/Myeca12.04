@@ -19,6 +19,18 @@ interface BeforeInstallPromptEvent extends Event {
 
 let isReloadingForServiceWorkerUpdate = false;
 let shouldReloadForServiceWorkerUpdate = false;
+let updateNotificationTimer: number | undefined;
+
+const UPDATE_NOTIFICATION_DELAY_MS = 45_000;
+const UPDATE_NOTIFICATION_CONVERSION_PATHS = ["/", "/pricing", "/itr/start", "/itr/form-selector"];
+
+function isConversionPath(path: string) {
+  const normalized = (path.split(/[?#]/)[0] || "/").replace(/\/+$/, "") || "/";
+  return UPDATE_NOTIFICATION_CONVERSION_PATHS.some((prefix) => {
+    if (prefix === "/") return normalized === "/";
+    return normalized === prefix || normalized.startsWith(`${prefix}/`);
+  });
+}
 
 function applyWaitingServiceWorkerUpdate(registration?: ServiceWorkerRegistration) {
   const waitingWorker = registration?.waiting;
@@ -128,15 +140,30 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
 
 // Show notification when update is available
 function showUpdateNotification(registration?: ServiceWorkerRegistration) {
+  const pathAtRequest = window.location.pathname;
+  if (isConversionPath(pathAtRequest)) {
+    window.clearTimeout(updateNotificationTimer);
+    updateNotificationTimer = window.setTimeout(() => {
+      if (isConversionPath(window.location.pathname)) {
+        renderUpdateNotification(registration, true);
+      }
+    }, UPDATE_NOTIFICATION_DELAY_MS);
+    return;
+  }
+
+  renderUpdateNotification(registration, false);
+}
+
+function renderUpdateNotification(registration?: ServiceWorkerRegistration, conversionPlacement = false) {
   document.getElementById('sw-update-notification')?.remove();
 
   const notification = document.createElement('div');
   notification.id = 'sw-update-notification';
   Object.assign(notification.style, {
     position: 'fixed',
-    bottom: '20px',
-    left: '20px',
-    right: '20px',
+    ...(conversionPlacement
+      ? { top: '88px', right: '16px', left: '16px' }
+      : { bottom: '20px', left: '20px', right: '20px' }),
     maxWidth: '400px',
     background: 'white',
     borderRadius: '12px',

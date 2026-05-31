@@ -41,6 +41,8 @@ describe("public performance cache policy", () => {
   it("keeps font and splash-image hints lean for first paint", () => {
     const html = read("client/index.html");
     const app = read("client/src/App.tsx");
+    const main = read("client/src/main.tsx");
+    const errorBoundary = read("client/src/components/ErrorBoundary.tsx");
 
     expect(html).toContain("Inter:wght@400;500;600;700&display=swap");
     expect(html).not.toContain("Inter:wght@400;500;600;700;800;900&display=swap");
@@ -48,12 +50,19 @@ describe("public performance cache policy", () => {
     expect(html).toContain('content="https://myeca.in/og-image.jpg"');
     expect(app).toContain("import('@/components/pwa/PwaInstallBanner')");
     expect(app).not.toContain("import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner'");
+    expect(main).not.toContain('import { initClientSentry } from "./telemetry/sentry.client"');
+    expect(main).toContain('import("./telemetry/sentry.client")');
+    expect(errorBoundary).not.toContain("import { captureClientException } from '@/telemetry/sentry.client'");
+    expect(errorBoundary).toContain("import('@/telemetry/sentry.client')");
   });
 
   it("keeps Workbox cache bounds tight for generated public assets", () => {
     const viteConfig = read("vite.config.ts");
 
     expect(viteConfig).toContain("maximumFileSizeToCacheInBytes: 2 * 1024 * 1024");
+    expect(viteConfig).toContain('globPatterns: ["index.html", "**/*.{js,css,png,svg,webp,json,woff2}"]');
+    expect(viteConfig).toContain('globIgnores: ["assets/logos/*"]');
+    expect(viteConfig).not.toContain('globPatterns: ["**/*.{js,css,html,png,svg,webp,json,woff2}"]');
     expect(viteConfig).toContain("publicDocumentRoutePattern");
     expect(viteConfig).toContain("publicDocumentUrlPattern");
     expect(viteConfig).toContain("^https?:\\\\/\\\\/[^/?#]+");

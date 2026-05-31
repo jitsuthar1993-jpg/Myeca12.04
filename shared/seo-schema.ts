@@ -37,6 +37,17 @@ export type HowToSchemaInput = {
   steps: Array<string | { name?: string; text: string; image?: string }>;
 };
 
+export type CollectionPageSchemaInput = {
+  url: string;
+  name: string;
+  description: string;
+  items: Array<{
+    name: string;
+    url: string;
+    description?: string;
+  }>;
+};
+
 function absoluteUrl(value: string | null | undefined) {
   if (!value) return DEFAULT_OG_IMAGE;
   if (/^https?:\/\//i.test(value)) return value;
@@ -271,5 +282,34 @@ export function buildHowToSchema(input: HowToSchemaInput): Thing | null {
         image: normalized.image ? absoluteUrl(normalized.image) : undefined,
       };
     }),
+  };
+}
+
+export function buildCollectionPageSchema(input: CollectionPageSchemaInput): Thing {
+  const items = input.items
+    .filter((item) => item.name.trim() && item.url.trim())
+    .map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name.trim(),
+      url: absoluteUrl(item.url),
+      ...(item.description?.trim() ? { description: item.description.trim() } : {}),
+    }));
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${absoluteUrl(input.url)}#collection`,
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.url),
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    mainEntity: {
+      "@type": "ItemList",
+      "@id": `${absoluteUrl(input.url)}#itemlist`,
+      numberOfItems: items.length,
+      itemListElement: items,
+    },
   };
 }

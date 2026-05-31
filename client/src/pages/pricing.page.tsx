@@ -23,6 +23,38 @@ const pricingHighlights = [
 
 const proofPoints = ["Scope before payment", "GST treatment visible", "CA touchpoints shown"];
 
+const popularPaths = [
+  {
+    name: "Salary",
+    price: "Rs 499",
+    detail: "Simple salary and interest income",
+    href: "/itr/start?plan=salary&source=pricing_popular_paths",
+    cta: "Start ITR Filing",
+  },
+  {
+    name: "Expert Assisted",
+    price: "Rs 999",
+    detail: "CA review, AIS/26AS checks, Form 16 support",
+    href: "/itr/start?plan=expert-assisted&source=pricing_popular_paths",
+    cta: "Start ITR Filing",
+    featured: true,
+  },
+  {
+    name: "Capital Gains",
+    price: "Rs 1,499+",
+    detail: "Stocks, mutual funds, property, crypto/VDA",
+    href: "/itr/start?profile=capital-gains&source=pricing_popular_paths",
+    cta: "Start ITR Filing",
+  },
+  {
+    name: "Business / GST",
+    price: "Scope first",
+    detail: "GST, TDS, company compliance and business filings",
+    href: "/services",
+    cta: "View Business Services",
+  },
+];
+
 const comparisonColumns = ["Salary", "Expert", "Capital Gains", "Business"];
 const comparisonRows = [
   ["Named CA review", "Add-on", "Yes", "Yes", "Dedicated owner"],
@@ -81,17 +113,17 @@ export default function PricingPage() {
               GST treatment, timelines, and exclusions visible before you start.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/itr/form-selector" className="w-full sm:w-auto">
+              <Link href="/itr/start?source=pricing_hero" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full bg-slate-800 hover:bg-slate-900 sm:w-auto">
-                  Start filing
+                  Start ITR Filing
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/services" className="w-full sm:w-auto">
+              <a href="#popular-pricing-paths" className="w-full sm:w-auto">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  View services
+                  Compare Pricing
                 </Button>
-              </Link>
+              </a>
             </div>
             <div className="mt-8 flex flex-col gap-3 text-sm font-semibold text-slate-600 sm:flex-row sm:flex-wrap">
               {proofPoints.map((point) => (
@@ -135,6 +167,37 @@ export default function PricingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="popular-pricing-paths" className="border-b border-slate-100 bg-white px-4 py-8 sm:px-6 md:py-10 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">Popular filing paths</p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 md:text-3xl">
+                Pick the nearest case and start with scope clarity.
+              </h2>
+            </div>
+            <p className="max-w-xl text-sm leading-6 text-slate-600">
+              Scope is confirmed before payment. Refund outcomes are never guaranteed by any filing plan.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {popularPaths.map((path) => (
+              <Link key={path.name} href={path.href} className="group h-full">
+                <div className={`flex h-full flex-col rounded-lg border p-5 shadow-sm transition group-hover:-translate-y-0.5 group-hover:shadow-lg ${path.featured ? "border-blue-300 bg-blue-50/60" : "border-slate-200 bg-slate-50/70 group-hover:bg-white"}`}>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-700">{path.name}</p>
+                  <p className="mt-3 text-3xl font-black text-slate-950">{path.price}</p>
+                  <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{path.detail}</p>
+                  <span className="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-black text-white transition group-hover:bg-blue-700">
+                    {path.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

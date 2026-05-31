@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
   TEMPORARY_TEST_AUTH_TOKEN_KEY,
 } from "@/lib/temporary-test-users";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
-import { getAuthToken } from "@/lib/authToken";
+import { getAuthToken, hasStoredSupabaseSession } from "@/lib/authToken";
 
 vi.mock("@/lib/supabase", () => ({
   supabase: {
@@ -22,6 +22,11 @@ vi.mock("@/lib/supabase", () => ({
 }));
 
 describe("auth session state", () => {
+  afterEach(() => {
+    sessionStorage.clear();
+    localStorage.clear();
+  });
+
   it("clears stale temporary test auth before real auth flows", () => {
     sessionStorage.setItem(TEMPORARY_TEST_AUTH_TOKEN_KEY, "myeca-temp-test:user");
     sessionStorage.setItem(
@@ -61,8 +66,14 @@ describe("auth session state", () => {
 
   it("ignores stale generic tokens when a Supabase session exists", async () => {
     sessionStorage.setItem(TEMPORARY_TEST_AUTH_TOKEN_KEY, "stale-token");
+    localStorage.setItem("sb-test-auth-token", JSON.stringify({ currentSession: true }));
 
     await expect(getAuthToken()).resolves.toBe("supabase-token");
     expect(sessionStorage.getItem(TEMPORARY_TEST_AUTH_TOKEN_KEY)).toBeNull();
+  });
+
+  it("skips Supabase session recovery when anonymous storage is empty", async () => {
+    expect(hasStoredSupabaseSession()).toBe(false);
+    await expect(getAuthToken()).resolves.toBeNull();
   });
 });

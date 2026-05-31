@@ -13,9 +13,23 @@ export type BrowserTelemetryConfig = {
   crispWebsiteId?: string;
 };
 
-function readEnv(key: string) {
-  return String(import.meta.env[key] || "").trim() || undefined;
-}
+const gaMeasurementId = String(import.meta.env.VITE_GA_MEASUREMENT_ID || "").trim() || undefined;
+const clarityProjectId = String(import.meta.env.VITE_CLARITY_PROJECT_ID || "").trim() || undefined;
+const posthogKey = String(import.meta.env.VITE_POSTHOG_KEY || "").trim() || undefined;
+const posthogHost = String(import.meta.env.VITE_POSTHOG_HOST || "").trim() || "https://us.i.posthog.com";
+const sentryDsn = String(import.meta.env.VITE_SENTRY_DSN || "").trim() || undefined;
+const crispWebsiteId = String(import.meta.env.VITE_CRISP_WEBSITE_ID || "").trim() || undefined;
+
+export const hasSentryTelemetryConfig = Boolean(sentryDsn);
+export const hasPosthogTelemetryConfig = Boolean(posthogKey);
+export const hasCrispTelemetryConfig = Boolean(crispWebsiteId);
+export const hasBrowserTelemetryConfig = Boolean(
+  gaMeasurementId ||
+    clarityProjectId ||
+    posthogKey ||
+    sentryDsn ||
+    crispWebsiteId,
+);
 
 export function getTelemetryConsent() {
   if (typeof window === "undefined") return undefined;
@@ -46,12 +60,12 @@ export function setTelemetryConsent(value: TelemetryConsent) {
 
 export function getBrowserTelemetryConfig(): BrowserTelemetryConfig {
   return {
-    gaMeasurementId: readEnv("VITE_GA_MEASUREMENT_ID"),
-    clarityProjectId: readEnv("VITE_CLARITY_PROJECT_ID"),
-    posthogKey: readEnv("VITE_POSTHOG_KEY"),
-    posthogHost: readEnv("VITE_POSTHOG_HOST") || "https://us.i.posthog.com",
-    sentryDsn: readEnv("VITE_SENTRY_DSN"),
-    crispWebsiteId: readEnv("VITE_CRISP_WEBSITE_ID"),
+    gaMeasurementId,
+    clarityProjectId,
+    posthogKey,
+    posthogHost,
+    sentryDsn,
+    crispWebsiteId,
   };
 }
 

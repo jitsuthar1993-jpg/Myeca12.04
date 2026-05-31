@@ -237,6 +237,42 @@ describe("user service routes", () => {
     });
   });
 
+  it("accepts privacy-safe ITR start conversion metadata", async () => {
+    const { response, json } = await request("/api/user-services", {
+      method: "POST",
+      body: JSON.stringify({
+        serviceId: "itr-filing",
+        serviceTitle: "Salary ITR Filing",
+        serviceCategory: "Individual Tax Services",
+        paymentAmount: 499,
+        metadata: {
+          requestDescription: "ITR start diagnosis recommended Salary plan.",
+          source: "itr_start_funnel",
+          requestedAt: "2026-05-31T12:00:00.000Z",
+          originalServicePath: "/itr/start",
+          conversionSource: "homepage_hero",
+          recommendedPlanId: "salary",
+          assessmentYear: "2026-27",
+          incomeProfile: ["salary"],
+          assistanceLevel: "guided",
+          ctaVariant: "primary_start",
+        },
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json.service.metadata).toMatchObject({
+      source: "itr_start_funnel",
+      originalServicePath: "/itr/start",
+      conversionSource: "homepage_hero",
+      recommendedPlanId: "salary",
+      assessmentYear: "2026-27",
+      incomeProfile: ["salary"],
+      assistanceLevel: "guided",
+      ctaVariant: "primary_start",
+    });
+  });
+
   it("rejects user-submitted operational service state", async () => {
     const { response, json } = await request("/api/user-services", {
       method: "POST",

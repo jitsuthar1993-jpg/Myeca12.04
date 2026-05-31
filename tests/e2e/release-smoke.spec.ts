@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { CALCULATOR_ROUTE_PATHS } from "../../client/src/routes/client-route-registry";
 
 const publicRoutes = [
   "/",
@@ -182,6 +183,117 @@ async function expectNavigationResetsScroll(page: Page, route: string) {
   }).toBeLessThanOrEqual(5);
 }
 
+async function calculatorStateFingerprint(page: Page) {
+  return page.locator("main").first().evaluate((main) => main.innerText.replace(/\s+/g, " ").trim());
+}
+
+async function clickEnabledCalculatorAction(page: Page) {
+  const actionButtons = page
+    .locator("main button")
+    .filter({ hasText: /calculate|compare|estimate|check|find|search/i })
+    .filter({ visible: true });
+
+  for (let index = 0; index < await actionButtons.count(); index += 1) {
+    const button = actionButtons.nth(index);
+    if (await button.isEnabled()) {
+      await button.click();
+      return;
+    }
+  }
+}
+
+function nextSampleNumberValue(value: string, minValue: string, maxValue: string) {
+  const current = Number.parseFloat(value);
+  const min = Number.parseFloat(minValue);
+  const max = Number.parseFloat(maxValue);
+  const base = Number.isFinite(current) ? current : Number.isFinite(min) ? min : 100000;
+  const delta = Math.max(1, Math.abs(base) * 0.1);
+  let next = base + delta;
+
+  if (Number.isFinite(max) && next > max) next = base - delta;
+  if (Number.isFinite(min) && next < min) next = min;
+  if (next === base) next = base + 1;
+
+  return Number.isInteger(next) ? String(next) : next.toFixed(2);
+}
+
+async function fillCalculatorInputs(page: Page, route: string) {
+  const editableControls = page
+    .locator("main input:not([type='hidden']):not([type='range']):not([disabled]), main textarea:not([disabled])")
+    .filter({ visible: true });
+  const controlCount = await editableControls.count();
+  if (controlCount === 0) return false;
+
+  const isRegimeComparison = route.includes("tax-regime") || route.includes("regime-comparator");
+  const controlsToFill = isRegimeComparison ? Math.min(controlCount, 2) : 1;
+
+  for (let index = 0; index < controlsToFill; index += 1) {
+    const control = editableControls.nth(index);
+    const field = await control.evaluate((element: HTMLInputElement | HTMLTextAreaElement) => ({
+      type: (element.getAttribute("type") || "text").toLowerCase(),
+      value: element.value,
+      min: element.getAttribute("min") || "",
+      max: element.getAttribute("max") || "",
+      readOnly: element.readOnly,
+    }));
+
+    if (field.readOnly) continue;
+
+    let sampleValue = "500000";
+    if (isRegimeComparison) sampleValue = index === 0 ? "1200000" : "150000";
+    else if (route === "/calculators") sampleValue = "gst";
+    else if (route.includes("hsn-finder")) sampleValue = "laptop";
+    else if (field.type === "date") sampleValue = "2025-04-01";
+    else if (field.type === "number") sampleValue = nextSampleNumberValue(field.value, field.min, field.max);
+
+    await control.scrollIntoViewIfNeeded();
+    await control.fill(sampleValue);
+  }
+
+  await clickEnabledCalculatorAction(page);
+  return true;
+}
+
+async function moveCalculatorSlider(page: Page) {
+  const sliders = page
+    .locator("main [role='slider']:not([aria-disabled='true']), main input[type='range']:not([disabled])")
+    .filter({ visible: true });
+
+  if (await sliders.count() === 0) return false;
+
+  const slider = sliders.first();
+  await slider.scrollIntoViewIfNeeded();
+  await slider.focus();
+  await slider.press("ArrowRight");
+  await slider.press("ArrowRight");
+  await clickEnabledCalculatorAction(page);
+  return true;
+}
+
+async function changeCalculatorSampleInput(page: Page, route: string) {
+  await expect
+    .poll(
+      () =>
+        page
+          .locator("main input:not([type='hidden']), main textarea, main select, main [role='slider'], main button")
+          .filter({ visible: true })
+          .count(),
+      { message: `${route} should expose an interactive calculator control` },
+    )
+    .toBeGreaterThan(0);
+
+  if (route === "/calculators/general") {
+    await page.keyboard.type("2+3");
+    await page.keyboard.press("Enter");
+    return;
+  }
+
+  if (await fillCalculatorInputs(page, route)) return;
+  if (await moveCalculatorSlider(page)) return;
+
+  throw new Error(`No sample calculator input could be changed for ${route}`);
+}
+
 test.describe("release smoke", () => {
   test("serves core SEO and PWA assets", async ({ request }) => {
     const manifest = await request.get("/manifest.json");
@@ -288,6 +400,35 @@ test.describe("release smoke", () => {
     for (const route of publicRoutes) {
       await expectUsablePage(page, route);
       await expectNoHorizontalOverflow(page, route);
+    }
+  });
+
+  test("calculator routes render usable results without layout overflow", async ({ page }) => {
+    test.setTimeout(90_000);
+
+    for (const route of CALCULATOR_ROUTE_PATHS) {
+      await expectUsablePage(page, route);
+      await expectNoHorizontalOverflow(page, route);
+
+      const bodyText = await page.locator("body").innerText();
+      expect(bodyText, `${route} should expose a calculator result`).toMatch(/₹|Tax|EMI|Maturity|Invoice|Eligible|Payable|Interest/i);
+    }
+  });
+
+  test("calculator sample inputs update visible results", async ({ page }) => {
+    test.setTimeout(90_000);
+
+    for (const route of CALCULATOR_ROUTE_PATHS) {
+      await expectUsablePage(page, route);
+      const before = await calculatorStateFingerprint(page);
+
+      await changeCalculatorSampleInput(page, route);
+
+      await expect
+        .poll(() => calculatorStateFingerprint(page), {
+          message: `${route} should update visible calculator output after sample input changes`,
+        })
+        .not.toBe(before);
     }
   });
 

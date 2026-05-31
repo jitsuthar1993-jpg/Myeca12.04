@@ -1,0 +1,28 @@
+import { route, type ClientRouteDefinition } from "../route-types";
+
+export const WORKSPACE_ROUTES = [
+  route("/documents/generator", "workspace", "client/src/pages/documents/registry.page.tsx"),
+  route("/documents/generator_page", "workspace", "client/src/pages/documents/registry.page.tsx"),
+  route("/documents/generator/:type", "workspace", "client/src/pages/documents/generator.page.tsx"),
+  route("/business/dashboard", "workspace", "client/src/pages/business/dashboard.page.tsx"),
+  route("/payments", "workspace", "client/src/pages/payments.page.tsx"),
+  route("/dashboard/services/:id", "workspace", "client/src/pages/dashboard/service-detail.page.tsx"),
+  route("/dashboard/services", "workspace", "client/src/pages/dashboard/services.page.tsx"),
+  route("/dashboard", "workspace", "client/src/pages/user-dashboard.page.tsx"),
+  route("/user", "workspace", "client/src/pages/user-dashboard.page.tsx"),
+  route("/account", "workspace", "client/src/pages/dashboard/account.page.tsx"),
+  route("/profile", "workspace", "client/src/pages/dashboard/account.page.tsx"),
+  route("/settings", "workspace", "client/src/pages/dashboard/account.page.tsx"),
+  route("/settings/account", "workspace", "client/src/pages/dashboard/account.page.tsx"),
+  route("/documents", "workspace", "client/src/pages/documents.page.tsx"),
+  route("/itr/filing", "workspace", "client/src/features/itr/pages/filing.page.tsx"),
+  route("/analytics", "workspace", "client/src/pages/analytics.page.tsx"),
+  route("/analytics-dashboard", "workspace", "client/src/pages/analytics-dashboard.page.tsx"),
+  route("/api-docs", "workspace", "client/src/pages/api-docs.page.tsx"),
+  route("/export", "workspace", "client/src/pages/export-center.page.tsx"),
+  route("/integrations", "workspace", "client/src/pages/integrations.page.tsx"),
+  route("/reports", "workspace", "client/src/pages/reports.page.tsx"),
+  route("/workflows", "workspace", "client/src/pages/workflows.page.tsx"),
+  route("/teams", "workspace", "client/src/pages/teams.page.tsx"),
+  route("/referrals", "workspace", "client/src/pages/referrals.page.tsx"),
+] as const satisfies readonly ClientRouteDefinition[];

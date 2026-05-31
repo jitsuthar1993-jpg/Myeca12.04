@@ -109,6 +109,7 @@ export default function TdsFilingPage() {
   const tdsRatesData = [
     {
       section: "194A",
+      newSection: "Section 393 table",
       type: "Interest",
       rate: "10%",
       threshold: "Rs 50,000; Rs 1,00,000 for senior citizens",
@@ -116,6 +117,7 @@ export default function TdsFilingPage() {
     },
     {
       section: "194C",
+      newSection: "Section 393(1) table",
       type: "Contractor Payments",
       rate: "1% (Individual/HUF), 2% (Others)",
       threshold: "Rs 30,000 per transaction / Rs 1,00,000 per year",
@@ -123,6 +125,7 @@ export default function TdsFilingPage() {
     },
     {
       section: "194H",
+      newSection: "Section 393 table",
       type: "Commission/Brokerage",
       rate: "2%",
       threshold: "Rs 20,000 per year",
@@ -130,6 +133,7 @@ export default function TdsFilingPage() {
     },
     {
       section: "194I",
+      newSection: "Section 393 table",
       type: "Rent",
       rate: "2% (Plant/Machinery), 10% (Land/Building)",
       threshold: "Rs 6,00,000 per year; 194IB has separate Rs 50,000/month rule",
@@ -137,6 +141,7 @@ export default function TdsFilingPage() {
     },
     {
       section: "194J",
+      newSection: "Section 393 table",
       type: "Professional Fees",
       rate: "10% (Professional), 2% (Technical)",
       threshold: "Rs 50,000 per year",
@@ -144,10 +149,65 @@ export default function TdsFilingPage() {
     },
     {
       section: "192",
+      newSection: "Section 392(1)",
       type: "Salary",
       rate: "As per tax slab",
       threshold: "Above basic exemption limit",
       description: "Salary payments to employees"
+    }
+  ];
+
+  const actTransitionHighlights = [
+    {
+      title: "Old Act section handling",
+      subtitle: "Income Tax Act, 1961",
+      icon: BookOpen,
+      color: "blue",
+      period: "Payments or credits up to 31 March 2026",
+      points: [
+        "Use existing TDS sections such as 192, 194A, 194C, 194H, 194I, and 194J.",
+        "FY 2025-26 returns, corrections, challans, and certificates continue under the old Act.",
+        "If TDS was already deducted before 1 April 2026, do not deduct again only because payment happens later."
+      ]
+    },
+    {
+      title: "New Act section handling",
+      subtitle: "Income-tax Act, 2025",
+      icon: FileText,
+      color: "indigo",
+      period: "Payments or credits from 1 April 2026",
+      points: [
+        "Salary TDS moves to Section 392, while most non-salary TDS shifts to Section 393 tables.",
+        "TCS collection references shift to Section 394 for new-Act transactions.",
+        "Return files should quote the new section/table reference for Tax Year 2026-27 transactions."
+      ]
+    }
+  ];
+
+  const sectionTransitionData = [
+    {
+      area: "Salary payments",
+      oldSection: "Section 192",
+      newSection: "Section 392(1)",
+      filingNote: "Use 24Q for salary TDS and map April 2026 onward salary payments to the new Act reference."
+    },
+    {
+      area: "Interest, commission, rent, contractors, professional fees",
+      oldSection: "Sections 194A, 194H, 194I, 194C, 194J",
+      newSection: "Section 393 tables",
+      filingNote: "Use the relevant 393 table item instead of quoting old section numbers for new-Act transactions."
+    },
+    {
+      area: "PAN-based challan-cum-statement cases",
+      oldSection: "Forms 26QB, 26QC, 26QD, 26QE",
+      newSection: "Form 141 under Section 393(1)",
+      filingNote: "Use the consolidated Form 141 workflow where the transaction falls under the new Act."
+    },
+    {
+      area: "Tax collected at source",
+      oldSection: "Section 206C series",
+      newSection: "Section 394",
+      filingNote: "Apply the same date-based transition principle for TCS debit or receipt events."
     }
   ];
 
@@ -306,6 +366,10 @@ export default function TdsFilingPage() {
                   <li className="flex items-start">
                     <AlertCircle className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
                     Late filing fee is Rs 200/day; avoid penalties by timely filing.
+                  </li>
+                  <li className="flex items-start">
+                    <BookOpen className="w-4 h-4 mr-2 text-purple-600 mt-0.5" />
+                    Use old sections up to 31 Mar 2026 and new Act references from 1 Apr 2026.
                   </li>
                 </ul>
               </CardContent>
@@ -552,6 +616,108 @@ export default function TdsFilingPage() {
           </Card>
         </m.div>
 
+        {/* Old and New Act Section Transition */}
+        <m.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+              Old and New TDS Sections
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Date-based section mapping for the Income Tax Act, 1961 and Income-tax Act, 2025 transition
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {actTransitionHighlights.map((item) => (
+              <Card
+                key={item.title}
+                className={`border-l-4 ${
+                  item.color === "blue" ? "border-l-blue-500" : "border-l-indigo-500"
+                }`}
+              >
+                <CardHeader>
+                  <CardTitle className={`flex items-center gap-2 ${
+                    item.color === "blue" ? "text-blue-900" : "text-indigo-900"
+                  }`}>
+                    <item.icon className="w-6 h-6" />
+                    {item.title}
+                  </CardTitle>
+                  <CardDescription>
+                    {item.subtitle} - {item.period}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {item.points.map((point) => (
+                      <li key={point} className="flex items-start">
+                        <CheckCircle className={`w-4 h-4 mr-3 flex-shrink-0 mt-1 ${
+                          item.color === "blue" ? "text-blue-500" : "text-indigo-500"
+                        }`} />
+                        <span className="text-sm text-gray-700">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-indigo-900">
+                <BookOpen className="w-6 h-6" />
+                Section Mapping for Filing Review
+              </CardTitle>
+              <CardDescription>
+                Use this as a quick review grid before selecting challan, return, or certificate references
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 font-semibold">Area</th>
+                      <th className="text-left py-3 font-semibold">Old Act Section</th>
+                      <th className="text-left py-3 font-semibold">New Act Reference</th>
+                      <th className="text-left py-3 font-semibold">Filing Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sectionTransitionData.map((item) => (
+                      <tr key={item.area} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 font-medium">{item.area}</td>
+                        <td className="py-3">
+                          <Badge variant="outline" className="font-mono">
+                            {item.oldSection}
+                          </Badge>
+                        </td>
+                        <td className="py-3">
+                          <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">
+                            {item.newSection}
+                          </Badge>
+                        </td>
+                        <td className="py-3 text-sm text-gray-600">{item.filingNote}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Alert className="mt-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Exact table serial numbers can vary by payee, payment type, threshold, and portal utility version. We verify the section/table reference before filing.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+        </m.div>
+
         {/* TDS Forms Overview */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
@@ -635,10 +801,10 @@ export default function TdsFilingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-indigo-900">
                 <Calculator className="w-6 h-6" />
-                TDS Rates FY 2025-26 - Key Sections
+                TDS Rates FY 2025-26 - Old and New Sections
               </CardTitle>
               <CardDescription>
-                TDS rates and threshold limits effective for the current financial year
+                Common rates with Income Tax Act, 1961 sections and Income-tax Act, 2025 references
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -646,7 +812,8 @@ export default function TdsFilingPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 font-semibold">Section</th>
+                      <th className="text-left py-3 font-semibold">Old Section</th>
+                      <th className="text-left py-3 font-semibold">New Reference</th>
                       <th className="text-left py-3 font-semibold">Payment Type</th>
                       <th className="text-left py-3 font-semibold">TDS Rate</th>
                       <th className="text-left py-3 font-semibold">Threshold</th>
@@ -658,6 +825,11 @@ export default function TdsFilingPage() {
                         <td className="py-3">
                           <Badge variant="outline" className="font-mono font-bold">
                             {rate.section}
+                          </Badge>
+                        </td>
+                        <td className="py-3">
+                          <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">
+                            {rate.newSection}
                           </Badge>
                         </td>
                         <td className="py-3">

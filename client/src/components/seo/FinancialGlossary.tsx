@@ -95,13 +95,13 @@ export default function FinancialGlossary() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
               <BookOpen className="h-3.5 w-3.5" />
-              Tax terms
+              People also ask before filing
             </div>
             <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
-              Look up the terms that affect your filing.
+              Clear answers to tax terms that change your filing path.
             </h2>
             <p className="mt-3 text-sm leading-6 text-slate-600 md:text-base">
-              Short explanations for ITR, GST, deductions, TDS, capital gains, and document terms that often appear during filing.
+              Search-friendly definitions for ITR, GST, deductions, TDS, capital gains, notices, and document terms that users ask before choosing a service.
             </p>
           </div>
 
@@ -191,7 +191,7 @@ export default function FinancialGlossary() {
             <div>
               <h4 className="text-lg font-extrabold text-slate-950 md:text-xl">Need help applying a term to your return?</h4>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                Ask for a scoped review when a deduction, GST item, capital gain, or notice term changes your filing path.
+                Ask for a scoped review when a deduction, GST item, capital gain, notice, or document term changes your filing path.
               </p>
             </div>
           </div>

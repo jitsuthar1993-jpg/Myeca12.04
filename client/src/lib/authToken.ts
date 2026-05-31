@@ -1,4 +1,3 @@
-import { supabase } from "./supabase";
 import {
   TEMPORARY_TEST_AUTH_TOKEN_KEY,
   TEMPORARY_TEST_AUTH_TOKEN_PREFIX,
@@ -6,6 +5,25 @@ import {
 import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
 const SUPABASE_SESSION_TOKEN_KEY = "myeca:supabase-access-token";
+
+export function hasStoredSupabaseSession() {
+  if (typeof window === "undefined") return false;
+
+  try {
+    if (window.sessionStorage.getItem(SUPABASE_SESSION_TOKEN_KEY)) return true;
+
+    for (let index = 0; index < window.localStorage.length; index += 1) {
+      const key = window.localStorage.key(index);
+      if (key?.startsWith("sb-") && key.endsWith("-auth-token")) {
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
+}
 
 export async function getAuthToken() {
   const temporaryToken = sessionStorage.getItem(TEMPORARY_TEST_AUTH_TOKEN_KEY);
@@ -21,6 +39,12 @@ export async function getAuthToken() {
     sessionStorage.removeItem(TEMPORARY_TEST_AUTH_TOKEN_KEY);
   }
 
+  const cachedToken = sessionStorage.getItem(SUPABASE_SESSION_TOKEN_KEY);
+  if (cachedToken) return cachedToken;
+
+  if (!hasStoredSupabaseSession()) return null;
+
+  const { supabase } = await import("./supabase");
   const { data } = await supabase.auth.getSession();
   if (data.session?.access_token) {
     setAuthToken(data.session.access_token);

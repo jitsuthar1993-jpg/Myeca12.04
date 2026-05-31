@@ -97,6 +97,60 @@ const COMMERCIAL_ROUTE_CONTENT = Object.fromEntries(
 ) as Record<string, PriorityItrRouteContent>;
 
 export const PRIORITY_ITR_ROUTE_CONTENT = {
+  "/itr-filing": {
+    highlights: [
+      "Commercial ITR filing pillar for AY 2026-27",
+      "CA-assisted review for Form 16, AIS, Form 26AS, refunds, and notices",
+      "Routes taxpayers from evidence gathering to the correct filing path",
+    ],
+    sections: [
+      {
+        heading: "Who this is for",
+        body:
+          "Use this ITR filing service page when FY 2025-26 income needs an AY 2026-27 return and the taxpayer wants a guided path from documents to form selection, computation, review, filing, and e-verification. It is especially relevant for salary, capital gains, freelance income, refund claims, AIS mismatch, and notice-risk cases.",
+        items: ["Salaried taxpayers with Form 16 or multiple employers", "Investors, freelancers, and taxpayers with refund or notice questions"],
+      },
+      {
+        heading: "Documents needed",
+        body:
+          "Before starting assisted filing, keep source records ready so every figure can be traced. The core evidence file should include Form 16 or Form 16A, AIS, TIS, Form 26AS, bank statements, deduction proofs, capital gains reports where applicable, challans, and bank validation proof for refunds.",
+        items: ["Form 16, AIS, TIS, and Form 26AS", "Broker statements, deduction proofs, challans, and refund-bank validation where relevant"],
+      },
+      {
+        heading: "Common mistakes",
+        body:
+          "The most common ITR filing mistakes are route mistakes: choosing ITR-1 when ITR-2 or ITR-3 is required, claiming TDS without matching income, filing before AIS or Form 26AS settles, using the wrong correction route, or selecting a tax regime without proof-backed comparison.",
+        items: ["Do not rely only on portal prefill", "Do not treat revised return, rectification, ITR-U, grievance, and notice reply as interchangeable"],
+      },
+      {
+        heading: "Related calculator",
+        body:
+          "Use the income tax calculator and regime comparator to estimate tax before filing. Calculator output is useful for planning, but the final return still needs official-record matching, correct form selection, and document review.",
+        items: ["Compare old and new regimes", "Save the estimate used for review"],
+      },
+      {
+        heading: "Related guide",
+        body:
+          "The AY 2026-27 ITR season hub and salary tax guide explain the surrounding filing decisions: when to wait for Form 16, how to reconcile AIS and Form 26AS, when capital gains change the ITR form, and when refund or notice risk justifies expert review.",
+        items: ["Use the hub for current-season filing sequence", "Use specific guides for salary, AIS mismatch, and capital gains decisions"],
+      },
+      {
+        heading: "Get CA review",
+        body:
+          "CA review is recommended when the return involves capital gains, business or freelance income, foreign assets, a large refund, an AIS/TDS mismatch, a defective-return notice, or uncertainty about the correct ITR form. MyeCA should present this as process-based review, not as a guaranteed refund or outcome.",
+        items: ["Review the evidence file before submission", "Keep the final computation and acknowledgement after e-verification"],
+      },
+    ],
+    links: [
+      { label: "compare old vs new tax regime", href: "/calculators/regime-comparator" },
+      { label: "check ITR form eligibility", href: "/itr/form-selector" },
+      { label: "upload Form 16", href: "/form16-parser" },
+      { label: "review AIS mismatch", href: "/blog/wait-for-ais-form-26as-before-filing-itr-ay-2026-27" },
+      { label: "file salaried ITR", href: "/services/itr-for-salaried" },
+      { label: "read the AY 2026-27 ITR season hub", href: "/itr-season-2026" },
+    ],
+    requiredTerms: ["ITR filing", "AY 2026-27", "Form 16", "AIS", "CA review"],
+  },
   "/": {
     highlights: [
       "AY 2026-27 ITR filing path",
@@ -294,6 +348,53 @@ export const PRIORITY_ITR_ROUTE_CONTENT = {
       { label: "When will filing start", href: "/blog/when-will-itr-filing-start-ay-2026-27" },
     ],
     requiredTerms: ["AY 2026-27", "ITR", "Form 16", "AIS"],
+  },
+  "/trust": {
+    highlights: [
+      "CA-led review workflow where shown",
+      "Editorial policy and correction policy for tax content",
+      "Secure document and data handling expectations",
+    ],
+    sections: [
+      {
+        heading: "CA review workflow",
+        body:
+          "MyeCA should describe CA review as a documented process: collect source records, reconcile official data, identify form and schedule requirements, prepare the computation, review mismatches, and preserve acknowledgement evidence after filing. The trust page must not imply guaranteed refunds, guaranteed acceptance, or automatic professional advice without a visible review step.",
+        items: ["Source document collection", "Computation and mismatch review", "Final acknowledgement preservation"],
+      },
+      {
+        heading: "Editorial policy and correction policy",
+        body:
+          "The editorial policy should explain that public tax guides are educational, source-backed, and updated when filing-season facts change. The correction policy should invite users to report outdated dates, form references, or broken official-source links so content can be reviewed and corrected.",
+        items: ["Use official source links where legal interpretation matters", "Record visible reviewed or updated dates for important ITR content"],
+      },
+      {
+        heading: "Data handling and document privacy",
+        body:
+          "Data handling should be framed around tax-document sensitivity: Form 16, AIS, Form 26AS, bank statements, broker reports, notices, and identity documents should be uploaded only through secure product workflows or approved support channels. Public pages should never request secrets in open text.",
+        items: ["Avoid sharing PAN, Aadhaar, passwords, or OTPs in public messages", "Use secure upload and account workflows for filing documents"],
+      },
+      {
+        heading: "Refund/payment scope",
+        body:
+          "The refund/payment scope should clearly separate platform fees, government tax payments, payment receipts, refund timing, and department processing. MyeCA can help prepare or review a filing position, but refund release and assessment processing remain with the Income Tax Department.",
+        items: ["Keep challans and payment receipts", "Track refund status through official or product-supported routes"],
+      },
+      {
+        heading: "Contact and escalation",
+        body:
+          "Trust signals improve when users can find contact details, support expectations, legal policies, privacy terms, and escalation paths. These process signals are safer than adding fake ratings, fake review counts, or unsupported credential schema.",
+        items: ["Link to contact, privacy, refund, and disclaimer pages", "Use verifiable reviewer details only where they are visible on-page"],
+      },
+    ],
+    links: [
+      { label: "contact MyeCA support", href: "/contact" },
+      { label: "read privacy policy", href: "/legal/privacy-policy" },
+      { label: "review refund policy", href: "/legal/refund-policy" },
+      { label: "read legal disclaimer", href: "/legal/disclaimer" },
+      { label: "request expert consultation", href: "/expert-consultation" },
+    ],
+    requiredTerms: ["trust", "CA review", "data handling", "privacy", "refund"],
   },
   ...COMMERCIAL_ROUTE_CONTENT,
 } satisfies Partial<Record<PriorityItrSearchRoute, PriorityItrRouteContent>>;

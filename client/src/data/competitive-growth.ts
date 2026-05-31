@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 export const competitiveProofPoints = [
+  "Scope-first CA-assisted tax filing",
   "CA-assisted review where applicable",
   "AIS, 26AS and Form 16 mismatch checklist",
   "Written scope before payment",
@@ -139,6 +140,17 @@ export const competitorPages = [
     myeCAEdge: ["CA-reviewed capital gains", "F&O audit flagging", "Crypto/VDA checklist", "AIS mismatch review before filing"],
     primaryCta: "/capital-gains-import",
     source: "https://quicko.com/pricing",
+  },
+  {
+    slug: "tax2win-alternative",
+    competitor: "Tax2Win",
+    title: "Tax2Win Alternative for Scope-First CA-Assisted ITR Filing",
+    description:
+      "Compare MyeCA with Tax2Win if you want ITR filing that starts with scope clarity, document-led review, AIS checks and CA assistance before sensitive details move into a full filing workflow.",
+    goodPoints: ["Strong tax tools menu", "Form 16 upload positioning", "Assisted filing claims", "Ratings and social proof"],
+    myeCAEdge: ["Scope-first CA-assisted tax filing", "Document-led review before checkout pressure", "No-blind-checkout messaging", "Case history tied to uploads and clarifications"],
+    primaryCta: "/itr/form-selector",
+    source: "https://tax2win.in/",
   },
   {
     slug: "indiafilings-alternative",

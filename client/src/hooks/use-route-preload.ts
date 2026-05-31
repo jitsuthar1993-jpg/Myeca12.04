@@ -9,14 +9,15 @@ import { queryClient } from '@/lib/queryClient';
 import { recoverFromStaleChunk } from '@/utils/chunk-recovery';
 
 const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
-  '/': ['/calculators', '/services', '/experts'],
+  '/': ['/itr/start', '/calculators', '/services', '/experts'],
   '/calculators': ['/calculators/income-tax', '/calculators/sip', '/calculators/hra', '/calculators/emi', '/calculators/hsn-finder'],
-  '/services': ['/services/gst-registration', '/services/company-registration', '/itr/form-selector', '/experts'],
+  '/services': ['/services/gst-registration', '/services/company-registration', '/itr/start', '/experts'],
   '/blog': ['/blog/:slug'],
   '/auth/login': ['/auth/register'],
   '/auth/register': ['/auth/login'],
-  '/dashboard': ['/profiles', '/documents', '/settings', '/itr/form-selector'],
-  '/itr': ['/itr/form-selector', '/itr/status-tracker'],
+  '/dashboard': ['/profiles', '/documents', '/settings', '/itr/start'],
+  '/itr': ['/itr/start', '/itr/form-selector', '/itr/status-tracker'],
+  '/itr/start': ['/itr/form-selector', '/expert-consultation'],
   '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],
   '/experts': ['/experts/ca-rahul-sharma', '/experts/ca-priya-nair'],
 };
@@ -73,6 +74,7 @@ const preloadRoute = (path: string, canPreloadPrivate: boolean) => {
     '/documents': () => import('@/pages/documents.page'),
     '/settings': () => import('@/pages/settings.page'),
     '/itr': () => import('@/features/itr/pages/filing.page'),
+    '/itr/start': () => import('@/features/itr/pages/start.page'),
     '/itr/filing': () => import('@/features/itr/pages/filing.page'),
     '/itr/status-tracker': () => import('@/features/itr/pages/status-tracker.page'),
     '/itr/form-selector': () => import('@/features/itr/pages/form-selector.page'),

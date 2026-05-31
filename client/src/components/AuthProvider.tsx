@@ -7,14 +7,19 @@ import {
   getTemporaryTestUserByEmail,
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
 } from "@/lib/temporary-test-users";
-import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/authToken";
+import {
+  clearAuthToken,
+  getAuthToken,
+  hasStoredSupabaseSession,
+  setAuthToken,
+} from "@/lib/authToken";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
 import {
   buildSignupConfirmationRedirectUrl,
   buildSignupConfirmationResendOptions,
 } from "@/lib/auth-confirmation";
-import { isSupabaseEnabled, supabase } from "@/lib/supabase";
+import { isSupabaseEnabled } from "@/lib/supabase-config";
 import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
 type LogoutReason = "manual" | "timeout" | "session_expired";
@@ -36,6 +41,11 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+async function getSupabaseClient() {
+  const { supabase } = await import("@/lib/supabase");
+  return supabase;
+}
 
 function readTemporaryUserFromSession(): AppUser | null {
   if (typeof window === "undefined") return null;
@@ -188,6 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const supabase = await getSupabaseClient();
     const { data } = await supabase.auth.getUser(token);
     const resolvedAuthUser = nextAuthUser ?? data.user ?? null;
     setAuthUser(resolvedAuthUser);
@@ -211,55 +222,70 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     });
 
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!active) return;
-      setIsLoading(true);
+    let unsubscribe: (() => void) | null = null;
 
-      const temporaryUser = readTemporaryUserFromSession();
-      if (temporaryUser) {
-        setAppUser(temporaryUser);
-        setAuthUser(null);
-        setIsLoading(false);
-        return;
-      }
-
-      if (!session?.access_token) {
-        refreshUser(null).catch((error) => {
+    if (isSupabaseEnabled && hasStoredSupabaseSession()) {
+      void getSupabaseClient()
+        .then((supabase) => {
           if (!active) return;
-          console.error("Auth session recovery failed:", error);
-          setAppUser(null);
-          setAuthUser(null);
-          setIsLoading(false);
-        });
-        return;
-      }
 
-      setAuthToken(session.access_token);
-      setAuthUser(session.user);
-      if (session.user) {
-        setAppUser(appUserFromAuthUser(session.user));
-      }
+          const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (!active) return;
+            setIsLoading(true);
 
-      fetchAppUserOrFallback(session.access_token, session.user)
-        .then((user) => {
-          if (!active) return;
-          setAuthUser(session.user);
-          setAppUser(user);
+            const temporaryUser = readTemporaryUserFromSession();
+            if (temporaryUser) {
+              setAppUser(temporaryUser);
+              setAuthUser(null);
+              setIsLoading(false);
+              return;
+            }
+
+            if (!session?.access_token) {
+              refreshUser(null).catch((error) => {
+                if (!active) return;
+                console.error("Auth session recovery failed:", error);
+                setAppUser(null);
+                setAuthUser(null);
+                setIsLoading(false);
+              });
+              return;
+            }
+
+            setAuthToken(session.access_token);
+            setAuthUser(session.user);
+            if (session.user) {
+              setAppUser(appUserFromAuthUser(session.user));
+            }
+
+            fetchAppUserOrFallback(session.access_token, session.user)
+              .then((user) => {
+                if (!active) return;
+                setAuthUser(session.user);
+                setAppUser(user);
+              })
+              .catch((error) => {
+                if (!active) return;
+                console.error("Auth profile sync failed:", error);
+                setAuthUser(session.user);
+                setAppUser(session.user ? appUserFromAuthUser(session.user) : null);
+              })
+              .finally(() => {
+                if (active) setIsLoading(false);
+              });
+          });
+
+          unsubscribe = () => data.subscription.unsubscribe();
         })
         .catch((error) => {
           if (!active) return;
-          console.error("Auth profile sync failed:", error);
-          setAuthUser(session.user);
-          setAppUser(session.user ? appUserFromAuthUser(session.user) : null);
-        })
-        .finally(() => {
-          if (active) setIsLoading(false);
+          console.error("Auth subscription failed:", error);
         });
-    });
+    }
 
     return () => {
       active = false;
-      data.subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, [refreshUser]);
 
@@ -293,6 +319,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
+      const supabase = await getSupabaseClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password: password ?? "",
@@ -337,6 +364,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
+      const supabase = await getSupabaseClient();
       const redirectTo = buildSignupConfirmationRedirectUrl(redirectPath);
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -375,6 +403,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!normalizedEmail) throw new Error("Enter your email address first.");
     if (!isSupabaseEnabled) return;
 
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: normalizedEmail,
@@ -398,6 +427,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -425,6 +455,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearTemporaryAuthState();
     clearAuthToken();
     if (isSupabaseEnabled) {
+      const supabase = await getSupabaseClient();
       await supabase.auth.signOut();
     }
     setAuthUser(null);
@@ -434,6 +465,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const sendPasswordReset = async (email: string) => {
     if (!isSupabaseEnabled) return;
 
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/login?reason=session_expired`,
     });
@@ -442,6 +474,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const sendEmailVerification = async () => {
     if (!isSupabaseEnabled || !appUser?.email) return;
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: appUser.email,

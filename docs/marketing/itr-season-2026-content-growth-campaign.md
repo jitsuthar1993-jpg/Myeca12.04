@@ -23,6 +23,26 @@ Public campaign hub:
 - `/itr-season-2026/capital-gains-broker-statement-checklist`
 - `/itr-season-2026/itr-deadline-refund-status-tracker`
 
+## Hybrid Content and Paid Conversion Plan
+
+Primary conversion event: `paid_filing_start`.
+
+Use `docs/marketing/itr-season-2026-paid-content-funnel.md` as the controlling strategy for the 90-day hybrid organic and paid funnel. It defines the paid ITR filing start goal, expert-consultation secondary route, content pillars, current official-source checks, and the split between repo-side readiness and owner-side performance proof.
+
+Execution files:
+
+- `docs/marketing/itr-season-2026-paid-media-plan.csv`: INR 200,000 monthly paid allocation across Google Search, remarketing, Meta retargeting, and LinkedIn/YouTube tests.
+- `docs/marketing/itr-season-2026-lead-nurture-sequence.csv`: day 0, 2, 4, 6, and 10 email/WhatsApp follow-up from checklist or tool engagement to paid filing.
+- `docs/marketing/itr-season-2026-weekly-kpi-template.csv`: weekly reporting sheet for attract, engage, and convert metrics.
+
+Paid amplification rules:
+
+- Send high-intent search traffic to `/itr/form-selector`, `/form16-parser`, `/calculators/income-tax`, `/calculators/regime-comparator`, or `/capital-gains-import` only when the page has a clear filing next step.
+- Retarget blog, checklist, calculator, and parser visitors who have not started paid filing.
+- Exclude completed paid filing users and consultation leads from reminder campaigns.
+- Use negative keywords for free-only, government login-only, refund-promise, jobs, PDF-only, unrelated GST-only, and non-India searches.
+- Keep ad copy educational and scope-led; do not imply refund certainty, notice avoidance, government affiliation, or processing speed.
+
 ## Backlink Policy
 
 Allowed:

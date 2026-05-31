@@ -442,11 +442,11 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Contact Us', url: '/contact' }]
   },
   '/blog': {
-    title: 'ITR Filing Blog AY 2026-27 | CA Tax Guides India | myeca.in',
+    title: 'ITR Filing Guides AY 2026-27 | CA Tax Guides | myeca.in',
     description: 'Read CA-reviewed FY 2025-26 and AY 2026-27 tax guides on ITR forms, Form 16, AIS, refunds, GST, capital gains, NRI filing, and notices from myeca.in now.',
     keywords: ['AY 2026-27 ITR filing', 'ITR filing guide', 'income tax return India', 'Form 16 guide', 'AIS Form 26AS', 'tax regime comparison'],
     type: 'website',
-    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Blog', url: '/blog' }]
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Filing & Tax Guides AY 2026-27', url: '/blog' }]
   },
   '/experts': {
     title: 'Expert CA Consultation Online | MyeCA.in Professional Network',
@@ -586,6 +586,13 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       updates: 'AY 2026-27 supported'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Form 16 Parser', url: '/form16-parser' }]
+  },
+  '/itr/start': {
+    title: 'Start ITR Filing AY 2026-27 | Check Salary or CA-Assisted Plan | MyeCA.in',
+    description: 'Check your ITR filing path in 60 seconds. Salary ITR starts at Rs 499, CA-assisted ITR starts at Rs 999, and complex cases are scoped before payment.',
+    keywords: ['start ITR filing', 'ITR filing price', 'CA assisted ITR', 'salary ITR filing', 'AY 2026-27 ITR'],
+    type: 'website',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Start ITR', url: '/itr/start' }]
   },
   '/itr/form-selector': {
     title: 'ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2 or ITR-3 | MyeCA.in',

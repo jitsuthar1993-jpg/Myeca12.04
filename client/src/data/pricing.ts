@@ -134,8 +134,8 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Capital gains", "Business income", "Foreign assets"],
     caTouchpoints: "Optional CA review add-on",
     sla: "After complete document review",
-    cta: { label: "Start this workflow", href: "/itr/form-selector" },
-    consultationCta: { label: "Consult expert", href: "/expert-consultation?service=salary-itr" },
+    cta: { label: "Start Salary ITR - Rs 499", href: "/itr/start?plan=salary&source=pricing_plan_card" },
+    consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=salary-itr" },
   },
   {
     id: "expert-assisted",
@@ -150,8 +150,8 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["F&O audit", "Foreign tax credit", "GST books"],
     caTouchpoints: "Named CA review plus one clarification loop",
     sla: "After complete document review",
-    cta: { label: "Start this workflow", href: "/itr/form-selector" },
-    consultationCta: { label: "Consult expert", href: "/expert-consultation?service=expert-assisted-itr" },
+    cta: { label: "Start CA-Assisted ITR - Rs 999", href: "/itr/start?plan=expert-assisted&source=pricing_plan_card" },
+    consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=expert-assisted-itr" },
   },
   {
     id: "capital-gains",
@@ -165,8 +165,8 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Tax audit", "Foreign broker statements", "Unlisted share valuation"],
     caTouchpoints: "CA review for gain classification and set-off",
     sla: "2-3 business days",
-    cta: { label: "Start this workflow", href: "/capital-gains-import" },
-    consultationCta: { label: "Consult expert", href: "/expert-consultation?service=capital-gains" },
+    cta: { label: "Get Scope Review", href: "/itr/start?profile=capital-gains&source=pricing_plan_card" },
+    consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=capital-gains" },
   },
   {
     id: "freelancer-44ada",
@@ -180,8 +180,8 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Statutory audit", "Monthly GST filing", "Bookkeeping cleanup"],
     caTouchpoints: "CA review for business income, deductions and compliance risk",
     sla: "3-5 business days",
-    cta: { label: "Start this workflow", href: "/services/tax-planning" },
-    consultationCta: { label: "Consult expert", href: "/expert-consultation?service=freelancer-tax" },
+    cta: { label: "Get Scope Review", href: "/itr/start?profile=business-freelance&source=pricing_plan_card" },
+    consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=freelancer-tax" },
   },
   {
     id: "nri-foreign-assets",
@@ -195,8 +195,8 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Overseas tax filing", "FEMA advisory beyond India tax", "Transfer pricing"],
     caTouchpoints: "Specialist CA review with written risk notes",
     sla: "5-7 business days",
-    cta: { label: "Start this workflow", href: "/expert-consultation?service=nri-tax" },
-    consultationCta: { label: "Consult expert", href: "/expert-consultation?service=nri-tax" },
+    cta: { label: "Get Scope Review", href: "/itr/start?profile=nri-foreign&source=pricing_plan_card" },
+    consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=nri-tax" },
   },
   {
     id: "business-gst",
@@ -210,8 +210,8 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Government fees unless stated", "Stamp duty unless stated", "Out-of-scope legal drafting"],
     caTouchpoints: "Dedicated owner for recurring compliance",
     sla: "Defined in written scope",
-    cta: { label: "View services", href: "/services" },
-    consultationCta: { label: "Consult expert", href: "/expert-consultation?service=business-compliance" },
+    cta: { label: "View Business Services", href: "/services" },
+    consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=business-compliance" },
   },
 ];
 
@@ -229,7 +229,7 @@ export const servicePricingCatalog: ServicePricing[] = [
     documents: ["PAN", "Aadhaar", "Form 16", "Bank details"],
     timeline: "After document review",
     caTouchpoints: "Checklist-assisted filing with optional CA review",
-    primaryCta: { label: "Start filing", href: "/itr/form-selector" },
+    primaryCta: { label: "Check ITR plan", href: "/itr/start?plan=salary&source=service_pricing" },
     consultationCta: { label: "Consult expert", href: "/expert-consultation?service=itr-1-filing" },
   },
   {

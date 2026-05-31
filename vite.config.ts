@@ -38,7 +38,8 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: false,
-        globPatterns: ["**/*.{js,css,html,png,svg,webp,json,woff2}"],
+        globPatterns: ["index.html", "**/*.{js,css,png,svg,webp,json,woff2}"],
+        globIgnores: ["assets/logos/*"],
         maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [
@@ -198,6 +199,11 @@ export default defineConfig({
     outDir: path.resolve(process.cwd(), "dist/public"),
     emptyOutDir: true,
     target: ["chrome87", "edge88", "firefox78", "safari14.1"],
+    modulePreload: {
+      // This app has hundreds of lazy routes; carrying every route preload edge in the entry
+      // bundle costs more than it helps anonymous first-page speed.
+      resolveDependencies: () => [],
+    },
     cssCodeSplit: true,
     sourcemap: shouldUploadSentrySourcemaps ? true : false,
     reportCompressedSize: false, // Faster CI builds
@@ -221,10 +227,6 @@ export default defineConfig({
             return "app-vendor";
           }
           // Radix UI stays route/component scoped so feature-heavy widgets do not inflate core vendor.
-          // Supabase auth client stays separate from the first paint path.
-          if (id.includes("node_modules/@supabase/")) {
-            return "supabase";
-          }
           if (id.includes("node_modules/lucide-react")) {
             return "icons";
           }

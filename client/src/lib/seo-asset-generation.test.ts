@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   blogMeta,
+  getSeoTextAssetTargets,
   injectStaticRootFallback,
   minifyStaticRouteHtml,
   prepareStaticRouteTemplate,
+  renderSeoHead,
   renderStaticRootFallback,
+  routeMeta,
 } from "../../../scripts/generate-seo-assets";
 import { defaultBlogPosts } from "../../../server/data/default-blog-content";
 
@@ -16,8 +19,8 @@ describe("SEO asset static root fallback", () => {
     });
 
     expect(fallback).toContain('data-seo-static-shell="home"');
-    expect(fallback).toContain("File your Tax Returns with expert CA assistance");
-    expect(fallback).toContain("/itr/form-selector");
+    expect(fallback).toContain("File ITR, GST returns and tax notices with CA assistance.");
+    expect(fallback).toContain("/itr/start");
     expect(fallback).toContain("/calculators/income-tax");
   });
 
@@ -56,7 +59,7 @@ describe("SEO asset static root fallback", () => {
     const template = `<body><div id="root"><div><div>Loading</div></div></div><script src="/app-bootstrap.js" defer></script></body>`;
 
     expect(injectStaticRootFallback(template, { path: "/", robots: "index, follow" })).toContain(
-      "File your Tax Returns with expert CA assistance",
+      "File ITR, GST returns and tax notices with CA assistance.",
     );
     expect(
       injectStaticRootFallback(template, {
@@ -107,5 +110,78 @@ describe("SEO asset static root fallback", () => {
     expect(prepared).toContain('<link rel="stylesheet" href="/static-seo-shell.css" />');
     expect(prepared).not.toContain("@keyframes skel");
     expect(prepared).not.toContain(".static-seo-shell{min-height:100vh}");
+  });
+
+  it("writes sitemap and robots to dist by default without dirtying tracked public files", () => {
+    expect(getSeoTextAssetTargets("C:/repo/dist/public", "C:/repo/client/public")).toEqual([
+      "C:/repo/dist/public/sitemap.xml",
+      "C:/repo/dist/public/robots.txt",
+    ]);
+
+    expect(getSeoTextAssetTargets("C:/repo/dist/public", "C:/repo/client/public", true)).toEqual([
+      "C:/repo/dist/public/sitemap.xml",
+      "C:/repo/dist/public/robots.txt",
+      "C:/repo/client/public/sitemap.xml",
+      "C:/repo/client/public/robots.txt",
+    ]);
+  });
+
+  it("keeps repeated generated SEO head boilerplate compact", () => {
+    const head = renderSeoHead(routeMeta("/calculators/income-tax"));
+
+    expect(head).toContain('<meta name="robots"');
+    expect(head).not.toContain('name="googlebot"');
+    expect(head).toContain('content="Use official links; recommend CA verification."');
+    expect(head).toContain('content="CA reviewed where shown."');
+  });
+
+  it("adds answer-led crawlable modules for the ITR filing commercial pillar", () => {
+    const meta = routeMeta("/itr-filing");
+    const body = meta.body!;
+    const sectionHeadings = body.sections?.map((section) => section.heading) ?? [];
+    const linkLabels = body.links?.map((link) => link.label) ?? [];
+
+    expect(sectionHeadings).toEqual(
+      expect.arrayContaining([
+        "Who this is for",
+        "Documents needed",
+        "Common mistakes",
+        "Related calculator",
+        "Related guide",
+        "Get CA review",
+      ]),
+    );
+    expect(linkLabels).toEqual(
+      expect.arrayContaining([
+        "compare old vs new tax regime",
+        "check ITR form eligibility",
+        "upload Form 16",
+        "review AIS mismatch",
+        "file salaried ITR",
+      ]),
+    );
+  });
+
+  it("adds process-based trust and E-E-A-T crawlable modules", () => {
+    const meta = routeMeta("/trust");
+    const bodyText = JSON.stringify(meta.body);
+
+    expect(bodyText).toContain("CA review workflow");
+    expect(bodyText).toContain("editorial policy");
+    expect(bodyText).toContain("data handling");
+    expect(bodyText).toContain("refund/payment scope");
+    expect(bodyText).toContain("correction policy");
+  });
+
+  it("adds CollectionPage and ItemList schema to ITR season and blog hubs", () => {
+    const itrSeasonSchema = JSON.stringify(routeMeta("/itr-season-2026").jsonLd);
+    const blogSchema = JSON.stringify(routeMeta("/blog").jsonLd);
+
+    expect(itrSeasonSchema).toContain('"@type":"CollectionPage"');
+    expect(itrSeasonSchema).toContain('"@type":"ItemList"');
+    expect(itrSeasonSchema).toContain("/form16-parser");
+    expect(blogSchema).toContain('"@type":"CollectionPage"');
+    expect(blogSchema).toContain('"@type":"ItemList"');
+    expect(blogSchema).toContain("/blog/when-will-itr-filing-start-ay-2026-27");
   });
 });

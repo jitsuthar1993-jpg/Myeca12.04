@@ -2,8 +2,11 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { hasSentryTelemetryConfig } from '@/telemetry/config';
+import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 import { recoverFromStaleChunk } from '@/utils/chunk-recovery';
-import { captureClientException } from '@/telemetry/sentry.client';
+
+const loadClientSentry = import.meta.env.VITE_SENTRY_DSN ? () => import('@/telemetry/sentry.client') : null;
 
 interface Props {
   children: ReactNode;
@@ -47,11 +50,16 @@ class ErrorBoundary extends Component<Props, State> {
     // Call custom error handler
     this.props.onError?.(error, errorInfo);
 
-    // Report to error tracking service (e.g., Sentry)
-    captureClientException(error, {
-      componentStack: errorInfo.componentStack,
-      url: window.location.href,
-    });
+    if (loadClientSentry && hasSentryTelemetryConfig && shouldLoadProductionTelemetry()) {
+      void loadClientSentry()
+        .then(({ captureClientException }) => {
+          captureClientException(error, {
+            componentStack: errorInfo.componentStack,
+            url: window.location.href,
+          });
+        })
+        .catch(() => {});
+    }
     this.reportError(error, errorInfo);
   }
 

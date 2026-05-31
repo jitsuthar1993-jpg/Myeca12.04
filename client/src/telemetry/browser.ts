@@ -35,6 +35,8 @@ let crispLoaded = false;
 let webVitalsLoaded = false;
 let crispClient: any = null;
 let lastTrackedPath = "";
+const loadPosthogModule = import.meta.env.VITE_POSTHOG_KEY ? () => import("posthog-js") : null;
+const loadCrispModule = import.meta.env.VITE_CRISP_WEBSITE_ID ? () => import("crisp-sdk-web") : null;
 
 const EVENT_ALIASES: Record<string, string> = {
   begin_checkout: "checkout_started",
@@ -95,9 +97,9 @@ function initializeClarity(config: BrowserTelemetryConfig, path: string) {
 }
 
 async function initializePostHog(config: BrowserTelemetryConfig, path: string) {
-  if (posthogLoaded || !config.posthogKey) return;
+  if (!loadPosthogModule || posthogLoaded || !config.posthogKey) return;
 
-  const posthogModule = await import("posthog-js");
+  const posthogModule = await loadPosthogModule();
   const posthog = posthogModule.default;
   posthog.init(config.posthogKey, {
     api_host: config.posthogHost,
@@ -121,9 +123,9 @@ async function initializePostHog(config: BrowserTelemetryConfig, path: string) {
 }
 
 async function initializeCrisp(config: BrowserTelemetryConfig, path: string) {
-  if (crispLoaded || !config.crispWebsiteId || !allowsSupportChat(path)) return;
+  if (!loadCrispModule || crispLoaded || !config.crispWebsiteId || !allowsSupportChat(path)) return;
 
-  const { Crisp } = await import("crisp-sdk-web");
+  const { Crisp } = await loadCrispModule();
   Crisp.configure(config.crispWebsiteId, {
     autoload: false,
     safeMode: true,

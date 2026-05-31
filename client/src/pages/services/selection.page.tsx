@@ -44,7 +44,7 @@ const SERVICES_DATA = [
     popular: true
   },
   {
-    id: 'gst-reg',
+    id: 'gst-registration',
     title: 'GST Registration',
     category: 'business',
     description: 'Get your GSTIN quickly with complete documentation.',
@@ -54,7 +54,7 @@ const SERVICES_DATA = [
     popular: true
   },
   {
-    id: 'company-incorp',
+    id: 'company-registration',
     title: 'Company Incorporation',
     category: 'startup',
     description: 'End-to-end support for PVT LTD, LLP, or One Person Company.',
@@ -73,7 +73,7 @@ const SERVICES_DATA = [
     color: 'amber'
   },
   {
-    id: 'msme-reg',
+    id: 'msme-registration',
     title: 'MSME Registration',
     category: 'business',
     description: 'Udyam registration to unlock government benefits and subsidies.',
@@ -82,7 +82,7 @@ const SERVICES_DATA = [
     color: 'cyan'
   },
   {
-    id: 'trademark-reg',
+    id: 'trademark-registration',
     title: 'Trademark Filing',
     category: 'startup',
     description: 'Protect your brand name, logo, and identity legally.',

@@ -1,16 +1,20 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 import { SEO_CONFIG } from "../config/seo.config";
 import { getGeneratedPublicRoutes } from "../data/missing-pages";
 import { generateMetadata } from "./seo";
 import {
   buildAccountingServiceSchema,
   buildArticleSchema,
+  buildCollectionPageSchema,
   buildHomepageGraph,
   buildHowToSchema,
   buildServiceSchema,
 } from "@shared/seo-schema";
 import {
   buildRobotsTxt,
+  buildSitemapXml,
   getIndexablePublicRoutes,
   routeChangefreq,
   routePriority,
@@ -85,6 +89,27 @@ describe("static SEO overhaul", () => {
     expect(robots).toContain("Host: https://myeca.in");
   });
 
+  it("keeps generated sitemap XML compact for production output size", () => {
+    const sitemap = buildSitemapXml([
+      {
+        loc: "https://myeca.in/",
+        lastmod: "2026-05-30",
+        changefreq: "weekly",
+        priority: "1.0",
+      },
+      {
+        loc: "https://myeca.in/calculators/income-tax",
+        lastmod: "2026-05-30",
+        changefreq: "weekly",
+        priority: "0.8",
+      },
+    ]);
+
+    expect(sitemap).toContain("<url><loc>https://myeca.in/</loc>");
+    expect(sitemap).not.toContain("\n  <url>");
+    expect(sitemap).not.toContain("\n    <loc>");
+  });
+
   it("builds homepage and local business schema for Bikaner CA-led services", () => {
     const graph = buildHomepageGraph();
     const localBusiness = buildAccountingServiceSchema("https://myeca.in/contact");
@@ -149,6 +174,42 @@ describe("static SEO overhaul", () => {
       totalTime: "PT30M",
     });
     expect(howTo.step).toHaveLength(3);
+  });
+
+  it("builds CollectionPage and ItemList schema for topical hubs", () => {
+    const collection = buildCollectionPageSchema({
+      url: "https://myeca.in/itr-season-2026",
+      name: "AY 2026-27 ITR Season Hub",
+      description: "ITR filing hub with Form 16, AIS, calculators, and CA review paths.",
+      items: [
+        { name: "Form 16 parser", url: "https://myeca.in/form16-parser" },
+        { name: "Income tax calculator", url: "https://myeca.in/calculators/income-tax" },
+      ],
+    });
+
+    expect(collection).toMatchObject({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: 2,
+      },
+    });
+    expect(collection.mainEntity.itemListElement[0]).toMatchObject({
+      "@type": "ListItem",
+      position: 1,
+      url: "https://myeca.in/form16-parser",
+    });
+  });
+
+  it("publishes llms.txt as an AI-search map for priority ITR answers", () => {
+    const llms = fs.readFileSync(path.join(process.cwd(), "client", "public", "llms.txt"), "utf8");
+
+    expect(llms).toContain("## Canonical Page Groups");
+    expect(llms).toContain("## Direct Answers");
+    expect(llms).toContain("https://myeca.in/itr-season-2026");
+    expect(llms).toContain("Owner-Side Evidence Still Required");
+    expect(llms).toContain("Calculators are estimates, not final filing advice.");
   });
 
   it("renders crawlable static body content instead of only the React loading shell", () => {

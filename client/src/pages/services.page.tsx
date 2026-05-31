@@ -41,7 +41,7 @@ const categories = [
       {
         title: "ITR Filing",
         description: "ITR-1 to ITR-4 with CA review, deductions, and e-verification support.",
-        href: "/itr/form-selector",
+        href: "/itr/start?source=services_individual_card",
         price: priceFor("itr-filing", "From ₹999 excluding GST"),
         meta: "Document-led",
       },
@@ -203,6 +203,13 @@ const supportCards = [
   },
 ];
 
+const guidedServicePaths = [
+  { label: "Salary ITR", detail: "Form 16, deductions, refund and regime checks", href: "/itr/start?plan=salary&source=services_guided_paths" },
+  { label: "Capital gains", detail: "Stocks, mutual funds, property, ESOPs or VDA", href: "/capital-gains-import" },
+  { label: "Notice help", detail: "Income tax or GST notice review before reply", href: "/services/notice-compliance" },
+  { label: "Business / GST", detail: "Registration, returns, TDS, MCA and compliance", href: "/services" },
+];
+
 export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
@@ -283,10 +290,10 @@ export default function ServicesPage() {
                   placeholder="Search services..."
                 />
               </div>
-              <Link href="/tax-assistant">
+              <Link href="/expert-consultation?service=service-selection">
                 <Button className="h-11 w-full rounded-lg bg-[#315efb] px-5 font-bold text-white shadow-sm hover:bg-[#2040d8] md:h-12 sm:w-auto">
                   <LifeBuoy className="h-4 w-4" />
-                  Ask assistant
+                  Ask CA before paying
                 </Button>
               </Link>
             </div>
@@ -319,6 +326,35 @@ export default function ServicesPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-white px-4 py-6 sm:px-6 md:py-8 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[330px_1fr] lg:items-center">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0050b5]">
+              Guided service intake
+            </p>
+            <h2 className="mt-2 text-2xl font-black leading-tight text-slate-950">
+              Route the case before asking users to decode forms.
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Pick the closest situation, then confirm scope and documents before payment.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {guidedServicePaths.map((path) => (
+              <Link key={path.label} href={path.href} className="group h-full">
+                <div className="flex h-full flex-col rounded-lg border border-slate-200 bg-slate-50 p-4 transition group-hover:border-blue-200 group-hover:bg-blue-50">
+                  <p className="text-sm font-black text-slate-950">{path.label}</p>
+                  <p className="mt-2 flex-1 text-xs leading-5 text-slate-600">{path.detail}</p>
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-blue-700">
+                    Choose path <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

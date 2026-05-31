@@ -12,6 +12,7 @@ import {
   isPrivateRoute,
   normalizePublicPath,
 } from "@shared/seo-public";
+import { getClientRoutePaths } from "@/routes/client-route-registry";
 import { classifySpaFallbackPath } from "@shared/spa-fallback-policy";
 import { buildHostileSpaFallbackAuditRoutes, parseSpaFallbackProbeSlugs } from "@shared/spa-fallback-audit-routes";
 import {
@@ -352,8 +353,7 @@ describe("SEO indexing policy", () => {
 
   it("keeps every direct client route either generated, private, or explicitly noindex fallback-safe", () => {
     const activationServiceIds = allServices.map((service) => service.id);
-    const routeSource = readFileSync(path.join(process.cwd(), "client/src/Routes.tsx"), "utf8");
-    const clientRoutes = [...routeSource.matchAll(/<Route\s+path="([^"]+)"/g)].map((match) => match[1]);
+    const clientRoutes = getClientRoutePaths();
     const generatedOrStaticRoutes = new Set(
       [
         ...PUBLIC_STATIC_ROUTES,

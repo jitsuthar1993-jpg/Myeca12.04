@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { FastITRFilingLogo, AccurateTaxCalculatorLogo, SmartDocumentScannerLogo, ExpertTaxReviewLogo } from "@/components/ui/home-feature-logos";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSEOConfig } from "@/config/seo.config";
-import { MobileActionBar } from "@/components/mobile";
+import { trackPublicCtaClick } from "@/lib/public-conversion-events";
 import { lazyWithRetry } from "@/utils/lazy-with-retry";
 
 
@@ -36,63 +36,6 @@ const ProfessionalServicesSection = lazyWithRetry(() => import("@/components/Pro
 const OtherServicesSection = lazyWithRetry(() => import("@/components/OtherServicesSection"));
 const FinancialGlossary = lazyWithRetry(() => import("@/components/seo/FinancialGlossary"));
 const FeaturedResources = lazyWithRetry(() => import("@/components/seo/FeaturedResources"));
-
-const heroTypingPhrases = ["Tax Returns", "GST Returns", "Notices", "Everything"];
-
-const HeroTypingPhrase = () => {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [visibleLength, setVisibleLength] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  const phrase = heroTypingPhrases[phraseIndex];
-  const visiblePhrase = phrase.slice(0, visibleLength);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    setReduceMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      setVisibleLength(heroTypingPhrases[0].length);
-      setPhraseIndex(0);
-      setIsDeleting(false);
-      return;
-    }
-
-    const hasTypedPhrase = visibleLength === phrase.length;
-    const hasDeletedPhrase = visibleLength === 0;
-    const delay = hasTypedPhrase && !isDeleting ? 1400 : hasDeletedPhrase && isDeleting ? 260 : isDeleting ? 45 : 80;
-
-    const timeoutId = window.setTimeout(() => {
-      if (hasTypedPhrase && !isDeleting) {
-        setIsDeleting(true);
-        return;
-      }
-
-      if (hasDeletedPhrase && isDeleting) {
-        setIsDeleting(false);
-        setPhraseIndex((currentIndex) => (currentIndex + 1) % heroTypingPhrases.length);
-        return;
-      }
-
-      setVisibleLength((currentLength) => currentLength + (isDeleting ? -1 : 1));
-    }, delay);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [isDeleting, phrase.length, reduceMotion, visibleLength]);
-
-  return (
-    <span aria-hidden="true" className="inline-flex min-w-[10.5ch] items-baseline justify-end text-blue-600">
-      <span className="font-mono font-black" style={{ WebkitTextStroke: "0.018em currentColor" }}>{visiblePhrase || "\u00a0"}</span>
-      <span className="ml-1 inline-block h-[0.9em] w-[0.08em] translate-y-[0.08em] animate-pulse bg-blue-600" />
-    </span>
-  );
-};
 
 const SectionFallback = () => (
   <div className="py-12">
@@ -108,8 +51,118 @@ const SectionFallback = () => (
   </div>
 );
 
+const HERO_TYPING_PHRASES = [
+  "Income Tax Returns",
+  "GST Returns",
+  "TDS Returns",
+  "Compliances",
+];
+
+const mobileSummaryCards = [
+  {
+    label: "For salaried professionals",
+    title: "Start with the right ITR path.",
+    description: "Check salary, Form 16, deductions, AIS, capital gains, and refund readiness before filing.",
+    href: "/itr/start?source=homepage_mobile_summary",
+    cta: "Start ITR Filing",
+    icon: FileText,
+  },
+  {
+    label: "Business / GST",
+    title: "Keep compliance scoped first.",
+    description: "Review GST, notices, TDS, registration, documents, and advisory needs before payment.",
+    href: "/services",
+    cta: "View Business Services",
+    icon: Building2,
+  },
+];
+
+const LowerHomepageMobileSummary = () => (
+  <section className="border-y border-slate-200 bg-[#F8FAFC] py-6 md:hidden">
+    <div className="container mx-auto px-4">
+      <div className="mb-4">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Guided next steps</p>
+        <h2 className="mt-2 text-xl font-extrabold tracking-tight text-slate-950">
+          Choose the tax path that matches your case.
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Compact mobile summaries keep the homepage fast while showing the trust, scope, and SEO answers people need before filing.
+        </p>
+      </div>
+
+      <div className="grid gap-3">
+        {mobileSummaryCards.map((item) => (
+          <Link key={item.title} href={item.href}>
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{item.label}</p>
+                  <h3 className="mt-1 text-base font-extrabold text-slate-950">{item.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
+                  <div className="mt-3 inline-flex items-center text-sm font-bold text-blue-700">
+                    {item.cta}
+                    <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-sm leading-6 text-slate-700">
+        <div className="flex items-start gap-2">
+          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />
+          <span>Scope before payment, secure document handling, and expert review are available when your filing needs more judgment.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 const HomePage = () => {
   const seo = getSEOConfig('/');
+  const [heroPhraseIndex, setHeroPhraseIndex] = useState(0);
+  const [heroTypedLength, setHeroTypedLength] = useState(HERO_TYPING_PHRASES[0].length);
+  const [isHeroDeleting, setIsHeroDeleting] = useState(false);
+  const currentHeroPhrase = HERO_TYPING_PHRASES[heroPhraseIndex];
+  const typedHeroPhrase = currentHeroPhrase.slice(0, heroTypedLength);
+
+  useEffect(() => {
+    const typingDelay = isHeroDeleting ? 38 : 76;
+    const holdDelay = 1250;
+    const switchDelay = 220;
+    const delay = !isHeroDeleting && heroTypedLength === currentHeroPhrase.length
+      ? holdDelay
+      : isHeroDeleting && heroTypedLength === 0
+        ? switchDelay
+        : typingDelay;
+
+    const timeout = window.setTimeout(() => {
+      if (!isHeroDeleting && heroTypedLength < currentHeroPhrase.length) {
+        setHeroTypedLength((length) => length + 1);
+        return;
+      }
+
+      if (!isHeroDeleting) {
+        setIsHeroDeleting(true);
+        return;
+      }
+
+      if (heroTypedLength > 0) {
+        setHeroTypedLength((length) => length - 1);
+        return;
+      }
+
+      setHeroPhraseIndex((index) => (index + 1) % HERO_TYPING_PHRASES.length);
+      setIsHeroDeleting(false);
+    }, delay);
+
+    return () => window.clearTimeout(timeout);
+  }, [currentHeroPhrase, heroTypedLength, isHeroDeleting]);
 
   return (
     <>
@@ -154,37 +207,40 @@ const HomePage = () => {
 
       <div className="bg-white min-h-screen">
         {/* Hero Section - Compact & Focused */}
-        <section className="bg-white py-10 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-16 lg:py-20">
+        <section className="bg-white py-10 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:py-14">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-5xl text-center">
               <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
                 <Shield className="h-4 w-4 shrink-0 text-blue-600" />
-                <span>CA assisted tax filing</span>
+                <span>Smart tax filing</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-300" aria-hidden="true" />
                 <span className="text-emerald-600">AY 2026-27</span>
               </div>
 
-              <div className="relative mx-auto mt-8 max-w-5xl">
+              <div className="relative mx-auto mt-6 max-w-5xl">
                 <span className="hero-filing-stamp pointer-events-none absolute -left-28 top-[5.75rem] hidden rounded-[3px] border-2 border-dashed border-blue-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-blue-700/85 ring-1 ring-blue-500/20 ring-offset-2 ring-offset-white xl:inline-flex">
                   ITR Filing Started
                 </span>
 
-                <h1 className="type-hero-title mx-auto max-w-4xl text-slate-950">
+                <h1 className="type-hero-title mx-auto max-w-5xl text-slate-950">
                   File your{" "}
-                  <span className="sr-only">Tax Returns, GST Returns, Notices, and Everything</span>
-                  <HeroTypingPhrase /> with expert CA assistance
+                  <span className="inline-flex min-w-[14ch] items-center justify-start text-left text-blue-600 sm:min-w-[18ch]">
+                    <span aria-live="polite">{typedHeroPhrase || "\u00a0"}</span>
+                    <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" aria-hidden="true" />
+                  </span>
                 </h1>
-                <p className="mx-auto mt-4 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
-                  With <span className="font-bold text-slate-700">Free Notice Assistance</span> for tax, GST, notices &amp; other services.
+                <p className="mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
+                  With <span className="font-bold text-slate-700">Expert eCA Assistance</span> and <span className="font-bold text-slate-700">Free Notice Assistance</span>.
                 </p>
                 <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-blue-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-blue-700/85 ring-1 ring-blue-500/20 ring-offset-2 ring-offset-white xl:hidden">
                   ITR Filing Started
                 </span>
               </div>
 
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7">
                 <Link
-                  href="/itr/form-selector"
+                  href="/itr/start?source=homepage_hero"
+                  onClick={() => trackPublicCtaClick("Start Filing Now", "homepage_hero")}
                   className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-slate-800 px-8 text-base font-black text-white shadow-lg shadow-slate-300 transition-colors hover:bg-slate-900 sm:w-auto"
                 >
                   <Rocket className="h-5 w-5" />
@@ -193,6 +249,7 @@ const HomePage = () => {
                 </Link>
                 <Link
                   href="/calculators/income-tax"
+                  onClick={() => trackPublicCtaClick("Free Tax Calculator", "homepage_hero")}
                   className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-8 text-base font-black text-slate-800 shadow-sm transition-colors hover:border-blue-200 hover:text-blue-700 sm:w-auto"
                 >
                   <Calculator className="h-5 w-5" />
@@ -200,14 +257,21 @@ const HomePage = () => {
                 </Link>
               </div>
 
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 text-sm font-semibold text-slate-600 sm:flex-row sm:gap-8 md:text-base">
-                {["Secure documents", "Scope before payment", "Expert support"].map((item) => (
-                  <div key={item} className="inline-flex items-center gap-2">
+              <div className="mt-8 flex flex-col items-center justify-center gap-4 text-sm font-semibold text-slate-600 sm:flex-row sm:gap-6 md:mt-7 md:text-base">
+                {[
+                  "Secure documents",
+                  "Scope before payment",
+                  "Expert support",
+                ].map((item) => (
+                  <div key={item} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
                     <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
+              <Link href="/trust" className="mt-4 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+                Privacy, security and document handling <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
@@ -233,7 +297,7 @@ const HomePage = () => {
                   ))}
                 </div>
                 <Link href="/pricing" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
-                  Compare all plans <ArrowRight className="ml-2 h-4 w-4" />
+                  Compare Pricing <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
@@ -255,7 +319,7 @@ const HomePage = () => {
         </section>
 
         {/* Proof Strip */}
-        <section className="hidden border-b border-slate-200 bg-[#F8FAFC] py-4 md:block md:py-6">
+        <section className="border-b border-slate-200 bg-[#F8FAFC] py-4 md:py-6">
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
@@ -484,6 +548,9 @@ const HomePage = () => {
                     { title: "Income Tax", desc: "AY 2026-27 estimate", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
                     { title: "HRA", desc: "Rent allowance check", href: "/calculators/hra", icon: Shield, tone: "bg-emerald-50 text-emerald-700" },
                     { title: "SIP", desc: "Investment planning", href: "/calculators/sip", icon: TrendingUp, tone: "bg-amber-50 text-amber-700" },
+                    { title: "Regime Compare", desc: "Old vs new tax", href: "/calculators/regime-comparator", icon: TrendingUp, tone: "bg-indigo-50 text-indigo-700" },
+                    { title: "TDS", desc: "Deduction estimate", href: "/calculators/tds", icon: FileText, tone: "bg-orange-50 text-orange-700" },
+                    { title: "Capital Gains", desc: "STCG and LTCG", href: "/calculators/capital-gains", icon: Calculator, tone: "bg-violet-50 text-violet-700" },
                   ].map((calc) => (
                     <Link key={calc.title} href={calc.href}>
                       <Card className="group h-full cursor-pointer rounded-lg border border-slate-100 bg-slate-50/70 shadow-none transition-colors hover:border-blue-100 hover:bg-white">
@@ -506,14 +573,14 @@ const HomePage = () => {
 
                 <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 md:hidden">
                   <p className="type-meta font-bold text-blue-700">Next step</p>
-                  <h3 className="mt-2 text-base font-extrabold text-slate-950">Know your number? Choose the ITR path.</h3>
+                  <h3 className="mt-2 text-base font-extrabold text-slate-950">Know your number? Check the ITR path.</h3>
                   <p className="mt-1 text-sm leading-6 text-slate-600">
-                    Use the form selector when your salary, deductions, and documents are ready enough to start.
+                    Start with a 60-second plan check before choosing a technical ITR form.
                   </p>
                   <div className="mt-3 grid gap-2">
-                    <Link href="/itr/form-selector">
+                    <Link href="/itr/start?source=homepage_mobile_tools">
                       <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
-                        Choose ITR form
+                        Check my ITR plan
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
@@ -527,6 +594,8 @@ const HomePage = () => {
           </div>
         </section>
 
+        <LowerHomepageMobileSummary />
+
         <section className="hidden md:block" style={{ contentVisibility: 'auto', contain: 'content', containIntrinsicSize: '0 500px' }}>
           <Suspense fallback={<SectionFallback />}>
             <FeaturesSection />
@@ -535,11 +604,11 @@ const HomePage = () => {
 
         <div className="hidden md:block">
           <Suspense fallback={<SectionFallback />}>
-            <OtherServicesSection />
+            <EverythingSection />
           </Suspense>
 
           <Suspense fallback={<SectionFallback />}>
-            <EverythingSection />
+            <OtherServicesSection />
           </Suspense>
 
           <section style={{ contentVisibility: 'auto', contain: 'content', containIntrinsicSize: '0 500px' }}>
@@ -584,16 +653,16 @@ const HomePage = () => {
                 </p>
 
                 <div className="flex flex-col gap-2 sm:flex-row md:justify-center md:gap-4">
-                  <Link href="/itr/form-selector">
+                  <Link href="/itr/start?source=homepage_final_cta">
                     <Button variant="brand" size="xl" className="h-11 w-full rounded-lg px-6 shadow-sm shadow-brand-500/25 transition-all sm:w-auto md:px-8 md:hover:-translate-y-0.5">
                       <Rocket className="mr-2 h-5 w-5" />
-                      Start Filing Now
+                       Start ITR Filing
                     </Button>
                   </Link>
-                  <Link href="/expert-consultation">
+                  <Link href="/expert-consultation?service=itr-filing&source=homepage_final_cta">
                     <Button size="xl" variant="outline" className="h-11 w-full rounded-lg border-slate-200 px-6 text-slate-700 shadow-sm transition-all hover:bg-slate-50 sm:w-auto md:px-8 md:hover:-translate-y-0.5">
                       <Phone className="mr-2 h-5 w-5" />
-                      Talk to Expert
+                       Talk to Expert
                     </Button>
                   </Link>
                 </div>

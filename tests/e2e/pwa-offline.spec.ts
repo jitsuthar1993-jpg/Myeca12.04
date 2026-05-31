@@ -4,11 +4,14 @@ test.use({ serviceWorkers: "allow" });
 
 async function waitForServiceWorkerControl(page: import("@playwright/test").Page) {
   await page.goto("/", { waitUntil: "load" });
-  await page.waitForFunction(
-    () => "serviceWorker" in navigator && navigator.serviceWorker.ready.then(() => true),
-    undefined,
-    { timeout: 20_000 },
-  );
+  await page.evaluate(async () => {
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("Service workers are not supported in this browser context.");
+    }
+
+    await navigator.serviceWorker.register("/service-worker.js", { scope: "/" });
+    await navigator.serviceWorker.ready;
+  });
   await page.reload({ waitUntil: "load" });
   await expect
     .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)), {

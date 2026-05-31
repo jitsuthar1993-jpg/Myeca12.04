@@ -17,6 +17,7 @@ import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 import { useRouteScrollManager } from '@/hooks/use-route-scroll-manager';
 import { shouldMaskTelemetryRoute } from '@/telemetry/privacy';
+import { hasBrowserTelemetryConfig } from '@/telemetry/config';
 
 const Header = lazyWithRetry(() => import('@/components/layout/Header'));
 const Footer = lazyWithRetry(() => import('@/components/layout/Footer'));
@@ -32,6 +33,7 @@ const Toaster = lazyWithRetry(() =>
 const PwaInstallBanner = lazyWithRetry(() =>
   import('@/components/pwa/PwaInstallBanner').then((m) => ({ default: m.PwaInstallBanner }))
 );
+const PublicMobileConversionBar = lazyWithRetry(() => import('@/components/conversion/PublicMobileConversionBar'));
 
 const AppLoading = () => <PageSkeleton />;
 const HeaderLoadingShell = () => (
@@ -125,7 +127,7 @@ function Router() {
       )}
       {showLayoutComponents && <div className="h-[60px] md:h-[74px]"></div>}
       <main
-        className="flex-1 bg-white"
+        className={`flex-1 bg-white ${showLayoutComponents && !hideFooter ? 'pb-20 md:pb-0' : ''}`}
         data-clarity-mask={shouldMaskTelemetryRoute(currentPath) ? "true" : undefined}
         data-telemetry-sensitive={shouldMaskTelemetryRoute(currentPath) ? "true" : undefined}
       >
@@ -134,6 +136,11 @@ function Router() {
       {showLayoutComponents && !hideFooter && (
         <Suspense fallback={null}>
           <Footer />
+        </Suspense>
+      )}
+      {showLayoutComponents && !hideFooter && (
+        <Suspense fallback={null}>
+          <PublicMobileConversionBar />
         </Suspense>
       )}
     </div>
@@ -146,7 +153,7 @@ function AppContent() {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const isAuthScreen = isAuthLayoutPath(location);
   const isTaxAssistantPage = location === '/tax-assistant';
-  const loadProductionTelemetry = shouldLoadProductionTelemetry();
+  const loadProductionTelemetry = hasBrowserTelemetryConfig && shouldLoadProductionTelemetry();
   const showDeferredGlobalChrome = useDeferredGlobalChrome();
 
   useEffect(() => {

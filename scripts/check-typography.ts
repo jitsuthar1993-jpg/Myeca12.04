@@ -6,8 +6,7 @@ import {
   type TypographyAllowlistEntry,
   type TypographyIssue,
 } from "../client/src/lib/typography-audit.ts";
-
-const routeSourcePath = "client/src/Routes.tsx";
+import { getTypographyRouteSourcePaths } from "../client/src/routes/client-route-registry.ts";
 
 const sharedUserTargets = [
   "client/src/components/auth/AuthPageShell.tsx",
@@ -56,42 +55,12 @@ const excludedRoutePatterns = [
   /^\/analytics-dashboard$/,
 ] as const;
 
-function toSourcePath(importPath: string) {
-  return `client/src/${importPath.endsWith(".tsx") ? importPath : `${importPath}.tsx`}`;
-}
-
 function collectRouteTargets() {
-  const routesSource = readFileSync(path.resolve(process.cwd(), routeSourcePath), "utf8");
-  const componentToPath = new Map<string, string>();
-
-  for (const match of routesSource.matchAll(
-    /const\s+(\w+)\s*=\s*lazyWithRetry\(\(\) => import\(["']@\/(.*?)["']\)/g,
-  )) {
-    componentToPath.set(match[1], toSourcePath(match[2]));
-  }
-
-  for (const match of routesSource.matchAll(/import\s+(\w+)\s+from\s+["']@\/(.*?)["']/g)) {
-    componentToPath.set(match[1], toSourcePath(match[2]));
-  }
-
-  const targets = new Set<string>();
-  for (const match of routesSource.matchAll(
-    /<Route\s+path=["']([^"']+)["'][\s\S]*?(?=<Route|<\/Switch>)/g,
-  )) {
-    const routePath = match[1];
-    const routeBlock = match[0];
-
-    if (excludedRoutePatterns.some((pattern) => pattern.test(routePath))) {
-      continue;
-    }
-
-    for (const [componentName, target] of componentToPath) {
-      if (new RegExp(`\\b${componentName}\\b`).test(routeBlock)) {
-        targets.add(target);
-      }
-    }
-  }
-
+  const targets = new Set(
+    getTypographyRouteSourcePaths()
+      .filter((entry) => !excludedRoutePatterns.some((pattern) => pattern.test(entry.path)))
+      .map((entry) => entry.source),
+  );
   targets.add("client/src/pages/not-found.tsx");
   return [...targets];
 }

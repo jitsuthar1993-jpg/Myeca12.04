@@ -6,15 +6,21 @@ import { addPerformanceHints } from "./utils/performance-hints";
 import { recoverFromStaleChunk } from "./utils/chunk-recovery";
 import { lazyWithRetry } from "./utils/lazy-with-retry";
 import { shouldLoadProductionTelemetry } from "./utils/runtime-env";
-import { initClientSentry } from "./telemetry/sentry.client";
 import { installApiBaseUrlFetch, resolveApiUrl } from "./lib/api-base-url";
+import { hasBrowserTelemetryConfig, hasSentryTelemetryConfig } from "./telemetry/config";
 import "./utils/safe-dom";
 import "./index.css";
 
-const loadProductionTelemetry = shouldLoadProductionTelemetry();
+const hasBuildTimeBrowserTelemetryConfig = hasBrowserTelemetryConfig;
+const loadClientSentry = import.meta.env.VITE_SENTRY_DSN ? () => import("./telemetry/sentry.client") : null;
+const loadProductionTelemetry = hasBuildTimeBrowserTelemetryConfig && shouldLoadProductionTelemetry();
 
 installApiBaseUrlFetch();
-initClientSentry();
+if (loadClientSentry && hasSentryTelemetryConfig && loadProductionTelemetry) {
+  void loadClientSentry()
+    .then(({ initClientSentry }) => initClientSentry())
+    .catch(() => {});
+}
 
 const VercelAnalytics = loadProductionTelemetry
   ? lazyWithRetry(() => import("@vercel/analytics/react").then((mod) => ({ default: mod.Analytics })))

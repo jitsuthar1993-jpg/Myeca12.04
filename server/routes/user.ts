@@ -27,6 +27,15 @@ const createUserServiceSchema = z.object({
     originalServicePath: z.string().trim().max(300).nullable().optional(),
     businessName: z.string().trim().max(160).optional(),
     contactNumber: z.string().trim().max(30).optional(),
+    conversionSource: z.string().trim().max(120).optional(),
+    recommendedPlanId: z.enum(["salary", "expert-assisted", "complex-scope"]).optional(),
+    assessmentYear: z.string().trim().max(20).optional(),
+    incomeProfile: z
+      .array(z.enum(["salary", "multiple-form16", "capital-gains", "business-freelance", "nri-foreign", "notice"]))
+      .max(8)
+      .optional(),
+    assistanceLevel: z.enum(["guided", "ca-assisted", "not-sure"]).optional(),
+    ctaVariant: z.string().trim().max(120).optional(),
   }).strict().optional(),
 }).strict();
 

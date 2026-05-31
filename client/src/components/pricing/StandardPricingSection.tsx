@@ -291,10 +291,15 @@ function ScopeBox({ caTouchpoints, sla }: { caTouchpoints: string; sla: string }
 
 function PlanCta({ plan }: { plan: PricingPlan }) {
   const content = (
-    <Button className="w-full bg-blue-600 text-white hover:bg-blue-700">
-      {plan.cta.label}
-      <ArrowRight className="h-4 w-4" />
-    </Button>
+    <div>
+      <Button className="w-full bg-blue-600 text-white hover:bg-blue-700">
+        {plan.cta.label}
+        <ArrowRight className="h-4 w-4" />
+      </Button>
+      <p className="mt-2 text-center text-xs font-semibold leading-5 text-slate-500">
+        Scope before payment. Refund outcomes are not guaranteed.
+      </p>
+    </div>
   );
 
   return plan.cta.href ? (

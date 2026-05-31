@@ -1,11 +1,16 @@
 ﻿import { Response, Router } from "express";
 import { z } from "zod";
+import type { NextFunction } from "express";
 import multer from "multer";
 import sharp from "sharp";
-import { del, get, put } from "@vercel/blob";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { errorResponse, safeError } from "../utils/error-response.js";
+import {
+  deletePrivateDocument,
+  getPrivateDocument,
+  putPrivateDocument,
+} from "../services/document-storage.js";
 import {
   assertCanAccessUserData,
   canAccessUserData,
@@ -35,7 +40,9 @@ const upload = multer({
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Invalid file type. Only PDF, images, Word, and Excel files are allowed."));
+      const error = new Error("Invalid file type. Only PDF, images, Word, and Excel files are allowed.");
+      (error as Error & { status?: number }).status = 400;
+      cb(error);
     }
   }
 });
@@ -145,7 +152,20 @@ function documentRouteError(res: Response, error: unknown, fallback: string) {
   return safeError(res, error, fallback);
 }
 
-router.post("/upload", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
+function uploadSingleDocument(req: AuthRequest, res: Response, next: NextFunction) {
+  upload.single("file")(req, res, (error: unknown) => {
+    if (!error) return next();
+
+    if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
+      return errorResponse(res, 413, "File size must be 10 MB or smaller");
+    }
+
+    const status = typeof (error as any)?.status === "number" ? (error as any).status : 400;
+    return errorResponse(res, status, (error as Error).message || "Failed to upload document");
+  });
+}
+
+router.post("/upload", authenticateToken, uploadSingleDocument, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.file) {
       return errorResponse(res, 400, "No file uploaded");
@@ -190,8 +210,7 @@ router.post("/upload", authenticateToken, upload.single("file"), async (req: Aut
     const docRef = adminDb.collection("documents").doc();
     const fileName = `${Date.now()}-${safePathSegment(req.file.originalname)}`;
     const pathname = `documents/${userId}/${docRef.id}/${fileName}`;
-    const blob = await put(pathname, fileBuffer, {
-      access: "private",
+    const blob = await putPrivateDocument(pathname, fileBuffer, {
       contentType: mimeType,
     });
 
@@ -380,21 +399,21 @@ router.get("/:id/download", authenticateToken, async (req: AuthRequest, res: Res
       return errorResponse(res, 403, "Access denied");
     }
 
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${encodeURIComponent(documentData.originalName || documentData.name || "document")}"`,
-    );
-    res.setHeader("Content-Type", documentData.mimeType || "application/octet-stream");
-
     const blobUrl = documentData.blobUrl || documentData.url;
     if (!blobUrl) {
       return errorResponse(res, 404, "Document file not found");
     }
 
-    const blob = await get(blobUrl, { access: "private" });
+    const blob = await getPrivateDocument(blobUrl);
     if (!blob || blob.statusCode !== 200 || !blob.stream) {
       return errorResponse(res, 404, "Document file not found");
     }
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${encodeURIComponent(documentData.originalName || documentData.name || "document")}"`,
+    );
+    res.setHeader("Content-Type", documentData.mimeType || "application/octet-stream");
 
     const file = await streamToBuffer(blob.stream);
     return res.send(file);
@@ -472,7 +491,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 
     const documentData = doc.data()!;
     if (documentData.blobUrl || documentData.url) {
-      await del(documentData.blobUrl || documentData.url).catch((error) => {
+      await deletePrivateDocument(documentData.blobUrl || documentData.url).catch((error) => {
         console.warn("[BLOB] Failed to delete blob:", error);
       });
     }

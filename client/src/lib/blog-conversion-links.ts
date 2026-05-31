@@ -51,8 +51,9 @@ function fallbackServiceHref(post: BlogConversionSource) {
 
 function conversionHref(post: BlogConversionSource) {
   const href = (post.ctaHref ?? "").trim();
-  if (href === "/itr/form-selector" || href.startsWith("/services/")) return href;
-  return "/itr/form-selector";
+  if (href === "/itr/form-selector" || href === "/itr/start") return "/itr/start?source=blog_conversion";
+  if (href.startsWith("/services/")) return href;
+  return "/itr/start?source=blog_conversion";
 }
 
 function uniqueLinks(links: BlogConversionLink[]) {
