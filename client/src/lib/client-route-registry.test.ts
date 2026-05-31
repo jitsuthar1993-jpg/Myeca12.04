@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   CALCULATOR_ROUTE_PATHS,
@@ -34,5 +35,17 @@ describe("client route registry", () => {
     for (const route of PUBLIC_EXACT_ROUTE_PATHS) {
       expect(isPrivateRoute(route), route).toBe(false);
     }
+  });
+
+  it("stays aligned with the concrete wouter route table", () => {
+    const routesSource = readFileSync("client/src/Routes.tsx", "utf8");
+    const routeTablePaths = [...routesSource.matchAll(/<Route\s+path="([^"]+)"/g)].map((match) =>
+      normalizePublicPath(match[1]),
+    );
+    const registryPaths = getClientRoutePaths().map(normalizePublicPath);
+
+    expect(routeTablePaths.length).toBeGreaterThan(100);
+    expect(new Set(routeTablePaths).size).toBe(routeTablePaths.length);
+    expect([...registryPaths].sort()).toEqual([...routeTablePaths].sort());
   });
 });

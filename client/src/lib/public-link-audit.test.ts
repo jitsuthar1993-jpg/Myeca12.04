@@ -29,9 +29,10 @@ import { defaultBlogPosts } from "../../../server/data/default-blog-content";
 import { loadStaticBlogPosts } from "../../../server/data/static-blog-content";
 import { EMAIL_TEMPLATES } from "../../../server/services/email";
 import { getBlogConversionLinks } from "./blog-conversion-links";
+import { PUBLIC_NAVIGATION_LINKS } from "../data/public-navigation-links";
 
 describe("public link audit", () => {
-  const disallowedPublicContentRoutes = ["/documents", "/dashboard", "/reports", "/admin", "/itr/filing", "/profiles"];
+  const disallowedPublicContentRoutes = ["/business/dashboard", "/documents", "/dashboard", "/reports", "/admin", "/itr/filing", "/profiles"];
 
   function escapeRegExp(value: string) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -331,11 +332,28 @@ describe("public link audit", () => {
     });
   });
 
-  it("links the ITR season hub from public global footer crawl paths", () => {
-    const footerSource = readFileSync("client/src/components/layout/Footer.tsx", "utf8");
+  it("keeps shared public navigation links real and non-private", () => {
+    expect(PUBLIC_NAVIGATION_LINKS.length).toBeGreaterThan(20);
 
-    expect(footerSource).toContain('href="/itr-season-2026"');
+    PUBLIC_NAVIGATION_LINKS.forEach((link) => {
+      const classified = classifyPublicHref(link.href, "/");
+
+      expect(classified.kind, `${link.label} -> ${link.href}`).not.toBe("placeholder");
+      expect(classified.kind, `${link.label} -> ${link.href}`).not.toBe("private-route");
+    });
+  });
+
+  it("links the ITR season hub from public global footer crawl paths", () => {
+    expect(PUBLIC_NAVIGATION_LINKS.some((link) => link.href === "/itr-season-2026")).toBe(true);
     expect(SEO_CONFIG["/itr-season-2026"]).toBeDefined();
+  });
+
+  it("keeps public header source free of hardcoded same-site URLs and private CTAs", () => {
+    const headerSource = readFileSync("client/src/components/layout/Header.tsx", "utf8");
+
+    expect(headerSource).not.toContain('href="https://myeca.in"');
+    expect(headerSource).not.toMatch(/href:\s*"\/documents\/generator"/);
+    expect(headerSource).not.toMatch(/href:\s*"\/business\/dashboard"/);
   });
 
   it("keeps the public HTML template free of unverifiable SEO claims", () => {

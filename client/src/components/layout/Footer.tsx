@@ -1,8 +1,14 @@
 import { Link } from "wouter";
 import { Mail, Phone, Shield, Award, Clock } from "lucide-react";
 import BrandLockup from "@/components/ui/brand-lockup";
+import { AppLink } from "@/components/ui/app-link";
 import { useAuth } from "@/components/AuthProvider";
 import { useRoutePreload } from '@/hooks/use-route-preload';
+import {
+  PUBLIC_FOOTER_BOTTOM_LINKS,
+  PUBLIC_FOOTER_LEGAL_LINKS,
+  PUBLIC_FOOTER_MOBILE_PRIMARY_LINKS,
+} from "@/data/public-navigation-links";
 
 export default function Footer() {
   const { isAuthenticated } = useAuth();
@@ -69,31 +75,25 @@ export default function Footer() {
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          {[
-            ["File ITR", "/itr/form-selector"],
-            ["AY 2026 Hub", "/itr-season-2026"],
-            ["Estimate Tax", "/calculators/income-tax"],
-            ["Compare Regimes", "/calculators/regime-comparator"],
-            ["Parse Form 16", "/form16-parser"],
-          ].map(([label, href]) => (
-            <Link
+          {PUBLIC_FOOTER_MOBILE_PRIMARY_LINKS.map(({ label, href }) => (
+            <AppLink
               key={href}
               href={href}
               onMouseEnter={() => preloadOnHover(href)}
               className="flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-center text-sm font-semibold text-slate-700"
             >
               {label}
-            </Link>
+            </AppLink>
           ))}
         </div>
 
         <div className="mt-5 border-t border-slate-200 pt-4">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500">
-            <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="hover:text-slate-700">Privacy</Link>
-            <Link href="/trust" onMouseEnter={() => preloadOnHover("/trust")} className="hover:text-slate-700">Trust</Link>
-            <Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="hover:text-slate-700">Terms</Link>
-            <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700">Refunds</Link>
-            <Link href="/contact" onMouseEnter={() => preloadOnHover("/contact")} className="hover:text-slate-700">Support</Link>
+            {PUBLIC_FOOTER_LEGAL_LINKS.map(({ label, href }) => (
+              <AppLink key={href} href={href} onMouseEnter={() => preloadOnHover(href)} className="hover:text-slate-700">
+                {label}
+              </AppLink>
+            ))}
           </div>
           <p className="mt-3 text-center text-xs text-slate-500">&copy; 2026 MyeCA.in. Made in India.</p>
         </div>
@@ -316,11 +316,16 @@ export default function Footer() {
             {/* Legal Links Row */}
             <div className="mt-4 pt-4 border-t border-slate-100">
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
-                <Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="hover:text-slate-700 transition-colors font-medium">Privacy Policy</Link>
-                <Link href="/trust" onMouseEnter={() => preloadOnHover("/trust")} className="hover:text-slate-700 transition-colors font-medium">Trust & Security</Link>
-                <Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="hover:text-slate-700 transition-colors font-medium">Terms of Service</Link>
-                <Link href="/legal/refund-policy" onMouseEnter={() => preloadOnHover("/legal/refund-policy")} className="hover:text-slate-700 transition-colors font-medium">Refund Policy</Link>
-                <Link href="/legal/disclaimer" onMouseEnter={() => preloadOnHover("/legal/disclaimer")} className="hover:text-slate-700 transition-colors font-medium">Disclaimer</Link>
+                {PUBLIC_FOOTER_BOTTOM_LINKS.map(({ label, href }) => (
+                  <AppLink
+                    key={href}
+                    href={href}
+                    onMouseEnter={() => preloadOnHover(href)}
+                    className="hover:text-slate-700 transition-colors font-medium"
+                  >
+                    {label}
+                  </AppLink>
+                ))}
                 <span className="text-slate-400 font-medium">Mumbai, Maharashtra, India</span>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,6 +9,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
+import { AppLink } from "@/components/ui/app-link";
 import {
   Sheet,
   SheetContent,
@@ -42,9 +43,28 @@ import { useAuth } from "@/components/AuthProvider";
 import { useRoutePreload } from "@/hooks/use-route-preload";
 import { cn } from "@/lib/utils";
 import { getRoleHome, getRoleLabel } from "@shared/app-roles";
+import {
+  PUBLIC_HEADER_MOBILE_CALCULATOR_LINKS,
+  PUBLIC_HEADER_MOBILE_QUICK_LINKS,
+  PUBLIC_HEADER_MOBILE_SERVICE_LINKS,
+  PUBLIC_HEADER_MOBILE_START_LINKS,
+  PUBLIC_HEADER_MOBILE_STARTUP_LINKS,
+  PUBLIC_HEADER_PRIMARY_LINKS,
+  type PublicHeaderIconKey,
+} from "@/data/public-navigation-links";
 
 const PROMO_DISMISSED_KEY = 'promo-bar-dismissed-v2';
 const PROMO_DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+const headerIconMap: Record<PublicHeaderIconKey, ComponentType<{ className?: string }>> = {
+  calculator: Calculator,
+  "file-check": FileCheck,
+  "file-text": FileText,
+  grid: Grid,
+  help: HelpCircle,
+  home: Home,
+  scale: Scale,
+};
 
 export default function Header() {
   const [location, navigate] = useLocation();
@@ -99,6 +119,8 @@ export default function Header() {
   const roleHome = getRoleHome(user?.role);
   const roleLabel = getRoleLabel(user?.role);
   const workspaceLabel = user?.role === "user" || !user?.role ? "Dashboard" : roleLabel;
+  const publicGuardedHref = (privatePath: string) =>
+    isAuthenticated ? privatePath : `/auth/login?next=${encodeURIComponent(privatePath)}`;
 
   const isActive = (path: string) => location === path;
   // Calculate top offset based on promo bar visibility
@@ -180,7 +202,7 @@ export default function Header() {
             )}>
               {/* Logo Section */}
               <div className="flex items-center gap-3 md:gap-4">
-                <a href="https://myeca.in" className="flex items-center gap-2 group shrink-0">
+                <AppLink href="/" className="flex items-center gap-2 group shrink-0">
                   <Logo size={isScrolled ? "sm" : "md"} className="scale-90 md:scale-100" />
                   <div className="flex flex-col justify-center gap-0.5">
                     <span className={cn(
@@ -196,7 +218,7 @@ export default function Header() {
                       SMART TAX SOLUTIONS
                     </span>
                   </div>
-                </a>
+                </AppLink>
               </div>
 
               {/* Desktop Navigation */}
@@ -300,7 +322,7 @@ export default function Header() {
                               {[
                                 { href: "/services/company-registration", icon: Briefcase, title: "Company Registration", desc: "Pvt Ltd, LLP, OPC & more", color: "indigo" },
                                 { href: "/services/trademark-registration", icon: Scale, title: "IPR Services", desc: "Trademark & Copyright", color: "purple" },
-                                { href: "/documents/generator", icon: FileCheck, title: "Legal Documents", desc: "Agreements & Contracts", color: "blue" }
+                                { href: publicGuardedHref("/documents/generator"), icon: FileCheck, title: "Legal Documents", desc: "Agreements & Contracts", color: "blue" }
                               ].map((item, idx) => {
                                 const Icon = item.icon as any;
                                 return (
@@ -341,7 +363,7 @@ export default function Header() {
                             </div>
                             <ul className="space-y-4">
                               {[
-                                { href: "/business/dashboard", icon: LayoutDashboard, title: "Business HQ", desc: "Compliance & deadlines", color: "emerald" },
+                                { href: publicGuardedHref("/business/dashboard"), icon: LayoutDashboard, title: "Business HQ", desc: "Compliance & deadlines", color: "emerald" },
                                 { href: "/business/virtual-cfo", icon: BarChart3, title: "Virtual CFO", desc: "P&L & Runway tracking", color: "blue" },
                                 { href: "/services/tax-planning", icon: TrendingUp, title: "Tax Planning", desc: "Expert advisory", color: "orange" }
                               ].map((item, idx) => {
@@ -785,71 +807,45 @@ export default function Header() {
                     </NavigationMenuContent>
                   </NavigationMenuItem>
 
+                  {PUBLIC_HEADER_PRIMARY_LINKS.map((item) => {
+                    const isCurrent =
+                      item.href === "/blog" ? location.startsWith("/blog") : location === item.href;
 
-                  <NavigationMenuItem>
-                    <Link href="/blog" onMouseEnter={() => preloadOnHover('/blog')}>
-                      <div className="relative group">
-                        {location.startsWith('/blog') && (
-                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
+                    return (
+                      <NavigationMenuItem key={item.href}>
+                        {item.icon === "trust" ? (
+                          <Link
+                            href={item.href}
+                            aria-label={item.label}
+                            title={item.label}
+                            onMouseEnter={() => preloadOnHover(item.href)}
+                            className={cn(
+                              "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300",
+                              isCurrent
+                                ? "border-blue-600/20 bg-blue-600/10 text-blue-600"
+                                : "border-transparent text-slate-500 hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
+                            )}
+                          >
+                            <Shield className="h-4 w-4" aria-hidden="true" />
+                          </Link>
+                        ) : (
+                          <Link href={item.href} onMouseEnter={() => preloadOnHover(item.href)}>
+                            <div className="relative group">
+                              {isCurrent && (
+                                <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
+                              )}
+                              <span className={cn(
+                                "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
+                                isCurrent ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
+                              )}>
+                                {item.label}
+                              </span>
+                            </div>
+                          </Link>
                         )}
-                        <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
-                          location.startsWith('/blog') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
-                        )}>
-                          Blogs
-                        </span>
-                      </div>
-                    </Link>
-                  </NavigationMenuItem>
-
-                  <NavigationMenuItem>
-                    <Link href="/pricing" onMouseEnter={() => preloadOnHover('/pricing')}>
-                      <div className="relative group">
-                        {location === '/pricing' && (
-                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
-                        )}
-                        <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
-                          location === '/pricing' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
-                        )}>
-                          Pricing
-                        </span>
-                      </div>
-                    </Link>
-                  </NavigationMenuItem>
-
-                  <NavigationMenuItem>
-                    <Link
-                      href="/trust"
-                      aria-label="Trust"
-                      title="Trust"
-                      onMouseEnter={() => preloadOnHover('/trust')}
-                      className={cn(
-                        "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300",
-                        location === '/trust'
-                          ? "border-blue-600/20 bg-blue-600/10 text-blue-600"
-                          : "border-transparent text-slate-500 hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
-                      )}
-                    >
-                      <Shield className="h-4 w-4" aria-hidden="true" />
-                    </Link>
-                  </NavigationMenuItem>
-
-                  <NavigationMenuItem>
-                    <Link href="/contact" onMouseEnter={() => preloadOnHover('/contact')}>
-                      <div className="relative group">
-                        {location === '/contact' && (
-                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
-                        )}
-                        <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
-                          location === '/contact' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
-                        )}>
-                          Contact
-                        </span>
-                      </div>
-                    </Link>
-                  </NavigationMenuItem>
+                      </NavigationMenuItem>
+                    );
+                  })}
 
 
 
@@ -982,8 +978,8 @@ export default function Header() {
                   </SheetTrigger>
                   <SheetContent side="right" className="flex w-[calc(100vw-24px)] max-w-[340px] flex-col overflow-y-auto p-0 sm:w-[350px]">
                     <SheetHeader className="overflow-hidden border-b bg-white p-0 text-left">
-                      <a
-                        href="https://myeca.in"
+                      <AppLink
+                        href="/"
                         onClick={() => setMobileMenuOpen(false)}
                         className="group flex cursor-pointer items-center gap-3 p-4 transition-all hover:bg-slate-50"
                       >
@@ -994,7 +990,7 @@ export default function Header() {
                           </span>
                           <span className="m-0 block type-meta font-normal uppercase leading-none tracking-widest text-slate-400">SMART TAX SOLUTIONS</span>
                         </div>
-                      </a>
+                      </AppLink>
                       <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     </SheetHeader>
 
@@ -1009,13 +1005,8 @@ export default function Header() {
                         <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
                           <p className="mb-3 type-meta font-bold uppercase tracking-[0.14em] text-blue-700">Start here</p>
                           <div className="grid grid-cols-2 gap-2">
-                            {[
-                              { href: "/itr/start?source=mobile_menu", label: "File ITR", icon: FileText },
-                              { href: "/calculators/income-tax", label: "Income Tax", icon: Calculator },
-                              { href: "/calculators/regime-comparator", label: "Regime", icon: Scale },
-                              { href: "/calculators/hra", label: "HRA", icon: Home },
-                            ].map((item) => {
-                              const Icon = item.icon;
+                            {PUBLIC_HEADER_MOBILE_START_LINKS.map((item) => {
+                              const Icon = headerIconMap[item.icon];
                               return (
                                 <Link
                                   key={item.href}
@@ -1036,13 +1027,8 @@ export default function Header() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
-                          {[
-                            { href: "/form16-parser", label: "Parse Form 16", icon: FileCheck },
-                            { href: "/contact", label: "Support", icon: HelpCircle },
-                            { href: "/calculators", label: "All Tools", icon: Grid },
-                            { href: "/", label: "Home", icon: Home },
-                          ].map((item) => {
-                            const Icon = item.icon;
+                          {PUBLIC_HEADER_MOBILE_QUICK_LINKS.map((item) => {
+                            const Icon = headerIconMap[item.icon];
                             return (
                               <Link
                                 key={item.href}
@@ -1071,14 +1057,7 @@ export default function Header() {
                             </AccordionTrigger>
                             <AccordionContent className="px-3 pb-3">
                               <div className="grid gap-1">
-                                {[
-                                  ["/services/itr-for-salaried", "Salaried ITR service"],
-                                  ["/services/tds-filing", "TDS Filing"],
-                                  ["/services/gst-registration", "GST Registration"],
-                                  ["/services/document-vault", "Document Vault"],
-                                  ["/services/notice-compliance", "Notice Help"],
-                                  ["/services/company-registration", "Company Setup"],
-                                ].map(([href, label]) => (
+                                {PUBLIC_HEADER_MOBILE_SERVICE_LINKS.map(({ href, label }) => (
                                   <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
                                     {label}
                                   </Link>
@@ -1096,10 +1075,20 @@ export default function Header() {
                             </AccordionTrigger>
                             <AccordionContent className="px-3 pb-3">
                               <div className="grid gap-1">
-                                <Link href="/startup-services" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50">Startup overview</Link>
-                                <Link href="/startup/registration" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Entity registration</Link>
-                                <Link href="/services/company-registration" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Company setup</Link>
-                                <Link href="/services/marketplace" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600">Services marketplace</Link>
+                                {PUBLIC_HEADER_MOBILE_STARTUP_LINKS.map(({ href, label }, index) => (
+                                  <Link
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={
+                                      index === 0
+                                        ? "block rounded-md px-2 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50"
+                                        : "block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-purple-50 hover:text-purple-600"
+                                    }
+                                  >
+                                    {label}
+                                  </Link>
+                                ))}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
@@ -1113,15 +1102,7 @@ export default function Header() {
                             </AccordionTrigger>
                             <AccordionContent className="px-3 pb-3">
                               <div className="grid gap-1">
-                                {[
-                                  ["/calculators/income-tax", "Income Tax"],
-                                  ["/calculators/regime-comparator", "Regime Compare"],
-                                  ["/calculators/hra", "HRA Calculator"],
-                                  ["/calculators/gst", "GST Calculator"],
-                                  ["/calculators/salary", "Salary Calculator"],
-                                  ["/calculators/tds", "TDS Calculator"],
-                                  ["/calculators", "All Calculators"],
-                                ].map(([href, label]) => (
+                                {PUBLIC_HEADER_MOBILE_CALCULATOR_LINKS.map(({ href, label }) => (
                                   <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-2 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600">
                                     {label}
                                   </Link>
