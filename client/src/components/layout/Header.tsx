@@ -796,7 +796,7 @@ export default function Header() {
                           "relative z-10 inline-flex items-center justify-center px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
                           location.startsWith('/blog') ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
                         )}>
-                          Blog
+                          Blogs
                         </span>
                       </div>
                     </Link>
@@ -819,19 +819,19 @@ export default function Header() {
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
-                    <Link href="/trust" onMouseEnter={() => preloadOnHover('/trust')}>
-                      <div className="relative group">
-                        {location === '/trust' && (
-                          <div className="absolute inset-0 bg-blue-600/10 border border-blue-600/20 shadow-sm rounded-full transition-all duration-300" />
-                        )}
-                        <span className={cn(
-                          "relative z-10 inline-flex items-center justify-center gap-2 px-5 py-2.5 transition-colors duration-300 cursor-pointer type-body",
-                          location === '/trust' ? "font-bold text-blue-600" : "font-normal text-slate-600 hover:text-blue-600"
-                        )}>
-                          <Shield className="h-4 w-4" />
-                          Trust
-                        </span>
-                      </div>
+                    <Link
+                      href="/trust"
+                      aria-label="Trust"
+                      title="Trust"
+                      onMouseEnter={() => preloadOnHover('/trust')}
+                      className={cn(
+                        "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300",
+                        location === '/trust'
+                          ? "border-blue-600/20 bg-blue-600/10 text-blue-600"
+                          : "border-transparent text-slate-500 hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
+                      )}
+                    >
+                      <Shield className="h-4 w-4" aria-hidden="true" />
                     </Link>
                   </NavigationMenuItem>
 
@@ -1139,16 +1139,6 @@ export default function Header() {
                             location === '/about' ? "font-bold text-blue-700" : "font-normal"
                           )}>
                           About MyeCA.in
-                        </Link>
-
-                        <Link
-                          href="/trust"
-                          onTouchStart={() => preloadOnHover("/trust")}
-                          className={cn(
-                            "flex min-h-11 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors hover:bg-slate-50 hover:text-blue-600",
-                            location === '/trust' ? "font-bold text-blue-700" : "font-normal"
-                          )}>
-                          Trust & Security
                         </Link>
 
                         <Link

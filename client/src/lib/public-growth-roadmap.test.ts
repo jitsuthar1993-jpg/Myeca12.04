@@ -18,7 +18,11 @@ describe("public growth roadmap implementation", () => {
     expect(source).toContain("Compliances");
     expect(source).toContain("Expert eCA Assistance");
     expect(source).toContain("Free Notice Assistance");
+    expect(source).toContain("ITR FILING 2026-27 STARTED");
+    expect(source).toContain("rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent");
+    expect(source).toContain("text-emerald-700/85");
     expect(source).not.toContain("for tax, GST, notices");
+    expect(source).not.toContain("ITR Filing Started");
     expect(source).not.toContain("<HeroTypingPhrase");
     expect(source).not.toContain("with expert CA assistance");
     expect(source).toContain("justify-start text-left text-blue-600");
@@ -46,10 +50,16 @@ describe("public growth roadmap implementation", () => {
     const headerSource = readSource("client/src/components/layout/Header.tsx");
 
     expect(headerSource).toContain("Login &amp; File");
+    expect(headerSource).toContain("Blogs");
+    expect(headerSource).toContain('href="/trust"');
+    expect(headerSource).toContain('aria-label="Trust"');
     expect(headerSource).toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file");
     expect(headerSource).not.toContain("<span>Log in</span>");
+    expect(headerSource).not.toContain(">Blog<");
     expect(headerSource).not.toContain("Check ITR Plan");
     expect(headerSource).not.toContain("hidden lg:flex text-slate-400");
+    expect(headerSource).not.toContain(">Trust<");
+    expect(headerSource).not.toContain("Trust & Security");
   });
 
   it("standardizes core pricing CTA labels", () => {

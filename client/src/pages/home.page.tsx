@@ -218,8 +218,8 @@ const HomePage = () => {
               </div>
 
               <div className="relative mx-auto mt-6 max-w-5xl">
-                <span className="hero-filing-stamp pointer-events-none absolute -left-28 top-[5.75rem] hidden rounded-[3px] border-2 border-dashed border-blue-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-blue-700/85 ring-1 ring-blue-500/20 ring-offset-2 ring-offset-white xl:inline-flex">
-                  ITR Filing Started
+                <span className="hero-filing-stamp pointer-events-none absolute -left-28 top-[5.75rem] hidden rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-700/85 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:inline-flex">
+                  ITR FILING 2026-27 STARTED
                 </span>
 
                 <h1 className="type-hero-title mx-auto max-w-5xl text-slate-950">
@@ -232,8 +232,8 @@ const HomePage = () => {
                 <p className="mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
                   With <span className="font-bold text-slate-700">Expert eCA Assistance</span> and <span className="font-bold text-slate-700">Free Notice Assistance</span>.
                 </p>
-                <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-blue-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-blue-700/85 ring-1 ring-blue-500/20 ring-offset-2 ring-offset-white xl:hidden">
-                  ITR Filing Started
+                <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-700/85 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:hidden">
+                  ITR FILING 2026-27 STARTED
                 </span>
               </div>
 
