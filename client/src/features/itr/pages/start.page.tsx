@@ -32,7 +32,7 @@ import {
   type ItrStartSelectorAnswers,
   type ItrStartTotalIncomeRange,
 } from "@/features/itr/lib/start-selector";
-import { recommendItrForm, type ItrFormRecommendation, type ItrTaxpayer } from "@shared/itr-filing";
+import { recommendItrForm, type ItrFormRecommendation } from "@shared/itr-filing";
 
 const assessmentYears: Array<{
   id: ItrStartSelectorAnswers["assessmentYear"];
@@ -43,21 +43,8 @@ const assessmentYears: Array<{
   { id: "2025-26", label: "AY 2025-26", helper: "Prior-year draft" },
 ];
 
-const taxpayerOptions: Array<{
-  id: ItrTaxpayer["type"];
-  label: string;
-  helper: string;
-}> = [
-  { id: "individual", label: "Individual", helper: "Most salary, pension, investor, and freelancer cases" },
-  { id: "huf", label: "HUF", helper: "Hindu Undivided Family returns" },
-  { id: "firm", label: "Firm", helper: "Firm other than LLP for eligible ITR-4 checks" },
-  { id: "llp", label: "LLP", helper: "Routes to CA scope review in v1" },
-  { id: "company", label: "Company", helper: "Routes to CA scope review in v1" },
-  { id: "trust", label: "Trust / other", helper: "Routes to CA scope review in v1" },
-];
-
 const residentialStatusOptions: Array<{
-  id: ItrTaxpayer["residentialStatus"];
+  id: ItrStartSelectorAnswers["residentialStatus"];
   label: string;
   helper: string;
 }> = [
@@ -338,11 +325,11 @@ export default function ITRStartPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <MetaSEO
-        title="ITR Form Selector AY 2026-27 | Choose ITR-1, ITR-2, ITR-3 or ITR-4"
-        description="Use the MyeCA ITR form selector for AY 2026-27. Answer public facts and get an ITR-1, ITR-2, ITR-3, ITR-4, or CA scope review recommendation."
+        title="Individual ITR Form Selector AY 2026-27 | Choose ITR-1, ITR-2, ITR-3 or ITR-4"
+        description="Use the MyeCA individual ITR form selector for AY 2026-27. Answer public facts and get an ITR-1, ITR-2, ITR-3, ITR-4, or CA scope review recommendation."
         breadcrumbs={[
           { name: "Home", url: "/" },
-          { name: "ITR Form Selector", url: "/itr/start" },
+          { name: "Individual ITR Form Selector", url: "/itr/start" },
         ]}
       />
 
@@ -355,16 +342,16 @@ export default function ITRStartPage() {
                 <span>AY 2026-27 form selection</span>
               </div>
               <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
-                ITR form selector
+                Individual ITR form selector
               </h1>
               <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-slate-600 md:text-lg">
-                Answer public facts only. MyeCA will identify the likely ITR form and then you can continue inside the signed-in filing draft.
+                Answer individual filing facts only. MyeCA will identify the likely ITR form and then you can continue inside the signed-in filing draft.
               </p>
             </div>
             <div className="grid gap-2 sm:grid-cols-3 lg:w-[440px]">
               {[
                 ["No PAN here", "Public facts only"],
-                ["Rules engine", "Same ITR logic"],
+                ["Rules engine", "Same individual logic"],
                 ["Next step", "Filing draft"],
               ].map(([label, helper]) => (
                 <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
@@ -384,9 +371,9 @@ export default function ITRStartPage() {
               <div className="flex items-start gap-3">
                 <UserRound className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">Taxpayer facts</h2>
+                  <h2 className="text-xl font-black text-slate-950">Individual filing facts</h2>
                   <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    These answers decide whether simple individual forms are even available.
+                    These answers decide which individual ITR form path applies.
                   </p>
                 </div>
               </div>
@@ -398,16 +385,6 @@ export default function ITRStartPage() {
                     options={assessmentYears}
                     value={answers.assessmentYear}
                     onChange={(value) => updateAnswer("assessmentYear", value)}
-                  />
-                </div>
-
-                <div>
-                  <p className="text-sm font-black text-slate-950">Taxpayer type</p>
-                  <ChoiceGrid
-                    options={taxpayerOptions}
-                    value={answers.taxpayerType}
-                    onChange={(value) => updateAnswer("taxpayerType", value)}
-                    columns="sm:grid-cols-2 xl:grid-cols-3"
                   />
                 </div>
 

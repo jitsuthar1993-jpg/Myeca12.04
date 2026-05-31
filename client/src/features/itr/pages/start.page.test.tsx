@@ -44,13 +44,17 @@ describe("ITR start form selector page", () => {
   it("renders a form-selection-only public page", () => {
     render(<ITRStartPage />);
 
-    expect(screen.getByRole("heading", { name: /ITR form selector/i })).toBeInTheDocument();
-    expect(screen.getByText("Taxpayer type")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Individual ITR form selector/i })).toBeInTheDocument();
+    expect(screen.getByText("Individual filing facts")).toBeInTheDocument();
     expect(screen.getByText("Residential status")).toBeInTheDocument();
     expect(screen.getByText("Recommended form")).toBeInTheDocument();
     expect(screen.getByText("ITR-1")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Continue filing/i })).toBeInTheDocument();
 
+    expect(screen.queryByText("Taxpayer type")).not.toBeInTheDocument();
+    for (const unsupportedType of ["HUF", "Firm", "LLP", "Company", "Trust / other"]) {
+      expect(screen.queryByText(unsupportedType)).not.toBeInTheDocument();
+    }
     expect(screen.queryByText(/Recommended plan/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/payment link/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Compare pricing/i)).not.toBeInTheDocument();

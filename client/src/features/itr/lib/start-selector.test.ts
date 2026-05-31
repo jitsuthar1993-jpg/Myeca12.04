@@ -52,14 +52,12 @@ describe("ITR start form selector mapper", () => {
     expect(recommendation.requiredSchedules).toContain("Schedule 44ADA");
   });
 
-  it("routes unsupported taxpayer types to CA scope review", () => {
-    const recommendation = recommendationFor({
+  it("keeps the public selector scoped to individual taxpayers", () => {
+    const draft = buildItrStartDraft({
+      ...DEFAULT_ITR_START_SELECTOR_ANSWERS,
       taxpayerType: "llp",
-      businessOrProfession: "business",
-      presumptiveScheme: "44AD",
-    });
+    } as any);
 
-    expect(recommendation.form).toBe("CA_SCOPE_REVIEW");
-    expect(recommendation.caReviewRequired).toBe(true);
+    expect(draft.taxpayer.type).toBe("individual");
   });
 });

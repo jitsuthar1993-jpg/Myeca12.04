@@ -81,9 +81,12 @@ describe("public growth roadmap implementation", () => {
   it("uses stronger route-level conversion and SEO copy", () => {
     const itrStartSource = readSource("client/src/features/itr/pages/start.page.tsx");
 
-    expect(itrStartSource).toContain("ITR form selector");
+    expect(itrStartSource).toContain("Individual ITR form selector");
+    expect(itrStartSource).toContain("Individual filing facts");
     expect(itrStartSource).toContain("recommendItrForm");
     expect(itrStartSource).toContain("Continue filing");
+    expect(itrStartSource).not.toContain("taxpayerOptions");
+    expect(itrStartSource).not.toContain("Taxpayer type");
     expect(itrStartSource).not.toContain("GST Returns");
     expect(itrStartSource).not.toContain("Recommended plan");
     expect(itrStartSource).not.toContain("request-link");

@@ -1,7 +1,6 @@
 import {
   normalizeItrDraft,
   type ItrFilingDraft,
-  type ItrTaxpayer,
 } from "@shared/itr-filing";
 
 export const ITR_START_SELECTOR_STORAGE_KEY = "myeca:itr-start-form-selector";
@@ -13,8 +12,7 @@ export type ItrStartBusinessOrProfession = "none" | "business" | "profession";
 
 export type ItrStartSelectorAnswers = {
   assessmentYear: "2026-27" | "2025-26";
-  taxpayerType: ItrTaxpayer["type"];
-  residentialStatus: ItrTaxpayer["residentialStatus"];
+  residentialStatus: ItrFilingDraft["taxpayer"]["residentialStatus"];
   totalIncomeRange: ItrStartTotalIncomeRange;
   salaryOrPension: boolean;
   housePropertyCount: ItrStartHousePropertyCount;
@@ -34,7 +32,6 @@ export type ItrStartSelectorAnswers = {
 
 export const DEFAULT_ITR_START_SELECTOR_ANSWERS: ItrStartSelectorAnswers = {
   assessmentYear: "2026-27",
-  taxpayerType: "individual",
   residentialStatus: "resident",
   totalIncomeRange: "under-50-lakh",
   salaryOrPension: true,
@@ -53,16 +50,11 @@ export const DEFAULT_ITR_START_SELECTOR_ANSWERS: ItrStartSelectorAnswers = {
   governedByPortugueseCivilCode: false,
 };
 
-const taxpayerTypes: ItrTaxpayer["type"][] = ["individual", "huf", "firm", "llp", "company", "trust", "aop", "boi", "other"];
-const residentialStatuses: ItrTaxpayer["residentialStatus"][] = ["resident", "rnor", "nri"];
+const residentialStatuses: ItrFilingDraft["taxpayer"]["residentialStatus"][] = ["resident", "rnor", "nri"];
 const presumptiveSchemes: ItrFilingDraft["income"]["presumptiveScheme"][] = ["none", "44AD", "44ADA", "44AE"];
 
-function isTaxpayerType(value: string | null): value is ItrTaxpayer["type"] {
-  return taxpayerTypes.includes(value as ItrTaxpayer["type"]);
-}
-
-function isResidentialStatus(value: string | null): value is ItrTaxpayer["residentialStatus"] {
-  return residentialStatuses.includes(value as ItrTaxpayer["residentialStatus"]);
+function isResidentialStatus(value: string | null): value is ItrFilingDraft["taxpayer"]["residentialStatus"] {
+  return residentialStatuses.includes(value as ItrFilingDraft["taxpayer"]["residentialStatus"]);
 }
 
 function isPresumptiveScheme(value: string | null): value is ItrFilingDraft["income"]["presumptiveScheme"] {
@@ -93,10 +85,6 @@ export function normalizeItrStartSelectorAnswers(input: Partial<ItrStartSelector
     ...input,
   };
 
-  if (!isTaxpayerType(answers.taxpayerType)) {
-    answers.taxpayerType = DEFAULT_ITR_START_SELECTOR_ANSWERS.taxpayerType;
-  }
-
   if (!isResidentialStatus(answers.residentialStatus)) {
     answers.residentialStatus = DEFAULT_ITR_START_SELECTOR_ANSWERS.residentialStatus;
   }
@@ -126,7 +114,7 @@ export function buildItrStartDraft(input: ItrStartSelectorAnswers): ItrFilingDra
   return normalizeItrDraft({
     assessmentYear: answers.assessmentYear,
     taxpayer: {
-      type: answers.taxpayerType,
+      type: "individual",
       residentialStatus: answers.residentialStatus,
     },
     filing: {
