@@ -22,7 +22,7 @@ export const allServices: Service[] = [
     category: "Tax & Filing Services",
     section: "Services",
     icon: "FileText",
-    path: "/itr/form-selector",
+    path: "/itr/start?source=all_services_itr_filing",
     price: "₹499 - ₹2,999 excluding GST",
     popular: true
   },
@@ -177,7 +177,7 @@ export const allServices: Service[] = [
     category: "ITR Filing Services",
     section: "ITR Filing",
     icon: "FileText",
-    path: "/itr/form-selector",
+    path: "/itr/start?source=all_services_start_itr",
     popular: true
   },
   {
@@ -205,7 +205,7 @@ export const allServices: Service[] = [
     category: "ITR Filing Services",
     section: "ITR Filing", 
     icon: "Users",
-    path: "/itr/form-selector"
+    path: "/itr/start?source=all_services_manage_profiles"
   },
 
   // ITR FILING SECTION - Support & Resources

@@ -42,7 +42,7 @@ export const pricingPlans = [
     caTouchpoints: "Optional CA review add-on",
     sla: "After document review",
     exclusions: ["Capital gains", "Business income", "Foreign assets"],
-    cta: "/itr/form-selector",
+    cta: "/itr/start?source=competitive_salary_plan",
   },
   {
     name: "Expert Assisted",
@@ -54,7 +54,7 @@ export const pricingPlans = [
     caTouchpoints: "CA review plus one clarification loop",
     sla: "After complete document review",
     exclusions: ["F&O audit", "Foreign tax credit", "GST books"],
-    cta: "/itr/form-selector",
+    cta: "/itr/start?source=competitive_expert_plan",
     featured: true,
   },
   {
@@ -149,7 +149,7 @@ export const competitorPages = [
       "Compare MyeCA with Tax2Win if you want ITR filing that starts with scope clarity, document-led review, AIS checks and CA assistance before sensitive details move into a full filing workflow.",
     goodPoints: ["Strong tax tools menu", "Form 16 upload positioning", "Assisted filing claims", "Ratings and social proof"],
     myeCAEdge: ["Scope-first CA-assisted tax filing", "Document-led review before checkout pressure", "No-blind-checkout messaging", "Case history tied to uploads and clarifications"],
-    primaryCta: "/itr/form-selector",
+    primaryCta: "/itr/start?source=competitive_tax2win_page",
     source: "https://tax2win.in/",
   },
   {

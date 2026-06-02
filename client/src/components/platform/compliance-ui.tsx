@@ -63,7 +63,7 @@ const statusLabel: Record<ComplianceStatus, string> = {
 
 export const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
-  { label: "File ITR", href: "/itr/form-selector", icon: FileText },
+  { label: "File ITR", href: "/itr/start?source=workspace_quick_nav", icon: FileText },
   { label: "Documents", href: "/documents", icon: FolderOpen },
   { label: "Tax Tools", href: "/calculators", icon: Calculator },
   { label: "AI Assistant", href: "/tax-assistant", icon: Bot },

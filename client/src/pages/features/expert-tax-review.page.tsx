@@ -49,7 +49,7 @@ export default function ExpertTaxReviewPage() {
             CA-assisted plans include expert review before submission. The review checks source documents, deductions, and common notice-risk areas.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/itr/form-selector">
+            <Link href="/itr/start?source=expert_review_feature_hero">
               <Button size="lg" className="gap-2">
                 Get CA-Reviewed Filing <ArrowRight className="w-5 h-5" />
               </Button>
@@ -159,7 +159,7 @@ export default function ExpertTaxReviewPage() {
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
           <h2 className="text-3xl font-extrabold mb-4">File with a CA reviewing your return.</h2>
           <p className="text-blue-100 mb-8">ITR-1 starts at ₹499. CA review is included in every plan — not an add-on.</p>
-          <Link href="/itr/form-selector">
+          <Link href="/itr/start?source=expert_review_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start CA-Reviewed Filing <ArrowRight className="w-5 h-5" />
             </Button>

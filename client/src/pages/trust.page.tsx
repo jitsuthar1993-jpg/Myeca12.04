@@ -95,7 +95,7 @@ export default function TrustPage() {
                 Tax filing asks users to share PAN, income, deductions, bank details, and business records. This page explains what MyeCA shows before payment, how document workflows are framed, and where privacy questions are handled.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row md:justify-center">
-                <Link href="/itr/form-selector" className="inline-flex h-12 items-center justify-center rounded-lg bg-blue-600 px-6 text-sm font-bold text-white shadow-sm shadow-blue-200 transition-colors hover:bg-blue-700">
+                <Link href="/itr/start?source=trust_hero" className="inline-flex h-12 items-center justify-center rounded-lg bg-blue-600 px-6 text-sm font-bold text-white shadow-sm shadow-blue-200 transition-colors hover:bg-blue-700">
                   Start filing <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link href="/legal/privacy-policy" className="inline-flex h-12 items-center justify-center rounded-lg border border-slate-200 bg-white px-6 text-sm font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50">

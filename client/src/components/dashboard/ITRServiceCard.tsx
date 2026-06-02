@@ -103,7 +103,7 @@ export function ITRServiceCard({ status, progress, assessmentYear, dueDate }: IT
           </div>
           
           <div className="pt-4">
-            <Link href="/itr/form-selector">
+            <Link href="/itr/filing">
               <Button className={cn(
                 "w-full h-12 rounded-xl font-bold transition-all duration-300 gap-2",
                 isCompleted

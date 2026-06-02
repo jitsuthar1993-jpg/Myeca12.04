@@ -293,7 +293,7 @@ export default function IncomeTaxCalculator() {
               : "Both regimes are currently showing the same tax before final document review."}
           </p>
           <div className="mt-4 grid gap-2">
-            <Link href="/itr/form-selector">
+            <Link href="/itr/start?source=income_tax_calculator_cta">
               <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
                 File with this estimate
                 <ArrowRight className="ml-2 h-4 w-4" />

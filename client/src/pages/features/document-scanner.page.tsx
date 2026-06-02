@@ -56,7 +56,7 @@ export default function DocumentScannerPage() {
             Form 16, AIS, bank statements, CAS — our scanner extracts all the data and maps it to your ITR form automatically.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/itr/form-selector">
+            <Link href="/itr/start?source=document_scanner_feature_hero">
               <Button size="lg" className="gap-2">
                 Upload & Start Filing <ArrowRight className="w-5 h-5" />
               </Button>
@@ -164,7 +164,7 @@ export default function DocumentScannerPage() {
           <ScanLine className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Stop entering numbers manually.</h2>
           <p className="text-blue-100 mb-8">Upload your documents and let the scanner do the work. A CA reviews before filing.</p>
-          <Link href="/itr/form-selector">
+          <Link href="/itr/start?source=document_scanner_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start with Document Upload <ArrowRight className="w-5 h-5" />
             </Button>

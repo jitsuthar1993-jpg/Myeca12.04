@@ -13,7 +13,7 @@ export default function ReadyToFileSection() {
           Guided filing starts at ₹499, with CA-assisted review available on eligible plans before submission.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <Link href="/itr/form-selector">
+          <Link href="/itr/start?source=ready_to_file_section">
             <Button
               size="lg"
               className="bg-white text-[#315efb] px-8 py-4 rounded-sm font-semibold hover:bg-gray-50 transition-all duration-300 shadow-md"

@@ -74,7 +74,7 @@ export const PUBLIC_HEADER_MOBILE_CALCULATOR_LINKS: PublicNavigationLink[] = [
 ];
 
 export const PUBLIC_FOOTER_MOBILE_PRIMARY_LINKS: PublicNavigationLink[] = [
-  { href: "/itr/form-selector", label: "File ITR" },
+  { href: "/itr/start?source=footer_mobile_primary", label: "File ITR" },
   { href: "/itr-season-2026", label: "AY 2026 Hub" },
   { href: "/calculators/income-tax", label: "Estimate Tax" },
   { href: "/calculators/regime-comparator", label: "Compare Regimes" },

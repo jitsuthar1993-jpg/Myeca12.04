@@ -307,7 +307,7 @@ export const generatedServicePages: GeneratedServicePageData[] = [
     process: standardServiceProcess,
     faqs: standardServiceFaqs("ITR filing"),
     relatedLinks: [
-      { label: "Start ITR filing", href: "/itr/form-selector" },
+      { label: "Start ITR filing", href: "/itr/start?source=generated_itr_service" },
       { label: "ITR for salaried", href: "/services/itr-for-salaried" },
     ],
   },
@@ -487,7 +487,7 @@ export const generatedCalculatorPages: GeneratedInfoPageData[] = [
     limitations: ["This page is an informational guide.", "Final eligibility depends on facts and applicable law.", "Use expert review for complex claims."],
     relatedLinks: [
       { label: "Income tax calculator", href: "/calculators/income-tax" },
-      { label: "Start ITR filing", href: "/itr/form-selector" },
+      { label: "Start ITR filing", href: "/itr/start?source=generated_deductions_page" },
     ],
   },
   {
@@ -535,7 +535,7 @@ export const generatedCalculatorPages: GeneratedInfoPageData[] = [
     limitations: ["This page does not calculate statutory entitlement.", "Final numbers depend on official payroll facts.", "Use expert review for disputes."],
     relatedLinks: [
       { label: "Tax consultation", href: "/services/tax-consultation" },
-      { label: "ITR filing", href: "/itr/form-selector" },
+      { label: "ITR filing", href: "/itr/start?source=generated_gratuity_page" },
     ],
   },
   {
@@ -551,7 +551,7 @@ export const generatedCalculatorPages: GeneratedInfoPageData[] = [
     limitations: ["This is an informational guide, not tax computation.", "Crypto tax positions can be fact-sensitive.", "Use expert review before filing."],
     relatedLinks: [
       { label: "Capital gains calculator", href: "/calculators/capital-gains" },
-      { label: "ITR filing", href: "/itr/form-selector" },
+      { label: "ITR filing", href: "/itr/start?source=generated_vda_page" },
     ],
   },
 ];

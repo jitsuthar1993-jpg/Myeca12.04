@@ -345,7 +345,7 @@ export default function AISViewerPage() {
                   Calculate Tax
                 </Button>
               </Link>
-              <Link href="/itr/form-selector">
+              <Link href="/itr/start?source=ais_viewer_toolbar">
                 <Button variant="outline">
                   <FileText className="mr-2 h-4 w-4" />
                   File ITR
@@ -635,7 +635,7 @@ export default function AISViewerPage() {
                   <p className="text-blue-200">Use your AIS data to complete your tax return</p>
                 </div>
                 <div className="flex gap-3">
-                  <Link href="/itr/form-selector">
+                  <Link href="/itr/start?source=ais_viewer_cta">
                     <Button variant="secondary">
                       <FileText className="mr-2 h-4 w-4" />
                       Start Filing

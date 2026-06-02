@@ -390,7 +390,7 @@ export default function UserGuidePage() {
                       <Button size="lg" onClick={() => setSelectedGuide(null)}>
                         View Other Guides
                       </Button>
-                      <Link href="/itr/form-selector">
+                      <Link href="/itr/start?source=user_guide_completion">
                         <Button size="lg" variant="outline">
                           Start Filing
                         </Button>

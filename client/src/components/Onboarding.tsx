@@ -66,7 +66,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     icon: <FileText className="h-12 w-12 text-purple-500" />,
     action: {
       label: 'Start Filing ITR',
-      href: '/itr/form-selector'
+      href: '/itr/start?source=onboarding'
     },
     tips: [
       'ITR-1 filing starts at just ₹499',

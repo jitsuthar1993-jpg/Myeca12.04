@@ -22,10 +22,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { captureTelemetryEvent } from "@/telemetry/browser";
 import {
-  ITR_START_SELECTOR_STORAGE_KEY,
   buildItrStartDraft,
   getItrStartSelectorAnswersFromParams,
   normalizeItrStartSelectorAnswers,
+  readItrStartHandoff,
+  writeItrStartHandoff,
   type ItrStartBusinessOrProfession,
   type ItrStartCapitalGains,
   type ItrStartHousePropertyCount,
@@ -134,13 +135,9 @@ function readInitialAnswers() {
   const params = new URLSearchParams(window.location.search);
 
   if (params.get("resume") === "1") {
-    try {
-      const stored = JSON.parse(window.sessionStorage.getItem(ITR_START_SELECTOR_STORAGE_KEY) || "");
-      if (stored?.answers) {
-        return normalizeItrStartSelectorAnswers(stored.answers);
-      }
-    } catch {
-      window.sessionStorage.removeItem(ITR_START_SELECTOR_STORAGE_KEY);
+    const handoff = readItrStartHandoff();
+    if (handoff?.answers) {
+      return normalizeItrStartSelectorAnswers(handoff.answers);
     }
   }
 
@@ -301,12 +298,10 @@ export default function ITRStartPage() {
   };
 
   const handleContinue = () => {
-    window.sessionStorage.setItem(ITR_START_SELECTOR_STORAGE_KEY, JSON.stringify({
+    writeItrStartHandoff({
       answers,
-      draft,
-      recommendation,
       source: conversionSource,
-    }));
+    });
 
     captureTelemetryEvent("itr_form_selector_continue", {
       source: conversionSource,
@@ -594,12 +589,12 @@ export default function ITRStartPage() {
               disabled={isLoading}
               className="mt-5 h-12 w-full rounded-lg bg-slate-900 font-black text-white hover:bg-slate-800"
             >
-              Continue filing
+              Continue to MY ITR
               <ArrowRight className="h-4 w-4" />
             </Button>
 
             <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">
-              Form selection is guidance for the MyeCA draft and CA-assisted review flow. Official portal filing remains a separate authorized workflow.
+              Your selector answers are saved briefly and resumed after login. Form selection is guidance for the MyeCA draft and CA-assisted review flow. Official portal filing remains a separate authorized workflow.
             </p>
           </aside>
         </div>

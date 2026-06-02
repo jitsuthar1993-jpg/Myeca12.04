@@ -39,7 +39,7 @@ type BottomNavItem = {
 
 const bottomNavItems: BottomNavItem[] = [
   { id: "home", label: "Home", href: "/", icon: Home },
-  { id: "file", label: "File", href: "/itr/form-selector", icon: FileText },
+  { id: "file", label: "File", href: "/itr/start?source=mobile_app_preview_nav", icon: FileText },
   { id: "tools", label: "Tools", href: "/calculators", icon: Calculator },
   { id: "services", label: "Services", href: "/services", icon: WalletCards },
   { id: "account", label: "Account", href: "/dashboard", icon: UserCircle2 },
@@ -179,7 +179,7 @@ function StatPill({
 }
 
 const quickActions = [
-  { label: "File ITR", icon: FileText, href: "/itr/form-selector", tone: "bg-blue-50 text-[#315efb]" },
+  { label: "File ITR", icon: FileText, href: "/itr/start?source=mobile_app_preview_action", tone: "bg-blue-50 text-[#315efb]" },
   { label: "Tax Calc", icon: Calculator, href: "/calculators/income-tax", tone: "bg-emerald-50 text-emerald-700" },
   { label: "Upload Docs", icon: Upload, href: "/documents", tone: "bg-indigo-50 text-indigo-600" },
   { label: "Ask CA", icon: Bot, href: "/tax-assistant", tone: "bg-amber-50 text-amber-700" },
@@ -243,7 +243,7 @@ export default function MobileAppScreensPage() {
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="h-12 w-full rounded-2xl bg-[#315efb] px-6 font-normal text-white shadow-lg shadow-blue-500/20 hover:bg-[#2040d8] sm:w-auto">
-                  <Link href="/itr/form-selector">
+                  <Link href="/itr/start?source=mobile_app_preview_cta">
                     Preview filing flow
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -505,7 +505,7 @@ export default function MobileAppScreensPage() {
                       The app can keep the filing flow concise while still showing CA review status and missing items.
                     </p>
                     <Button asChild className="mt-4 h-11 w-full rounded-2xl bg-[#315efb] font-normal text-white hover:bg-[#2040d8]">
-                      <Link href="/itr/form-selector">Continue filing</Link>
+                      <Link href="/itr/start?source=mobile_app_preview_continue">Continue filing</Link>
                     </Button>
                   </div>
                 </div>

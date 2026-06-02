@@ -1,9 +1,13 @@
 import {
   normalizeItrDraft,
+  recommendItrForm,
   type ItrFilingDraft,
+  type ItrFormRecommendation,
 } from "@shared/itr-filing";
 
 export const ITR_START_SELECTOR_STORAGE_KEY = "myeca:itr-start-form-selector";
+export const ITR_START_HANDOFF_VERSION = 1;
+export const ITR_START_HANDOFF_TTL_MS = 24 * 60 * 60 * 1000;
 
 export type ItrStartTotalIncomeRange = "under-50-lakh" | "above-50-lakh";
 export type ItrStartHousePropertyCount = "none" | "one" | "two" | "more-than-two";
@@ -28,6 +32,17 @@ export type ItrStartSelectorAnswers = {
   hasBroughtForwardOrCarryForwardLoss: boolean;
   section194NCashWithdrawal: boolean;
   governedByPortugueseCivilCode: boolean;
+};
+
+export type ItrStartHandoffPayload = {
+  version: typeof ITR_START_HANDOFF_VERSION;
+  flowId: string;
+  createdAt: number;
+  expiresAt: number;
+  source: string;
+  answers: ItrStartSelectorAnswers;
+  draft: ItrFilingDraft;
+  recommendation: ItrFormRecommendation;
 };
 
 export const DEFAULT_ITR_START_SELECTOR_ANSWERS: ItrStartSelectorAnswers = {
@@ -175,4 +190,140 @@ export function getItrStartSelectorAnswersFromParams(params: URLSearchParams): I
   }
 
   return normalizeItrStartSelectorAnswers(answers);
+}
+
+function storageCandidates(): Storage[] {
+  if (typeof window === "undefined") return [];
+
+  const candidates: Storage[] = [];
+
+  try {
+    if (window.localStorage) {
+      candidates.push(window.localStorage);
+    }
+  } catch {
+    // localStorage can be unavailable in restricted browser modes.
+  }
+
+  try {
+    if (window.sessionStorage) {
+      candidates.push(window.sessionStorage);
+    }
+  } catch {
+    // sessionStorage fallback is best effort too.
+  }
+
+  return candidates;
+}
+
+function getWritableStorage() {
+  for (const storage of storageCandidates()) {
+    try {
+      const probeKey = `${ITR_START_SELECTOR_STORAGE_KEY}:probe`;
+      storage.setItem(probeKey, "1");
+      storage.removeItem(probeKey);
+      return storage;
+    } catch {
+      // Try the next available browser storage.
+    }
+  }
+
+  return null;
+}
+
+function generateFlowId(now: number) {
+  const randomId =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 10);
+
+  return `itr-start-${now}-${randomId}`;
+}
+
+export function buildItrStartHandoffPayload({
+  answers,
+  source,
+  now = Date.now(),
+  flowId = generateFlowId(now),
+}: {
+  answers: Partial<ItrStartSelectorAnswers>;
+  source: string;
+  now?: number;
+  flowId?: string;
+}): ItrStartHandoffPayload {
+  const normalizedAnswers = normalizeItrStartSelectorAnswers(answers);
+  const draft = buildItrStartDraft(normalizedAnswers);
+
+  return {
+    version: ITR_START_HANDOFF_VERSION,
+    flowId,
+    createdAt: now,
+    expiresAt: now + ITR_START_HANDOFF_TTL_MS,
+    source,
+    answers: normalizedAnswers,
+    draft,
+    recommendation: recommendItrForm(draft),
+  };
+}
+
+export function clearItrStartHandoff() {
+  for (const storage of storageCandidates()) {
+    try {
+      storage.removeItem(ITR_START_SELECTOR_STORAGE_KEY);
+    } catch {
+      // Ignore storage access failures; clearing is best effort.
+    }
+  }
+}
+
+export function writeItrStartHandoff(input: {
+  answers: Partial<ItrStartSelectorAnswers>;
+  source: string;
+  now?: number;
+}): ItrStartHandoffPayload {
+  const payload = buildItrStartHandoffPayload(input);
+  const storage = getWritableStorage();
+
+  if (storage) {
+    storage.setItem(ITR_START_SELECTOR_STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  return payload;
+}
+
+export function readItrStartHandoff({ now = Date.now() }: { now?: number } = {}): ItrStartHandoffPayload | null {
+  for (const storage of storageCandidates()) {
+    let raw: string | null = null;
+    try {
+      raw = storage.getItem(ITR_START_SELECTOR_STORAGE_KEY);
+    } catch {
+      continue;
+    }
+    if (!raw) continue;
+
+    try {
+      const parsed = JSON.parse(raw) as Partial<ItrStartHandoffPayload>;
+      if (parsed.version !== ITR_START_HANDOFF_VERSION || !parsed.answers || !parsed.source || !parsed.createdAt || !parsed.expiresAt) {
+        clearItrStartHandoff();
+        return null;
+      }
+
+      if (parsed.expiresAt <= now) {
+        clearItrStartHandoff();
+        return null;
+      }
+
+      return buildItrStartHandoffPayload({
+        answers: parsed.answers,
+        source: parsed.source,
+        now: parsed.createdAt,
+        flowId: parsed.flowId || generateFlowId(parsed.createdAt),
+      });
+    } catch {
+      clearItrStartHandoff();
+      return null;
+    }
+  }
+
+  return null;
 }

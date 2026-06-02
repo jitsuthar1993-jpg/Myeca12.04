@@ -1,8 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { recommendItrForm } from "@shared/itr-filing";
 import {
   DEFAULT_ITR_START_SELECTOR_ANSWERS,
+  ITR_START_HANDOFF_TTL_MS,
+  ITR_START_SELECTOR_STORAGE_KEY,
   buildItrStartDraft,
+  clearItrStartHandoff,
+  readItrStartHandoff,
+  writeItrStartHandoff,
   type ItrStartSelectorAnswers,
 } from "./start-selector";
 
@@ -14,6 +19,16 @@ function recommendationFor(overrides: Partial<ItrStartSelectorAnswers>) {
 }
 
 describe("ITR start form selector mapper", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    vi.useRealTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("maps the default public selector answers to ITR-1", () => {
     const recommendation = recommendationFor({});
 
@@ -59,5 +74,84 @@ describe("ITR start form selector mapper", () => {
     } as any);
 
     expect(draft.taxpayer.type).toBe("individual");
+  });
+
+  it("stores and reads a normalized selector handoff payload", () => {
+    const now = Date.UTC(2026, 5, 1, 10, 0, 0);
+
+    const written = writeItrStartHandoff({
+      answers: {
+        ...DEFAULT_ITR_START_SELECTOR_ANSWERS,
+        capitalGains: "short-term",
+      },
+      source: "unit_test",
+      now,
+    });
+
+    const stored = readItrStartHandoff({ now });
+
+    expect(stored).toMatchObject({
+      version: 1,
+      flowId: written.flowId,
+      source: "unit_test",
+      answers: { capitalGains: "short-term" },
+      recommendation: { form: "ITR-2" },
+    });
+    expect(stored?.draft.taxpayer.type).toBe("individual");
+    expect(stored?.draft.income.shortTermCapitalGains).toBeGreaterThan(0);
+  });
+
+  it("expires stale selector handoff payloads", () => {
+    const now = Date.UTC(2026, 5, 1, 10, 0, 0);
+
+    writeItrStartHandoff({
+      answers: DEFAULT_ITR_START_SELECTOR_ANSWERS,
+      source: "unit_test",
+      now,
+    });
+
+    expect(readItrStartHandoff({ now: now + ITR_START_HANDOFF_TTL_MS + 1 })).toBeNull();
+    expect(readItrStartHandoff({ now })).toBeNull();
+  });
+
+  it("falls back to sessionStorage when localStorage is unavailable", () => {
+    const now = Date.UTC(2026, 5, 1, 10, 0, 0);
+    vi.spyOn(window, "localStorage", "get").mockImplementation(() => {
+      throw new Error("localStorage blocked");
+    });
+
+    const written = writeItrStartHandoff({
+      answers: DEFAULT_ITR_START_SELECTOR_ANSWERS,
+      source: "unit_test",
+      now,
+    });
+
+    expect(sessionStorage.getItem(ITR_START_SELECTOR_STORAGE_KEY)).toContain(written.flowId);
+    expect(readItrStartHandoff({ now })?.flowId).toBe(written.flowId);
+  });
+
+  it("clears corrupt selector handoff payloads", () => {
+    localStorage.setItem("myeca:itr-start-form-selector", "{not-json");
+
+    expect(readItrStartHandoff()).toBeNull();
+    expect(localStorage.getItem("myeca:itr-start-form-selector")).toBeNull();
+  });
+
+  it("normalizes handoff answers before rebuilding the draft", () => {
+    const payload = writeItrStartHandoff({
+      answers: {
+        ...DEFAULT_ITR_START_SELECTOR_ANSWERS,
+        businessOrProfession: "none",
+        presumptiveScheme: "44ADA",
+      },
+      source: "unit_test",
+      now: Date.UTC(2026, 5, 1, 10, 0, 0),
+    });
+
+    expect(payload.answers.presumptiveScheme).toBe("none");
+    expect(payload.draft.income.presumptiveScheme).toBe("none");
+
+    clearItrStartHandoff();
+    expect(readItrStartHandoff()).toBeNull();
   });
 });

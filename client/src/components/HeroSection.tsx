@@ -85,7 +85,7 @@ export default function HeroSection() {
                 className="btn-primary px-8 py-4 rounded-xl font-semibold"
                 asChild
               >
-                <Link href="/itr/form-selector">
+                <Link href="/itr/start?source=legacy_hero_section">
                   Start Filing Now
                 </Link>
               </Button>

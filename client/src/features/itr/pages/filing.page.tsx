@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -32,6 +32,11 @@ import {
   formatInr,
 } from "@/components/platform/compliance-ui";
 import { Layout } from "@/components/admin/Layout";
+import {
+  clearItrStartHandoff,
+  readItrStartHandoff,
+  type ItrStartHandoffPayload,
+} from "@/features/itr/lib/start-selector";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 import {
@@ -134,6 +139,11 @@ type DocumentsResponse = {
   documents: VaultDocument[];
 };
 
+type CreateDraftInput = {
+  draft?: ItrFilingDraft;
+  clearHandoff?: boolean;
+};
+
 const STARTER_DRAFT = normalizeItrDraft({
   assessmentYear: "2026-27",
   taxpayer: {
@@ -172,9 +182,12 @@ export default function ITRFilingPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [activeReturnId, setActiveReturnId] = useState<string | null>(null);
   const [draft, setDraft] = useState<ItrFilingDraft>(STARTER_DRAFT);
+  const [selectorHandoff, setSelectorHandoff] = useState<ItrStartHandoffPayload | null>(null);
+  const [handoffChecked, setHandoffChecked] = useState(false);
   const [pendingSave, setPendingSave] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [exportPreview, setExportPreview] = useState<string>("");
+  const autoCreateHandoffRef = useRef<string | null>(null);
   const progress = ((currentStep + 1) / ITR_FILING_STEPS.length) * 100;
 
   const taxReturnsQuery = useQuery<TaxReturnsResponse>({
@@ -214,6 +227,12 @@ export default function ITRFilingPage() {
   }, [activeReturnId, taxReturns]);
 
   useEffect(() => {
+    if (taxReturnsQuery.isLoading || handoffChecked) return;
+    setSelectorHandoff(readItrStartHandoff());
+    setHandoffChecked(true);
+  }, [handoffChecked, taxReturnsQuery.isLoading]);
+
+  useEffect(() => {
     if (!activeReturn) return;
     setDraft(normalizeItrDraft(activeReturn.formData));
     setPendingSave(false);
@@ -237,21 +256,60 @@ export default function ITRFilingPage() {
   }, [activeReturnId, draft, pendingSave]);
 
   const createDraftMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (input?: CreateDraftInput) => {
+      const draftToCreate = input?.draft ? normalizeItrDraft(input.draft) : STARTER_DRAFT;
       const response = await apiRequest("/api/tax-returns", {
         method: "POST",
         body: JSON.stringify({
-          assessmentYear: STARTER_DRAFT.assessmentYear,
-          draft: STARTER_DRAFT,
+          assessmentYear: draftToCreate.assessmentYear,
+          draft: draftToCreate,
         }),
       });
       return response.json() as Promise<{ taxReturn: TaxReturnRecord }>;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, input) => {
       setActiveReturnId(data.taxReturn.id);
+      setDraft(normalizeItrDraft(data.taxReturn.formData));
+      if (input?.clearHandoff) {
+        clearItrStartHandoff();
+        setSelectorHandoff(null);
+      }
       queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
     },
   });
+
+  const applyHandoffMutation = useMutation({
+    mutationFn: async () => {
+      if (!activeReturn?.id || !selectorHandoff) throw new Error("No saved selector handoff to apply.");
+      const response = await apiRequest(`/api/tax-returns/${activeReturn.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ draft: selectorHandoff.draft }),
+      });
+      return response.json() as Promise<{ taxReturn: TaxReturnRecord }>;
+    },
+    onSuccess: (data) => {
+      setDraft(normalizeItrDraft(data.taxReturn.formData));
+      clearItrStartHandoff();
+      setSelectorHandoff(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
+    },
+  });
+
+  useEffect(() => {
+    if (!handoffChecked || !selectorHandoff || taxReturnsQuery.isLoading || taxReturns.length > 0 || createDraftMutation.isPending) {
+      return;
+    }
+
+    if (autoCreateHandoffRef.current === selectorHandoff.flowId) return;
+    autoCreateHandoffRef.current = selectorHandoff.flowId;
+    createDraftMutation.mutate({ draft: selectorHandoff.draft, clearHandoff: true });
+  }, [
+    createDraftMutation,
+    handoffChecked,
+    selectorHandoff,
+    taxReturns.length,
+    taxReturnsQuery.isLoading,
+  ]);
 
   const submitReviewMutation = useMutation({
     mutationFn: async () => {
@@ -332,6 +390,10 @@ export default function ITRFilingPage() {
   const previousStep = () => setCurrentStep((step) => Math.max(step - 1, 0));
   const linkedVaultDocument = (checklistItemId: string) =>
     vaultDocuments.find((document) => document.id === draft.documents[checklistItemId]) ?? null;
+  const dismissHandoff = () => {
+    clearItrStartHandoff();
+    setSelectorHandoff(null);
+  };
 
   if (taxReturnsQuery.isLoading) {
     return (
@@ -355,7 +417,7 @@ export default function ITRFilingPage() {
             />
             <Button
               className="mt-6 bg-blue-600 text-white hover:bg-blue-700"
-              onClick={() => createDraftMutation.mutate()}
+              onClick={() => createDraftMutation.mutate({})}
               disabled={createDraftMutation.isPending}
             >
               {createDraftMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -388,6 +450,40 @@ export default function ITRFilingPage() {
             </div>
           </div>
         </MyeCard>
+
+        {selectorHandoff && activeReturn ? (
+          <MyeCard className="border-blue-200 bg-blue-50 p-5 shadow-none">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="type-meta font-black uppercase text-blue-700">Saved selector answers</p>
+                <h2 className="mt-2 type-section-title font-black text-slate-950">Resume your ITR plan</h2>
+                <p className="type-body mt-2 max-w-3xl text-slate-700">
+                  We found the plan you started from {selectorHandoff.source.replace(/_/g, " ")}. Apply it to this draft to carry forward the recommended {selectorHandoff.recommendation.form.replace(/_/g, " ")} path.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row lg:shrink-0">
+                <Button
+                  type="button"
+                  onClick={() => applyHandoffMutation.mutate()}
+                  disabled={applyHandoffMutation.isPending}
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  {applyHandoffMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileCheck2 className="h-4 w-4" />}
+                  Apply plan
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={dismissHandoff}
+                  disabled={applyHandoffMutation.isPending}
+                  className="border-blue-200 bg-white text-blue-700 hover:bg-blue-100"
+                >
+                  Dismiss plan
+                </Button>
+              </div>
+            </div>
+          </MyeCard>
+        ) : null}
 
         <div className="grid gap-4 xl:grid-cols-[0.72fr_0.28fr]">
           <MyeCard className="p-5">

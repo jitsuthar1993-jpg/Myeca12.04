@@ -435,7 +435,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
           <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
             Optional CA review for eligible ITR plans - <span className="text-white font-semibold">starting ?999</span>
           </p>
-          <Link href="/itr/form-selector">
+          <Link href="/itr/start?source=blog_article_banner">
             <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
               File Now <ArrowRight className="w-3 h-3" />
             </span>
