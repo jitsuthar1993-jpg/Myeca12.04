@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { type User as SupabaseUser } from "@supabase/supabase-js";
 import { type User as AppUser } from "@shared/schema";
 import { normalizeAppRole, type AppRole } from "@shared/app-roles";
@@ -14,6 +14,7 @@ import {
   setAuthToken,
 } from "@/lib/authToken";
 import { clearTemporaryAuthState } from "@/lib/auth-session-state";
+import { shouldUseBlockingAuthLoading } from "@/lib/auth-transition";
 import { authUserToSyncPayload } from "@/lib/auth-user-sync";
 import {
   buildSignupConfirmationRedirectUrl,
@@ -173,18 +174,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [appUser, setAppUser] = useState<AppUser | null>(() => readTemporaryUserFromSession());
   const [authUser, setAuthUser] = useState<SupabaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const appUserRef = useRef<AppUser | null>(appUser);
+
+  const setResolvedAppUser = useCallback((user: AppUser | null) => {
+    appUserRef.current = user;
+    setAppUser(user);
+  }, []);
+
+  useEffect(() => {
+    appUserRef.current = appUser;
+  }, [appUser]);
 
   const refreshUser = useCallback(async (nextAuthUser?: SupabaseUser | null) => {
     const temporaryUser = readTemporaryUserFromSession();
     if (temporaryUser) {
-      setAppUser(temporaryUser);
+      setResolvedAppUser(temporaryUser);
       setAuthUser(null);
       setIsLoading(false);
       return;
     }
 
     if (!isSupabaseEnabled) {
-      setAppUser(null);
+      setResolvedAppUser(null);
       setAuthUser(null);
       setIsLoading(false);
       return;
@@ -192,7 +203,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const token = await getAuthToken();
     if (!token) {
-      setAppUser(null);
+      setResolvedAppUser(null);
       setAuthUser(null);
       setIsLoading(false);
       return;
@@ -204,12 +215,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthUser(resolvedAuthUser);
 
     if (resolvedAuthUser) {
-      setAppUser(appUserFromAuthUser(resolvedAuthUser));
+      setResolvedAppUser(appUserFromAuthUser(resolvedAuthUser));
     }
 
-    setAppUser(await fetchAppUserOrFallback(token, resolvedAuthUser));
+    setResolvedAppUser(await fetchAppUserOrFallback(token, resolvedAuthUser));
     setIsLoading(false);
-  }, []);
+  }, [setResolvedAppUser]);
 
   useEffect(() => {
     let active = true;
@@ -217,7 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUser().catch((error) => {
       if (!active) return;
       console.error("Auth initialization failed:", error);
-      setAppUser(null);
+      setResolvedAppUser(null);
       setAuthUser(null);
       setIsLoading(false);
     });
@@ -231,11 +242,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           const { data } = supabase.auth.onAuthStateChange((_event, session) => {
             if (!active) return;
-            setIsLoading(true);
+            const shouldBlock = shouldUseBlockingAuthLoading(
+              _event,
+              Boolean(appUserRef.current),
+              Boolean(session?.access_token),
+            );
+            if (shouldBlock) {
+              setIsLoading(true);
+            }
 
             const temporaryUser = readTemporaryUserFromSession();
             if (temporaryUser) {
-              setAppUser(temporaryUser);
+              setResolvedAppUser(temporaryUser);
               setAuthUser(null);
               setIsLoading(false);
               return;
@@ -245,7 +263,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               refreshUser(null).catch((error) => {
                 if (!active) return;
                 console.error("Auth session recovery failed:", error);
-                setAppUser(null);
+                setResolvedAppUser(null);
                 setAuthUser(null);
                 setIsLoading(false);
               });
@@ -255,20 +273,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setAuthToken(session.access_token);
             setAuthUser(session.user);
             if (session.user) {
-              setAppUser(appUserFromAuthUser(session.user));
+              setResolvedAppUser(appUserFromAuthUser(session.user));
             }
 
             fetchAppUserOrFallback(session.access_token, session.user)
               .then((user) => {
                 if (!active) return;
                 setAuthUser(session.user);
-                setAppUser(user);
+                setResolvedAppUser(user);
               })
               .catch((error) => {
                 if (!active) return;
                 console.error("Auth profile sync failed:", error);
                 setAuthUser(session.user);
-                setAppUser(session.user ? appUserFromAuthUser(session.user) : null);
+                setResolvedAppUser(session.user ? appUserFromAuthUser(session.user) : null);
               })
               .finally(() => {
                 if (active) setIsLoading(false);
@@ -296,7 +314,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       writeTemporaryUserToSession(user);
       setAuthToken(temporaryTestUser.token);
       setAuthUser(null);
-      setAppUser(user);
+      setResolvedAppUser(user);
       setIsLoading(false);
       return user;
     }
@@ -312,7 +330,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const user = localFallbackUser(email);
       writeTemporaryUserToSession(user);
-      setAppUser(user);
+      setResolvedAppUser(user);
       setAuthUser(null);
       setIsLoading(false);
       return user;
@@ -333,11 +351,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthToken(data.session.access_token);
       setAuthUser(data.user);
       if (data.user) {
-        setAppUser(appUserFromAuthUser(data.user));
+        setResolvedAppUser(appUserFromAuthUser(data.user));
       }
 
       const user = await fetchAppUserOrFallback(data.session.access_token, data.user);
-      setAppUser(user);
+      setResolvedAppUser(user);
       return user;
     } finally {
       setIsLoading(false);
@@ -348,7 +366,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearTemporaryAuthState();
     clearAuthToken();
     setAuthUser(null);
-    setAppUser(null);
+    setResolvedAppUser(null);
     setIsLoading(true);
 
     if (!isSupabaseEnabled) {
@@ -358,7 +376,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const user = localFallbackUser(email);
       writeTemporaryUserToSession(user);
-      setAppUser(user);
+      setResolvedAppUser(user);
       setIsLoading(false);
       return { needsEmailConfirmation: false };
     }
@@ -385,10 +403,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthToken(data.session.access_token);
         setAuthUser(data.user);
         if (data.user) {
-          setAppUser(appUserFromAuthUser(data.user));
+          setResolvedAppUser(appUserFromAuthUser(data.user));
         }
 
-        setAppUser(await fetchAppUserOrFallback(data.session.access_token, data.user));
+        setResolvedAppUser(await fetchAppUserOrFallback(data.session.access_token, data.user));
         return { needsEmailConfirmation: false };
       }
 
@@ -416,7 +434,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearTemporaryAuthState();
     clearAuthToken();
     setAuthUser(null);
-    setAppUser(null);
+    setResolvedAppUser(null);
 
     if (!isSupabaseEnabled) {
       if (!allowLocalAuthFallbacks()) {
@@ -459,7 +477,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.auth.signOut();
     }
     setAuthUser(null);
-    setAppUser(null);
+    setResolvedAppUser(null);
+
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", "/");
+      window.dispatchEvent(new Event("popstate"));
+    }
   };
 
   const sendPasswordReset = async (email: string) => {

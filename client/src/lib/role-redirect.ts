@@ -1,4 +1,4 @@
-import { getRoleHome, isRoleAllowedPath } from "@shared/app-roles";
+import { getRoleHome } from "@shared/app-roles";
 
 export function getSafeRedirectPath(rawRedirectUrl: string | null, origin = window.location.origin) {
   if (!rawRedirectUrl) return null;
@@ -17,10 +17,6 @@ export function getSafeRedirectPath(rawRedirectUrl: string | null, origin = wind
   }
 }
 
-export function resolvePostLoginRedirect(role: unknown, requestedPath: string | null) {
-  if (requestedPath && isRoleAllowedPath(role, requestedPath)) {
-    return requestedPath;
-  }
-
+export function resolvePostLoginRedirect(role: unknown, _requestedPath: string | null) {
   return getRoleHome(role);
 }

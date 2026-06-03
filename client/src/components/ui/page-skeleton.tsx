@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function PageSkeleton() {
   return (
     <div className="min-h-screen bg-white" data-testid="page-skeleton">
-      <div className="container mx-auto px-4 py-8 space-y-8 animate-in fade-in duration-300">
+      <div className="container mx-auto px-4 py-8 space-y-8">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <Skeleton className="h-5 w-40 mx-auto rounded-full" />
           <Skeleton className="h-10 w-3/4 mx-auto" />

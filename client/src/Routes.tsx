@@ -1,7 +1,11 @@
-import { Switch, Route } from "wouter";
-import { Suspense, lazy } from 'react';
+import { Route, Router as StaticRouter, Switch, type BaseLocationHook } from "wouter";
+import { Suspense, lazy, useMemo, useState } from 'react';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
+import {
+  RouteTransitionCompletionMarker,
+  useRouteTransitionPending,
+} from '@/components/routing/route-transition';
 import HomePage from "@/pages/home.page";
 const MobileAppScreensPage = lazyWithRetry(() => import("@/pages/mobile-app-screens.page"));
 
@@ -182,9 +186,25 @@ const LogoutPage = lazyWithRetry(() => import("@/pages/logout.page"));
 
 const AppLoading = () => <PageSkeleton />;
 
-export default function Routes() {
+const staticNavigate = () => undefined;
+
+function createStaticLocationHook(path: string): BaseLocationHook {
+  const hook: BaseLocationHook = () => [path, staticNavigate];
+  return hook;
+}
+
+function StaticRouteFallback({ path }: { path: string }) {
+  const hook = useMemo(() => createStaticLocationHook(path), [path]);
+
   return (
-    <Suspense fallback={<AppLoading />}>
+    <StaticRouter hook={hook}>
+      <RouteSwitch />
+    </StaticRouter>
+  );
+}
+
+function RouteSwitch() {
+  return (
       <Switch>
         <Route path="/" component={HomePage} />
         <Route path="/mobile-app" component={MobileAppScreensPage} />
@@ -457,6 +477,21 @@ export default function Routes() {
         <Route path="/500" component={ServerErrorPage} />
         <Route component={NotFound} />
       </Switch>
+  );
+}
+
+export default function Routes() {
+  const isRouteTransitionPending = useRouteTransitionPending();
+  const [committedPath, setCommittedPath] = useState<string | null>(null);
+  const fallback =
+    isRouteTransitionPending && committedPath !== null
+      ? <StaticRouteFallback path={committedPath} />
+      : <AppLoading />;
+
+  return (
+    <Suspense fallback={fallback}>
+      <RouteSwitch />
+      <RouteTransitionCompletionMarker onCommit={setCommittedPath} />
     </Suspense>
   );
 }

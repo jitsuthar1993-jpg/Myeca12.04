@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Home, Calculator, User, Rocket, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRoutePreload } from "@/hooks/use-route-preload";
 
 interface NavItem {
   href: string;
@@ -13,6 +14,7 @@ interface NavItem {
 
 export default function BottomNav() {
   const [location] = useLocation();
+  const { preloadOnHover } = useRoutePreload();
 
   const navItems: NavItem[] = [
     {
@@ -84,6 +86,8 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              onPointerEnter={() => preloadOnHover(item.href)}
+              onTouchStart={() => preloadOnHover(item.href)}
               className={cn(
                 "flex flex-col items-center justify-center py-2.5 px-2 rounded-xl",
                 "transition-all duration-200 relative",

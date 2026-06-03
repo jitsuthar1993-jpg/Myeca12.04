@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { Suspense } from "react";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { RouteProgressOverlay, RouteTransitionProvider } from "./components/routing/route-transition";
 import { addPerformanceHints } from "./utils/performance-hints";
 import { recoverFromStaleChunk } from "./utils/chunk-recovery";
 import { lazyWithRetry } from "./utils/lazy-with-retry";
@@ -67,13 +68,16 @@ const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
       <ErrorBoundary>
-        <App />
-        {VercelAnalytics && VercelSpeedInsights && (
-          <Suspense fallback={null}>
-            <VercelAnalytics />
-            <VercelSpeedInsights />
-          </Suspense>
-        )}
+        <RouteTransitionProvider>
+          <App />
+          <RouteProgressOverlay />
+          {VercelAnalytics && VercelSpeedInsights && (
+            <Suspense fallback={null}>
+              <VercelAnalytics />
+              <VercelSpeedInsights />
+            </Suspense>
+          )}
+        </RouteTransitionProvider>
       </ErrorBoundary>,
   );
 } else {

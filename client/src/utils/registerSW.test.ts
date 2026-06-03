@@ -1,6 +1,11 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { readLastReloadAttempt } from "./reload-diagnostics";
 import { registerServiceWorker } from "./registerSW";
+
+beforeEach(() => {
+  window.sessionStorage.clear();
+});
 
 afterEach(() => {
   vi.useRealTimers();
@@ -10,6 +15,61 @@ afterEach(() => {
   Object.defineProperty(navigator, "serviceWorker", {
     configurable: true,
     value: undefined,
+  });
+});
+
+describe("service worker dev unregister reload", () => {
+  it("records the one-time development unregister reload", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    const reloadPage = vi.fn();
+    const registrations = [{ unregister: vi.fn().mockResolvedValue(true) }];
+
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: {
+        controller: {},
+        getRegistrations: vi.fn().mockResolvedValue(registrations),
+      },
+    });
+
+    await registerServiceWorker(undefined, {
+      now: () => 1000,
+      pathname: "/auth/login",
+      reloadPage,
+      storage: window.sessionStorage,
+    });
+
+    expect(reloadPage).toHaveBeenCalledTimes(1);
+    expect(readLastReloadAttempt(window.sessionStorage)).toMatchObject({
+      attempts: 1,
+      path: "/auth/login",
+      reason: "service_worker_dev_unregistered",
+      timestamp: 1000,
+    });
+  });
+
+  it("does not repeat the development unregister reload in the same tab session", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    const reloadPage = vi.fn();
+    window.sessionStorage.setItem("sw_dev_unregistered", "1");
+
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: {
+        controller: {},
+        getRegistrations: vi.fn().mockResolvedValue([{ unregister: vi.fn().mockResolvedValue(true) }]),
+      },
+    });
+
+    await registerServiceWorker(undefined, {
+      now: () => 1000,
+      pathname: "/auth/login",
+      reloadPage,
+      storage: window.sessionStorage,
+    });
+
+    expect(reloadPage).not.toHaveBeenCalled();
+    expect(readLastReloadAttempt(window.sessionStorage)).toBeNull();
   });
 });
 

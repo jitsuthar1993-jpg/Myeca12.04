@@ -68,7 +68,7 @@ function isAuthLayoutPath(path: string) {
   return path.startsWith('/auth/') || authLayoutRoutes.includes(path);
 }
 
-function useDeferredGlobalChrome(timeout = 2400) {
+function useDeferredGlobalChrome(timeout = 800) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -117,7 +117,7 @@ function Router() {
   const hideFooter = currentPath === '/tax-assistant';
   const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/itr/start');
 
-  useRoutePreload();
+  useRoutePreload({ preloadRelated: true });
 
   return (
     <div className="min-h-screen flex flex-col bg-white">

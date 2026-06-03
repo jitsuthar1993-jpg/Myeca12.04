@@ -12,9 +12,9 @@ import {
 const origin = "https://myeca.in";
 
 describe("auth confirmation redirects", () => {
-  it("builds Supabase signup callback URLs with safe local targets", () => {
+  it("builds Supabase signup callback URLs that return to the dashboard", () => {
     expect(buildSignupConfirmationRedirectUrl("/documents?tab=tax#files", origin)).toBe(
-      "https://myeca.in/auth/callback?next=%2Fdocuments%3Ftab%3Dtax%23files",
+      "https://myeca.in/auth/callback?next=%2Fdashboard",
     );
   });
 

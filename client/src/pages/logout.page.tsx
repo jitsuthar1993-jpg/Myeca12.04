@@ -13,7 +13,7 @@ export default function LogoutPage() {
     const runLogout = async () => {
       await logout("manual");
       if (mounted) {
-        setLocation("/login");
+        setLocation("/");
       }
     };
 
@@ -29,7 +29,7 @@ export default function LogoutPage() {
       <div className="text-center">
         <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
         <h1 className="mt-4 text-2xl font-black text-slate-950">Signing you out</h1>
-        <p className="mt-2 text-sm font-medium text-slate-500">You will be redirected to login in a moment.</p>
+        <p className="mt-2 text-sm font-medium text-slate-500">You will be redirected to the homepage in a moment.</p>
       </div>
     </main>
   );
