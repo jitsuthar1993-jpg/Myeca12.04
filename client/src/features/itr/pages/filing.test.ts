@@ -111,15 +111,13 @@ describe("ITR filing workspace", () => {
 
   it("follows the signed-in draft-to-CA-review filing sequence", () => {
     expect(ITR_FILING_STEPS.map((step) => step.id)).toEqual([
-      "profile",
-      "income-sources",
+      "owner",
+      "identity",
+      "income",
       "documents",
-      "income-details",
-      "deductions",
-      "tax-paid",
-      "form-selection",
-      "ca-review",
-      "e-verify",
+      "verify",
+      "compute",
+      "review",
     ]);
   });
 
@@ -143,6 +141,35 @@ describe("ITR filing workspace", () => {
       mobileActionBarOffset: "above-user-bottom-nav",
       tone: "professional",
     });
+  });
+
+  it("renders the simplified guided owner step without false verification claims", async () => {
+    setupApi([taxReturn({
+      formData: {
+        assessmentYear: "2026-27",
+        filingOwner: { mode: "self" },
+        taxpayer: {
+          type: "individual",
+          residentialStatus: "resident",
+          pan: "ABCDE1234F",
+          aadhaar: "123412341234",
+          bankAccount: "123456789012",
+          bankAccountConfirm: "123456789012",
+          ifsc: "HDFC0001234",
+        },
+        income: { salary: 900000, otherSources: 40000 },
+        taxPaid: { tds: 65000 },
+      },
+    })]);
+
+    renderFilingPage();
+
+    expect(await screen.findByText("Self-prep with CA review")).toBeInTheDocument();
+    expect(screen.getByText("My own ITR")).toBeInTheDocument();
+    expect(screen.getByText("Another person")).toBeInTheDocument();
+    expect(screen.getByText("Tax liability")).toBeInTheDocument();
+    expect(screen.queryByText(/API verified/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/UIDAI verified/i)).not.toBeInTheDocument();
   });
 
   it("auto-creates the first tax return from a valid selector handoff", async () => {

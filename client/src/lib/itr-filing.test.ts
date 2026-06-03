@@ -3,7 +3,10 @@ import {
   ITR_AY_2026_27_SCHEMA_EXPORTS,
   buildItrDraftJsonExport,
   buildItrReviewPacket,
+  buildItrVerificationReport,
+  computeItrTaxLiability,
   getItrDocumentChecklist,
+  validateItrIdentity,
   recommendItrForm,
   type ItrFilingDraft,
 } from "@shared/itr-filing";
@@ -20,6 +23,11 @@ const baseDraft: ItrFilingDraft = {
     pan: "ABCDE1234F",
     firstName: "Asha",
     lastName: "Rao",
+    aadhaar: "123412341234",
+    bankName: "HDFC Bank",
+    bankAccount: "123456789012",
+    bankAccountConfirm: "123456789012",
+    ifsc: "HDFC0001234",
   },
   filing: {
     returnKind: "original",
@@ -166,6 +174,46 @@ describe("ITR filing form selection", () => {
 });
 
 describe("ITR filing review helpers", () => {
+  it("normalizes filing owner and validates identity fields without claiming API verification", () => {
+    const validation = validateItrIdentity(draft({
+      filingOwner: {
+        mode: "other",
+        personId: "profile_parent",
+        relationship: "parent",
+        displayName: "Parent return",
+      },
+    }));
+
+    expect(validation.panFormatValid).toBe(true);
+    expect(validation.panVerificationMode).toBe("format_only");
+    expect(validation.aadhaarFormatValid).toBe(true);
+    expect(validation.ifscFormatValid).toBe(true);
+    expect(validation.bankAccountConfirmed).toBe(true);
+    expect(validation.missingRequiredFields).toEqual([]);
+  });
+
+  it("builds critical verification issues for invalid identity and bank confirmation", () => {
+    const report = buildItrVerificationReport(draft({
+      taxpayer: {
+        pan: "abc",
+        aadhaar: "111",
+        firstName: "",
+        lastName: "",
+        bankAccount: "123456789012",
+        bankAccountConfirm: "999999999999",
+        ifsc: "bad-ifsc",
+      },
+    }));
+
+    expect(report.status).toBe("blocked");
+    expect(report.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "pan-format", severity: "critical" }),
+      expect.objectContaining({ id: "aadhaar-format", severity: "critical" }),
+      expect.objectContaining({ id: "bank-account-confirm", severity: "critical" }),
+      expect.objectContaining({ id: "ifsc-format", severity: "critical" }),
+    ]));
+  });
+
   it("builds a document checklist from selected income sources and risk flags", () => {
     const checklist = getItrDocumentChecklist(draft({
       income: {
@@ -189,6 +237,31 @@ describe("ITR filing review helpers", () => {
     ]));
   });
 
+  it("computes ITR-1-grade AY 2026-27 tax liability and refund from the draft", () => {
+    const liability = computeItrTaxLiability(baseDraft);
+
+    expect(liability.status).toBe("computed");
+    expect(liability.recommendedRegime).toBe("new");
+    expect(liability.activeRegime).toBe("new");
+    expect(liability.newRegime.grossTaxLiability).toBe(0);
+    expect(liability.oldRegime.grossTaxLiability).toBe(63960);
+    expect(liability.totalTaxPaid).toBe(65000);
+    expect(liability.refundDue).toBe(65000);
+    expect(liability.taxPayable).toBe(0);
+    expect(liability.unsupportedReasons).toEqual([]);
+  });
+
+  it("gates non-ITR-1 computation into CA review for the phased build", () => {
+    const liability = computeItrTaxLiability(draft({
+      income: {
+        shortTermCapitalGains: 50000,
+      },
+    }));
+
+    expect(liability.status).toBe("review_required");
+    expect(liability.unsupportedReasons).toContain("ITR-2 computation is gated for CA review in this phased release.");
+  });
+
   it("creates a CA review packet with recommendation and tax summary", () => {
     const packet = buildItrReviewPacket(baseDraft, "return_1");
 
@@ -196,6 +269,8 @@ describe("ITR filing review helpers", () => {
     expect(packet.recommendation.form).toBe("ITR-1");
     expect(packet.summary.totalIncome).toBe(940000);
     expect(packet.summary.totalTaxPaid).toBe(65000);
+    expect(packet.summary.taxLiability.status).toBe("computed");
+    expect(packet.summary.taxLiability.refundDue).toBe(65000);
     expect(packet.status).toBe("ready_for_review");
   });
 

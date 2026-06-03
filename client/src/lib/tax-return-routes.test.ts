@@ -96,6 +96,7 @@ const { default: taxReturnsRouter } = await import("../../../server/routes/tax-r
 function resetStore() {
   mockState.store.clear();
   mockState.counter = 0;
+  process.env.PII_ENCRYPTION_KEY = "test-pii-key-for-tax-return-routes";
 }
 
 function seed(collection: string, id: string, data: Record<string, any>) {
@@ -162,6 +163,46 @@ describe("tax return routes", () => {
       status: "draft",
     });
     expect(json.recommendation.form).toBe("ITR-1");
+  });
+
+  it("encrypts sensitive taxpayer fields at rest while returning editable draft data", async () => {
+    const { response, json } = await request("/api/tax-returns", {
+      method: "POST",
+      body: JSON.stringify({
+        assessmentYear: "2026-27",
+        draft: {
+          taxpayer: {
+            type: "individual",
+            residentialStatus: "resident",
+            firstName: "Asha",
+            lastName: "Rao",
+            pan: "ABCDE1234F",
+            aadhaar: "123412341234",
+            bankName: "HDFC Bank",
+            bankAccount: "123456789012",
+            bankAccountConfirm: "123456789012",
+            ifsc: "HDFC0001234",
+          },
+          income: { salary: 900000, otherSources: 40000 },
+          deductions: { section80C: 120000, section80D: 25000 },
+          taxPaid: { tds: 65000 },
+        },
+      }),
+    });
+
+    const stored = collectionStore("tax_returns").get("tax_returns_1");
+    const storedDraft = JSON.parse(String(stored?.formData || "{}"));
+
+    expect(response.status).toBe(200);
+    expect(storedDraft.taxpayer.pan).toMatch(/^enc:v1:/);
+    expect(storedDraft.taxpayer.aadhaar).toMatch(/^enc:v1:/);
+    expect(storedDraft.taxpayer.bankAccount).toMatch(/^enc:v1:/);
+    expect(storedDraft.taxpayer.bankAccountConfirm).toMatch(/^enc:v1:/);
+    expect(json.taxReturn.formData.taxpayer.pan).toBe("ABCDE1234F");
+    expect(json.taxReturn.formData.taxpayer.aadhaar).toBe("123412341234");
+    expect(json.taxReturn.formData.taxpayer.bankAccount).toBe("123456789012");
+    expect(json.taxReturn.calculatedTax.status).toBe("computed");
+    expect(json.taxReturn.calculatedTax.refundDue).toBe(65000);
   });
 
   it("blocks profile links that belong to another user", async () => {

@@ -7,6 +7,7 @@ import {
   ITR_REVIEW_STATUSES,
   buildItrDraftJsonExport,
   buildItrReviewPacket,
+  computeItrTaxLiability,
   calculateItrTotalDeductions,
   calculateItrTotalIncome,
   calculateItrTotalTaxPaid,
@@ -15,6 +16,7 @@ import {
   recommendItrForm,
   type ItrFilingDraft,
 } from "../../shared/itr-filing.js";
+import { decryptPII, encryptPII } from "../utils/encryption.js";
 import {
   canAccessUserData,
   isAdmin,
@@ -59,25 +61,91 @@ const CA_REVIEW_STATUSES = new Set([
   "refund_or_demand_tracking",
 ]);
 
+const SENSITIVE_TAXPAYER_FIELDS = [
+  "pan",
+  "aadhaar",
+  "bankAccount",
+  "bankAccountConfirm",
+] as const;
+
+function transformSensitiveTaxpayerFields(
+  draftInput: ItrFilingDraft,
+  transform: (value?: string | null) => string | null | undefined,
+) {
+  const draft = normalizeItrDraft(draftInput);
+  const taxpayer = { ...draft.taxpayer };
+
+  for (const field of SENSITIVE_TAXPAYER_FIELDS) {
+    taxpayer[field] = transform(taxpayer[field]) ?? "";
+  }
+
+  return {
+    ...draft,
+    taxpayer,
+  };
+}
+
+function secureDraftForStorage(draftInput: ItrFilingDraft) {
+  return transformSensitiveTaxpayerFields(draftInput, encryptPII);
+}
+
+function decryptDraftForResponse(draftInput: ItrFilingDraft) {
+  const rawDraft = draftInput && typeof draftInput === "object"
+    ? { ...(draftInput as Record<string, any>) }
+    : {};
+  const taxpayer = rawDraft.taxpayer && typeof rawDraft.taxpayer === "object"
+    ? { ...rawDraft.taxpayer }
+    : {};
+
+  for (const field of SENSITIVE_TAXPAYER_FIELDS) {
+    taxpayer[field] = decryptPII(taxpayer[field]) ?? "";
+  }
+
+  return normalizeItrDraft({
+    ...rawDraft,
+    taxpayer,
+  });
+}
+
+function secureReviewPacketForStorage(packet: ReturnType<typeof buildItrReviewPacket>) {
+  return {
+    ...packet,
+    draft: secureDraftForStorage(packet.draft),
+  };
+}
+
+function decryptReviewPacketForResponse(packet: ReturnType<typeof buildItrReviewPacket>) {
+  return {
+    ...packet,
+    draft: decryptDraftForResponse(packet.draft),
+  };
+}
+
 function parseStoredDraft(data: Record<string, any>): ItrFilingDraft {
+  let parsed: unknown;
+
   if (data.formData && typeof data.formData === "string") {
     try {
-      return normalizeItrDraft(JSON.parse(data.formData));
+      parsed = JSON.parse(data.formData);
     } catch {
-      return normalizeItrDraft({});
+      parsed = {};
     }
+  } else if (data.formData && typeof data.formData === "object") {
+    parsed = data.formData;
+  } else {
+    parsed = {};
   }
 
-  if (data.formData && typeof data.formData === "object") {
-    return normalizeItrDraft(data.formData);
-  }
-
-  return normalizeItrDraft({});
+  return decryptDraftForResponse(parsed as ItrFilingDraft);
 }
 
 function serializeTaxReturn(id: string, data: Record<string, any>) {
   const draft = parseStoredDraft(data);
   const recommendation = data.recommendation ?? recommendItrForm(draft);
+  const calculatedTax = data.calculatedTax ?? computeItrTaxLiability(draft);
+  const reviewPacket = data.reviewPacket
+    ? decryptReviewPacketForResponse(data.reviewPacket)
+    : null;
 
   return {
     id,
@@ -89,9 +157,9 @@ function serializeTaxReturn(id: string, data: Record<string, any>) {
     reviewStatus: data.reviewStatus ?? data.status ?? "draft",
     formData: draft,
     recommendation,
-    reviewPacket: data.reviewPacket ?? null,
+    reviewPacket,
     taxSummary: data.taxSummary ?? buildTaxSummary(draft),
-    calculatedTax: data.calculatedTax ?? null,
+    calculatedTax,
     refundAmount: data.refundAmount ?? null,
     acknowledgmentNumber: data.acknowledgmentNumber ?? null,
     filedAt: data.filedAt ?? null,
@@ -105,6 +173,7 @@ function buildTaxSummary(draft: ItrFilingDraft) {
     totalIncome: calculateItrTotalIncome(draft),
     totalDeductions: calculateItrTotalDeductions(draft),
     totalTaxPaid: calculateItrTotalTaxPaid(draft),
+    taxLiability: computeItrTaxLiability(draft),
   };
 }
 
@@ -184,6 +253,8 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       assessmentYear: data.assessmentYear,
     });
     const recommendation = recommendItrForm(draft);
+    const taxSummary = buildTaxSummary(draft);
+    const calculatedTax = computeItrTaxLiability(draft);
     const now = new Date();
     const taxReturnRef = adminDb.collection("tax_returns").doc();
     const taxReturn = {
@@ -194,11 +265,11 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       itrType: recommendation.form,
       status: "draft",
       reviewStatus: "draft",
-      formData: JSON.stringify(draft),
+      formData: JSON.stringify(secureDraftForStorage(draft)),
       recommendation,
       documentChecklist: getItrDocumentChecklist(draft),
-      taxSummary: buildTaxSummary(draft),
-      calculatedTax: null,
+      taxSummary,
+      calculatedTax,
       createdAt: now,
       updatedAt: now,
     };
@@ -252,12 +323,15 @@ router.post("/:id/documents", authenticateToken, async (req: AuthRequest, res: R
       },
     });
     const recommendation = recommendItrForm(draft);
+    const taxSummary = buildTaxSummary(draft);
+    const calculatedTax = computeItrTaxLiability(draft);
     const updateData = {
-      formData: JSON.stringify(draft),
+      formData: JSON.stringify(secureDraftForStorage(draft)),
       recommendation,
       itrType: recommendation.form,
       documentChecklist: getItrDocumentChecklist(draft),
-      taxSummary: buildTaxSummary(draft),
+      taxSummary,
+      calculatedTax,
       updatedAt: new Date(),
     };
 
@@ -297,14 +371,17 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
           assessmentYear: data.assessmentYear ?? existingDraft.assessmentYear,
         });
     const recommendation = recommendItrForm(draft);
+    const taxSummary = buildTaxSummary(draft);
+    const calculatedTax = computeItrTaxLiability(draft);
     const updateData = {
       ...(data.profileId !== undefined ? { profileId: data.profileId } : {}),
       assessmentYear: draft.assessmentYear,
       itrType: recommendation.form,
-      formData: JSON.stringify(draft),
+      formData: JSON.stringify(secureDraftForStorage(draft)),
       recommendation,
       documentChecklist: getItrDocumentChecklist(draft),
-      taxSummary: buildTaxSummary(draft),
+      taxSummary,
+      calculatedTax,
       updatedAt: new Date(),
     };
 
@@ -328,9 +405,16 @@ router.post("/:id/recommendation", authenticateToken, async (req: AuthRequest, r
 
     const draft = parseStoredDraft(doc.data() as Record<string, any>);
     const recommendation = recommendItrForm(draft);
-    await doc.ref?.update({ recommendation, itrType: recommendation.form, updatedAt: new Date() });
+    const calculatedTax = computeItrTaxLiability(draft);
+    await doc.ref?.update({
+      recommendation,
+      itrType: recommendation.form,
+      taxSummary: buildTaxSummary(draft),
+      calculatedTax,
+      updatedAt: new Date(),
+    });
 
-    res.json({ success: true, recommendation });
+    res.json({ success: true, recommendation, calculatedTax });
   } catch (error) {
     return routeError(res, error, "Failed to generate tax return recommendation");
   }
@@ -345,12 +429,16 @@ router.post("/:id/submit-review", authenticateToken, async (req: AuthRequest, re
     const draft = parseStoredDraft(existing);
     const recommendation = recommendItrForm(draft);
     const reviewPacket = buildItrReviewPacket(draft, doc.id);
+    const taxSummary = buildTaxSummary(draft);
+    const calculatedTax = computeItrTaxLiability(draft);
     const updateData = {
       status: "ready_for_review",
       reviewStatus: "ready_for_review",
       itrType: recommendation.form,
       recommendation,
-      reviewPacket,
+      reviewPacket: secureReviewPacketForStorage(reviewPacket),
+      taxSummary,
+      calculatedTax,
       updatedAt: new Date(),
     };
 
@@ -418,7 +506,9 @@ router.get("/:id/review-packet", authenticateToken, async (req: AuthRequest, res
     if (!doc) return errorResponse(res, 404, "Tax return not found");
 
     const data = doc.data() as Record<string, any>;
-    const reviewPacket = data.reviewPacket ?? buildItrReviewPacket(parseStoredDraft(data), doc.id);
+    const reviewPacket = data.reviewPacket
+      ? decryptReviewPacketForResponse(data.reviewPacket)
+      : buildItrReviewPacket(parseStoredDraft(data), doc.id);
 
     res.json({ success: true, reviewPacket });
   } catch (error) {
