@@ -6,6 +6,7 @@ type BrandLockupProps = {
   wordmarkSize?: "sm" | "md" | "lg";
   className?: string;
   subtitle?: string;
+  subtitleClassName?: string;
   badge?: string;
   dark?: boolean;
   compact?: boolean;
@@ -28,6 +29,7 @@ export default function BrandLockup({
   wordmarkSize = "md",
   className,
   subtitle,
+  subtitleClassName,
   badge,
   dark = false,
   compact = false,
@@ -70,6 +72,7 @@ export default function BrandLockup({
               "mt-1 block font-bold uppercase leading-none",
               subtitleSizeClasses[wordmarkSize],
               dark ? "text-blue-100/85" : "text-slate-500",
+              subtitleClassName,
             )}
           >
             {subtitle}

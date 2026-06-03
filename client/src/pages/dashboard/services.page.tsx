@@ -1,100 +1,193 @@
-import { useState, useMemo } from 'react';
-import { Layout } from '@/components/admin/Layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
-  Plus, 
-  Filter, 
-  ChevronRight, 
-  Star, 
-  Clock, 
-  ShieldCheck, 
-  Zap, 
-  FileText, 
-  Building2, 
-  TrendingUp, 
-  CreditCard,
-  MessageSquare,
-  ArrowRight,
-  CheckCircle2,
-  Sparkles,
-  X
-} from 'lucide-react';
-import { m, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { allServices, Service } from '@/data/all-services';
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { useMemo, useState } from 'react';
+import { Link, useLocation } from 'wouter';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { useLocation } from 'wouter';
-import { buildDashboardServiceRequestPayload } from '@/lib/service-workflow';
-
-const iconMap: Record<string, any> = {
-  FileText,
-  Receipt: FileText,
-  PiggyBank: TrendingUp,
-  Shield: ShieldCheck,
-  CreditCard,
-  AlertTriangle: ShieldCheck,
+import {
+  ArrowRight,
+  Briefcase,
   Building2,
-  Award: Star,
-  Calculator: FileText,
-  Home: Building2,
-  TrendingUp,
-  Grid: Sparkles,
-  BarChart3: TrendingUp,
-  Users: MessageSquare,
-  HelpCircle: MessageSquare,
-  BookOpen: FileText,
-  Bot: Zap,
-  MessageCircle: MessageSquare,
+  Calculator,
+  Check,
+  CheckCircle2,
+  Clock,
+  CreditCard,
+  FileText,
+  HelpCircle,
+  Receipt,
+  Rocket,
+  Scale,
+  ShieldCheck,
+  Star,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
+import { m } from 'framer-motion';
+import { Layout } from '@/components/admin/Layout';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { SERVICES, SERVICE_CATEGORIES, type Service, type ServiceCategory } from '@/data/services-catalog';
+import { apiRequest } from '@/lib/queryClient';
+import { cn } from '@/lib/utils';
+import { buildDashboardServiceRequestPayload, type DashboardServiceRequestOption } from '@/lib/service-workflow';
+
+const CUSTOM_SERVICE_ID = 'custom';
+
+const CATEGORY_ICONS: Record<ServiceCategory, LucideIcon> = {
+  individual: FileText,
+  'business-registration': Building2,
+  'tax-compliance': ShieldCheck,
+  'gst-services': Receipt,
+  startup: Rocket,
+  legal: Scale,
+  accounting: Calculator,
+  payroll: Users,
 };
 
+const SERVICE_ROUTE_BY_ID: Partial<Record<string, string>> = {
+  'itr-1-filing': '/services/itr-for-salaried',
+  'itr-2-filing': '/services/itr-for-salaried',
+  'itr-3-filing': '/services/itr-for-salaried',
+  'tax-planning': '/services/tax-planning',
+  'nri-tax-filing': '/services/itr-for-salaried',
+  'pvt-ltd-registration': '/services/company-registration',
+  'llp-registration': '/services/company-registration',
+  'opc-registration': '/services/company-registration',
+  'gst-registration': '/services/gst-registration',
+  'gst-return-monthly': '/services/gst-returns',
+  'gst-annual-return': '/services/gst-returns',
+  'tds-return-filing': '/services/tds-filing',
+  'advance-tax-planning': '/calculators/advance-tax',
+  'startup-india-registration': '/services/startup-india-registration',
+  'trademark-registration': '/services/trademark-registration',
+  'annual-compliance': '/services/compliance-management',
+};
+
+type RelatedTool = {
+  title: string;
+  description: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+const RELATED_TOOLS_BY_CATEGORY: Partial<Record<ServiceCategory, RelatedTool[]>> = {
+  individual: [
+    { title: 'Income Tax Calculator', description: 'Estimate tax before filing.', href: '/calculators/income-tax', icon: Calculator },
+    { title: 'Tax Regime Comparison', description: 'Compare old and new regime.', href: '/calculators/tax-regime', icon: Scale },
+    { title: 'HRA Calculator', description: 'Check rent exemption support.', href: '/calculators/hra', icon: Building2 },
+  ],
+  'tax-compliance': [
+    { title: 'Advance Tax Calculator', description: 'Estimate quarterly payments.', href: '/calculators/advance-tax', icon: CreditCard },
+    { title: 'TDS Calculator', description: 'Check deduction estimates.', href: '/calculators/tds', icon: Receipt },
+  ],
+  'gst-services': [
+    { title: 'GST Calculator', description: 'Calculate tax inclusive or exclusive values.', href: '/calculators/gst', icon: Calculator },
+    { title: 'HSN / SAC Finder', description: 'Find goods and service codes.', href: '/calculators/hsn-finder', icon: FileText },
+  ],
+  'business-registration': [
+    { title: 'Company Registration Guide', description: 'Review incorporation options.', href: '/services/company-registration', icon: Building2 },
+    { title: 'MSME Registration', description: 'Check Udyam registration support.', href: '/services/msme-udyam-registration', icon: ShieldCheck },
+  ],
+  startup: [
+    { title: 'Startup Planning', description: 'Map founder and funding steps.', href: '/startup/planning', icon: Rocket },
+    { title: 'Startup Services', description: 'Browse startup support routes.', href: '/startup-services', icon: Briefcase },
+  ],
+  legal: [
+    { title: 'Trademark Registration', description: 'Review brand protection support.', href: '/services/trademark-registration', icon: Star },
+    { title: 'Document Generator', description: 'Prepare common legal documents.', href: '/documents/generator', icon: FileText },
+  ],
+};
+
+const requestableServices = SERVICES.filter((service) => service.pricing.type !== 'custom' || service.pricing.amount > 0);
+
+function getCategoryLabel(categoryId: ServiceCategory) {
+  return SERVICE_CATEGORIES.find((category) => category.id === categoryId)?.name || 'General service';
+}
+
+function getServicePriceLabel(service: Service) {
+  const amount = `Rs ${service.pricing.amount.toLocaleString('en-IN')}`;
+  const unit = service.pricing.unit ? ` (${service.pricing.unit})` : '';
+
+  switch (service.pricing.type) {
+    case 'starting':
+      return `Starting ${amount}${unit}`;
+    case 'monthly':
+      return `${amount}/month${unit}`;
+    case 'yearly':
+      return `${amount}/year${unit}`;
+    case 'custom':
+      return 'Custom quote';
+    default:
+      return `${amount}${unit}`;
+  }
+}
+
+function getOriginalAmountLabel(service: Service) {
+  if (!service.pricing.originalAmount || service.pricing.originalAmount <= service.pricing.amount) return null;
+  return `Rs ${service.pricing.originalAmount.toLocaleString('en-IN')}`;
+}
+
+function toRequestOption(service: Service): DashboardServiceRequestOption {
+  return {
+    id: service.id,
+    title: service.name,
+    categoryLabel: getCategoryLabel(service.category),
+    paymentAmount: service.pricing.type === 'custom' ? null : service.pricing.amount,
+    originalServicePath: SERVICE_ROUTE_BY_ID[service.id] ?? null,
+  };
+}
+
+function getRelatedTools(service: Service) {
+  const categoryTools = RELATED_TOOLS_BY_CATEGORY[service.category] || [];
+  const serviceRoute = SERVICE_ROUTE_BY_ID[service.id];
+  const serviceGuide = serviceRoute
+    ? [{
+        title: 'Service guide',
+        description: 'Open the public service details.',
+        href: serviceRoute,
+        icon: HelpCircle,
+      }]
+    : [];
+
+  return [...serviceGuide, ...categoryTools]
+    .filter((tool, index, tools) => tools.findIndex((item) => item.href === tool.href) === index)
+    .slice(0, 4);
+}
+
 export default function DashboardServicesPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [requestDescription, setRequestDescription] = useState("");
+  const [requestDescription, setRequestDescription] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
 
-  const categories = useMemo(() => {
-    const cats = Array.from(new Set(allServices.map(s => s.category)));
-    return ["all", ...cats];
-  }, []);
+  const selectedService = useMemo(
+    () => requestableServices.find((service) => service.id === selectedServiceId),
+    [selectedServiceId],
+  );
+  const isCustomRequest = selectedServiceId === CUSTOM_SERVICE_ID;
+  const selectedRequestOption = selectedService ? toRequestOption(selectedService) : undefined;
+  const selectedCategoryTools = selectedService ? getRelatedTools(selectedService) : [];
 
-  const filteredServices = useMemo(() => {
-    return allServices.filter(service => {
-      const matchesSearch = service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           service.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = activeCategory === "all" || service.category === activeCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchTerm, activeCategory]);
+  const servicesByCategory = useMemo(
+    () => SERVICE_CATEGORIES.map((category) => ({
+      ...category,
+      services: requestableServices.filter((service) => service.category === category.id),
+    })).filter((category) => category.services.length > 0),
+    [],
+  );
 
   const requestMutation = useMutation({
     mutationFn: async () => {
       if (!selectedServiceId) throw new Error('Choose a service first.');
-      const service = allServices.find(s => s.id === selectedServiceId);
       const response = await apiRequest('/api/user-services', {
         method: 'POST',
-        body: JSON.stringify(buildDashboardServiceRequestPayload(selectedServiceId, service, requestDescription)),
+        body: JSON.stringify(buildDashboardServiceRequestPayload(
+          selectedServiceId,
+          selectedRequestOption,
+          requestDescription,
+        )),
       });
       return response.json();
     },
@@ -102,13 +195,12 @@ export default function DashboardServicesPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['/api/user/dashboard'] }),
         queryClient.invalidateQueries({ queryKey: ['/api/user-services'] }),
+        data?.id ? queryClient.invalidateQueries({ queryKey: ['/api/user-services', data.id] }) : undefined,
       ]);
       toast({
         title: 'Request created',
         description: 'Your service case is ready. Continue from the case workspace.',
       });
-      setIsRequestModalOpen(false);
-      setSelectedServiceId(null);
       setRequestDescription('');
       if (data?.id) {
         setLocation(`/dashboard/services/${data.id}`);
@@ -123,273 +215,313 @@ export default function DashboardServicesPage() {
     },
   });
 
+  const selectService = (serviceId: string) => {
+    setSelectedServiceId(serviceId);
+    setRequestDescription('');
+  };
+
   const handleRaiseRequest = () => {
-    if (!selectedServiceId) return;
+    if (!selectedServiceId || requestMutation.isPending) return;
     requestMutation.mutate();
   };
 
-  const renderServiceCard = (service: Service) => {
-    const IconComponent = iconMap[service.icon] || FileText;
-    
-    return (
-      <m.div
-        layout
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.3 }}
-        key={service.id}
-      >
-        <Card className="group relative h-full rounded-lg border border-slate-100 bg-white shadow-none transition-all duration-300 hover:border-blue-600/30 hover:shadow-xl hover:shadow-blue-500/5 md:rounded-[32px]">
-          <CardContent className="p-4 md:p-8">
-            <div className="mb-4 flex items-center justify-between md:mb-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-50 text-slate-400 transition-all duration-300 group-hover:bg-blue-50 group-hover:text-blue-600 md:h-12 md:w-12 md:rounded-2xl">
-                <IconComponent className="h-6 w-6" />
-              </div>
-              {service.popular && (
-                <Badge className="bg-amber-50 text-amber-600 border-none type-meta font-black uppercase tracking-wider h-6 px-2">
-                  Popular
-                </Badge>
-              )}
-            </div>
-
-            <div className="mb-5 space-y-2 md:mb-6">
-              <h3 className="type-card-title text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight">{service.title}</h3>
-              <p className="type-support text-slate-500 line-clamp-2 font-medium">
-                {service.description}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between gap-3 border-t border-slate-50 pt-4 md:pt-6">
-               <div className="flex flex-col">
-                  <span className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Fee Starts From</span>
-                  <span className="type-body font-bold text-slate-900">{service.price || "Free"}</span>
-               </div>
-               <Button 
-                onClick={() => {
-                  setSelectedServiceId(service.id);
-                  setIsRequestModalOpen(true);
-                }}
-                variant="outline"
-                size="sm" 
-                className="h-10 rounded-lg border-slate-200 px-4 type-meta font-black uppercase tracking-widest text-slate-600 transition-all hover:border-blue-600 hover:bg-blue-600 hover:text-white md:rounded-xl md:px-5"
-               >
-                 Enroll
-               </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </m.div>
-    );
-  };
+  let rainfallIndex = 0;
 
   return (
-    <Layout title="Service Catalog">
-      <div className="flex flex-col items-start gap-5 bg-slate-50/50 p-0 lg:flex-row lg:gap-12 lg:rounded-[48px] lg:p-2">
-        {/* Sticky Left Category Section */}
-        <div className="hidden w-full shrink-0 space-y-6 lg:sticky lg:top-[112px] lg:block lg:w-80">
-          <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm">
-             <div className="mb-10">
-                <h2 className="type-section-title font-black text-slate-900 tracking-tight mb-2">Marketplace</h2>
-                <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Filter by category</p>
-             </div>
-
-             <div className="space-y-1.5">
-                {categories.map((cat) => (
-                   <button
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
-                      className={cn(
-                         "w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-200 text-left group",
-                         activeCategory === cat
-                            ? "bg-blue-700 text-white shadow-lg shadow-slate-200"
-                            : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                      )}
-                   >
-                      <div className={cn(
-                         "h-8 w-8 rounded-xl flex items-center justify-center transition-colors",
-                         activeCategory === cat ? "bg-white/10 text-white" : "bg-slate-100 text-slate-400 group-hover:bg-white group-hover:text-slate-900"
-                      )}>
-                         {cat === 'all' ? <Sparkles className="h-4 w-4" /> : <Building2 className="h-4 w-4" />}
-                      </div>
-                      <span className="font-bold text-sm tracking-tight capitalize">{cat === 'all' ? 'All Services' : cat}</span>
-                   </button>
-                ))}
-             </div>
+    <Layout title="Services">
+      <div className="space-y-5 bg-white pb-16 text-slate-950">
+        <section className="border-b border-slate-100 pb-5">
+          <div className="max-w-4xl">
+            <h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+              Choose a service
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-600">
+              Select a service and review scope, documents, pricing, and next steps in one place.
+            </p>
           </div>
+        </section>
 
-          <div className="p-10 rounded-[48px] bg-blue-50 border border-blue-100 relative overflow-hidden group cursor-pointer">
-             <div className="relative z-10">
-                <h3 className="type-section-title font-black mb-3 text-slate-900">Custom Help?</h3>
-                <p className="text-slate-500 type-support font-medium mb-8">Can't find a specific service? Our CAs can handle bespoke requests.</p>
-                <Button 
-                  onClick={() => {
-                    setSelectedServiceId("custom");
-                    setIsRequestModalOpen(true);
-                  }}
-                  className="w-full bg-white text-slate-900 hover:bg-blue-700 hover:text-white border border-slate-200 font-black type-meta uppercase tracking-widest h-14 rounded-2xl shadow-sm transition-all">
-                  Request Custom Service
-                </Button>
-             </div>
-          </div>
-        </div>
-
-        {/* Main Content Area - Full Page Scroll */}
-        <div className="min-w-0 flex-1 w-full space-y-5 pb-20 lg:max-w-7xl lg:space-y-8">
-          {/* Page Header */}
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-6">
-            <div className="flex flex-col gap-1">
-              <h1 className="type-page-title font-black text-slate-900">Service Catalog</h1>
-              <p className="text-slate-500 max-w-2xl type-body font-medium">
-                Professional tax and business solutions at your fingertips.
-              </p>
-            </div>
-            <Button 
-              onClick={() => {
-                setSelectedServiceId("custom");
-                setIsRequestModalOpen(true);
-              }}
-              className="h-11 w-full rounded-lg bg-blue-700 px-5 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all hover:-translate-y-1 hover:bg-blue-600 md:h-14 md:w-auto md:rounded-2xl md:px-8"
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="space-y-5">
+            <section
+              aria-label="Rainfall service selector"
+              className="space-y-4"
             >
-              <Plus className="h-4 w-4 mr-3" />
-              Custom Request
-            </Button>
-          </div>
+              {servicesByCategory.map((category) => {
+                const CategoryIcon = CATEGORY_ICONS[category.id] || FileText;
 
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:hidden">
-            {categories.map((cat) => (
-              <button
-                key={cat}
+                return (
+                  <div key={category.id} className="space-y-2">
+                    <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+                      <CategoryIcon className="h-4 w-4 text-slate-400" />
+                      <h2 className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">
+                        {category.name}
+                      </h2>
+                    </div>
+
+                    <div className="grid gap-2 md:grid-cols-2">
+                      {category.services.map((service) => {
+                        const isSelected = selectedServiceId === service.id;
+                        const itemDelay = rainfallIndex * 0.025;
+                        rainfallIndex += 1;
+
+                        return (
+                          <m.button
+                            key={service.id}
+                            type="button"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: itemDelay, duration: 0.22, ease: 'easeOut' }}
+                            onClick={() => selectService(service.id)}
+                            className={cn(
+                              'group flex min-h-[58px] w-full items-center justify-between gap-3 rounded-lg border bg-white px-3 py-2 text-left transition-colors',
+                              isSelected
+                                ? 'border-blue-300 bg-blue-50 text-blue-950'
+                                : 'border-slate-200 text-slate-800 hover:border-blue-200 hover:bg-slate-50',
+                            )}
+                          >
+                            <span className="min-w-0">
+                              <span className="block text-sm font-black leading-5">
+                                {service.name}
+                              </span>
+                              <span className="mt-0.5 block text-xs font-semibold leading-5 text-slate-500">
+                                {getServicePriceLabel(service)} - {service.timeline}
+                              </span>
+                            </span>
+                            <span className={cn(
+                              'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border',
+                              isSelected ? 'border-blue-300 bg-white text-blue-700' : 'border-slate-200 text-transparent',
+                            )}>
+                              <Check className="h-3.5 w-3.5" />
+                            </span>
+                          </m.button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              <m.button
                 type="button"
-                onClick={() => setActiveCategory(cat)}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: rainfallIndex * 0.025, duration: 0.22, ease: 'easeOut' }}
+                onClick={() => selectService(CUSTOM_SERVICE_ID)}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-lg border px-3 text-xs font-black capitalize",
-                  activeCategory === cat
-                    ? "border-blue-700 bg-blue-700 text-white"
-                    : "border-slate-200 bg-white text-slate-600",
+                  'flex min-h-[58px] w-full items-center justify-between gap-3 rounded-lg border border-dashed px-3 py-2 text-left transition-colors',
+                  isCustomRequest
+                    ? 'border-blue-300 bg-blue-50 text-blue-950'
+                    : 'border-slate-300 bg-white text-slate-800 hover:border-blue-200 hover:bg-slate-50',
                 )}
               >
-                {cat === 'all' ? 'All Services' : cat}
-              </button>
-            ))}
+                <span>
+                  <span className="block text-sm font-black leading-5">Custom service request</span>
+                  <span className="mt-0.5 block text-xs font-semibold leading-5 text-slate-500">
+                    Share a requirement that is not listed above.
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 text-slate-400" />
+              </m.button>
+            </section>
+
+            {!selectedService && !isCustomRequest ? (
+              <section className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+                <Briefcase className="mb-3 h-6 w-6 text-slate-400" />
+                <h2 className="text-lg font-black text-slate-950">Select a row to see details</h2>
+                <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
+                  The service scope, required documents, related tools, and case action will open here.
+                </p>
+              </section>
+            ) : (
+              <section className="space-y-5">
+                <div className="rounded-lg border border-slate-200 bg-white p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <Badge className="mb-3 border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700 shadow-none">
+                        {isCustomRequest ? 'Custom Service' : getCategoryLabel(selectedService!.category)}
+                      </Badge>
+                      <h2 className="text-2xl font-black tracking-tight text-slate-950">
+                        {isCustomRequest ? 'Custom service request' : selectedService!.name}
+                      </h2>
+                      <p className="mt-3 max-w-3xl text-sm font-medium leading-6 text-slate-600">
+                        {isCustomRequest
+                          ? 'Share the requirement and the team will review the right service path before assigning the case.'
+                          : selectedService!.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <dl className="mt-5 grid gap-3 sm:grid-cols-3">
+                    {[
+                      {
+                        label: 'Professional fee',
+                        value: isCustomRequest ? 'Scope based' : getServicePriceLabel(selectedService!),
+                        icon: CreditCard,
+                      },
+                      {
+                        label: 'Timeline',
+                        value: isCustomRequest ? 'After review' : selectedService!.timeline,
+                        icon: Clock,
+                      },
+                      {
+                        label: 'Documents',
+                        value: isCustomRequest ? 'Shared after review' : `${selectedService!.documents.length} listed`,
+                        icon: FileText,
+                      },
+                    ].map((item) => (
+                      <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                        <dt className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                          <item.icon className="h-4 w-4 text-blue-600" />
+                          {item.label}
+                        </dt>
+                        <dd className="mt-2 text-sm font-black text-slate-950">{item.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+
+                  {!isCustomRequest && getOriginalAmountLabel(selectedService!) && (
+                    <p className="mt-3 text-xs font-bold text-slate-500">
+                      Listed reference price: <span className="line-through">{getOriginalAmountLabel(selectedService!)}</span>
+                    </p>
+                  )}
+                </div>
+
+                {!isCustomRequest && (
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <section className="rounded-lg border border-slate-200 bg-white p-5">
+                      <div className="mb-4 flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                        <h3 className="text-base font-black text-slate-950">Included</h3>
+                      </div>
+                      <ul className="space-y-3">
+                        {selectedService!.features.map((feature) => (
+                          <li key={feature} className="flex gap-3 text-sm font-medium leading-6 text-slate-600">
+                            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-blue-600" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+
+                    <section className="rounded-lg border border-slate-200 bg-white p-5">
+                      <div className="mb-4 flex items-center gap-2">
+                        <Briefcase className="h-5 w-5 text-blue-600" />
+                        <h3 className="text-base font-black text-slate-950">Deliverables</h3>
+                      </div>
+                      <ul className="space-y-3">
+                        {selectedService!.deliverables.map((deliverable) => (
+                          <li key={deliverable} className="flex gap-3 text-sm font-medium leading-6 text-slate-600">
+                            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-400" />
+                            {deliverable}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  </div>
+                )}
+
+                {!isCustomRequest && (
+                  <section className="rounded-lg border border-slate-200 bg-white p-5">
+                    <div className="mb-4 flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                      <h3 className="text-base font-black text-slate-950">Required documents</h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedService!.documents.map((document) => (
+                        <Badge key={document} variant="outline" className="rounded-md border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-700">
+                          {document}
+                        </Badge>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {!isCustomRequest && selectedCategoryTools.length > 0 && (
+                  <section className="rounded-lg border border-slate-200 bg-white p-5">
+                    <div className="mb-4 flex items-center gap-2">
+                      <Calculator className="h-5 w-5 text-blue-600" />
+                      <h3 className="text-base font-black text-slate-950">Related tools</h3>
+                    </div>
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {selectedCategoryTools.map((tool) => (
+                        <Button
+                          key={tool.href}
+                          asChild
+                          variant="outline"
+                          className="h-auto w-full justify-between rounded-lg border-slate-200 p-4 text-left"
+                        >
+                          <Link href={tool.href}>
+                            <span className="flex min-w-0 items-start gap-3">
+                              <tool.icon className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
+                              <span className="min-w-0">
+                                <span className="block text-sm font-black text-slate-900">{tool.title}</span>
+                                <span className="mt-1 block whitespace-normal text-xs font-medium leading-5 text-slate-500">
+                                  {tool.description}
+                                </span>
+                              </span>
+                            </span>
+                            <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
+                          </Link>
+                        </Button>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </section>
+            )}
           </div>
 
-          {/* Action Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-slate-100 bg-white px-4 py-4 md:gap-8 md:rounded-[32px] md:px-8 md:py-6">
-            <div className="flex min-w-0 flex-1 items-center gap-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
-                <Input 
-                  placeholder="Search for ITR, GST, Trademark, Audit..." 
-                  className="h-12 rounded-lg border-slate-100 bg-slate-50/30 pl-12 text-sm font-medium transition-all focus-visible:ring-blue-100 md:h-14 md:rounded-2xl md:pl-14 md:text-base"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+          <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">
+            <section className="rounded-lg border border-slate-200 bg-white p-5">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-950">Start request</h3>
+                  <p className="text-xs font-bold text-slate-500">Creates a service case in your workspace.</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="request-description" className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">
+                  Optional brief
+                </Label>
+                <Textarea
+                  id="request-description"
+                  value={requestDescription}
+                  onChange={(event) => setRequestDescription(event.target.value)}
+                  placeholder="Add business context, deadlines, income sources, GSTIN status, or any specific goal."
+                  className="min-h-36 rounded-lg border-slate-200 bg-slate-50 text-sm font-medium"
+                  disabled={!selectedServiceId || requestMutation.isPending}
                 />
               </div>
-            </div>
-          </div>
 
-          {/* Services Grid */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 xl:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {filteredServices.map(renderServiceCard)}
-            </AnimatePresence>
-          </div>
+              <Button
+                className="mt-4 h-12 w-full justify-between rounded-lg bg-blue-700 font-black text-white hover:bg-blue-600"
+                onClick={handleRaiseRequest}
+                disabled={!selectedServiceId || requestMutation.isPending}
+              >
+                {requestMutation.isPending ? 'Creating case...' : 'Create service case'}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </section>
 
-          {/* No Results */}
-          {filteredServices.length === 0 && (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-slate-100/50 bg-white px-4 py-20 shadow-sm md:rounded-[48px] md:py-32">
-               <div className="h-24 w-24 rounded-[32px] bg-slate-50 flex items-center justify-center mb-8">
-                  <Search className="h-12 w-12 text-slate-300" />
-               </div>
-               <h3 className="type-section-title font-black text-slate-900 mb-3 tracking-tight">Search Spectrum Empty</h3>
-               <p className="text-slate-500 text-center max-w-md mb-10 type-body font-medium">
-                 We couldn't find any services matching your query. Let our experts assist you with a custom solution.
-               </p>
-               <Button 
-                variant="outline" 
-                className="h-14 px-10 rounded-2xl border-slate-200 font-black text-xs uppercase tracking-widest"
-                onClick={() => {
-                  setSearchTerm("");
-                  setActiveCategory("all");
-                }}
-               >
-                 Reset All Search Filters
-               </Button>
-            </div>
-          )}
+            <section className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
+              <div className="flex gap-3">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
+                <div>
+                  <p className="text-sm font-black text-emerald-950">Workspace linked</p>
+                  <p className="mt-1 text-xs font-semibold leading-5 text-emerald-800">
+                    Requests created here continue into documents, payments, admin review, and CA assignment.
+                  </p>
+                </div>
+              </div>
+            </section>
+          </aside>
         </div>
       </div>
-
-      {/* Request Modal */}
-      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
-        <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border-none p-5 shadow-2xl sm:max-w-[550px] sm:rounded-[48px] sm:p-10">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600" />
-          <DialogHeader className="mb-8">
-            <DialogTitle className="type-section-title font-black text-slate-900 tracking-tight">Service Enrollment</DialogTitle>
-            <DialogDescription className="text-slate-500 font-medium type-body pt-3">
-              {selectedServiceId === "custom" 
-                ? "Provide details about your specific legal or financial requirement for expert evaluation."
-                : `You are initiating a high-priority request for ${allServices.find(s => s.id === selectedServiceId)?.title}.`}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-8">
-            <div className="space-y-3">
-              <Label htmlFor="service" className="type-meta font-black uppercase tracking-widest text-slate-400 ml-1">Service Identifier</Label>
-              <div className="p-5 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between shadow-inner">
-                 <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm transition-transform hover:scale-105">
-                       {selectedServiceId === "custom" ? <Sparkles className="h-6 w-6" /> : <ShieldCheck className="h-6 w-6" />}
-                    </div>
-                    <div>
-                       <p className="type-body font-black text-slate-900 mb-1.5">
-                         {selectedServiceId === "custom" ? "Bespoke Consultation" : allServices.find(s => s.id === selectedServiceId)?.title}
-                       </p>
-                       <p className="type-meta font-black text-blue-600 uppercase tracking-[0.1em]">
-                          {selectedServiceId === "custom" ? "EXPERT ANALYSIS" : "PREMIUM FILING"}
-                       </p>
-                    </div>
-                 </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label htmlFor="description" className="type-meta font-black uppercase tracking-widest text-slate-400 ml-1">Engagement Brief</Label>
-              <Textarea 
-                id="description" 
-                placeholder="Describe your current situation, business nature or specific goals..." 
-                className="min-h-[160px] rounded-[32px] border-slate-100 bg-slate-50/50 focus-visible:ring-blue-100 p-6 text-sm font-medium shadow-inner"
-                value={requestDescription}
-                onChange={(e) => setRequestDescription(e.target.value)}
-              />
-            </div>
-
-            <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-100/50 flex items-start gap-4">
-               <div className="mt-1">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-               </div>
-               <div>
-                  <p className="type-meta font-black text-emerald-800 uppercase tracking-widest mb-1">Expert Availability</p>
-                  <p className="type-meta text-emerald-700 font-semibold">Verified CA experts are active. Anticipated response window: 120 minutes.</p>
-               </div>
-            </div>
-          </div>
-
-          <DialogFooter className="mt-8 gap-3 sm:mt-10 sm:justify-between">
-            <Button variant="ghost" onClick={() => setIsRequestModalOpen(false)} className="h-12 w-full rounded-lg px-6 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 sm:h-14 sm:w-auto sm:rounded-2xl sm:px-8">
-              Discard
-            </Button>
-            <Button 
-              onClick={handleRaiseRequest}
-              disabled={requestMutation.isPending}
-              className="h-12 w-full rounded-lg bg-blue-600 px-6 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-blue-100 transition-all hover:-translate-y-1 hover:bg-blue-700 sm:h-14 sm:w-auto sm:rounded-2xl sm:px-12"
-            >
-              {requestMutation.isPending ? 'Creating Case...' : 'Submit Engagement Request'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </Layout>
   );
 }

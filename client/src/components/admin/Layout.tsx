@@ -17,6 +17,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import BrandLockup from '@/components/ui/brand-lockup';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/AuthProvider';
@@ -81,14 +82,14 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
         >
           <div className="flex h-full flex-col">
             <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
-              <Link href={roleHome} className="flex min-w-0 items-center gap-2">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-xs font-black text-white">
-                  M
-                </div>
-                <div className="min-w-0">
-                  <p className="mb-0 truncate text-sm font-bold leading-tight text-slate-950">MyeCA</p>
-                  <p className="type-meta mb-0 truncate font-medium leading-tight text-slate-500">{roleLabel}</p>
-                </div>
+              <Link href={roleHome} className="flex min-w-0 items-center">
+                <BrandLockup
+                  logoSize="sm"
+                  wordmarkSize="sm"
+                  subtitle="SMART TAX SOLUTIONS"
+                  subtitleClassName="whitespace-nowrap text-[8px] tracking-[0.1em]"
+                  className="min-w-0 gap-2"
+                />
               </Link>
               <Button
                 variant="ghost"

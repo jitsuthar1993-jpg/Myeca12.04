@@ -3,6 +3,7 @@ import {
   buildDashboardServiceRequestPayload,
   buildPaymentLinkRequestPayload,
   serviceNeedsPayment,
+  type DashboardServiceRequestOption,
 } from './service-workflow';
 
 describe('service workflow helpers', () => {
@@ -45,6 +46,38 @@ describe('service workflow helpers', () => {
     expect(payload.serviceCategory).toBe('Custom Service');
     expect(payload).not.toHaveProperty('paymentStatus');
     expect(payload).not.toHaveProperty('status');
+  });
+
+  it('normalizes richer dashboard service options into request metadata', () => {
+    const service: DashboardServiceRequestOption = {
+      id: 'gst-registration',
+      title: 'GST Registration',
+      categoryLabel: 'GST Services',
+      paymentAmount: 999,
+      originalServicePath: '/services/gst-registration',
+    };
+
+    const payload = buildDashboardServiceRequestPayload(
+      'gst-registration',
+      service,
+      ' Need GST for a new firm ',
+      '2026-05-15T10:00:00.000Z',
+    );
+
+    expect(payload).toMatchObject({
+      serviceId: 'gst-registration',
+      serviceTitle: 'GST Registration',
+      serviceCategory: 'GST Services',
+      paymentAmount: 999,
+      metadata: {
+        requestDescription: 'Need GST for a new firm',
+        source: 'dashboard_services',
+        formId: 'dashboard-service-modal',
+        serviceIntent: 'gst-registration',
+        requestedAt: '2026-05-15T10:00:00.000Z',
+        originalServicePath: '/services/gst-registration',
+      },
+    });
   });
 
   it('identifies payment states that still need action', () => {

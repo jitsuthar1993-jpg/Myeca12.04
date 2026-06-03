@@ -48,14 +48,18 @@ function renderWithQueryClient(ui: ReactElement) {
 }
 
 describe("role-aware dashboard shell alignment", () => {
-  it("renders compact brand, header, and footer identity text without default paragraph margins", () => {
+  it("renders the homepage brand lockup, header, and footer identity text without default paragraph margins", () => {
     renderWithQueryClient(
       <Layout>
         <div>Dashboard content</div>
       </Layout>,
     );
 
-    expect(screen.getByText("MyeCA")).toHaveClass("mb-0", "leading-tight");
+    const sidebarBrand = screen.getByRole("link", { name: /MyeCA\.in SMART TAX SOLUTIONS/i });
+
+    expect(sidebarBrand).toHaveAttribute("href", "/dashboard");
+    expect(screen.getByText("MyeCA.in")).toBeVisible();
+    expect(screen.getByText("SMART TAX SOLUTIONS")).toHaveClass("whitespace-nowrap");
     const headerTitle = screen
       .getAllByText("Workspace")
       .find((element) => element.className.includes("text-sm"));
