@@ -1,35 +1,35 @@
 import { useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import {
   CheckCircle2,
+  ChevronRight,
   Download,
   Eye,
   FileCheck2,
   FileText,
   FolderOpen,
-  LockKeyhole,
   Pencil,
+  Plus,
   Search,
   ShieldCheck,
   Trash2,
   Upload,
-  Plus,
-  ChevronRight
 } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Layout } from "@/components/admin/Layout";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { getAuthToken } from "@/lib/authToken";
 import { ALLOWED_FILE_TYPES, formatFileSize, prepareDocumentForUpload } from "@/lib/file_utils";
-import { Layout } from "@/components/admin/Layout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { caseTimelineStages, vaultChecklist } from "@/data/competitive-growth";
 import { shouldLoadProductionTelemetry } from "@/utils/runtime-env";
@@ -55,7 +55,18 @@ const vaultFolders = [
   { key: "bank_statement", label: "Bank statements", prompt: "Interest and income checks", status: "filed" as const },
 ];
 
+const generatorLinks = [
+  ["Rent Receipt", "/documents/generator/rent-receipt"],
+  ["Invoice", "/documents/generator/invoice"],
+  ["Form 15G", "/documents/generator/form-15g"],
+  ["Board Resolution", "/documents/generator/board-resolution-gst"],
+];
+
 const extractedFields: Array<[string, string, string]> = [];
+
+function formatStatus(status?: string) {
+  return (status || "stored").replace(/_/g, " ");
+}
 
 async function trackDocumentEvent(name: string, properties: Record<string, string>) {
   if (!shouldLoadProductionTelemetry()) return;
@@ -153,6 +164,13 @@ export default function DocumentsPage() {
   const documents = data?.documents || [];
   const totalSize = documents.reduce((sum, doc) => sum + (doc.size || 0), 0);
 
+  const stats = [
+    { label: "Files", value: documents.length, icon: FileText, tone: "blue" },
+    { label: "Storage", value: formatFileSize(totalSize), icon: FolderOpen, tone: "indigo" },
+    { label: "Readiness", value: vaultChecklist.length, icon: ShieldCheck, tone: "emerald" },
+    { label: "Generators", value: generatorLinks.length, icon: FileCheck2, tone: "amber" },
+  ];
+
   const handleDownload = async (doc: Document) => {
     const token = await getAuthToken();
     const response = await fetch(`/api/documents/${doc.id}/download`, {
@@ -175,238 +193,209 @@ export default function DocumentsPage() {
   };
 
   return (
-    <Layout>
+    <Layout title="Documents">
       <SEO
         title="Secure Document Vault | MyeCA.in"
         description="Store, verify, and manage private tax and compliance documents."
         keywords="document vault, form 16 upload, AIS, secure tax documents"
       />
 
-      <div className="flex flex-col items-start gap-5 bg-slate-50/50 p-0 xl:flex-row xl:gap-12 xl:rounded-[48px] xl:p-2">
-        {/* Sticky Left Summary Section */}
-        <div className="hidden w-full shrink-0 space-y-6 xl:sticky xl:top-[112px] xl:block xl:w-96">
-          <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
-             <div className="h-28 bg-gradient-to-br from-blue-500 to-indigo-500 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-             </div>
-             <CardContent className="relative px-6 pb-8">
-                <div className="flex flex-col items-center -mt-14">
-                   <div className="w-28 h-28 rounded-[40px] bg-white p-2 shadow-2xl">
-                      <div className="w-full h-full rounded-[32px] bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-4xl font-black text-blue-600 border border-blue-100">
-                         <FolderOpen className="h-10 w-10" />
-                      </div>
-                   </div>
-                   <div className="mt-5 text-center">
-                      <h2 className="type-card-title font-black text-slate-900 tracking-tight">Security Vault</h2>
-                      <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
-                         Encryption Active
-                      </Badge>
-                   </div>
-                </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        accept={ALLOWED_FILE_TYPES.join(",")}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) uploadMutation.mutate(file);
+        }}
+      />
 
-                <div className="mt-10 grid grid-cols-2 gap-3">
-                   {[
-                     { label: "Storage", value: formatFileSize(totalSize), icon: LockKeyhole, color: "blue" },
-                     { label: "Files", value: documents.length, icon: FileText, color: "indigo" },
-                     { label: "OCR Checks", value: "Preview", icon: FileCheck2, color: "emerald" },
-                     { label: "Vaults", value: vaultFolders.length, icon: FolderOpen, color: "purple" }
-                   ].map((stat, i) => (
-                     <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
-                        <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
-                        <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
-                        <span className="type-support font-black text-slate-900 leading-none">{stat.value}</span>
-                     </div>
-                   ))}
-                </div>
-
-                <div className="mt-10 space-y-3">
-                   <p className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Private Folders</p>
-                   {vaultFolders.map((folder) => (
-                      <div key={folder.key} className="flex items-center justify-between p-4 rounded-3xl bg-white border border-slate-100 hover:border-blue-200 transition-all cursor-pointer group shadow-sm">
-                         <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 transition-colors">
-                               <FolderOpen className="h-4 w-4" />
-                            </div>
-                            <span className="type-meta font-black text-slate-700 group-hover:text-blue-600 transition-colors">{folder.label}</span>
-                         </div>
-                         <ChevronRight className="h-3 w-3 text-slate-300 group-hover:text-blue-600" />
-                      </div>
-                   ))}
-                </div>
-             </CardContent>
-          </Card>
-
-          <div className="p-8 rounded-[40px] bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-100/50 relative overflow-hidden group cursor-pointer shadow-xl shadow-blue-50">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all group-hover:scale-150" />
-             <ShieldCheck className="h-8 w-8 text-blue-500 mb-6" />
-             <h3 className="type-card-title font-black mb-3 text-slate-900">AI Verification</h3>
-             <p className="text-slate-500 type-support font-medium mb-6">OCR extraction will appear only after a real document scan is available for a file.</p>
-             <Button disabled className="w-full bg-slate-100 text-slate-400 font-black type-meta uppercase tracking-widest h-11 rounded-2xl border-none">Scan Preview</Button>
+      <div className="space-y-5 pb-12 md:space-y-6">
+        <section className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-4 md:flex-row md:items-center md:justify-between md:p-5">
+          <div className="space-y-2">
+            <h1 className="type-page-title text-slate-900">Document Vault</h1>
+            <p className="type-body max-w-2xl font-medium text-slate-500">
+              Keep tax records, filing proofs, and service documents organized inside your private workspace.
+            </p>
           </div>
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            className="h-11 w-full rounded-lg bg-blue-700 px-5 text-sm font-bold text-white hover:bg-blue-800 md:h-10 md:w-auto"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Upload Document
+          </Button>
+        </section>
 
-          <Card className="border-none shadow-sm rounded-[32px] bg-white">
-            <CardHeader className="p-6 border-b border-slate-50">
-              <CardTitle className="type-card-title font-black uppercase tracking-widest">Filing readiness</CardTitle>
-              <CardDescription className="type-support">What the CA can verify from this vault.</CardDescription>
-            </CardHeader>
-            <CardContent className="p-5 space-y-3">
-              {vaultChecklist.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.label} className="flex gap-3 rounded-2xl bg-slate-50 p-4">
-                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
-                    <div>
-                      <p className="type-support font-black text-slate-800">{item.label}</p>
-                      <p className="mt-1 type-support font-medium text-slate-500">{item.detail}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Content Area - Full Page Scroll */}
-        <div className="min-w-0 flex-1 w-full space-y-5 pb-20 xl:max-w-7xl xl:space-y-10">
-          {/* Page Header */}
-          <div className="flex flex-col justify-between gap-5 rounded-lg border border-slate-100/50 bg-white p-4 shadow-sm md:flex-row md:items-center md:gap-6 md:rounded-[48px] md:p-12">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-3 mb-2">
-                 <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                 <span className="type-meta font-black uppercase tracking-[0.2em] text-blue-600">Secure Storage</span>
-              </div>
-              <h1 className="type-page-title font-black text-slate-900">Document Vault</h1>
-              <p className="text-slate-500 max-w-2xl type-body font-medium">
-                Profile-aware, encrypted storage for your financial and compliance paperwork.
-              </p>
-            </div>
-            <Button 
-              onClick={() => fileInputRef.current?.click()}
-              className="h-11 w-full rounded-lg bg-blue-600 px-5 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-blue-100 transition-all hover:-translate-y-1 hover:bg-blue-700 md:h-16 md:w-auto md:rounded-3xl md:px-10"
-            >
-              <Plus className="h-5 w-5 mr-3" />
-              Upload Document
-            </Button>
-          </div>
-
-          <div className="grid gap-5 xl:grid-cols-[1fr_0.8fr] xl:gap-8">
-            {/* Main Vault Table */}
-            <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
-              <CardHeader className="flex flex-col gap-4 border-b border-slate-50 p-4 md:flex-row md:items-center md:justify-between md:p-8">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+          {stats.map((stat) => (
+            <Card key={stat.label} className="rounded-lg border-slate-200 shadow-none">
+              <CardContent className="flex min-h-[112px] flex-col items-start gap-3 p-4 sm:min-h-0 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
+                <div
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-lg",
+                    stat.tone === "blue" && "bg-blue-50 text-blue-600",
+                    stat.tone === "indigo" && "bg-indigo-50 text-indigo-600",
+                    stat.tone === "emerald" && "bg-emerald-50 text-emerald-600",
+                    stat.tone === "amber" && "bg-amber-50 text-amber-600",
+                  )}
+                >
+                  <stat.icon className="h-6 w-6" />
+                </div>
                 <div>
-                  <CardTitle className="text-lg font-bold">Authenticated Files</CardTitle>
-                  <CardDescription className="text-xs font-medium text-slate-500">Search and manage your private compliance documents.</CardDescription>
+                  <p className="type-meta font-bold uppercase text-slate-400">{stat.label}</p>
+                  <p className="mt-1 text-2xl font-bold text-slate-900">{stat.value}</p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="relative group w-full md:w-auto">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
-                    <Input 
-                      placeholder="Search vault..." 
-                      className="h-10 w-full rounded-lg border-none bg-slate-50 pl-9 text-xs font-medium md:h-9 md:w-40 md:rounded-xl"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="space-y-5">
+            <Card className="overflow-hidden rounded-lg border-slate-200 shadow-none">
+              <CardHeader className="border-b border-slate-100 p-4 md:p-5">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <CardTitle className="type-card-title text-slate-900">Authenticated Files</CardTitle>
+                    <CardDescription className="type-support mt-1 font-medium text-slate-500">
+                      Search, filter, preview, download, or remove documents from your vault.
+                    </CardDescription>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_180px] md:w-[440px]">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <Input
+                        placeholder="Search documents..."
+                        className="h-10 rounded-lg border-slate-200 bg-slate-50 pl-10 text-sm font-medium focus-visible:ring-blue-100"
+                        value={searchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
+                      />
+                    </div>
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                      <SelectTrigger className="h-10 rounded-lg border-slate-200 bg-slate-50 text-sm font-semibold">
+                        <SelectValue placeholder="All categories" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All categories</SelectItem>
+                        {vaultFolders.map((folder) => (
+                          <SelectItem key={folder.key} value={folder.key}>
+                            {folder.label}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </CardHeader>
+
               <CardContent className="p-0">
                 <div className="grid gap-3 p-4 md:hidden">
-                  {documents.map((doc) => (
-                    <div key={doc.id} className="rounded-lg border border-slate-100 bg-white p-4 shadow-sm">
-                      <div className="flex items-start gap-3">
-                        <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
-                          <FileText className="h-5 w-5" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate type-support font-bold text-slate-900">{doc.name}</p>
-                          <p className="type-meta mt-1 font-medium uppercase tracking-tight text-slate-500">
-                            {doc.category} - {formatFileSize(doc.size)}
-                          </p>
-                        </div>
-                        <Badge className="border-none bg-slate-50 px-2.5 py-1 type-meta font-bold uppercase tracking-widest text-slate-600">
-                          {doc.status}
-                        </Badge>
-                      </div>
-                      <div className="mt-4 grid grid-cols-3 gap-2">
-                        <Button variant="outline" className="h-10 rounded-lg text-xs font-bold" onClick={() => setSelectedDoc(doc)}>
-                          <Eye className="mr-1 h-4 w-4" />
-                          View
-                        </Button>
-                        <Button variant="outline" className="h-10 rounded-lg text-xs font-bold" onClick={() => handleDownload(doc)}>
-                          <Download className="mr-1 h-4 w-4" />
-                          Save
-                        </Button>
-                        <Button variant="outline" className="h-10 rounded-lg text-xs font-bold text-red-500" onClick={() => deleteMutation.mutate(doc.id)}>
-                          <Trash2 className="mr-1 h-4 w-4" />
-                          Delete
-                        </Button>
-                      </div>
+                  {isLoading ? (
+                    <div className="rounded-lg border border-slate-200 bg-white px-5 py-12 text-center text-sm font-bold text-slate-400">
+                      Loading documents...
                     </div>
-                  ))}
-                  {documents.length === 0 && (
-                    <div className="px-4 py-10 text-center">
-                      <FolderOpen className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-                      <p className="type-support font-bold text-slate-900">No documents uploaded yet</p>
-                      <p className="mt-1 type-support font-medium text-slate-500">
-                        Upload Form 16, AIS, bank statements, or investment proofs to build your private vault.
-                      </p>
-                    </div>
+                  ) : documents.length ? (
+                    documents.map((doc) => (
+                      <div key={doc.id} className="rounded-lg border border-slate-200 bg-white p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                            <FileText className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-bold text-slate-900">{doc.name}</p>
+                            <p className="type-meta mt-1 font-bold uppercase text-slate-400">
+                              {doc.category} - {formatFileSize(doc.size)}
+                            </p>
+                          </div>
+                          <Badge variant="outline" className="type-meta border-slate-200 bg-slate-50 px-2.5 py-1 font-bold capitalize text-slate-600">
+                            {formatStatus(doc.status)}
+                          </Badge>
+                        </div>
+                        <div className="mt-4 grid grid-cols-3 gap-2">
+                          <Button variant="outline" className="h-10 rounded-lg text-xs font-bold" onClick={() => setSelectedDoc(doc)}>
+                            <Eye className="mr-1 h-4 w-4" />
+                            View
+                          </Button>
+                          <Button variant="outline" className="h-10 rounded-lg text-xs font-bold" onClick={() => handleDownload(doc)}>
+                            <Download className="mr-1 h-4 w-4" />
+                            Save
+                          </Button>
+                          <Button variant="outline" className="h-10 rounded-lg text-xs font-bold text-red-600" onClick={() => deleteMutation.mutate(doc.id)}>
+                            <Trash2 className="mr-1 h-4 w-4" />
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <EmptyDocumentsState onUpload={() => fileInputRef.current?.click()} />
                   )}
                 </div>
 
                 <div className="hidden overflow-x-auto md:block">
-                  <table className="w-full text-left border-collapse">
+                  <table className="w-full text-left">
                     <thead>
-                      <tr className="border-b border-slate-50">
-                        <th className="px-8 py-4 type-meta font-bold text-slate-400 uppercase tracking-widest">Document</th>
-                        <th className="px-8 py-4 type-meta font-bold text-slate-400 uppercase tracking-widest">Status</th>
-                        <th className="px-8 py-4 type-meta font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                      <tr className="border-b border-slate-100 bg-slate-50/50">
+                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Document</th>
+                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Category</th>
+                        <th className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Status</th>
+                        <th className="px-5 py-4 text-right text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                      {documents.map((doc) => (
-                        <tr key={doc.id} className="group hover:bg-slate-50/50 transition-colors">
-                          <td className="px-8 py-4">
-                            <div className="flex items-center gap-4">
-                              <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
-                                <FileText className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <p className="type-support font-bold text-slate-900">{doc.name}</p>
-                                <p className="type-meta font-medium text-slate-500 uppercase tracking-tight">
-                                  {doc.category} · {formatFileSize(doc.size)}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-8 py-4">
-                             <Badge className="bg-slate-50 text-slate-600 border-none font-bold type-meta uppercase tracking-widest px-2.5 py-1">
-                                {doc.status}
-                             </Badge>
-                          </td>
-                          <td className="px-8 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50" onClick={() => setSelectedDoc(doc)}>
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50" onClick={() => handleDownload(doc)}>
-                                <Download className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50" onClick={() => deleteMutation.mutate(doc.id)}>
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                      {isLoading ? (
+                        <tr>
+                          <td colSpan={4} className="px-8 py-16 text-center text-sm font-bold text-slate-400">
+                            Loading documents...
                           </td>
                         </tr>
-                      ))}
-                      {documents.length === 0 && (
+                      ) : documents.length ? (
+                        documents.map((doc) => (
+                          <tr key={doc.id} className="group transition-colors hover:bg-blue-50/30">
+                            <td className="px-5 py-5">
+                              <div className="flex items-center gap-4">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                                  <FileText className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-bold text-slate-900">{doc.name}</p>
+                                  <p className="type-meta mt-1 font-semibold text-slate-400">
+                                    {formatFileSize(doc.size)}
+                                  </p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-5 py-5">
+                              <p className="text-sm font-bold capitalize text-slate-700">{doc.category.replace(/_/g, " ")}</p>
+                              <p className="type-meta mt-1 font-semibold text-slate-400">{doc.year || "Current year"}</p>
+                            </td>
+                            <td className="px-5 py-5">
+                              <Badge variant="outline" className="type-meta border-slate-200 bg-slate-50 px-3 py-1 font-bold capitalize text-slate-600">
+                                {formatStatus(doc.status)}
+                              </Badge>
+                            </td>
+                            <td className="px-5 py-5 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-700" onClick={() => setSelectedDoc(doc)}>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-700" onClick={() => handleDownload(doc)}>
+                                  <Download className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600" onClick={() => deleteMutation.mutate(doc.id)}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
                         <tr>
-                          <td colSpan={3} className="px-8 py-12 text-center">
-                            <FolderOpen className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-                            <p className="type-support font-bold text-slate-900">No documents uploaded yet</p>
-                            <p className="mt-1 type-support font-medium text-slate-500">
-                              Upload Form 16, AIS, bank statements, or investment proofs to build your private vault.
-                            </p>
+                          <td colSpan={4} className="px-8 py-16">
+                            <EmptyDocumentsState onUpload={() => fileInputRef.current?.click()} />
                           </td>
                         </tr>
                       )}
@@ -416,189 +405,243 @@ export default function DocumentsPage() {
               </CardContent>
             </Card>
 
-            {/* Right Column: Upload & Generators */}
-            <div className="space-y-5 xl:space-y-8">
-              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
-                <CardHeader className="border-b border-slate-50 p-5 md:p-8">
-                  <CardTitle className="type-card-title font-bold">Quick Upload</CardTitle>
-                  <CardDescription className="type-support font-medium text-slate-500">Securely ingest new compliance documents.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-5 p-5 md:space-y-6 md:p-8">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept={ALLOWED_FILE_TYPES.join(",")}
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) uploadMutation.mutate(file);
-                    }}
-                  />
-                  <div 
-                    className="group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-100 bg-slate-50/50 p-6 text-center transition hover:border-blue-200 hover:bg-blue-50/30 md:rounded-3xl md:p-10"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="p-4 rounded-2xl bg-white shadow-sm mb-4 text-blue-600 transition group-hover:-translate-y-1">
-                      <Upload className="h-6 w-6" />
+            <Card className="rounded-lg border-slate-200 shadow-none">
+              <CardHeader className="border-b border-slate-100 p-4 md:p-5">
+                <CardTitle className="type-card-title text-slate-900">Filing Readiness</CardTitle>
+                <CardDescription className="type-support mt-1 font-medium text-slate-500">
+                  What a CA can verify once documents are linked to a filing or service.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 p-4 md:grid-cols-2 md:p-5">
+                {vaultChecklist.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.label} className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4">
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-bold text-slate-900">{item.label}</p>
+                        <p className="mt-1 type-support font-medium text-slate-500">{item.detail}</p>
+                      </div>
                     </div>
-                    <p className="type-support font-bold text-slate-900">Drop files here</p>
-                    <p className="type-support text-slate-400 mt-1 font-medium">PDF, image, Word or Excel (compressed when possible)</p>
-                  </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Document Name</Label>
-                      <Input 
-                        value={uploadData.name}
-                        onChange={(e) => setUploadData(p => ({...p, name: e.target.value}))}
-                        placeholder="e.g. Form 16"
-                        className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Category</Label>
-                      <Select value={uploadData.category} onValueChange={(category) => setUploadData(p => ({...p, category}))}>
-                        <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {vaultFolders.map(f => <SelectItem key={f.key} value={f.key}>{f.label}</SelectItem>)}
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Taxpayer Profile</Label>
-                      <Select value={uploadData.profileId} onValueChange={(profileId) => setUploadData(p => ({...p, profileId}))}>
-                        <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">Current user</SelectItem>
-                          {profiles.map((profile: any) => (
-                            <SelectItem key={profile.id} value={String(profile.id)}>{profile.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="type-support font-medium text-slate-400">Use this when the document belongs to a saved taxpayer or family profile.</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="type-meta font-bold uppercase tracking-widest text-slate-400 ml-1">Linked Service</Label>
-                      <Select value={uploadData.userServiceId} onValueChange={(userServiceId) => setUploadData(p => ({...p, userServiceId}))}>
-                        <SelectTrigger className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">Keep in vault only</SelectItem>
-                          {userServices.map((service: any) => (
-                            <SelectItem key={service.id} value={String(service.id)}>
-                              {service.serviceTitle || service.serviceId || "Service"} · {String(service.status || "pending").replace(/_/g, " ")}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="type-support font-medium text-slate-400">
-                        {userServices.length
-                          ? "Attach this file to an active case so it appears in that service workspace."
-                          : "No service cases yet. Start a service first if this file should move a case forward."}
-                      </p>
-                    </div>
+            <Card className="rounded-lg border-slate-200 shadow-none">
+              <CardHeader className="border-b border-slate-100 p-4 md:p-5">
+                <CardTitle className="type-card-title text-slate-900">Case Workflow</CardTitle>
+                <CardDescription className="type-support mt-1 font-medium text-slate-500">
+                  Linked files move with the related service workspace.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 md:p-5">
+                {caseTimelineStages.map((stage, index) => (
+                  <div key={stage} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                    <p className="type-meta font-bold uppercase tracking-[0.12em] text-slate-400">Stage {index + 1}</p>
+                    <p className="mt-2 text-sm font-bold text-slate-900">{stage}</p>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="overflow-hidden rounded-lg border-none bg-white shadow-sm md:rounded-[32px]">
-                <CardHeader className="border-b border-slate-50 p-5 md:p-8">
-                  <CardTitle className="type-card-title font-bold">Internal Generators</CardTitle>
-                  <CardDescription className="type-support font-medium text-slate-500">Documents created within MyeCA.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 gap-2">
-                    {[
-                      ["Rent Receipt", "/documents/generator/rent-receipt"],
-                      ["Invoice", "/documents/generator/invoice"],
-                      ["Form 15G", "/documents/generator/form-15g"],
-                      ["Board Resolution", "/documents/generator/board-resolution-gst"],
-                    ].map(([label, href]) => (
-                      <Link key={href} href={href}>
-                        <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-colors group cursor-pointer border border-transparent hover:border-slate-100">
-                          <span className="text-sm font-bold text-slate-700">{label}</span>
-                          <Pencil className="h-4 w-4 text-slate-300 group-hover:text-blue-600 transition-colors" />
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
 
-          <Card className="overflow-hidden rounded-lg border-none bg-blue-700 text-white shadow-sm md:rounded-[32px]">
-            <CardHeader className="border-b border-white/10 p-5 md:p-8">
-              <CardTitle className="text-xl font-black">Case workflow preview</CardTitle>
-              <CardDescription className="text-slate-400">
-                When a file is linked to a service, it appears on that case workspace and helps the team move the case forward.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-4">
-              {caseTimelineStages.map((stage, index) => (
-                <div key={stage} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="type-meta font-black uppercase tracking-widest text-blue-300">Stage {index + 1}</p>
-                  <p className="mt-2 type-support font-bold text-white">{stage}</p>
+          <aside className="space-y-5">
+            <Card className="rounded-lg border-slate-200 shadow-none">
+              <CardHeader className="border-b border-slate-100 p-4 md:p-5">
+                <CardTitle className="type-card-title text-slate-900">Quick Upload</CardTitle>
+                <CardDescription className="type-support mt-1 font-medium text-slate-500">
+                  Add a document and optionally connect it to a profile or case.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5 p-4 md:p-5">
+                <button
+                  type="button"
+                  className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-blue-300 hover:bg-blue-50/40"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg border border-blue-100 bg-white text-blue-600">
+                    <Upload className="h-5 w-5" />
+                  </span>
+                  <span className="text-sm font-bold text-slate-900">
+                    {uploadMutation.isPending ? "Uploading..." : "Choose a file"}
+                  </span>
+                  <span className="mt-1 text-xs font-medium text-slate-500">PDF, image, Word or Excel</span>
+                </button>
+
+                <div className="space-y-4">
+                  <FieldLabel label="Document Name">
+                    <Input
+                      value={uploadData.name}
+                      onChange={(event) => setUploadData((previous) => ({ ...previous, name: event.target.value }))}
+                      placeholder="e.g. Form 16"
+                      className="h-10 rounded-lg border-slate-200 bg-slate-50 text-sm font-semibold"
+                    />
+                  </FieldLabel>
+
+                  <FieldLabel label="Category">
+                    <Select value={uploadData.category} onValueChange={(category) => setUploadData((previous) => ({ ...previous, category }))}>
+                      <SelectTrigger className="h-10 rounded-lg border-slate-200 bg-slate-50 text-sm font-semibold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vaultFolders.map((folder) => (
+                          <SelectItem key={folder.key} value={folder.key}>
+                            {folder.label}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FieldLabel>
+
+                  <FieldLabel label="Taxpayer Profile">
+                    <Select value={uploadData.profileId} onValueChange={(profileId) => setUploadData((previous) => ({ ...previous, profileId }))}>
+                      <SelectTrigger className="h-10 rounded-lg border-slate-200 bg-slate-50 text-sm font-semibold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Current user</SelectItem>
+                        {profiles.map((profile: any) => (
+                          <SelectItem key={profile.id} value={String(profile.id)}>
+                            {profile.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="type-support font-medium text-slate-400">
+                      Use this when a file belongs to a saved family or taxpayer profile.
+                    </p>
+                  </FieldLabel>
+
+                  <FieldLabel label="Linked Service">
+                    <Select value={uploadData.userServiceId} onValueChange={(userServiceId) => setUploadData((previous) => ({ ...previous, userServiceId }))}>
+                      <SelectTrigger className="h-10 rounded-lg border-slate-200 bg-slate-50 text-sm font-semibold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Keep in vault only</SelectItem>
+                        {userServices.map((service: any) => (
+                          <SelectItem key={service.id} value={String(service.id)}>
+                            {service.serviceTitle || service.serviceId || "Service"} - {String(service.status || "pending").replace(/_/g, " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="type-support font-medium text-slate-400">
+                      {userServices.length
+                        ? "Attach this file to an active case so it appears in that workspace."
+                        : "No service cases yet. Start a service first if this file should move a case forward."}
+                    </p>
+                  </FieldLabel>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-lg border-slate-200 shadow-none">
+              <CardHeader className="border-b border-slate-100 p-4 md:p-5">
+                <CardTitle className="type-card-title text-slate-900">Document Generators</CardTitle>
+                <CardDescription className="type-support mt-1 font-medium text-slate-500">
+                  Create common documents inside MyeCA.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2 p-4 md:p-5">
+                {generatorLinks.map(([label, href]) => (
+                  <Link key={href} href={href}>
+                    <div className="flex min-h-[44px] items-center justify-between rounded-lg border border-transparent px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-200 hover:bg-slate-50">
+                      <span>{label}</span>
+                      <Pencil className="h-4 w-4 text-slate-300" />
+                    </div>
+                  </Link>
+                ))}
+              </CardContent>
+            </Card>
+          </aside>
         </div>
       </div>
 
       <Dialog open={!!selectedDoc} onOpenChange={(open) => !open && setSelectedDoc(null)}>
-        <DialogContent className="max-h-[calc(100vh-2rem)] max-w-4xl overflow-y-auto rounded-2xl border-none p-0 shadow-2xl md:rounded-[32px]">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="bg-blue-700 p-8 flex flex-col justify-center items-center text-center">
-               <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mb-6 border border-white/10">
-                  <FileText className="h-10 w-10 text-blue-400" />
-               </div>
-               <h3 className="type-card-title font-bold text-white mb-2">Document Preview</h3>
-               <p className="text-slate-400 type-support max-w-xs font-medium">Verified extraction fields will appear here after OCR metadata is available.</p>
-            </div>
-            <div className="p-8 space-y-6">
-               <div>
-                  <h2 className="type-card-title font-bold text-slate-900">Extraction Status</h2>
-                  <p className="type-support font-medium text-slate-500">This file is stored securely. OCR verification is not available for this document yet.</p>
-               </div>
-               
-               {extractedFields.length ? (
-                <div className="space-y-4">
-                  {extractedFields.map(([label, value, confidence]) => (
-                    <div key={label} className="space-y-1.5">
-                      <div className="flex items-center justify-between px-1">
-                        <Label className="type-meta font-bold uppercase tracking-widest text-slate-400">{label}</Label>
-                        <Badge variant="outline" className={cn("type-meta font-black uppercase px-1.5 py-0 border-none", confidence === "High" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
-                          {confidence} Match
-                        </Badge>
-                      </div>
-                      <Input defaultValue={value} className="h-10 rounded-xl bg-slate-50 border-none text-sm font-semibold" />
-                    </div>
-                  ))}
-                </div>
-               ) : (
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
-                  <p className="type-support font-black text-slate-900">{selectedDoc?.name}</p>
-                  <p className="mt-2 type-support font-medium text-slate-500">
-                    Download the original file or wait for OCR metadata to be generated before confirming extracted values.
-                  </p>
-                </div>
-               )}
+        <DialogContent className="z-[60] max-h-[calc(100vh-2rem)] max-w-2xl overflow-y-auto rounded-lg border-slate-200 bg-white p-0 shadow-xl">
+          <DialogHeader className="border-b border-slate-100 p-5">
+            <DialogTitle className="flex items-center gap-3 text-lg font-bold text-slate-900">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                <FileText className="h-5 w-5" />
+              </span>
+              Document Preview
+            </DialogTitle>
+          </DialogHeader>
 
-               <Button className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-lg shadow-blue-100 transition-all mt-4" onClick={() => setSelectedDoc(null)}>
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Close Preview
-               </Button>
+          <div className="space-y-5 p-5">
+            <div>
+              <h2 className="type-card-title font-bold text-slate-900">Extraction Status</h2>
+              <p className="type-support mt-1 font-medium text-slate-500">
+                This file is stored securely. OCR verification is not available for this document yet.
+              </p>
             </div>
+
+            {extractedFields.length ? (
+              <div className="space-y-4">
+                {extractedFields.map(([label, value, confidence]) => (
+                  <div key={label} className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="type-meta font-bold uppercase tracking-[0.12em] text-slate-400">{label}</Label>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "type-meta border-none px-2 py-0.5 font-bold uppercase",
+                          confidence === "High" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700",
+                        )}
+                      >
+                        {confidence} Match
+                      </Badge>
+                    </div>
+                    <Input defaultValue={value} className="h-10 rounded-lg border-slate-200 bg-slate-50 text-sm font-semibold" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <p className="text-sm font-bold text-slate-900">{selectedDoc?.name}</p>
+                <p className="mt-2 type-support font-medium text-slate-500">
+                  Download the original file or wait for OCR metadata to be generated before confirming extracted values.
+                </p>
+              </div>
+            )}
+
+            <Button className="h-11 w-full rounded-lg bg-blue-700 font-bold text-white hover:bg-blue-800" onClick={() => setSelectedDoc(null)}>
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              Close Preview
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
     </Layout>
+  );
+}
+
+function FieldLabel({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <Label className="type-meta ml-1 font-bold uppercase tracking-[0.12em] text-slate-400">{label}</Label>
+      {children}
+    </div>
+  );
+}
+
+function EmptyDocumentsState({ onUpload }: { onUpload: () => void }) {
+  return (
+    <div className="mx-auto max-w-sm px-4 py-10 text-center">
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-50 text-slate-300">
+        <FolderOpen className="h-8 w-8" />
+      </div>
+      <h3 className="text-lg font-bold text-slate-900">No documents uploaded yet</h3>
+      <p className="mt-2 text-sm font-medium text-slate-500">
+        Upload Form 16, AIS, bank statements, or investment proofs to build your private vault.
+      </p>
+      <Button onClick={onUpload} className="mt-6 h-10 rounded-lg bg-blue-700 px-5 text-sm font-bold text-white hover:bg-blue-800">
+        <Plus className="mr-2 h-4 w-4" />
+        Upload Document
+      </Button>
+    </div>
   );
 }
