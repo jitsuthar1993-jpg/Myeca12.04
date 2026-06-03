@@ -6,6 +6,7 @@ import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
 import { setCachedUser } from "../utils/user-cache.js";
 import { getUserOwnedSnapshot, recordBelongsToUser } from "../utils/access-control.js";
+import { notifyLeadAutomation } from "../services/lead-automation.js";
 
 const router = Router();
 const updateProfileSchema = z.object({
@@ -327,6 +328,9 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
     };
 
     const docRef = await adminDb.collection("consultation_requests").add(newRequest);
+    void notifyLeadAutomation({ id: docRef.id, ...newRequest }).catch((error) => {
+      console.warn("[LEAD_AUTOMATION]", error);
+    });
     res.json({
       success: true,
       id: docRef.id,

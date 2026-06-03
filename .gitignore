@@ -130,7 +130,6 @@ Thumbs.db
 .blog-list.json
 
 # Lock files
-package-lock.json
 yarn.lock
 
 # Generated files
@@ -190,6 +189,7 @@ server/coverage/
 
 # Gradle cache
 android/.gradle/
+mye-ca-android/.gradle/
 android/local.properties
 
 # Android signing keys

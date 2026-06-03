@@ -1,0 +1,57 @@
+name: myeca-listmonk
+
+services:
+  listmonk-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: listmonk
+      POSTGRES_USER: listmonk
+      POSTGRES_PASSWORD: ${LISTMONK_DB_PASSWORD:-replace-with-strong-listmonk-db-password}
+    volumes:
+      - listmonk-postgres:/var/lib/postgresql/data
+    networks:
+      - listmonk
+
+  listmonk:
+    image: ${LISTMONK_IMAGE:-listmonk/listmonk:v4.1.0}
+    restart: unless-stopped
+    depends_on:
+      - listmonk-db
+    env_file:
+      - ../.env
+    command:
+      - sh
+      - -c
+      - ./listmonk --install --idempotent --yes && ./listmonk --upgrade --yes && ./listmonk
+    environment:
+      LISTMONK_app__address: 0.0.0.0:9000
+      LISTMONK_db__host: listmonk-db
+      LISTMONK_db__port: 5432
+      LISTMONK_db__user: listmonk
+      LISTMONK_db__password: ${LISTMONK_DB_PASSWORD:-replace-with-strong-listmonk-db-password}
+      LISTMONK_db__database: listmonk
+      LISTMONK_db__ssl_mode: disable
+      LISTMONK_ADMIN_USER: ${LISTMONK_ADMIN_USER:-admin}
+      LISTMONK_ADMIN_PASSWORD: ${LISTMONK_ADMIN_PASSWORD:-replace-with-strong-listmonk-password}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.listmonk.rule=Host(`mail.myeca.in`)
+      - traefik.http.routers.listmonk.entrypoints=websecure
+      - traefik.http.routers.listmonk.tls.certresolver=letsencrypt
+      - traefik.http.services.listmonk.loadbalancer.server.port=9000
+    volumes:
+      - listmonk-uploads:/listmonk/uploads
+    networks:
+      - web
+      - listmonk
+
+networks:
+  web:
+    external: true
+  listmonk:
+    internal: true
+
+volumes:
+  listmonk-postgres:
+  listmonk-uploads:

@@ -1,0 +1,79 @@
+name: myeca-twenty
+
+services:
+  twenty-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: twenty
+      POSTGRES_USER: twenty
+      POSTGRES_PASSWORD: ${TWENTY_POSTGRES_PASSWORD:-replace-with-strong-twenty-db-password}
+    volumes:
+      - twenty-postgres:/var/lib/postgresql/data
+    networks:
+      - twenty
+
+  twenty-redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - twenty-redis:/data
+    networks:
+      - twenty
+
+  twenty-server:
+    image: ${TWENTY_IMAGE:-twentycrm/twenty:v0.53}
+    restart: unless-stopped
+    depends_on:
+      - twenty-db
+      - twenty-redis
+    env_file:
+      - ../.env
+    environment:
+      SERVER_URL: ${TWENTY_SERVER_URL:-https://crm.myeca.in}
+      PG_DATABASE_URL: postgres://twenty:${TWENTY_POSTGRES_PASSWORD:-replace-with-strong-twenty-db-password}@twenty-db:5432/twenty
+      REDIS_URL: ${TWENTY_REDIS_URL:-redis://twenty-redis:6379}
+      APP_SECRET: ${TWENTY_APP_SECRET:-replace-with-openssl-rand-base64-32}
+      IS_MULTIWORKSPACE_ENABLED: "false"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.twenty.rule=Host(`crm.myeca.in`)
+      - traefik.http.routers.twenty.entrypoints=websecure
+      - traefik.http.routers.twenty.tls.certresolver=letsencrypt
+      - traefik.http.services.twenty.loadbalancer.server.port=3000
+    volumes:
+      - twenty-storage:/app/packages/twenty-server/.local-storage
+    networks:
+      - web
+      - twenty
+
+  twenty-worker:
+    image: ${TWENTY_IMAGE:-twentycrm/twenty:v0.53}
+    restart: unless-stopped
+    depends_on:
+      - twenty-db
+      - twenty-redis
+    env_file:
+      - ../.env
+    command: yarn worker:prod
+    environment:
+      SERVER_URL: ${TWENTY_SERVER_URL:-https://crm.myeca.in}
+      PG_DATABASE_URL: postgres://twenty:${TWENTY_POSTGRES_PASSWORD:-replace-with-strong-twenty-db-password}@twenty-db:5432/twenty
+      REDIS_URL: ${TWENTY_REDIS_URL:-redis://twenty-redis:6379}
+      APP_SECRET: ${TWENTY_APP_SECRET:-replace-with-openssl-rand-base64-32}
+      IS_MULTIWORKSPACE_ENABLED: "false"
+    volumes:
+      - twenty-storage:/app/packages/twenty-server/.local-storage
+    networks:
+      - twenty
+
+networks:
+  web:
+    external: true
+  twenty:
+    internal: true
+
+volumes:
+  twenty-postgres:
+  twenty-redis:
+  twenty-storage:

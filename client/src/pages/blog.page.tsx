@@ -203,7 +203,7 @@ function ArticleCard({
     >
       <article
         className={cn(
-          'group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg',
+          'group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md',
           compact ? 'flex h-full flex-col' : 'md:grid md:grid-cols-[240px_minmax(0,1fr)]'
         )}
       >
@@ -290,6 +290,7 @@ export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAudience, setSelectedAudience] = useState('all');
+  const [isTopicFilterOpen, setIsTopicFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
 
@@ -330,6 +331,20 @@ export default function BlogPage() {
   const featuredPost = posts.find((post) => post.isFeatured) ?? posts[0];
   const regularPosts = featuredPost ? posts.filter((post) => post.id !== featuredPost.id) : posts;
   const popularTopics = categories.slice(0, 8);
+  const selectedCategoryLabel = useMemo(() => {
+    if (selectedCategory === 'all') return 'All guides';
+
+    return (
+      categories.find((category) => normalizeKey(category.id || category.slug || category.name) === selectedCategory)
+        ?.name ?? 'Selected topic'
+    );
+  }, [categories, selectedCategory]);
+
+  const selectCategory = (categoryKey: string) => {
+    setSelectedCategory(categoryKey);
+    setPage(1);
+    setIsTopicFilterOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
@@ -429,9 +444,9 @@ export default function BlogPage() {
       </section>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+        <div className="mb-5 rounded-lg border border-slate-200 bg-white p-3 shadow-sm md:mb-6">
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_430px]">
-            <div className="flex self-start items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-50">
+            <div className="flex self-start items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-50">
               <Search className="h-5 w-5 shrink-0 text-blue-500" />
               <input
                 id="blog-search"
@@ -445,7 +460,7 @@ export default function BlogPage() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-1.5">
+            <div className="grid grid-cols-3 gap-2 rounded-lg bg-slate-50 p-1.5">
               {AUDIENCE_FILTERS.map((audience) => {
                 const active = selectedAudience === audience.key;
                 return (
@@ -457,7 +472,7 @@ export default function BlogPage() {
                       setPage(1);
                     }}
                     className={cn(
-                      'rounded-xl px-2 py-3 text-left transition sm:px-3',
+                      'rounded-lg px-2 py-3 text-left transition sm:px-3',
                       active
                         ? 'bg-blue-50 text-blue-700'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'
@@ -486,15 +501,61 @@ export default function BlogPage() {
           </div>
         </div>
 
-        <div className="mb-7 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mb-5 md:hidden">
           <button
             type="button"
-            onClick={() => {
-              setSelectedCategory('all');
-              setPage(1);
-            }}
+            aria-expanded={isTopicFilterOpen}
+            onClick={() => setIsTopicFilterOpen((isOpen) => !isOpen)}
+            className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 text-left text-sm font-black text-slate-950 shadow-sm"
+          >
+            <span className="inline-flex items-center gap-2 text-blue-700">
+              <BookOpen className="h-4 w-4" />
+              Topic
+            </span>
+            <span className="min-w-0 truncate text-right text-slate-700">{selectedCategoryLabel}</span>
+          </button>
+          {isTopicFilterOpen ? (
+            <div className="mt-2 grid gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+              <button
+                type="button"
+                onClick={() => selectCategory('all')}
+                className={cn(
+                  'rounded-lg border px-3 py-2 text-left text-sm font-bold transition',
+                  selectedCategory === 'all'
+                    ? 'border-blue-600 bg-blue-600 text-white'
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:text-blue-700'
+                )}
+              >
+                All guides
+              </button>
+              {categories.map((category) => {
+                const key = normalizeKey(category.id || category.slug || category.name);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => selectCategory(key)}
+                    className={cn(
+                      'rounded-lg border px-3 py-2 text-left text-sm font-bold transition',
+                      selectedCategory === key
+                        ? 'border-blue-600 bg-blue-600 text-white'
+                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:text-blue-700'
+                    )}
+                  >
+                    {category.name}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+
+        <div className="mb-7 hidden md:flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <button
+            type="button"
+            onClick={() => selectCategory('all')}
             className={cn(
-              'shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition',
+              'shrink-0 rounded-lg border px-4 py-2 text-sm font-bold transition',
               selectedCategory === 'all'
                 ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
                 : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700'
@@ -508,12 +569,9 @@ export default function BlogPage() {
               <button
                 key={key}
                 type="button"
-                onClick={() => {
-                  setSelectedCategory(key);
-                  setPage(1);
-                }}
+                onClick={() => selectCategory(key)}
                 className={cn(
-                  'shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition',
+                  'shrink-0 rounded-lg border px-4 py-2 text-sm font-bold transition',
                   selectedCategory === key
                     ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
                     : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700'
@@ -525,7 +583,7 @@ export default function BlogPage() {
           })}
         </div>
 
-        <section className="mb-7 rounded-2xl border border-blue-100 bg-white p-4 shadow-sm md:p-5">
+        <section className="mb-7 hidden rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:block md:p-5">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
@@ -598,6 +656,29 @@ export default function BlogPage() {
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="min-w-0 space-y-8">
                 {featuredPost && <ArticleCard post={featuredPost} priority />}
+                <section className="mobile-first-content-cta rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:hidden">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
+                    ITR readiness check
+                  </p>
+                  <h2 className="mt-2 text-lg font-black text-slate-950">
+                    Turn this guide into the right filing path.
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Check your ITR form, mismatch risk, documents and expert-review need before you start.
+                  </p>
+                  <div className="mt-4 grid gap-2">
+                    <Link href="/itr/form-recommender">
+                      <span className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-black text-white transition hover:bg-blue-700">
+                        Check my ITR form in 60 sec <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </Link>
+                    <Link href="/expert-consultation?service=blog-reader">
+                      <span className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-4 text-sm font-black text-blue-700 transition hover:bg-blue-100">
+                        Talk to Expert
+                      </span>
+                    </Link>
+                  </div>
+                </section>
                 {regularPosts.map((post) => (
                   <ArticleCard key={post.id} post={post} />
                 ))}
@@ -668,9 +749,7 @@ export default function BlogPage() {
                       <button
                         key={topic.id}
                         type="button"
-                        onClick={() =>
-                          setSelectedCategory(normalizeKey(topic.id || topic.slug || topic.name))
-                        }
+                        onClick={() => selectCategory(normalizeKey(topic.id || topic.slug || topic.name))}
                         className="flex w-full items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                       >
                         {topic.name}

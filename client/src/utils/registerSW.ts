@@ -21,7 +21,7 @@ let isReloadingForServiceWorkerUpdate = false;
 let shouldReloadForServiceWorkerUpdate = false;
 let updateNotificationTimer: number | undefined;
 
-const UPDATE_NOTIFICATION_DELAY_MS = 45_000;
+const UPDATE_NOTIFICATION_DELAY_MS = 5_000;
 const UPDATE_NOTIFICATION_CONVERSION_PATHS = ["/", "/pricing", "/itr/start", "/itr/form-selector"];
 
 function isConversionPath(path: string) {

@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { captureTelemetryEvent, trackTelemetryPageView } from "./browser";
+import { captureTelemetryEvent, initializeSelfHostedTelemetry, trackTelemetryPageView, updateTelemetryForRoute } from "./browser";
 
 afterEach(() => {
   delete window.gtag;
   delete window.posthog;
+  delete (window as any).$chatwoot;
+  delete (window as any).chatwootSDK;
+  delete (window as any).chatwootSettings;
+  document.head.innerHTML = "";
   window.history.replaceState({}, "", "/");
 });
 
@@ -56,5 +60,32 @@ describe("browser telemetry dispatch", () => {
     };
     expect(gtag).toHaveBeenCalledWith("event", "signup", payload);
     expect(capture).toHaveBeenCalledWith("signup", payload);
+  });
+
+  it("injects self-hosted Umami and Chatwoot only from configured safe routes", () => {
+    const toggleBubbleVisibility = vi.fn();
+    (window as any).$chatwoot = { toggleBubbleVisibility };
+
+    initializeSelfHostedTelemetry({
+      posthogHost: "https://us.i.posthog.com",
+      umamiWebsiteId: "umami-site-id",
+      umamiScriptUrl: "https://analytics.myeca.in/script.js",
+      chatwootBaseUrl: "https://chat.myeca.in",
+      chatwootWebsiteToken: "chatwoot-token",
+    }, "/contact");
+
+    const umamiScript = document.getElementById("myeca-umami") as HTMLScriptElement | null;
+    expect(umamiScript?.src).toBe("https://analytics.myeca.in/script.js");
+    expect(umamiScript?.dataset.websiteId).toBe("umami-site-id");
+
+    const chatwootScript = document.getElementById("myeca-chatwoot") as HTMLScriptElement | null;
+    expect(chatwootScript?.src).toBe("https://chat.myeca.in/packs/js/sdk.js");
+    expect((window as any).chatwootSettings).toMatchObject({ hideMessageBubble: false });
+
+    updateTelemetryForRoute("/documents/upload");
+    expect(toggleBubbleVisibility).toHaveBeenLastCalledWith("hide");
+
+    updateTelemetryForRoute("/contact");
+    expect(toggleBubbleVisibility).toHaveBeenLastCalledWith("show");
   });
 });

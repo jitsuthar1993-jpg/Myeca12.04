@@ -11,6 +11,10 @@ export type BrowserTelemetryConfig = {
   posthogHost: string;
   sentryDsn?: string;
   crispWebsiteId?: string;
+  umamiWebsiteId?: string;
+  umamiScriptUrl?: string;
+  chatwootBaseUrl?: string;
+  chatwootWebsiteToken?: string;
 };
 
 const gaMeasurementId = String(import.meta.env.VITE_GA_MEASUREMENT_ID || "").trim() || undefined;
@@ -19,16 +23,24 @@ const posthogKey = String(import.meta.env.VITE_POSTHOG_KEY || "").trim() || unde
 const posthogHost = String(import.meta.env.VITE_POSTHOG_HOST || "").trim() || "https://us.i.posthog.com";
 const sentryDsn = String(import.meta.env.VITE_SENTRY_DSN || "").trim() || undefined;
 const crispWebsiteId = String(import.meta.env.VITE_CRISP_WEBSITE_ID || "").trim() || undefined;
+const umamiWebsiteId = String(import.meta.env.VITE_UMAMI_WEBSITE_ID || "").trim() || undefined;
+const umamiScriptUrl = String(import.meta.env.VITE_UMAMI_SCRIPT_URL || "").trim() || undefined;
+const chatwootBaseUrl = String(import.meta.env.VITE_CHATWOOT_BASE_URL || "").trim() || undefined;
+const chatwootWebsiteToken = String(import.meta.env.VITE_CHATWOOT_WEBSITE_TOKEN || "").trim() || undefined;
 
 export const hasSentryTelemetryConfig = Boolean(sentryDsn);
 export const hasPosthogTelemetryConfig = Boolean(posthogKey);
 export const hasCrispTelemetryConfig = Boolean(crispWebsiteId);
+export const hasUmamiTelemetryConfig = Boolean(umamiWebsiteId && umamiScriptUrl);
+export const hasChatwootTelemetryConfig = Boolean(chatwootBaseUrl && chatwootWebsiteToken);
 export const hasBrowserTelemetryConfig = Boolean(
   gaMeasurementId ||
     clarityProjectId ||
     posthogKey ||
     sentryDsn ||
-    crispWebsiteId,
+    crispWebsiteId ||
+    hasUmamiTelemetryConfig ||
+    hasChatwootTelemetryConfig,
 );
 
 export function getTelemetryConsent() {
@@ -66,6 +78,10 @@ export function getBrowserTelemetryConfig(): BrowserTelemetryConfig {
     posthogHost,
     sentryDsn,
     crispWebsiteId,
+    umamiWebsiteId,
+    umamiScriptUrl,
+    chatwootBaseUrl,
+    chatwootWebsiteToken,
   };
 }
 
@@ -78,6 +94,8 @@ export function shouldEnableTelemetry(
       config.clarityProjectId ||
       config.posthogKey ||
       config.sentryDsn ||
-      config.crispWebsiteId,
+      config.crispWebsiteId ||
+      (config.umamiWebsiteId && config.umamiScriptUrl) ||
+      (config.chatwootBaseUrl && config.chatwootWebsiteToken),
   );
 }

@@ -780,7 +780,7 @@ export default function ITRFilingPage() {
               <div className="rounded-[28px] border border-blue-200 bg-blue-50 p-6">
                 <FileCheck2 className="h-9 w-9 text-blue-800" />
                 <p className="mt-4 type-meta font-black uppercase tracking-widest text-blue-700">Recommended form</p>
-                <h3 className="mt-2 text-5xl font-black text-slate-950">{recommendation.form.replace(/_/g, " ")}</h3>
+                <h3 className="mt-2 type-section-title font-black text-slate-950">{recommendation.form.replace(/_/g, " ")}</h3>
                 <p className="mt-3 type-support text-blue-950">{recommendation.exportStatus.reason}</p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {recommendation.requiredSchedules.map((schedule) => (

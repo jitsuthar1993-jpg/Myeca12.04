@@ -13,26 +13,10 @@ import { generalRateLimit } from "./middleware/rateLimiting.js";
 import { getRequestId, requestIdMiddleware } from "./middleware/request-id.js";
 import { initServerSentry, setupServerSentryErrorHandler } from "./telemetry/sentry.js";
 import { isPrivateRoute } from "../shared/seo-public.js";
+import { isAllowedOrigin, isLocalHost } from "./lib/origin-policy.js";
 
 initServerSentry();
 const app = express();
-const productionOrigins: (string | RegExp)[] = [
-  "https://myeca.in",
-  "https://www.myeca.in",
-];
-const localOrigins: RegExp[] = [/^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
-
-function isLocalHost(host: string | undefined) {
-  const normalizedHost = host?.split(":")[0] || "";
-  return normalizedHost === "localhost" || normalizedHost === "127.0.0.1" || normalizedHost === "::1";
-}
-
-function isAllowedOrigin(origin: string, allowLocalOrigins: boolean) {
-  const allowedOrigins = allowLocalOrigins ? [...productionOrigins, ...localOrigins] : productionOrigins;
-  return allowedOrigins.some((entry) =>
-    typeof entry === "string" ? entry === origin : entry.test(origin),
-  );
-}
 
 app.use(requestIdMiddleware);
 app.use(compress());
@@ -51,7 +35,7 @@ app.use((req, res, next) => {
         return callback(null, true);
       }
 
-      if (isAllowedOrigin(origin, allowLocalOrigins)) {
+      if (isAllowedOrigin(origin, { allowLocalOrigins })) {
         return callback(null, true);
       }
 
@@ -95,7 +79,7 @@ app.use("/api", (req, res, next) => {
 
   const origin = req.get("origin");
   if (process.env.NODE_ENV === "production" && origin) {
-    if (!isAllowedOrigin(origin, isLocalHost(req.hostname || req.headers.host))) {
+    if (!isAllowedOrigin(origin, { allowLocalOrigins: isLocalHost(req.hostname || req.headers.host) })) {
       return res.status(403).json({
         success: false,
         error: "CSRF validation failed",

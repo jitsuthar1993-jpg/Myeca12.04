@@ -1,6 +1,8 @@
 import express from "express";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { validateEnv } from "../../../server/lib/env-validation.js";
+import { getAllowedOrigins, isAllowedOrigin } from "../../../server/lib/origin-policy.js";
+import { getServerListenConfig } from "../../../server/lib/listen-config.js";
 import { getSupabaseAnonKey, getSupabaseUrl } from "../../../server/lib/supabase.js";
 import { buildOpenApiSpec } from "../../../server/openapi.js";
 import { requestIdMiddleware } from "../../../server/middleware/request-id.js";
@@ -38,6 +40,33 @@ describe("backend hardening utilities", () => {
 
   it("allows production startup when required env vars are configured", () => {
     expect(() => validateEnv(productionEnv())).not.toThrow();
+  });
+
+  it("keeps local binding by default but allows container binding through HOST", () => {
+    expect(getServerListenConfig({ PORT: "5000" } as NodeJS.ProcessEnv)).toEqual({
+      host: "127.0.0.1",
+      port: 5000,
+    });
+
+    expect(getServerListenConfig({ HOST: "0.0.0.0", PORT: "8080" } as NodeJS.ProcessEnv)).toEqual({
+      host: "0.0.0.0",
+      port: 8080,
+    });
+  });
+
+  it("adds explicit staging origins without allowing arbitrary production origins", () => {
+    const env = productionEnv({
+      ALLOWED_ORIGINS: "https://edge-staging.myeca.in, https://preview.myeca.in/",
+    });
+
+    expect(getAllowedOrigins(env)).toEqual([
+      "https://myeca.in",
+      "https://www.myeca.in",
+      "https://edge-staging.myeca.in",
+      "https://preview.myeca.in",
+    ]);
+    expect(isAllowedOrigin("https://edge-staging.myeca.in", { env })).toBe(true);
+    expect(isAllowedOrigin("https://evil.example", { env })).toBe(false);
   });
 
   it("does not use hardcoded Supabase fallback config in production", () => {

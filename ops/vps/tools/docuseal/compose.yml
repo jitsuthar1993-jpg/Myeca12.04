@@ -1,0 +1,48 @@
+name: myeca-docuseal
+
+services:
+  docuseal-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: docuseal
+      POSTGRES_USER: docuseal
+      POSTGRES_PASSWORD: ${DOCUSEAL_DB_PASSWORD:-replace-with-strong-docuseal-db-password}
+    volumes:
+      - docuseal-postgres:/var/lib/postgresql/data
+    networks:
+      - docuseal
+
+  docuseal:
+    image: ${DOCUSEAL_IMAGE:-docuseal/docuseal:2.3.1}
+    restart: unless-stopped
+    depends_on:
+      - docuseal-db
+    env_file:
+      - ../.env
+    environment:
+      HOST: sign.myeca.in
+      FORCE_SSL: "true"
+      DATABASE_URL: ${DOCUSEAL_DATABASE_URL:-postgresql://docuseal:replace-with-strong-docuseal-db-password@docuseal-db:5432/docuseal}
+      SECRET_KEY_BASE: ${DOCUSEAL_SECRET_KEY_BASE:-replace-with-openssl-rand-hex-64}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.docuseal.rule=Host(`sign.myeca.in`)
+      - traefik.http.routers.docuseal.entrypoints=websecure
+      - traefik.http.routers.docuseal.tls.certresolver=letsencrypt
+      - traefik.http.services.docuseal.loadbalancer.server.port=3000
+    volumes:
+      - docuseal-data:/data
+    networks:
+      - web
+      - docuseal
+
+networks:
+  web:
+    external: true
+  docuseal:
+    internal: true
+
+volumes:
+  docuseal-postgres:
+  docuseal-data:

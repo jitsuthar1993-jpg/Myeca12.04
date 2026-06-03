@@ -1,0 +1,43 @@
+name: myeca-n8n
+
+services:
+  n8n:
+    image: ${N8N_IMAGE:-docker.n8n.io/n8nio/n8n:2.21.5}
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      N8N_HOST: auto.myeca.in
+      N8N_PORT: 5678
+      N8N_PROTOCOL: https
+      # WEBHOOK_URL=https://auto.myeca.in/ is required behind Traefik.
+      WEBHOOK_URL: https://auto.myeca.in/
+      N8N_PROXY_HOPS: 1
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-replace-with-openssl-rand-hex-64}
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD:-replace-with-strong-n8n-password}
+      GENERIC_TIMEZONE: Asia/Kolkata
+      TZ: Asia/Kolkata
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.n8n.rule=Host(`auto.myeca.in`)
+      - traefik.http.routers.n8n.entrypoints=websecure
+      - traefik.http.routers.n8n.tls.certresolver=letsencrypt
+      - traefik.http.services.n8n.loadbalancer.server.port=5678
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - web
+      - n8n
+
+networks:
+  web:
+    external: true
+  n8n:
+    internal: true
+
+volumes:
+  n8n-data:

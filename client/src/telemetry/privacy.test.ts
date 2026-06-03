@@ -77,6 +77,16 @@ describe("telemetry privacy gates", () => {
     expect(shouldEnableTelemetry(emptyConfig, true)).toBe(false);
     expect(shouldEnableTelemetry({ ...emptyConfig, gaMeasurementId: "G-TEST" }, false)).toBe(false);
     expect(shouldEnableTelemetry({ ...emptyConfig, gaMeasurementId: "G-TEST" }, true)).toBe(true);
+    expect(shouldEnableTelemetry({
+      ...emptyConfig,
+      umamiWebsiteId: "umami-site-id",
+      umamiScriptUrl: "https://analytics.myeca.in/script.js",
+    }, true)).toBe(true);
+    expect(shouldEnableTelemetry({
+      ...emptyConfig,
+      chatwootBaseUrl: "https://chat.myeca.in",
+      chatwootWebsiteToken: "chatwoot-token",
+    }, true)).toBe(true);
   });
 
   it("stores explicit telemetry consent before behavior tools can load", () => {

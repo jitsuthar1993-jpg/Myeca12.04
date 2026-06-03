@@ -10,8 +10,8 @@ export const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://client.crisp.chat"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://client.crisp.chat", "data:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://client.crisp.chat", "https://chat.myeca.in"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://client.crisp.chat", "https://chat.myeca.in", "data:"],
       scriptSrc: [
         "'self'",
         ...(isDevelopment ? ["'unsafe-inline'"] : []),
@@ -23,6 +23,8 @@ export const securityHeaders = helmet({
         "https://*.posthog.com",
         "https://*.i.posthog.com",
         "https://client.crisp.chat",
+        "https://analytics.myeca.in",
+        "https://chat.myeca.in",
       ],
       scriptSrcAttr: ["'none'"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
@@ -45,9 +47,11 @@ export const securityHeaders = helmet({
         "https://*.sentry.io",
         "https://client.crisp.chat",
         "https://client.relay.crisp.chat",
+        "https://analytics.myeca.in",
+        "https://chat.myeca.in",
         "wss://client.relay.crisp.chat",
       ],
-      frameSrc: ["'self'", "https://client.crisp.chat"],
+      frameSrc: ["'self'", "https://client.crisp.chat", "https://chat.myeca.in"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],

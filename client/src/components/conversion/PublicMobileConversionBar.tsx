@@ -1,9 +1,102 @@
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { trackPublicCtaClick } from "@/lib/public-conversion-events";
 
+const HIDDEN_PATH_PREFIXES = [
+  "/itr/start",
+  "/auth",
+  "/dashboard",
+  "/documents",
+  "/reports",
+  "/admin",
+  "/itr/filing",
+  "/payments",
+  "/settings",
+  "/profile",
+  "/account",
+  "/business/dashboard",
+  "/tax-assistant",
+];
+
+function normalizePath(path: string) {
+  const pathname = path.split(/[?#]/)[0] || "/";
+  if (pathname === "/") return pathname;
+  return pathname.replace(/\/+$/, "");
+}
+
+function hasFormFocus() {
+  if (typeof document === "undefined") return false;
+
+  const activeElement = document.activeElement;
+  if (!activeElement || activeElement === document.body) return false;
+
+  const tagName = activeElement.tagName.toLowerCase();
+  return (
+    tagName === "input" ||
+    tagName === "textarea" ||
+    tagName === "select" ||
+    activeElement.getAttribute("contenteditable") === "true"
+  );
+}
+
+function getScrollThreshold() {
+  if (typeof window === "undefined") return Number.POSITIVE_INFINITY;
+  return Math.max(360, window.innerHeight * 0.9);
+}
+
 export default function PublicMobileConversionBar({ currentPath = "/" }: { currentPath?: string }) {
-  if (currentPath.startsWith("/itr/start")) return null;
+  const normalizedPath = useMemo(() => normalizePath(currentPath), [currentPath]);
+  const [hasScrolledPastFirstViewport, setHasScrolledPastFirstViewport] = useState(false);
+  const [isFormFocused, setIsFormFocused] = useState(false);
+  const isHiddenPath = HIDDEN_PATH_PREFIXES.some(
+    (prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`),
+  );
+
+  useEffect(() => {
+    setHasScrolledPastFirstViewport(false);
+
+    if (isHiddenPath) return undefined;
+
+    const updateScrollState = () => {
+      setHasScrolledPastFirstViewport(window.scrollY > getScrollThreshold());
+    };
+
+    const frame = window.requestAnimationFrame(updateScrollState);
+    const interval = window.setInterval(updateScrollState, 250);
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearInterval(interval);
+      window.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [isHiddenPath, normalizedPath]);
+
+  useEffect(() => {
+    if (isHiddenPath) return undefined;
+
+    const updateFocusState = () => setIsFormFocused(hasFormFocus());
+    const updateFocusStateAfterBlur = () => window.setTimeout(updateFocusState, 0);
+    const interval = window.setInterval(updateFocusState, 250);
+
+    updateFocusState();
+    document.addEventListener("focusin", updateFocusState);
+    document.addEventListener("focusout", updateFocusStateAfterBlur);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("focusin", updateFocusState);
+      document.removeEventListener("focusout", updateFocusStateAfterBlur);
+    };
+  }, [isHiddenPath, normalizedPath]);
+
+  const isScrolledNow =
+    typeof window !== "undefined" ? window.scrollY > getScrollThreshold() : hasScrolledPastFirstViewport;
+
+  if (isHiddenPath || isFormFocused || !hasScrolledPastFirstViewport || !isScrolledNow) return null;
 
   return (
     <nav

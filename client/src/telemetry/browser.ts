@@ -25,6 +25,13 @@ declare global {
       stopSessionRecording?: () => void;
       register?: (properties: Record<string, unknown>) => void;
     };
+    chatwootSettings?: Record<string, unknown>;
+    chatwootSDK?: {
+      run?: (options: { websiteToken: string; baseUrl: string }) => void;
+    };
+    $chatwoot?: {
+      toggleBubbleVisibility?: (visibility: "show" | "hide") => void;
+    };
   }
 }
 
@@ -32,6 +39,8 @@ let gaLoaded = false;
 let clarityLoaded = false;
 let posthogLoaded = false;
 let crispLoaded = false;
+let umamiLoaded = false;
+let chatwootLoaded = false;
 let webVitalsLoaded = false;
 let crispClient: any = null;
 let lastTrackedPath = "";
@@ -56,15 +65,18 @@ function normalizeEventName(eventName: string) {
   return EVENT_ALIASES[normalized] || normalized;
 }
 
-function loadScriptOnce(id: string, src: string) {
-  if (document.getElementById(id)) return;
+function loadScriptOnce(id: string, src: string, configure?: (script: HTMLScriptElement) => void) {
+  const existing = document.getElementById(id);
+  if (existing) return existing as HTMLScriptElement;
 
   const script = document.createElement("script");
   script.id = id;
   script.src = src;
   script.async = true;
   script.defer = true;
+  configure?.(script);
   document.head.appendChild(script);
+  return script;
 }
 
 function initializeGa(config: BrowserTelemetryConfig) {
@@ -123,6 +135,10 @@ async function initializePostHog(config: BrowserTelemetryConfig, path: string) {
 }
 
 async function initializeCrisp(config: BrowserTelemetryConfig, path: string) {
+  if (
+    config.chatwootBaseUrl &&
+    config.chatwootWebsiteToken
+  ) return;
   if (!loadCrispModule || crispLoaded || !config.crispWebsiteId || !allowsSupportChat(path)) return;
 
   const { Crisp } = await loadCrispModule();
@@ -135,6 +151,53 @@ async function initializeCrisp(config: BrowserTelemetryConfig, path: string) {
 
   crispClient = Crisp;
   crispLoaded = true;
+}
+
+function normalizeBaseUrl(value: string) {
+  return value.trim().replace(/\/+$/, "");
+}
+
+function initializeUmami(config: BrowserTelemetryConfig) {
+  if (umamiLoaded || !config.umamiWebsiteId || !config.umamiScriptUrl) return;
+
+  loadScriptOnce("myeca-umami", config.umamiScriptUrl, (script) => {
+    script.dataset.websiteId = config.umamiWebsiteId || "";
+  });
+  umamiLoaded = true;
+}
+
+function initializeChatwoot(config: BrowserTelemetryConfig, path: string) {
+  if (
+    chatwootLoaded ||
+    !config.chatwootBaseUrl ||
+    !config.chatwootWebsiteToken ||
+    !allowsSupportChat(path)
+  ) return;
+
+  const baseUrl = normalizeBaseUrl(config.chatwootBaseUrl);
+  window.chatwootSettings = {
+    hideMessageBubble: false,
+    position: "right",
+    type: "standard",
+  };
+
+  loadScriptOnce("myeca-chatwoot", `${baseUrl}/packs/js/sdk.js`, (script) => {
+    script.onload = () => {
+      window.chatwootSDK?.run?.({
+        websiteToken: config.chatwootWebsiteToken || "",
+        baseUrl,
+      });
+    };
+  });
+  chatwootLoaded = true;
+}
+
+export function initializeSelfHostedTelemetry(config: BrowserTelemetryConfig, path: string) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  initializeUmami(config);
+  initializeChatwoot(config, path);
+  updateTelemetryForRoute(path);
 }
 
 async function initializeWebVitals() {
@@ -168,6 +231,7 @@ export async function initializeBrowserTelemetry(path = typeof window !== "undef
 
   initializeGa(config);
   initializeClarity(config, path);
+  initializeSelfHostedTelemetry(config, path);
   await Promise.all([
     initializePostHog(config, path),
     initializeCrisp(config, path),
@@ -205,6 +269,10 @@ export function updateTelemetryForRoute(path: string) {
       crispClient.chat.close();
       crispClient.chat.hide();
     }
+  }
+
+  if (chatwootLoaded && window.$chatwoot) {
+    window.$chatwoot.toggleBubbleVisibility?.(allowsSupportChat(safePath) ? "show" : "hide");
   }
 }
 

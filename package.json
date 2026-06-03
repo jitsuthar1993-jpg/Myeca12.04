@@ -43,6 +43,7 @@
     "check:spa-fallback-indexing": "tsx scripts/check-spa-fallback-indexing.ts",
     "check:itr-season-seo-content": "tsx scripts/check-itr-season-seo-content.ts",
     "check:priority-structured-data": "tsx scripts/check-priority-structured-data.ts",
+    "check:priority-seo-sweep": "tsx scripts/check-priority-seo-sweep.ts",
     "check:seo-deployment-parity": "tsx scripts/check-seo-deployment-parity.ts",
     "check:search-goal-readiness": "tsx scripts/check-search-goal-readiness.ts",
     "check:seo-outreach-readiness": "tsx scripts/check-seo-outreach-readiness.ts",

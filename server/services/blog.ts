@@ -282,7 +282,7 @@ export async function listPublishedBlogPosts(
     console.warn("Unable to load published blog posts:", error);
   }
 
-  return storedPosts;
+  return mergePublishedBlogPosts(listDefaultPublishedBlogPosts(), storedPosts);
 }
 
 export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
@@ -290,6 +290,23 @@ export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
   return loadStaticBlogPosts()
     .filter((post) => post.status === "published")
     .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
+}
+
+export function mergePublishedBlogPosts(
+  staticPosts: StoredBlogPost[],
+  databasePosts: StoredBlogPost[],
+): StoredBlogPost[] {
+  const bySlug = new Map<string, StoredBlogPost>();
+
+  staticPosts
+    .filter((post) => post.status === "published")
+    .forEach((post) => bySlug.set(post.slug || post.id, post));
+
+  databasePosts
+    .filter((post) => post.status === "published")
+    .forEach((post) => bySlug.set(post.slug || post.id, post));
+
+  return sortPublishedPosts([...bySlug.values()]);
 }
 
 export async function getBlogPostById(id: string, db: DataAdminDb = adminDb): Promise<StoredBlogPost | null> {

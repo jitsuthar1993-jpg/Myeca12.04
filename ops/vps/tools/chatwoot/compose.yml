@@ -1,0 +1,94 @@
+name: myeca-chatwoot
+
+services:
+  chatwoot-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: chatwoot
+      POSTGRES_USER: chatwoot
+      POSTGRES_PASSWORD: ${CHATWOOT_POSTGRES_PASSWORD:-replace-with-strong-chatwoot-db-password}
+    volumes:
+      - chatwoot-postgres:/var/lib/postgresql/data
+    networks:
+      - chatwoot
+
+  chatwoot-redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-replace-with-strong-redis-password}
+    volumes:
+      - chatwoot-redis:/data
+    networks:
+      - chatwoot
+
+  chatwoot-rails:
+    image: ${CHATWOOT_IMAGE:-chatwoot/chatwoot:v4.10.1}
+    restart: unless-stopped
+    depends_on:
+      - chatwoot-db
+      - chatwoot-redis
+    env_file:
+      - ../.env
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      FRONTEND_URL: ${CHATWOOT_FRONTEND_URL:-https://chat.myeca.in}
+      SECRET_KEY_BASE: ${CHATWOOT_SECRET_KEY_BASE:-replace-with-openssl-rand-hex-64}
+      POSTGRES_HOST: chatwoot-db
+      POSTGRES_DATABASE: chatwoot
+      POSTGRES_USERNAME: chatwoot
+      POSTGRES_PASSWORD: ${CHATWOOT_POSTGRES_PASSWORD:-replace-with-strong-chatwoot-db-password}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-replace-with-strong-redis-password}@chatwoot-redis:6379
+      MAILER_SENDER_EMAIL: ${CHATWOOT_MAILER_SENDER_EMAIL:-support@myeca.in}
+      SMTP_ADDRESS: ${CHATWOOT_SMTP_ADDRESS:-smtp.brevo.com}
+      SMTP_PORT: ${CHATWOOT_SMTP_PORT:-587}
+      SMTP_USERNAME: ${CHATWOOT_SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${CHATWOOT_SMTP_PASSWORD:-}
+    command: bundle exec rails s -p 3000 -b 0.0.0.0
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.chatwoot.rule=Host(`chat.myeca.in`)
+      - traefik.http.routers.chatwoot.entrypoints=websecure
+      - traefik.http.routers.chatwoot.tls.certresolver=letsencrypt
+      - traefik.http.services.chatwoot.loadbalancer.server.port=3000
+    volumes:
+      - chatwoot-storage:/app/storage
+    networks:
+      - web
+      - chatwoot
+
+  chatwoot-sidekiq:
+    image: ${CHATWOOT_IMAGE:-chatwoot/chatwoot:v4.10.1}
+    restart: unless-stopped
+    depends_on:
+      - chatwoot-db
+      - chatwoot-redis
+    env_file:
+      - ../.env
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      FRONTEND_URL: ${CHATWOOT_FRONTEND_URL:-https://chat.myeca.in}
+      SECRET_KEY_BASE: ${CHATWOOT_SECRET_KEY_BASE:-replace-with-openssl-rand-hex-64}
+      POSTGRES_HOST: chatwoot-db
+      POSTGRES_DATABASE: chatwoot
+      POSTGRES_USERNAME: chatwoot
+      POSTGRES_PASSWORD: ${CHATWOOT_POSTGRES_PASSWORD:-replace-with-strong-chatwoot-db-password}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-replace-with-strong-redis-password}@chatwoot-redis:6379
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    volumes:
+      - chatwoot-storage:/app/storage
+    networks:
+      - chatwoot
+
+networks:
+  web:
+    external: true
+  chatwoot:
+    internal: true
+
+volumes:
+  chatwoot-postgres:
+  chatwoot-redis:
+  chatwoot-storage:

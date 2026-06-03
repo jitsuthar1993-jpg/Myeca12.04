@@ -380,6 +380,14 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'GST Filing', url: '/gst-filing' }]
   },
+  '/services/gst-returns': {
+    title: 'GST Returns Filing Service India | GSTR-1 & GSTR-3B | MyeCA.in',
+    description: 'Prepare GST returns with GSTR-1, GSTR-3B, ITC reconciliation, invoice checks, due-date tracking, and CA-led filing support for Indian businesses.',
+    keywords: ['GST returns filing', 'GSTR-1 filing', 'GSTR-3B filing', 'ITC reconciliation', 'GST return service'],
+    type: 'service',
+    serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'GST Returns', url: '/services/gst-returns' }]
+  },
   '/services/gst-registration': {
     title: 'GST Registration Online India | Fast & Easy Process | MyeCA.in',
     description: 'Get GST registration support online with document preparation, portal filing guidance, query support, and transparent pricing.',
@@ -595,11 +603,16 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Individual ITR Form Selector', url: '/itr/start' }]
   },
   '/itr/form-selector': {
-    title: 'ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2 or ITR-3 | MyeCA.in',
-    description: 'Choose the right income tax return form for salary, capital gains, business income, foreign assets, and other AY 2026-27 filing scenarios.',
-    keywords: ['ITR form selector', 'which ITR form', 'ITR-1 ITR-2 ITR-3', 'AY 2026-27 ITR filing', 'income tax return form'],
+    title: 'Which ITR Return Should You File for AY 2026-27? | MyeCA.in',
+    description: 'Compare ITR-1, ITR-2, ITR-3, ITR-4, ITR-5, ITR-6, ITR-7 and ITR-U for AY 2026-27 with documents, schedules, deadlines, and CA-assisted filing paths.',
+    keywords: ['which ITR return to file', 'ITR form selector AY 2026-27', 'ITR-1 ITR-2 ITR-3 ITR-4 ITR-5 ITR-6 ITR-7 ITR-U', 'AY 2026-27 ITR filing', 'income tax return form'],
     type: 'website',
-    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Filing', url: '/itr/form-selector' }]
+    faqItems: [
+      { q: 'Which ITR return should I file for AY 2026-27?', a: 'Choose the return based on taxpayer type, residential status, income heads, capital gains, business income, foreign assets, audit triggers, and whether the return is original, belated, revised, or updated.' },
+      { q: 'Does MyeCA support all ITR forms as filing drafts?', a: 'The public guide covers ITR-1 through ITR-7 and ITR-U, while the active individual draft workflow remains focused on ITR-1 to ITR-4 with CA scope review for complex or entity cases.' },
+      { q: 'Are AY 2026-27 returns governed by the Income Tax Act, 1961?', a: 'Yes. Returns for FY 2025-26 filed for AY 2026-27 continue under the Income Tax Act, 1961 framework, even during the transition to the Income-tax Act, 2025.' }
+    ],
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Which ITR Return to File', url: '/itr/form-selector' }]
   },
   '/itr/form-recommender': {
     title: 'ITR Form Recommender AY 2026-27 | Guided Filing Path | MyeCA.in',
@@ -720,6 +733,14 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'service',
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Tax Planning', url: '/services/tax-planning' }]
+  },
+  '/services/tds-filing': {
+    title: 'TDS Filing Service India | 24Q, 26Q & Challan Review | MyeCA.in',
+    description: 'Prepare TDS filing with TAN, challan matching, deductee PAN checks, Form 24Q or 26Q data, Form 16 support, and CA-led compliance review.',
+    keywords: ['TDS filing service', 'TDS return filing', 'Form 24Q filing', 'Form 26Q filing', 'TAN challan review'],
+    type: 'service',
+    serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'TDS Filing', url: '/services/tds-filing' }]
   },
   '/services/document-vault': {
     title: 'Secure Tax Document Vault | MyeCA.in',

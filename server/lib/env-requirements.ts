@@ -237,6 +237,50 @@ export const ENV_REQUIREMENTS: EnvRequirement[] = [
     level: "optional",
     description: "Crisp website ID for production-only public support chat.",
   },
+  {
+    key: "VITE_UMAMI_WEBSITE_ID",
+    level: "optional",
+    description: "Self-hosted Umami website ID for consent-gated public analytics.",
+  },
+  {
+    key: "VITE_UMAMI_SCRIPT_URL",
+    level: "optional",
+    description: "Self-hosted Umami script URL, for example https://analytics.myeca.in/script.js.",
+    validate: urlValue,
+  },
+  {
+    key: "VITE_CHATWOOT_BASE_URL",
+    level: "optional",
+    description: "Self-hosted Chatwoot base URL for consent-gated public support chat.",
+    validate: urlValue,
+  },
+  {
+    key: "VITE_CHATWOOT_WEBSITE_TOKEN",
+    level: "optional",
+    description: "Chatwoot website inbox token for the public support widget.",
+  },
+  {
+    key: "ALLOWED_ORIGINS",
+    level: "optional",
+    description: "Comma-separated extra HTTPS origins allowed by CORS and CSRF checks, such as edge-staging.myeca.in.",
+  },
+  {
+    key: "HOST",
+    level: "optional",
+    description: "Server bind host. Use 0.0.0.0 in Docker so Traefik can reach the app container.",
+  },
+  {
+    key: "LEAD_AUTOMATION_WEBHOOK_URL",
+    level: "optional",
+    description: "n8n webhook URL for consultation request automation.",
+    validate: urlValue,
+  },
+  {
+    key: "LEAD_AUTOMATION_WEBHOOK_SECRET",
+    level: "optional",
+    description: "Shared HMAC secret for signing consultation request automation payloads.",
+    validate: strongSecret(32),
+  },
 ];
 
 export function getEnvReport(env: NodeJS.ProcessEnv = process.env) {

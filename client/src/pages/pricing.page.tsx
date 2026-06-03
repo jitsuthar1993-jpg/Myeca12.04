@@ -64,6 +64,46 @@ const comparisonRows = [
   ["Post-filing support", "Email", "Included", "Included", "Scope based"],
 ];
 
+function PricingPromiseCard({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-sm font-black text-slate-950">MyeCA pricing promise</p>
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            Every paid plan separates included work, exclusions, SLA, and review scope before payment.
+          </p>
+        </div>
+      </div>
+      <div className={compact ? "mt-4 grid gap-2" : "mt-5 space-y-3"}>
+        {trustRows.map(([label, value]) => (
+          <div key={label} className="grid gap-1 rounded-lg border border-slate-100 bg-slate-50/70 p-3 sm:grid-cols-[1fr_auto] sm:items-center">
+            <p className="text-sm font-bold text-slate-900">{label}</p>
+            <p className="text-xs font-bold text-blue-700 sm:text-right">{value}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PricingHighlights() {
+  return (
+    <div className="grid gap-3 sm:grid-cols-3">
+      {pricingHighlights.map(([label, value, note]) => (
+        <div key={label} className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{label}</p>
+          <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+          <p className="mt-1 text-xs leading-5 text-slate-600">{note}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-white">
@@ -95,8 +135,8 @@ export default function PricingPage() {
         ]}
       />
 
-      <section className="border-b border-slate-100 bg-white px-4 py-10 sm:px-6 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.03fr_0.97fr] lg:items-start">
+      <section className="border-b border-slate-100 bg-white px-4 py-8 sm:px-6 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.03fr_0.97fr] lg:items-start">
           <div className="max-w-4xl">
             <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
               <ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" />
@@ -105,14 +145,14 @@ export default function PricingPage() {
               <span className="text-emerald-600">Scope before payment</span>
             </div>
 
-            <h1 className="type-hero-title mt-7 max-w-4xl text-slate-950">
+            <h1 className="type-hero-title mt-5 max-w-4xl text-slate-950 md:mt-7">
               Tax filing plans priced by real return complexity.
             </h1>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600 md:text-xl">
+            <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600 md:mt-5 md:text-xl">
               Compare guided, assisted, investor, NRI, freelancer, and business compliance plans with CA touchpoints,
               GST treatment, timelines, and exclusions visible before you start.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row md:mt-8">
               <Link href="/itr/start?source=pricing_hero" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full bg-slate-800 hover:bg-slate-900 sm:w-auto">
                   Start ITR Filing
@@ -125,7 +165,7 @@ export default function PricingPage() {
                 </Button>
               </a>
             </div>
-            <div className="mt-8 flex flex-col gap-3 text-sm font-semibold text-slate-600 sm:flex-row sm:flex-wrap">
+            <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-slate-600 sm:flex-row sm:flex-wrap md:mt-8">
               {proofPoints.map((point) => (
                 <span key={point} className="inline-flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -135,38 +175,9 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-black text-slate-950">MyeCA pricing promise</p>
-                  <p className="mt-1 text-sm leading-6 text-slate-600">
-                    Every paid plan separates included work, exclusions, SLA, and review scope before payment.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-5 space-y-3">
-                {trustRows.map(([label, value]) => (
-                  <div key={label} className="grid gap-1 rounded-lg border border-slate-100 bg-slate-50/70 p-3 sm:grid-cols-[1fr_auto] sm:items-center">
-                    <p className="text-sm font-bold text-slate-900">{label}</p>
-                    <p className="text-xs font-bold text-blue-700 sm:text-right">{value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {pricingHighlights.map(([label, value, note]) => (
-                <div key={label} className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{label}</p>
-                  <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">{note}</p>
-                </div>
-              ))}
-            </div>
+          <div className="hidden lg:grid gap-4">
+            <PricingPromiseCard />
+            <PricingHighlights />
           </div>
         </div>
       </section>
@@ -198,6 +209,10 @@ export default function PricingPage() {
                 </div>
               </Link>
             ))}
+          </div>
+          <div className="mt-5 lg:hidden">
+            {/* mobile pricing promise */}
+            <PricingPromiseCard compact />
           </div>
         </div>
       </section>

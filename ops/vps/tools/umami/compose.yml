@@ -1,0 +1,43 @@
+name: myeca-umami
+
+services:
+  umami-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-with-strong-postgres-password}
+    volumes:
+      - umami-postgres:/var/lib/postgresql/data
+    networks:
+      - umami
+
+  umami:
+    image: ${UMAMI_IMAGE:-docker.umami.is/umami-software/umami:postgresql-v3.0.0}
+    restart: unless-stopped
+    depends_on:
+      - umami-db
+    env_file:
+      - ../.env
+    environment:
+      DATABASE_URL: ${UMAMI_DATABASE_URL:-postgresql://umami:replace-with-strong-postgres-password@umami-db:5432/umami}
+      APP_SECRET: ${UMAMI_APP_SECRET:-replace-with-openssl-rand-hex-64}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.umami.rule=Host(`analytics.myeca.in`)
+      - traefik.http.routers.umami.entrypoints=websecure
+      - traefik.http.routers.umami.tls.certresolver=letsencrypt
+      - traefik.http.services.umami.loadbalancer.server.port=3000
+    networks:
+      - web
+      - umami
+
+networks:
+  web:
+    external: true
+  umami:
+    internal: true
+
+volumes:
+  umami-postgres:

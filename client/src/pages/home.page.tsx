@@ -58,6 +58,12 @@ const HERO_TYPING_PHRASES = [
   "Compliances",
 ];
 
+const heroProofItems = [
+  "Secure documents",
+  "Scope before payment",
+  "Expert support",
+];
+
 const mobileSummaryCards = [
   {
     label: "For salaried professionals",
@@ -222,9 +228,9 @@ const HomePage = () => {
                   ITR FILING 2026-27 STARTED
                 </span>
 
-                <h1 className="type-hero-title mx-auto max-w-5xl text-slate-950">
+                <h1 className="type-hero-title mx-auto max-w-5xl text-center text-slate-950">
                   File your{" "}
-                  <span className="inline-flex min-w-[14ch] items-center justify-start text-left text-blue-600 sm:min-w-[18ch]">
+                  <span className="inline-flex min-w-[14ch] items-center justify-center text-center text-blue-600 sm:min-w-[18ch]">
                     <span aria-live="polite">{typedHeroPhrase || "\u00a0"}</span>
                     <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" aria-hidden="true" />
                   </span>
@@ -257,21 +263,17 @@ const HomePage = () => {
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-col items-center justify-center gap-4 text-sm font-semibold text-slate-600 sm:flex-row sm:gap-6 md:mt-7 md:text-base">
-                {[
-                  "Secure documents",
-                  "Scope before payment",
-                  "Expert support",
-                ].map((item) => (
-                  <div key={item} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
-                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" />
-                    <span>{item}</span>
-                  </div>
+              <div className="mx-auto mt-7 flex max-w-3xl flex-col items-center justify-center gap-3 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm sm:flex-row sm:flex-wrap">
+                {heroProofItems.map((item) => (
+                  <span key={item} className="inline-flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
+                    {item}
+                  </span>
                 ))}
+                <Link href="/trust" className="inline-flex items-center font-bold text-blue-700 hover:text-blue-800">
+                  Document handling <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Link>
               </div>
-              <Link href="/trust" className="mt-4 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
-                Privacy, security and document handling <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
             </div>
           </div>
         </section>

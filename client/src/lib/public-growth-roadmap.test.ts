@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { competitorPages, competitiveProofPoints } from "../data/competitive-growth";
+import { PUBLIC_HEADER_PRIMARY_LINKS } from "../data/public-navigation-links";
 import { getTaxFilingPlans } from "../data/pricing";
 
 function readSource(path: string) {
@@ -25,10 +26,12 @@ describe("public growth roadmap implementation", () => {
     expect(source).not.toContain("ITR Filing Started");
     expect(source).not.toContain("<HeroTypingPhrase");
     expect(source).not.toContain("with expert CA assistance");
-    expect(source).toContain("justify-start text-left text-blue-600");
+    expect(source).toContain("justify-center text-center text-blue-600");
     expect(source).toContain("animate-pulse");
     expect(source).toContain("Start Filing Now");
     expect(source).toContain("Free Tax Calculator");
+    expect(source).toContain("heroProofItems");
+    expect(source).toContain("Document handling");
     expect(source).toContain("Scope before payment");
     expect(source).toContain("/calculators/regime-comparator");
     expect(source).toContain("/calculators/tds");
@@ -43,7 +46,11 @@ describe("public growth roadmap implementation", () => {
     expect(barSource).toContain("Start ITR");
     expect(barSource).toContain("Talk to Expert");
     expect(barSource).toContain("/itr/start");
-    expect(barSource).toContain('currentPath.startsWith("/itr/start")');
+    expect(barSource).toContain("HIDDEN_PATH_PREFIXES");
+    expect(barSource).toContain('"/auth"');
+    expect(barSource).toContain("hasScrolledPastFirstViewport");
+    expect(barSource).toContain("focusin");
+    expect(barSource).toContain("window.scrollY");
     expect(barSource).toContain("/expert-consultation?service=itr-filing");
   });
 
@@ -51,9 +58,10 @@ describe("public growth roadmap implementation", () => {
     const headerSource = readSource("client/src/components/layout/Header.tsx");
 
     expect(headerSource).toContain("Login &amp; File");
-    expect(headerSource).toContain("Blogs");
-    expect(headerSource).toContain('href="/trust"');
-    expect(headerSource).toContain('aria-label="Trust"');
+    expect(headerSource).toContain("PUBLIC_HEADER_PRIMARY_LINKS.map");
+    expect(PUBLIC_HEADER_PRIMARY_LINKS).toContainEqual({ href: "/blog", label: "Blogs" });
+    expect(PUBLIC_HEADER_PRIMARY_LINKS).toContainEqual({ href: "/trust", icon: "trust", label: "Trust" });
+    expect(headerSource).toContain("aria-label={item.label}");
     expect(headerSource).toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file");
     expect(headerSource).not.toContain("<span>Log in</span>");
     expect(headerSource).not.toContain(">Blog<");
@@ -84,7 +92,10 @@ describe("public growth roadmap implementation", () => {
     expect(itrStartSource).toContain("Individual ITR form selector");
     expect(itrStartSource).toContain("Individual filing facts");
     expect(itrStartSource).toContain("recommendItrForm");
-    expect(itrStartSource).toContain("Continue filing");
+    expect(itrStartSource).toContain("itrStartProofItems");
+    expect(itrStartSource).toContain("Current recommendation");
+    expect(itrStartSource).toContain("lg:hidden");
+    expect(itrStartSource).toContain("Continue to MY ITR");
     expect(itrStartSource).not.toContain("taxpayerOptions");
     expect(itrStartSource).not.toContain("Taxpayer type");
     expect(itrStartSource).not.toContain("GST Returns");
@@ -103,5 +114,29 @@ describe("public growth roadmap implementation", () => {
     expect(readSource("client/src/features/itr/pages/form-selector.page.tsx")).toContain(
       "Check my ITR plan in 60 sec"
     );
+    const formSelectorSource = readSource("client/src/features/itr/pages/form-selector.page.tsx");
+    expect(formSelectorSource).toContain("Which ITR Return Should You File for AY 2026-27?");
+    expect(formSelectorSource).toContain("ITR-7");
+    expect(formSelectorSource).toContain("ITR-U");
+    expect(formSelectorSource).toContain("AY 2026-27");
+    expect(formSelectorSource).toContain("Income Tax Act, 1961");
+    expect(formSelectorSource).toContain("/itr/start?source=form_selector_full_guide");
+    expect(formSelectorSource).toContain("/expert-consultation?service=itr-filing&source=form_selector_full_guide");
+  });
+
+  it("applies the balanced mobile visual-flow polish layer", () => {
+    const pricingSource = readSource("client/src/pages/pricing.page.tsx");
+    const blogSource = readSource("client/src/pages/blog.page.tsx");
+
+    expect(pricingSource).toContain("PricingPromiseCard");
+    expect(pricingSource).toContain("hidden lg:grid");
+    expect(pricingSource).toContain("lg:hidden");
+    expect(pricingSource).toContain("mobile pricing promise");
+
+    expect(blogSource).toContain("isTopicFilterOpen");
+    expect(blogSource).toContain("selectedCategoryLabel");
+    expect(blogSource).toContain("Topic");
+    expect(blogSource).toContain("hidden md:flex");
+    expect(blogSource).toContain("mobile-first-content-cta");
   });
 });

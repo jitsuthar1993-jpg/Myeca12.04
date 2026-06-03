@@ -27,6 +27,7 @@ import {
 } from "@shared/search-console-verification";
 import { defaultBlogPosts } from "../../../server/data/default-blog-content";
 import { loadStaticBlogPosts } from "../../../server/data/static-blog-content";
+import { listPublishedBlogPosts } from "../../../server/services/blog";
 import { EMAIL_TEMPLATES } from "../../../server/services/email";
 import { getBlogConversionLinks } from "./blog-conversion-links";
 import { PUBLIC_NAVIGATION_LINKS } from "../data/public-navigation-links";
@@ -156,7 +157,7 @@ describe("public link audit", () => {
     const expectedMetadata = [
       {
         route: "/itr/form-selector",
-        title: "ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2 or ITR-3 | MyeCA.in",
+        title: "Which ITR Return Should You File for AY 2026-27? | MyeCA.in",
       },
       {
         route: "/itr/form-recommender",
@@ -192,6 +193,46 @@ describe("public link audit", () => {
     expect(sitemap).not.toContain("<loc>https://myeca.in/itr/filing</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/dashboard</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/documents</loc>");
+  });
+
+  it("keeps runtime blog listings from shrinking below the static MDX catalog", async () => {
+    const staticPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
+    const [databasePost, staticOnlyPost] = staticPosts;
+    const fakeDb = {
+      collection(name: string) {
+        if (name === "categories") {
+          return {
+            orderBy: () => ({
+              get: async () => ({ docs: [] }),
+            }),
+          };
+        }
+
+        if (name === "blog_posts") {
+          return {
+            where: () => ({
+              get: async () => ({
+                docs: [
+                  {
+                    id: databasePost.id,
+                    data: () => databasePost,
+                  },
+                ],
+              }),
+            }),
+          };
+        }
+
+        throw new Error(`Unexpected collection ${name}`);
+      },
+    };
+
+    const posts = await listPublishedBlogPosts(fakeDb as never);
+    const slugs = posts.map((post) => post.slug);
+
+    expect(posts.length).toBeGreaterThanOrEqual(staticPosts.length);
+    expect(slugs).toContain(databasePost.slug);
+    expect(slugs).toContain(staticOnlyPost.slug);
   });
 
   it("indexes the ITR season campaign assets and competitor capture pages", () => {
@@ -260,6 +301,7 @@ describe("public link audit", () => {
       const links = [
         ...guide.relatedCalculators,
         ...(guide.relatedResources?.map((resource) => resource.href) ?? []),
+        ...guide.steps.flatMap((step) => step.links?.map((link) => link.href) ?? []),
       ];
 
       expect(links.some((href) => href.startsWith("/calculators/")), guide.slug).toBe(true);

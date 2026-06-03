@@ -1,438 +1,314 @@
-import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardCheck,
+  ExternalLink,
+  FileCheck2,
+  FileText,
+  HelpCircle,
+  Landmark,
+  Scale,
+  ShieldCheck,
+  UsersRound,
+} from "lucide-react";
+import MetaSEO from "@/components/seo/MetaSEO";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Users, Building, TrendingUp, AlertCircle, CheckCircle, ChevronRight, HelpCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  itrReturnDecisionSteps,
+  itrReturnFormGuide,
+  itrReturnFormSourceLinks,
+  type ItrReturnFormCtaCategory,
+  type ItrReturnFormGuide,
+} from "@/features/itr/data/return-form-guide";
 
-const ITR_FORMS = [
-  {
-    id: 'ITR-1',
-    title: 'ITR-1 (Sahaj)',
-    description: 'For salaried individuals with income up to ₹50 lakhs',
-    features: [
-      'Salary income',
-      'House property income (one house)',
-      'Other sources income',
-      'Deductions under Chapter VI-A'
-    ],
-    complexity: 'Simple',
-    estimatedTime: '15-20 minutes',
-    icon: Users,
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    available: true
-  },
-  {
-    id: 'ITR-2',
-    title: 'ITR-2',
-    description: 'For individuals/HUFs having income from capital gains, foreign assets',
-    features: [
-      'All ITR-1 sources',
-      'Capital gains',
-      'Foreign income/assets',
-      'Multiple house properties',
-      'Director in companies'
-    ],
-    complexity: 'Moderate',
-    estimatedTime: '30-45 minutes',
-    icon: TrendingUp,
-    color: 'bg-blue-50 text-blue-700 border-blue-100',
-    available: true
-  },
-  {
-    id: 'ITR-3',
-    title: 'ITR-3',
-    description: 'For individuals/HUFs having income from business or profession',
-    features: [
-      'Business/professional income',
-      'Presumptive taxation',
-      'Book profit',
-      'Partnership firm partners',
-      'All ITR-2 sources'
-    ],
-    complexity: 'Complex',
-    estimatedTime: '45-60 minutes',
-    icon: Building,
-    color: 'bg-indigo-50 text-indigo-700 border-indigo-100',
-    available: true
-  },
-  {
-    id: 'ITR-4',
-    title: 'ITR-4 (Sugam)',
-    description: 'For individuals/HUFs/firms with presumptive income',
-    features: [
-      'Presumptive business income',
-      'Turnover up to ₹2 crores',
-      'Section 44AD/44ADA',
-      'Simple business returns'
-    ],
-    complexity: 'Simple',
-    estimatedTime: '20-25 minutes',
-    icon: FileText,
-    color: 'bg-violet-50 text-violet-700 border-violet-100',
-    available: true
+const formTone: Record<ItrReturnFormGuide["id"], string> = {
+  "ITR-1": "border-emerald-100 bg-emerald-50 text-emerald-700",
+  "ITR-2": "border-blue-100 bg-blue-50 text-blue-700",
+  "ITR-3": "border-indigo-100 bg-indigo-50 text-indigo-700",
+  "ITR-4": "border-cyan-100 bg-cyan-50 text-cyan-700",
+  "ITR-5": "border-amber-100 bg-amber-50 text-amber-700",
+  "ITR-6": "border-slate-200 bg-slate-100 text-slate-700",
+  "ITR-7": "border-violet-100 bg-violet-50 text-violet-700",
+  "ITR-U": "border-rose-100 bg-rose-50 text-rose-700",
+};
+
+function ctaFor(category: ItrReturnFormCtaCategory) {
+  if (category === "individual-selector") {
+    return {
+      label: "Start individual selector",
+      href: "/itr/start?source=form_selector_full_guide",
+      external: false,
+    };
   }
-];
 
-const ASSESSMENT_YEARS = [
-  { value: '2026-27', label: 'AY 2026-27 (FY 2025-26)', period: '1st April 2025 to 31st March 2026' },
-  { value: '2025-26', label: 'AY 2025-26 (FY 2024-25 - archive)', period: '1st April 2024 to 31st March 2025' },
-  { value: '2024-25', label: 'AY 2024-25 (FY 2023-24 - archive)', period: '1st April 2023 to 31st March 2024' },
-  { value: '2023-24', label: 'AY 2023-24 (FY 2022-23 - archive)', period: '1st April 2022 to 31st March 2023' },
-  { value: '2022-23', label: 'AY 2022-23 (FY 2021-22 - archive)', period: '1st April 2021 to 31st March 2022' }
-];
+  if (category === "ca-review") {
+    return {
+      label: "Ask CA before filing",
+      href: "/expert-consultation?service=itr-filing&source=form_selector_full_guide",
+      external: false,
+    };
+  }
 
-const GUIDED_INTAKE_PROMPTS = [
-  { label: 'Income type', detail: 'Salary, freelance, business, rental or interest income', icon: Users },
-  { label: 'Capital gains', detail: 'Stocks, mutual funds, property, ESOPs or VDA', icon: TrendingUp },
-  { label: 'Risk flags', detail: 'NRI, notice, foreign assets, GST or audit possibility', icon: AlertCircle },
-  { label: 'Documents ready', detail: 'Form 16, AIS/26AS, bank details and proofs', icon: FileText },
-];
-
-export default function ITRFormSelectorPage() {
-  const [selectedForm, setSelectedForm] = useState('');
-  const [assessmentYear, setAssessmentYear] = useState('2026-27');
-
-  // Parse recommended form from URL if coming back from the assistant
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const recommended = params.get('recommended');
-    if (recommended) {
-      setSelectedForm(recommended);
-    }
-  }, []);
-
-  const getRecommendedForm = () => {
-    // If we have a selection from the assistant, that's our recommendation
-    const params = new URLSearchParams(window.location.search);
-    const recommended = params.get('recommended');
-    if (recommended) return recommended;
-    return 'ITR-1';
+  return {
+    label: "Check official return route",
+    href: "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/%20income%20tax%20returns-faq",
+    external: true,
   };
+}
 
-  const selectedYearData = ASSESSMENT_YEARS.find(y => y.value === assessmentYear);
-  const selectedFormData = ITR_FORMS.find(form => form.id === selectedForm);
+function DetailList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div>
+      <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">{title}</p>
+      <ul className="mt-3 space-y-2">
+        {items.map((item) => (
+          <li key={item} className="flex gap-2 text-sm font-semibold leading-6 text-slate-700">
+            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function FormGuideCard({ form }: { form: ItrReturnFormGuide }) {
+  const cta = ctaFor(form.ctaCategory);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-6 md:py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 text-left md:mb-10 md:text-center"
-        >
-          <h1 className="type-page-title text-slate-900 mb-2">Income Tax Return Filing</h1>
-          <p className="type-body text-slate-600 max-w-2xl md:mx-auto">
-            Choose the assessment year and ITR path that matches your income profile.
-          </p>
-        </motion.div>
-
-        <section className="mb-6 rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:mb-10 md:rounded-2xl md:p-6">
-          <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-blue-700">
-                <HelpCircle className="h-3.5 w-3.5" />
-                Plan-first intake
-              </div>
-              <h2 className="mt-3 text-xl font-black leading-tight text-slate-950 md:text-2xl">
-                Not sure which ITR plan or form applies?
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Answer public, non-sensitive questions first. Salary and CA-assisted cases move faster, while capital gains, business, NRI, foreign assets and notices stay scope-first.
-              </p>
-              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <Link href="/itr/start?source=form_selector_rescue">
-                  <Button className="h-11 w-full rounded-lg bg-blue-600 px-5 text-sm font-black text-white hover:bg-blue-700 sm:w-auto">
-                    Check my ITR plan in 60 sec
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/expert-consultation?service=itr-filing&source=form_selector_rescue">
-                  <Button variant="outline" className="h-11 w-full rounded-lg border-blue-100 bg-blue-50 px-5 text-sm font-black text-blue-700 hover:bg-blue-100 sm:w-auto">
-                    Ask CA before paying
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {GUIDED_INTAKE_PROMPTS.map((prompt) => {
-                const Icon = prompt.icon;
-                return (
-                  <div key={prompt.label} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-black text-slate-950">{prompt.label}</p>
-                        <p className="mt-1 text-xs leading-5 text-slate-600">{prompt.detail}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+    <article id={form.id} className="scroll-mt-24 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={formTone[form.id]}>{form.id}</Badge>
+            <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">{form.shortLabel}</span>
           </div>
-        </section>
-
-        {/* Year Selection Section - Two Box Layout */}
-        <div className="grid grid-cols-1 gap-3 mb-6 md:grid-cols-2 md:gap-6 md:mb-12">
-          {/* Left Box: Assessment Year Selection */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white border border-slate-200 p-4 rounded-lg shadow-sm flex flex-col justify-center md:rounded-2xl md:p-8"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-indigo-50 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-indigo-600" />
-              </div>
-              <h2 className="type-card-title text-slate-900">Assessment Year</h2>
-            </div>
-            <p className="type-support text-slate-500 mb-4 md:mb-6">
-              Select the assessment year for which you want to file your income tax returns.
-            </p>
-            <Select value={assessmentYear} onValueChange={setAssessmentYear}>
-              <SelectTrigger className="w-full h-12 bg-slate-50 border-slate-200 focus:ring-2 focus:ring-indigo-500/20 text-slate-900 font-medium">
-                <SelectValue placeholder="Select Assessment Year" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-slate-200 text-slate-900">
-                {ASSESSMENT_YEARS.map((year) => (
-                  <SelectItem key={year.value} value={year.value} className="focus:bg-indigo-50 text-slate-900">
-                    {year.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="mt-3 type-support font-medium text-slate-500 md:hidden">
-              Financial year: <span className="font-bold text-indigo-700">{selectedYearData?.period}</span>
-            </p>
-          </motion.div>
-
-          {/* Right Box: Document Period */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="hidden bg-white border border-slate-200 p-8 rounded-2xl shadow-sm flex-col justify-center relative overflow-hidden group md:flex"
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
-              <FileText className="h-24 w-24" />
-            </div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-emerald-50 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-emerald-600" />
-              </div>
-              <h2 className="type-card-title text-slate-900">Document Period</h2>
-            </div>
-            <p className="type-support text-slate-500 mb-6">
-              Income earned during this period will be reported in your ITR for {selectedYearData?.label}.
-            </p>
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="type-meta uppercase font-bold text-slate-400 tracking-widest">Financial Year Range</p>
-                <p className="type-body font-bold text-indigo-700">{selectedYearData?.period}</p>
-              </div>
-            </div>
-          </motion.div>
+          <h2 className="mt-3 text-2xl font-black leading-tight text-slate-950">{form.title}</h2>
+          <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">{form.summary}</p>
         </div>
-
-        <div className="mb-4 grid gap-2 md:hidden">
-          <Link
-            href="/calculators/income-tax"
-            className="flex min-h-11 items-center justify-between rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700"
-          >
-            <span>Estimate tax first</span>
-            <ChevronRight className="h-4 w-4" />
+        {cta.external ? (
+          <a href={cta.href} target="_blank" rel="noreferrer" className="shrink-0">
+            <Button variant="outline" className="h-11 w-full border-slate-200 bg-white font-black text-slate-800 md:w-auto">
+              {cta.label}
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </a>
+        ) : (
+          <Link href={cta.href} className="shrink-0">
+            <Button className="h-11 w-full bg-blue-600 font-black text-white hover:bg-blue-700 md:w-auto">
+              {cta.label}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </Link>
-          <Link
-            href="/form16-parser"
-            className="flex min-h-11 items-center justify-between rounded-lg border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700"
-          >
-            <span>Parse Form 16 before choosing</span>
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
-
-        <div className="mb-8 grid gap-3 md:hidden">
-          {ITR_FORMS.map((form) => {
-            const IconComponent = form.icon;
-            const isRecommended = form.id === getRecommendedForm();
-            const isSelected = selectedForm === form.id;
-
-            return (
-              <div
-                key={form.id}
-                className={`rounded-lg border bg-white shadow-sm transition-colors ${
-                  isSelected ? 'border-indigo-300 ring-2 ring-indigo-100' : 'border-slate-200'
-                }`}
-              >
-                <div className="flex gap-3 p-4">
-                  <button
-                    type="button"
-                    onClick={() => form.available && setSelectedForm(form.id)}
-                    className="flex min-w-0 flex-1 items-start gap-3 text-left"
-                  >
-                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${form.color}`}>
-                      <IconComponent className="h-4 w-4" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="flex flex-wrap items-center gap-2">
-                        <span className="type-card-title text-slate-950">{form.title}</span>
-                        {isRecommended && (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 type-meta py-0 px-2 h-5">
-                            Recommended
-                          </Badge>
-                        )}
-                      </span>
-                      <span className="mt-1 block type-support text-slate-600">{form.description}</span>
-                      <span className="mt-3 flex flex-wrap gap-2 type-meta font-bold uppercase tracking-wide">
-                        <span className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">{form.complexity}</span>
-                        <span className="rounded-md bg-blue-50 px-2 py-1 text-blue-700">{form.estimatedTime}</span>
-                      </span>
-                    </span>
-                  </button>
-                  <Link href={`/itr/filing?form=${form.id}&ay=${assessmentYear}`} className="shrink-0 self-center">
-                    <Button size="sm" className="h-9 rounded-lg bg-indigo-600 px-3 type-support font-bold text-white hover:bg-indigo-700">
-                      Start ITR
-                    </Button>
-                  </Link>
-                </div>
-                <details className="border-t border-slate-100 px-4 py-3">
-                  <summary className="cursor-pointer type-support font-bold text-indigo-700">View included cases</summary>
-                  <ul className="mt-3 grid gap-2">
-                    {form.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2 type-support text-slate-600">
-                        <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Form Selection Grid */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {ITR_FORMS.map((form, index) => {
-            const IconComponent = form.icon;
-            const isRecommended = form.id === getRecommendedForm();
-            const isSelected = selectedForm === form.id;
-            
-            return (
-              <motion.div
-                key={form.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index + 0.3 }}
-                onClick={() => form.available && setSelectedForm(form.id)}
-                className={`cursor-pointer transition-all duration-300 ${
-                  !form.available ? 'opacity-60 cursor-not-allowed' : ''
-                }`}
-              >
-                <Card className={`h-full border-slate-200 transition-all overflow-hidden ${
-                  isSelected ? 'ring-2 ring-indigo-600 border-transparent shadow-md bg-white' : 'hover:border-slate-300 hover:shadow-sm bg-white'
-                }`}>
-                  <CardHeader className="pb-3 border-b border-slate-50">
-                    <div className="flex items-center justify-between mb-2">
-                       <div className={`p-2 rounded-lg border ${form.color}`}>
-                          <IconComponent className="h-4 w-4" />
-                        </div>
-                        {isRecommended && (
-                           <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50 type-meta py-0 px-2 h-5">
-                            Recommended
-                          </Badge>
-                        )}
-                    </div>
-                    <CardTitle className="type-card-title text-slate-900">{form.title}</CardTitle>
-                    <CardDescription className="type-support text-slate-500 mt-1 line-clamp-2 min-h-11">
-                      {form.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-4 space-y-4">
-                    <div className="space-y-2">
-                      <p className="type-meta font-bold text-slate-400 uppercase tracking-widest px-0.5">Features</p>
-                      <ul className="space-y-1.5 min-h-[100px]">
-                        {form.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-start type-support text-slate-600 font-medium">
-                            <CheckCircle className="h-3 w-3 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className="flex justify-between items-center pt-3 border-t border-slate-50">
-                      <div>
-                        <p className="type-meta uppercase font-bold text-slate-400">Complexity</p>
-                        <p className={`type-meta font-bold ${
-                          form.complexity === 'Simple' ? 'text-emerald-600' : 
-                          form.complexity === 'Moderate' ? 'text-blue-600' : 'text-amber-600'
-                        }`}>{form.complexity}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="type-meta uppercase font-bold text-slate-400">Est. Time</p>
-                        <p className="type-meta font-bold text-slate-700">{form.estimatedTime}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Action Confirmation Banner */}
-        <AnimatePresence mode="wait">
-          {selectedFormData && (
-            <motion.div
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="mb-10 hidden md:block"
-            >
-              <Card className="bg-indigo-600 border-none shadow-xl shadow-indigo-200">
-                <CardContent className="p-5 flex flex-col md:flex-row items-center justify-between gap-5 md:p-8 md:gap-6">
-                  <div className="text-center md:text-left">
-                    <h3 className="type-section-title text-white mb-2">Proceed with {selectedFormData.title}?</h3>
-                    <p className="type-support text-indigo-100 max-w-md">
-                      You've selected {selectedFormData.title} for AY {assessmentYear}. All data will be processed according to financial regulations.
-                    </p>
-                  </div>
-                  
-                  <Link href={`/itr/filing?form=${selectedFormData.id}&ay=${assessmentYear}`} className="w-full md:w-auto">
-                    <Button size="lg" className="w-full bg-white text-indigo-700 hover:bg-slate-50 px-5 h-12 font-extrabold text-base shadow-lg group md:h-14 md:px-10 md:text-lg">
-                      Start ITR Filing
-                      <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Footer Support Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center"
-        >
-          <div className="flex flex-col items-start gap-2 rounded-lg border border-slate-200 bg-slate-200/50 p-4 text-left md:inline-flex md:flex-row md:items-center md:rounded-full md:px-6 md:py-3">
-            <HelpCircle className="h-4 w-4 text-slate-500" />
-            <span className="type-support text-slate-600 font-medium">Confused about which plan or form to pick?</span>
-            <Link href="/itr/start?source=form_selector_footer">
-               <button className="type-support text-indigo-600 font-bold hover:underline">Check my ITR plan in 60 sec</button>
-            </Link>
-          </div>
-        </motion.div>
+        )}
       </div>
-    </div>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <DetailList title="Applies to" items={form.appliesTo} />
+        <DetailList title="Not for" items={form.notFor} />
+      </div>
+
+      <div className="mt-5 grid gap-4 border-t border-slate-100 pt-5 md:grid-cols-3">
+        <div className="rounded-lg bg-slate-50 p-4">
+          <FileText className="mb-3 h-5 w-5 text-blue-700" />
+          <DetailList title="Income heads" items={form.incomeSources} />
+        </div>
+        <div className="rounded-lg bg-slate-50 p-4">
+          <ClipboardCheck className="mb-3 h-5 w-5 text-blue-700" />
+          <DetailList title="Key schedules" items={form.keySchedules} />
+        </div>
+        <div className="rounded-lg bg-slate-50 p-4">
+          <FileCheck2 className="mb-3 h-5 w-5 text-blue-700" />
+          <DetailList title="Typical documents" items={form.typicalDocuments} />
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 border-t border-slate-100 pt-5 md:grid-cols-2">
+        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
+          <CalendarDays className="mb-2 h-5 w-5 text-blue-700" />
+          <p className="text-sm font-black text-blue-950">Deadline note</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">{form.deadlineNote}</p>
+        </div>
+        <div className="rounded-lg border border-amber-100 bg-amber-50 p-4">
+          <HelpCircle className="mb-2 h-5 w-5 text-amber-700" />
+          <p className="text-sm font-black text-amber-950">Late filing impact</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">{form.lateFilingNote}</p>
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        {form.sourceLinks.map((source) => (
+          <a
+            key={`${form.id}-${source.label}`}
+            href={source.href}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-black text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+          >
+            {source.label}
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+export default function ITRFormSelectorPage() {
+  return (
+    <main className="min-h-screen bg-slate-50">
+      <MetaSEO
+        title="Which ITR Return Should You File for AY 2026-27? | MyeCA.in"
+        description="Compare ITR-1, ITR-2, ITR-3, ITR-4, ITR-5, ITR-6, ITR-7 and ITR-U for AY 2026-27 with documents, schedules, deadlines, and CA-assisted filing paths."
+        keywords={[
+          "which ITR return to file",
+          "ITR form selector AY 2026-27",
+          "ITR-1 ITR-2 ITR-3 ITR-4 ITR-5 ITR-6 ITR-7 ITR-U",
+          "income tax return form India",
+          "CA assisted ITR filing",
+        ]}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: "Which ITR Return to File", url: "/itr/form-selector" },
+        ]}
+        faqPageData={[
+          {
+            question: "Which ITR return should I file for AY 2026-27?",
+            answer:
+              "The return depends on taxpayer type, residential status, income heads, capital gains, business income, foreign assets, audit triggers, and whether the filing is original, revised, belated, or updated.",
+          },
+          {
+            question: "Does MyeCA support every ITR form as a filing draft?",
+            answer:
+              "MyeCA keeps the public guide broad, but the active individual draft workflow remains focused on ITR-1 to ITR-4 with CA scope review for entity and complex cases.",
+          },
+        ]}
+      />
+
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-[1fr_0.78fr] md:px-6 md:py-12 lg:px-8">
+          <div>
+            <Badge className="mb-4 border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50">AY 2026-27 guide</Badge>
+            <h1 className="type-page-title font-black text-slate-950">Which ITR Return Should You File for AY 2026-27?</h1>
+            <p className="mt-5 max-w-3xl text-base font-semibold leading-8 text-slate-600">
+              Use this MyeCA guide to compare ITR-1 through ITR-7 and ITR-U before starting a filing draft,
+              asking for CA-assisted review, or checking the official Income Tax portal. AY 2026-27 returns
+              for FY 2025-26 continue under the Income Tax Act, 1961 framework.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link href="/itr/start?source=form_selector_full_guide">
+                <Button size="lg" className="h-12 bg-blue-600 font-black text-white hover:bg-blue-700">
+                  Check my ITR plan in 60 sec
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/expert-consultation?service=itr-filing&source=form_selector_full_guide">
+                <Button size="lg" variant="outline" className="h-12 border-blue-100 bg-blue-50 font-black text-blue-700 hover:bg-blue-100">
+                  Ask CA before filing
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-blue-100 bg-blue-50 p-5">
+            <ShieldCheck className="h-7 w-7 text-blue-700" />
+            <h2 className="mt-4 text-xl font-black text-blue-950">Scope before payment</h2>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+              This page is for form selection and document readiness. Final filing must follow the live Income Tax portal,
+              current notifications, and reviewer judgment for complex cases.
+            </p>
+            <div className="mt-4 grid gap-2">
+              {["Official sources checked", "All ITR forms covered", "Individual wizard kept separate"].map((item) => (
+                <div key={item} className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-black text-slate-700">
+                  <BadgeCheck className="h-4 w-4 text-emerald-600" />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-slate-50">
+        <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
+          <div className="mb-5 flex items-start gap-3">
+            <Scale className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Fast decision strip</p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">Start from taxpayer type, then check blockers.</h2>
+            </div>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {itrReturnDecisionSteps.map((step) => (
+              <a key={step.label} href={step.href} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:bg-blue-50">
+                <p className="text-sm font-black text-slate-950">{step.label}</p>
+                <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{step.result}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Complete form map</p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950">ITR-1 to ITR-7 plus ITR-U</h2>
+          </div>
+          <div className="grid gap-2 text-sm font-semibold text-slate-600 sm:grid-cols-3 md:w-[520px]">
+            <span className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2">
+              <UsersRound className="h-4 w-4 text-blue-700" />
+              Individuals
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2">
+              <Building2 className="h-4 w-4 text-blue-700" />
+              Entities
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2">
+              <Landmark className="h-4 w-4 text-blue-700" />
+              Trusts
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          {itrReturnFormGuide.map((form) => (
+            <FormGuideCard key={form.id} form={form} />
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 md:grid-cols-[0.8fr_1.2fr] md:px-6 lg:px-8">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Official source links</p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">Verify before final filing.</h2>
+            <p className="mt-3 text-sm font-semibold leading-7 text-slate-600">
+              MyeCA uses this page for practical guidance and CA-assisted readiness. The live portal,
+              current forms, and notifications remain the final authority.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {itrReturnFormSourceLinks.map((source) => (
+              <a
+                key={source.label}
+                href={source.href}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-16 items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm font-black text-slate-800 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              >
+                {source.label}
+                <ExternalLink className="h-4 w-4 shrink-0" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

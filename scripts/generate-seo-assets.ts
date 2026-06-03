@@ -472,6 +472,7 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
       reviewedAt: post.reviewedAt,
       reviewerCredentialName: post.reviewerCredentialName,
       reviewerCredentialId: post.reviewerCredentialId,
+      faqItems: post.faqItems,
     },
   };
 }
