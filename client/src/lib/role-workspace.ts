@@ -2,7 +2,6 @@ import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
   Briefcase,
-  CreditCard,
   Database,
   FileText,
   FolderOpen,
@@ -39,7 +38,8 @@ export const ROLE_NAV_GROUPS: Record<AppRole, RoleNavGroup[]> = {
         { icon: LayoutGrid, label: "Control Center", href: "/admin/dashboard" },
         { icon: Users, label: "Users", href: "/admin/users" },
         { icon: MessageSquare, label: "Requests", href: "/admin/requests" },
-        { icon: ShieldCheck, label: "CA Review", href: "/admin/dashboard" },
+        { icon: Layers, label: "Services", href: "/admin/services" },
+        { icon: ShieldCheck, label: "CA Review", href: "/admin/requests" },
       ],
     },
     {
@@ -74,7 +74,6 @@ export const ROLE_NAV_GROUPS: Record<AppRole, RoleNavGroup[]> = {
       label: "Workspace",
       items: [
         { icon: Home, label: "Team Hub", href: "/team/dashboard" },
-        { icon: Layers, label: "Assigned Tasks", href: "/team/dashboard" },
       ],
     },
     {
@@ -93,7 +92,6 @@ export const ROLE_NAV_GROUPS: Record<AppRole, RoleNavGroup[]> = {
         { icon: FileText, label: "MY ITR", href: "/itr/filing" },
         { icon: Zap, label: "Services", href: "/dashboard/services" },
         { icon: FolderOpen, label: "Documents", href: "/documents" },
-        { icon: CreditCard, label: "Payments", href: "/payments" },
       ],
     },
     {
