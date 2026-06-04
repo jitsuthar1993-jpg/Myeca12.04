@@ -1,14 +1,19 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'wouter';
+import React from "react";
+import { MetaSEO } from "@/components/seo/MetaSEO";
 
-interface SEOProps {
+/**
+ * @deprecated Prefer the newer `MetaSEO` component (or `RouteSeo` for routes whose
+ * metadata lives in `seo.config.ts`). This file is now a thin compatibility shim
+ * that translates the legacy prop shape into MetaSEO so the entire site shares one
+ * Helmet/JSON-LD code path. Migrate call sites at your convenience and delete this file.
+ */
+interface LegacySEOProps {
   title: string;
   description: string;
   keywords?: string;
   url?: string;
   image?: string;
-  type?: 'website' | 'article' | 'service' | 'calculator';
+  type?: "website" | "article" | "service" | "calculator";
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
@@ -25,268 +30,52 @@ interface SEOProps {
     reviews: string;
     availability: string;
   };
-  faqData?: {
-    question: string;
-    answer: string;
-  }[];
-  breadcrumbData?: {
-    name: string;
-    item: string;
-  }[];
+  faqData?: { question: string; answer: string }[];
+  breadcrumbData?: { name: string; item: string }[];
 }
 
-const SEO: React.FC<SEOProps> = ({
+const SEO: React.FC<LegacySEOProps> = ({
   title,
   description,
-  keywords = 'tax filing, income tax, ITR, tax calculator, India',
-  url = 'https://myeca.in',
-  image = 'https://myeca.in/og-image.jpg',
-  type = 'website',
-  author = 'MyeCA.in',
+  keywords,
+  url,
+  image,
+  type = "website",
+  author,
   publishedTime,
   modifiedTime,
-  tags = [],
+  tags,
   calculatorData,
   serviceData,
   faqData,
   breadcrumbData,
 }) => {
-  const [location] = useLocation();
-  const currentUrl = `https://myeca.in${location}`;
-  const siteName = 'MyeCA.in - Expert Tax Filing Services';
-  const servicePrice = serviceData?.price ? serviceData.price.replace(/,/g, '').match(/\d+(?:\.\d+)?/)?.[0] : undefined;
-
-  // Generate structured data based on type
-  const generateStructuredData = () => {
-    const baseData = {
-      "@context": "https://schema.org",
-      "@type": type === 'calculator' ? 'SoftwareApplication' : type === 'service' ? 'ProfessionalService' : 'WebSite',
-      name: title,
-      description: description,
-      url: currentUrl,
-      image: image,
-      author: {
-        "@type": "Organization",
-        name: author,
-        url: "https://myeca.in",
-        logo: "https://myeca.in/favicon.svg",
-        sameAs: [
-          "https://www.facebook.com/myecain",
-          "https://twitter.com/myecain",
-          "https://www.linkedin.com/company/myecain",
-          "https://www.instagram.com/myecain"
-        ]
-      },
-      publisher: {
-        "@type": "Organization",
-        name: siteName,
-        logo: {
-          "@type": "ImageObject",
-          url: "https://myeca.in/favicon.svg"
+  // Build an article-shaped jsonLd extra so MetaSEO's article schema picks up the
+  // publish/modified timestamps and tags that the legacy component took as flat props.
+  const articleExtra =
+    type === "article" && (publishedTime || modifiedTime || (tags && tags.length))
+      ? {
+          datePublished: publishedTime,
+          dateModified: modifiedTime || publishedTime,
+          keywords: tags?.join(", "),
         }
-      }
-    };
-
-    if (type === 'calculator' && calculatorData) {
-      return {
-        ...baseData,
-        applicationCategory: 'FinanceApplication',
-        operatingSystem: 'Web, iOS, Android',
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "INR"
-        },
-        features: calculatorData.features,
-        screenshot: "https://myeca.in/calculator-screenshot.png"
-      };
-    }
-
-    if (type === 'service' && serviceData) {
-      return {
-        ...baseData,
-        provider: {
-          "@type": "Organization",
-          name: siteName,
-          url: "https://myeca.in"
-        },
-        areaServed: {
-          "@type": "Country",
-          name: "India"
-        },
-        offers: {
-          "@type": "Offer",
-          price: servicePrice,
-          priceCurrency: "INR",
-          availability: serviceData.availability || "https://schema.org/InStock"
-        },
-      };
-    }
-
-    if (type === 'article') {
-      return {
-        ...baseData,
-        datePublished: publishedTime,
-        dateModified: modifiedTime || publishedTime,
-        author: {
-          "@type": "Organization",
-          name: author
-        },
-        keywords: tags.join(', '),
-        articleSection: 'Tax and Finance',
-        wordCount: description.split(' ').length + 200
-      };
-    }
-
-    // New: FAQ Schema
-    if (faqData && faqData.length > 0) {
-      const faqSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqData.map(faq => ({
-          "@type": "Question",
-          "name": faq.question,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": faq.answer
-          }
-        }))
-      };
-      
-      // If we have other specific data, we should probably return an array of schemas 
-      // but for simplicity here we merge or favor FAQ if requested on a generic page
-      return faqSchema;
-    }
-
-    // New: Breadcrumb Schema
-    if (breadcrumbData && breadcrumbData.length > 0) {
-      return {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": breadcrumbData.map((crumb, index) => ({
-          "@type": "ListItem",
-          "position": index + 1,
-          "name": crumb.name,
-          "item": `https://myeca.in${crumb.item}`
-        }))
-      };
-    }
-
-    return baseData;
-  };
-
-  const structuredData = generateStructuredData();
+      : undefined;
 
   return (
-    <Helmet>
-      {/* Basic Meta Tags */}
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
-      <meta name="author" content={author} />
-      <meta name="robots" content="index, follow" />
-      <meta name="googlebot" content="index, follow" />
-      <meta name="bingbot" content="index, follow" />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={currentUrl} />
-      
-      {/* Open Graph Tags */}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:url" content={currentUrl} />
-      <meta property="og:image" content={image} />
-      <meta property="og:type" content={type} />
-      <meta property="og:site_name" content={siteName} />
-      <meta property="og:locale" content="en_IN" />
-      
-      {/* Twitter Card Tags */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
-      <meta name="twitter:site" content="@myecain" />
-      <meta name="twitter:creator" content="@myecain" />
-      
-      {/* Article Specific Tags */}
-      {type === 'article' && (
-        <>
-          <meta property="article:published_time" content={publishedTime} />
-          <meta property="article:modified_time" content={modifiedTime || publishedTime} />
-          <meta property="article:author" content={author} />
-          <meta property="article:section" content="Tax and Finance" />
-          {tags.map((tag, index) => (
-            <meta key={index} property="article:tag" content={tag} />
-          ))}
-        </>
-      )}
-      
-      {/* Calculator Specific Tags */}
-      {type === 'calculator' && calculatorData && (
-        <>
-          <meta property="calculator:type" content={calculatorData.type} />
-          <meta property="calculator:accuracy" content={calculatorData.accuracy} />
-          <meta property="calculator:last-updated" content={calculatorData.updates} />
-          <meta name="application-name" content="MyeCA Tax Calculator" />
-          <meta name="mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-title" content="MyeCA Calculator" />
-        </>
-      )}
-      
-      {/* Service Specific Tags */}
-      {type === 'service' && serviceData && (
-        <>
-          <meta property="service:price" content={serviceData.price} />
-          <meta property="service:availability" content={serviceData.availability} />
-        </>
-      )}
-      
-      {/* Local Business Schema for Homepage */}
-      {location === '/' && (
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            name: siteName,
-            description: "Guided and CA-assisted tax filing services in India for ITR, GST, and compliance workflows.",
-            url: "https://myeca.in",
-            email: "support@myeca.in",
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: "Mumbai",
-              addressRegion: "Maharashtra",
-              addressCountry: "IN"
-            },
-            openingHoursSpecification: {
-              "@type": "OpeningHoursSpecification",
-              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-              opens: "09:00",
-              closes: "19:00"
-            },
-            priceRange: "₹499-₹9,999 excluding GST"
-          })}
-        </script>
-      )}
-      
-      {/* Structured Data */}
-      <script type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </script>
-      
-      {/* Additional SEO Meta Tags */}
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta name="msapplication-TileColor" content="#2563eb" />
-      <meta name="msapplication-TileImage" content="/favicon.svg" />
-      <meta name="application-name" content="MyeCA.in" />
-      
-      {/* Favicon Tags */}
-      <link rel="apple-touch-icon" href="/favicon.svg" />
-      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-      <link rel="manifest" href="/manifest.json" />
-      <meta name="msapplication-TileColor" content="#ffffff" />
-      <meta name="msapplication-TileImage" content="/favicon.svg" />
-    </Helmet>
+    <MetaSEO
+      title={title}
+      description={description}
+      keywords={keywords}
+      canonicalUrl={url}
+      ogImage={image}
+      type={type}
+      expertAuthor={author}
+      breadcrumbs={breadcrumbData?.map((crumb) => ({ name: crumb.name, url: crumb.item }))}
+      faqPageData={faqData}
+      calculatorData={calculatorData}
+      serviceData={serviceData}
+      jsonLd={articleExtra}
+    />
   );
 };
 
