@@ -1,6 +1,8 @@
 ﻿import { Router, Response } from "express";
 import { z } from "zod";
 import { adminDb } from "../data-admin.js";
+import { countByUserAndStatus } from "../db/queries.js";
+import { schema } from "../db.js";
 import { optionalAuth, requireAnyAuth, AuthRequest } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
@@ -111,35 +113,30 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
     // ships back. The previous implementation read every tax return, document, service, and
     // profile row for the user just to call .size and .slice(0, 5) — wasted work for any user
     // with more than a handful of records.
-    // adminDb's where() only supports "==", so pending counts run as parallel single-status
-    // aggregates rather than one IN query. Each is a cheap COUNT(*) and they all fan out at
-    // once.
-    const pendingReturnStatuses = ["draft", "pending", "in_progress"];
-    const pendingServiceStatuses = ["pending", "in_progress", "requested", "new"];
-
+    // Pending counts use the Drizzle helper countByUserAndStatus which issues a single
+    // `WHERE userId = ? AND status IN (...)` query — replacing the per-status fan-out the
+    // adminDb shim required because it only supports `==`.
     const [
       totalReturnsAgg,
       totalDocsAgg,
       totalProfilesAgg,
-      pendingReturnAggs,
-      pendingServiceAggs,
+      pendingReturnsCount,
+      pendingServicesCount,
       recentReturnsSnapshot,
       activeServicesSnapshot,
     ] = await Promise.all([
       returnsRef.count().get(),
       docsRef.count().get(),
       profilesRef.count().get(),
-      Promise.all(pendingReturnStatuses.map((s) => returnsRef.where("status", "==", s).count().get())),
-      Promise.all(pendingServiceStatuses.map((s) => servicesRef.where("status", "==", s).count().get())),
+      countByUserAndStatus(schema.taxReturns, user.id, ["draft", "pending", "in_progress"]),
+      countByUserAndStatus(schema.userServices, user.id, ["pending", "in_progress", "requested", "new"]),
       returnsRef.orderBy("updatedAt", "desc").limit(5).get(),
       servicesRef.orderBy("updatedAt", "desc").limit(50).get(),
     ]);
 
     const activeServices = activeServicesSnapshot.docs.map(normalizeUserService);
     const userReturns = recentReturnsSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
-    const pendingTasks =
-      pendingReturnAggs.reduce((sum: number, agg: any) => sum + agg.data().count, 0) +
-      pendingServiceAggs.reduce((sum: number, agg: any) => sum + agg.data().count, 0);
+    const pendingTasks = pendingReturnsCount + pendingServicesCount;
 
     const recentActivity = [
       ...activeServices.map((service) => ({

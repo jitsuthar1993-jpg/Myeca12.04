@@ -103,6 +103,84 @@ vi.mock("../../../server/data-admin.js", () => ({
   },
 }));
 
+// Drizzle helpers in server/db/queries.ts read from the real Postgres pool. The unit
+// tests run against the in-memory mock store above, so route handlers that call those
+// helpers see them resolved from the same store. The helpers are mapped to the
+// schema by table name so we can route them back through collectionStore().
+const tableNameByRef = vi.hoisted(() => new Map<unknown, string>());
+vi.mock("../../../server/db.js", () => {
+  const makeStub = (collectionName: string) => {
+    const ref = { __collectionName: collectionName } as const;
+    tableNameByRef.set(ref, collectionName);
+    return ref;
+  };
+  return {
+    schema: {
+      users: makeStub("users"),
+      profiles: makeStub("profiles"),
+      documents: makeStub("documents"),
+      taxReturns: makeStub("tax_returns"),
+      userServices: makeStub("user_services"),
+      blogPosts: makeStub("blog_posts"),
+      categories: makeStub("categories"),
+      dailyUpdates: makeStub("daily_updates"),
+      activityLogs: makeStub("activity_logs"),
+      auditLogs: makeStub("audit_logs"),
+      referrals: makeStub("referrals"),
+      teams: makeStub("teams"),
+      notifications: makeStub("notifications"),
+      workflows: makeStub("workflows"),
+      reports: makeStub("reports"),
+      chatSessions: makeStub("chat_sessions"),
+      chatMessages: makeStub("chat_messages"),
+      documentDrafts: makeStub("document_drafts"),
+      consultationRequests: makeStub("consultation_requests"),
+      paymentLinkRequests: makeStub("payment_link_requests"),
+      siteSettings: makeStub("site_settings"),
+      emailTemplates: makeStub("email_templates"),
+      pages: makeStub("pages"),
+    },
+    getDb: () => {
+      throw new Error("getDb() must not be called in tests — mock server/db/queries.js instead");
+    },
+    getSql: () => {
+      throw new Error("getSql() must not be called in tests");
+    },
+    getDatabaseUrl: () => null,
+  };
+});
+
+vi.mock("../../../server/db/queries.js", () => ({
+  countByUserAndStatus: async (table: unknown, userId: string, statuses: string[]) => {
+    const collectionName = tableNameByRef.get(table);
+    if (!collectionName) return 0;
+    const records = collectionStore(collectionName);
+    let count = 0;
+    for (const data of records.values()) {
+      if (data.userId === userId && statuses.includes(String(data.status))) count += 1;
+    }
+    return count;
+  },
+  countWhereEquals: async (table: unknown, field: string, value: string) => {
+    const collectionName = tableNameByRef.get(table);
+    if (!collectionName) return 0;
+    const records = collectionStore(collectionName);
+    let count = 0;
+    for (const data of records.values()) {
+      if (String(data[field]) === value) count += 1;
+    }
+    return count;
+  },
+  findByIdIn: async (table: unknown, ids: string[]) => {
+    const collectionName = tableNameByRef.get(table);
+    if (!collectionName) return [];
+    const records = collectionStore(collectionName);
+    return ids
+      .filter((id) => records.has(id))
+      .map((id) => ({ id, data: records.get(id) || {} }));
+  },
+}));
+
 vi.mock("../../../server/middleware/auth.js", () => {
   const attachUser = (req: any) => {
     const userId = req.get("x-test-user-id") || "user_1";
