@@ -80,6 +80,14 @@
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=(self), payment=(self)"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
         }
       ]
     },
@@ -177,6 +185,14 @@
     { "source": "/api/documents/stats/summary", "destination": "/api/index?route=documents-summary" },
     { "source": "/api/documents/:id/download", "destination": "/api/index?route=documents-download&id=:id" },
     { "source": "/api/documents/:id", "destination": "/api/index?route=documents-detail&id=:id" },
+    { "source": "/api/tax-returns", "destination": "/api/index?route=tax-returns" },
+    { "source": "/api/tax-returns/:id/documents", "destination": "/api/index?route=tax-return-documents&id=:id" },
+    { "source": "/api/tax-returns/:id/recommendation", "destination": "/api/index?route=tax-return-recommendation&id=:id" },
+    { "source": "/api/tax-returns/:id/submit-review", "destination": "/api/index?route=tax-return-submit-review&id=:id" },
+    { "source": "/api/tax-returns/:id/review-status", "destination": "/api/index?route=tax-return-review-status&id=:id" },
+    { "source": "/api/tax-returns/:id/review-packet", "destination": "/api/index?route=tax-return-review-packet&id=:id" },
+    { "source": "/api/tax-returns/:id/export-json", "destination": "/api/index?route=tax-return-export-json&id=:id" },
+    { "source": "/api/tax-returns/:id", "destination": "/api/index?route=tax-return-detail&id=:id" },
     { "source": "/api/public/categories", "destination": "/api/index?route=public-categories" },
     { "source": "/api/public/blogs", "destination": "/api/index?route=public-blogs" },
     { "source": "/api/public/blogs/:slug", "destination": "/api/index?route=public-blog&slug=:slug" },

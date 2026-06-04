@@ -4,6 +4,7 @@ import path from "node:path";
 import multer from "multer";
 import sharp from "sharp";
 import { del, get, put } from "@vercel/blob";
+import { z } from "zod";
 import {
   countCollection,
   listCollection,
@@ -45,11 +46,26 @@ import {
   normalizedIndexNowKey,
 } from "../shared/indexnow.js";
 import {
+  ITR_REVIEW_STATUSES,
+  buildItrDraftJsonExport,
+  buildItrReviewPacket,
+  calculateItrTotalDeductions,
+  calculateItrTotalIncome,
+  calculateItrTotalTaxPaid,
+  computeItrTaxLiability,
+  getItrDocumentChecklist,
+  normalizeItrDraft,
+  recommendItrForm,
+  type ItrFilingDraft,
+} from "../shared/itr-filing.js";
+import {
   buildNoindexNotFoundHtml,
   classifySpaFallbackPath,
   injectNoindexFallbackMeta,
 } from "../shared/spa-fallback-policy.js";
 import { captureServerException, initServerSentry } from "../server/telemetry/sentry.js";
+import { decryptPII, encryptPII } from "../server/utils/encryption.js";
+import { fileBufferMatchesDeclaredType } from "../server/lib/file-signature.js";
 
 initServerSentry();
 const PUBLIC_CACHE = "public, s-maxage=300, stale-while-revalidate=3600";
@@ -83,6 +99,41 @@ const documentUpload = multer({
   },
 });
 
+// Best-effort, per-instance rate limiting for sensitive endpoints. Vercel may run several
+// warm instances, so this is not a global guarantee — a KV/Redis-backed limiter (e.g. Upstash)
+// is recommended for cross-instance enforcement. This still blunts single-instance brute force.
+const RATE_LIMITED_ROUTES: Record<string, { limit: number; windowMs: number }> = {
+  "auth-sync": { limit: 30, windowMs: 60_000 },
+  "auth-logout-event": { limit: 30, windowMs: 60_000 },
+  "documents-upload": { limit: 20, windowMs: 60_000 },
+};
+const rateLimitBuckets = new Map<string, { count: number; resetAt: number }>();
+
+function clientIp(req: any) {
+  const forwarded = String(req.headers?.["x-forwarded-for"] || "");
+  const first = forwarded.split(",")[0]?.trim();
+  return first || req.socket?.remoteAddress || "unknown";
+}
+
+function checkRateLimit(req: any, bucket: string, limit: number, windowMs: number) {
+  const now = Date.now();
+  if (rateLimitBuckets.size > 10_000) {
+    for (const [key, value] of rateLimitBuckets) {
+      if (now > value.resetAt) rateLimitBuckets.delete(key);
+    }
+  }
+
+  const key = `${bucket}:${clientIp(req)}`;
+  const entry = rateLimitBuckets.get(key);
+  if (!entry || now > entry.resetAt) {
+    rateLimitBuckets.set(key, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  if (entry.count >= limit) return false;
+  entry.count += 1;
+  return true;
+}
+
 function ensureRequestId(req: any, res: any) {
   const incoming = String(req.headers?.["x-request-id"] || "");
   const requestId = incoming && incoming.length <= 120 ? incoming : crypto.randomUUID();
@@ -115,6 +166,7 @@ function routeFor(req: any) {
     "/api/documents": "documents-list",
     "/api/documents/upload": "documents-upload",
     "/api/documents/stats/summary": "documents-summary",
+    "/api/tax-returns": "tax-returns",
     "/api/v1/auth/me": "auth-me",
     "/api/v1/auth/sync": "auth-sync",
     "/api/v1/auth/logout-event": "auth-logout-event",
@@ -142,6 +194,27 @@ function routeFor(req: any) {
   if (documentMatch) {
     url.searchParams.set("id", decodeURIComponent(documentMatch[1]));
     return { name: "documents-detail", url };
+  }
+
+  const taxReturnActionMatch = pathname.match(/^\/api\/tax-returns\/([^/]+)\/([^/]+)$/);
+  if (taxReturnActionMatch) {
+    url.searchParams.set("id", decodeURIComponent(taxReturnActionMatch[1]));
+    const action = decodeURIComponent(taxReturnActionMatch[2]);
+    const taxReturnActionRoutes: Record<string, string> = {
+      documents: "tax-return-documents",
+      recommendation: "tax-return-recommendation",
+      "submit-review": "tax-return-submit-review",
+      "review-status": "tax-return-review-status",
+      "review-packet": "tax-return-review-packet",
+      "export-json": "tax-return-export-json",
+    };
+    return { name: taxReturnActionRoutes[action] ?? "not-found", url };
+  }
+
+  const taxReturnMatch = pathname.match(/^\/api\/tax-returns\/([^/]+)$/);
+  if (taxReturnMatch) {
+    url.searchParams.set("id", decodeURIComponent(taxReturnMatch[1]));
+    return { name: "tax-return-detail", url };
   }
 
   const downloadMatch = pathname.match(/^\/downloads\/income-tax-forms\/([^/]+)$/);
@@ -294,6 +367,509 @@ async function streamToBuffer(stream: ReadableStream<Uint8Array>) {
   return Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
 }
 
+const createTaxReturnSchema = z.object({
+  assessmentYear: z.string().trim().min(1).default("2026-27"),
+  profileId: z.string().trim().min(1).nullable().optional(),
+  draft: z.unknown().optional(),
+});
+
+const updateTaxReturnSchema = z.object({
+  assessmentYear: z.string().trim().min(1).optional(),
+  profileId: z.string().trim().min(1).nullable().optional(),
+  draft: z.unknown().optional(),
+});
+
+const linkTaxReturnDocumentSchema = z.object({
+  documentId: z.string().trim().min(1),
+  checklistItemId: z.string().trim().min(1),
+});
+
+const reviewStatusSchema = z.object({
+  status: z.enum(ITR_REVIEW_STATUSES),
+  notes: z.string().trim().max(2000).optional().default(""),
+  acknowledgmentNumber: z.string().trim().max(80).optional(),
+  refundAmount: z.number().optional().nullable(),
+  filedAt: z.string().trim().optional(),
+});
+
+const CA_REVIEW_STATUSES = new Set([
+  "ca_review",
+  "changes_requested",
+  "approved_for_filing",
+  "filed",
+  "e_verified",
+  "refund_or_demand_tracking",
+]);
+
+const SENSITIVE_TAXPAYER_FIELDS = [
+  "pan",
+  "aadhaar",
+  "bankAccount",
+  "bankAccountConfirm",
+] as const;
+
+function transformSensitiveTaxpayerFields(
+  draftInput: ItrFilingDraft,
+  transform: (value?: string | null) => string | null | undefined,
+) {
+  const draft = normalizeItrDraft(draftInput);
+  const taxpayer = { ...draft.taxpayer };
+
+  for (const field of SENSITIVE_TAXPAYER_FIELDS) {
+    taxpayer[field] = transform(taxpayer[field]) ?? "";
+  }
+
+  return {
+    ...draft,
+    taxpayer,
+  };
+}
+
+function secureTaxReturnDraftForStorage(draftInput: ItrFilingDraft) {
+  return transformSensitiveTaxpayerFields(draftInput, encryptPII);
+}
+
+function decryptTaxReturnDraftForResponse(draftInput: ItrFilingDraft) {
+  const rawDraft = draftInput && typeof draftInput === "object"
+    ? { ...(draftInput as Record<string, any>) }
+    : {};
+  const taxpayer = rawDraft.taxpayer && typeof rawDraft.taxpayer === "object"
+    ? { ...rawDraft.taxpayer }
+    : {};
+
+  for (const field of SENSITIVE_TAXPAYER_FIELDS) {
+    taxpayer[field] = decryptPII(taxpayer[field]) ?? "";
+  }
+
+  return normalizeItrDraft({
+    ...rawDraft,
+    taxpayer,
+  });
+}
+
+function secureReviewPacketForStorage(packet: ReturnType<typeof buildItrReviewPacket>) {
+  return {
+    ...packet,
+    draft: secureTaxReturnDraftForStorage(packet.draft),
+  };
+}
+
+function decryptReviewPacketForResponse(packet: ReturnType<typeof buildItrReviewPacket>) {
+  return {
+    ...packet,
+    draft: decryptTaxReturnDraftForResponse(packet.draft),
+  };
+}
+
+function parseStoredTaxReturnDraft(data: Record<string, any>): ItrFilingDraft {
+  let parsed: unknown;
+
+  if (data.formData && typeof data.formData === "string") {
+    try {
+      parsed = JSON.parse(data.formData);
+    } catch {
+      parsed = {};
+    }
+  } else if (data.formData && typeof data.formData === "object") {
+    parsed = data.formData;
+  } else {
+    parsed = {};
+  }
+
+  return decryptTaxReturnDraftForResponse(parsed as ItrFilingDraft);
+}
+
+function buildTaxReturnSummary(draft: ItrFilingDraft) {
+  return {
+    totalIncome: calculateItrTotalIncome(draft),
+    totalDeductions: calculateItrTotalDeductions(draft),
+    totalTaxPaid: calculateItrTotalTaxPaid(draft),
+    taxLiability: computeItrTaxLiability(draft),
+  };
+}
+
+function serializeTaxReturn(id: string, data: Record<string, any>) {
+  const draft = parseStoredTaxReturnDraft(data);
+  const recommendation = data.recommendation ?? recommendItrForm(draft);
+  const calculatedTax = data.calculatedTax ?? computeItrTaxLiability(draft);
+  const reviewPacket = data.reviewPacket
+    ? decryptReviewPacketForResponse(data.reviewPacket)
+    : null;
+
+  return {
+    id,
+    userId: data.userId,
+    profileId: data.profileId ?? null,
+    assessmentYear: data.assessmentYear ?? draft.assessmentYear,
+    itrType: data.itrType ?? recommendation.form,
+    status: data.status ?? "draft",
+    reviewStatus: data.reviewStatus ?? data.status ?? "draft",
+    formData: draft,
+    recommendation,
+    reviewPacket,
+    taxSummary: data.taxSummary ?? buildTaxReturnSummary(draft),
+    calculatedTax,
+    refundAmount: data.refundAmount ?? null,
+    acknowledgmentNumber: data.acknowledgmentNumber ?? null,
+    filedAt: data.filedAt ?? null,
+    createdAt: data.createdAt ?? null,
+    updatedAt: data.updatedAt ?? null,
+  };
+}
+
+function apiRole(user: any) {
+  return normalizeAppRole(user?.role);
+}
+
+function apiIsAdmin(user: any) {
+  return apiRole(user) === "admin";
+}
+
+function apiIsCa(user: any) {
+  return apiRole(user) === "ca";
+}
+
+async function apiCanAccessUserData(actor: any, targetUserId?: string | null) {
+  if (!actor || !targetUserId) return false;
+  if (actor.id === targetUserId) return true;
+  if (apiIsAdmin(actor)) return true;
+
+  if (apiIsCa(actor)) {
+    const targetUser = await adminDb.collection("users").doc(targetUserId).get();
+    return targetUser.exists && targetUser.data()?.assignedCaId === actor.id;
+  }
+
+  return false;
+}
+
+async function profileCanBeLinked(userId: string, profileId?: string | null) {
+  if (!profileId) return true;
+  const profile = await adminDb.collection("profiles").doc(profileId).get();
+  return profile.exists && profile.data()?.userId === userId;
+}
+
+async function getOwnedTaxReturn(userId: string, id?: string | null) {
+  if (!id) return null;
+  const doc = await adminDb.collection("tax_returns").doc(id).get();
+  if (!doc.exists || doc.data()?.userId !== userId) return null;
+  return doc;
+}
+
+async function getReviewAccessibleTaxReturn(user: any, id?: string | null) {
+  if (!id) return null;
+  const doc = await adminDb.collection("tax_returns").doc(id).get();
+  if (!doc.exists) return null;
+  return await apiCanAccessUserData(user, doc.data()?.userId) ? doc : null;
+}
+
+function taxRouteError(res: any, error: unknown, fallback: string) {
+  if (error instanceof z.ZodError) {
+    return sendJson(res, 400, { error: error.errors[0]?.message || fallback });
+  }
+
+  const status = typeof (error as any)?.status === "number" ? (error as any).status : undefined;
+  if (status) {
+    return sendJson(res, status, { error: (error as Error).message || fallback });
+  }
+
+  console.error("[TAX_RETURNS_API]", error);
+  return sendJson(res, 500, { error: fallback });
+}
+
+async function handleTaxReturnsApi(name: string, req: any, res: any, url: URL) {
+  try {
+    if (name === "tax-returns") {
+      if (!methodAllowed(req, res, ["GET", "POST"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      if (req.method === "POST") {
+        const data = createTaxReturnSchema.parse(requestBody(req));
+        if (!(await profileCanBeLinked(user.id, data.profileId))) {
+          return sendJson(res, 400, { error: "Linked profile does not belong to this user." });
+        }
+
+        const draft = normalizeItrDraft({
+          ...(typeof data.draft === "object" && data.draft ? data.draft : {}),
+          assessmentYear: data.assessmentYear,
+        });
+        const recommendation = recommendItrForm(draft);
+        const taxSummary = buildTaxReturnSummary(draft);
+        const calculatedTax = computeItrTaxLiability(draft);
+        const now = new Date();
+        const taxReturnRef = adminDb.collection("tax_returns").doc();
+        const taxReturn = {
+          id: taxReturnRef.id,
+          userId: user.id,
+          profileId: data.profileId ?? null,
+          assessmentYear: draft.assessmentYear,
+          itrType: recommendation.form,
+          status: "draft",
+          reviewStatus: "draft",
+          formData: JSON.stringify(secureTaxReturnDraftForStorage(draft)),
+          recommendation,
+          documentChecklist: getItrDocumentChecklist(draft),
+          taxSummary,
+          calculatedTax,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        await taxReturnRef.set(taxReturn);
+        return sendJson(res, 200, {
+          success: true,
+          taxReturn: serializeTaxReturn(taxReturnRef.id, taxReturn),
+          recommendation,
+        });
+      }
+
+      const snapshot = await adminDb.collection("tax_returns").where("userId", "==", user.id).get();
+      const taxReturns = snapshot.docs
+        .map((doc: any) => serializeTaxReturn(doc.id, doc.data()))
+        .sort((a: any, b: any) => String(b.updatedAt ?? "").localeCompare(String(a.updatedAt ?? "")));
+
+      return sendJson(res, 200, { success: true, taxReturns });
+    }
+
+    if (name === "tax-return-detail") {
+      if (!methodAllowed(req, res, ["GET", "PATCH"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      const doc = await getOwnedTaxReturn(user.id, url.searchParams.get("id"));
+      if (!doc) return sendJson(res, 404, { error: "Tax return not found" });
+      const existing = doc.data() as Record<string, any>;
+
+      if (req.method === "PATCH") {
+        const data = updateTaxReturnSchema.parse(requestBody(req));
+        if (!(await profileCanBeLinked(existing.userId, data.profileId))) {
+          return sendJson(res, 400, { error: "Linked profile does not belong to this user." });
+        }
+
+        const existingDraft = parseStoredTaxReturnDraft(existing);
+        const draft = data.draft === undefined
+          ? normalizeItrDraft({ ...existingDraft, assessmentYear: data.assessmentYear ?? existingDraft.assessmentYear })
+          : normalizeItrDraft({
+              ...existingDraft,
+              ...(typeof data.draft === "object" && data.draft ? data.draft : {}),
+              assessmentYear: data.assessmentYear ?? existingDraft.assessmentYear,
+            });
+        const recommendation = recommendItrForm(draft);
+        const taxSummary = buildTaxReturnSummary(draft);
+        const calculatedTax = computeItrTaxLiability(draft);
+        const updateData = {
+          ...(data.profileId !== undefined ? { profileId: data.profileId } : {}),
+          assessmentYear: draft.assessmentYear,
+          itrType: recommendation.form,
+          formData: JSON.stringify(secureTaxReturnDraftForStorage(draft)),
+          recommendation,
+          documentChecklist: getItrDocumentChecklist(draft),
+          taxSummary,
+          calculatedTax,
+          updatedAt: new Date(),
+        };
+
+        await doc.ref?.update(updateData);
+        return sendJson(res, 200, {
+          success: true,
+          taxReturn: serializeTaxReturn(doc.id, { ...existing, ...updateData }),
+          recommendation,
+        });
+      }
+
+      return sendJson(res, 200, { success: true, taxReturn: serializeTaxReturn(doc.id, existing) });
+    }
+
+    if (name === "tax-return-documents") {
+      if (!methodAllowed(req, res, ["POST"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      const taxReturnDoc = await getOwnedTaxReturn(user.id, url.searchParams.get("id"));
+      if (!taxReturnDoc) return sendJson(res, 404, { error: "Tax return not found" });
+
+      const { documentId, checklistItemId } = linkTaxReturnDocumentSchema.parse(requestBody(req));
+      const documentDoc = await adminDb.collection("documents").doc(documentId).get();
+      if (!documentDoc.exists) return sendJson(res, 404, { error: "Document not found" });
+
+      const taxReturn = taxReturnDoc.data() as Record<string, any>;
+      const document = documentDoc.data() as Record<string, any>;
+      if (document.userId !== taxReturn.userId) {
+        return sendJson(res, 403, { error: "Document does not belong to this tax return owner" });
+      }
+
+      const existingDraft = parseStoredTaxReturnDraft(taxReturn);
+      const draft = normalizeItrDraft({
+        ...existingDraft,
+        documents: {
+          ...existingDraft.documents,
+          [checklistItemId]: documentId,
+        },
+      });
+      const recommendation = recommendItrForm(draft);
+      const taxSummary = buildTaxReturnSummary(draft);
+      const calculatedTax = computeItrTaxLiability(draft);
+      const updateData = {
+        formData: JSON.stringify(secureTaxReturnDraftForStorage(draft)),
+        recommendation,
+        itrType: recommendation.form,
+        documentChecklist: getItrDocumentChecklist(draft),
+        taxSummary,
+        calculatedTax,
+        updatedAt: new Date(),
+      };
+
+      await documentDoc.ref?.update({ taxReturnId: taxReturnDoc.id, updatedAt: new Date() });
+      await taxReturnDoc.ref?.update(updateData);
+      return sendJson(res, 200, {
+        success: true,
+        taxReturn: serializeTaxReturn(taxReturnDoc.id, { ...taxReturn, ...updateData }),
+        document: {
+          id: documentDoc.id,
+          name: document.name ?? document.originalName ?? "document",
+          taxReturnId: taxReturnDoc.id,
+        },
+        recommendation,
+      });
+    }
+
+    if (name === "tax-return-recommendation") {
+      if (!methodAllowed(req, res, ["POST"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      const doc = await getOwnedTaxReturn(user.id, url.searchParams.get("id"));
+      if (!doc) return sendJson(res, 404, { error: "Tax return not found" });
+
+      const draft = parseStoredTaxReturnDraft(doc.data() as Record<string, any>);
+      const recommendation = recommendItrForm(draft);
+      const calculatedTax = computeItrTaxLiability(draft);
+      await doc.ref?.update({
+        recommendation,
+        itrType: recommendation.form,
+        taxSummary: buildTaxReturnSummary(draft),
+        calculatedTax,
+        updatedAt: new Date(),
+      });
+
+      return sendJson(res, 200, { success: true, recommendation, calculatedTax });
+    }
+
+    if (name === "tax-return-submit-review") {
+      if (!methodAllowed(req, res, ["POST"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      const doc = await getOwnedTaxReturn(user.id, url.searchParams.get("id"));
+      if (!doc) return sendJson(res, 404, { error: "Tax return not found" });
+
+      const existing = doc.data() as Record<string, any>;
+      const draft = parseStoredTaxReturnDraft(existing);
+      const recommendation = recommendItrForm(draft);
+      const reviewPacket = buildItrReviewPacket(draft, doc.id);
+      const taxSummary = buildTaxReturnSummary(draft);
+      const calculatedTax = computeItrTaxLiability(draft);
+      const updateData = {
+        status: "ready_for_review",
+        reviewStatus: "ready_for_review",
+        itrType: recommendation.form,
+        recommendation,
+        reviewPacket: secureReviewPacketForStorage(reviewPacket),
+        taxSummary,
+        calculatedTax,
+        updatedAt: new Date(),
+      };
+
+      await doc.ref?.update(updateData);
+      return sendJson(res, 200, {
+        success: true,
+        taxReturn: serializeTaxReturn(doc.id, { ...existing, ...updateData }),
+        reviewPacket,
+      });
+    }
+
+    if (name === "tax-return-review-status") {
+      if (!methodAllowed(req, res, ["PATCH"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+      if (!apiIsAdmin(user) && !apiIsCa(user)) {
+        return sendJson(res, 403, { error: "Only a CA or admin can update review status" });
+      }
+
+      const doc = await getReviewAccessibleTaxReturn(user, url.searchParams.get("id"));
+      if (!doc) return sendJson(res, 404, { error: "Tax return not found" });
+
+      const data = reviewStatusSchema.parse(requestBody(req));
+      if (!CA_REVIEW_STATUSES.has(data.status)) {
+        return sendJson(res, 400, { error: "Use submit-review to move a draft into ready_for_review" });
+      }
+
+      const existing = doc.data() as Record<string, any>;
+      const now = new Date();
+      const statusHistory = Array.isArray(existing.reviewStatusHistory) ? existing.reviewStatusHistory : [];
+      const updateData = {
+        status: data.status,
+        reviewStatus: data.status,
+        ...(data.acknowledgmentNumber !== undefined ? { acknowledgmentNumber: data.acknowledgmentNumber } : {}),
+        ...(data.refundAmount !== undefined ? { refundAmount: data.refundAmount } : {}),
+        ...(data.filedAt !== undefined ? { filedAt: data.filedAt ? new Date(data.filedAt) : null } : {}),
+        reviewStatusHistory: [
+          ...statusHistory,
+          {
+            status: data.status,
+            notes: data.notes,
+            actorId: user.id ?? null,
+            actorRole: user.role ?? null,
+            createdAt: now,
+          },
+        ],
+        updatedAt: now,
+      };
+
+      await doc.ref?.update(updateData);
+      return sendJson(res, 200, {
+        success: true,
+        taxReturn: serializeTaxReturn(doc.id, { ...existing, ...updateData }),
+      });
+    }
+
+    if (name === "tax-return-review-packet") {
+      if (!methodAllowed(req, res, ["GET"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      const doc = await getReviewAccessibleTaxReturn(user, url.searchParams.get("id"));
+      if (!doc) return sendJson(res, 404, { error: "Tax return not found" });
+
+      const data = doc.data() as Record<string, any>;
+      const reviewPacket = data.reviewPacket
+        ? decryptReviewPacketForResponse(data.reviewPacket)
+        : buildItrReviewPacket(parseStoredTaxReturnDraft(data), doc.id);
+
+      return sendJson(res, 200, { success: true, reviewPacket });
+    }
+
+    if (name === "tax-return-export-json") {
+      if (!methodAllowed(req, res, ["GET"])) return;
+      const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
+      if (!user) return;
+
+      const doc = await getReviewAccessibleTaxReturn(user, url.searchParams.get("id"));
+      if (!doc) return sendJson(res, 404, { error: "Tax return not found" });
+
+      return sendJson(
+        res,
+        200,
+        buildItrDraftJsonExport(parseStoredTaxReturnDraft(doc.data() as Record<string, any>), doc.id),
+      );
+    }
+
+    return sendJson(res, 404, { error: "API route not found" });
+  } catch (error) {
+    return taxRouteError(res, error, "Failed to process tax return request");
+  }
+}
+
 function redirectToIncomeTaxForm(req: any, res: any, url: URL) {
   const slug = url.searchParams.get("slug") ?? "";
   const asset = getIncomeTaxFormAsset(slug);
@@ -353,6 +929,13 @@ async function handleRequest(req: any, res: any) {
   const { name, url } = routeFor(req);
   res.setHeader("X-Robots-Tag", name === "sitemap" || name === "robots" ? "index, follow" : "noindex, nofollow");
 
+  const rateLimit = RATE_LIMITED_ROUTES[name];
+  if (rateLimit && !checkRateLimit(req, name, rateLimit.limit, rateLimit.windowMs)) {
+    res.setHeader("Retry-After", String(Math.ceil(rateLimit.windowMs / 1000)));
+    res.setHeader("Cache-Control", "no-store");
+    return sendJson(res, 429, { error: "Too many requests, please try again shortly." });
+  }
+
   if (name === "health") {
     res.setHeader("Cache-Control", "no-store");
     return sendJson(res, 200, { status: "ok" });
@@ -406,6 +989,10 @@ async function handleRequest(req: any, res: any) {
 
   res.setHeader("Cache-Control", PRIVATE_CACHE);
 
+  if (name.startsWith("tax-return")) {
+    return handleTaxReturnsApi(name, req, res, url);
+  }
+
   if (name === "auth-me") {
     if (!methodAllowed(req, res, ["GET"])) return;
     const user = await requireApiUser(req, res, ["admin", "ca", "team_member", "user"]);
@@ -420,12 +1007,16 @@ async function handleRequest(req: any, res: any) {
 
     const body = requestBody(req);
     const userRef = adminDb.collection("users").doc(user.id);
+    // SECURITY: derive role and the stored email ONLY from the verified session identity,
+    // never from the request body. Trusting body.email here would let any authenticated user
+    // escalate to a privileged role by claiming an invited/bootstrap admin/CA email.
+    const verifiedEmail = user.email ?? null;
     const role =
-      (await getProvisionedRoleForEmail(body.email || user.email)) ??
-      normalizeAppRole(user.role ?? getBootstrapRoleForEmail(body.email || user.email) ?? "user");
+      (await getProvisionedRoleForEmail(verifiedEmail)) ??
+      normalizeAppRole(user.role ?? getBootstrapRoleForEmail(verifiedEmail) ?? "user");
     const updatedUser = {
       ...user,
-      email: body.email || user.email || null,
+      email: verifiedEmail,
       firstName: body.firstName || user.firstName || "User",
       lastName: body.lastName || user.lastName || "",
       phoneNumber: body.phoneNumber?.trim?.() || (user as any).phoneNumber || null,
@@ -471,6 +1062,11 @@ async function handleRequest(req: any, res: any) {
       await runMiddleware(req, res, documentUpload.single("file"));
       const file = (req as any).file;
       if (!file) return sendJson(res, 400, { error: "No file uploaded" });
+
+      // Validate real content against the declared type — multer only checks the client mimetype.
+      if (!fileBufferMatchesDeclaredType(file.buffer, file.mimetype)) {
+        return sendJson(res, 400, { error: "File content does not match its declared type." });
+      }
 
       let tags: string[] = [];
       if (req.body?.tags) {
@@ -715,15 +1311,31 @@ async function handleRequest(req: any, res: any) {
   if (name === "notifications") {
     const user = await requireTemporaryRole(req, res, ["admin", "ca", "team_member", "user"]);
     if (!user) return;
-    return sendJson(res, 200, { success: true, notifications: await listCollection("notifications", 100) });
+    // SECURITY: scope to the caller. A global list would leak every user's notifications.
+    const snapshot = await adminDb
+      .collection("notifications")
+      .where("userId", "==", user.id)
+      .limit(100)
+      .get();
+    const notifications = snapshot.docs
+      .map((doc: any) => ({ id: doc.id, ...doc.data() }))
+      .filter((notification: any) => notification.status !== "deleted");
+    return sendJson(res, 200, { success: true, notifications });
   }
 
   if (name === "user-activity") {
     const user = await requireTemporaryRole(req, res, ["admin", "ca", "team_member", "user"]);
     if (!user) return;
+    // SECURITY: scope to the caller. A global list would leak every user's activity trail.
+    const snapshot = await adminDb
+      .collection("activity_logs")
+      .where("userId", "==", user.id)
+      .limit(100)
+      .get();
+    const activities = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     return sendJson(res, 200, {
       success: true,
-      data: { activities: await listCollection("activity_logs", 100) },
+      data: { activities },
     });
   }
 
