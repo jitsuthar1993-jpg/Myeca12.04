@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Shield, Calculator, FileText, TrendingUp, Clock, CheckCircle, ArrowRight, IndianRupee, Building2, AlertCircle, Sparkles } from "lucide-react";
+import { RouteSeo } from "@/components/seo/RouteSeo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -94,6 +95,7 @@ const TaxPlanningPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <RouteSeo path="/services/tax-planning" />
       <SEO
         title="Startup Tax Planning & Benefits | MyeCA.in"
         description="Review startup tax benefits such as Section 80-IAC, angel tax exemption, R&D incentives, and expert CA guidance based on eligibility and documents."

@@ -1,6 +1,7 @@
 import { m } from "framer-motion";
-import { 
-  ShieldCheck, 
+import { RouteSeo } from "@/components/seo/RouteSeo";
+import {
+  ShieldCheck,
   Lock, 
   Search, 
   Clock, 
@@ -73,6 +74,7 @@ export default function DocumentVaultServicePage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <RouteSeo path="/services/document-vault" />
       <SEO 
         title="Secure Document Vault | MyEca" 
         description="Store and manage your sensitive tax and identity documents with secure account-based access."

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Rocket, 
+import { RouteSeo } from "@/components/seo/RouteSeo";
+import {
+  Rocket,
   FileText, 
   Clock, 
   Shield, 
@@ -206,6 +207,7 @@ export default function StartupIndiaRegistrationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+      <RouteSeo path="/services/startup-india-registration" />
       {/* Header */}
       <section className="bg-white border-b soft-border py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

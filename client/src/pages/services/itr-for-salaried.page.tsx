@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
+import { RouteSeo } from "@/components/seo/RouteSeo";
 import { 
   FileText, 
   Clock, 
@@ -215,6 +216,7 @@ export default function ITRForSalariedPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-slate-50">
+      <RouteSeo path="/services/itr-for-salaried" />
       {/* Hero Section */}
       <section className="bg-white border-b soft-border py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
