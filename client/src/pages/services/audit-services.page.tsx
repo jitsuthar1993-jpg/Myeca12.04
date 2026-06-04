@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
-import SEO from "@/components/SEO";
+import { RouteSeo } from "@/components/seo/RouteSeo";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 
 const AuditServicesPage = () => {
@@ -128,11 +128,7 @@ const AuditServicesPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SEO
-        title="Startup Audit Services - Statutory, Tax & Internal Audits | MyeCA.in"
-        description="Professional audit services for startups including statutory audit, tax audit, GST audit, and due diligence. Build investor confidence with certified audits."
-        keywords="startup audit services, statutory audit, tax audit, GST audit, due diligence, internal audit, forensic audit"
-      />
+      <RouteSeo path="/services/audit-services" />
 
       {/* Header */}
       <section className="bg-white border-b soft-border py-10">

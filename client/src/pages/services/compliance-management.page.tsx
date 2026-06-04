@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
-import SEO from "@/components/SEO";
+import { RouteSeo } from "@/components/seo/RouteSeo";
 
 const ComplianceManagementPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -130,11 +130,7 @@ const ComplianceManagementPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SEO
-        title="Startup Compliance Management Services - Never Miss a Deadline | MyeCA.in"
-        description="End-to-end compliance management for startups. ROC, GST, Income Tax, Labour Law compliance with zero penalties. Get dedicated compliance manager."
-        keywords="startup compliance, ROC compliance, GST compliance, labour law compliance, DPIIT compliance, compliance management services"
-      />
+      <RouteSeo path="/services/compliance-management" />
 
       {/* Header */}
       <section className="bg-white border-b soft-border py-10">

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  ShoppingBag, 
+import { RouteSeo } from "@/components/seo/RouteSeo";
+import {
+  ShoppingBag,
   FileText, 
   Clock, 
   Shield, 
@@ -271,6 +272,7 @@ export default function TradeLicensePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-green-50">
+      <RouteSeo path="/services/trade-license" />
       {/* Header */}
       <section className="bg-white border-b soft-border py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
