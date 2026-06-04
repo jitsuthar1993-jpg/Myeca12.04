@@ -25,6 +25,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { ROLE_NAV_GROUPS } from '@/lib/role-workspace';
 import { getRoleHome, getRoleLabel, normalizeAppRole } from '@shared/app-roles';
+import { useRoutePreload } from '@/hooks/use-route-preload';
 import { MobileBottomNav, MobileMoreSheet, type MobileNavItem } from '@/components/mobile';
 
 interface LayoutProps {
@@ -38,6 +39,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
   const [location, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
+  const { preloadOnHover } = useRoutePreload();
   const role = normalizeAppRole(user?.role);
   const roleGroups = ROLE_NAV_GROUPS[role];
   const roleHome = getRoleHome(role);
@@ -120,6 +122,8 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                                 : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950',
                             )}
                             onClick={() => setSidebarOpen(false)}
+                            onMouseEnter={() => preloadOnHover(item.href)}
+                            onTouchStart={() => preloadOnHover(item.href)}
                           >
                             <Icon className="h-4 w-4 shrink-0" />
                             <span className="truncate">{item.label}</span>
