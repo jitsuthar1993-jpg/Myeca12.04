@@ -6,6 +6,7 @@ import { convertTimestamp } from "../utils/timestamps.js";
 import { validateRequest } from "../middleware/security.js";
 import { safeError } from "../utils/error-response.js";
 import { provisionPrivilegedUser, syncRoleClaims } from "../services/user-accounts.js";
+import { syncSupabaseUserDirectory } from "../services/supabase-user-directory.js";
 import { invalidateCachedUser } from "../utils/user-cache.js";
 import { APP_ROLES, PRIVILEGED_APP_ROLES } from "../../shared/app-roles.js";
 
@@ -374,6 +375,7 @@ router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
     const page = parseInt(req.query.page as string) || 1;
     const limit = Math.min(parseInt(req.query.limit as string) || API_CONFIG.DEFAULT_PAGE_SIZE, API_CONFIG.MAX_PAGE_SIZE);
     const search = req.query.search as string;
+    const sync = await syncSupabaseUserDirectory();
 
     let allUsers: any[];
 
@@ -412,7 +414,8 @@ router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         success: true,
         data: {
           users: paginatedUsers,
-          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+          pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+          sync,
         }
       });
     }
@@ -425,12 +428,27 @@ router.get('/users', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
       success: true,
       data: {
         users: paginatedUsers,
-        pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+        pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+        sync,
       }
     });
   } catch (error) {
     return safeError(res, error, 'Failed to retrieve users.');
   }
+});
+
+router.post('/users/sync', requireAuth, requireAdmin, async (_req: AuthRequest, res: Response) => {
+  const sync = await syncSupabaseUserDirectory();
+  res.json({
+    success: sync.status !== "error",
+    data: { sync },
+    message:
+      sync.status === "synced"
+        ? "User directory synced with Supabase Auth."
+        : sync.status === "not_configured"
+          ? "Supabase user directory sync is not configured."
+          : "Supabase user directory sync failed.",
+  });
 });
 
 // Update user role
@@ -525,8 +543,25 @@ router.delete('/users/:id', requireAuth, requireAdmin, async (req: AuthRequest, 
 
 // ==================== DASHBOARD STATISTICS ====================
 
+// Process-local cache for the admin dashboard payload. /stats scans six full collections
+// and computes monthly aggregates, so the cost is identical for every admin viewer. A short
+// TTL means data still feels live (manual Refresh button or normal navigation triggers a
+// fresh fetch after 60s) while collapsing the hot-path read load.
+const STATS_CACHE_TTL_MS = 60_000;
+let cachedStatsPayload: { generatedAt: number; payload: Record<string, any> } | null = null;
+
+function invalidateStatsCache() {
+  cachedStatsPayload = null;
+}
+
 router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
+    if (req.query.refresh === "1") invalidateStatsCache();
+    if (cachedStatsPayload && Date.now() - cachedStatsPayload.generatedAt < STATS_CACHE_TTL_MS) {
+      res.set("X-Cache", "HIT");
+      return res.json(cachedStatsPayload.payload);
+    }
+
     // Fetch all collections in parallel instead of sequentially
     const [
       usersSnapshot,
@@ -628,7 +663,7 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         timestamp: u.createdAt
       }));
 
-    res.json({
+    const payload = {
       success: true,
       data: {
         users: {
@@ -673,7 +708,10 @@ router.get('/stats', requireAuth, requireAdmin, async (req: AuthRequest, res: Re
         recentActivity: recentActivity,
         recentCalculations: []
       }
-    });
+    };
+    cachedStatsPayload = { generatedAt: Date.now(), payload };
+    res.set("X-Cache", "MISS");
+    res.json(payload);
   } catch (error) {
     return safeError(res, error, "Failed to retrieve dashboard statistics.");
   }
