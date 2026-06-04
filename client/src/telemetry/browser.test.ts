@@ -1,8 +1,18 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { captureTelemetryEvent, initializeSelfHostedTelemetry, trackTelemetryPageView, updateTelemetryForRoute } from "./browser";
+import {
+  ensureGoogleConsentModeDefault,
+  captureTelemetryEvent,
+  initializeSelfHostedTelemetry,
+  trackTelemetryPageView,
+  updateGoogleConsentMode,
+  updateTelemetryForRoute,
+} from "./browser";
+import { setTelemetryConsent } from "./config";
 
 afterEach(() => {
+  window.localStorage.clear();
+  delete window.dataLayer;
   delete window.gtag;
   delete window.posthog;
   delete (window as any).$chatwoot;
@@ -13,7 +23,44 @@ afterEach(() => {
 });
 
 describe("browser telemetry dispatch", () => {
+  it("sets Google Consent Mode v2 defaults before Google tags send data", () => {
+    ensureGoogleConsentModeDefault();
+
+    expect(window.dataLayer).toContainEqual(["consent", "default", {
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "denied",
+      wait_for_update: 500,
+    }]);
+    expect(window.dataLayer).toContainEqual(["set", "ads_data_redaction", true]);
+  });
+
+  it("updates Google Consent Mode for analytics-only acceptance and denial", () => {
+    const gtag = vi.fn();
+    window.gtag = gtag;
+
+    updateGoogleConsentMode("granted");
+
+    expect(gtag).toHaveBeenCalledWith("consent", "update", {
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "granted",
+    });
+
+    updateGoogleConsentMode("denied");
+
+    expect(gtag).toHaveBeenLastCalledWith("consent", "update", {
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "denied",
+    });
+  });
+
   it("sends scrubbed page views with safe URLs", () => {
+    setTelemetryConsent("granted");
     const gtag = vi.fn();
     const capture = vi.fn();
     window.gtag = gtag;
@@ -39,6 +86,7 @@ describe("browser telemetry dispatch", () => {
   });
 
   it("normalizes conversion event names and scrubs payloads", () => {
+    setTelemetryConsent("granted");
     const gtag = vi.fn();
     const capture = vi.fn();
     window.gtag = gtag;
@@ -60,6 +108,21 @@ describe("browser telemetry dispatch", () => {
     };
     expect(gtag).toHaveBeenCalledWith("event", "signup", payload);
     expect(capture).toHaveBeenCalledWith("signup", payload);
+  });
+
+  it("does not dispatch telemetry events after consent is denied", () => {
+    const gtag = vi.fn();
+    const capture = vi.fn();
+    window.gtag = gtag;
+    window.posthog = { capture };
+    setTelemetryConsent("denied");
+    window.history.replaceState({}, "", "/pricing");
+
+    trackTelemetryPageView("/pricing", "Pricing");
+    captureTelemetryEvent("lead_submit", { source: "pricing" });
+
+    expect(gtag).not.toHaveBeenCalled();
+    expect(capture).not.toHaveBeenCalled();
   });
 
   it("injects self-hosted Umami and Chatwoot only from configured safe routes", () => {

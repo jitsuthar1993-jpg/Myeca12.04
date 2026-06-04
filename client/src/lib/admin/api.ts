@@ -1,6 +1,6 @@
 // Admin API Client - Simple and Clean
 
-import type { AnalyticsOverview, ApiResponse, AuditLog, DashboardStats, FilterParams, User } from './types';
+import type { AnalyticsDateRange, AnalyticsOverview, ApiResponse, AuditLog, DashboardStats, FilterParams, User } from './types';
 import { getAuthToken } from '@/lib/authToken';
 
 const API_BASE = '/api/admin';
@@ -58,10 +58,13 @@ class AdminApi {
     );
   }
 
-  async getAnalyticsOverview(): Promise<ApiResponse<AnalyticsOverview>> {
+  async getAnalyticsOverview(params?: { range?: AnalyticsDateRange }): Promise<ApiResponse<AnalyticsOverview>> {
     try {
       const token = await getAuthToken();
-      const response = await fetch('/api/analytics/overview', {
+      const query = new URLSearchParams();
+      if (params?.range) query.set('range', params.range);
+      const endpoint = `/api/analytics/overview${query.toString() ? `?${query}` : ''}`;
+      const response = await fetch(endpoint, {
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -77,7 +80,10 @@ class AdminApi {
       const payload = await response.json();
       return {
         success: true,
-        data: payload.stats as AnalyticsOverview,
+        data: {
+          ...(payload.stats as AnalyticsOverview),
+          googleAnalytics: payload.googleAnalytics,
+        },
       };
     } catch (error) {
       console.error('API Error [/api/analytics/overview]:', error);

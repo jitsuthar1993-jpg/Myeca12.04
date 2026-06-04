@@ -1,7 +1,9 @@
 import {
   getBrowserTelemetryConfig,
+  getTelemetryConsent,
   hasTelemetryConsent,
   shouldEnableTelemetry,
+  type TelemetryConsent,
   type BrowserTelemetryConfig,
 } from "@/telemetry/config";
 import {
@@ -46,6 +48,16 @@ let crispClient: any = null;
 let lastTrackedPath = "";
 const loadPosthogModule = import.meta.env.VITE_POSTHOG_KEY ? () => import("posthog-js") : null;
 const loadCrispModule = import.meta.env.VITE_CRISP_WEBSITE_ID ? () => import("crisp-sdk-web") : null;
+const GOOGLE_CONSENT_DENIED = {
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+  analytics_storage: "denied",
+} as const;
+const GOOGLE_ANALYTICS_CONSENT_GRANTED = {
+  ...GOOGLE_CONSENT_DENIED,
+  analytics_storage: "granted",
+} as const;
 
 const EVENT_ALIASES: Record<string, string> = {
   begin_checkout: "checkout_started",
@@ -79,13 +91,50 @@ function loadScriptOnce(id: string, src: string, configure?: (script: HTMLScript
   return script;
 }
 
-function initializeGa(config: BrowserTelemetryConfig) {
-  if (gaLoaded || !config.gaMeasurementId) return;
-
+function ensureGtagQueue() {
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function gtag(...args: any[]) {
     window.dataLayer?.push(args);
   };
+}
+
+function hasGoogleConsentDefault() {
+  return window.dataLayer?.some((entry) => (
+    Array.isArray(entry) &&
+      entry[0] === "consent" &&
+      entry[1] === "default"
+  )) || false;
+}
+
+export function ensureGoogleConsentModeDefault() {
+  if (typeof window === "undefined") return;
+
+  ensureGtagQueue();
+  if (hasGoogleConsentDefault()) return;
+
+  window.gtag?.("consent", "default", {
+    ...GOOGLE_CONSENT_DENIED,
+    wait_for_update: 500,
+  });
+  window.gtag?.("set", "ads_data_redaction", true);
+}
+
+export function updateGoogleConsentMode(consent: TelemetryConsent | undefined) {
+  if (typeof window === "undefined" || !consent) return;
+
+  ensureGoogleConsentModeDefault();
+  window.gtag?.(
+    "consent",
+    "update",
+    consent === "granted" ? GOOGLE_ANALYTICS_CONSENT_GRANTED : GOOGLE_CONSENT_DENIED,
+  );
+}
+
+function initializeGa(config: BrowserTelemetryConfig) {
+  if (gaLoaded || !config.gaMeasurementId) return;
+
+  ensureGoogleConsentModeDefault();
+  updateGoogleConsentMode("granted");
 
   loadScriptOnce("myeca-ga4", `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(config.gaMeasurementId)}`);
   window.gtag("js", new Date());
@@ -227,6 +276,10 @@ export async function initializeBrowserTelemetry(path = typeof window !== "undef
 
   const config = getBrowserTelemetryConfig();
   if (!shouldEnableTelemetry(config)) return;
+  if (config.gaMeasurementId) {
+    ensureGoogleConsentModeDefault();
+    updateGoogleConsentMode(getTelemetryConsent());
+  }
   if (!hasTelemetryConsent()) return;
 
   initializeGa(config);
@@ -278,6 +331,7 @@ export function updateTelemetryForRoute(path: string) {
 
 export function trackTelemetryPageView(path: string, title = typeof document !== "undefined" ? document.title : "") {
   if (typeof window === "undefined") return;
+  if (!hasTelemetryConsent()) return;
 
   const safePath = safeTelemetryPath(path);
   const hasPageViewSink = Boolean(window.gtag || window.posthog?.capture);
@@ -299,6 +353,7 @@ export function trackTelemetryPageView(path: string, title = typeof document !==
 
 export function captureTelemetryEvent(eventName: string, properties: Record<string, TelemetryValue> = {}) {
   if (typeof window === "undefined") return;
+  if (!hasTelemetryConsent()) return;
 
   const cleanName = normalizeEventName(eventName);
   if (!cleanName) return;

@@ -61,6 +61,7 @@
     "@aws-sdk/client-ses": "^3.848.0",
     "@capacitor/android": "^8.3.4",
     "@capacitor/core": "^8.3.4",
+    "@google-analytics/data": "^6.1.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@posthog/react": "^1.9.0",

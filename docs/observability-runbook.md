@@ -17,7 +17,7 @@ Configure these values in Vercel before enabling the startup stack:
 - `SENTRY_TRACES_SAMPLE_RATE`
 - `VITE_CRISP_WEBSITE_ID`
 
-Behavior analytics, replay, Web Vitals, and Crisp load only in production after the user accepts analytics. Sentry error monitoring initializes separately with `sendDefaultPii: false` and request/body scrubbing.
+Behavior analytics, replay, Web Vitals, and Crisp load only in production after the user accepts analytics. GA4 uses Consent Mode v2 with `analytics_storage`, `ad_storage`, `ad_user_data`, and `ad_personalization` denied by default; accepting the current analytics banner grants only `analytics_storage`. Sentry error monitoring initializes separately with `sendDefaultPii: false` and request/body scrubbing.
 
 ## Route Policy
 

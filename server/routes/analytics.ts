@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { z } from "zod";
 import { adminDb } from "../data-admin.js";
 import { requireAdmin, requireAuth } from "../middleware/auth.js";
+import { getGoogleAnalyticsDashboard, parseGoogleAnalyticsRange } from "../services/google-analytics-reporting.js";
 import { safeError } from "../utils/error-response.js";
 
 const router = Router();
@@ -33,20 +34,24 @@ function statusCount(docs: Array<{ data: () => Record<string, any> }>, completed
   return { done, draft, pending };
 }
 
-router.get("/overview", requireAuth, requireAdmin, async (_req: Request, res: Response) => {
+router.get("/overview", requireAuth, requireAdmin, async (req: Request, res: Response) => {
   try {
+    const range = parseGoogleAnalyticsRange(req.query.range);
+    const googleAnalyticsPromise = getGoogleAnalyticsDashboard({ range });
     const [
       usersSnapshot,
       profilesSnapshot,
       returnsSnapshot,
       documentsSnapshot,
       postsSnapshot,
+      googleAnalytics,
     ] = await Promise.all([
       adminDb.collection("users").get(),
       adminDb.collection("profiles").get(),
       adminDb.collection("tax_returns").get(),
       adminDb.collection("documents").get(),
       adminDb.collection("blog_posts").get(),
+      googleAnalyticsPromise,
     ]);
 
     const users = usersSnapshot.docs.map((doc) => doc.data() as Record<string, any>);
@@ -63,6 +68,7 @@ router.get("/overview", requireAuth, requireAdmin, async (_req: Request, res: Re
     res.json({
       success: true,
       source: "database",
+      googleAnalytics,
       stats: {
         userStats: {
           totalUsers: usersSnapshot.size,

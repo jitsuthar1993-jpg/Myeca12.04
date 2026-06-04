@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { GoogleAnalyticsDashboard } from '@/components/admin/analytics/GoogleAnalyticsDashboard';
 import { useAnalytics } from '@/hooks/admin/useAnalytics';
+import type { AnalyticsDateRange } from '@/lib/admin/types';
 import { Activity, FileText, FolderOpen, RefreshCw, Users } from 'lucide-react';
 
 function formatNumber(value: number | undefined) {
@@ -34,7 +37,8 @@ function MetricCard({
 }
 
 export default function AnalyticsPage() {
-  const { data, isLoading, error, refetch, isFetching } = useAnalytics();
+  const [range, setRange] = useState<AnalyticsDateRange>('30d');
+  const { data, isLoading, error, refetch, isFetching } = useAnalytics({ range });
   const stats = data?.data;
 
   return (
@@ -141,6 +145,12 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
             </div>
+
+            <GoogleAnalyticsDashboard
+              report={stats?.googleAnalytics}
+              selectedRange={range}
+              onRangeChange={setRange}
+            />
           </>
         )}
       </div>

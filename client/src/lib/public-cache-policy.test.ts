@@ -56,6 +56,21 @@ describe("public performance cache policy", () => {
     expect(errorBoundary).toContain("import('@/telemetry/sentry.client')");
   });
 
+  it("sets Google Consent Mode defaults before loading Tag Manager", () => {
+    const html = read("client/index.html");
+    const bootstrap = read("client/public/gtm-consent-bootstrap.js");
+    const consentIndex = bootstrap.indexOf('"consent", "default"');
+    const gtmIndex = bootstrap.indexOf("googletagmanager.com/gtm.js");
+
+    expect(html).toContain('<script src="/gtm-consent-bootstrap.js"></script>');
+    expect(consentIndex).toBeGreaterThan(-1);
+    expect(gtmIndex).toBeGreaterThan(-1);
+    expect(consentIndex).toBeLessThan(gtmIndex);
+    expect(bootstrap).toContain('ad_user_data: "denied"');
+    expect(bootstrap).toContain('ad_personalization: "denied"');
+    expect(html).not.toContain("googletagmanager.com/ns.html");
+  });
+
   it("keeps Workbox cache bounds tight for generated public assets", () => {
     const viteConfig = read("vite.config.ts");
 

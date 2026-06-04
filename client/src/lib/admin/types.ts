@@ -85,7 +85,71 @@ export interface AnalyticsOverview {
     totalPosts: number;
     publishedPosts: number;
   };
+  googleAnalytics?: GoogleAnalyticsReport;
   [key: string]: unknown;
+}
+
+export type AnalyticsDateRange = '7d' | '30d' | '90d';
+
+export interface GoogleAnalyticsSummary {
+  activeUsers: number;
+  newUsers: number;
+  sessions: number;
+  pageViews: number;
+  eventCount: number;
+  keyEvents: number;
+  engagementRate: number;
+  averageSessionDuration: number;
+}
+
+export interface GoogleAnalyticsReport {
+  status: 'not_configured' | 'ready' | 'error';
+  dateRange: {
+    range: AnalyticsDateRange;
+    startDate: string;
+    endDate: 'today';
+  };
+  summary: GoogleAnalyticsSummary;
+  topPages: Array<{
+    path: string;
+    title: string;
+    pageViews: number;
+    activeUsers: number;
+    engagementRate: number;
+  }>;
+  trafficSources: Array<{
+    channel: string;
+    sourceMedium: string;
+    sessions: number;
+    activeUsers: number;
+    keyEvents: number;
+  }>;
+  devices: Array<{
+    category: string;
+    browser: string;
+    activeUsers: number;
+    sessions: number;
+  }>;
+  locations: Array<{
+    country: string;
+    city: string;
+    activeUsers: number;
+    sessions: number;
+  }>;
+  events: Array<{
+    eventName: string;
+    eventCount: number;
+    activeUsers: number;
+    keyEvents: number;
+  }>;
+  keyEvents: Array<{
+    eventName: string;
+    keyEvents: number;
+    eventCount: number;
+    activeUsers: number;
+  }>;
+  lastFetchedAt: string | null;
+  error?: string;
 }
 
 export type PaginationParams = FilterParams;

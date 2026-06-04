@@ -173,6 +173,22 @@ export const ENV_REQUIREMENTS: EnvRequirement[] = [
     description: "Google Analytics measurement ID for production telemetry.",
   },
   {
+    key: "GOOGLE_ANALYTICS_PROPERTY_ID",
+    level: "optional",
+    description: "Numeric GA4 property ID used by the admin analytics dashboard server-side reports.",
+  },
+  {
+    key: "GOOGLE_ANALYTICS_CLIENT_EMAIL",
+    level: "optional",
+    description: "Service-account client email with Viewer access to the GA4 property.",
+    validate: emailList,
+  },
+  {
+    key: "GOOGLE_ANALYTICS_PRIVATE_KEY",
+    level: "optional",
+    description: "Service-account private key for GA4 reporting. Store only in server-side environments.",
+  },
+  {
     key: "VITE_GOOGLE_SITE_VERIFICATION",
     level: "optional",
     description: "Google Search Console HTML meta verification token exposed to the Vite build.",

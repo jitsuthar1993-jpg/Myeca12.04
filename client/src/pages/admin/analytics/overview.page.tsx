@@ -1,9 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { AdminLayout } from '@/components/admin/layout/AdminLayout';
 import { AdminBreadcrumb } from '@/components/admin/layout/AdminBreadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { GoogleAnalyticsDashboard } from '@/components/admin/analytics/GoogleAnalyticsDashboard';
 import { useAnalytics } from '@/hooks/admin/useAnalytics';
+import type { AnalyticsDateRange } from '@/lib/admin/types';
 import { Activity, FileText, FolderOpen, RefreshCw, Users } from 'lucide-react';
 
 function formatNumber(value: number | undefined) {
@@ -36,7 +38,8 @@ function StatCard({
 }
 
 export default function AnalyticsOverviewPage() {
-  const { data, isLoading, error, refetch, isFetching } = useAnalytics();
+  const [range, setRange] = useState<AnalyticsDateRange>('30d');
+  const { data, isLoading, error, refetch, isFetching } = useAnalytics({ range });
   const stats = data?.data;
 
   const handleRefresh = useCallback(() => {
@@ -153,6 +156,12 @@ export default function AnalyticsOverviewPage() {
                 </CardContent>
               </Card>
             </div>
+
+            <GoogleAnalyticsDashboard
+              report={stats?.googleAnalytics}
+              selectedRange={range}
+              onRangeChange={setRange}
+            />
           </>
         )}
       </div>
