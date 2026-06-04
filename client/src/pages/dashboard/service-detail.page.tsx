@@ -182,7 +182,7 @@ export default function ServiceDetailPage() {
   if (isError || !service) {
     return (
       <Layout>
-        <div className="mx-auto max-w-xl rounded-[28px] border border-slate-100 bg-white p-10 text-center shadow-sm">
+        <div className="mx-auto max-w-xl rounded-lg border border-slate-200 bg-white p-6 text-center shadow-none">
           <Briefcase className="mx-auto mb-4 h-10 w-10 text-slate-300" />
           <h1 className="type-page-title font-black text-slate-900">Service case not found</h1>
           <p className="mt-2 type-support font-medium text-slate-500">The case may have been removed or you may not have access.</p>
@@ -204,7 +204,7 @@ export default function ServiceDetailPage() {
 
   return (
     <Layout title="Service Case">
-      <div className="space-y-5 pb-20 md:space-y-8">
+      <div className="space-y-5 pb-20 md:space-y-6">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Link href="/dashboard" className="w-full sm:w-auto">
             <Button variant="ghost" className="h-10 w-full justify-start rounded-lg px-3 text-slate-500 hover:text-slate-900 sm:w-auto sm:rounded-xl">
@@ -228,7 +228,7 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
-        <section className="rounded-lg border border-slate-100 bg-white p-4 shadow-sm md:rounded-[32px] md:p-8">
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-none md:p-5">
           <div className="grid gap-5 lg:grid-cols-[1fr_340px] lg:gap-8">
             <div>
               <Badge className="border-none bg-blue-50 px-3 py-1 type-meta font-black uppercase tracking-widest text-blue-700">
@@ -252,7 +252,7 @@ export default function ServiceDetailPage() {
             { label: 'Payment', value: statusLabel(service.paymentStatus || 'pending'), icon: CreditCard },
             { label: 'Documents', value: `${documents.length} linked`, icon: FileText },
           ].map((item) => (
-            <Card key={item.label} className="rounded-lg border-slate-100 shadow-sm md:rounded-[24px]">
+            <Card key={item.label} className="rounded-lg border-slate-200 shadow-none">
               <CardContent className="flex items-center gap-4 p-4 md:p-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                   <item.icon className="h-6 w-6" />
@@ -267,8 +267,8 @@ export default function ServiceDetailPage() {
         </div>
 
         <div className="grid gap-5 xl:grid-cols-[1fr_420px] xl:gap-8">
-          <div className="space-y-5 md:space-y-8">
-            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+          <div className="space-y-5 md:space-y-6">
+            <Card className="rounded-lg border-slate-200 shadow-none">
               <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Case Timeline</CardTitle>
                 <CardDescription className="type-support">What has happened and what still needs attention.</CardDescription>
@@ -286,7 +286,7 @@ export default function ServiceDetailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+            <Card className="rounded-lg border-slate-200 shadow-none">
               <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Linked Documents</CardTitle>
                 <CardDescription className="type-support">Files uploaded here stay attached to this service case.</CardDescription>
@@ -314,7 +314,7 @@ export default function ServiceDetailPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="p-10 text-center">
+                  <div className="p-6 text-center">
                     <FileText className="mx-auto mb-3 h-10 w-10 text-slate-300" />
                     <p className="type-support font-black text-slate-900">No documents linked yet</p>
                     <p className="mt-1 type-meta font-medium text-slate-500">Upload Form 16, AIS, GST files, invoices, or proofs for this case.</p>
@@ -324,8 +324,8 @@ export default function ServiceDetailPage() {
             </Card>
           </div>
 
-          <div className="space-y-5 md:space-y-8">
-            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+          <div className="space-y-5 md:space-y-6">
+            <Card className="rounded-lg border-slate-200 shadow-none">
               <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Case Upload</CardTitle>
                 <CardDescription className="type-support">Attach a document directly to this service.</CardDescription>
@@ -356,7 +356,7 @@ export default function ServiceDetailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-lg border-slate-100 shadow-sm md:rounded-[28px]">
+            <Card className="rounded-lg border-slate-200 shadow-none">
               <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Request Notes</CardTitle>
                 <CardDescription className="type-support">Original brief and your latest update.</CardDescription>

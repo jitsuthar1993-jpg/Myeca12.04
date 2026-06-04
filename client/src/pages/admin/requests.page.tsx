@@ -237,8 +237,8 @@ export default function AdminRequestsPage() {
 
   return (
     <Layout title="Requests">
-      <div className="space-y-8 pb-16">
-        <section className="rounded-[28px] border border-slate-100 bg-white p-7 shadow-sm">
+      <div className="space-y-5 pb-12">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-none">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <Badge className="border-none bg-blue-700 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
@@ -271,7 +271,7 @@ export default function AdminRequestsPage() {
             { label: "Open Payments", value: openPayments, icon: CreditCard, color: "text-emerald-600 bg-emerald-50" },
             { label: "Total Cases", value: serviceCases.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100" },
           ].map((item) => (
-            <Card key={item.label} className="rounded-[22px] border-slate-100 shadow-sm">
+            <Card key={item.label} className="rounded-lg border-slate-200 shadow-none">
               <CardContent className="flex items-center gap-4 p-5">
                 <div className={cn("flex h-11 w-11 items-center justify-center rounded-2xl", item.color)}>
                   <item.icon className="h-5 w-5" />
@@ -302,7 +302,7 @@ export default function AdminRequestsPage() {
         </div>
 
         {activeTab === "cases" && (
-          <Card className="rounded-[26px] border-slate-100 shadow-sm">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
               <CardTitle className="text-base font-black">Service Cases</CardTitle>
               <Select value={caseStatus} onValueChange={setCaseStatus}>
@@ -387,7 +387,7 @@ export default function AdminRequestsPage() {
 
         {activeTab !== "cases" && (
         <div className="grid gap-6 xl:grid-cols-2">
-          <Card className="rounded-[26px] border-slate-100 shadow-sm">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
               <CardTitle className="text-base font-black">Consultation Queue</CardTitle>
               <Select value={consultationStatus} onValueChange={setConsultationStatus}>
@@ -457,7 +457,7 @@ export default function AdminRequestsPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[26px] border-slate-100 shadow-sm">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
               <CardTitle className="text-base font-black">Payment Link Queue</CardTitle>
               <Select value={paymentStatus} onValueChange={setPaymentStatus}>

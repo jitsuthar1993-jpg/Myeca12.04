@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Layout } from "@/components/admin/Layout";
+import { DashboardPageHeader } from "@/components/admin/DashboardPrimitives";
 import { useToast } from "@/hooks/use-toast";
 import { CONTACT } from "@/config/contact";
 import { apiRequest } from "@/lib/queryClient";
@@ -215,14 +217,15 @@ function AdminSettingsContent() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Admin Settings</h1>
-        <p className="text-gray-600 mt-2">Configure system settings and platform options</p>
-      </div>
+    <div className="space-y-5 pb-12">
+      <DashboardPageHeader
+        eyebrow="System"
+        title="Admin Settings"
+        description="Configure system settings and platform options."
+      />
 
-      <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
+      <Tabs defaultValue="general" className="space-y-5">
+        <TabsList className="grid h-auto w-full grid-cols-2 rounded-lg border border-slate-200 bg-slate-50 p-1 lg:grid-cols-6">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="email">Email</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
@@ -232,8 +235,8 @@ function AdminSettingsContent() {
         </TabsList>
 
         {/* General Settings */}
-        <TabsContent value="general" className="space-y-6">
-          <Card>
+        <TabsContent value="general" className="space-y-5">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
@@ -309,8 +312,8 @@ function AdminSettingsContent() {
         </TabsContent>
 
         {/* Email Settings */}
-        <TabsContent value="email" className="space-y-6">
-          <Card>
+        <TabsContent value="email" className="space-y-5">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="h-5 w-5" />
@@ -401,8 +404,8 @@ function AdminSettingsContent() {
         </TabsContent>
 
         {/* Payment Settings */}
-        <TabsContent value="payment" className="space-y-6">
-          <Card>
+        <TabsContent value="payment" className="space-y-5">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
@@ -488,8 +491,8 @@ function AdminSettingsContent() {
         </TabsContent>
 
         {/* Security Settings */}
-        <TabsContent value="security" className="space-y-6">
-          <Card>
+        <TabsContent value="security" className="space-y-5">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />
@@ -570,8 +573,8 @@ function AdminSettingsContent() {
         </TabsContent>
 
         {/* Tax Filing Settings */}
-        <TabsContent value="tax" className="space-y-6">
-          <Card>
+        <TabsContent value="tax" className="space-y-5">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
@@ -637,8 +640,8 @@ function AdminSettingsContent() {
         </TabsContent>
 
         {/* System Settings */}
-        <TabsContent value="system" className="space-y-6">
-          <Card>
+        <TabsContent value="system" className="space-y-5">
+          <Card className="rounded-lg border-slate-200 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Server className="h-5 w-5" />
@@ -757,10 +760,8 @@ function AdminSettingsContent() {
 // Main settings page without sidebar
 export default function AdminSettingsPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <AdminSettingsContent />
-      </div>
-    </div>
+    <Layout title="Settings">
+      <AdminSettingsContent />
+    </Layout>
   );
 }

@@ -222,7 +222,7 @@ export default function UsersManagementPage() {
 
   return (
     <Layout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-5 pb-12">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -262,7 +262,7 @@ export default function UsersManagementPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
                 <Users className="h-5 w-5" />
@@ -273,7 +273,7 @@ export default function UsersManagementPage() {
             <p className="text-2xl font-bold text-slate-900">{userCounts.total}</p>
           </Card>
 
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
                 <UserCheck className="h-5 w-5" />
@@ -284,7 +284,7 @@ export default function UsersManagementPage() {
             <p className="text-2xl font-bold text-slate-900">{userCounts.active}</p>
           </Card>
 
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
                 <Clock className="h-5 w-5" />
@@ -295,7 +295,7 @@ export default function UsersManagementPage() {
             <p className="text-2xl font-bold text-slate-900">{userCounts.pending}</p>
           </Card>
 
-          <Card className="border-none shadow-sm bg-white p-6 rounded-[32px] group hover:shadow-md transition-all">
+          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
                 <Shield className="h-5 w-5" />
@@ -352,7 +352,7 @@ export default function UsersManagementPage() {
               </div>
            </div>
 
-           <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+           <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
              <CardContent className="p-0">
                <div className="overflow-x-auto">
                  <table className="w-full text-left border-collapse">

@@ -135,7 +135,7 @@ export default function CADashboard() {
 
           <TabsContent value="clients" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
              <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
-                <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-slate-50 p-5">
                    <div>
                       <CardTitle className="text-lg font-bold">Client Portfolios</CardTitle>
                       <CardDescription className="text-xs font-medium text-slate-500">Search and oversee assigned tax profiles.</CardDescription>
@@ -228,7 +228,7 @@ export default function CADashboard() {
           </TabsContent>
 
           <TabsContent value="filings" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-             <Card className="overflow-hidden rounded-lg border-slate-200 bg-white p-10 text-center shadow-none">
+             <Card className="overflow-hidden rounded-lg border-slate-200 bg-white p-6 text-center shadow-none">
                 <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                    <FileText className="w-8 h-8 text-blue-600" />
                 </div>
