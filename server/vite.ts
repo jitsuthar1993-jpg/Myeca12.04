@@ -263,14 +263,17 @@ export function serveStatic(app: Express) {
     try {
       let content = await fs.promises.readFile(indexPath, "utf-8");
       const userAgent = req.headers["user-agent"] || "";
-      const isBot = /bot|googlebot|crawler|spider|robot|crawling|bingbot|duckduckbot|yandexbot|slurp|facebot|ia_archiver/i.test(userAgent);
+      // Includes social link-preview agents (WhatsApp, Facebook, Telegram, LinkedIn, Twitter,
+      // Slack, Discord, Skype, Pinterest) so shared links render with the correct OG card.
+      const isBot = /bot|googlebot|crawler|spider|robot|crawling|bingbot|duckduckbot|yandexbot|slurp|facebot|ia_archiver|facebookexternalhit|whatsapp|telegrambot|linkedinbot|twitterbot|slackbot|slack-imgproxy|discordbot|skypeuripreview|pinterest|embedly|quora|outbrain|preview|chatgpt|gptbot|claude-web/i.test(userAgent);
 
       // Simple SEO Injection for Bots
       if (isBot) {
         log(`Bot detected: ${userAgent} on ${url}`, "seo");
         
         const blogSeo = await getBlogSeoData(cleanPath);
-        const fallbackSeo = SEO_CONFIG[cleanPath] || SEO_CONFIG["/"];
+        const configEntry = SEO_CONFIG[cleanPath];
+        const fallbackSeo = configEntry || SEO_CONFIG["/"];
         const seo = blogSeo || {
           title: fallbackSeo.title,
           description: fallbackSeo.description,
@@ -278,7 +281,10 @@ export function serveStatic(app: Express) {
           canonical: `https://myeca.in${cleanPath === "/" ? "/" : cleanPath}`,
           image: DEFAULT_OG_IMAGE,
           type: fallbackSeo.type === "article" ? "article" : "website",
-          noindex: true,
+          // Only mark noindex when the path has no SEO config (unknown route) or the
+          // matching config explicitly opts out. Previously every non-blog page sent
+          // <meta name="robots" content="noindex"> to crawlers — service pages included.
+          noindex: configEntry ? Boolean(configEntry.noindex) : true,
           jsonLd: [],
         };
         
