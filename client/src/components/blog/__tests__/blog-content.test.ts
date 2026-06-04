@@ -46,4 +46,12 @@ Repeated heading.
     expect(result.html).toContain('href="#"');
     expect(result.toc).toEqual([{ id: "safe-heading", text: "Safe Heading", level: 2 }]);
   });
+
+  it("strips slash-separated event handlers that a whitespace-only pattern would miss", () => {
+    const result = normalizeBlogContent(
+      '<p>ok</p><img/onerror="alert(1)" src=x><svg/onload=alert(2)>',
+    );
+
+    expect(result.html).not.toMatch(/onerror|onload/i);
+  });
 });

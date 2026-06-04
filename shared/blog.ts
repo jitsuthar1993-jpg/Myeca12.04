@@ -125,7 +125,9 @@ export const DEFAULT_BLOG_CTA = {
 const HTML_TAG_RE = /<\/?[a-z][\s\S]*>/i;
 const SCRIPT_TAG_RE = /<\s*script[^>]*>[\s\S]*?<\s*\/\s*script\s*>/gi;
 const STYLE_TAG_RE = /<\s*style[^>]*>[\s\S]*?<\s*\/\s*style\s*>/gi;
-const EVENT_HANDLER_RE = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+// Leading [\s/] also catches slash-separated attributes such as `<img/onerror=...>` and
+// `<svg/onload=...>`, which a plain `\son` (whitespace-only) prefix would miss.
+const EVENT_HANDLER_RE = /[\s/]on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 const JS_PROTOCOL_RE = /\s(href|src)\s*=\s*(?:"\s*javascript:[^"]*"|'\s*javascript:[^']*'|[^\s>]*javascript:[^\s>]*)/gi;
 
 export function stripHtml(input: string): string {
