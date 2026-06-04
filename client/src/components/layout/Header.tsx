@@ -121,9 +121,9 @@ export default function Header() {
   const workspaceLabel = user?.role === "user" || !user?.role ? "Dashboard" : roleLabel;
   const publicGuardedHref = (privatePath: string) =>
     isAuthenticated ? privatePath : `/auth/login?next=${encodeURIComponent(privatePath)}`;
-  const desktopLoginFileHref = "/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file";
-  const mobileLoginFileHref = "/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dmobile_menu_login_file";
-  const mobileFileHref = !isLoading && !isAuthenticated ? mobileLoginFileHref : "/itr/start?source=mobile_menu_footer";
+  const loginDashboardHref = "/auth/login?next=%2Fdashboard";
+  const desktopLoginFileHref = loginDashboardHref;
+  const mobileFileHref = !isLoading && !isAuthenticated ? loginDashboardHref : "/itr/start?source=mobile_menu_footer";
   const mobileFileLabel = !isLoading && !isAuthenticated ? "Login & File ITR" : "Check ITR plan";
 
   const isActive = (path: string) => location === path;
@@ -864,7 +864,6 @@ export default function Header() {
                     href={desktopLoginFileHref}
                     onMouseEnter={() => {
                       preloadOnHover('/auth/login');
-                      preloadOnHover('/itr/start');
                     }}
                     className="hidden lg:block"
                   >
@@ -1143,7 +1142,7 @@ export default function Header() {
                         href={mobileFileHref}
                         onTouchStart={() => {
                           if (!isLoading && !isAuthenticated) preloadOnHover("/auth/login");
-                          preloadOnHover("/itr/start");
+                          if (!isLoading && isAuthenticated) preloadOnHover("/itr/start");
                         }}
                         onClick={() => setMobileMenuOpen(false)}
                       >

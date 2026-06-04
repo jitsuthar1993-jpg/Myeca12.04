@@ -63,8 +63,9 @@ describe("public growth roadmap implementation", () => {
     expect(PUBLIC_HEADER_PRIMARY_LINKS).toContainEqual({ href: "/trust", icon: "trust", label: "Trust" });
     expect(PUBLIC_HEADER_PRIMARY_LINKS).not.toContainEqual({ href: "/pricing", label: "Pricing" });
     expect(headerSource).toContain("aria-label={item.label}");
-    expect(headerSource).toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file");
-    expect(headerSource).toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dmobile_menu_login_file");
+    expect(headerSource).toContain("/auth/login?next=%2Fdashboard");
+    expect(headerSource).not.toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file");
+    expect(headerSource).not.toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dmobile_menu_login_file");
     expect(headerSource).not.toContain("<span>Log in</span>");
     expect(headerSource).not.toContain("Join / Sign in");
     expect(headerSource).not.toContain(">Blog<");

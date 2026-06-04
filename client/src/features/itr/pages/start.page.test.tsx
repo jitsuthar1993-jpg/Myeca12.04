@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -86,6 +86,17 @@ describe("ITR start form selector page", () => {
     expect(navigateMock).toHaveBeenCalledWith(
       `/auth/register?redirect_url=${encodeURIComponent("/itr/filing?source=homepage_hero")}`,
     );
+  });
+
+  it("redirects legacy header login-file visits to login for the dashboard", async () => {
+    window.history.pushState({}, "", "/itr/start?source=header_desktop_login_file");
+
+    render(<ITRStartPage />);
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith("/auth/login?next=%2Fdashboard");
+    });
+    expect(screen.queryByRole("heading", { name: /Individual ITR form selector/i })).not.toBeInTheDocument();
   });
 
   it("stores the selector handoff before routing to auth", async () => {

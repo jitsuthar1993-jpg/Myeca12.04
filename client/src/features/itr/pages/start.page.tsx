@@ -137,6 +137,8 @@ const itrStartProofItems = [
   ["Next step", "Filing draft"],
 ];
 
+const legacyLoginFileSources = new Set(["header_desktop_login_file", "mobile_menu_login_file"]);
+
 function readInitialAnswers() {
   const params = new URLSearchParams(window.location.search);
 
@@ -266,12 +268,21 @@ export default function ITRStartPage() {
   const [answers, setAnswers] = useState<ItrStartSelectorAnswers>(() => readInitialAnswers());
   const params = new URLSearchParams(window.location.search);
   const conversionSource = params.get("source") || "itr_start_page";
+  const isLegacyLoginFileSource = legacyLoginFileSources.has(conversionSource);
   const draft = useMemo(() => buildItrStartDraft(answers), [answers]);
   const recommendation = useMemo(() => recommendItrForm(draft), [draft]);
   const resultStatus = recommendation.caReviewRequired ? "CA review expected" : "Simple form path";
   const continuePath = `/itr/filing?source=${encodeURIComponent(conversionSource)}`;
 
   useEffect(() => {
+    if (isLoading || !isLegacyLoginFileSource) return;
+
+    navigate(isAuthenticated ? "/dashboard" : "/auth/login?next=%2Fdashboard");
+  }, [isAuthenticated, isLegacyLoginFileSource, isLoading, navigate]);
+
+  useEffect(() => {
+    if (isLegacyLoginFileSource) return;
+
     captureTelemetryEvent("itr_form_selector_recommended", {
       source: conversionSource,
       assessment_year: answers.assessmentYear,
@@ -285,6 +296,7 @@ export default function ITRStartPage() {
     recommendation.blockers.length,
     recommendation.caReviewRequired,
     recommendation.form,
+    isLegacyLoginFileSource,
   ]);
 
   const updateAnswer = <K extends keyof ItrStartSelectorAnswers>(key: K, value: ItrStartSelectorAnswers[K]) => {
@@ -322,6 +334,10 @@ export default function ITRStartPage() {
 
     navigate(`/auth/register?redirect_url=${encodeURIComponent(continuePath)}`);
   };
+
+  if (isLegacyLoginFileSource) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
