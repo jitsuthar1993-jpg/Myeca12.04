@@ -428,6 +428,38 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'MSME Registration', url: '/services/msme-udyam-registration' }]
   },
+  '/services/compliance-management': {
+    title: 'Annual Business Compliance Management | ROC, MCA, GST | MyeCA.in',
+    description: 'Stay on top of every statutory filing with managed ROC, MCA, GST, TDS, and labour compliance support, deadline reminders, and document-ready CA reviews.',
+    keywords: ['annual compliance', 'company compliance India', 'ROC filing', 'MCA annual filing', 'statutory compliance service'],
+    type: 'service',
+    serviceData: { price: '₹4999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Compliance Management', url: '/services/compliance-management' }]
+  },
+  '/services/fssai-registration': {
+    title: 'FSSAI Food License Registration Online | Basic, State, Central | MyeCA.in',
+    description: 'Apply for FSSAI food licensing — Basic, State, or Central — with document checklists, business-type guidance, and end-to-end CA-supported filing.',
+    keywords: ['FSSAI registration', 'food license online', 'FSSAI basic license', 'FSSAI state license', 'food business license India'],
+    type: 'service',
+    serviceData: { price: '₹1499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'FSSAI Registration', url: '/services/fssai-registration' }]
+  },
+  '/services/trade-license': {
+    title: 'Trade License Registration India | Municipal Corporation Filing | MyeCA.in',
+    description: 'Get help applying for or renewing your municipal trade license. Document preparation, application support, and follow-through with the local corporation.',
+    keywords: ['trade license registration', 'municipal trade license', 'shop and establishment license', 'trade license renewal', 'business license India'],
+    type: 'service',
+    serviceData: { price: '₹2499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Trade License', url: '/services/trade-license' }]
+  },
+  '/services/audit-services': {
+    title: 'Statutory & Internal Audit Services for Indian Businesses | MyeCA.in',
+    description: 'CA-led statutory, tax, internal, and management audits. Compliance verification, risk-control review, and audit-report support for Indian companies and LLPs.',
+    keywords: ['audit services India', 'statutory audit', 'internal audit service', 'tax audit', 'CA audit firm'],
+    type: 'service',
+    serviceData: { price: '₹9999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Audit Services', url: '/services/audit-services' }]
+  },
   '/about': {
     title: 'About myeca.in CA Tax Filing Platform | Rajasthan India',
     description: 'Learn how myeca.in blends CA-led tax filing, secure document workflows, and practical FY 2025-26 / AY 2026-27 compliance support from Bikaner, Rajasthan.',
