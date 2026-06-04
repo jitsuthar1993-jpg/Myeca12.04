@@ -92,9 +92,10 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
 
   // Disable 2FA
   const disableMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (code: string) => {
       return await apiRequest("/api/2fa/disable", {
-        method: "POST"
+        method: "POST",
+        body: JSON.stringify({ token: code })
       });
     },
     onSuccess: () => {
@@ -108,7 +109,7 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to disable 2FA. Please try again.",
+        description: "Couldn't disable 2FA. Check the verification code and try again.",
         variant: "destructive"
       });
     }
@@ -125,8 +126,11 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
   };
 
   const handleDisable = () => {
-    if (confirm("Are you sure you want to disable two-factor authentication?")) {
-      disableMutation.mutate();
+    const code = window.prompt(
+      "Enter a current 6-digit authenticator code (or an unused backup code) to disable two-factor authentication:",
+    );
+    if (code && code.trim()) {
+      disableMutation.mutate(code.trim());
     }
   };
 

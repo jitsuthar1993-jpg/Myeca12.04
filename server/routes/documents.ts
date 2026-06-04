@@ -17,6 +17,7 @@ import {
   getAccessibleSnapshot,
   recordBelongsToUser,
 } from "../utils/access-control.js";
+import { fileBufferMatchesDeclaredType } from "../lib/file-signature.js";
 
 const router = Router();
 
@@ -169,6 +170,11 @@ router.post("/upload", authenticateToken, uploadSingleDocument, async (req: Auth
   try {
     if (!req.file) {
       return errorResponse(res, 400, "No file uploaded");
+    }
+
+    // Validate real content against the declared type — multer only checks the client mimetype.
+    if (!fileBufferMatchesDeclaredType(req.file.buffer, req.file.mimetype)) {
+      return errorResponse(res, 400, "File content does not match its declared type.");
     }
 
     const userId = await resolveTargetUserId(req);

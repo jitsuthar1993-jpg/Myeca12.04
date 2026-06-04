@@ -11,6 +11,7 @@ import ShareButtons from "@/components/ShareButtons";
 import BlogCard from "@/components/blog/BlogCard";
 import { getBlogCoverImageSrc, isGeneratedBlogCover } from "@/lib/blog-cover-assets";
 import { cn } from "@/lib/utils";
+import { sanitizeHTML } from "@/lib/sanitize";
 import { type BlogSourceLink, type BlogTocItem, type PublicBlogDetail, type PublicBlogSummary, normalizeBlogContent } from "@shared/blog";
 
 export interface EditorialArticleData {
@@ -389,6 +390,8 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
   const [shareOpen, setShareOpen] = useState(false);
 
   const normalized = useMemo(() => normalizeBlogContent(post.content), [post.content]);
+  // DOMPurify allowlist sanitize at the render sink — the shared regex pass is not sufficient.
+  const safeArticleHtml = useMemo(() => sanitizeHTML(normalized.html), [normalized.html]);
   const toc = post.toc && post.toc.length > 0 ? post.toc : normalized.toc;
   const highlights = post.keyHighlights ?? [];
   const faqs = post.faqItems ?? [];
@@ -581,7 +584,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                 "prose-pre:bg-blue-700 prose-pre:rounded-xl",
                 "prose-img:rounded-xl prose-img:shadow-sm prose-img:border prose-img:border-slate-200",
               )}
-              dangerouslySetInnerHTML={{ __html: normalized.html }}
+              dangerouslySetInnerHTML={{ __html: safeArticleHtml }}
             />
 
             {/* Mobile info panel, shown lg:hidden */}

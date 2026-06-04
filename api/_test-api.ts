@@ -2,7 +2,7 @@ import { adminDb } from "../server/data-admin.js";
 import { getPublicSupabaseAuthClient, getSupabaseAuthClient } from "../server/lib/supabase.js";
 import { displayNameParts } from "../server/services/user-accounts.js";
 import { normalizeAppRole } from "../shared/app-roles.js";
-import { getTemporaryTestUserByToken, type TemporaryTestRole } from "../shared/temporary-test-users.js";
+import { getTemporaryTestUserByToken, temporaryTestAuthEnabled, type TemporaryTestRole } from "../shared/temporary-test-users.js";
 
 type ApiUser = {
   id: string;
@@ -80,7 +80,7 @@ async function getSupabaseUserFromToken(token: string) {
 }
 
 export function readTemporaryAuth(req: any) {
-  if (process.env.NODE_ENV === "production") return null;
+  if (!temporaryTestAuthEnabled()) return null;
   const token = readBearerToken(req);
   if (!token) return null;
   return getTemporaryTestUserByToken(token);

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { findOrCreateUserProfile } from "../services/user-accounts.js";
 import { safeError } from "../utils/error-response.js";
 import { getCachedUser, setCachedUser } from "../utils/user-cache.js";
-import { getTemporaryTestUserByToken } from "../../shared/temporary-test-users.js";
+import { getTemporaryTestUserByToken, temporaryTestAuthEnabled } from "../../shared/temporary-test-users.js";
 import { APP_ROLES, normalizeAppRole, type AppRole } from "../../shared/app-roles.js";
 import { getSupabaseAuthClient } from "../lib/supabase.js";
 import { getRequestId } from "./request-id.js";
@@ -23,7 +23,7 @@ async function readAuth(req: Request) {
 
   if (bearerToken) {
     const temporaryUser = getTemporaryTestUserByToken(bearerToken);
-    if (temporaryUser && process.env.NODE_ENV !== "production") {
+    if (temporaryUser && temporaryTestAuthEnabled()) {
       return {
         userId: temporaryUser.id,
         email: temporaryUser.email,

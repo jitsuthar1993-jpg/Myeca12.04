@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import { z } from "zod";
 import { getRequestId } from "./request-id.js";
+import { getAllowedOrigins } from "../lib/origin-policy.js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -83,7 +84,14 @@ export const customSecurityHeaders = (req: Request, res: Response, next: NextFun
   // Enforce HTTPS in production, while keeping local production smoke tests usable.
   if (process.env.NODE_ENV === 'production') {
     if (!isLocalHost && req.headers['x-forwarded-proto'] !== 'https') {
-      return res.redirect(301, `https://${req.headers.host}${req.url}`);
+      // Do not trust the Host header for the redirect target (host-header injection / open
+      // redirect). Only echo it back when it is a known-allowed host; otherwise use canonical.
+      const requestHost = req.headers.host ?? "";
+      const allowedHosts = new Set(getAllowedOrigins().map((origin) => new URL(origin).host));
+      const safeHost = allowedHosts.has(requestHost)
+        ? requestHost
+        : new URL(getAllowedOrigins()[0]).host;
+      return res.redirect(301, `https://${safeHost}${req.url}`);
     }
   }
   

@@ -71,19 +71,23 @@ router.post("/sync", requireAuth, validateRequest(syncUserSchema), async (req: A
     }
 
     const userId = auth.userId;
-    const { email, firstName, lastName, phoneNumber } = req.body;
+    // SECURITY: role and the stored email are derived ONLY from the verified session
+    // (auth.email), never from req.body. Trusting body.email would let any authenticated
+    // user escalate by claiming an invited/bootstrap admin/CA email.
+    const { firstName, lastName, phoneNumber } = req.body;
+    const verifiedEmail = auth.email ?? null;
     const userRef = adminDb.collection("users").doc(userId);
     const userDoc = await userRef.get();
 
     if (userDoc.exists) {
       const currentData = userDoc.data()!;
-      const bootstrapRole = getBootstrapRoleForEmail(auth.email) ?? "user";
+      const bootstrapRole = getBootstrapRoleForEmail(verifiedEmail) ?? "user";
       const role =
-        (await getProvisionedRoleForEmail(email || currentData.email || auth.email)) ??
+        (await getProvisionedRoleForEmail(verifiedEmail ?? currentData.email)) ??
         normalizeAppRole(currentData.role ?? bootstrapRole);
       const updatedData = {
         ...currentData,
-        email: email || currentData.email,
+        email: verifiedEmail || currentData.email,
         firstName: firstName || currentData.firstName,
         lastName: lastName || currentData.lastName,
         phoneNumber: phoneNumber?.trim() || currentData.phoneNumber || null,
@@ -97,10 +101,10 @@ router.post("/sync", requireAuth, validateRequest(syncUserSchema), async (req: A
       return res.json({ message: "User synced", user: { id: userId, ...updatedData } });
     }
 
-    const role = (await getProvisionedRoleForEmail(email || auth.email)) ?? getBootstrapRoleForEmail(email || auth.email) ?? "user";
+    const role = (await getProvisionedRoleForEmail(verifiedEmail)) ?? getBootstrapRoleForEmail(verifiedEmail) ?? "user";
     const newUser = {
       id: userId,
-      email: email || auth.email || null,
+      email: verifiedEmail,
       firstName: firstName || "User",
       lastName: lastName || "",
       phoneNumber: phoneNumber || null,

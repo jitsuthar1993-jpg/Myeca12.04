@@ -31,6 +31,7 @@ import {
 } from "@/lib/public-blog-data";
 import { getBlogConversionLinks } from "@/lib/blog-conversion-links";
 import { cn } from "@/lib/utils";
+import { sanitizeHTML } from "@/lib/sanitize";
 import {
   normalizeBlogContent,
   type BlogFaqItem,
@@ -275,6 +276,8 @@ export default function BlogPostPage() {
 
   const post = postData;
   const normalizedContent = useMemo(() => normalizeBlogContent(post?.content ?? ""), [post?.content]);
+  // DOMPurify allowlist sanitize at the render sink — the shared regex pass is not sufficient.
+  const safeContentHtml = useMemo(() => sanitizeHTML(normalizedContent.html), [normalizedContent.html]);
   const toc = post?.toc && post.toc.length > 0 ? post.toc : normalizedContent.toc;
   const tags = useMemo(() => normalizeTags(post?.tags), [post?.tags]);
   const authorName = post ? getAuthorName(post) : "MyeCA Editorial Team";
@@ -499,7 +502,7 @@ export default function BlogPostPage() {
               "prose-td:px-6 prose-td:py-4 prose-td:text-sm prose-td:text-slate-700",
               "prose-img:rounded-[2rem] prose-img:border prose-img:border-slate-100",
             )}
-            dangerouslySetInnerHTML={{ __html: normalizedContent.html }}
+            dangerouslySetInnerHTML={{ __html: safeContentHtml }}
           />
 
           <div className="mt-16 space-y-12">

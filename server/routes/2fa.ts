@@ -166,19 +166,44 @@ router.post("/disable", requireAuth, async (req: AuthRequest, res: Response) => 
   try {
     const auth = req.auth;
     if (!auth || !auth.userId) return res.status(401).json({ error: "Unauthorized" });
-    
+
+    const userDoc = await adminDb.collection("users").doc(auth.userId).get();
+    const userData = userDoc.data();
+    const storedSecret = getStoredTotpSecret(userData);
+
+    // Require re-authentication: an enabled 2FA can only be turned off with a valid current
+    // TOTP code or an unused backup code, so a hijacked session cannot silently remove it.
+    if (userData?.twoFactorEnabled && storedSecret) {
+      const token = readToken(req.body);
+      if (!token) {
+        return res.status(400).json({ error: "Verification code required to disable 2FA" });
+      }
+      const verified = speakeasy.totp.verify({
+        secret: storedSecret,
+        encoding: "base32",
+        token,
+        window: 2,
+      });
+      if (!verified && !(await consumeBackupCode(auth.userId, userData, token))) {
+        return res.status(400).json({ error: "Invalid verification code" });
+      }
+    }
+
     await adminDb.collection("users").doc(auth.userId).set({
       twoFactorEnabled: false,
       twoFactorSecret: null,
       twoFactorBackupCodes: [],
       twoFactorDisabledAt: new Date().toISOString(),
     }, { merge: true });
-    
-    res.json({ 
+
+    res.json({
       success: true,
-      message: "2FA has been disabled" 
+      message: "2FA has been disabled"
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid verification payload" });
+    }
     console.error("Error disabling 2FA:", error);
     res.status(500).json({ error: "Failed to disable 2FA" });
   }
@@ -189,24 +214,28 @@ router.post("/login-verify", apiRateLimiter, async (req: AuthRequest, res: Respo
   try {
     const { email } = req.body;
     const token = readToken(req.body);
-    
+
     if (!email || !token) {
       return res.status(400).json({ error: "Email and token are required" });
     }
-    
+
+    // Uniform failure response so this endpoint cannot be used to enumerate which emails
+    // exist or which accounts have 2FA enabled.
+    const invalid = () => res.status(400).json({ error: "Invalid email or verification code" });
+
     // Get user by email
     const snapshot = await adminDb.collection("users").where("email", "==", email).get();
     if (snapshot.empty) {
-      return res.status(404).json({ error: "User not found" });
+      return invalid();
     }
-    
+
     const userData = snapshot.docs[0].data();
-    
+
     const storedSecret = getStoredTotpSecret(userData);
     if (!userData.twoFactorEnabled || !storedSecret) {
-      return res.status(400).json({ error: "2FA not enabled for this user" });
+      return invalid();
     }
-    
+
     // Verify the token
     const verified = speakeasy.totp.verify({
       secret: storedSecret,
@@ -214,14 +243,14 @@ router.post("/login-verify", apiRateLimiter, async (req: AuthRequest, res: Respo
       token: token,
       window: 2
     });
-    
+
     if (!verified) {
-      return res.status(400).json({ error: "Invalid 2FA token" });
+      return invalid();
     }
-    
-    res.json({ 
+
+    res.json({
       success: true,
-      message: "2FA verification successful" 
+      message: "2FA verification successful"
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -240,6 +269,35 @@ function generateBackupCodes(count: number = 8): string[] {
     codes.push(code);
   }
   return codes;
+}
+
+// Consume a one-time backup code if the candidate matches an unused one; the remaining codes
+// are re-encrypted and stored back.
+async function consumeBackupCode(
+  userId: string,
+  userData: Record<string, any> | undefined,
+  candidate: string,
+): Promise<boolean> {
+  const stored = revealMfaValue(userData?.twoFactorBackupCodes);
+  if (!stored) return false;
+
+  let codes: string[];
+  try {
+    const parsed = JSON.parse(stored);
+    codes = Array.isArray(parsed) ? parsed.map((code) => String(code)) : [];
+  } catch {
+    return false;
+  }
+
+  const index = codes.indexOf(candidate.toUpperCase());
+  if (index === -1) return false;
+
+  codes.splice(index, 1);
+  await adminDb.collection("users").doc(userId).set(
+    { twoFactorBackupCodes: getProtectedBackupCodes(codes) },
+    { merge: true },
+  );
+  return true;
 }
 
 export default router;

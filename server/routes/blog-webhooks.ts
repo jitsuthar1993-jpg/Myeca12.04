@@ -1,4 +1,5 @@
 ﻿import { Router, type Request, type Response } from "express";
+import crypto from "node:crypto";
 import { z } from "zod";
 import { adminDb } from "../data-admin.js";
 import { sanitize } from "../middleware/sanitize.js";
@@ -23,6 +24,14 @@ function readSecretHeader(req: Request) {
   return typeof header === "string" ? header.trim() : "";
 }
 
+function secretsMatch(provided: string, expected: string) {
+  const providedBuf = Buffer.from(provided);
+  const expectedBuf = Buffer.from(expected);
+  // Constant-time compare; the length check itself is not secret-dependent.
+  if (providedBuf.length !== expectedBuf.length) return false;
+  return crypto.timingSafeEqual(providedBuf, expectedBuf);
+}
+
 router.post("/blog-post", sanitize, async (req: Request, res: Response) => {
   try {
     const expectedSecret = getWebhookSecret();
@@ -31,7 +40,7 @@ router.post("/blog-post", sanitize, async (req: Request, res: Response) => {
     }
 
     const providedSecret = readSecretHeader(req);
-    if (!providedSecret || providedSecret !== expectedSecret) {
+    if (!providedSecret || !secretsMatch(providedSecret, expectedSecret)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

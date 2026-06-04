@@ -142,7 +142,15 @@ async function publishBlog(blog: GeneratedBlog): Promise<string> {
 // Validate Twilio signature. Optional, but recommended in production.
 function validateTwilioSignature(req: Request): boolean {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
-  if (!authToken) return true; // Skip validation if not configured
+  if (!authToken) {
+    // Fail closed in production: without the auth token we cannot prove the request is from
+    // Twilio, and this webhook can publish blog posts and spend OpenAI credits.
+    if (process.env.NODE_ENV === "production") {
+      console.warn("[WhatsApp] TWILIO_AUTH_TOKEN is not set — rejecting webhook in production");
+      return false;
+    }
+    return true; // local/dev convenience only
+  }
 
   const signature = req.headers["x-twilio-signature"] as string;
   if (!signature) return false;
