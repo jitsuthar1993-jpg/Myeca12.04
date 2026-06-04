@@ -76,6 +76,19 @@ function authError(res: Response, status: number, error: string) {
   });
 }
 
+/**
+ * Status values that block access. A user record without a status field is treated as
+ * active for backwards compatibility with older records that predate the status enum.
+ * Mirrors the enum in admin.ts updateUserRoleSchema.
+ */
+const BLOCKED_USER_STATUSES = new Set(["inactive", "suspended", "rejected"]);
+
+function isUserBlocked(userData: { status?: unknown } | null | undefined): boolean {
+  if (!userData) return false;
+  const normalized = String(userData.status || "active").toLowerCase();
+  return BLOCKED_USER_STATUSES.has(normalized);
+}
+
 export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   try {
     const auth = await readAuth(req);
@@ -83,7 +96,15 @@ export async function optionalAuth(req: Request, _res: Response, next: NextFunct
       await attachAuthUser(req, auth);
     }
     next();
-  } catch {
+  } catch (error) {
+    // optionalAuth is meant to continue anonymously when auth resolution fails, but
+    // silently swallowing every error hides genuine bugs (Supabase outages, DB write
+    // failures during findOrCreateUserProfile). Log so they surface in observability
+    // without breaking the request.
+    console.warn("optionalAuth: continuing anonymously after error", {
+      path: req.path,
+      message: error instanceof Error ? error.message : String(error),
+    });
     next();
   }
 }
@@ -95,7 +116,10 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       return authError(res, 401, "Unauthorized");
     }
 
-    await attachAuthUser(req, auth);
+    const userData = await attachAuthUser(req, auth);
+    if (isUserBlocked(userData)) {
+      return authError(res, 403, "Your account is not active. Please contact support.");
+    }
     next();
   } catch (error) {
     return safeError(res, error, "Authentication failed");
@@ -115,6 +139,10 @@ export function requireRole(allowedRoles: readonly AppRole[]) {
       const userData = await attachAuthUser(req, auth);
       if (!userData) {
         return authError(res, 403, "Access denied. Profile not found.");
+      }
+
+      if (isUserBlocked(userData)) {
+        return authError(res, 403, "Your account is not active. Please contact support.");
       }
 
       const userRole = normalizeAppRole(userData.role);
