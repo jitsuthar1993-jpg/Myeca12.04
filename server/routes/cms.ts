@@ -67,32 +67,27 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
 
     const lookup = await getCategoryLookup();
 
-    // Fetch all posts to allow in-memory filtering and sorting without composite indexes
-    const snapshot = await adminDb.collection("blog_posts").get();
+    // Push status filter and ordering down into SQL. Text search runs in JS over the result
+    // set because the adminDb shim does not expose ILIKE; the SQL-side limit keeps the result
+    // small enough that the in-memory search is trivial.
+    let query = adminDb.collection("blog_posts") as any;
+    if (status === "draft" || status === "published") {
+      query = query.where("status", "==", status);
+    }
+    query = query.orderBy("createdAt", "desc").limit(q ? 500 : 200);
+    const snapshot = await query.get();
+
     let posts = snapshot.docs.map((doc: any) =>
       normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup),
     );
 
-    // Apply status filter
-    if (status && (status === "draft" || status === "published")) {
-      posts = posts.filter((p: any) => p.status === status);
-    }
-
-    // Apply search filter
     if (q) {
       const qLower = q.toLowerCase();
       posts = posts.filter((p: any) =>
         (p.title?.toLowerCase() || "").includes(qLower) ||
-        (p.slug?.toLowerCase() || "").includes(qLower)
+        (p.slug?.toLowerCase() || "").includes(qLower),
       );
     }
-
-    // Sort by createdAt descending
-    posts.sort((a: any, b: any) => {
-      const dateA = new Date(a.createdAt || a.updatedAt || 0);
-      const dateB = new Date(b.createdAt || b.updatedAt || 0);
-      return dateB.getTime() - dateA.getTime();
-    });
 
     res.json({ success: true, posts });
   } catch (error) {

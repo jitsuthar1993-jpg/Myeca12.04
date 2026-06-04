@@ -14,56 +14,54 @@ const mobilePerformanceSchema = z.object({
   warnings: z.array(z.string()).optional(),
 }).passthrough();
 
-function statusCount(docs: Array<{ data: () => Record<string, any> }>, completedStatuses: string[]) {
-  const completed = new Set(completedStatuses);
-  let done = 0;
-  let draft = 0;
-  let pending = 0;
-
-  docs.forEach((doc) => {
-    const status = String((doc.data() as any).status || "").toLowerCase();
-    if (completed.has(status)) {
-      done += 1;
-    } else if (status === "draft") {
-      draft += 1;
-    } else {
-      pending += 1;
-    }
-  });
-
-  return { done, draft, pending };
-}
-
 router.get("/overview", requireAuth, requireAdmin, async (req: Request, res: Response) => {
   try {
     const range = parseGoogleAnalyticsRange(req.query.range);
     const googleAnalyticsPromise = getGoogleAnalyticsDashboard({ range });
+
+    // Use SQL count() aggregates instead of loading entire collections to compute totals.
+    // Each of these previously deserialised every row in the table just to take .length.
+    const usersRef = adminDb.collection("users") as any;
+    const returnsRef = adminDb.collection("tax_returns") as any;
+
     const [
-      usersSnapshot,
-      profilesSnapshot,
-      returnsSnapshot,
-      documentsSnapshot,
-      postsSnapshot,
+      totalUsersAgg,
+      activeUsersAgg,
+      pendingUsersAgg,
+      adminsAgg,
+      caProfessionalsAgg,
+      totalProfilesAgg,
+      totalReturnsAgg,
+      filedReturnsAgg,
+      verifiedReturnsAgg,
+      completedReturnsAgg,
+      draftReturnsAgg,
+      totalDocsAgg,
+      totalPostsAgg,
+      publishedPostsAgg,
       googleAnalytics,
     ] = await Promise.all([
-      adminDb.collection("users").get(),
-      adminDb.collection("profiles").get(),
-      adminDb.collection("tax_returns").get(),
-      adminDb.collection("documents").get(),
-      adminDb.collection("blog_posts").get(),
+      usersRef.count().get(),
+      usersRef.where("status", "==", "active").count().get(),
+      usersRef.where("status", "==", "pending").count().get(),
+      usersRef.where("role", "==", "admin").count().get(),
+      usersRef.where("role", "==", "ca").count().get(),
+      adminDb.collection("profiles").count().get(),
+      returnsRef.count().get(),
+      returnsRef.where("status", "==", "filed").count().get(),
+      returnsRef.where("status", "==", "verified").count().get(),
+      returnsRef.where("status", "==", "completed").count().get(),
+      returnsRef.where("status", "==", "draft").count().get(),
+      adminDb.collection("documents").count().get(),
+      adminDb.collection("blog_posts").count().get(),
+      adminDb.collection("blog_posts").where("status", "==", "published").count().get(),
       googleAnalyticsPromise,
     ]);
 
-    const users = usersSnapshot.docs.map((doc) => doc.data() as Record<string, any>);
-    const activeUsers = users.filter((user) => String(user.status || "active").toLowerCase() === "active");
-    const pendingUsers = users.filter((user) => String(user.status || "").toLowerCase() === "pending");
-    const admins = users.filter((user) => String(user.role || "").toLowerCase() === "admin");
-    const caProfessionals = users.filter((user) => String(user.role || "").toLowerCase() === "ca");
-
-    const returnCounts = statusCount(returnsSnapshot.docs, ["filed", "completed", "verified"]);
-    const publishedPosts = postsSnapshot.docs.filter(
-      (doc) => String((doc.data() as any).status || "").toLowerCase() === "published",
-    );
+    const totalUsers = totalUsersAgg.data().count;
+    const totalReturns = totalReturnsAgg.data().count;
+    const filedDone = filedReturnsAgg.data().count + verifiedReturnsAgg.data().count + completedReturnsAgg.data().count;
+    const draftReturns = draftReturnsAgg.data().count;
 
     res.json({
       success: true,
@@ -71,27 +69,27 @@ router.get("/overview", requireAuth, requireAdmin, async (req: Request, res: Res
       googleAnalytics,
       stats: {
         userStats: {
-          totalUsers: usersSnapshot.size,
-          activeUsers: activeUsers.length,
-          pendingUsers: pendingUsers.length,
-          admins: admins.length,
-          caProfessionals: caProfessionals.length,
+          totalUsers,
+          activeUsers: activeUsersAgg.data().count,
+          pendingUsers: pendingUsersAgg.data().count,
+          admins: adminsAgg.data().count,
+          caProfessionals: caProfessionalsAgg.data().count,
         },
         profileStats: {
-          totalProfiles: profilesSnapshot.size,
+          totalProfiles: totalProfilesAgg.data().count,
         },
         returnStats: {
-          totalReturns: returnsSnapshot.size,
-          filedReturns: returnCounts.done,
-          draftReturns: returnCounts.draft,
-          pendingReturns: returnCounts.pending,
+          totalReturns,
+          filedReturns: filedDone,
+          draftReturns,
+          pendingReturns: Math.max(0, totalReturns - filedDone - draftReturns),
         },
         docStats: {
-          totalDocuments: documentsSnapshot.size,
+          totalDocuments: totalDocsAgg.data().count,
         },
         contentStats: {
-          totalPosts: postsSnapshot.size,
-          publishedPosts: publishedPosts.length,
+          totalPosts: totalPostsAgg.data().count,
+          publishedPosts: publishedPostsAgg.data().count,
         },
       },
     });
