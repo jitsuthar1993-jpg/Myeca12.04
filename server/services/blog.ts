@@ -60,6 +60,14 @@ export interface StoredBlogPost {
   canonicalUrl: string | null;
 }
 
+export type BlogInventorySource = "cms" | "static";
+
+export type BlogInventoryPost = StoredBlogPost & {
+  source: BlogInventorySource;
+  canEdit: boolean;
+  canDelete: boolean;
+};
+
 type CategoryLookup = {
   byId: Map<string, BlogCategory>;
   aliases: Map<string, BlogCategory>;
@@ -258,6 +266,23 @@ export async function listAllBlogPosts(db: DataAdminDb = adminDb): Promise<Store
     console.warn("Unable to load all blog posts:", error);
   }
 
+  return storedPosts;
+}
+
+export async function listBlogInventoryPosts(db: DataAdminDb = adminDb): Promise<BlogInventoryPost[]> {
+  const lookup = await getCategoryLookup(db);
+  let storedPosts: StoredBlogPost[] = [];
+
+  try {
+    const snapshot = await withTimeout(
+      db.collection("blog_posts").get(),
+      "Loading blog post inventory",
+    );
+    storedPosts = snapshot.docs.map((doc) => normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup));
+  } catch (error) {
+    console.warn("Unable to load blog post inventory:", error);
+  }
+
   return mergeBlogInventoryPosts(listDefaultBlogPosts(lookup), storedPosts);
 }
 
@@ -295,14 +320,33 @@ function listDefaultBlogPosts(lookup: CategoryLookup = getDefaultCategoryLookup(
     .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
 }
 
+export function getStaticBlogPostById(id: string): StoredBlogPost | null {
+  const key = id.trim().toLowerCase();
+  if (!key) return null;
+
+  return listDefaultBlogPosts()
+    .find((post) => post.id.toLowerCase() === key || post.slug.toLowerCase() === key) ?? null;
+}
+
+function toBlogInventoryPost(post: StoredBlogPost, source: BlogInventorySource): BlogInventoryPost {
+  const isCmsPost = source === "cms";
+
+  return {
+    ...post,
+    source,
+    canEdit: isCmsPost,
+    canDelete: isCmsPost,
+  };
+}
+
 function mergeBlogInventoryPosts(
   staticPosts: StoredBlogPost[],
   databasePosts: StoredBlogPost[],
-): StoredBlogPost[] {
-  const bySlug = new Map<string, StoredBlogPost>();
+): BlogInventoryPost[] {
+  const bySlug = new Map<string, BlogInventoryPost>();
 
-  staticPosts.forEach((post) => bySlug.set((post.slug || post.id).toLowerCase(), post));
-  databasePosts.forEach((post) => bySlug.set((post.slug || post.id).toLowerCase(), post));
+  staticPosts.forEach((post) => bySlug.set((post.slug || post.id).toLowerCase(), toBlogInventoryPost(post, "static")));
+  databasePosts.forEach((post) => bySlug.set((post.slug || post.id).toLowerCase(), toBlogInventoryPost(post, "cms")));
 
   return sortBlogInventoryPosts([...bySlug.values()]);
 }
@@ -337,7 +381,7 @@ export async function getBlogPostById(id: string, db: DataAdminDb = adminDb): Pr
     console.warn(`Unable to load blog post '${id}':`, error);
   }
 
-  return listDefaultBlogPosts(lookup).find((post) => post.id === id || post.slug === id) ?? null;
+  return null;
 }
 
 export async function buildBlogPostWriteData(
@@ -424,7 +468,7 @@ export function sortPublishedPosts(posts: StoredBlogPost[]): StoredBlogPost[] {
     });
 }
 
-export function sortBlogInventoryPosts(posts: StoredBlogPost[]): StoredBlogPost[] {
+export function sortBlogInventoryPosts<T extends StoredBlogPost>(posts: T[]): T[] {
   return [...posts].sort((left, right) => {
     if (left.isFeatured !== right.isFeatured) {
       return Number(right.isFeatured) - Number(left.isFeatured);

@@ -7,12 +7,14 @@ import multer from "multer";
 import sharp from "sharp";
 import { put, list } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
-import { blogPostEditorSchema, blogPostUpdateSchema, type BlogPostEditorInput } from "../../shared/blog.js";
+import { blogPostEditorSchema, blogPostUpdateSchema, type BlogCategory, type BlogPostEditorInput } from "../../shared/blog.js";
+import { defaultBlogCategories } from "../data/default-blog-content.js";
 import {
   buildBlogPostWriteData,
   getCategoryLookup,
   getBlogPostById,
-  listAllBlogPosts,
+  getStaticBlogPostById,
+  listBlogInventoryPosts,
   normalizeStoredBlogPostRecord,
   type StoredBlogPost,
 } from "../services/blog.js";
@@ -59,7 +61,28 @@ function storedPostToEditorInput(post: StoredBlogPost): BlogPostEditorInput {
     readingTimeMinutes: post.readingTimeMinutes,
     publishedAt: post.publishedAt,
     tags: post.tags,
+    audience: post.audience,
+    reviewedBy: post.reviewedBy,
+    reviewedAt: post.reviewedAt,
+    reviewerName: post.reviewerName,
+    reviewerRole: post.reviewerRole,
+    reviewerCredentialName: post.reviewerCredentialName,
+    reviewerCredentialId: post.reviewerCredentialId,
+    reviewerCredentialAuthority: post.reviewerCredentialAuthority,
+    sourceLinks: post.sourceLinks,
+    serviceSlug: post.serviceSlug,
+    calculatorSlug: post.calculatorSlug,
+    canonicalUrl: post.canonicalUrl,
   });
+}
+
+function withCmsInventoryFlags(post: StoredBlogPost) {
+  return {
+    ...post,
+    source: "cms" as const,
+    canEdit: true,
+    canDelete: true,
+  };
 }
 
 // List posts with filters
@@ -67,7 +90,7 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
   try {
     const { q, status } = req.query as { q?: string; status?: string };
 
-    let posts = await listAllBlogPosts();
+    let posts = await listBlogInventoryPosts();
     if (status === "draft" || status === "published") {
       posts = posts.filter((post) => post.status === status);
     }
@@ -83,6 +106,41 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
     res.json({ success: true, posts });
   } catch (error) {
     return safeError(res, error, "Failed to fetch posts");
+  }
+});
+
+router.post("/posts/:id/import", requireAuth, requireTeamMember, async (req: AuthRequest, res: Response) => {
+  try {
+    const staticPost = getStaticBlogPostById(req.params.id);
+    if (!staticPost) return errorResponse(res, 404, "Static post not found");
+
+    const existingSnapshot = await adminDb.collection("blog_posts")
+      .where("slug", "==", staticPost.slug)
+      .limit(1)
+      .get();
+    const lookup = await getCategoryLookup();
+    const existingDoc = existingSnapshot.docs[0];
+
+    if (existingDoc) {
+      const post = normalizeStoredBlogPostRecord(existingDoc.id, existingDoc.data() as Record<string, unknown>, lookup);
+      return res.json({ success: true, imported: false, post: withCmsInventoryFlags(post) });
+    }
+
+    const postRef = adminDb.collection("blog_posts").doc();
+    const writeData = await buildBlogPostWriteData(storedPostToEditorInput(staticPost), {
+      authUserId: req.auth?.userId,
+    });
+
+    await postRef.set(writeData);
+    clearPublicBlogCaches();
+
+    const post = normalizeStoredBlogPostRecord(postRef.id, writeData as Record<string, unknown>, lookup);
+    return res.json({ success: true, imported: true, post: withCmsInventoryFlags(post) });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return errorResponse(res, 400, error.errors[0].message);
+    }
+    return safeError(res, error, "Failed to import post");
   }
 });
 
@@ -129,12 +187,10 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
 
     const postRef = adminDb.collection("blog_posts").doc(id);
     const doc = await postRef.get();
+    if (!doc.exists) return errorResponse(res, 404, "Post not found");
 
     const lookup = await getCategoryLookup();
-    const existing = doc.exists
-      ? normalizeStoredBlogPostRecord(id, doc.data() as Record<string, unknown>, lookup)
-      : await getBlogPostById(id);
-    if (!existing) return errorResponse(res, 404, "Post not found");
+    const existing = normalizeStoredBlogPostRecord(id, doc.data() as Record<string, unknown>, lookup);
 
     const completePayload = blogPostEditorSchema.parse({
       ...storedPostToEditorInput(existing),
@@ -145,11 +201,7 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
       authUserId: req.auth?.userId,
     });
 
-    if (doc.exists) {
-      await postRef.update(writeData);
-    } else {
-      await postRef.set(writeData);
-    }
+    await postRef.update(writeData);
     clearPublicBlogCaches();
 
     const updatedLookup = await getCategoryLookup();
@@ -256,7 +308,22 @@ const createCategorySchema = z.object({
 router.get("/categories", requireAuth, requireTeamMember, async (req: AuthRequest, res: Response) => {
   try {
     const snapshot = await adminDb.collection("categories").orderBy("name").get();
-    const allCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const byId = new Map<string, BlogCategory>(defaultBlogCategories.map((category) => [category.id, { ...category }]));
+    snapshot.docs.forEach((doc) => {
+      const data = doc.data() as Partial<BlogCategory>;
+      const name = typeof data.name === "string" && data.name.trim() ? data.name.trim() : "General";
+      const slug = typeof data.slug === "string" && data.slug.trim()
+        ? data.slug.trim()
+        : name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      byId.set(doc.id, {
+        id: doc.id,
+        name,
+        slug,
+        description: typeof data.description === "string" ? data.description : null,
+      });
+    });
+    const allCategories = Array.from(byId.values())
+      .sort((left, right) => left.name.localeCompare(right.name));
     res.json({ success: true, categories: allCategories });
   } catch (error) {
     return safeError(res, error, "Failed to fetch categories");
