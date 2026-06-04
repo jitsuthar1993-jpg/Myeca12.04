@@ -18,8 +18,6 @@ export type ServiceRequestPayload = {
   metadata: {
     requestDescription: string;
     source: string;
-    formId: string;
-    serviceIntent: string;
     requestedAt: string;
     originalServicePath: string | null;
   };
@@ -56,8 +54,6 @@ export function buildDashboardServiceRequestPayload(
     metadata: {
       requestDescription: requestDescription.trim(),
       source: 'dashboard_services',
-      formId: 'dashboard-service-modal',
-      serviceIntent: isCustom ? 'custom-request' : selectedServiceId,
       requestedAt,
       originalServicePath: normalizedService?.originalServicePath ?? null,
     },

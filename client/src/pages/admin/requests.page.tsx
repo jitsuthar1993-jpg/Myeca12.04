@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import {
+  Briefcase,
   CalendarClock,
   CheckCircle2,
   CreditCard,
@@ -58,8 +59,23 @@ type PaymentLinkRequest = {
   createdAt?: string;
 };
 
+type ServiceCase = {
+  id: string;
+  serviceTitle?: string;
+  serviceCategory?: string;
+  status?: "pending" | "in_progress" | "completed" | "cancelled";
+  paymentStatus?: string;
+  paymentAmount?: number | string | null;
+  userName?: string;
+  userEmail?: string | null;
+  assignedCaId?: string | null;
+  metadata?: { requestDescription?: string; adminNote?: string };
+  createdAt?: string;
+};
+
 const consultationStatuses = ["all", "new", "contacted", "converted", "closed"];
 const paymentStatuses = ["all", "requested", "link_sent", "paid", "cancelled"];
+const caseStatuses = ["all", "pending", "in_progress", "completed", "cancelled"];
 
 function dateLabel(value?: string) {
   if (!value) return "Not recorded";
@@ -102,13 +118,17 @@ function label(value?: string) {
 export default function AdminRequestsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<"cases" | "consultations" | "payments">("cases");
   const [consultationStatus, setConsultationStatus] = useState("all");
   const [paymentStatus, setPaymentStatus] = useState("all");
+  const [caseStatus, setCaseStatus] = useState("all");
   const [selectedConsultation, setSelectedConsultation] = useState<ConsultationRequest | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<PaymentLinkRequest | null>(null);
+  const [selectedCase, setSelectedCase] = useState<ServiceCase | null>(null);
   const [consultationNote, setConsultationNote] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
   const [paymentNote, setPaymentNote] = useState("");
+  const [caseNote, setCaseNote] = useState("");
 
   const consultationQuery = useQuery<{ requests: ConsultationRequest[]; total: number }>({
     queryKey: ["/api/admin/requests/consultations", consultationStatus],
@@ -130,8 +150,38 @@ export default function AdminRequestsPage() {
     },
   });
 
+  const casesQuery = useQuery<{ cases: ServiceCase[]; total: number }>({
+    queryKey: ["/api/admin/user-services", caseStatus],
+    queryFn: async () => {
+      const params = new URLSearchParams({ limit: "100" });
+      if (caseStatus !== "all") params.set("status", caseStatus);
+      const response = await apiRequest(`/api/admin/user-services?${params}`);
+      return response.json();
+    },
+  });
+
+  const updateCase = useMutation({
+    mutationFn: async ({ id, ...payload }: { id: string; status?: string; adminNote?: string }) => {
+      const response = await apiRequest(`/api/admin/user-services/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/user-services"] });
+      setSelectedCase(null);
+      setCaseNote("");
+      toast({ title: "Case updated", description: "Service case status has been saved." });
+    },
+    onError: (error: any) => {
+      toast({ title: "Update failed", description: error?.message || "Please try again.", variant: "destructive" });
+    },
+  });
+
   const consultationRequests = consultationQuery.data?.requests ?? [];
   const paymentRequests = paymentQuery.data?.requests ?? [];
+  const serviceCases = casesQuery.data?.cases ?? [];
   const openConsultations = useMemo(
     () => consultationRequests.filter((request) => !["converted", "closed"].includes(request.status || "")).length,
     [consultationRequests],
@@ -139,6 +189,10 @@ export default function AdminRequestsPage() {
   const openPayments = useMemo(
     () => paymentRequests.filter((request) => !["paid", "cancelled"].includes(request.status || "")).length,
     [paymentRequests],
+  );
+  const pendingCases = useMemo(
+    () => serviceCases.filter((c) => !["completed", "cancelled"].includes(c.status || "")).length,
+    [serviceCases],
   );
 
   const updateConsultation = useMutation({
@@ -192,18 +246,19 @@ export default function AdminRequestsPage() {
               </Badge>
               <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-950">Customer Requests</h1>
               <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-500">
-                Review consultation callbacks and payment-link requests created from the customer workspace.
+                Service cases, consultation callbacks, and payment-link requests from the customer workspace.
               </p>
             </div>
             <Button
               variant="outline"
               className="h-11 rounded-xl border-slate-200 text-xs font-black"
               onClick={() => {
+                casesQuery.refetch();
                 consultationQuery.refetch();
                 paymentQuery.refetch();
               }}
             >
-              <RefreshCw className={cn("mr-2 h-4 w-4", (consultationQuery.isFetching || paymentQuery.isFetching) && "animate-spin")} />
+              <RefreshCw className={cn("mr-2 h-4 w-4", (casesQuery.isFetching || consultationQuery.isFetching || paymentQuery.isFetching) && "animate-spin")} />
               Refresh
             </Button>
           </div>
@@ -211,10 +266,10 @@ export default function AdminRequestsPage() {
 
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-blue-600 bg-blue-50" },
+            { label: "Pending Cases", value: pendingCases, icon: Briefcase, color: "text-blue-600 bg-blue-50" },
+            { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-amber-600 bg-amber-50" },
             { label: "Open Payments", value: openPayments, icon: CreditCard, color: "text-emerald-600 bg-emerald-50" },
-            { label: "Consultations Shown", value: consultationRequests.length, icon: Phone, color: "text-amber-600 bg-amber-50" },
-            { label: "Payments Shown", value: paymentRequests.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100" },
+            { label: "Total Cases", value: serviceCases.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100" },
           ].map((item) => (
             <Card key={item.label} className="rounded-[22px] border-slate-100 shadow-sm">
               <CardContent className="flex items-center gap-4 p-5">
@@ -230,6 +285,112 @@ export default function AdminRequestsPage() {
           ))}
         </div>
 
+        <div className="flex gap-1 rounded-xl border border-slate-200 bg-slate-50 p-1 w-fit">
+          {(["cases", "consultations", "payments"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "rounded-lg px-4 py-2 text-xs font-black capitalize transition-colors",
+                activeTab === tab ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-800",
+              )}
+            >
+              {tab === "cases" ? "Service Cases" : tab === "consultations" ? "Consultations" : "Payment Links"}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === "cases" && (
+          <Card className="rounded-[26px] border-slate-100 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
+              <CardTitle className="text-base font-black">Service Cases</CardTitle>
+              <Select value={caseStatus} onValueChange={setCaseStatus}>
+                <SelectTrigger className="h-9 w-40 rounded-xl border-slate-200 text-xs font-bold">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {caseStatuses.map((s) => (
+                    <SelectItem key={s} value={s}>{label(s)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </CardHeader>
+            <CardContent className="overflow-x-auto p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {casesQuery.isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-32 text-center text-slate-500">
+                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
+                        Loading cases...
+                      </TableCell>
+                    </TableRow>
+                  ) : serviceCases.length ? (
+                    serviceCases.map((c) => (
+                      <TableRow key={c.id}>
+                        <TableCell>
+                          <p className="font-black text-slate-900">{c.userName || "Customer"}</p>
+                          <p className="mt-1 text-xs text-slate-400">{c.userEmail || ""}</p>
+                        </TableCell>
+                        <TableCell>
+                          <p className="font-black text-slate-900">{c.serviceTitle || "Service"}</p>
+                          <p className="mt-1 text-xs text-slate-500">{c.serviceCategory || ""}</p>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={cn("border px-2 py-1 text-[10px] font-black uppercase tracking-widest", statusBadgeClass(c.status))}>
+                            {label(c.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm font-black text-slate-900">{amountLabel(c.paymentAmount)}</TableCell>
+                        <TableCell className="text-xs text-slate-500">{dateLabel(c.createdAt)}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Link href={`/dashboard/services/${c.id}`}>
+                              <Button variant="outline" size="sm" className="rounded-xl border-slate-200 text-xs font-black">
+                                <ExternalLink className="mr-1 h-3 w-3" />
+                                View
+                              </Button>
+                            </Link>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-xl border-slate-200 text-xs font-black"
+                              onClick={() => {
+                                setSelectedCase(c);
+                                setCaseNote(c.metadata?.adminNote || "");
+                              }}
+                            >
+                              Update
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-32 text-center text-sm font-medium text-slate-500">
+                        No service cases match this filter.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab !== "cases" && (
         <div className="grid gap-6 xl:grid-cols-2">
           <Card className="rounded-[26px] border-slate-100 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-slate-50 p-5">
@@ -381,7 +542,58 @@ export default function AdminRequestsPage() {
             </CardContent>
           </Card>
         </div>
+        )}
       </div>
+
+      <Dialog open={!!selectedCase} onOpenChange={() => setSelectedCase(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Update Service Case</DialogTitle>
+            <DialogDescription>Change the case status or add an internal admin note.</DialogDescription>
+          </DialogHeader>
+          {selectedCase && (
+            <div className="space-y-5">
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Service</p>
+                <p className="mt-1 font-black text-slate-900">{selectedCase.serviceTitle || "Service"}</p>
+                <p className="text-sm text-slate-500">{selectedCase.userName} · {amountLabel(selectedCase.paymentAmount)}</p>
+                {selectedCase.metadata?.requestDescription && (
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{selectedCase.metadata.requestDescription}</p>
+                )}
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
+                <Select
+                  value={selectedCase.status || "pending"}
+                  onValueChange={(s) => setSelectedCase({ ...selectedCase, status: s as ServiceCase["status"] })}
+                >
+                  <SelectTrigger className="rounded-xl border-slate-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {caseStatuses.filter((s) => s !== "all").map((s) => (
+                      <SelectItem key={s} value={s}>{label(s)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Textarea
+                  value={caseNote}
+                  onChange={(e) => setCaseNote(e.target.value)}
+                  placeholder="Internal note for the team..."
+                  className="min-h-24 rounded-xl border-slate-200"
+                />
+              </div>
+              <Button
+                className="w-full rounded-xl bg-blue-700 font-black text-white hover:bg-blue-600"
+                disabled={updateCase.isPending}
+                onClick={() => updateCase.mutate({ id: selectedCase.id, status: selectedCase.status || "pending", adminNote: caseNote })}
+              >
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Save Case State
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!selectedConsultation} onOpenChange={() => setSelectedConsultation(null)}>
         <DialogContent className="max-w-2xl">

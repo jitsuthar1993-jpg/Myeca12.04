@@ -248,6 +248,72 @@ router.patch(
   },
 );
 
+// ==================== USER SERVICE CASES ====================
+
+router.get("/user-services", requireAuth, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const status = typeof req.query.status === "string" && req.query.status !== "all" ? req.query.status : undefined;
+    const limit = parseRequestLimit(req.query.limit ?? "100");
+
+    const snapshot = await adminDb.collection("user_services").get();
+    const usersSnapshot = await adminDb.collection("users").get();
+    const userMap = new Map<string, any>(usersSnapshot.docs.map(doc => [doc.id, doc.data()]));
+
+    let cases = snapshot.docs
+      .map(doc => {
+        const data = doc.data() as Record<string, any>;
+        return {
+          id: doc.id,
+          ...data,
+          userName: userMap.get(data.userId)?.firstName || "Customer",
+          userEmail: userMap.get(data.userId)?.email || null,
+          createdAt: convertTimestamp(data.createdAt),
+          updatedAt: convertTimestamp(data.updatedAt),
+        } as Record<string, any>;
+      })
+      .filter(c => !status || c["status"] === status)
+      .sort((a, b) => new Date((b.createdAt as any) || 0).getTime() - new Date((a.createdAt as any) || 0).getTime());
+
+    res.json({ success: true, cases: cases.slice(0, limit), total: cases.length });
+  } catch (error) {
+    return safeError(res, error, "Failed to load user service cases");
+  }
+});
+
+const updateUserServiceCaseSchema = z.object({
+  status: z.enum(["pending", "in_progress", "completed", "cancelled"]).optional(),
+  assignedCaId: z.string().trim().max(128).nullable().optional(),
+  adminNote: z.string().trim().max(2000).optional(),
+});
+
+router.patch(
+  "/user-services/:id",
+  requireAuth,
+  requireAdmin,
+  validateRequest(updateUserServiceCaseSchema),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const ref = adminDb.collection("user_services").doc(req.params.id);
+      const doc = await ref.get();
+      if (!doc.exists) return res.status(404).json({ success: false, message: "Service case not found" });
+
+      const updates = updateUserServiceCaseSchema.parse(req.body);
+      const payload: Record<string, any> = { ...updates, updatedAt: new Date() };
+      if (updates.adminNote !== undefined) {
+        const existing = (doc.data() as any).metadata || {};
+        payload.metadata = { ...existing, adminNote: updates.adminNote };
+        delete payload.adminNote;
+      }
+
+      await ref.update(payload);
+      await appendAdminAudit(req, "user_service_case_updated", { caseId: req.params.id, status: updates.status ?? null });
+      res.json({ success: true });
+    } catch (error) {
+      return safeError(res, error, "Failed to update service case");
+    }
+  },
+);
+
 router.post(
   "/invitations",
   requireAuth,
