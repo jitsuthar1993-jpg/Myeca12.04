@@ -68,7 +68,7 @@ describe("public performance cache policy", () => {
     expect(consentIndex).toBeLessThan(gtmIndex);
     expect(bootstrap).toContain('ad_user_data: "denied"');
     expect(bootstrap).toContain('ad_personalization: "denied"');
-    expect(html).not.toContain("googletagmanager.com/ns.html");
+    expect(html).toContain("googletagmanager.com/ns.html?id=GTM-5H5QSCJC");
   });
 
   it("keeps Workbox cache bounds tight for generated public assets", () => {
