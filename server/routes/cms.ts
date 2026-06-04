@@ -11,6 +11,8 @@ import { blogPostEditorSchema, blogPostUpdateSchema, type BlogPostEditorInput } 
 import {
   buildBlogPostWriteData,
   getCategoryLookup,
+  getBlogPostById,
+  listAllBlogPosts,
   normalizeStoredBlogPostRecord,
   type StoredBlogPost,
 } from "../services/blog.js";
@@ -65,21 +67,10 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
   try {
     const { q, status } = req.query as { q?: string; status?: string };
 
-    const lookup = await getCategoryLookup();
-
-    // Push status filter and ordering down into SQL. Text search runs in JS over the result
-    // set because the adminDb shim does not expose ILIKE; the SQL-side limit keeps the result
-    // small enough that the in-memory search is trivial.
-    let query = adminDb.collection("blog_posts") as any;
+    let posts = await listAllBlogPosts();
     if (status === "draft" || status === "published") {
-      query = query.where("status", "==", status);
+      posts = posts.filter((post) => post.status === status);
     }
-    query = query.orderBy("createdAt", "desc").limit(q ? 500 : 200);
-    const snapshot = await query.get();
-
-    let posts = snapshot.docs.map((doc: any) =>
-      normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup),
-    );
 
     if (q) {
       const qLower = q.toLowerCase();
@@ -99,10 +90,8 @@ router.get("/posts", requireAuth, requireTeamMember, async (req: AuthRequest, re
 router.get("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const doc = await adminDb.collection("blog_posts").doc(id).get();
-    if (!doc.exists) return errorResponse(res, 404, "Post not found");
-    const lookup = await getCategoryLookup();
-    const post = normalizeStoredBlogPostRecord(doc.id, doc.data() as Record<string, unknown>, lookup);
+    const post = await getBlogPostById(id);
+    if (!post) return errorResponse(res, 404, "Post not found");
     res.json({ success: true, post });
   } catch (error) {
     return safeError(res, error, "Failed to fetch post");
@@ -140,10 +129,13 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
 
     const postRef = adminDb.collection("blog_posts").doc(id);
     const doc = await postRef.get();
-    if (!doc.exists) return errorResponse(res, 404, "Post not found");
 
     const lookup = await getCategoryLookup();
-    const existing = normalizeStoredBlogPostRecord(id, doc.data() as Record<string, unknown>, lookup);
+    const existing = doc.exists
+      ? normalizeStoredBlogPostRecord(id, doc.data() as Record<string, unknown>, lookup)
+      : await getBlogPostById(id);
+    if (!existing) return errorResponse(res, 404, "Post not found");
+
     const completePayload = blogPostEditorSchema.parse({
       ...storedPostToEditorInput(existing),
       ...payload,
@@ -153,7 +145,11 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
       authUserId: req.auth?.userId,
     });
 
-    await postRef.update(writeData);
+    if (doc.exists) {
+      await postRef.update(writeData);
+    } else {
+      await postRef.set(writeData);
+    }
     clearPublicBlogCaches();
 
     const updatedLookup = await getCategoryLookup();

@@ -258,7 +258,7 @@ export async function listAllBlogPosts(db: DataAdminDb = adminDb): Promise<Store
     console.warn("Unable to load all blog posts:", error);
   }
 
-  return storedPosts;
+  return mergeBlogInventoryPosts(listDefaultBlogPosts(lookup), storedPosts);
 }
 
 /** Optimized: only fetch published posts from DB instead of all posts */
@@ -286,10 +286,25 @@ export async function listPublishedBlogPosts(
 }
 
 export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
-  const lookup = getDefaultCategoryLookup();
+  return listDefaultBlogPosts()
+    .filter((post) => post.status === "published");
+}
+
+function listDefaultBlogPosts(lookup: CategoryLookup = getDefaultCategoryLookup()): StoredBlogPost[] {
   return loadStaticBlogPosts()
-    .filter((post) => post.status === "published")
     .map((post) => normalizeStoredBlogPostRecord(post.id, post as unknown as Record<string, unknown>, lookup));
+}
+
+function mergeBlogInventoryPosts(
+  staticPosts: StoredBlogPost[],
+  databasePosts: StoredBlogPost[],
+): StoredBlogPost[] {
+  const bySlug = new Map<string, StoredBlogPost>();
+
+  staticPosts.forEach((post) => bySlug.set((post.slug || post.id).toLowerCase(), post));
+  databasePosts.forEach((post) => bySlug.set((post.slug || post.id).toLowerCase(), post));
+
+  return sortBlogInventoryPosts([...bySlug.values()]);
 }
 
 export function mergePublishedBlogPosts(
@@ -322,7 +337,7 @@ export async function getBlogPostById(id: string, db: DataAdminDb = adminDb): Pr
     console.warn(`Unable to load blog post '${id}':`, error);
   }
 
-  return null;
+  return listDefaultBlogPosts(lookup).find((post) => post.id === id || post.slug === id) ?? null;
 }
 
 export async function buildBlogPostWriteData(
@@ -407,6 +422,30 @@ export function sortPublishedPosts(posts: StoredBlogPost[]): StoredBlogPost[] {
       const rightUpdated = right.updatedAt ? new Date(right.updatedAt).getTime() : 0;
       return rightUpdated - leftUpdated;
     });
+}
+
+export function sortBlogInventoryPosts(posts: StoredBlogPost[]): StoredBlogPost[] {
+  return [...posts].sort((left, right) => {
+    if (left.isFeatured !== right.isFeatured) {
+      return Number(right.isFeatured) - Number(left.isFeatured);
+    }
+
+    const leftTime = Math.max(
+      left.updatedAt ? new Date(left.updatedAt).getTime() : 0,
+      left.publishedAt ? new Date(left.publishedAt).getTime() : 0,
+      left.createdAt ? new Date(left.createdAt).getTime() : 0,
+    );
+    const rightTime = Math.max(
+      right.updatedAt ? new Date(right.updatedAt).getTime() : 0,
+      right.publishedAt ? new Date(right.publishedAt).getTime() : 0,
+      right.createdAt ? new Date(right.createdAt).getTime() : 0,
+    );
+    if (leftTime !== rightTime) {
+      return rightTime - leftTime;
+    }
+
+    return left.title.localeCompare(right.title);
+  });
 }
 
 export function toPublicBlogSummary(post: StoredBlogPost) {
