@@ -6,6 +6,7 @@ import {
   RouteTransitionCompletionMarker,
   useRouteTransitionPending,
 } from '@/components/routing/route-transition';
+import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import HomePage from "@/pages/home.page";
 const MobileAppScreensPage = lazyWithRetry(() => import("@/pages/mobile-app-screens.page"));
 
@@ -204,7 +205,13 @@ function StaticRouteFallback({ path }: { path: string }) {
 }
 
 function RouteSwitch() {
+  // A single RouteErrorBoundary inside the Switch contains render errors to the page
+  // content area — the outer ErrorBoundary in App.tsx stays in place as the final
+  // catch-all, but a thrown error in /dashboard/services/:id no longer blanks the
+  // header, footer, and global chrome. The boundary auto-resets when the URL changes
+  // (see RouteErrorBoundary's key={location}).
   return (
+    <RouteErrorBoundary>
       <Switch>
         <Route path="/" component={HomePage} />
         <Route path="/mobile-app" component={MobileAppScreensPage} />
@@ -477,6 +484,7 @@ function RouteSwitch() {
         <Route path="/500" component={ServerErrorPage} />
         <Route component={NotFound} />
       </Switch>
+    </RouteErrorBoundary>
   );
 }
 
