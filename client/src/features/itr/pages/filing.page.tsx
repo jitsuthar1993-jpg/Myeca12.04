@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
+  AlertTriangle,
   BadgeCheck,
   Banknote,
   CheckCircle2,
@@ -237,6 +238,12 @@ function incomeToggleSelected(draft: ItrFilingDraft, key: (typeof INCOME_TOGGLES
   return draft.income.foreignIncome > 0 || draft.flags.hasForeignAssets || draft.flags.hasForeignSigningAuthority;
 }
 
+function apiErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === "string" && error.trim()) return error;
+  return "Please try again. If it still fails, contact support.";
+}
+
 export default function ITRFilingPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [activeReturnId, setActiveReturnId] = useState<string | null>(null);
@@ -244,6 +251,7 @@ export default function ITRFilingPage() {
   const [selectorHandoff, setSelectorHandoff] = useState<ItrStartHandoffPayload | null>(null);
   const [handoffChecked, setHandoffChecked] = useState(false);
   const [pendingSave, setPendingSave] = useState(false);
+  const [saveError, setSaveError] = useState<unknown>(null);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [showSensitive, setShowSensitive] = useState(false);
   const aadhaarInputId = useId();
@@ -302,19 +310,26 @@ export default function ITRFilingPage() {
     if (!activeReturn) return;
     setDraft(normalizeItrDraft(activeReturn.formData));
     setPendingSave(false);
+    setSaveError(null);
   }, [activeReturn?.id]);
 
   useEffect(() => {
     if (!activeReturnId || !pendingSave) return;
 
     const timer = window.setTimeout(async () => {
-      await apiRequest(`/api/tax-returns/${activeReturnId}`, {
-        method: "PATCH",
-        body: JSON.stringify({ draft }),
-      });
-      setLastSavedAt(new Date());
-      setPendingSave(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
+      try {
+        await apiRequest(`/api/tax-returns/${activeReturnId}`, {
+          method: "PATCH",
+          body: JSON.stringify({ draft }),
+        });
+        setLastSavedAt(new Date());
+        setSaveError(null);
+        queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
+      } catch (error) {
+        setSaveError(error);
+      } finally {
+        setPendingSave(false);
+      }
     }, 700);
 
     return () => window.clearTimeout(timer);
@@ -335,6 +350,7 @@ export default function ITRFilingPage() {
     onSuccess: (data, input) => {
       setActiveReturnId(data.taxReturn.id);
       setDraft(normalizeItrDraft(data.taxReturn.formData));
+      setSaveError(null);
       if (input?.clearHandoff) {
         clearItrStartHandoff();
         setSelectorHandoff(null);
@@ -406,6 +422,7 @@ export default function ITRFilingPage() {
   });
 
   const updateDraft = (updater: (current: ItrFilingDraft) => ItrFilingDraft) => {
+    setSaveError(null);
     setDraft((current) => normalizeItrDraft(updater(current)));
     setPendingSave(Boolean(activeReturnId));
   };
@@ -484,6 +501,36 @@ export default function ITRFilingPage() {
     );
   }
 
+  if (taxReturnsQuery.isError) {
+    return (
+      <Layout title="MY ITR">
+        <MyeCard className="p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-red-700">MY ITR</p>
+              <h2 className="mt-2 text-2xl font-black text-slate-950">We couldn't load your ITR drafts</h2>
+              <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-600">
+                {apiErrorMessage(taxReturnsQuery.error)}
+              </p>
+              <Button
+                type="button"
+                onClick={() => void taxReturnsQuery.refetch()}
+                disabled={taxReturnsQuery.isFetching}
+                className="mt-5 bg-blue-600 text-white hover:bg-blue-700"
+              >
+                {taxReturnsQuery.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                Retry
+              </Button>
+            </div>
+          </div>
+        </MyeCard>
+      </Layout>
+    );
+  }
+
   if (!activeReturn) {
     return (
       <Layout title="MY ITR">
@@ -493,9 +540,23 @@ export default function ITRFilingPage() {
             title="Start a new AY 2026-27 filing draft"
             description="Prepare your own ITR or another person's draft, then submit the self-prep packet for CA review."
           />
+          {createDraftMutation.isError ? (
+            <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800" role="alert">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-black text-red-900">We couldn't start your ITR draft</p>
+                  <p className="mt-1 leading-6">{apiErrorMessage(createDraftMutation.error)}</p>
+                </div>
+              </div>
+            </div>
+          ) : null}
           <Button
             className="mt-6 bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => createDraftMutation.mutate({})}
+            onClick={() => {
+              createDraftMutation.reset();
+              createDraftMutation.mutate({});
+            }}
             disabled={createDraftMutation.isPending}
           >
             {createDraftMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -522,7 +583,7 @@ export default function ITRFilingPage() {
               <StatusBadge status={recommendationStatus(recommendation) as any} label={recommendation.form.replace(/_/g, " ")} />
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">
                 <Save className="mr-2 inline h-4 w-4" />
-                {pendingSave ? "Saving..." : lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Saved draft"}
+                {saveError ? "Save failed" : pendingSave ? "Saving..." : lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Saved draft"}
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">
                 {documentCountLabel(requiredDocumentCount)}
@@ -530,6 +591,26 @@ export default function ITRFilingPage() {
             </div>
           </div>
         </MyeCard>
+
+        {saveError ? (
+          <MyeCard className="border-red-200 bg-red-50 p-4 shadow-none">
+            <div className="flex items-start gap-3 text-sm font-semibold text-red-800" role="alert">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <div>
+                <p className="font-black text-red-900">We couldn't save your latest draft changes</p>
+                <p className="mt-1 leading-6">{apiErrorMessage(saveError)}</p>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => setPendingSave(Boolean(activeReturnId))}
+                  className="mt-3 bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Retry save
+                </Button>
+              </div>
+            </div>
+          </MyeCard>
+        ) : null}
 
         {selectorHandoff && activeReturn ? (
           <MyeCard className="border-blue-200 bg-blue-50 p-5 shadow-none">

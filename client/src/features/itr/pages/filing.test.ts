@@ -172,6 +172,37 @@ describe("ITR filing workspace", () => {
     expect(screen.queryByText(/UIDAI verified/i)).not.toBeInTheDocument();
   });
 
+  it("shows a retryable error when filing drafts fail to load", async () => {
+    apiRequestMock.mockRejectedValueOnce(new Error("404: API route not found"));
+
+    renderFilingPage();
+
+    expect(await screen.findByText("We couldn't load your ITR drafts")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Retry/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Start from scratch/i })).not.toBeInTheDocument();
+  });
+
+  it("recovers the start action when draft creation fails", async () => {
+    apiRequestMock.mockImplementation(async (url: string, options?: { method?: string }) => {
+      if (url === "/api/tax-returns" && options?.method === "POST") {
+        throw new Error("405: Method not allowed");
+      }
+
+      if (url === "/api/tax-returns") {
+        return jsonResponse({ taxReturns: [] });
+      }
+
+      return jsonResponse({});
+    });
+
+    renderFilingPage();
+    await userEvent.click(await screen.findByRole("button", { name: /Start from scratch/i }));
+
+    expect(await screen.findByText("We couldn't start your ITR draft")).toBeInTheDocument();
+    expect(screen.getByText(/Method not allowed/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Start from scratch/i })).toBeEnabled();
+  });
+
   it("auto-creates the first tax return from a valid selector handoff", async () => {
     setupApi([]);
     writeItrStartHandoff({
