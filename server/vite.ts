@@ -24,6 +24,7 @@ import {
   classifySpaFallbackPath,
   injectNoindexFallbackMeta,
 } from "../shared/spa-fallback-policy.js";
+import { isCrawlerUserAgent } from "../shared/bot-detection.js";
 
 const viteLogger = createLogger();
 const BLOG_SEO_CACHE_TTL = 5 * 60 * 1000;
@@ -263,9 +264,7 @@ export function serveStatic(app: Express) {
     try {
       let content = await fs.promises.readFile(indexPath, "utf-8");
       const userAgent = req.headers["user-agent"] || "";
-      // Includes social link-preview agents (WhatsApp, Facebook, Telegram, LinkedIn, Twitter,
-      // Slack, Discord, Skype, Pinterest) so shared links render with the correct OG card.
-      const isBot = /bot|googlebot|crawler|spider|robot|crawling|bingbot|duckduckbot|yandexbot|slurp|facebot|ia_archiver|facebookexternalhit|whatsapp|telegrambot|linkedinbot|twitterbot|slackbot|slack-imgproxy|discordbot|skypeuripreview|pinterest|embedly|quora|outbrain|preview|chatgpt|gptbot|claude-web/i.test(userAgent);
+      const isBot = isCrawlerUserAgent(userAgent);
 
       // Simple SEO Injection for Bots
       if (isBot) {

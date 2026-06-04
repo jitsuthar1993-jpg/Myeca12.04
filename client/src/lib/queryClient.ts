@@ -113,8 +113,11 @@ queryClient.setQueryDefaults(["/api/profiles"], USER_FOCUS_REFETCH_OPTIONS);
 queryClient.setQueryDefaults(["/api/user-services"], USER_FOCUS_REFETCH_OPTIONS);
 queryClient.setQueryDefaults(["/api/ca/stats"], USER_FOCUS_REFETCH_OPTIONS);
 
-// Admin list/dashboard queries hit large tables; use a longer stale window and refresh on demand via the Refresh button.
-queryClient.setQueryDefaults(["/api/admin/stats"], CACHE_TIMES.adminList);
+// /api/admin/stats still refetches on focus for fresh dashboard feel — the server now
+// serves it from a 60s in-memory cache, so the refetch is cheap.
+queryClient.setQueryDefaults(["/api/admin/stats"], USER_FOCUS_REFETCH_OPTIONS);
+
+// Admin list queries hit large tables; use a longer stale window and refresh on demand.
 queryClient.setQueryDefaults(["/api/admin/user-services"], CACHE_TIMES.adminList);
 queryClient.setQueryDefaults(["/api/admin/requests/consultations"], CACHE_TIMES.adminList);
 queryClient.setQueryDefaults(["/api/admin/requests/payment-links"], CACHE_TIMES.adminList);

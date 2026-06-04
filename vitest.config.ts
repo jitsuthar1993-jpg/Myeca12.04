@@ -6,7 +6,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./client/src/test/setup.ts'],
-    include: ['client/src/**/*.{test,spec}.{ts,tsx}'],
+    // Server/shared tests opt into the node environment via the
+    // `// @vitest-environment node` pragma at the top of the file. The default below
+    // stays jsdom because the bulk of the suite is React components.
+    include: ['client/src/**/*.{test,spec}.{ts,tsx}', 'server/**/*.{test,spec}.ts', 'shared/**/*.{test,spec}.ts'],
     exclude: ['node_modules', 'dist'],
     coverage: {
       provider: 'v8',

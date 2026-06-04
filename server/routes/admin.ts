@@ -105,7 +105,7 @@ async function listRequestRecords(
   return snapshot.docs.map(normalizeRequestRecord);
 }
 
-function parseRequestLimit(value: unknown) {
+export function parseRequestLimit(value: unknown) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return 50;
   return Math.min(API_CONFIG.MAX_PAGE_SIZE, Math.max(1, Math.floor(parsed)));

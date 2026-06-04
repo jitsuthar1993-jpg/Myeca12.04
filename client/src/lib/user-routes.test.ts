@@ -72,6 +72,19 @@ function makeQuery(
       const docs = entries.map(([id]) => makeSnapshot(id, records));
       return { docs, size: docs.length };
     },
+    count() {
+      // Mirror the production shim's count() API: returns an object with .get() that
+      // resolves to a snapshot whose .data() yields { count: <number> }.
+      return {
+        get: async () => {
+          const records = collectionStore(collectionName);
+          const count = Array.from(records.entries())
+            .filter(([, data]) => clauses.every((clause) => data[clause.field] === clause.value))
+            .length;
+          return { data: () => ({ count }) };
+        },
+      };
+    },
   };
 }
 
