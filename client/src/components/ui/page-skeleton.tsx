@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export function PageSkeleton() {
   return (
@@ -65,6 +66,50 @@ export function CalculatorSkeleton() {
         </div>
       </div>
     </div>
+  );
+}
+
+interface TableRowsSkeletonProps {
+  /** Number of placeholder rows to render. Defaults to 5. */
+  rows?: number;
+  /** Number of columns to render in each row. */
+  columns: number;
+  /** Optional className applied to each TableCell wrapper. */
+  className?: string;
+}
+
+/**
+ * Skeleton rows that fit inside an existing `<Table>` body. Use this in place of a
+ * centered spinner when fetching list data — the page chrome and table headers stay
+ * stable so there is no layout shift when the real rows arrive, and the user sees
+ * the shape of the data immediately rather than an indeterminate loading state.
+ *
+ * Render inside <TableBody>:
+ *   {query.isLoading ? <TableRowsSkeleton columns={6} /> : rows.map(...)}
+ */
+export function TableRowsSkeleton({ rows = 5, columns, className }: TableRowsSkeletonProps) {
+  return (
+    <>
+      {Array.from({ length: rows }, (_, rowIndex) => (
+        <tr
+          key={`skeleton-row-${rowIndex}`}
+          data-testid="table-row-skeleton"
+          className="border-b border-slate-100"
+        >
+          {Array.from({ length: columns }, (_, colIndex) => (
+            <td key={`skeleton-cell-${rowIndex}-${colIndex}`} className={cn("p-4", className)}>
+              <Skeleton
+                className={cn(
+                  "h-4",
+                  // Vary the widths so the placeholders feel less mechanical.
+                  colIndex % 3 === 0 ? "w-40" : colIndex % 3 === 1 ? "w-24" : "w-16",
+                )}
+              />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
   );
 }
 

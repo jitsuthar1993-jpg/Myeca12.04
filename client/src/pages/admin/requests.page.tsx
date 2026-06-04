@@ -8,12 +8,12 @@ import {
   CheckCircle2,
   CreditCard,
   ExternalLink,
-  Loader2,
   MessageSquare,
   Phone,
   ReceiptText,
   RefreshCw,
 } from "lucide-react";
+import { TableRowsSkeleton } from "@/components/ui/page-skeleton";
 import { Layout } from "@/components/admin/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -330,12 +330,7 @@ export default function AdminRequestsPage() {
                 </TableHeader>
                 <TableBody>
                   {casesQuery.isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-32 text-center text-slate-500">
-                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
-                        Loading cases...
-                      </TableCell>
-                    </TableRow>
+                    <TableRowsSkeleton rows={5} columns={6} />
                   ) : serviceCases.length ? (
                     serviceCases.map((c) => (
                       <TableRow key={c.id}>
@@ -420,12 +415,7 @@ export default function AdminRequestsPage() {
                 </TableHeader>
                 <TableBody>
                   {consultationQuery.isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-32 text-center text-slate-500">
-                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
-                        Loading consultations...
-                      </TableCell>
-                    </TableRow>
+                    <TableRowsSkeleton rows={5} columns={4} />
                   ) : consultationRequests.length ? (
                     consultationRequests.map((request) => (
                       <TableRow key={request.id}>
@@ -495,12 +485,7 @@ export default function AdminRequestsPage() {
                 </TableHeader>
                 <TableBody>
                   {paymentQuery.isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-32 text-center text-slate-500">
-                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
-                        Loading payments...
-                      </TableCell>
-                    </TableRow>
+                    <TableRowsSkeleton rows={5} columns={4} />
                   ) : paymentRequests.length ? (
                     paymentRequests.map((request) => (
                       <TableRow key={request.id}>
