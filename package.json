@@ -20,6 +20,7 @@
     "check:static-seo": "tsx scripts/validate-static-seo.ts",
     "check:seo-metadata": "tsx scripts/audit-seo-metadata.ts",
     "check:typography": "tsx scripts/check-typography.ts",
+    "check:dead-code": "ts-prune | grep -v '(used in module)' | tee dead-code-report.txt | wc -l && echo 'unused exports — see dead-code-report.txt for the list'",
     "db:generate": "dotenv -e .env -- drizzle-kit generate",
     "db:generate:preview": "dotenv -e .env -e .vercel/.env.preview.local -- drizzle-kit generate",
     "db:migrate": "dotenv -e .env -- drizzle-kit migrate",

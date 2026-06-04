@@ -215,3 +215,4 @@ proxy.ts
 my site.md
 .vercel
 .env*.local
+dead-code-report.txt
