@@ -100,27 +100,47 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
       return res.status(401).json({ success: false, message: "User not found in request" });
     }
 
-    const [returnsSnapshot, docsSnapshot, servicesSnapshot, profilesSnapshot] = await Promise.all([
-      adminDb.collection("tax_returns")
-        .where("userId", "==", user.id)
-        .get(),
-      adminDb.collection("documents")
-        .where("userId", "==", user.id)
-        .where("status", "==", "active")
-        .get(),
-      adminDb.collection("user_services")
-        .where("userId", "==", user.id)
-        .get(),
-      adminDb.collection("profiles")
-        .where("userId", "==", user.id)
-        .get(),
+    const returnsRef = adminDb.collection("tax_returns").where("userId", "==", user.id) as any;
+    const docsRef = adminDb.collection("documents")
+      .where("userId", "==", user.id)
+      .where("status", "==", "active") as any;
+    const profilesRef = adminDb.collection("profiles").where("userId", "==", user.id) as any;
+    const servicesRef = adminDb.collection("user_services").where("userId", "==", user.id) as any;
+
+    // Use SQL aggregates for the simple totals and only fetch the rows the response actually
+    // ships back. The previous implementation read every tax return, document, service, and
+    // profile row for the user just to call .size and .slice(0, 5) — wasted work for any user
+    // with more than a handful of records.
+    // adminDb's where() only supports "==", so pending counts run as parallel single-status
+    // aggregates rather than one IN query. Each is a cheap COUNT(*) and they all fan out at
+    // once.
+    const pendingReturnStatuses = ["draft", "pending", "in_progress"];
+    const pendingServiceStatuses = ["pending", "in_progress", "requested", "new"];
+
+    const [
+      totalReturnsAgg,
+      totalDocsAgg,
+      totalProfilesAgg,
+      pendingReturnAggs,
+      pendingServiceAggs,
+      recentReturnsSnapshot,
+      activeServicesSnapshot,
+    ] = await Promise.all([
+      returnsRef.count().get(),
+      docsRef.count().get(),
+      profilesRef.count().get(),
+      Promise.all(pendingReturnStatuses.map((s) => returnsRef.where("status", "==", s).count().get())),
+      Promise.all(pendingServiceStatuses.map((s) => servicesRef.where("status", "==", s).count().get())),
+      returnsRef.orderBy("updatedAt", "desc").limit(5).get(),
+      servicesRef.orderBy("updatedAt", "desc").limit(50).get(),
     ]);
 
-    const activeServices = servicesSnapshot.docs.map(normalizeUserService);
-    const userReturns = returnsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const activeServices = activeServicesSnapshot.docs.map(normalizeUserService);
+    const userReturns = recentReturnsSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     const pendingTasks =
-      activeServices.filter((service) => isPendingStatus(service.status) || isPendingStatus(service.paymentStatus)).length +
-      userReturns.filter((entry: any) => isPendingStatus(entry.status)).length;
+      pendingReturnAggs.reduce((sum: number, agg: any) => sum + agg.data().count, 0) +
+      pendingServiceAggs.reduce((sum: number, agg: any) => sum + agg.data().count, 0);
+
     const recentActivity = [
       ...activeServices.map((service) => ({
         id: `service-${service.id}`,
@@ -142,15 +162,15 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
     res.json({
       success: true,
       stats: {
-        totalReturns: returnsSnapshot.size,
-        documentsUploaded: docsSnapshot.size,
-        profiles: profilesSnapshot.size,
+        totalReturns: totalReturnsAgg.data().count,
+        documentsUploaded: totalDocsAgg.data().count,
+        profiles: totalProfilesAgg.data().count,
         pendingTasks,
         savedAmount: 0,
       },
       activeServices,
       recentActivity,
-      taxReturns: userReturns.slice(0, 5)
+      taxReturns: userReturns,
     });
   } catch (error) {
     return safeError(res, error, "Failed to retrieve dashboard data.");
