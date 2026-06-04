@@ -1,10 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Router as StaticRouter, type BaseLocationHook } from "wouter";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { RouteErrorBoundary } from "./RouteErrorBoundary";
 
-function BrokenChild() {
+function BrokenChild(): ReactNode {
   throw new Error("kaboom");
 }
 

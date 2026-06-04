@@ -8,6 +8,42 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Strip query strings and high-cardinality path segments before reporting so the
+// telemetry endpoint sees a stable route shape (e.g. /api/user-services instead of
+// /api/user-services/abc123). Keeping the function tiny so importing it stays free.
+export function normalizeApiPath(rawUrl: string) {
+  try {
+    const u = rawUrl.startsWith("http") ? new URL(rawUrl) : new URL(rawUrl, "http://x");
+    return u.pathname
+      .replace(/[0-9a-f]{8,}/gi, ":id")
+      .replace(/\/\d+/g, "/:id");
+  } catch {
+    return rawUrl.split("?")[0];
+  }
+}
+
+function reportApiTiming(opts: {
+  url: string;
+  method: string;
+  status: number;
+  durationMs: number;
+  ok: boolean;
+}) {
+  // Dynamic import keeps the telemetry module out of the critical bundle. Failures
+  // are swallowed: telemetry is a nice-to-have, never a request-blocking dependency.
+  void import("@/telemetry/browser")
+    .then(({ captureTelemetryEvent }) => {
+      captureTelemetryEvent("api_request", {
+        api_path: normalizeApiPath(opts.url),
+        method: opts.method,
+        status: opts.status,
+        duration_ms: Math.round(opts.durationMs),
+        ok: opts.ok,
+      });
+    })
+    .catch(() => {});
+}
+
 export async function apiRequest(
   url: string,
   options?: {
@@ -17,25 +53,33 @@ export async function apiRequest(
 ): Promise<Response> {
   const token = await getAuthToken();
   const headers: HeadersInit = {};
-  
+
   if (options?.body) {
     headers["Content-Type"] = "application/json";
   }
-  
+
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
+  const method = options?.method || "GET";
   const start = performance.now();
-  const res = await fetch(url, {
-    method: options?.method || "GET",
-    headers,
-    body: options?.body,
-    credentials: "include",
-  });
-
-  await throwIfResNotOk(res);
-  return res;
+  let status = 0;
+  let ok = false;
+  try {
+    const res = await fetch(url, {
+      method,
+      headers,
+      body: options?.body,
+      credentials: "include",
+    });
+    status = res.status;
+    ok = res.ok;
+    await throwIfResNotOk(res);
+    return res;
+  } finally {
+    reportApiTiming({ url, method, status, durationMs: performance.now() - start, ok });
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
@@ -46,24 +90,32 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const token = await getAuthToken();
     const headers: HeadersInit = {};
-    
+
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
-    
+
     const url = queryKey.join("/") as string;
     const start = performance.now();
-    const res = await fetch(url, {
-      headers,
-      credentials: "include",
-    });
+    let status = 0;
+    let ok = false;
+    try {
+      const res = await fetch(url, {
+        headers,
+        credentials: "include",
+      });
+      status = res.status;
+      ok = res.ok;
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+        return null;
+      }
+
+      await throwIfResNotOk(res);
+      return await res.json();
+    } finally {
+      reportApiTiming({ url, method: "GET", status, durationMs: performance.now() - start, ok });
     }
-
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 // Cache time configurations for different data types
