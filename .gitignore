@@ -186,6 +186,9 @@ server/coverage/
 .claude/get-shit-done/
 .claude/launch.json
 .claude/package.json
+# Agent-session git worktrees — created automatically by the harness; never source of truth.
+# Remove stale ones with `git worktree remove .claude/worktrees/<name>`.
+.claude/worktrees/
 
 # Gradle cache
 android/.gradle/
