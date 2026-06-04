@@ -92,16 +92,16 @@ function normalizeRequestRecord(doc: any): Record<string, any> & { id: string; c
   };
 }
 
-async function listRequestRecords(collection: "consultation_requests" | "payment_link_requests", status?: string) {
-  const snapshot = await adminDb.collection(collection).get();
-  return snapshot.docs
-    .map(normalizeRequestRecord)
-    .filter((request) => !status || request.status === status)
-    .sort((a, b) => {
-      const bTime = new Date((b.createdAt as any) || 0).getTime();
-      const aTime = new Date((a.createdAt as any) || 0).getTime();
-      return bTime - aTime;
-    });
+async function listRequestRecords(
+  collection: "consultation_requests" | "payment_link_requests",
+  status?: string,
+  limit = 100,
+) {
+  let query = adminDb.collection(collection) as any;
+  if (status) query = query.where("status", "==", status);
+  query = query.orderBy("createdAt", "desc").limit(limit);
+  const snapshot = await query.get();
+  return snapshot.docs.map(normalizeRequestRecord);
 }
 
 function parseRequestLimit(value: unknown) {
@@ -128,11 +128,11 @@ router.get("/requests/consultations", requireAuth, requireAdmin, async (req: Aut
   try {
     const status = typeof req.query.status === "string" && req.query.status !== "all" ? req.query.status : undefined;
     const limit = parseRequestLimit(req.query.limit);
-    const requests = await listRequestRecords("consultation_requests", status);
+    const requests = await listRequestRecords("consultation_requests", status, limit);
 
     res.json({
       success: true,
-      requests: requests.slice(0, limit),
+      requests,
       total: requests.length,
     });
   } catch (error) {
@@ -177,11 +177,11 @@ router.get("/requests/payment-links", requireAuth, requireAdmin, async (req: Aut
   try {
     const status = typeof req.query.status === "string" && req.query.status !== "all" ? req.query.status : undefined;
     const limit = parseRequestLimit(req.query.limit);
-    const requests = await listRequestRecords("payment_link_requests", status);
+    const requests = await listRequestRecords("payment_link_requests", status, limit);
 
     res.json({
       success: true,
-      requests: requests.slice(0, limit),
+      requests,
       total: requests.length,
     });
   } catch (error) {
@@ -255,26 +255,36 @@ router.get("/user-services", requireAuth, requireAdmin, async (req: AuthRequest,
     const status = typeof req.query.status === "string" && req.query.status !== "all" ? req.query.status : undefined;
     const limit = parseRequestLimit(req.query.limit ?? "100");
 
-    const snapshot = await adminDb.collection("user_services").get();
-    const usersSnapshot = await adminDb.collection("users").get();
-    const userMap = new Map<string, any>(usersSnapshot.docs.map(doc => [doc.id, doc.data()]));
+    let query = adminDb.collection("user_services") as any;
+    if (status) query = query.where("status", "==", status);
+    query = query.orderBy("createdAt", "desc").limit(limit);
+    const snapshot = await query.get();
 
-    let cases = snapshot.docs
-      .map(doc => {
-        const data = doc.data() as Record<string, any>;
-        return {
-          id: doc.id,
-          ...data,
-          userName: userMap.get(data.userId)?.firstName || "Customer",
-          userEmail: userMap.get(data.userId)?.email || null,
-          createdAt: convertTimestamp(data.createdAt),
-          updatedAt: convertTimestamp(data.updatedAt),
-        } as Record<string, any>;
-      })
-      .filter(c => !status || c["status"] === status)
-      .sort((a, b) => new Date((b.createdAt as any) || 0).getTime() - new Date((a.createdAt as any) || 0).getTime());
+    // Batch-fetch only the users referenced by the limited result set in parallel.
+    const userIds = Array.from(new Set(
+      snapshot.docs.map((doc: any) => (doc.data() as any).userId).filter((id: any): id is string => !!id),
+    )) as string[];
+    const userMap = new Map<string, any>();
+    if (userIds.length) {
+      const userDocs = await Promise.all(
+        userIds.map(id => adminDb.collection("users").doc(id).get()),
+      );
+      userDocs.forEach(doc => doc.exists && userMap.set(doc.id, doc.data()));
+    }
 
-    res.json({ success: true, cases: cases.slice(0, limit), total: cases.length });
+    const cases = snapshot.docs.map((doc: any) => {
+      const data = doc.data() as Record<string, any>;
+      return {
+        id: doc.id,
+        ...data,
+        userName: userMap.get(data.userId)?.firstName || "Customer",
+        userEmail: userMap.get(data.userId)?.email || null,
+        createdAt: convertTimestamp(data.createdAt),
+        updatedAt: convertTimestamp(data.updatedAt),
+      };
+    });
+
+    res.json({ success: true, cases, total: cases.length });
   } catch (error) {
     return safeError(res, error, "Failed to load user service cases");
   }

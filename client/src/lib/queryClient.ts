@@ -74,6 +74,8 @@ const CACHE_TIMES = {
   static: { staleTime: 24 * 60 * 60 * 1000, gcTime: 24 * 60 * 60 * 1000 }, // 24hr
   // Blog posts, services - moderate
   content: { staleTime: 5 * 60 * 1000, gcTime: 30 * 60 * 1000 }, // 5min stale, 30min cache
+  // Admin list views - heavy queries that hit large tables; refresh on demand only.
+  adminList: { staleTime: 2 * 60 * 1000, gcTime: 15 * 60 * 1000 }, // 2min stale, 15min cache
   // Default for most API calls
   default: { staleTime: 60 * 1000, gcTime: 10 * 60 * 1000 }, // 1min stale, 10min cache
 };
@@ -109,5 +111,10 @@ const USER_FOCUS_REFETCH_OPTIONS = {
 queryClient.setQueryDefaults(["/api/user/dashboard"], USER_FOCUS_REFETCH_OPTIONS);
 queryClient.setQueryDefaults(["/api/profiles"], USER_FOCUS_REFETCH_OPTIONS);
 queryClient.setQueryDefaults(["/api/user-services"], USER_FOCUS_REFETCH_OPTIONS);
-queryClient.setQueryDefaults(["/api/admin/stats"], USER_FOCUS_REFETCH_OPTIONS);
 queryClient.setQueryDefaults(["/api/ca/stats"], USER_FOCUS_REFETCH_OPTIONS);
+
+// Admin list/dashboard queries hit large tables; use a longer stale window and refresh on demand via the Refresh button.
+queryClient.setQueryDefaults(["/api/admin/stats"], CACHE_TIMES.adminList);
+queryClient.setQueryDefaults(["/api/admin/user-services"], CACHE_TIMES.adminList);
+queryClient.setQueryDefaults(["/api/admin/requests/consultations"], CACHE_TIMES.adminList);
+queryClient.setQueryDefaults(["/api/admin/requests/payment-links"], CACHE_TIMES.adminList);
