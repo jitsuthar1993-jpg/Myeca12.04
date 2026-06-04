@@ -11,4 +11,11 @@ describe("role workspace navigation", () => {
       label: "MY ITR",
     });
   });
+
+  it("does not show payments in the user workspace navigation", () => {
+    const workspaceItems = ROLE_NAV_GROUPS.user.find((group) => group.label === "Workspace")?.items;
+
+    expect(workspaceItems?.map((item) => item.label)).not.toContain("Payments");
+    expect(workspaceItems?.map((item) => item.href)).not.toContain("/payments");
+  });
 });

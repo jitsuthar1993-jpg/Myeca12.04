@@ -121,6 +121,10 @@ export default function Header() {
   const workspaceLabel = user?.role === "user" || !user?.role ? "Dashboard" : roleLabel;
   const publicGuardedHref = (privatePath: string) =>
     isAuthenticated ? privatePath : `/auth/login?next=${encodeURIComponent(privatePath)}`;
+  const desktopLoginFileHref = "/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file";
+  const mobileLoginFileHref = "/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dmobile_menu_login_file";
+  const mobileFileHref = !isLoading && !isAuthenticated ? mobileLoginFileHref : "/itr/start?source=mobile_menu_footer";
+  const mobileFileLabel = !isLoading && !isAuthenticated ? "Login & File ITR" : "Check ITR plan";
 
   const isActive = (path: string) => location === path;
   // Calculate top offset based on promo bar visibility
@@ -857,7 +861,7 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 {!isLoading && !isAuthenticated && (
                   <Link
-                    href="/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file"
+                    href={desktopLoginFileHref}
                     onMouseEnter={() => {
                       preloadOnHover('/auth/login');
                       preloadOnHover('/itr/start');
@@ -866,7 +870,7 @@ export default function Header() {
                   >
                     <Button className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-normal text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)]">
                       <FileText className="mr-2 h-4 w-4" />
-                      Login &amp; File
+                      Login &amp; File ITR
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -1135,14 +1139,21 @@ export default function Header() {
                     </div>
 
                     <div className="mt-auto border-t bg-slate-50/50 p-4">
-                      <Link href="/itr/start?source=mobile_menu_footer" onTouchStart={() => preloadOnHover("/itr/start")} onClick={() => setMobileMenuOpen(false)}>
+                      <Link
+                        href={mobileFileHref}
+                        onTouchStart={() => {
+                          if (!isLoading && !isAuthenticated) preloadOnHover("/auth/login");
+                          preloadOnHover("/itr/start");
+                        }}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
                         <Button className="mb-3 h-11 w-full justify-center gap-2 rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-200 hover:bg-blue-700">
                           <FileText className="h-4 w-4" />
-                          Check ITR plan
+                          {mobileFileLabel}
                         </Button>
                       </Link>
                       {!isLoading && !isAuthenticated && (
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="grid gap-3">
                           <Button
                             type="button"
                             onClick={() => {
@@ -1155,11 +1166,6 @@ export default function Header() {
                             <Bot className="h-4 w-4" />
                             Tax Assistant
                           </Button>
-                          <Link href="/auth/login" onTouchStart={() => preloadOnHover("/auth/login")} onClick={() => setMobileMenuOpen(false)}>
-                            <Button variant="outline" className="h-11 w-full justify-center rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
-                              Join / Sign in
-                            </Button>
-                          </Link>
                         </div>
                       )}
                       {!isLoading && isAuthenticated && (

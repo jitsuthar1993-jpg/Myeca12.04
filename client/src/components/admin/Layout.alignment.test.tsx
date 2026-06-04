@@ -95,7 +95,7 @@ describe("role-aware dashboard shell alignment", () => {
     ).toEqual(["Home", "MY ITR", "Services", "Docs", "More"]);
   });
 
-  it("keeps secondary user destinations inside the mobile More menu", async () => {
+  it("keeps secondary user destinations inside the mobile More menu without payments", async () => {
     renderWithQueryClient(
       <Layout>
         <div>Dashboard content</div>
@@ -106,8 +106,9 @@ describe("role-aware dashboard shell alignment", () => {
 
     const moreMenu = screen.getByRole("dialog", { name: "More workspace options" });
 
-    for (const label of ["Search workspace", "Payments", "Account", "Help", "Support Request", "Sign Out"]) {
+    for (const label of ["Search workspace", "Account", "Help", "Support Request", "Sign Out"]) {
       expect(moreMenu).toHaveTextContent(label);
     }
+    expect(moreMenu).not.toHaveTextContent("Payments");
   });
 });

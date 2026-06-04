@@ -28,7 +28,6 @@ export type PublicHeaderPrimaryLink = PublicNavigationLink & {
 
 export const PUBLIC_HEADER_PRIMARY_LINKS: PublicHeaderPrimaryLink[] = [
   { href: "/blog", label: "Blogs" },
-  { href: "/pricing", label: "Pricing" },
   { href: "/trust", icon: "trust", label: "Trust" },
   { href: "/contact", label: "Contact" },
 ];

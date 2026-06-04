@@ -57,13 +57,16 @@ describe("public growth roadmap implementation", () => {
   it("keeps the public desktop header CTA focused", () => {
     const headerSource = readSource("client/src/components/layout/Header.tsx");
 
-    expect(headerSource).toContain("Login &amp; File");
+    expect(headerSource).toContain("Login &amp; File ITR");
     expect(headerSource).toContain("PUBLIC_HEADER_PRIMARY_LINKS.map");
     expect(PUBLIC_HEADER_PRIMARY_LINKS).toContainEqual({ href: "/blog", label: "Blogs" });
     expect(PUBLIC_HEADER_PRIMARY_LINKS).toContainEqual({ href: "/trust", icon: "trust", label: "Trust" });
+    expect(PUBLIC_HEADER_PRIMARY_LINKS).not.toContainEqual({ href: "/pricing", label: "Pricing" });
     expect(headerSource).toContain("aria-label={item.label}");
     expect(headerSource).toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dheader_desktop_login_file");
+    expect(headerSource).toContain("/auth/login?next=%2Fitr%2Fstart%3Fsource%3Dmobile_menu_login_file");
     expect(headerSource).not.toContain("<span>Log in</span>");
+    expect(headerSource).not.toContain("Join / Sign in");
     expect(headerSource).not.toContain(">Blog<");
     expect(headerSource).not.toContain("Check ITR Plan");
     expect(headerSource).not.toContain("hidden lg:flex text-slate-400");

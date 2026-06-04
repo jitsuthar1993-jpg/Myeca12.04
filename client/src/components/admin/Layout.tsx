@@ -2,7 +2,6 @@ import { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import {
   Command,
-  CreditCard,
   FileText,
   FolderOpen,
   HelpCircle,
@@ -56,7 +55,6 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
   ];
 
   const moreActions = [
-    { icon: CreditCard, label: 'Payments', href: '/payments' },
     { icon: Settings, label: 'Account', href: '/settings' },
     { icon: HelpCircle, label: 'Help', href: '/help' },
     { icon: MessageSquare, label: 'Support Request', href: '/expert-consultation' },
