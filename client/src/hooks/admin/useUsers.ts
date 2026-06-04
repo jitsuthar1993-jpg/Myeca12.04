@@ -9,7 +9,7 @@ export function useUsers(params?: PaginationParams) {
     queryKey: ['admin', 'users', params],
     queryFn: async () => {
       const result = await adminApi.getUsers(params);
-      const fallback = { users: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0, pages: 0 } };
+      const fallback = { users: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0, pages: 0 }, sync: undefined };
       const data = result.data || fallback;
       return {
         ...data,

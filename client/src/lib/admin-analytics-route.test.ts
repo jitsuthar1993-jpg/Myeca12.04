@@ -32,15 +32,30 @@ const gaReport = vi.hoisted(() => ({
 
 vi.mock("../../../server/data-admin.js", () => ({
   adminDb: {
-    collection: (name: keyof typeof collectionSizes) => ({
-      get: async () => {
-        const rows = collectionSizes[name] || [];
+    collection: (name: keyof typeof collectionSizes) => {
+      const makeQuery = (clauses: Array<{ field: string; value: unknown }> = []) => {
+        const rows = () => (collectionSizes[name] || [])
+          .filter((row) => clauses.every((clause) => (row as any)[clause.field] === clause.value));
+
         return {
-          size: rows.length,
-          docs: rows.map((row) => ({ data: () => row })),
+          where: (field: string, op: string, value: unknown) => {
+            if (op !== "==") throw new Error(`Unsupported test operator ${op}`);
+            return makeQuery([...clauses, { field, value }]);
+          },
+          count: () => ({
+            get: async () => ({
+              data: () => ({ count: rows().length }),
+            }),
+          }),
+          get: async () => ({
+            size: rows().length,
+            docs: rows().map((row) => ({ data: () => row })),
+          }),
         };
-      },
-    }),
+      };
+
+      return makeQuery();
+    },
   },
 }));
 

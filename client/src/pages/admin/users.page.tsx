@@ -14,13 +14,14 @@ import { toast } from "@/hooks/use-toast";
 import { 
   Users, Search, Filter, MoreVertical, Check, X, Clock, 
   UserCheck, UserX, Shield, Eye, Ban, UserPlus, Edit,
-  Mail, Phone, Calendar, MapPin, Trash2, Zap, ArrowUpRight, ArrowRight
+  Mail, Phone, Calendar, MapPin, Trash2, Zap, ArrowUpRight, ArrowRight, RefreshCw
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { Layout } from "@/components/admin/Layout";
 import { getRoleLabel, normalizeAppRole } from "@shared/app-roles";
+import type { SupabaseUserDirectorySync } from "@/lib/admin/types";
 
 const formatDate = (date: any, includeTime: boolean = false) => {
   if (!date) return "N/A";
@@ -55,6 +56,13 @@ interface User {
   updatedAt: string;
 }
 
+function syncBadge(sync?: SupabaseUserDirectorySync) {
+  if (!sync) return { label: "Sync pending", className: "bg-slate-100 text-slate-600" };
+  if (sync.status === "synced") return { label: "Supabase synced", className: "bg-emerald-50 text-emerald-700" };
+  if (sync.status === "not_configured") return { label: "Sync setup needed", className: "bg-amber-50 text-amber-700" };
+  return { label: "Sync error", className: "bg-red-50 text-red-700" };
+}
+
 export default function UsersManagementPage() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
   const currentRole = normalizeAppRole(currentUser?.role);
@@ -78,13 +86,15 @@ export default function UsersManagementPage() {
   // Fetch all users
   const { data: response, isLoading, error } = useQuery<{
     success: boolean;
-    data: { users: User[]; pagination: { total: number; pages: number; page: number; limit: number } };
+    data: { users: User[]; pagination: { total: number; pages: number; page: number; limit: number }; sync?: SupabaseUserDirectorySync };
   }>({
     queryKey: [`/api/admin/users?page=${page}&limit=${limit}&search=${searchTerm}`],
     enabled: isAdmin,
   });
 
   const users = response?.data?.users || [];
+  const sync = response?.data?.sync;
+  const syncState = syncBadge(sync);
 
   // User action mutations
   const updateRoleMutation = useMutation({
@@ -152,6 +162,31 @@ export default function UsersManagementPage() {
     },
   });
 
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("/api/admin/users/sync", { method: "POST" });
+      const data = await res.json();
+      if (data?.data?.sync?.status === "error") {
+        throw new Error(data.data.sync.error || data.message || "Supabase user directory sync failed.");
+      }
+      return data;
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ predicate: (query) => String(query.queryKey[0]).startsWith("/api/admin/users") });
+      toast({
+        title: data?.data?.sync?.status === "synced" ? "Directory synced" : "Sync checked",
+        description: data?.message || "Supabase user directory sync finished.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Sync failed",
+        description: error.message || "Could not sync the Supabase user directory.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Get list of CAs for assignment dropdown
   const caUsers = users.filter((u: User) => u.role === 'ca');
 
@@ -195,12 +230,26 @@ export default function UsersManagementPage() {
                 <Zap className="w-3 h-3 fill-current" />
                 Access Control
              </div>
-             <h1 className="text-3xl font-bold tracking-tight text-slate-900">User Management</h1>
+             <div className="flex flex-wrap items-center gap-3">
+               <h1 className="text-3xl font-bold tracking-tight text-slate-900">User Management</h1>
+               <Badge className={cn("rounded-full border-none px-3 py-1 text-[10px] font-bold uppercase tracking-widest", syncState.className)}>
+                 {syncState.label}
+               </Badge>
+             </div>
              <p className="text-slate-500 max-w-2xl text-sm font-medium">
                Manage identities, provision roles, and oversee platform permissions.
              </p>
           </div>
           <div className="flex items-center gap-3">
+             <Button
+               variant="outline"
+               className="h-10 px-5 rounded-xl border-slate-200 bg-white font-bold text-xs uppercase tracking-widest"
+               onClick={() => syncMutation.mutate()}
+               disabled={syncMutation.isPending}
+             >
+               <RefreshCw className={cn("h-4 w-4 mr-2", syncMutation.isPending && "animate-spin")} />
+               Sync
+             </Button>
              <Button
                className="h-10 px-6 rounded-xl bg-blue-700 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-widest shadow-sm"
                onClick={() => setInviteOpen(true)}

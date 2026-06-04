@@ -154,6 +154,16 @@ export interface GoogleAnalyticsReport {
 
 export type PaginationParams = FilterParams;
 
+export interface SupabaseUserDirectorySync {
+  status: 'synced' | 'not_configured' | 'error';
+  supabaseUsers: number;
+  created: number;
+  updated: number;
+  skipped: number;
+  lastSyncedAt: string | null;
+  error?: string;
+}
+
 export interface Column<T> {
   key?: keyof T | string;
   label?: string;
@@ -240,6 +250,7 @@ export interface Pagination {
   limit: number;
   total: number;
   totalPages: number;
+  pages?: number;
 }
 
 export interface ApiResponse<T> {

@@ -38,17 +38,38 @@ function makeDocRef(collectionName: string, id: string, records = collectionStor
   };
 }
 
-function makeQuery(collectionName: string, clauses: Array<{ field: string; value: unknown }> = []) {
+function makeQuery(
+  collectionName: string,
+  clauses: Array<{ field: string; value: unknown }> = [],
+  order?: { field: string; direction: "asc" | "desc" },
+  maxRows?: number,
+) {
   return {
     where(field: string, op: string, value: unknown) {
       if (op !== "==") throw new Error(`Unsupported test operator ${op}`);
-      return makeQuery(collectionName, [...clauses, { field, value }]);
+      return makeQuery(collectionName, [...clauses, { field, value }], order, maxRows);
+    },
+    orderBy(field: string, direction: "asc" | "desc" = "asc") {
+      return makeQuery(collectionName, clauses, { field, direction }, maxRows);
+    },
+    limit(limitRows: number) {
+      return makeQuery(collectionName, clauses, order, limitRows);
     },
     async get() {
       const records = collectionStore(collectionName);
-      const docs = Array.from(records.entries())
-        .filter(([, data]) => clauses.every((clause) => data[clause.field] === clause.value))
-        .map(([id]) => makeSnapshot(id, records));
+      let entries = Array.from(records.entries())
+        .filter(([, data]) => clauses.every((clause) => data[clause.field] === clause.value));
+      if (order) {
+        entries = entries.sort(([, left], [, right]) => {
+          const leftValue = String(left[order.field] ?? "");
+          const rightValue = String(right[order.field] ?? "");
+          return order.direction === "desc" ? rightValue.localeCompare(leftValue) : leftValue.localeCompare(rightValue);
+        });
+      }
+      if (maxRows) {
+        entries = entries.slice(0, maxRows);
+      }
+      const docs = entries.map(([id]) => makeSnapshot(id, records));
       return { docs, size: docs.length };
     },
   };

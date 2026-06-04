@@ -1,6 +1,6 @@
 // Admin API Client - Simple and Clean
 
-import type { AnalyticsDateRange, AnalyticsOverview, ApiResponse, AuditLog, DashboardStats, FilterParams, User } from './types';
+import type { AnalyticsDateRange, AnalyticsOverview, ApiResponse, AuditLog, DashboardStats, FilterParams, SupabaseUserDirectorySync, User } from './types';
 import { getAuthToken } from '@/lib/authToken';
 
 const API_BASE = '/api/admin';
@@ -53,9 +53,13 @@ class AdminApi {
     if (params?.limit) query.append('limit', params.limit.toString());
     if (params?.search) query.append('search', params.search);
     
-    return this.request<{ users: User[]; pagination: { total: number; page: number; limit: number; totalPages: number } }>(
+    return this.request<{ users: User[]; pagination: { total: number; page: number; limit: number; totalPages?: number; pages?: number }; sync?: SupabaseUserDirectorySync }>(
       `/users${query.toString() ? `?${query}` : ''}`
     );
+  }
+
+  async syncUsers(): Promise<ApiResponse<{ sync: SupabaseUserDirectorySync }>> {
+    return this.request<{ sync: SupabaseUserDirectorySync }>('/users/sync', { method: 'POST' });
   }
 
   async getAnalyticsOverview(params?: { range?: AnalyticsDateRange }): Promise<ApiResponse<AnalyticsOverview>> {
