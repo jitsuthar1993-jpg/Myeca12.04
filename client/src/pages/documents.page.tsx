@@ -196,7 +196,7 @@ export default function DocumentsPage() {
         <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <Card className="min-w-0 overflow-hidden rounded-lg border-slate-200 shadow-sm">
             <CardHeader className="gap-4 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between">
-              <div>
+              <div className="[&>p]:mb-0">
                 <CardTitle className="type-card-title font-black text-slate-950">My Documents</CardTitle>
                 <CardDescription className="type-support text-slate-500">
                   Uploaded files connected to your account.
@@ -240,7 +240,7 @@ export default function DocumentsPage() {
                               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                                 <FileText className="h-5 w-5" />
                               </div>
-                              <div className="min-w-0">
+                              <div className="min-w-0 [&>p]:mb-0">
                                 <p className="truncate type-support font-black text-slate-950">{doc.name}</p>
                                 <p className="mt-0.5 type-meta font-semibold text-slate-500">
                                   {formatFileSize(doc.size)}
@@ -383,8 +383,10 @@ export default function DocumentsPage() {
                 {pendingUploadItems.length ? (
                   pendingUploadItems.map((item) => (
                     <div key={item.key} className="rounded-lg border border-slate-200 bg-white p-4">
-                      <p className="type-support font-black text-slate-950">{item.label}</p>
-                      <p className="mt-1 type-support text-slate-500">{item.prompt}</p>
+                      <div className="min-w-0 flex-1 [&>p]:mb-0">
+                        <p className="type-support font-black text-slate-950">{item.label}</p>
+                        <p className="mt-1 type-support text-slate-500">{item.prompt}</p>
+                      </div>
                     </div>
                   ))
                 ) : (

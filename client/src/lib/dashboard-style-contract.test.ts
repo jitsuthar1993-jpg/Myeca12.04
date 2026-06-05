@@ -43,4 +43,12 @@ describe("dashboard style contract", () => {
       }
     }
   });
+
+  it("removes global paragraph margins from document icon text stacks", () => {
+    const source = readFileSync("client/src/pages/documents.page.tsx", "utf8");
+
+    expect(source).toContain('<div className="[&>p]:mb-0">');
+    expect(source).toContain('<div className="min-w-0 flex-1 [&>p]:mb-0">');
+    expect(source).toContain('<div className="min-w-0 [&>p]:mb-0">');
+  });
 });
