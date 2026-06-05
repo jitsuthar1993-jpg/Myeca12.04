@@ -586,6 +586,26 @@ describe("user service routes", () => {
   });
 });
 
+describe("admin service catalog route", () => {
+  it("loads the code-defined service catalog through the Express API", async () => {
+    seed("user_services", "service_1", {
+      serviceId: "itr-filing",
+      status: "pending",
+    });
+
+    const { response, json } = await request("/api/admin/services");
+
+    expect(response.status).toBe(200);
+    expect(json[0]).toMatchObject({
+      id: "itr-filing",
+      name: "ITR Filing",
+      category: "tax-filing",
+      isActive: true,
+      bookingsCount: 1,
+    });
+  });
+});
+
 describe("admin request routes", () => {
   it("lists and updates consultation requests for the operations inbox", async () => {
     seed("consultation_requests", "consult_1", {

@@ -9,6 +9,8 @@ import { provisionPrivilegedUser, syncRoleClaims } from "../services/user-accoun
 import { syncSupabaseUserDirectory } from "../services/supabase-user-directory.js";
 import { invalidateCachedUser } from "../utils/user-cache.js";
 import { APP_ROLES, PRIVILEGED_APP_ROLES } from "../../shared/app-roles.js";
+import { serializeAdminCatalogService } from "../../shared/admin-service-catalog.js";
+import { allServices } from "../../client/src/data/all-services.js";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
@@ -122,6 +124,21 @@ async function appendAdminAudit(req: AuthRequest, action: string, metadata: Reco
     updatedAt: new Date(),
   });
 }
+
+router.get("/services", requireAuth, requireAdmin, async (_req: AuthRequest, res: Response) => {
+  try {
+    const requests = await adminDb.collection("user_services").limit(1000).get();
+    const bookings = new Map<string, number>();
+    requests.docs.forEach((doc: any) => {
+      const serviceId = String(doc.data()?.serviceId || "");
+      if (serviceId) bookings.set(serviceId, (bookings.get(serviceId) || 0) + 1);
+    });
+
+    res.json(allServices.map((service) => serializeAdminCatalogService(service, bookings.get(service.id) || 0)));
+  } catch (error) {
+    return safeError(res, error, "Failed to load service catalog");
+  }
+});
 
 // ==================== USER MANAGEMENT ====================
 

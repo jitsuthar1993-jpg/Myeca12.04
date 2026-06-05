@@ -33,6 +33,7 @@ import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
 import { buildOpenApiSpec } from "../server/openapi.js";
 import { getIncomeTaxFormAsset } from "../shared/income-tax-form-assets.js";
 import { normalizeAppRole } from "../shared/app-roles.js";
+import { serializeAdminCatalogService } from "../shared/admin-service-catalog.js";
 import {
   buildRobotsTxt,
   buildSitemapXml,
@@ -157,6 +158,8 @@ function routeFor(req: any) {
     "/api/notifications": "notifications",
     "/api/admin/stats": "admin-stats",
     "/api/admin/users": "admin-users",
+    "/api/admin/services": "admin-services",
+    "/api/admin/user-services": "admin-user-services",
     "/api/ca/stats": "ca-stats",
     "/api/ca/clients": "ca-clients",
     "/api/cms/posts": "cms-posts",
@@ -215,6 +218,12 @@ function routeFor(req: any) {
   if (taxReturnMatch) {
     url.searchParams.set("id", decodeURIComponent(taxReturnMatch[1]));
     return { name: "tax-return-detail", url };
+  }
+
+  const adminUserServiceMatch = pathname.match(/^\/api\/admin\/user-services\/([^/]+)$/);
+  if (adminUserServiceMatch) {
+    url.searchParams.set("id", decodeURIComponent(adminUserServiceMatch[1]));
+    return { name: "admin-user-service-detail", url };
   }
 
   const downloadMatch = pathname.match(/^\/downloads\/income-tax-forms\/([^/]+)$/);
@@ -311,9 +320,32 @@ function isPendingStatus(status: unknown) {
 }
 
 function asTime(value: unknown) {
-  const date = value instanceof Date ? value : typeof value === "string" ? new Date(value) : null;
+  const date = value instanceof Date
+    ? value
+    : typeof (value as any)?.toDate === "function"
+      ? (value as any).toDate()
+      : typeof value === "string"
+        ? new Date(value)
+        : null;
   const time = date?.getTime() ?? 0;
   return Number.isNaN(time) ? 0 : time;
+}
+
+function apiDate(value: unknown) {
+  const time = asTime(value);
+  return time ? new Date(time).toISOString() : value ?? null;
+}
+
+function apiAmount(record: Record<string, any>) {
+  const value = record.paymentAmount ?? record.amount ?? record.price ?? record.totalAmount ?? 0;
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  const match = String(value).replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : 0;
+}
+
+function apiLimit(value: string | null, fallback = 100) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) ? Math.min(500, Math.max(1, parsed)) : fallback;
 }
 
 function serializeDocument(docId: string, data: Record<string, any>) {
@@ -1306,6 +1338,76 @@ async function handleRequest(req: any, res: any) {
     return sendJson(res, 200, snapshot.docs.map((doc: any) => normalizeUserService(doc.id, doc.data())));
   }
 
+  if (name === "admin-services") {
+    if (!methodAllowed(req, res, ["GET"])) return;
+    const user = await requireTemporaryRole(req, res, ["admin"]);
+    if (!user) return;
+
+    const requests = await listCollection("user_services", 1000);
+    const bookings = new Map<string, number>();
+    requests.forEach((request: any) => {
+      const serviceId = String(request.serviceId || "");
+      if (serviceId) bookings.set(serviceId, (bookings.get(serviceId) || 0) + 1);
+    });
+
+    return sendJson(
+      res,
+      200,
+      allServices.map((service) => serializeAdminCatalogService(service, bookings.get(service.id) || 0)),
+    );
+  }
+
+  if (name === "admin-user-services") {
+    if (!methodAllowed(req, res, ["GET"])) return;
+    const user = await requireTemporaryRole(req, res, ["admin"]);
+    if (!user) return;
+
+    const status = url.searchParams.get("status");
+    const limit = apiLimit(url.searchParams.get("limit"));
+    const services = (await listCollection("user_services", 1000))
+      .filter((service: any) => !status || status === "all" || service.status === status)
+      .sort((a: any, b: any) => asTime(b.createdAt) - asTime(a.createdAt));
+    const userIds = Array.from(new Set(services.map((service: any) => service.userId).filter(Boolean))) as string[];
+    const userDocs = await Promise.all(userIds.map((id) => adminDb.collection("users").doc(id).get()));
+    const users = new Map(userDocs.filter((doc: any) => doc.exists).map((doc: any) => [doc.id, doc.data()]));
+    const cases = services.slice(0, limit).map((service: any) => ({
+      ...normalizeUserService(service.id, service),
+      userName: users.get(service.userId)?.firstName || "Customer",
+      userEmail: users.get(service.userId)?.email || null,
+      createdAt: apiDate(service.createdAt),
+      updatedAt: apiDate(service.updatedAt),
+    }));
+
+    return sendJson(res, 200, { success: true, cases, total: services.length });
+  }
+
+  if (name === "admin-user-service-detail") {
+    if (!methodAllowed(req, res, ["PATCH"])) return;
+    const user = await requireTemporaryRole(req, res, ["admin"]);
+    if (!user) return;
+
+    const updateSchema = z.object({
+      status: z.enum(["pending", "in_progress", "completed", "cancelled"]).optional(),
+      assignedCaId: z.string().trim().max(128).nullable().optional(),
+      adminNote: z.string().trim().max(2000).optional(),
+    });
+    const parsed = updateSchema.safeParse(requestBody(req));
+    if (!parsed.success) return sendJson(res, 400, { error: parsed.error.errors[0]?.message || "Invalid service update" });
+
+    const id = url.searchParams.get("id") || "";
+    const ref = adminDb.collection("user_services").doc(id);
+    const doc = await ref.get();
+    if (!doc.exists) return sendJson(res, 404, { error: "Service case not found" });
+
+    const updates: Record<string, any> = { ...parsed.data, updatedAt: new Date() };
+    if (parsed.data.adminNote !== undefined) {
+      updates.metadata = { ...(doc.data()?.metadata || {}), adminNote: parsed.data.adminNote };
+      delete updates.adminNote;
+    }
+    await ref.update(updates);
+    return sendJson(res, 200, { success: true });
+  }
+
   if (!methodAllowed(req, res, ["GET"])) return;
 
   if (name === "notifications") {
@@ -1343,22 +1445,92 @@ async function handleRequest(req: any, res: any) {
     const user = await requireTemporaryRole(req, res, ["admin"]);
     if (!user) return;
 
-    const [usersTotal, userServicesTotal, taxReturnsTotal] = await Promise.all([
+    const [usersTotal, userServicesTotal, taxReturnsTotal, users, userServices, taxReturns] = await Promise.all([
       countCollection("users"),
       countCollection("user_services"),
       countCollection("tax_returns"),
+      listCollection("users", 1000),
+      listCollection("user_services", 1000),
+      listCollection("tax_returns", 1000),
     ]);
+    const userMap = new Map<string, any>(
+      users.map((entry: any): [string, any] => [entry.id, entry]),
+    );
+    const pendingServices = userServices.filter((entry: any) => !["completed", "cancelled"].includes(entry.status));
+    const pendingTaxReturns = taxReturns.filter((entry: any) => !["filed", "completed"].includes(entry.status));
+    const pendingWorkList = [
+      ...pendingServices.map((entry: any) => ({
+        id: entry.id,
+        type: "service",
+        title: entry.serviceTitle || entry.serviceName || "Custom Service",
+        userId: entry.userId,
+        userName: userMap.get(entry.userId)?.firstName || "Unknown",
+        assignedCaId: entry.assignedCaId || null,
+        assignedCaName: userMap.get(entry.assignedCaId)?.firstName || "Unassigned",
+        status: entry.status || "pending",
+        price: apiAmount(entry),
+        createdAt: apiDate(entry.createdAt),
+      })),
+      ...pendingTaxReturns.map((entry: any) => ({
+        id: entry.id,
+        type: "tax_return",
+        title: `ITR Filing (${entry.filingType || entry.itrType || "General"})`,
+        userId: entry.userId,
+        userName: userMap.get(entry.userId)?.firstName || "Unknown",
+        assignedCaId: entry.assignedCaId || userMap.get(entry.userId)?.assignedCaId || null,
+        assignedCaName: userMap.get(entry.assignedCaId || userMap.get(entry.userId)?.assignedCaId)?.firstName || "Unassigned",
+        status: entry.status || "draft",
+        price: apiAmount(entry),
+        createdAt: apiDate(entry.createdAt),
+      })),
+    ].sort((a, b) => asTime(b.createdAt) - asTime(a.createdAt));
+    const workList = pendingWorkList.slice(0, 20);
+    const serviceFrequency = new Map<string, number>();
+    userServices.forEach((entry: any) => {
+      const title = entry.serviceTitle || entry.serviceName || "Custom Service";
+      serviceFrequency.set(title, (serviceFrequency.get(title) || 0) + 1);
+    });
+    const revenueTotal = userServices.reduce((sum: number, entry: any) => sum + apiAmount(entry), 0);
 
     return sendJson(res, 200, {
       success: true,
       data: {
-        users: { total: usersTotal, active: usersTotal, inactive: 0, newThisMonth: usersTotal, growthPercent: 0 },
-        calculations: { total: 0, thisMonth: 0, saved: 0, trend: "stable" },
-        revenue: { total: 0, thisMonth: 0, growthPercent: 0 },
-        services: { total: userServicesTotal, active: taxReturnsTotal, popular: [] },
+        users: {
+          total: usersTotal,
+          active: users.filter((entry: any) => String(entry.status || "active").toLowerCase() === "active").length,
+          inactive: users.filter((entry: any) => String(entry.status || "").toLowerCase() === "inactive").length,
+          newThisMonth: users.length,
+          growthPercent: 0,
+        },
+        calculations: {
+          total: taxReturnsTotal,
+          thisMonth: pendingTaxReturns.length,
+          saved: taxReturns.filter((entry: any) => entry.status === "draft").length,
+          trend: "stable",
+        },
+        revenue: { total: revenueTotal, pending: pendingWorkList.reduce((sum, entry) => sum + entry.price, 0), thisMonth: 0, growthPercent: 0 },
+        services: {
+          total: userServicesTotal,
+          active: pendingWorkList.length,
+          popular: Array.from(serviceFrequency.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([name, count]) => ({ name, count })),
+        },
         systemHealth: { status: "healthy", database: "connected", uptime: 0, lastCheck: new Date().toISOString() },
-        recentActivity: [],
-        workList: [],
+        recentActivity: userServices
+          .slice()
+          .sort((a: any, b: any) => asTime(b.createdAt) - asTime(a.createdAt))
+          .slice(0, 10)
+          .map((entry: any) => ({
+            id: entry.id,
+            action: `Service request created: ${entry.serviceTitle || entry.serviceName || "Custom Service"}`,
+            user: userMap.get(entry.userId)?.firstName || "Unknown",
+            timestamp: apiDate(entry.createdAt),
+            resourceType: "service",
+            resourceId: entry.id,
+          })),
+        workList,
       },
     });
   }

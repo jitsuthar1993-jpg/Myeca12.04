@@ -91,7 +91,7 @@ export default function UserDashboard() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">
           {[
             { label: 'Returns', value: stats.totalReturns ?? 0, icon: FileText, color: 'blue' },
             { label: 'Documents', value: stats.documentsUploaded ?? 0, icon: Briefcase, color: 'indigo' },
@@ -99,21 +99,21 @@ export default function UserDashboard() {
             { label: 'Active Services', value: activeServices.length, icon: Target, color: 'emerald' },
           ].map((stat) => (
             <Card key={stat.label} className="rounded-lg border-slate-200 shadow-none">
-              <CardContent className="flex min-h-[112px] flex-col items-start gap-3 p-4 sm:min-h-0 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
+              <CardContent className="flex min-h-[76px] items-center gap-3 px-3 py-3 sm:min-h-[80px] sm:px-4">
                 <div
                   className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg',
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
                     stat.color === 'blue' && 'bg-blue-50 text-blue-600',
                     stat.color === 'indigo' && 'bg-indigo-50 text-indigo-600',
                     stat.color === 'amber' && 'bg-amber-50 text-amber-600',
                     stat.color === 'emerald' && 'bg-emerald-50 text-emerald-600',
                   )}
                 >
-                  <stat.icon className="h-6 w-6" />
+                  <stat.icon className="h-5 w-5" />
                 </div>
-                <div>
-                  <p className="type-meta font-bold uppercase text-slate-400">{stat.label}</p>
-                  <p className="mt-1 text-2xl font-bold text-slate-900">{stat.value}</p>
+                <div className="min-w-0">
+                  <p className="type-meta font-bold uppercase leading-tight text-slate-400">{stat.label}</p>
+                  <p className="mt-0.5 text-xl font-bold leading-none text-slate-900">{stat.value}</p>
                 </div>
               </CardContent>
             </Card>
@@ -188,13 +188,19 @@ export default function UserDashboard() {
 
         <div className="hidden overflow-hidden rounded-lg border border-slate-200 bg-white md:block">
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full table-fixed text-left">
+              <colgroup>
+                <col className="w-[30%]" />
+                <col className="w-[28%]" />
+                <col className="w-[20%]" />
+                <col className="w-[22%]" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50">
-                  <th className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Service</th>
-                  <th className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Assigned CA</th>
-                  <th className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Payment</th>
-                  <th className="px-5 py-4 text-right text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Service</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Assigned CA</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Payment</th>
+                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -207,44 +213,44 @@ export default function UserDashboard() {
                 ) : activeServices.length ? (
                   activeServices.map((service) => (
                     <tr key={service.id} className="group transition-colors hover:bg-blue-50/30">
-                      <td className="px-5 py-5">
-                        <div className="flex items-center gap-5">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
-                            <Briefcase className="h-5 w-5" />
+                      <td className="align-middle px-4 py-3">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                            <Briefcase className="h-4 w-4" />
                           </div>
-                          <div>
-                            <p className="mb-2 text-sm font-bold leading-none text-slate-900">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold leading-tight text-slate-900">
                               {service.serviceTitle || service.serviceId || 'Service request'}
                             </p>
-                            <p className="type-meta font-bold uppercase text-slate-400">
+                            <p className="type-meta mt-1 truncate font-bold uppercase text-slate-400">
                               {service.serviceCategory || 'General service'}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-5">
-                        <div className="flex items-center gap-3">
-                          <ShieldCheck className="h-4 w-4 text-blue-600" />
-                          <div>
-                            <p className="text-sm font-bold text-slate-800">{assignedCaLabel(service)}</p>
+                      <td className="align-middle px-4 py-3">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" />
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold text-slate-800">{assignedCaLabel(service)}</p>
                             {(service.assignedCaEmail || service.metadata?.assignedCa?.email) && (
-                              <p className="type-meta mt-1 font-semibold text-slate-400">
+                              <p className="type-meta mt-0.5 truncate font-semibold text-slate-400">
                                 {service.assignedCaEmail || service.metadata?.assignedCa?.email}
                               </p>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-5">
-                        <Badge variant="outline" className="type-meta border-slate-200 bg-slate-50 px-3 py-1 font-bold text-slate-600">
+                      <td className="align-middle px-4 py-3">
+                        <Badge variant="outline" className="type-meta whitespace-nowrap border-slate-200 bg-slate-50 px-2.5 py-0.5 font-bold text-slate-600">
                           {service.paymentStatus || 'Payment pending'}
                         </Badge>
                       </td>
-                      <td className="px-5 py-5 text-right">
+                      <td className="align-middle px-4 py-3 text-right">
                         <Link href={`/dashboard/services/${service.id}`}>
-                          <Button variant="outline" className="h-9 rounded-lg border-slate-200 px-4 text-xs font-bold text-slate-600 hover:border-blue-600 hover:bg-blue-600 hover:text-white">
+                          <Button variant="outline" className="h-8 min-w-[136px] justify-between rounded-lg border-slate-200 px-3 text-xs font-bold text-slate-600 hover:border-blue-600 hover:bg-blue-600 hover:text-white">
                             {serviceStatus(service)}
-                            <ChevronRight className="ml-2 h-3.5 w-3.5" />
+                            <ChevronRight className="ml-2 h-3.5 w-3.5 shrink-0" />
                           </Button>
                         </Link>
                       </td>

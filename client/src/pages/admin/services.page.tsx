@@ -88,7 +88,7 @@ const serviceSchema = z.object({
 type ServiceFormData = z.infer<typeof serviceSchema>;
 
 interface Service {
-  id: number;
+  id: number | string;
   name: string;
   description: string;
   category: string;
@@ -99,8 +99,8 @@ interface Service {
   estimatedDuration?: string;
   requirements?: string;
   bookingsCount?: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 const categories = [
@@ -196,7 +196,7 @@ export default function ServicesManagementPage() {
   });
 
   const updateServiceMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: ServiceFormData }) =>
+    mutationFn: ({ id, data }: { id: number | string; data: ServiceFormData }) =>
       apiRequest(`/api/admin/services/${id}`, {
         method: "PUT",
         body: JSON.stringify(data),
@@ -217,7 +217,7 @@ export default function ServicesManagementPage() {
   });
 
   const deleteServiceMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/admin/services/${id}`, {
+    mutationFn: (id: number | string) => apiRequest(`/api/admin/services/${id}`, {
       method: "DELETE",
     }),
     onSuccess: () => {
@@ -660,7 +660,7 @@ export default function ServicesManagementPage() {
                   </td>
                   <td className="px-4 py-4 text-sm font-medium text-slate-600">{service.bookingsCount || 0} bookings</td>
                   <td className="px-4 py-4 text-xs font-medium text-slate-500">
-                    {format(new Date(service.updatedAt), "MMM dd, yyyy")}
+                    {service.updatedAt ? format(new Date(service.updatedAt), "MMM dd, yyyy") : "Code catalog"}
                   </td>
                   <td className="px-4 py-4 text-right">
                     <div className="flex items-center justify-end gap-1.5">
