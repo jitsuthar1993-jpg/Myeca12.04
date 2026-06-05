@@ -157,6 +157,9 @@ describe("Vercel admin service APIs", () => {
       category: "tax-filing",
       isActive: true,
     });
+    expect(res.body.map((service: { id: string }) => service.id)).not.toEqual(
+      expect.arrayContaining(["advance-tax", "income-tax-calculator", "all-calculators", "tax-regime-calculator"]),
+    );
   });
 
   it("lists and updates user service cases for admins", async () => {

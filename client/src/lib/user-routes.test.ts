@@ -603,6 +603,9 @@ describe("admin service catalog route", () => {
       isActive: true,
       bookingsCount: 1,
     });
+    expect(json.map((service: { id: string }) => service.id)).not.toEqual(
+      expect.arrayContaining(["advance-tax", "income-tax-calculator", "all-calculators", "tax-regime-calculator"]),
+    );
   });
 });
 

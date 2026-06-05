@@ -3,9 +3,14 @@ export type AdminCatalogSourceService = {
   title: string;
   description: string;
   category: string;
+  path?: string;
   price?: string;
   popular?: boolean;
 };
+
+export function isAdminCatalogService(service: AdminCatalogSourceService) {
+  return service.path !== "/calculators" && !service.path?.startsWith("/calculators/");
+}
 
 function catalogPrice(value?: string) {
   const match = String(value || "").replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);

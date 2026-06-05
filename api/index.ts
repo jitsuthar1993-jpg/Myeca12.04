@@ -33,7 +33,7 @@ import { getGeneratedPublicRoutes } from "../client/src/data/missing-pages.js";
 import { buildOpenApiSpec } from "../server/openapi.js";
 import { getIncomeTaxFormAsset } from "../shared/income-tax-form-assets.js";
 import { normalizeAppRole } from "../shared/app-roles.js";
-import { serializeAdminCatalogService } from "../shared/admin-service-catalog.js";
+import { isAdminCatalogService, serializeAdminCatalogService } from "../shared/admin-service-catalog.js";
 import {
   buildRobotsTxt,
   buildSitemapXml,
@@ -1353,7 +1353,9 @@ async function handleRequest(req: any, res: any) {
     return sendJson(
       res,
       200,
-      allServices.map((service) => serializeAdminCatalogService(service, bookings.get(service.id) || 0)),
+      allServices
+        .filter(isAdminCatalogService)
+        .map((service) => serializeAdminCatalogService(service, bookings.get(service.id) || 0)),
     );
   }
 

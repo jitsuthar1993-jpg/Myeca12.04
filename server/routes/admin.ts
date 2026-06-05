@@ -9,7 +9,7 @@ import { provisionPrivilegedUser, syncRoleClaims } from "../services/user-accoun
 import { syncSupabaseUserDirectory } from "../services/supabase-user-directory.js";
 import { invalidateCachedUser } from "../utils/user-cache.js";
 import { APP_ROLES, PRIVILEGED_APP_ROLES } from "../../shared/app-roles.js";
-import { serializeAdminCatalogService } from "../../shared/admin-service-catalog.js";
+import { isAdminCatalogService, serializeAdminCatalogService } from "../../shared/admin-service-catalog.js";
 import { allServices } from "../../client/src/data/all-services.js";
 
 const API_CONFIG = {
@@ -134,7 +134,11 @@ router.get("/services", requireAuth, requireAdmin, async (_req: AuthRequest, res
       if (serviceId) bookings.set(serviceId, (bookings.get(serviceId) || 0) + 1);
     });
 
-    res.json(allServices.map((service) => serializeAdminCatalogService(service, bookings.get(service.id) || 0)));
+    res.json(
+      allServices
+        .filter(isAdminCatalogService)
+        .map((service) => serializeAdminCatalogService(service, bookings.get(service.id) || 0)),
+    );
   } catch (error) {
     return safeError(res, error, "Failed to load service catalog");
   }
