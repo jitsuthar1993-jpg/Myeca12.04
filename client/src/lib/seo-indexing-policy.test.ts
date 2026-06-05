@@ -328,7 +328,7 @@ describe("SEO indexing policy", () => {
 
     [
       "/dashboard/services/example-id",
-      "/services/activate/partnership-deed",
+      "/services/activate/itr-filing",
       "/services/company-registration/mumbai",
       "/experts/ca-amit-verma",
       "/search",

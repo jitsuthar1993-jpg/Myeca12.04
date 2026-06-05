@@ -1,9 +1,11 @@
 import { useEffect } from "react";
+import { useLocation } from "wouter";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
 export default function LogoutPage() {
   const { logout } = useAuth();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     let mounted = true;

@@ -100,8 +100,8 @@ export function StandardPricingCompactCard({ service }: { service: ServicePricin
 function SectionHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
   return (
     <div className="mb-9 max-w-3xl">
-      <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">{eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl">{title}</h2>
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">{eyebrow}</p>
+      <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">{title}</h2>
       <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">{description}</p>
     </div>
   );
@@ -112,8 +112,8 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
   return (
     <Card
       className={cn(
-        "overflow-hidden rounded-lg border-slate-200 shadow-sm hover:border-blue-100",
-        plan.featured && "border-blue-500 shadow-lg shadow-blue-100/70"
+        "rounded-lg border-blue-100 bg-white shadow-sm",
+        plan.featured && "border-blue-200 shadow-md shadow-blue-100/80"
       )}
     >
       <CardContent className="flex h-full flex-col p-6">
@@ -150,7 +150,7 @@ function ServicePackageCard({
   const Icon = service.icon || ShieldCheck;
 
   return (
-    <Card className="overflow-hidden rounded-lg border-slate-200 shadow-sm">
+    <Card className="overflow-hidden rounded-lg border-blue-100 bg-white shadow-sm">
       <CardContent className="grid gap-8 p-6 lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
         <div>
           <div className="flex items-center gap-4">
@@ -216,7 +216,7 @@ function FeeBreakdownCard({
   const professional = service.feeBreakdown?.professional || [];
 
   return (
-    <Card className="rounded-lg border-slate-200 shadow-sm">
+    <Card className="rounded-lg border-blue-100 bg-white shadow-sm">
       <CardContent className="grid gap-6 p-6 md:grid-cols-3 lg:p-8">
         <FeeColumn title="Government / Statutory Fees" items={government} tone="red" />
         <FeeColumn title="MyeCA Professional Fees" items={professional} tone="blue" />
@@ -237,7 +237,7 @@ function PriceBlock({ pricing }: { pricing: PricingPlan["pricing"] | ServicePric
   return (
     <div className="mt-5">
       <div className="flex flex-wrap items-baseline gap-2">
-        <p className="break-words text-3xl font-black tracking-tight text-slate-950 md:text-4xl">{formatPricingLabel(pricing)}</p>
+        <p className="text-4xl font-extrabold tracking-tight text-slate-900">{formatPricingLabel(pricing)}</p>
         {pricing.originalAmount && (
           <span className="text-sm font-bold text-slate-400 line-through">{formatINR(pricing.originalAmount)}</span>
         )}
@@ -291,15 +291,10 @@ function ScopeBox({ caTouchpoints, sla }: { caTouchpoints: string; sla: string }
 
 function PlanCta({ plan }: { plan: PricingPlan }) {
   const content = (
-    <div>
-      <Button className="w-full bg-blue-600 text-white hover:bg-blue-700">
-        {plan.cta.label}
-        <ArrowRight className="h-4 w-4" />
-      </Button>
-      <p className="mt-2 text-center text-xs font-semibold leading-5 text-slate-500">
-        Scope before payment. Refund outcomes are not guaranteed.
-      </p>
-    </div>
+    <Button variant="brand" className="w-full rounded-lg">
+      {plan.cta.label}
+      <ArrowRight className="h-4 w-4" />
+    </Button>
   );
 
   return plan.cta.href ? (

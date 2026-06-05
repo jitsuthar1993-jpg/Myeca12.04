@@ -29,8 +29,6 @@ describe('service workflow helpers', () => {
       metadata: {
         requestDescription: 'Need GST for a new firm',
         source: 'dashboard_services',
-        formId: 'dashboard-service-modal',
-        serviceIntent: 'gst-registration',
         requestedAt: '2026-05-15T10:00:00.000Z',
         originalServicePath: '/services/gst-registration',
       },
@@ -62,8 +60,6 @@ describe('service workflow helpers', () => {
       metadata: {
         requestDescription: 'Need GST for a new firm',
         source: 'dashboard_services',
-        formId: 'dashboard-service-modal',
-        serviceIntent: 'gst-registration',
         requestedAt: '2026-05-15T10:00:00.000Z',
         originalServicePath: '/services/gst-registration',
       },

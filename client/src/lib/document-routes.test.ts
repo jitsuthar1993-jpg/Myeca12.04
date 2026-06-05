@@ -331,7 +331,7 @@ describe("document routes", () => {
     expect(oversized.json.error).toContain("10 MB");
   });
 
-  it("compresses image uploads through the private storage adapter", async () => {
+  it("stores image uploads through the private storage adapter without making tiny files larger", async () => {
     const onePixelPng = Buffer.from(
       "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=",
       "base64",
@@ -355,12 +355,14 @@ describe("document routes", () => {
     expect(upload.response.status).toBe(200);
     expect(upload.json.document).toMatchObject({
       name: "Receipt",
-      mimeType: "image/jpeg",
+      mimeType: "image/png",
+      compressionType: "image",
+      compressionStatus: "skipped",
     });
 
     const stored = collectionStore("documents").get(upload.json.document.id);
     expect(stored?.size).toBeGreaterThan(0);
-    expect(mockState.blobs.get(stored?.blobUrl)?.contentType).toBe("image/jpeg");
+    expect(mockState.blobs.get(stored?.blobUrl)?.contentType).toBe("image/png");
   });
 
   it("keeps registered metadata linked to the owning user and trusted blob URL", async () => {

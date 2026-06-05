@@ -301,7 +301,7 @@ export default function CADashboard() {
 
           <TabsContent value="cases" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
              <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
-                <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-slate-50 p-5">
                    <div>
                       <CardTitle className="text-lg font-bold">Assigned Case Queue</CardTitle>
                       <CardDescription className="text-xs font-medium text-slate-500">Review submitted service cases, MY ITR handoffs, and linked document counts.</CardDescription>
@@ -428,7 +428,7 @@ export default function CADashboard() {
 
           <TabsContent value="reminders" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
              <Card className="overflow-hidden rounded-lg border-slate-200 bg-white shadow-none">
-                <CardHeader className="p-8 border-b border-slate-50 flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-slate-50 p-5">
                    <div>
                       <CardTitle className="text-lg font-bold">Assigned Reminder Queue</CardTitle>
                       <CardDescription className="text-xs font-medium text-slate-500">Track missing-document requests, client-response items, and due follow-ups.</CardDescription>

@@ -1252,7 +1252,7 @@ describe("admin service catalog route", () => {
     expect(response.status).toBe(200);
     expect(json[0]).toMatchObject({
       id: "itr-filing",
-      name: "ITR Filing",
+      name: "ITR filing with document checklist",
       category: "tax-filing",
       isActive: true,
       bookingsCount: 1,

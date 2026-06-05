@@ -10,7 +10,7 @@ const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
   '/blog': ['/blog/:slug'],
   '/auth/login': ['/auth/register'],
   '/auth/register': ['/auth/login'],
-  '/dashboard': ['/profiles', '/documents', '/settings', '/itr/start'],
+  '/dashboard': ['/profiles', '/documents', '/payments', '/settings', '/itr/filing', '/itr/start'],
   '/itr': ['/itr/start', '/itr/form-selector', '/itr/status-tracker'],
   '/itr/start': ['/itr/form-selector', '/expert-consultation'],
   '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],

@@ -9,6 +9,9 @@ import { safeError } from "../utils/error-response.js";
 import { setCachedUser } from "../utils/user-cache.js";
 import { getUserOwnedSnapshot, recordBelongsToUser } from "../utils/access-control.js";
 import { notifyLeadAutomation } from "../services/lead-automation.js";
+import { createReminder, listReminders } from "../utils/reminders.js";
+import { listWorkflowEvents, recordWorkflowEvent } from "../utils/workflow-events.js";
+import { notifyAdmins, notifyRole, notifyUser } from "../utils/workflow-notifications.js";
 
 const router = Router();
 const updateProfileSchema = z.object({
@@ -680,6 +683,42 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
     };
 
     const docRef = await adminDb.collection("consultation_requests").add(newRequest);
+    await recordWorkflowEvent({
+      type: "form_submitted",
+      title: "Public intake form submitted",
+      message: `${request.name} submitted ${request.service}.`,
+      sourceType: "consultation_request",
+      sourceId: docRef.id,
+      userId: req.user?.id || null,
+      targetRole: "team_member",
+      actorUserId: req.user?.id || null,
+      actorRole: req.user?.role || null,
+      priority: "medium",
+      metadata: {
+        source: newRequest.source,
+        formId: request.formId || null,
+        serviceIntent: request.serviceIntent || request.service,
+      },
+    });
+    await createReminder({
+      title: "New intake request",
+      message: `${request.name} asked for ${request.service}.`,
+      targetRole: "team_member",
+      sourceType: "consultation_request",
+      sourceId: docRef.id,
+      priority: "medium",
+      metadata: {
+        source: newRequest.source,
+        formId: request.formId || null,
+        serviceIntent: request.serviceIntent || request.service,
+      },
+    });
+    await notifyRole("team_member", {
+      title: "New intake request",
+      message: `${request.name} asked for ${request.service}.`,
+      type: "info",
+      metadata: { consultationRequestId: docRef.id, source: newRequest.source },
+    });
     void notifyLeadAutomation({ id: docRef.id, ...newRequest }).catch((error) => {
       console.warn("[LEAD_AUTOMATION]", error);
     });
