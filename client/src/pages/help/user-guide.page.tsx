@@ -101,7 +101,7 @@ const userGuides = [
   {
     id: 'tax-planning',
     title: 'Tax Planning Strategies',
-    description: 'Maximize your tax savings with smart planning',
+    description: 'Estimate eligible tax savings with smart planning',
     icon: Calculator,
     readTime: '12 min',
     sections: [
@@ -186,7 +186,7 @@ const quickTips = [
   },
   {
     title: 'Keep Records',
-    description: 'Maintain documents for 7 years',
+    description: 'Maintain documents for required recordkeeping',
     icon: FileText
   },
   {

@@ -63,6 +63,7 @@ export default function HSNFinderPage() {
         icon={<Search className="w-6 h-6" />}
         variant="blue"
         breadcrumbItems={[{ name: "HSN Finder" }]}
+        compact
       />
 
       <CalcLayout

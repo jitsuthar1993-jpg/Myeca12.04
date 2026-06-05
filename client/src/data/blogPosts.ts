@@ -52,7 +52,7 @@ export const blogPosts = [
   {
     id: 2,
     title: "New Tax Regime vs Old Tax Regime: Which One Should You Choose?",
-    excerpt: "Detailed comparison between the new and old tax regimes to help you make an informed decision for maximum tax savings.",
+    excerpt: "Detailed comparison between the new and old tax regimes to help you estimate eligible tax savings.",
     content: `
       <h2>Understanding Both Tax Regimes</h2>
       <p>The new tax regime offers lower tax rates but fewer deductions, while the old regime has higher rates but allows various deductions and exemptions.</p>
@@ -115,9 +115,9 @@ export const blogPosts = [
   {
     id: 3,
     title: "Top 10 Tax-Saving Investments for 2025",
-    excerpt: "Explore the best investment options under Section 80C and other provisions to minimize your tax liability effectively.",
+    excerpt: "Explore common investment options under Section 80C and other provisions to estimate eligible tax savings.",
     content: `
-      <h2>Maximize Your Tax Savings in 2025</h2>
+      <h2>Estimate Eligible Tax Savings in 2025</h2>
       <p>Smart tax planning through investments can help you save up to Rs 46,800 in taxes (for 30% tax bracket) under Section 80C alone.</p>
 
       <h3>1. Public Provident Fund (PPF)</h3>
@@ -218,7 +218,7 @@ export const blogPosts = [
       <ul>
         <li><strong>Impact:</strong> Wrong tax rate application</li>
         <li><strong>Requirement:</strong> 4-digit HSN for turnover above Rs 5 Cr</li>
-        <li><strong>Best Practice:</strong> Maintain HSN master list</li>
+        <li><strong>Practice Tip:</strong> Maintain HSN master list</li>
       </ul>
 
       <h3>3. Missing Reverse Charge Entries</h3>
@@ -249,7 +249,7 @@ export const blogPosts = [
         <li><strong>Cancellation:</strong> Within 24 hours only</li>
       </ul>
 
-      <h3>Best Practices for Error-Free Filing</h3>
+      <h3>Practical Checks Before Filing</h3>
       <ol>
         <li>Maintain proper books of accounts</li>
         <li>Reconcile ITC monthly with GSTR-2B</li>
@@ -453,7 +453,7 @@ export const blogPosts = [
 
       <h3>Who Benefits Most?</h3>
       <ul>
-        <li><strong>Salaried Employees:</strong> Maximum benefit with standard deduction</li>
+        <li><strong>Salaried Employees:</strong> Standard deduction may reduce taxable salary where eligible</li>
         <li><strong>Young Professionals:</strong> No need for investment proofs</li>
         <li><strong>High Income Earners:</strong> Lower tax rates across slabs</li>
         <li><strong>NRIs:</strong> Simplified compliance without deductions</li>
@@ -900,7 +900,7 @@ export const blogPosts = [
 
       <h3>1. Private Limited Company (Pvt Ltd)</h3>
       <ul>
-        <li><strong>Best For:</strong> High growth startups looking for VC funding</li>
+        <li><strong>Suitable For:</strong> High growth startups looking for VC funding</li>
         <li><strong>Compliance Level:</strong> High (Audit, board meetings, ROC filings)</li>
         <li><strong>Control:</strong> Directors and Shareholders</li>
         <li><strong>Capital Requirement:</strong> Nil (Minimum authorized capital)</li>
@@ -908,7 +908,7 @@ export const blogPosts = [
 
       <h3>2. Limited Liability Partnership (LLP)</h3>
       <ul>
-        <li><strong>Best For:</strong> Professionals and service-oriented businesses</li>
+        <li><strong>Suitable For:</strong> Professionals and service-oriented businesses</li>
         <li><strong>Compliance Level:</strong> Moderate</li>
         <li><strong>Taxation:</strong> Partnership tax rates apply</li>
         <li><strong>Advantage:</strong> No Dividend Distribution Tax</li>
@@ -916,7 +916,7 @@ export const blogPosts = [
 
       <h3>3. One Person Company (OPC)</h3>
       <ul>
-        <li><strong>Best For:</strong> Solopreneurs who want limited liability</li>
+        <li><strong>Suitable For:</strong> Solopreneurs who want limited liability</li>
         <li><strong>Compliance Level:</strong> Moderate</li>
         <li><strong>Requirement:</strong> One Director and One Nominee</li>
         <li><strong>Flexibility:</strong> Easy to convert to Pvt Ltd later</li>

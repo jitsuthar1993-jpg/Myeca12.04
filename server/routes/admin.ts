@@ -72,7 +72,7 @@ const optionalAdminNote = z.preprocess(
 );
 
 const updateConsultationRequestSchema = z.object({
-  status: z.enum(["new", "contacted", "converted", "closed"]).optional(),
+  status: z.enum(["new", "contacted", "needs_info", "escalated_admin", "escalated_ca", "converted", "closed"]).optional(),
   internalNote: optionalAdminNote,
 });
 
@@ -183,6 +183,20 @@ router.patch(
       };
 
       await ref.update(payload);
+      const current = doc.data() as Record<string, any>;
+      await recordWorkflowEvent({
+        type: "intake_admin_updated",
+        title: "Admin updated intake",
+        message: updates.internalNote || `Admin marked intake as ${updates.status || current.status || "updated"}.`,
+        sourceType: "consultation_request",
+        sourceId: req.params.id,
+        userId: current.userId || null,
+        targetRole: "team_member",
+        actorUserId: req.auth?.userId ?? null,
+        actorRole: req.user?.role || "admin",
+        priority: updates.status === "needs_info" ? "high" : "medium",
+        metadata: { status: updates.status ?? null },
+      });
       await appendAdminAudit(req, "consultation_request_updated", {
         requestId: req.params.id,
         status: updates.status ?? null,
@@ -208,6 +222,19 @@ router.get("/requests/payment-links", requireAuth, requireAdmin, async (req: Aut
     });
   } catch (error) {
     return safeError(res, error, "Failed to load payment link requests");
+  }
+});
+
+router.get("/requests/cases", requireAuth, requireAdmin, async (_req: AuthRequest, res: Response) => {
+  try {
+    const cases = await buildServiceCaseQueue();
+    res.json({
+      success: true,
+      cases,
+      total: cases.length,
+    });
+  } catch (error) {
+    return safeError(res, error, "Failed to load service cases");
   }
 });
 
@@ -255,6 +282,44 @@ router.patch(
           }
           await serviceRef.update(serviceUpdates);
         }
+      }
+
+      await recordWorkflowEvent({
+        type: "payment_link_updated",
+        title: "Payment link request updated",
+        message: updates.status === "link_sent" ? "A payment link was shared for the service case." : "Payment link request was updated.",
+        sourceType: "payment_link_request",
+        sourceId: req.params.id,
+        caseId: current.userServiceId ?? null,
+        userId: current.userId ?? null,
+        targetRole: updates.status === "link_sent" ? "user" : "admin",
+        targetUserId: updates.status === "link_sent" ? current.userId ?? null : null,
+        actorUserId: req.auth?.userId ?? null,
+        actorRole: req.user?.role || "admin",
+        priority: updates.status === "link_sent" ? "high" : "medium",
+        metadata: { status: updates.status ?? null, paymentLink: updates.paymentLink ?? null },
+      });
+
+      if (updates.status === "link_sent" && current.userId) {
+        await Promise.all([
+          notifyUser(current.userId, {
+            title: "Payment link ready",
+            message: `${current.serviceTitle || "Your service"} payment link is ready in your workspace.`,
+            type: "info",
+            metadata: { paymentLinkRequestId: req.params.id, userServiceId: current.userServiceId ?? null },
+          }),
+          createReminder({
+            title: "Payment link ready",
+            message: `${current.serviceTitle || "Your service"} payment link is ready in your workspace.`,
+            targetRole: "user",
+            targetUserId: current.userId,
+            caseId: current.userServiceId ?? null,
+            sourceType: "payment_link_request",
+            sourceId: req.params.id,
+            priority: "high",
+            metadata: { actionUrl: current.userServiceId ? `/dashboard/services/${current.userServiceId}` : "/payments" },
+          }),
+        ]);
       }
 
       await appendAdminAudit(req, "payment_link_request_updated", {

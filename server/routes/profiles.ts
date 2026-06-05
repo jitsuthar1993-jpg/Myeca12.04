@@ -7,6 +7,8 @@ import { errorResponse, safeError } from "../utils/error-response.js";
 import { assertCanAccessUserData, getAccessibleSnapshot, getUserOwnedRecords } from "../utils/access-control.js";
 
 const router = Router();
+const PII_CONFIGURATION_ERROR = "Secure profile encryption is not configured.";
+
 const profileCreateSchema = z.object({
   name: z.string().trim().min(1).max(100),
   relation: z.string().trim().min(1).max(50).default("self"),
@@ -49,6 +51,10 @@ function normalizeUserId(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
+function isPiiConfigurationError(error: unknown) {
+  return error instanceof Error && error.message.includes("PII_ENCRYPTION_KEY");
+}
+
 async function resolveTargetUserId(req: AuthRequest) {
   const authUserId = req.auth?.userId;
   if (!authUserId) return null;
@@ -71,6 +77,9 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     const profiles = records.map((profile) => serializeProfile(String(profile.id), profile));
     res.json(profiles);
   } catch (error) {
+    if (isPiiConfigurationError(error)) {
+      return errorResponse(res, 503, PII_CONFIGURATION_ERROR);
+    }
     return safeError(res, error, "Failed to fetch profiles");
   }
 });
@@ -102,6 +111,9 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return errorResponse(res, 400, error.errors[0].message);
+    }
+    if (isPiiConfigurationError(error)) {
+      return errorResponse(res, 503, PII_CONFIGURATION_ERROR);
     }
     return safeError(res, error, "Failed to create profile");
   }
@@ -153,6 +165,9 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
   } catch (error) {
     if (error instanceof z.ZodError) {
       return errorResponse(res, 400, error.errors[0].message);
+    }
+    if (isPiiConfigurationError(error)) {
+      return errorResponse(res, 503, PII_CONFIGURATION_ERROR);
     }
     return safeError(res, error, "Failed to update profile");
   }

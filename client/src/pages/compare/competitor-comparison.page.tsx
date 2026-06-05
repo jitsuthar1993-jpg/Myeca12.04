@@ -36,7 +36,7 @@ export default function CompetitorComparisonPage() {
           {
             question: "What makes MyeCA different?",
             answer:
-              "MyeCA emphasizes named CA accountability, visible document review, AIS/26AS mismatch checks, written scope before payment and case tracking from intake to post-filing support.",
+              "MyeCA emphasizes CA-assisted review where applicable, visible document review, AIS/26AS mismatch checks, written scope before payment and case tracking from intake to post-filing support.",
           },
         ]}
       />

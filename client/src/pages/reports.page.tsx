@@ -9,7 +9,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { invalidateReportCaches } from "@/lib/workspace-cache";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { 
@@ -48,6 +49,7 @@ const iconMap: Record<string, any> = {
 
 export default function ReportsPage() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: undefined,
@@ -67,11 +69,15 @@ export default function ReportsPage() {
 
   // Generate report mutation
   const generateMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("/api/reports/generate", {
-      method: "POST",
-      body: JSON.stringify(data)
-    }),
-    onSuccess: (data) => {
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("/api/reports/generate", {
+        method: "POST",
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    },
+    onSuccess: async () => {
+      await invalidateReportCaches(queryClient);
       toast({
         title: "Report generated successfully",
         description: "Your report is ready for download."

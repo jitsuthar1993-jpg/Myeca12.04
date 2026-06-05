@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { getFilePreview, formatFileSize, ALLOWED_FILE_TYPES, MAX_FILE_SIZE_BYTES, prepareDocumentForUpload } from "@/lib/file_utils";
 import { logAuditEvent, logDocumentAccess } from "@/lib/audit";
 import { getAuthToken } from "@/lib/authToken";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateDocumentCaches } from "@/lib/workspace-cache";
 
 interface ServiceUploaderProps {
   serviceId: string;
@@ -14,11 +16,12 @@ interface ServiceUploaderProps {
   expectedDocs: { id: string; name: string; required: boolean }[];
 }
 
-export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderProps) {
+export function ServiceUploader({ serviceId, serviceType, expectedDocs }: ServiceUploaderProps) {
   const [uploadedDocs, setUploadedDocs] = useState<Record<string, File | null>>({});
   const [isUploading, setIsUploading] = useState<Record<string, boolean>>({});
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleFileChange = async (docId: string, file: File | null) => {
     if (!file) {
@@ -122,6 +125,7 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
         formData.append("name", docName);
         formData.append("category", serviceType);
         formData.append("tags", JSON.stringify([docId]));
+        formData.append("userServiceId", serviceId);
 
         const response = await fetch("/api/documents/upload", {
           method: "POST",
@@ -143,8 +147,7 @@ export function ServiceUploader({ serviceType, expectedDocs }: ServiceUploaderPr
         title: "Documents Uploaded Successfully",
         description: "All selected documents have been uploaded and are being reviewed."
       });
-      
-      // Invalidate queries or redirect if needed
+      await invalidateDocumentCaches(queryClient, serviceId);
     } catch (err) {
       console.error("Upload error:", err);
       toast({

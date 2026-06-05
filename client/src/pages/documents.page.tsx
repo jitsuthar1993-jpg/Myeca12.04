@@ -1,19 +1,16 @@
 import { useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "wouter";
 import {
   CheckCircle2,
   ChevronRight,
   Download,
   Eye,
-  FileCheck2,
   FileText,
   FolderOpen,
   Pencil,
   Plus,
   Search,
-  ShieldCheck,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -27,12 +24,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { getAuthToken } from "@/lib/authToken";
 import { ALLOWED_FILE_TYPES, formatFileSize, prepareDocumentForUpload } from "@/lib/file_utils";
 import { cn } from "@/lib/utils";
 import { caseTimelineStages, vaultChecklist } from "@/data/competitive-growth";
 import { shouldLoadProductionTelemetry } from "@/utils/runtime-env";
+import { invalidateDocumentCaches } from "@/lib/workspace-cache";
 
 interface Document {
   id: string;
@@ -48,11 +45,11 @@ interface Document {
   status: string;
 }
 
-const vaultFolders = [
-  { key: "form16", label: "Form 16", prompt: "Part A/B salary certificate", status: "action_required" as const },
-  { key: "ais", label: "AIS / 26AS", prompt: "Mismatch detection source", status: "not_started" as const },
-  { key: "investment_proof", label: "80C / 80D proofs", prompt: "ELSS, PF, insurance, medical", status: "in_progress" as const },
-  { key: "bank_statement", label: "Bank statements", prompt: "Interest and income checks", status: "filed" as const },
+const documentCategories = [
+  { key: "form16", label: "Form 16", prompt: "Salary certificate" },
+  { key: "ais", label: "AIS / 26AS", prompt: "Tax statement" },
+  { key: "investment_proof", label: "Investment proofs", prompt: "80C / 80D proofs" },
+  { key: "bank_statement", label: "Bank statements", prompt: "Interest and income checks" },
 ];
 
 const generatorLinks = [
@@ -74,77 +71,82 @@ async function trackDocumentEvent(name: string, properties: Record<string, strin
   track(name, properties);
 }
 
+function formatDocumentDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function statusLabel(value?: string | null) {
+  return (value || "active").replace(/_/g, " ");
+}
+
 export default function DocumentsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
   const [uploadData, setUploadData] = useState({
     name: "",
     category: "form16",
     year: "2025-26",
     description: "",
-    profileId: "none",
-    userServiceId: "none",
   });
 
   const { data, isLoading } = useQuery<{ documents: Document[] }>({
-    queryKey: ["/api/documents", categoryFilter, searchTerm],
+    queryKey: ["/api/documents", searchTerm],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (categoryFilter !== "all") params.append("category", categoryFilter);
       if (searchTerm) params.append("search", searchTerm);
-      const response = await apiRequest(`/api/documents?${params}`);
+      const queryString = params.toString();
+      const response = await apiRequest(queryString ? `/api/documents?${queryString}` : "/api/documents");
       return response.json();
     },
-    retry: 0,
-  });
-
-  const { data: profiles = [] } = useQuery<any[]>({
-    queryKey: ["/api/profiles"],
-    retry: 0,
-  });
-
-  const { data: userServices = [] } = useQuery<any[]>({
-    queryKey: ["/api/user-services"],
     retry: 0,
   });
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const preparedFile = await prepareDocumentForUpload(file);
-
       const token = await getAuthToken();
       const formData = new FormData();
+
       formData.append("file", preparedFile);
       formData.append("name", uploadData.name || preparedFile.name);
       formData.append("category", uploadData.category);
       formData.append("year", uploadData.year);
       formData.append("description", uploadData.description);
-      if (uploadData.profileId !== "none") formData.append("profileId", uploadData.profileId);
-      if (uploadData.userServiceId !== "none") formData.append("userServiceId", uploadData.userServiceId);
 
       const response = await fetch("/api/documents/upload", {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
+
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || data.message || "Failed to upload document");
       }
+
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+    onSuccess: async () => {
+      await invalidateDocumentCaches(queryClient);
       void trackDocumentEvent("document_upload_success", { category: uploadData.category });
       toast({ title: "Document uploaded", description: "Stored securely in your private vault." });
+      setUploadData((current) => ({ ...current, name: "", description: "" }));
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
     onError: (error) => {
-      void trackDocumentEvent("document_upload_failed", { reason: error instanceof Error ? error.message : "unknown" });
+      void trackDocumentEvent("document_upload_failed", {
+        reason: error instanceof Error ? error.message : "unknown",
+      });
       toast({
         title: "Upload failed",
         description: error instanceof Error ? error.message : "Please try again later.",
@@ -155,14 +157,15 @@ export default function DocumentsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/documents/${id}`, { method: "DELETE" }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+    onSuccess: async () => {
+      await invalidateDocumentCaches(queryClient);
       toast({ title: "Document deleted", description: "The file metadata and private access link were removed." });
     },
   });
 
   const documents = data?.documents || [];
-  const totalSize = documents.reduce((sum, doc) => sum + (doc.size || 0), 0);
+  const uploadedCategories = new Set(documents.map((doc) => doc.category));
+  const pendingUploadItems = documentCategories.filter((item) => !uploadedCategories.has(item.key));
 
   const stats = [
     { label: "Files", value: documents.length, icon: FileText, tone: "blue" },
@@ -176,10 +179,16 @@ export default function DocumentsPage() {
     const response = await fetch(`/api/documents/${doc.id}/download`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
+
     if (!response.ok) {
-      toast({ title: "Download failed", description: "Ownership check failed or file is unavailable.", variant: "destructive" });
+      toast({
+        title: "Download failed",
+        description: "Ownership check failed or file is unavailable.",
+        variant: "destructive",
+      });
       return;
     }
+
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");

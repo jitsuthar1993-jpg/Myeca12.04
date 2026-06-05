@@ -80,11 +80,11 @@ export default function StandardPricingSection({
 
 export function StandardPricingCompactCard({ service }: { service: ServicePricing }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+    <div className="rounded-lg border border-blue-100 bg-[#F8FAFC] p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="type-meta font-black uppercase tracking-widest text-slate-400">Price</p>
-          <p className="mt-1 text-xl font-black tracking-tight text-slate-950">{formatPricingLabel(service.pricing)}</p>
+          <p className="mt-1 text-xl font-extrabold tracking-tight text-slate-900">{formatPricingLabel(service.pricing)}</p>
           <p className="mt-1 text-xs font-bold text-slate-500">{getGstNote(service.pricing)}</p>
         </div>
         {service.badge && <Badge className="bg-blue-50 text-blue-700">{service.badge}</Badge>}
@@ -122,12 +122,12 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
             <Icon className="h-6 w-6" />
           </div>
           {plan.badge && (
-            <Badge className={plan.featured ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-700"}>
+            <Badge className={plan.featured ? "border-blue-100 bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-700"}>
               {plan.badge}
             </Badge>
           )}
         </div>
-        <h3 className="mt-5 text-2xl font-black text-slate-950">{plan.name}</h3>
+        <h3 className="mt-5 text-2xl font-extrabold text-slate-900">{plan.name}</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">{plan.audience}</p>
         <PriceBlock pricing={plan.pricing} />
         <FeatureList items={plan.included} />
@@ -159,7 +159,7 @@ function ServicePackageCard({
             </div>
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-slate-400">{service.category}</p>
-              <h3 className="text-2xl font-black text-slate-950">{service.name}</h3>
+              <h3 className="text-2xl font-extrabold text-slate-900">{service.name}</h3>
             </div>
           </div>
           <p className="mt-5 text-sm leading-7 text-slate-600">{service.audience}</p>
@@ -170,13 +170,13 @@ function ServicePackageCard({
           </div>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             {checkoutAmount ? (
-              <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => onCheckout?.(service)}>
+              <Button variant="brand" className="rounded-lg" onClick={() => onCheckout?.(service)}>
                 {service.primaryCta.label}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             ) : service.primaryCta.href ? (
               <Link href={service.primaryCta.href}>
-                <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                <Button variant="brand" className="rounded-lg">
                   {service.primaryCta.label}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -192,9 +192,9 @@ function ServicePackageCard({
           <DetailPanel title="Included" items={service.included} />
           <DetailPanel title="Documents Needed" items={service.documents} icon="doc" />
           <DetailPanel title="Exclusions" items={service.exclusions} muted />
-          <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+          <div className="rounded-lg border border-blue-100 bg-blue-50 p-5">
             <Info className="h-5 w-5 text-blue-700" />
-            <h4 className="mt-3 font-black text-slate-950">Scope note</h4>
+            <h4 className="mt-3 font-extrabold text-slate-900">Scope note</h4>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               Starting prices apply to standard cases. Any government fees, extra classes, hearings, audits, or out-of-scope work are confirmed before payment.
             </p>
@@ -220,11 +220,11 @@ function FeeBreakdownCard({
       <CardContent className="grid gap-6 p-6 md:grid-cols-3 lg:p-8">
         <FeeColumn title="Government / Statutory Fees" items={government} tone="red" />
         <FeeColumn title="MyeCA Professional Fees" items={professional} tone="blue" />
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+        <div className="rounded-lg border border-blue-100 bg-[#F8FAFC] p-5">
           <p className="text-xs font-black uppercase tracking-widest text-slate-400">Checkout starts at</p>
-          <p className="mt-2 text-3xl font-black text-slate-950">{formatPricingLabel(service.pricing)}</p>
+          <p className="mt-2 text-3xl font-extrabold text-slate-900">{formatPricingLabel(service.pricing)}</p>
           <p className="mt-2 text-sm font-bold text-slate-500">{getGstNote(service.pricing)}</p>
-          <Button className="mt-6 w-full bg-blue-600 hover:bg-blue-700" onClick={() => onCheckout?.(service)}>
+          <Button variant="brand" className="mt-6 w-full rounded-lg" onClick={() => onCheckout?.(service)}>
             {service.primaryCta.label}
           </Button>
         </div>
@@ -280,7 +280,7 @@ function ExclusionList({ items }: { items: string[] }) {
 
 function ScopeBox({ caTouchpoints, sla }: { caTouchpoints: string; sla: string }) {
   return (
-    <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+    <div className="mt-6 rounded-lg border border-slate-100 bg-[#F8FAFC] p-4">
       <p className="text-xs font-black uppercase tracking-widest text-slate-400">CA touchpoint</p>
       <p className="mt-2 text-sm font-bold text-slate-800">{caTouchpoints}</p>
       <p className="mt-3 text-xs font-black uppercase tracking-widest text-slate-400">SLA</p>
@@ -313,7 +313,7 @@ function PlanCta({ plan }: { plan: PricingPlan }) {
 
 function InfoPill({ icon: Icon, label, value }: { icon: typeof Clock; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+    <div className="rounded-lg border border-slate-100 bg-[#F8FAFC] p-4">
       <Icon className="h-4 w-4 text-blue-700" />
       <p className="mt-2 type-meta font-black uppercase tracking-widest text-slate-400">{label}</p>
       <p className="mt-1 text-sm font-bold text-slate-800">{value}</p>
@@ -333,8 +333,8 @@ function DetailPanel({
   icon?: "doc";
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <h4 className="font-black text-slate-950">{title}</h4>
+    <div className="rounded-lg border border-slate-200 bg-white p-5">
+      <h4 className="font-extrabold text-slate-900">{title}</h4>
       <div className="mt-4 space-y-3">
         {items.map((item) => (
           <div key={item} className="flex gap-3 text-sm font-semibold text-slate-700">
@@ -364,14 +364,14 @@ function FeeColumn({
 }) {
   const total = items.reduce((sum, item) => sum + item.amount, 0);
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <h4 className="font-black text-slate-950">{title}</h4>
+    <div className="rounded-lg border border-slate-200 bg-white p-5">
+      <h4 className="font-extrabold text-slate-900">{title}</h4>
       <div className="mt-4 space-y-3">
         {items.length === 0 ? (
           <p className="text-sm font-semibold text-slate-500">Confirmed during scope review.</p>
         ) : (
           items.map((item) => (
-            <div key={item.label} className="rounded-xl bg-slate-50 p-3">
+            <div key={item.label} className="rounded-lg bg-[#F8FAFC] p-3">
               <div className="flex items-center justify-between gap-4">
                 <span className="text-sm font-bold text-slate-700">{item.label}</span>
                 <span className={cn("font-black", tone === "red" ? "text-red-600" : "text-blue-700")}>
@@ -386,8 +386,8 @@ function FeeColumn({
       {items.length > 0 && (
         <div className="mt-4 border-t border-slate-100 pt-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-black text-slate-950">Subtotal</span>
-            <span className="text-lg font-black text-slate-950">{formatINR(total)}</span>
+            <span className="text-sm font-extrabold text-slate-900">Subtotal</span>
+            <span className="text-lg font-extrabold text-slate-900">{formatINR(total)}</span>
           </div>
         </div>
       )}

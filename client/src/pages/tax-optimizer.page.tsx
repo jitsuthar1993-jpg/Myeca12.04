@@ -10,7 +10,7 @@ export default function TaxOptimizerPage() {
   return (
     <Layout>
       <EnhancedSEO
-        title="Tax Optimizer - Maximize Your Tax Savings | MyeCA"
+        title="Tax Optimizer - Estimate Eligible Tax Savings | MyeCA"
         description="Get personalized tax-saving recommendations. Our AI-powered Tax Optimizer analyzes your income and suggests optimal deductions under Section 80C, 80D, NPS, and more."
         canonicalUrl={`https://myeca.in${location}`}
         keywords={[
@@ -32,4 +32,3 @@ export default function TaxOptimizerPage() {
     </Layout>
   );
 }
-

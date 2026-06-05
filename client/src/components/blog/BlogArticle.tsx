@@ -330,7 +330,7 @@ function RightSidebar({
                 <div className="w-7 h-7 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
                   <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
                 </div>
-                <p className="type-meta font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
+                <p className="type-meta font-black uppercase tracking-widest text-blue-700">Consultation Request</p>
               </div>
               <h3 className="text-sm font-bold leading-snug mb-1.5 text-slate-950">Need expert help?</h3>
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
@@ -594,7 +594,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                   <div className="w-8 h-8 rounded-lg border border-blue-100 bg-white flex items-center justify-center">
                     <MessageSquare className="w-4 h-4 text-blue-600" />
                   </div>
-                  <p className="type-meta font-black uppercase tracking-widest text-blue-700">Free Consultation</p>
+                  <p className="type-meta font-black uppercase tracking-widest text-blue-700">Consultation Request</p>
                 </div>
                 <h3 className="text-base font-bold leading-snug mb-2 text-slate-950">Need expert help?</h3>
                 <p className="text-sm text-slate-600 leading-relaxed mb-4">
@@ -700,7 +700,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                     Ready to put this into action?
                   </h2>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    Get hands-on help from MyeCA experts for ITR filing, GST, tax planning, and business compliance without the guesswork.
+                    Get hands-on help from MyeCA reviewers for ITR filing, GST, tax planning, and business compliance without the guesswork.
                   </p>
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

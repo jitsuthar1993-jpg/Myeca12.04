@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { 
   Calculator, IndianRupee, TrendingUp, Calendar,
   Zap, Sparkles, CreditCard, ShieldCheck, ArrowRight, 
-  Wallet, Info, CheckCircle, Star, Lock, Headphones, 
+  Wallet, Info, CheckCircle, Lock, Headphones,
   Award, BarChart3, PieChart, Percent, ArrowUpRight,
   Briefcase, Activity
 } from "lucide-react";
@@ -67,12 +67,12 @@ export default function EMICalculator() {
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-normal text-[#175CD3]">80k+ Borrowers</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Estimate for</p>
+                <p className="text-xs font-normal text-[#175CD3]">Loan planning</p>
               </div>
               <div className="pl-2">
-                <div className="flex text-amber-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
+                <div className="flex text-[#175CD3] gap-1">
+                  {[1, 2, 3].map(i => <CheckCircle key={i} className="w-3 h-3" />)}
                 </div>
                 <p className="type-meta font-normal text-[#667085]">Estimate Tool</p>
               </div>

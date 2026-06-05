@@ -23,6 +23,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Input } from '@/components/ui/input';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+import BrandLockup from '@/components/ui/brand-lockup';
 import { ROLE_NAV_GROUPS } from '@/lib/role-workspace';
 import { getRoleHome, getRoleLabel, normalizeAppRole } from '@shared/app-roles';
 import { useRoutePreload } from '@/hooks/use-route-preload';

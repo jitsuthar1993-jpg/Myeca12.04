@@ -71,6 +71,7 @@ export default function SIPCalculator() {
         icon={<TrendingUp className="w-6 h-6" />}
         variant="blue"
         breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced SIP Calculator" : "SIP Calculator" }]}
+        compact
       />
 
       <CalcLayout
@@ -236,8 +237,8 @@ export default function SIPCalculator() {
             }
           ]}
           howItWorks={{
-            title: "The 15-15-15 Rule",
-            description: "A famous thumb rule for SIP investors to reach the ₹1 Crore milestone.",
+            title: "Sample SIP Assumption",
+            description: "A simple scenario for testing how monthly investment, time, and assumed return interact.",
             steps: [
               { title: "Invest ₹15,000", desc: "Start with a monthly SIP of ₹15,000 in a diversified equity mutual fund." },
               { title: "For 15 Years", desc: "Remain invested consistently without withdrawing for a period of 15 years." },
@@ -246,7 +247,7 @@ export default function SIPCalculator() {
           }}
           faqs={[
             { q: "Can I increase my SIP amount?", a: "Yes, you can use a 'Step-up SIP' feature to increase your investment as your income grows." },
-            { q: "Are SIP returns guaranteed?", a: "No, mutual fund returns depend on market performance. However, equity SIPs historically deliver 12-15% over 10+ years." },
+            { q: "Are SIP returns guaranteed?", a: "No, mutual fund returns depend on market performance. Review fund factsheets, risk level, and time horizon before investing." },
             { q: "Is there a penalty for missing a SIP?", a: "Fund houses don't charge penalties, but your bank might charge an 'ECS bounce' fee for insufficient funds." }
           ]}
         />

@@ -323,7 +323,7 @@ export default function AnalyticsPage() {
                   {[
                     { title: "Investment Strategy", desc: "Maximize your Section 80C units before the current fiscal deadline.", icon: Activity },
                     { title: "Health Coverage", desc: "Evaluate Section 80D limits for enhanced medical insurance premiums.", icon: Shield },
-                    { title: "Asset Planning", desc: "Audit home loan interest units for maximum capital preservation.", icon: Target },
+                    { title: "Asset Planning", desc: "Audit home loan interest units for capital-preservation planning.", icon: Target },
                     { title: "Expense Audit", desc: "Verify all deductible operational expenditures for compliance yield.", icon: BarChart3 }
                   ].map((action, i) => (
                     <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-10 flex items-start gap-6 hover:shadow-xl transition-all border border-slate-100/50">
@@ -345,7 +345,7 @@ export default function AnalyticsPage() {
                   <Activity className="h-14 w-14 text-slate-200" />
                </div>
                <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-4">No Data in Context</h3>
-               <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Initiate your first tax return filing to begin generating statistical insights and optimization strategies.</p>
+               <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">Initiate your first tax return filing to begin generating statistical insights and planning notes.</p>
                <Button className="rounded-2xl px-12 h-14 bg-blue-600 font-black text-xs uppercase tracking-widest">Start Filing</Button>
             </div>
           )}

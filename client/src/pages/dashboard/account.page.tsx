@@ -1,50 +1,102 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Loader2, Save, Lock, User, Shield,
-  Mail, Phone, Calendar, LogOut, ShieldCheck,
-  ChevronRight, Sparkles, Globe, Fingerprint
-} from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Fingerprint,
+  Loader2,
+  Lock,
+  LogOut,
+  Mail,
+  Phone,
+  Save,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import { MfaEnrollment } from "@/components/auth/MfaEnrollment";
-import { Separator } from "@/components/ui/separator";
 import { Layout } from "@/components/admin/Layout";
-import { m, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { changeSupabasePassword } from "@/lib/account-security";
+import { apiRequest } from "@/lib/queryClient";
+import { supabase } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 
 const profileSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  firstName: z.string().trim().min(1, "First name is required").max(100, "First name is too long"),
+  lastName: z.string().trim().max(100).optional().or(z.literal("")),
   email: z.string().email("Invalid email address").optional(),
   phoneNumber: z.string().trim().max(20).optional(),
 });
 
-const passwordSchema = z.object({
-  current_password: z.string().min(1, "Current password is required"),
-  new_password: z.string().min(6, "Password must be at least 6 characters"),
-  confirm_password: z.string().min(6, "Password must be at least 6 characters"),
-}).refine((data) => data.new_password === data.confirm_password, {
-  message: "Passwords do not match",
-  path: ["confirm_password"],
-});
+const passwordSchema = z
+  .object({
+    current_password: z.string().min(1, "Current password is required"),
+    new_password: z.string().min(6, "Password must be at least 6 characters"),
+    confirm_password: z.string().min(6, "Password must be at least 6 characters"),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
+type PasswordFormValues = z.infer<typeof passwordSchema>;
+
+type AccountUser = {
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  phoneNumber?: string | null;
+  role?: string | null;
+  isVerified?: boolean | null;
+};
+
+const accountTabs = [
+  {
+    id: "profile",
+    label: "Profile Details",
+    description: "Name, email, and mobile",
+    icon: User,
+  },
+  {
+    id: "security",
+    label: "Security",
+    description: "Password and MFA",
+    icon: ShieldCheck,
+  },
+] as const;
+
+type AccountTab = (typeof accountTabs)[number]["id"];
+
+function getInitials(accountUser?: AccountUser | null) {
+  const initials = `${accountUser?.firstName?.[0] || ""}${accountUser?.lastName?.[0] || ""}`.toUpperCase();
+  return initials || accountUser?.email?.[0]?.toUpperCase() || "U";
+}
+
+function getDisplayName(accountUser?: AccountUser | null) {
+  const name = [accountUser?.firstName, accountUser?.lastName].filter(Boolean).join(" ").trim();
+  return name || accountUser?.email || "Your account";
+}
+
+function getRoleLabel(role?: string | null) {
+  return (role || "user").replace(/_/g, " ");
+}
 
 export default function UnifiedAccountPage() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState<AccountTab>("profile");
 
-  const profileForm = useForm({
+  const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       firstName: "",
@@ -54,7 +106,7 @@ export default function UnifiedAccountPage() {
     },
   });
 
-  const passwordForm = useForm({
+  const passwordForm = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
       current_password: "",
@@ -63,44 +115,40 @@ export default function UnifiedAccountPage() {
     },
   });
 
-  const { data: profileData, isLoading: isLoadingProfile } = useQuery({
+  const { data: profileData, isLoading: isLoadingProfile } = useQuery<AccountUser | null>({
     queryKey: ["/api/profile"],
     queryFn: async () => {
       try {
         const res = await apiRequest("/api/profile");
         const data = await res.json();
-        return data.data?.user;
-      } catch (e) {
+        return data.data?.user || null;
+      } catch {
         return null;
       }
     },
   });
 
-  const accountUser = profileData || user;
-  const displayName = [accountUser?.firstName, accountUser?.lastName].filter(Boolean).join(" ").trim() || accountUser?.email || "Your account";
+  const accountUser = (profileData || user || null) as AccountUser | null;
+  const displayName = getDisplayName(accountUser);
   const displayEmail = accountUser?.email || "Email not available";
   const displayPhone = accountUser?.phoneNumber || "Mobile not added";
+  const roleLabel = getRoleLabel(accountUser?.role);
+  const verificationLabel = accountUser?.isVerified ? "Verified account" : "Verification pending";
 
   useEffect(() => {
-    if (profileData) {
-      profileForm.reset({
-        firstName: profileData.firstName || "",
-        lastName: profileData.lastName || "",
-        email: profileData.email || "",
-        phoneNumber: profileData.phoneNumber || "",
-      });
-    } else if (user) {
-      profileForm.reset({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        phoneNumber: user.phoneNumber || "",
-      });
-    }
-  }, [profileData, user, profileForm]);
+    const source = profileData || user;
+    if (!source) return;
+
+    profileForm.reset({
+      firstName: source.firstName || "",
+      lastName: source.lastName || "",
+      email: source.email || "",
+      phoneNumber: source.phoneNumber || "",
+    });
+  }, [profileData, profileForm, user]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: ProfileFormValues) => {
       const res = await apiRequest("/api/profile", {
         method: "PUT",
         body: JSON.stringify(data),
@@ -109,7 +157,7 @@ export default function UnifiedAccountPage() {
       return json.data?.user;
     },
     onSuccess: (updatedUser) => {
-      toast({ title: "Profile Updated", description: "Your changes have been saved successfully." });
+      toast({ title: "Profile updated", description: "Your account details have been saved." });
       if (updatedUser) {
         queryClient.setQueryData(["/api/profile"], updatedUser);
       }
@@ -117,30 +165,35 @@ export default function UnifiedAccountPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/v1/auth/me"] });
     },
     onError: (error: any) => {
-      toast({ title: "Update Failed", description: error.message || "Could not save profile changes.", variant: "destructive" });
+      toast({
+        title: "Update failed",
+        description: error.message || "Could not save profile changes.",
+        variant: "destructive",
+      });
     },
   });
 
   const changePasswordMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await apiRequest("/api/change-password", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+    mutationFn: async (data: PasswordFormValues) => {
+      return changeSupabasePassword(
+        supabase,
+        accountUser?.email || user?.email,
+        data.current_password,
+        data.new_password,
+      );
     },
     onSuccess: () => {
-      toast({ title: "Password Changed", description: "Your security credentials have been updated." });
+      toast({ title: "Password changed", description: "Your sign-in password has been updated." });
       passwordForm.reset();
     },
     onError: (error: any) => {
-      toast({ title: "Security Update Failed", description: error.message || "Failed to change password.", variant: "destructive" });
+      toast({
+        title: "Security update failed",
+        description: error.message || "Failed to change password.",
+        variant: "destructive",
+      });
     },
   });
-
-  const getInitials = () => {
-    if (!accountUser) return 'U';
-    return `${accountUser.firstName?.[0] || ''}${accountUser.lastName?.[0] || ''}`.toUpperCase() || 'U';
-  };
 
   return (
     <Layout title="Account Settings">
@@ -155,13 +208,13 @@ export default function UnifiedAccountPage() {
              <h1 className="type-page-title font-black text-slate-900">Account Control</h1>
              <p className="type-support font-medium text-slate-500">Manage your profile details and account security in one place.</p>
           </div>
-          <Button 
+          <Button
             onClick={() => logout()}
             variant="ghost" 
             className="h-11 w-full rounded-lg border border-red-100/50 bg-red-50 px-6 font-bold text-red-600 transition-all hover:bg-red-100 md:w-auto md:rounded-2xl"
           >
             <LogOut className="h-4 w-4" />
-            Sign Out
+            Sign out
           </Button>
         </div>
 
@@ -200,39 +253,42 @@ export default function UnifiedAccountPage() {
                         </div>
                      </div>
                   </div>
-
-                  <div className="mt-10 space-y-2">
-                     {[
-                        { id: 'profile', label: 'General Profile', icon: User, desc: 'Identity & Contact' },
-                        { id: 'security', label: 'Security & Access', icon: ShieldCheck, desc: 'Passwords & MFA' },
-                     ].map((tab) => (
-                        <button
-                           key={tab.id}
-                           onClick={() => setActiveTab(tab.id)}
-                           className={cn(
-                              "w-full flex items-center gap-4 px-5 py-4 rounded-[28px] transition-all duration-300 text-left group",
-                              activeTab === tab.id 
-                                 ? "bg-blue-600 text-white shadow-xl shadow-blue-100" 
-                                 : "text-slate-500 hover:bg-slate-50 hover:text-blue-600"
-                           )}
-                        >
-                           <div className={cn(
-                              "h-11 w-11 rounded-[18px] flex items-center justify-center transition-colors",
-                              activeTab === tab.id ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500"
-                           )}>
-                              <tab.icon className="h-5 w-5" />
-                           </div>
-                           <div className="flex flex-col min-w-0">
-                              <span className="text-sm font-bold">{tab.label}</span>
-                              <span className={cn("type-meta truncate font-medium", activeTab === tab.id ? "text-blue-100" : "text-slate-400")}>{tab.desc}</span>
-                           </div>
-                           {activeTab === tab.id && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}
-                        </button>
-                     ))}
+                  <div className="min-w-0">
+                    <h2 className="truncate text-base font-bold text-slate-950">{displayName}</h2>
+                    <p className="mt-1 truncate text-sm text-slate-600">{displayEmail}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Badge variant="outline" className="rounded-md border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-600">
+                        {roleLabel}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "rounded-md text-[11px] font-bold uppercase",
+                          accountUser?.isVerified
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-amber-200 bg-amber-50 text-amber-700",
+                        )}
+                      >
+                        {verificationLabel}
+                      </Badge>
+                    </div>
                   </div>
-               </CardContent>
+                </div>
+
+                <Separator className="my-5" />
+
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <Mail className="h-4 w-4 shrink-0 text-slate-400" />
+                    <span className="min-w-0 truncate">{displayEmail}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <Phone className="h-4 w-4 shrink-0 text-slate-400" />
+                    <span className="min-w-0 truncate">{displayPhone}</span>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
-          </div>
 
           <div className="w-full rounded-lg border border-slate-100 bg-white p-4 shadow-sm lg:hidden">
             <div className="flex items-center gap-3">

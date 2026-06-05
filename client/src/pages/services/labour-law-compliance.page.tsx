@@ -242,7 +242,7 @@ export default function LabourLawCompliancePage() {
     }
   ];
 
-  const bestPractices2025 = [
+  const compliancePractices2025 = [
     {
       category: "Digital Compliance",
       icon: Globe,
@@ -270,7 +270,7 @@ export default function LabourLawCompliancePage() {
       icon: Users,
       color: "purple",
       practices: [
-        "Engage certified labor law consultants for complex compliance",
+        "Engage experienced labor law consultants for complex compliance",
         "Regular training programs for HR and payroll teams",
         "Establish compliance committees with clear responsibilities",
         "Annual compliance certification from authorized professionals"
@@ -639,7 +639,7 @@ export default function LabourLawCompliancePage() {
           </div>
         </m.div>
 
-        {/* Best Practices 2025 */}
+        {/* Compliance Practices 2025 */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -648,7 +648,7 @@ export default function LabourLawCompliancePage() {
         >
           <div className="text-center mb-12">
             <h2 className="type-section-title font-bold text-gray-900 mb-4">
-              Best Practices for Labour Law Compliance 2025
+              Labour Law Compliance Practices 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Modern approaches to ensure seamless compliance and risk mitigation
@@ -656,7 +656,7 @@ export default function LabourLawCompliancePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {bestPractices2025.map((practice, index) => (
+            {compliancePractices2025.map((practice, index) => (
               <Card key={index} className={`border-l-4 border-l-${practice.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
                   <CardTitle className={`flex items-center gap-2 text-${practice.color}-900`}>
@@ -685,30 +685,30 @@ export default function LabourLawCompliancePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.4 }}
         >
-          <Card className="bg-gradient-to-r from-orange-600 to-red-600 text-white">
+          <Card className="border-orange-100 bg-gradient-to-br from-white via-orange-50 to-red-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Need Expert Labour Law Compliance?
               </h3>
-              <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 Our labour law experts ensure complete PF, ESI, Contract Labour Act, and Factory Act 
                 compliance with update checks, deadline tracking and proactive management.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 px-8 shadow-lg">
+                <Button size="lg" className="bg-orange-600 text-white hover:bg-orange-700 px-8 shadow-sm">
                   <Users className="w-5 h-5 mr-2" />
                   Complete Compliance ₹2,999/month excluding GST
                 </Button>
                 <Link href="/expert-consultation?service=labour-law-compliance">
-                  <Button size="lg" className="bg-orange-700 hover:bg-orange-800 text-white border-0 px-8 shadow-lg font-semibold">
+                  <Button size="lg" variant="outline" className="border-orange-200 bg-white text-orange-700 hover:bg-orange-50 px-8 shadow-sm font-semibold">
                     <Phone className="w-5 h-5 mr-2" />
                     Get Expert Consultation
                   </Button>
                 </Link>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-orange-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span>Penalty-risk review</span>

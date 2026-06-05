@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { buildPaymentLinkRequestPayload, serviceNeedsPayment } from '@/lib/service-workflow';
+import { invalidatePaymentCaches } from '@/lib/workspace-cache';
 
 type UserService = {
   id: string;
@@ -52,9 +53,8 @@ export default function PaymentsPage() {
       });
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user/dashboard'] });
+    onSuccess: async () => {
+      await invalidatePaymentCaches(queryClient);
       toast({ title: 'Payment link requested', description: 'The team will share a secure payment link after review.' });
     },
     onError: (error: any) => {

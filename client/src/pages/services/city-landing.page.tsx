@@ -81,25 +81,25 @@ export default function CityLandingPage() {
       />
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-500/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+      <section className="relative overflow-hidden border-b border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-slate-50 py-20">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-100/60 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl">
             <m.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-4 py-2 rounded-full text-sm font-bold mb-6 border border-blue-500/30"
+              className="inline-flex items-center gap-2 bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-bold mb-6 border border-blue-100 shadow-sm"
             >
               <MapPin className="w-4 h-4" />
               Serving {city.name}: {city.population}
             </m.div>
             
-            <h1 className="type-page-title mb-6">
-              Expert <span className="text-blue-400">{service.title}</span> 
-              <br />Services in <span className="underline decoration-blue-500 underline-offset-8">{city.name}</span>
+            <h1 className="type-page-title mb-6 text-slate-950">
+              Expert <span className="text-blue-600">{service.title}</span>
+              <br />Services in <span className="underline decoration-blue-300 underline-offset-8">{city.name}</span>
             </h1>
             
-            <p className="text-xl text-blue-100/80 mb-10 leading-relaxed max-w-2xl">
+            <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl">
               Launch your venture with confidence. Our {city.name}-based CAs provide 
               end-to-end support for businesses in {city.landmark} and across the NCR.
             </p>
@@ -109,7 +109,7 @@ export default function CityLandingPage() {
                 Talk to a {city.name} CA
                 <Phone className="ml-2 w-5 h-5" />
               </Button>
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 h-14 rounded-xl text-lg font-bold">
+              <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 px-8 h-14 rounded-xl text-lg font-bold">
                 View Local Pricing
               </Button>
             </div>
@@ -201,21 +201,21 @@ export default function CityLandingPage() {
       {/* CTA */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <Card className="bg-blue-600 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+          <Card className="border-blue-100 bg-gradient-to-br from-white to-blue-50 overflow-hidden relative shadow-lg shadow-blue-900/5">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/60 rounded-full blur-3xl -mr-32 -mt-32"></div>
             <CardContent className="p-12 text-center relative z-10">
-              <h2 className="type-section-title mb-6">
+              <h2 className="type-section-title mb-6 text-slate-950">
                 Ready to Start your Business in {city.name}?
               </h2>
-              <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+              <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
                 Join the league of successful {city.name} entrepreneurs. Get your {service.title} 
                 started with expert assistance today.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-black h-14 px-10 rounded-xl transition-all hover:scale-105">
-                  Book Free Consultation
+                <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 font-black h-14 px-10 rounded-xl transition-all hover:scale-105">
+                  Request Consultation
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-black h-14 px-10 rounded-xl">
+                <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 font-black h-14 px-10 rounded-xl">
                   Contact Support
                 </Button>
               </div>

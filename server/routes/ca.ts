@@ -1,9 +1,20 @@
 import { Router, Response } from "express";
+import { z } from "zod";
 import { requireAuth, requireCA, AuthRequest } from "../middleware/auth.js";
 import { adminDb } from "../data-admin.js";
 import { canAccessUserData, isAdmin } from "../utils/access-control.js";
+import { buildServiceCaseDetail, buildServiceCaseQueue } from "../utils/case-queue.js";
+import { createReminder } from "../utils/reminders.js";
+import { recordWorkflowEvent } from "../utils/workflow-events.js";
+import { notifyAdmins, notifyUser } from "../utils/workflow-notifications.js";
 
 const router = Router();
+const updateCaseSchema = z.object({
+  status: z.enum(["pending", "in_progress", "client_response_needed", "completed", "closed"]).optional(),
+  caNote: z.string().trim().max(2000).optional(),
+  reminderMessage: z.string().trim().max(1000).optional(),
+  reminderDueAt: z.string().datetime().optional(),
+}).strict();
 
 async function getAccessibleClients(req: AuthRequest) {
   const actor = req.user;
@@ -104,6 +115,132 @@ router.get("/clients/:userId/documents", requireAuth, requireCA, async (req: Aut
   } catch (error: any) {
     console.error("Error fetching client documents:", error);
     res.status(500).json({ success: false, error: error.message || "Failed to fetch documents" });
+  }
+});
+
+router.get("/cases", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.auth?.userId || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const cases = await buildServiceCaseQueue(isAdmin(req.user) ? {} : { assignedCaId: req.user.id });
+    res.json({
+      success: true,
+      data: {
+        cases,
+        total: cases.length,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error fetching CA cases:", error);
+    res.status(500).json({ success: false, error: error.message || "Failed to fetch cases" });
+  }
+});
+
+router.get("/cases/:id", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.auth?.userId || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const serviceCase = await buildServiceCaseDetail(req.params.id);
+    if (!serviceCase) {
+      return res.status(404).json({ success: false, error: "Case not found" });
+    }
+
+    if (!isAdmin(req.user) && serviceCase.assignedCaId !== req.user.id) {
+      return res.status(403).json({ success: false, error: "This case is not assigned to you." });
+    }
+
+    res.json({ success: true, data: { case: serviceCase } });
+  } catch (error: any) {
+    console.error("Error fetching CA case:", error);
+    res.status(500).json({ success: false, error: error.message || "Failed to fetch case" });
+  }
+});
+
+router.patch("/cases/:id", requireAuth, requireCA, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.auth?.userId || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const updates = updateCaseSchema.parse(req.body || {});
+    const serviceCase = await buildServiceCaseDetail(req.params.id);
+    if (!serviceCase) {
+      return res.status(404).json({ success: false, error: "Case not found" });
+    }
+
+    if (!isAdmin(req.user) && serviceCase.assignedCaId !== req.user.id) {
+      return res.status(403).json({ success: false, error: "This case is not assigned to you." });
+    }
+
+    const serviceRef = adminDb.collection("user_services").doc(req.params.id);
+    const current = (await serviceRef.get()).data() as Record<string, any>;
+    const metadata = {
+      ...(current.metadata || {}),
+      ...(updates.caNote ? { caNote: updates.caNote, caNoteUpdatedAt: new Date() } : {}),
+    };
+    const payload: Record<string, any> = { metadata, updatedAt: new Date() };
+    if (updates.status) payload.status = updates.status;
+    await serviceRef.update(payload);
+
+    await recordWorkflowEvent({
+      type: "case_ca_updated",
+      title: "CA updated case",
+      message: updates.caNote || `Case status updated to ${updates.status || current.status || "updated"}.`,
+      sourceType: "user_service",
+      sourceId: req.params.id,
+      caseId: req.params.id,
+      userId: serviceCase.userId as string,
+      targetRole: updates.status === "client_response_needed" ? "user" : "admin",
+      targetUserId: updates.status === "client_response_needed" ? String(serviceCase.userId || "") : null,
+      actorUserId: req.user.id,
+      actorRole: req.user.role || "ca",
+      priority: updates.status === "client_response_needed" ? "high" : "medium",
+      metadata: { status: updates.status ?? null },
+    });
+
+    await Promise.all([
+      notifyAdmins({
+        title: "CA updated service case",
+        message: updates.caNote || "A CA updated an assigned service case.",
+        type: "info",
+        metadata: { userServiceId: req.params.id, userId: serviceCase.userId || null },
+      }),
+      updates.status === "client_response_needed"
+        ? notifyUser(String(serviceCase.userId || ""), {
+            title: "Action needed on your case",
+            message: updates.caNote || "Your CA needs more information on your service case.",
+            type: "warning",
+            metadata: { userServiceId: req.params.id },
+          })
+        : Promise.resolve(),
+      updates.reminderMessage && serviceCase.userId
+        ? createReminder({
+            title: "Action needed on your case",
+            message: updates.reminderMessage,
+            targetRole: "user",
+            targetUserId: String(serviceCase.userId),
+            caseId: req.params.id,
+            sourceType: "user_service",
+            sourceId: req.params.id,
+            dueAt: updates.reminderDueAt || null,
+            priority: "high",
+            metadata: { actionUrl: `/dashboard/services/${req.params.id}` },
+          })
+        : Promise.resolve(),
+    ]);
+
+    const updated = await buildServiceCaseDetail(req.params.id);
+    res.json({ success: true, data: { case: updated } });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ success: false, error: error.errors[0]?.message || "Invalid case update" });
+    }
+    console.error("Error updating CA case:", error);
+    res.status(500).json({ success: false, error: error.message || "Failed to update case" });
   }
 });
 

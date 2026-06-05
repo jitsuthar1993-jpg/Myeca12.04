@@ -3,6 +3,7 @@ import { Link, useParams } from 'wouter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft,
+  Bell,
   Briefcase,
   CheckCircle2,
   Clock,
@@ -27,6 +28,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { getAuthToken } from '@/lib/authToken';
 import { ALLOWED_FILE_TYPES, formatFileSize, prepareDocumentForUpload } from '@/lib/file_utils';
 import { cn } from '@/lib/utils';
+import { invalidateDocumentCaches, invalidateWorkspaceCaseCaches } from '@/lib/workspace-cache';
 
 type ServiceCase = {
   id: string;
@@ -52,10 +54,29 @@ type LinkedDocument = {
   createdAt?: string;
 };
 
+type WorkflowActivity = {
+  id: string;
+  type?: string;
+  title?: string;
+  message?: string;
+  createdAt?: string;
+};
+
+type Reminder = {
+  id: string;
+  title?: string;
+  message?: string;
+  status?: string;
+  priority?: string;
+  dueAt?: string;
+};
+
 type ServiceCaseResponse = {
   success: boolean;
   service: ServiceCase;
   documents: LinkedDocument[];
+  activity?: WorkflowActivity[];
+  reminders?: Reminder[];
 };
 
 function statusLabel(value?: string | null) {
@@ -91,6 +112,8 @@ export default function ServiceDetailPage() {
 
   const service = data?.service;
   const documents = data?.documents || [];
+  const activity = data?.activity || [];
+  const reminders = data?.reminders || [];
   const requestDescription = service?.metadata?.requestDescription || '';
 
   const noteMutation = useMutation({
@@ -105,8 +128,8 @@ export default function ServiceDetailPage() {
       });
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services', serviceId] });
+    onSuccess: async () => {
+      await invalidateWorkspaceCaseCaches(queryClient, serviceId);
       toast({ title: 'Case note saved', description: 'Your update is now attached to this service case.' });
     },
     onError: (error: any) => {
@@ -136,10 +159,8 @@ export default function ServiceDetailPage() {
       }
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services', serviceId] });
-      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user/dashboard'] });
+    onSuccess: async () => {
+      await invalidateDocumentCaches(queryClient, serviceId);
       setUploadName('');
       if (fileInputRef.current) fileInputRef.current.value = '';
       toast({ title: 'Document linked', description: 'The file is attached to this service case.' });

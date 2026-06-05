@@ -354,7 +354,7 @@ export default function ReferralsPage() {
                      </div>
                      <h1 className="text-4xl font-black tracking-tight text-slate-900">Earning Program</h1>
                      <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
-                        Coordinate client referrals, track conversion yields, and liquidate your earned rewards via our secure payout engine.
+                        Coordinate client referrals, track conversion yields, and request earned rewards through the payout workflow.
                      </p>
                   </div>
                   <div className="flex gap-4">

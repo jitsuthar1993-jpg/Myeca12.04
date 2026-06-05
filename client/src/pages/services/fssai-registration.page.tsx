@@ -218,8 +218,8 @@ export default function FSSAIRegistrationPage() {
         type="service"
         serviceData={{
           price: "2999",
-          rating: "4.8",
-          reviews: "8500",
+          rating: "Unrated",
+          reviews: "0",
           availability: "https://schema.org/InStock"
         }}
         breadcrumbs={[
@@ -583,27 +583,27 @@ export default function FSSAIRegistrationPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.0 }}
         >
-          <Card className="bg-gradient-to-r from-orange-600 to-red-600 text-white">
+          <Card className="border-orange-100 bg-gradient-to-br from-white via-orange-50 to-red-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Ready to Get Your FSSAI License?
               </h3>
-              <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 Our FSSAI experts handle documentation, application filing, and compliance guidance based on your business details.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 px-8">
+                <Button size="lg" className="bg-orange-600 text-white hover:bg-orange-700 px-8">
                   <Utensils className="w-5 h-5 mr-2" />
                   Apply Now from ₹2,999 excluding GST
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 px-8">
+                <Button size="lg" variant="outline" className="border-orange-200 bg-white text-orange-700 hover:bg-orange-50 px-8">
                   <Phone className="w-5 h-5 mr-2" />
-                  Free FSSAI Consultation
+                  Request FSSAI Consultation
                 </Button>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-orange-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span>Expert Documentation Support</span>
@@ -614,7 +614,7 @@ export default function FSSAIRegistrationPage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Complete Compliance Guidance</span>
+                  <span>Compliance Guidance</span>
                 </div>
               </div>
             </CardContent>
@@ -632,13 +632,13 @@ export default function FSSAIRegistrationPage() {
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Hygiene Ratings & Branding</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Beyond the mandatory 14-digit license number, FSSAI now encourages the <span className="font-bold">Hygiene Rating Scheme</span>. Businesses with high ratings (4 or 5 stars) see a significant boost in consumer trust and can display these ratings on platforms like Zomato and Swiggy.
+                    Beyond the mandatory 14-digit license number, FSSAI encourages hygiene-rating participation for eligible businesses. Display and marketplace use depend on the applicable FSSAI program rules and platform policies.
                   </p>
                </div>
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Penalty for Non-Compliance</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Operating without a valid FSSAI license can result in imprisonment up to 6 months and a fine up to <span className="font-bold">₹5,00,000</span>. Don't risk your reputation; our team ensures your application is filed under the correct category (Manufacturer, Trader, or Retailer) to avoid rejection.
+                    Operating without a valid FSSAI license can result in penalties under applicable food-safety law. Our team helps classify the application category and prepare documents to reduce avoidable filing issues.
                   </p>
                </div>
             </div>

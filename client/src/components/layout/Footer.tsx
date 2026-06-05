@@ -65,7 +65,7 @@ export default function Footer() {
           {[
             ["Portal", "Filing workflow"],
             ["Privacy", "Document handling"],
-            ["CA", "Review option"],
+            ["Scope", "Before payment"],
           ].map(([value, label]) => (
             <div key={value} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3">
               <div className="text-base font-black tracking-tight text-slate-950">{value}</div>

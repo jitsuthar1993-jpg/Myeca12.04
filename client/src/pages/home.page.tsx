@@ -198,7 +198,7 @@ const HomePage = () => {
           },
           {
             question: "Is CA review mandatory for all tax filings on MyeCA.in?",
-            answer: "No. Self-service filing and CA-assisted packages are separate options, so choose the review level that fits your facts and document readiness."
+            answer: "No. Entry guided filing and CA-assisted packages are separate options, so choose the review level that fits your facts and document readiness."
           },
           {
             question: "How much does it cost to file ITR online?",
@@ -304,7 +304,7 @@ const HomePage = () => {
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
                 {[
-                  { title: "Self-guided", price: "₹499", detail: "Simple salary filing", note: "Checklist and guided workflow" },
+                  { title: "Entry guided", price: "₹499", detail: "Simple salary filing", note: "Checklist and guided workflow" },
                   { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", note: "Review scope shown upfront" },
                   { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", note: "Documents reviewed before quote" },
                 ].map((plan) => (
@@ -474,16 +474,6 @@ const HomePage = () => {
           </div>
         </section>
 
-        <div className="hidden md:block">
-          <Suspense fallback={<SectionFallback />}>
-            <Testimonials />
-          </Suspense>
-
-          <Suspense fallback={<SectionFallback />}>
-            <TrustedBySection />
-          </Suspense>
-        </div>
-
         {/* Planning Tools Section */}
         <section className="border-b border-slate-200 bg-white py-12 md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -496,7 +486,7 @@ const HomePage = () => {
                 <p className="mt-3 text-sm leading-6 text-slate-600 md:text-base">
                   Use calculators to prepare your numbers, then move into the filing workflow when documents and deductions are clear.
                 </p>
-                <Link href="/calculators" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
+                <Link href="/calculators" className="mt-auto inline-flex items-center pt-5 text-sm font-bold text-blue-700 hover:text-blue-800">
                   View all calculators <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
 
@@ -521,7 +511,7 @@ const HomePage = () => {
                 </Link>
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-4">
                 <div className="grid grid-cols-2 gap-2 md:hidden">
                   {[
                     { title: "Income Tax", desc: "Tax payable", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
@@ -545,7 +535,7 @@ const HomePage = () => {
                   ))}
                 </div>
 
-                <div className="hidden gap-3 md:grid md:grid-cols-3">
+                <div className="hidden gap-4 md:grid md:grid-cols-3">
                   {[
                     { title: "Income Tax", desc: "AY 2026-27 estimate", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
                     { title: "HRA", desc: "Rent allowance check", href: "/calculators/hra", icon: Shield, tone: "bg-emerald-50 text-emerald-700" },
@@ -625,6 +615,16 @@ const HomePage = () => {
           <Suspense fallback={<SectionFallback />}>
             <GSTNoticeSection />
           </Suspense>
+
+          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
+            <Suspense fallback={<SectionFallback />}>
+              <Testimonials />
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
+              <TrustedBySection />
+            </Suspense>
+          </section>
 
           <Suspense fallback={<SectionFallback />}>
             <FinancialGlossary />

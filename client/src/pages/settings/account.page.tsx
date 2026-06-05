@@ -16,6 +16,8 @@ import { MfaEnrollment } from "@/components/auth/MfaEnrollment";
 import { Separator } from "@/components/ui/separator";
 import { logAuditEvent } from "@/lib/audit";
 import { Layout } from "@/components/admin/Layout";
+import { changeSupabasePassword } from "@/lib/account-security";
+import { supabase } from "@/lib/supabase";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -108,10 +110,12 @@ export default function AccountSettingsPage() {
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/change-password", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return changeSupabasePassword(
+        supabase,
+        profileData?.email || user?.email,
+        data.current_password,
+        data.new_password,
+      );
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Password updated successfully" });

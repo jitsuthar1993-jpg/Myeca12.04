@@ -720,7 +720,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         description: 'Most popular section with multiple investment options.',
         checklist: [
           'PPF (Public Provident Fund) - 15 year lock-in',
-          'ELSS Mutual Funds - 3 year lock-in, best returns',
+          'ELSS Mutual Funds - 3 year lock-in, market-linked returns',
           'NSC (National Savings Certificate)',
           'Tax Saving FD (5 year lock-in)',
           'EPF/VPF contributions',

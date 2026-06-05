@@ -273,7 +273,7 @@ export default function TdsFilingPage() {
   const complianceFeatures = [
     {
       title: "Expert CA Assistance",
-      description: "Qualified chartered accountants handle your TDS compliance",
+      description: "Assigned tax professionals support your TDS compliance workflow",
       icon: Users
     },
     {
@@ -282,7 +282,7 @@ export default function TdsFilingPage() {
       icon: FileText
     },
     {
-      title: "Error-Free Returns",
+      title: "Validation Checks",
       description: "Validation checks before filing to reduce return errors",
       icon: CheckCircle
     },
@@ -1000,7 +1000,7 @@ export default function TdsFilingPage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Your data is completely secure and handled by qualified CAs only
+                  Share data through the authenticated workflow; assigned professionals handle the selected filing scope
                 </AlertDescription>
               </Alert>
 

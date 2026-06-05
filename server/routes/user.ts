@@ -13,7 +13,7 @@ import { notifyLeadAutomation } from "../services/lead-automation.js";
 const router = Router();
 const updateProfileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
-  lastName: z.string().trim().min(1).max(100),
+  lastName: z.string().trim().max(100).optional().nullable().default(""),
   phoneNumber: z.string().trim().max(20).optional().nullable(),
 });
 
@@ -26,6 +26,8 @@ const createUserServiceSchema = z.object({
   metadata: z.object({
     requestDescription: z.string().trim().max(3000).optional(),
     source: z.string().trim().max(120).optional(),
+    formId: z.string().trim().max(120).optional(),
+    serviceIntent: z.string().trim().max(160).optional(),
     requestedAt: z.string().trim().max(80).optional(),
     originalServicePath: z.string().trim().max(300).nullable().optional(),
     businessName: z.string().trim().max(160).optional(),
@@ -59,12 +61,45 @@ const consultationRequestSchema = z.object({
   preferredTime: z.string().trim().max(80).optional().or(z.literal("")),
   message: z.string().trim().min(1).max(3000),
   source: z.string().trim().max(120).optional(),
+  formId: z.string().trim().max(120).optional(),
+  serviceIntent: z.string().trim().max(160).optional(),
 });
 
 const paymentLinkRequestSchema = z.object({
   userServiceId: z.string().trim().min(1),
   note: z.string().trim().max(1000).optional(),
 });
+
+const itrDraftSchema = z.object({
+  assessmentYear: z.string().trim().min(1).max(20).default("2026-27"),
+  filingPath: z.enum(["self", "ca"]).nullable().optional(),
+  recommendedForm: z.string().trim().max(20).nullable().optional(),
+  sourceSelections: z.record(z.boolean()).optional(),
+  filingFacts: z.record(z.any()).optional(),
+  profileDraft: z.record(z.any()).optional(),
+  estimateSummary: z.record(z.any()).optional(),
+  documentChecklist: z.array(z.record(z.any())).optional(),
+  workspaceState: z.record(z.any()).optional(),
+}).strict();
+
+const submitItrReviewSchema = z.object({
+  userNote: z.string().trim().max(3000).optional(),
+}).strict();
+
+type ITRDraftPayload = z.infer<typeof itrDraftSchema>;
+
+function normalizeCaFilingData<T extends Record<string, any>>(data: T): T {
+  const workspaceState =
+    data.workspaceState && typeof data.workspaceState === "object" && !Array.isArray(data.workspaceState)
+      ? { ...data.workspaceState, selectedFilingPath: "ca" }
+      : data.workspaceState;
+
+  return {
+    ...data,
+    filingPath: "ca",
+    ...(workspaceState ? { workspaceState } : {}),
+  };
+}
 
 function normalizeUserService(doc: any): Record<string, any> & { id: string } {
   const data = doc.data() as Record<string, any>;
@@ -93,6 +128,48 @@ function isPendingStatus(status: unknown) {
 
 async function getOwnedUserService(serviceId: string, userId: string) {
   return getUserOwnedSnapshot("user_services", serviceId, userId);
+}
+
+async function runServiceSideEffect(label: string, task: () => Promise<unknown>) {
+  try {
+    await task();
+  } catch (error) {
+    console.warn(`[WORKFLOW] ${label} failed; primary service record was already saved.`, error);
+  }
+}
+
+async function findLatestTaxReturn(userId: string, status?: string) {
+  const snapshot = await adminDb.collection("tax_returns")
+    .where("userId", "==", userId)
+    .get();
+
+  const docs = snapshot.docs
+    .filter((doc) => !status || doc.data()?.status === status)
+    .sort((a, b) => asTime(b.data()?.updatedAt || b.data()?.createdAt) - asTime(a.data()?.updatedAt || a.data()?.createdAt));
+
+  return docs[0] || null;
+}
+
+function serializeTaxReturn(doc: any) {
+  return { id: doc.id, ...normalizeCaFilingData(doc.data() as Record<string, any>) };
+}
+
+async function linkDraftDocumentsToService(userId: string, taxReturnId: string, userServiceId: string, now: Date) {
+  const snapshot = await adminDb.collection("documents")
+    .where("userId", "==", userId)
+    .where("taxReturnId", "==", taxReturnId)
+    .get();
+
+  await Promise.all(snapshot.docs.map((doc: any) => {
+    const data = doc.data() as Record<string, any>;
+    if (data.status && data.status !== "active") return Promise.resolve();
+    if (data.userServiceId === userServiceId && data.serviceId === userServiceId) return Promise.resolve();
+    return doc.ref.update({
+      userServiceId,
+      serviceId: userServiceId,
+      updatedAt: now,
+    });
+  }));
 }
 
 router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Response) => {
@@ -198,8 +275,8 @@ router.put("/profile", requireAnyAuth, validateRequest(updateProfileSchema), asy
 
     const userRef = adminDb.collection("users").doc(authUser.id);
     await userRef.update({
-      firstName,
-      lastName,
+      firstName: firstName.trim(),
+      lastName: typeof lastName === "string" ? lastName.trim() : "",
       phoneNumber: phoneNumber?.trim() || null,
       updatedAt: new Date()
     });
@@ -234,6 +311,176 @@ router.get("/user-services", requireAnyAuth, async (req: AuthRequest, res: Respo
   }
 });
 
+router.get("/itr/draft", requireAnyAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const draft = await findLatestTaxReturn(user.id, "draft");
+    res.json({ success: true, draft: draft ? serializeTaxReturn(draft) : null });
+  } catch (error) {
+    return safeError(res, error, "Failed to load ITR draft");
+  }
+});
+
+router.put("/itr/draft", requireAnyAuth, validateRequest(itrDraftSchema), async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const draft = normalizeCaFilingData(itrDraftSchema.parse(req.body) as ITRDraftPayload);
+    const existing = await findLatestTaxReturn(user.id, "draft");
+    const now = new Date();
+    const payload = {
+      ...draft,
+      userId: user.id,
+      status: "draft",
+      updatedAt: now,
+      createdAt: existing?.data()?.createdAt || now,
+    };
+
+    const ref = existing?.ref || await adminDb.collection("tax_returns").add(payload);
+    if (existing?.ref) {
+      await existing.ref.update(payload);
+    }
+
+    const saved = await ref.get();
+    res.json({ success: true, draft: serializeTaxReturn(saved) });
+  } catch (error) {
+    return safeError(res, error, "Failed to save ITR draft");
+  }
+});
+
+router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrReviewSchema), async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const draft = await findLatestTaxReturn(user.id, "draft");
+    if (!draft) {
+      return res.status(404).json({ success: false, message: "No ITR draft found to submit." });
+    }
+
+    const draftData = normalizeCaFilingData(draft.data() as Record<string, any>);
+    const note = submitItrReviewSchema.parse(req.body).userNote || "";
+    const now = new Date();
+
+    let serviceRef = draftData.userServiceId
+      ? adminDb.collection("user_services").doc(draftData.userServiceId)
+      : null;
+    let serviceDoc = serviceRef ? await serviceRef.get() : null;
+
+    if (!serviceDoc?.exists) {
+      serviceRef = await adminDb.collection("user_services").add({
+        userId: user.id,
+        serviceId: "itr-filing",
+        serviceTitle: "CA ITR Filing Review",
+        serviceCategory: "Income Tax",
+        profileId: null,
+        paymentAmount: null,
+        paymentStatus: "pending",
+        assignedCaId: user.assignedCaId || null,
+        status: "pending",
+        metadata: {
+          source: "itr_filing_workspace",
+          linkedTaxReturnId: draft.id,
+          recommendedForm: draftData.recommendedForm || null,
+          assessmentYear: draftData.assessmentYear || "2026-27",
+          documentChecklist: draftData.documentChecklist || [],
+          ...(note ? { userNote: note } : {}),
+        },
+        createdAt: now,
+        updatedAt: now,
+      });
+      serviceDoc = await serviceRef.get();
+    } else if (serviceRef) {
+      const current = serviceDoc.data() as Record<string, any>;
+      await serviceRef.update({
+        metadata: {
+          ...(current.metadata || {}),
+          source: "itr_filing_workspace",
+          linkedTaxReturnId: draft.id,
+          recommendedForm: draftData.recommendedForm || null,
+          assessmentYear: draftData.assessmentYear || "2026-27",
+          documentChecklist: draftData.documentChecklist || [],
+          ...(note ? { userNote: note } : {}),
+        },
+        status: current.status === "completed" ? current.status : "pending",
+        updatedAt: now,
+      });
+      serviceDoc = await serviceRef.get();
+    }
+
+    await draft.ref.update({
+      ...draftData,
+      status: "ca_review",
+      filingPath: "ca",
+      userServiceId: serviceRef.id,
+      submittedForReviewAt: now,
+      updatedAt: now,
+    });
+    await linkDraftDocumentsToService(user.id, draft.id, serviceRef.id, now);
+
+    const updatedTaxReturn = await draft.ref.get();
+    const updatedService = await serviceRef.get();
+    const notificationMetadata = {
+      taxReturnId: draft.id,
+      userServiceId: serviceRef.id,
+      userId: user.id,
+    };
+
+    await recordWorkflowEvent({
+      type: "itr_review_submitted",
+      title: "MY ITR submitted for review",
+      message: "A user submitted an MY ITR draft for CA review.",
+      sourceType: "tax_return",
+      sourceId: draft.id,
+      caseId: serviceRef.id,
+      userId: user.id,
+      targetRole: updatedService.data()?.assignedCaId ? "ca" : "admin",
+      targetUserId: updatedService.data()?.assignedCaId || null,
+      actorUserId: user.id,
+      actorRole: user.role || "user",
+      priority: "high",
+      metadata: notificationMetadata,
+    });
+    await createReminder({
+      title: "Review submitted MY ITR case",
+      message: "A user submitted an MY ITR draft and is waiting for expert review.",
+      targetRole: updatedService.data()?.assignedCaId ? "ca" : "admin",
+      targetUserId: updatedService.data()?.assignedCaId || null,
+      caseId: serviceRef.id,
+      sourceType: "tax_return",
+      sourceId: draft.id,
+      priority: "high",
+      metadata: { actionUrl: `/dashboard/services/${serviceRef.id}` },
+    });
+
+    await Promise.all([
+      notifyAdmins({
+        title: "ITR review submitted",
+        message: "A user submitted an MY ITR draft for CA review.",
+        type: "info",
+        metadata: notificationMetadata,
+      }),
+      notifyUser(updatedService.data()?.assignedCaId, {
+        title: "New assigned ITR case",
+        message: "A new ITR filing review case is assigned to you.",
+        type: "info",
+        metadata: notificationMetadata,
+      }),
+    ]);
+
+    res.json({
+      success: true,
+      taxReturn: serializeTaxReturn(updatedTaxReturn),
+      service: normalizeUserService(updatedService),
+    });
+  } catch (error) {
+    return safeError(res, error, "Failed to submit ITR draft for review");
+  }
+});
+
 router.get("/user-services/:id", requireAnyAuth, async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
@@ -244,16 +491,22 @@ router.get("/user-services/:id", requireAnyAuth, async (req: AuthRequest, res: R
       return res.status(404).json({ success: false, message: "Service not found" });
     }
 
-    const documentsSnapshot = await adminDb.collection("documents")
-      .where("userId", "==", user.id)
-      .where("userServiceId", "==", req.params.id)
-      .where("status", "==", "active")
-      .get();
+    const [documentsSnapshot, activity, reminders] = await Promise.all([
+      adminDb.collection("documents")
+        .where("userId", "==", user.id)
+        .where("userServiceId", "==", req.params.id)
+        .where("status", "==", "active")
+        .get(),
+      listWorkflowEvents({ caseId: req.params.id, userId: user.id }),
+      listReminders({ caseId: req.params.id, targetUserId: user.id }),
+    ]);
 
     res.json({
       success: true,
       service: normalizeUserService(service),
       documents: documentsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      activity,
+      reminders,
     });
   } catch (error) {
     return safeError(res, error, "Failed to fetch user service");
@@ -287,12 +540,66 @@ router.post("/user-services", requireAnyAuth, validateRequest(createUserServiceS
     };
 
     const docRef = await adminDb.collection("user_services").add(newService);
+    const savedService = normalizeUserService(await docRef.get());
+
+    await Promise.all([
+      runServiceSideEffect("record service workflow event", () => recordWorkflowEvent({
+        type: "service_requested",
+        title: "Service request created",
+        message: `${savedService.serviceTitle || "A service request"} was created from the user workspace.`,
+        sourceType: "user_service",
+        sourceId: docRef.id,
+        caseId: docRef.id,
+        userId: user.id,
+        targetRole: savedService.assignedCaId ? "ca" : "team_member",
+        targetUserId: savedService.assignedCaId || null,
+        actorUserId: user.id,
+        actorRole: user.role || "user",
+        priority: "medium",
+        metadata: {
+          source: metadata?.source || "user_services",
+          formId: metadata?.formId || null,
+          serviceIntent: metadata?.serviceIntent || serviceId,
+        },
+      })),
+      runServiceSideEffect("create service reminder", () => createReminder({
+        title: "New service intake",
+        message: `${savedService.serviceTitle || "A service request"} needs triage or expert handoff.`,
+        targetRole: savedService.assignedCaId ? "ca" : "team_member",
+        targetUserId: savedService.assignedCaId || null,
+        caseId: docRef.id,
+        sourceType: "user_service",
+        sourceId: docRef.id,
+        priority: "medium",
+        metadata: { actionUrl: `/dashboard/services/${docRef.id}` },
+      })),
+      runServiceSideEffect("notify service stakeholders", () => Promise.all([
+        notifyAdmins({
+          title: "New service request",
+          message: `${savedService.serviceTitle || "A service request"} was created from the user workspace.`,
+          type: "info",
+          metadata: { userServiceId: docRef.id, userId: user.id },
+        }),
+        notifyUser(savedService.assignedCaId, {
+          title: "New assigned service case",
+          message: `${savedService.serviceTitle || "A service request"} is assigned to you.`,
+          type: "info",
+          metadata: { userServiceId: docRef.id, userId: user.id },
+        }),
+        notifyRole("team_member", {
+          title: "New service intake",
+          message: `${savedService.serviceTitle || "A service request"} was created from the user workspace.`,
+          type: "info",
+          metadata: { userServiceId: docRef.id, userId: user.id },
+        }),
+      ])),
+    ]);
 
     res.json({
       success: true,
       message: "Service activated successfully",
       id: docRef.id,
-      service: normalizeUserService(await docRef.get())
+      service: savedService
     });
   } catch (error) {
     return safeError(res, error, "Failed to create user service");
@@ -319,6 +626,34 @@ router.patch("/user-services/:id", requireAnyAuth, validateRequest(updateUserSer
     };
 
     await service.ref.update({ metadata, updatedAt: new Date() });
+    await recordWorkflowEvent({
+      type: "case_note_added",
+      title: "User added a case note",
+      message: incomingMetadata.userNote || "A user added an update to a service case.",
+      sourceType: "user_service",
+      sourceId: req.params.id,
+      caseId: req.params.id,
+      userId: user.id,
+      targetRole: current.assignedCaId || current.metadata?.assignedCaId ? "ca" : "admin",
+      targetUserId: current.assignedCaId || current.metadata?.assignedCaId || null,
+      actorUserId: user.id,
+      actorRole: user.role || "user",
+      priority: "medium",
+    });
+    await Promise.all([
+      notifyAdmins({
+        title: "Service note updated",
+        message: "A user added an update to a service case.",
+        type: "info",
+        metadata: { userServiceId: req.params.id, userId: user.id },
+      }),
+      notifyUser(current.assignedCaId || current.metadata?.assignedCaId, {
+        title: "Client service note updated",
+        message: "A client added an update to an assigned service case.",
+        type: "info",
+        metadata: { userServiceId: req.params.id, userId: user.id },
+      }),
+    ]);
     const updated = await service.ref.get();
     res.json({ success: true, service: normalizeUserService(updated) });
   } catch (error) {
@@ -391,6 +726,44 @@ router.post("/payments/request-link", requireAnyAuth, validateRequest(paymentLin
       paymentStatus: serviceData.paymentStatus === "paid" ? "paid" : "link_requested",
       updatedAt: new Date(),
     });
+    await recordWorkflowEvent({
+      type: "payment_link_requested",
+      title: "Payment link requested",
+      message: `${request.serviceTitle} needs a payment link.`,
+      sourceType: "payment_link_request",
+      sourceId: requestRef.id,
+      caseId: req.body.userServiceId,
+      userId: user.id,
+      targetRole: "admin",
+      actorUserId: user.id,
+      actorRole: user.role || "user",
+      priority: "high",
+      metadata: { note: request.note || null },
+    });
+    await createReminder({
+      title: "Payment link requested",
+      message: `${request.serviceTitle} needs a payment link.`,
+      targetRole: "admin",
+      caseId: req.body.userServiceId,
+      sourceType: "payment_link_request",
+      sourceId: requestRef.id,
+      priority: "high",
+      metadata: { actionUrl: "/admin/requests" },
+    });
+    await Promise.all([
+      notifyAdmins({
+        title: "Payment link requested",
+        message: `${request.serviceTitle} needs a payment link.`,
+        type: "info",
+        metadata: { userServiceId: req.body.userServiceId, paymentLinkRequestId: requestRef.id, userId: user.id },
+      }),
+      notifyUser(serviceData.assignedCaId, {
+        title: "Client requested payment link",
+        message: `${request.serviceTitle} has a payment-link request.`,
+        type: "info",
+        metadata: { userServiceId: req.body.userServiceId, paymentLinkRequestId: requestRef.id, userId: user.id },
+      }),
+    ]);
 
     res.json({
       success: true,

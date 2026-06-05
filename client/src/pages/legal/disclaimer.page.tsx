@@ -60,7 +60,7 @@ export default function DisclaimerPage() {
               
               <p className="text-gray-600 mb-4">
                 MyeCA Technologies Private Limited ("MyeCA", "we", "us", or "our") provides tax and 
-                business services through qualified professionals. This disclaimer applies to all users 
+                business services through tax and compliance professionals. This disclaimer applies to all users
                 of our platform and services.
               </p>
             </div>
@@ -158,7 +158,7 @@ export default function DisclaimerPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">Not a Substitute for Professional Consultation</h3>
                     <p className="text-gray-600 text-sm">
-                      While our team includes qualified Chartered Accountants and tax professionals, 
+                      While our team includes tax professionals and specialist reviewers,
                       the information and services provided should not be considered as personalized 
                       professional advice until a formal engagement is established.
                     </p>

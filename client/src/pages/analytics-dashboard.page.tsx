@@ -49,7 +49,7 @@ const userDemographics = [
 
 const performanceMetrics = [
   { metric: "Page Load Time", value: 1.2, target: 2.0, unit: "s" },
-  { metric: "Success Rate", value: 99.8, target: 99.0, unit: "%" },
+  { metric: "Completion Rate", value: 99.8, target: 99.0, unit: "%" },
   { metric: "User Satisfaction", value: 4.8, target: 4.5, unit: "/5" },
   { metric: "Support Response", value: 15, target: 30, unit: "min" },
   { metric: "Uptime", value: 99.9, target: 99.5, unit: "%" },

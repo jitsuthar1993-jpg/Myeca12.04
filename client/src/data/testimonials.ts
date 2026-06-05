@@ -1,42 +1,40 @@
-export interface Testimonial {
+export interface FilingSituation {
   id: string;
-  name: string;
-  role: string;
-  company?: string;
-  content: string;
-  rating: number;
-  avatar: string;
-  verified?: boolean;
-  platform?: string;
+  title: string;
+  profile: string;
+  documents: string[];
+  checks: string[];
+  nextStep: string;
+  href: string;
 }
 
-export const testimonials: Testimonial[] = [
+export const filingSituations: FilingSituation[] = [
   {
-    id: "1",
-    name: "Salaried user, Mumbai",
-    role: "ITR-2 (Dual Salaries)",
-    content: "I had two Form 16s after switching jobs. The checklist made it clear what to upload and what the CA would review before filing.",
-    rating: 5,
-    avatar: "SU",
-    verified: false,
+    id: "dual-form-16",
+    title: "Two Form 16s after a job switch",
+    profile: "Salaried ITR-1 or ITR-2 filer",
+    documents: ["Both Form 16s", "AIS / Form 26AS", "Bank interest and deduction proofs"],
+    checks: ["Salary overlap or missing months", "TDS credit visibility", "Old vs new regime fit"],
+    nextStep: "Start ITR",
+    href: "/itr/form-selector",
   },
   {
-    id: "2",
-    name: "Investor user, Bengaluru",
-    role: "Capital Gains Filing",
-    content: "The capital gains workflow helped me organize broker reports, AIS details, and questions for review before I chose an assisted plan.",
-    rating: 5,
-    avatar: "IU",
-    verified: false,
+    id: "capital-gains",
+    title: "Capital gains from broker reports",
+    profile: "Investor with equity, mutual fund, ESOP, crypto, or property sale facts",
+    documents: ["Broker capital gains report", "AIS capital gains entries", "Purchase and sale records"],
+    checks: ["STCG / LTCG split", "AIS mismatch risk", "Loss carry-forward treatment"],
+    nextStep: "Request scope review",
+    href: "/capital-gains-import",
   },
   {
-    id: "3",
-    name: "NRI user",
-    role: "NRI Tax Advisory",
-    content: "The consultation request captured my NRI tax questions and gave me a clearer document list before speaking with an expert.",
-    rating: 5,
-    avatar: "NU",
-    verified: false,
+    id: "nri-tax",
+    title: "NRI income and Indian TDS",
+    profile: "Resident status, Indian income, or refund question",
+    documents: ["Residency days summary", "Indian income proofs", "TDS and bank details"],
+    checks: ["Residential status facts", "DTAA or foreign income flags", "Refund and notice exposure"],
+    nextStep: "Request scope review",
+    href: "/expert-consultation?service=nri-tax",
   },
   {
     id: "4",
@@ -48,35 +46,12 @@ export const testimonials: Testimonial[] = [
     verified: false,
   },
   {
-    id: "5",
-    name: "Business-income user, Pune",
-    role: "F&O & Business Audit",
-    content: "The service scope made it easier to separate ordinary filing work from items that needed specialist review.",
-    rating: 5,
-    avatar: "BU",
-    verified: false,
-  },
-];
-
-export const companyTestimonials: Testimonial[] = [
-  {
-    id: "c1",
-    name: "Company HR user",
-    role: "HR Director",
-    company: "Private technology company",
-    content: "The dashboard-style filing view makes it easier to understand employee document readiness and follow-up items.",
-    rating: 5,
-    avatar: "HR",
-    verified: false,
-  },
-  {
-    id: "c2",
-    name: "Finance team user",
-    role: "Finance Head",
-    company: "Private services company",
-    content: "The service scope and document checklist helped our finance team plan the filing work before committing to a paid workflow.",
-    rating: 5,
-    avatar: "FT",
-    verified: false,
+    id: "business-gst",
+    title: "Business GST or TDS cleanup",
+    profile: "Founder, proprietor, or finance team with recurring filings",
+    documents: ["Sales and purchase registers", "GST or TDS challans", "Last filed return status"],
+    checks: ["Period-wise gaps", "ITC or challan matching", "Next filing deadline"],
+    nextStep: "Request scope review",
+    href: "/contact",
   },
 ];

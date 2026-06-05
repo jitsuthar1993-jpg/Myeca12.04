@@ -62,6 +62,12 @@ vi.mock("../../../server/data-admin.js", () => ({
     collection: (name: string) => ({
       ...makeQuery(name),
       doc: (id?: string) => makeDocRef(name, id || `${name}_generated`),
+      add: async (data: Record<string, any>) => {
+        const records = collectionStore(name);
+        const id = `${name}_${records.size + 1}`;
+        records.set(id, { ...data });
+        return { id };
+      },
     }),
   },
 }));
@@ -107,6 +113,7 @@ vi.mock("../../../server/services/document-storage.js", () => ({
   }),
 }));
 
+const { put } = await import("@vercel/blob");
 const { default: documentsRouter } = await import("../../../server/routes/documents.js");
 
 function resetStore() {

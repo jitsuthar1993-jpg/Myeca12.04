@@ -1,4 +1,3 @@
-import { m } from "framer-motion";
 import { useState, type FormEvent } from "react";
 import { BadgeCheck, Clock, FileText, Mail, MessageSquare, Phone, Send, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -71,6 +70,8 @@ export default function ContactPage() {
           preferredTime: "Business hours",
           message: formData.message.trim(),
           source: "contact_page",
+          formId: "contact-form",
+          serviceIntent: formData.subject.trim(),
         }),
       });
       toast({
@@ -107,26 +108,17 @@ export default function ContactPage() {
           <div className="mx-auto max-w-4xl px-4 text-center">
             <div className="type-meta mx-auto mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-white px-3 py-1 font-normal uppercase text-blue-700">
               <ShieldCheck className="h-3.5 w-3.5" />
-              Scope-first support
+              Summary first, documents later
             </div>
-            <m.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="type-hero-title mb-5 font-normal text-slate-950"
-            >
+            <h1 className="type-hero-title mb-5 font-extrabold text-slate-950">
               Contact MyeCA support and tax experts.
-            </m.h1>
-            <m.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mx-auto max-w-2xl text-base leading-7 text-slate-600 sm:text-lg"
-            >
+            </h1>
+            <p className="mx-auto max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Share the situation, not sensitive documents. We review requests during business hours, confirm the scope, and then guide you to the right filing or consultation path.
-            </m.p>
+            </p>
             <div className="mt-6 grid gap-3 text-left sm:grid-cols-3">
               {[
-                { icon: BadgeCheck, label: "Scope before quote" },
+                { icon: BadgeCheck, label: "Review before quote" },
                 { icon: FileText, label: "Document checklist after review" },
                 { icon: ShieldCheck, label: "No payment on this page" },
               ].map(({ icon: Icon, label }) => (
@@ -141,12 +133,7 @@ export default function ContactPage() {
 
         <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-6"
-            >
+            <div className="space-y-6">
               <div>
                 <h2 className="mb-4 text-2xl font-normal text-slate-950">Contact information</h2>
                 <div className="grid gap-4">
@@ -203,7 +190,7 @@ export default function ContactPage() {
                       <span className="transition group-open:rotate-180">v</span>
                     </summary>
                     <p className="mt-2 border-l-2 border-blue-200 pl-4 text-sm leading-6 text-slate-600">
-                      No. Use this form for a summary only. The team will tell you what to share after the case scope is clear.
+                      No. Use this form for a summary only. The team will tell you what to share after the right service route is clear.
                     </p>
                   </details>
                   <details className="group">
@@ -221,13 +208,9 @@ export default function ContactPage() {
                   <ShieldCheck className="h-4 w-4" />
                 </a>
               </div>
-            </m.div>
+            </div>
 
-            <m.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
+            <div>
               <Card className="h-full rounded-lg border-slate-200 shadow-lg shadow-slate-950/5">
                 <CardContent className="p-6 sm:p-8">
                   <div className="mb-6">
@@ -287,7 +270,7 @@ export default function ContactPage() {
                   </form>
                 </CardContent>
               </Card>
-            </m.div>
+            </div>
           </div>
         </div>
       </div>

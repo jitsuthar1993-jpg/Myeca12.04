@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import {
   Briefcase,
   CalendarClock,
+  Briefcase,
   CheckCircle2,
   CreditCard,
   ExternalLink,
@@ -12,6 +13,7 @@ import {
   Phone,
   ReceiptText,
   RefreshCw,
+  UsersRound,
 } from "lucide-react";
 import { TableRowsSkeleton } from "@/components/ui/page-skeleton";
 import { Layout } from "@/components/admin/Layout";
@@ -42,7 +44,7 @@ type ConsultationRequest = {
   service?: string;
   preferredTime?: string;
   message?: string;
-  status?: "new" | "contacted" | "converted" | "closed";
+  status?: "new" | "contacted" | "needs_info" | "escalated_admin" | "escalated_ca" | "converted" | "closed";
   internalNote?: string;
   createdAt?: string;
 };
@@ -96,10 +98,15 @@ function statusBadgeClass(status?: string) {
   switch (status) {
     case "new":
     case "requested":
+    case "needs_info":
       return "bg-amber-50 text-amber-700 border-amber-100";
     case "contacted":
     case "link_sent":
       return "bg-blue-50 text-blue-700 border-blue-100";
+    case "escalated_admin":
+      return "bg-violet-50 text-violet-700 border-violet-100";
+    case "escalated_ca":
+      return "bg-cyan-50 text-cyan-700 border-cyan-100";
     case "converted":
     case "paid":
       return "bg-emerald-50 text-emerald-700 border-emerald-100";
@@ -205,6 +212,8 @@ export default function AdminRequestsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/requests/consultations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/team/triage"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workflow-events"] });
       setSelectedConsultation(null);
       setConsultationNote("");
       toast({ title: "Consultation updated", description: "The request is ready for the next team action." });
@@ -225,6 +234,8 @@ export default function AdminRequestsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/requests/payment-links"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workflow-events"] });
       setSelectedPayment(null);
       setPaymentLink("");
       setPaymentNote("");
@@ -256,6 +267,9 @@ export default function AdminRequestsPage() {
                 casesQuery.refetch();
                 consultationQuery.refetch();
                 paymentQuery.refetch();
+                caseQuery.refetch();
+                remindersQuery.refetch();
+                teamTriageQuery.refetch();
               }}
             >
               <RefreshCw className={cn("mr-2 h-4 w-4", (casesQuery.isFetching || consultationQuery.isFetching || paymentQuery.isFetching) && "animate-spin")} />
@@ -264,7 +278,7 @@ export default function AdminRequestsPage() {
           </div>
         </section>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {[
             { label: "Pending Cases", value: pendingCases, icon: Briefcase, color: "text-blue-600 bg-blue-50" },
             { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-amber-600 bg-amber-50" },

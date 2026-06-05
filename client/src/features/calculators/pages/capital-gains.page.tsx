@@ -8,7 +8,7 @@ import {
   IndianRupee, Receipt, 
   Building2, LineChart, Sparkles, AlertTriangle, Zap,
   Clock, ArrowRight, ShieldCheck, Calculator, FileSpreadsheet,
-  Star, Info, Lock, Headphones, Award, BarChart3,
+  Info, Lock, Headphones, Award, BarChart3,
   CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -89,12 +89,12 @@ export default function CapitalGainsCalculatorPage() {
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-normal text-[#027A48]">25k+ Investors</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Estimate for</p>
+                <p className="text-xs font-normal text-[#027A48]">Capital gains review</p>
               </div>
               <div className="pl-2">
-                <div className="flex text-amber-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
+                <div className="flex text-[#027A48] gap-1">
+                  {[1, 2, 3].map(i => <CheckCircle2 key={i} className="w-3 h-3" />)}
                 </div>
                 <p className="type-meta font-normal text-[#667085]">Estimate Tool</p>
               </div>

@@ -156,7 +156,7 @@ export const SERVICES: Service[] = [
     shortDescription: 'Complete Pvt Ltd company incorporation',
     description: 'End-to-end private limited company registration including name approval, DSC, DIN, MOA/AOA drafting, and incorporation certificate.',
     category: 'business-registration',
-    pricing: { type: 'fixed', amount: 7999, originalAmount: 14999 },
+    pricing: { type: 'starting', amount: 7999, originalAmount: 14999 },
     features: [
       'Name availability check',
       '2 DSC + 2 DIN',
@@ -166,10 +166,10 @@ export const SERVICES: Service[] = [
       'First board resolution'
     ],
     deliverables: ['COI', 'MOA', 'AOA', 'PAN', 'TAN', 'DSC tokens'],
-    timeline: '10-15 business days',
+    timeline: 'Estimated 10-15 business days, subject to approvals',
     documents: ['Directors PAN', 'Directors Aadhaar', 'Address proof', 'Passport photos'],
     popular: true,
-    badge: 'Best Value',
+    badge: 'Scope first',
     icon: 'Building'
   },
   {

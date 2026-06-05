@@ -40,10 +40,10 @@ export default function ExpertTaxReviewPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-6">
             <UserCheck className="w-4 h-4" />
-            Licensed Chartered Accountant
+            Credential-checked tax professional
           </div>
           <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
-            A CA Reviews Your Return <span className="text-[#315efb]">Before It's Filed</span>
+            CA-Assisted Review <span className="text-[#315efb]">Before Filing Where Applicable</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
             CA-assisted plans include expert review before submission. The review checks source documents, deductions, and common notice-risk areas.
@@ -55,7 +55,7 @@ export default function ExpertTaxReviewPage() {
               </Button>
             </Link>
             <Link href="/pricing">
-              <Button size="lg" variant="outline">View Pricing — from ₹499</Button>
+              <Button size="lg" variant="outline">View Scope-First Pricing</Button>
             </Link>
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function ExpertTaxReviewPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="type-section-title font-extrabold text-slate-900">How CA review works</h2>
-            <p className="text-slate-500 mt-3 text-lg">You handle the inputs. The CA handles the accuracy.</p>
+            <p className="text-slate-500 mt-3 text-lg">You handle the inputs. The review helps flag items that need attention.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {caProcess.map((step) => (
@@ -119,10 +119,10 @@ export default function ExpertTaxReviewPage() {
               </p>
               <div className="space-y-3">
                 {[
-                  "ICAI-registered Chartered Accountants",
-                  "Specialised in individual income tax",
-                  "Available for queries post-filing",
-                  "Handle notice responses on your behalf",
+                  "Credential-checked tax professionals",
+                  "Specialised income-tax review where applicable",
+                  "Queries handled within the selected service scope",
+                  "Notice responses available as a separately scoped service",
                 ].map((point) => (
                   <div key={point} className="flex items-center gap-3 text-slate-700 font-medium">
                     <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
@@ -133,10 +133,10 @@ export default function ExpertTaxReviewPage() {
             </div>
             <div className="space-y-4">
               {[
-                { icon: Shield, label: "No notice risk", desc: "CAs catch the patterns that commonly trigger income tax notices before submission." },
+                { icon: Shield, label: "Issue flags", desc: "Review can flag patterns that may need clarification before submission." },
                 { icon: FileSearch, label: "Document matching", desc: "Form 16, 26AS, AIS, and CAS are cross-checked against each other." },
                 { icon: AlertCircle, label: "Error flagging", desc: "Any inconsistency is raised with you before the return is finalised." },
-                { icon: MessageSquare, label: "Post-filing support", desc: "If ITDC sends a notice after filing, your CA helps you respond." },
+                { icon: MessageSquare, label: "Post-filing support", desc: "If the department sends a notice after filing, response help can be scoped separately." },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="w-9 h-9 shrink-0 rounded-lg bg-[#315efb]/8 flex items-center justify-center">

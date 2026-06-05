@@ -3,7 +3,7 @@ import {
   PiggyBank, TrendingUp, Target, Calendar, IndianRupee,
   ShieldCheck, Sparkles, Zap, Shield, BadgeCent,
   CheckCircle2, Clock, Calculator, ArrowRight,
-  Star, Info, Lock, Headphones, Award, BarChart3,
+  Info, Lock, Headphones, Award, BarChart3,
   Percent, ArrowUpRight, HeartHandshake, Briefcase
 } from "lucide-react";
 import { getSEOConfig } from "@/config/seo.config";
@@ -83,12 +83,12 @@ export default function NPSCalculatorPage() {
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-normal text-[#444CE7]">35k+ Investors</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Estimate for</p>
+                <p className="text-xs font-normal text-[#444CE7]">Retirement planning</p>
               </div>
               <div className="pl-2">
-                <div className="flex text-amber-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
+                <div className="flex text-[#444CE7] gap-1">
+                  {[1, 2, 3].map(i => <CheckCircle2 key={i} className="w-3 h-3" />)}
                 </div>
                 <p className="type-meta font-normal text-[#667085]">Projection Tool</p>
               </div>
@@ -331,7 +331,7 @@ export default function NPSCalculatorPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Retirement Strategy?</h4>
-                  <p className="type-support text-[#667085] mb-2 leading-tight">Map your portfolio for a stress-free retirement with our CA experts.</p>
+                  <p className="type-support text-[#667085] mb-2 leading-tight">Map your portfolio assumptions with MyeCA tax experts.</p>
                   <Link href="/services/tax-planning">
                     <button className="text-sm font-normal text-[#444CE7] flex items-center gap-2 hover:gap-3 transition-all">
                       Speak to Consultant

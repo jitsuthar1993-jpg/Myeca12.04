@@ -848,7 +848,7 @@ export function getSeoTextAssetTargets(
   return targets.map(normalizeFsPath);
 }
 
-function writeTextAssets(blogPosts: DefaultBlogPost[]) {
+function writeTextAssets(blogPosts: StaticMdxBlogPost[]) {
   const blogEntries = blogPosts
     .filter((post) => post.status === "published")
     .map((post) => ({

@@ -93,6 +93,7 @@ export default function PenaltyCalculatorPage() {
         icon={<ShieldAlert className="w-6 h-6 text-amber-600" />}
         variant="amber"
         breadcrumbItems={[{ name: "Penalty Calculator" }]}
+        compact
       />
 
       <CalcLayout

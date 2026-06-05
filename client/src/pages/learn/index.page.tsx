@@ -90,7 +90,7 @@ export default function LearnPage() {
               {[
                 { label: "Lesson Outlines", value: `${VIDEO_TUTORIALS.length}`, icon: Play, color: "bg-red-500" },
                 { label: "Tax Guides", value: `${TAX_GUIDES.length}`, icon: BookOpen, color: "bg-emerald-500" },
-                { label: "Expert CAs", value: `${EXPERTS.length}`, icon: Users, color: "bg-purple-500" },
+                { label: "Expert Profiles", value: `${EXPERTS.length}`, icon: Users, color: "bg-purple-500" },
                 { label: "Topic Areas", value: `${VIDEO_CATEGORIES.length}`, icon: TrendingUp, color: "bg-blue-500" }
               ].map((stat, i) => (
                 <div key={i} className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-white/15 transition-colors">
@@ -185,7 +185,7 @@ export default function LearnPage() {
                       Expert Consultation
                     </h3>
                     <p className="text-gray-600 mb-6 leading-relaxed">
-                      Book 1-on-1 video calls with certified Chartered Accountants.
+                      Book 1-on-1 video calls with credential-checked tax professionals where available.
                     </p>
                     <div className="flex items-center text-sm font-medium text-purple-600 bg-purple-50 w-fit px-3 py-1 rounded-full">
                       <Users className="h-3 w-3 mr-1.5" />
@@ -378,7 +378,7 @@ export default function LearnPage() {
               </h2>
               <p className="text-indigo-100 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
                 Can't find what you're looking for? Our AI Tax Assistant can help you with guided answers,
-                or book a consultation with our expert CAs for personalized advice.
+                or book a consultation with MyeCA tax experts for personalized advice.
               </p>
               <div className="flex flex-wrap justify-center gap-6">
                 <Button size="lg" className="bg-white text-indigo-600 hover:bg-indigo-50 font-bold h-14 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all" asChild>

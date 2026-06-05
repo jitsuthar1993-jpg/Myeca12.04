@@ -89,6 +89,7 @@ export default function EnhancedFDCalculator() {
         icon={<PiggyBank className="w-6 h-6" />}
         variant="indigo"
         breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced FD" : "FD Calculator" }]}
+        compact
       />
 
       <CalcLayout
@@ -282,7 +283,7 @@ export default function EnhancedFDCalculator() {
               icon: <TrendingUp className="w-5 h-5" />,
               iconBg: "bg-emerald-50 text-emerald-600",
               title: "Market Comparison",
-              desc: "Quickly compare rates from top PSU and private banks to ensure you're getting the best deal."
+              desc: "Quickly compare rates from PSU and private banks to review suitable options."
             },
             {
               icon: <Zap className="w-5 h-5" />,

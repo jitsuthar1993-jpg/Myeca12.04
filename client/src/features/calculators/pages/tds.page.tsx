@@ -20,7 +20,6 @@ import {
   FileSpreadsheet,
   Calculator,
   ArrowRight,
-  Star,
   Info,
   Calendar,
   Lock,
@@ -101,7 +100,7 @@ export default function TDSCalculatorPage() {
                 TDS <span className="text-[#444CE7]">Calculator</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
-                Instant TDS estimates based on Income Tax sections and threshold limits.
+                TDS estimates based on Income Tax sections and threshold limits.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
@@ -113,12 +112,12 @@ export default function TDSCalculatorPage() {
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
-                <p className="text-xs font-normal text-[#444CE7]">50k+ Businesses</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Estimate for</p>
+                <p className="text-xs font-normal text-[#444CE7]">TDS planning</p>
               </div>
               <div className="pl-2">
-                <div className="flex text-amber-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
+                <div className="flex text-[#444CE7] gap-1">
+                  {[1, 2, 3].map(i => <CheckCircle2 key={i} className="w-3 h-3" />)}
                 </div>
                 <p className="type-meta font-normal text-[#667085]">TDS Estimate</p>
               </div>

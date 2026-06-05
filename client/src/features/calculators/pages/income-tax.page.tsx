@@ -7,7 +7,7 @@ import { computeIndividualIncomeTax, type ResidentialStatus } from "@/lib/income
 import type { TaxCalculationResult } from "@/types/calculator";
 import { 
   TrendingUp, IndianRupee, 
-  Zap, Star, 
+  Zap,
   ChevronRight, PieChart, ShieldCheck,
   Target, Info, ArrowLeft, ArrowRight,
   Shield, Wallet, Receipt, CheckCircle2,
@@ -760,8 +760,8 @@ export default function IncomeTaxCalculator() {
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">Tax Summary</h2>
                 <div className="bg-[#ECFDF3] text-[#027A48] type-meta font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
-                  <Star className="w-3 h-3 fill-[#027A48]" />
-                  Recommended
+                  <CheckCircle2 className="w-3 h-3" />
+                  Suggested
                 </div>
               </div>
               <p className="text-sm text-[#667085] mb-4">Live comparison of tax regimes</p>
@@ -924,7 +924,7 @@ export default function IncomeTaxCalculator() {
                 icon: <ShieldCheck className="w-5 h-5" />,
                 iconBg: "bg-emerald-50 text-emerald-600",
                 title: "Old Regime Benefits",
-                desc: "If you have a home loan, pay high rent (HRA), or have major investments in PPF/LIC, the Old Regime might still be your best choice."
+                desc: "If you have a home loan, pay high rent (HRA), or have major investments in PPF/LIC, the Old Regime may still be suitable."
               },
               {
                 icon: <Target className="w-5 h-5" />,

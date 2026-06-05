@@ -301,28 +301,28 @@ export default function TrademarkRegistrationPage() {
   const commonRejectionReasons = [
     {
       reason: "Similarity with existing trademark",
-      frequency: "40%",
+      frequency: "Common",
       solution: "Comprehensive pre-filing search and modification",
       icon: Search,
       color: "red"
     },
     {
       reason: "Descriptive or generic mark",
-      frequency: "25%", 
+      frequency: "Common",
       solution: "Choose distinctive and unique marks",
       icon: AlertTriangle,
       color: "orange"
     },
     {
       reason: "Improper class specification",
-      frequency: "20%",
+      frequency: "Common",
       solution: "Accurate class selection with expert guidance",
       icon: FileCheck,
       color: "yellow"
     },
     {
       reason: "Incomplete documentation",
-      frequency: "15%",
+      frequency: "Common",
       solution: "Complete document checklist verification",
       icon: Upload,
       color: "blue"
@@ -341,8 +341,8 @@ export default function TrademarkRegistrationPage() {
         type="service"
         serviceData={{
           price: getServicePriceForSchema("trademark-registration", "12999"),
-          rating: "4.7",
-          reviews: "10000",
+          rating: "Unrated",
+          reviews: "0",
           availability: "https://schema.org/InStock"
         }}
         breadcrumbs={[
@@ -361,7 +361,7 @@ export default function TrademarkRegistrationPage() {
           },
           {
             question: "What is a trademark search and is it necessary?",
-            answer: "A trademark search checks existing marks for similarities to avoid rejection. While not mandatory, it is highly recommended to ensure your brand is unique and legally protectable."
+            answer: "A trademark search checks existing marks for similarities before filing. While not mandatory, it helps assess conflict risk and class-selection issues."
           }
         ]}
       />
@@ -800,7 +800,7 @@ export default function TrademarkRegistrationPage() {
               {
                 id: 4,
                 question: "What happens if my trademark application is rejected?",
-                answer: "Common rejection reasons include similarity with existing marks (40%), descriptive nature (25%), wrong class selection (20%), or incomplete documents (15%). You can file a response within 30 days addressing objections, modify the application, or provide supporting evidence. Our experts handle objection responses with high success rates."
+                answer: "Common rejection reasons include similarity with existing marks, descriptive wording, wrong class selection, or incomplete documents. You can file a response within the permitted window addressing objections, modify the application, or provide supporting evidence. Objection responses are scoped separately."
               },
               {
                 id: 5,
@@ -810,7 +810,7 @@ export default function TrademarkRegistrationPage() {
               {
                 id: 6,
                 question: "Is trademark search mandatory before filing?",
-                answer: "While not legally mandatory, trademark search is highly recommended to avoid rejection and conflicts. Our comprehensive search covers identical marks, similar marks, phonetic similarities, and visual similarities across all 45 classes. This reduces rejection risk and saves time and money in the long run."
+                answer: "While not legally mandatory, trademark search is useful for identifying rejection and conflict risks. Search scope can include identical marks, similar marks, phonetic similarities, and visual similarities across relevant classes."
               },
               {
                 id: 7,
@@ -847,12 +847,12 @@ export default function TrademarkRegistrationPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.6 }}
         >
-          <Card className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+          <Card className="border-purple-100 bg-gradient-to-br from-white via-purple-50 to-indigo-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Ready to Protect Your Brand?
               </h3>
-              <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 Our trademark experts handle the complete registration process from search to certificate. 
                 Secure your brand with 10-year protection starting from {"₹"}12,999.
               </p>
@@ -860,26 +860,26 @@ export default function TrademarkRegistrationPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
-                  className="bg-white text-purple-600 hover:bg-purple-50 px-8"
+                  className="bg-purple-600 text-white hover:bg-purple-700 px-8"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
                   <Shield className="w-5 h-5 mr-2" />
                   Register Trademark ₹12,999
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600 px-8">
+                <Button size="lg" variant="outline" className="border-purple-200 bg-white text-purple-700 hover:bg-purple-50 px-8">
                   <Search className="w-5 h-5 mr-2" />
-                  Free Trademark Search
+                  Request Trademark Search
                 </Button>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-purple-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span>Search Before Filing</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Expert IP Lawyers</span>
+                  <span>IP Filing Support</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -901,7 +901,7 @@ export default function TrademarkRegistrationPage() {
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Selecting a 'Strong' Trademark</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Legally, "Arbitrary" or "Fanciful" names (like Apple for computers) are the strongest and easiest to register. Avoid "Descriptive" names (like 'Tasty food' for a restaurant) as they are often rejected for lacking distinctiveness. Our CA experts help you refine your brand name before filing.
+                    Legally, "Arbitrary" or "Fanciful" names (like Apple for computers) are often stronger than descriptive names. Descriptive names may face distinctiveness objections, so an IP filing expert can help review the brand name before filing.
                   </p>
                </div>
                <div className="space-y-4">

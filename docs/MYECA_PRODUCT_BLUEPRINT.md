@@ -139,7 +139,7 @@ Build the most trusted digital CA platform for India where users can:
 #### Fulfillment
 - Average CA turnaround time.
 - Document completion rate per filing.
-- First-time-right filing/compliance success rate.
+- First-time-right filing/compliance completion quality.
 - Pending workload aging by service type.
 
 #### Retention

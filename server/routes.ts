@@ -6,6 +6,9 @@ import { apiRateLimiter, authLimiter, adminLimiter, uploadLimiter } from "./midd
 import documentsRouter from "./routes/documents.js";
 import referralsRouter from "./routes/referrals.js";
 import notificationsRouter from "./routes/notifications.js";
+import remindersRouter from "./routes/reminders.js";
+import workflowEventsRouter from "./routes/workflow-events.js";
+import teamTriageRouter from "./routes/team-triage.js";
 import feedbackRouter from "./routes/feedback.js";
 import twoFactorRouter from "./routes/2fa.js";
 import teamsRouter from "./routes/teams.js";
@@ -201,6 +204,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/documents", uploadLimiter, documentsRouter);
   app.use("/api/referrals", referralsRouter);
   app.use("/api/notifications", notificationsRouter);
+  app.use("/api/reminders", remindersRouter);
+  app.use("/api/workflow-events", workflowEventsRouter);
+  app.use("/api/team/triage", teamTriageRouter);
   app.use(feedbackRouter);
   app.use("/api/2fa", twoFactorRouter);
   app.use("/api/teams", teamsRouter);

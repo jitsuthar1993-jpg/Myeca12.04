@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'wouter';
+import { useState, useEffect, useCallback } from 'react';
+import { Link, useLocation } from 'wouter';
 import {
   AlertCircle,
   ArrowRight,
@@ -25,6 +25,7 @@ import {
   AuthPageShell,
 } from '@/components/auth/AuthPageShell';
 import { allowLocalAuthFallbacks as shouldAllowLocalAuthFallbacks } from '@/utils/runtime-env';
+import { navigateAfterLogin } from '@/lib/login-navigation';
 import { getSafeRedirectPath, resolvePostLoginRedirect } from '@/lib/role-redirect';
 
 const reasonCopy: Record<string, { title: string; message: string }> = {
@@ -68,6 +69,7 @@ function getLoginErrorMessage(error: any) {
 
 export default function LoginPage() {
   const { user, isAuthenticated, isLoading: authLoading, login, loginWithGoogle, resendSignupConfirmation } = useAuth();
+  const [, setLocation] = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -84,27 +86,27 @@ export default function LoginPage() {
   const allowLocalAuthFallbacks = shouldAllowLocalAuthFallbacks();
   const testEmail = allowLocalAuthFallbacks ? params.get('test_email') : null;
   const showTemporaryLogin = allowLocalAuthFallbacks && params.get('test_login') === '1';
-  const reloadAfterLogin = (target: string) => {
-    window.location.replace(target);
-  };
+  const redirectAfterLogin = useCallback((target: string) => {
+    navigateAfterLogin(target, setLocation);
+  }, [setLocation]);
 
   useEffect(() => {
     if (!authLoading && !loading && !googleLoading && isAuthenticated) {
-      reloadAfterLogin(resolvePostLoginRedirect(user?.role, requestedRedirectPath));
+      redirectAfterLogin(resolvePostLoginRedirect(user?.role, requestedRedirectPath));
     }
-  }, [authLoading, googleLoading, isAuthenticated, loading, requestedRedirectPath, user?.role]);
+  }, [authLoading, googleLoading, isAuthenticated, loading, redirectAfterLogin, requestedRedirectPath, user?.role]);
 
   useEffect(() => {
     if (testEmail) {
       setLoading(true);
       login(testEmail, 'temporary_test_login').then((signedInUser) => {
-        reloadAfterLogin(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath));
+        redirectAfterLogin(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath));
       }).catch(err => {
         setError(err?.message || 'Temporary test login failed');
         setLoading(false);
       });
     }
-  }, [testEmail, login, requestedRedirectPath]);
+  }, [testEmail, login, redirectAfterLogin, requestedRedirectPath]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -114,7 +116,7 @@ export default function LoginPage() {
 
     try {
       const signedInUser = await login(email.trim(), password);
-      reloadAfterLogin(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath));
+      redirectAfterLogin(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath));
     } catch (err: any) {
       setError(getLoginErrorMessage(err));
     } finally {
@@ -142,7 +144,7 @@ export default function LoginPage() {
 
     try {
       const signedInUser = await login(testUser.email, 'temporary_test_login');
-      reloadAfterLogin(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath || testUser.redirectTo));
+      redirectAfterLogin(resolvePostLoginRedirect(signedInUser.role, requestedRedirectPath || testUser.redirectTo));
     } catch (err: any) {
       setError(err?.message || `Unable to sign in as ${testUser.label}.`);
       setLoading(false);

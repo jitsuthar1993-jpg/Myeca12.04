@@ -29,8 +29,8 @@ export default function DocumentVaultServicePage() {
   const features = [
     {
       icon: <Lock className="w-7 h-7 text-[#4f46e5]" />,
-      title: "Encrypted Storage",
-      description: "Files are protected in transit and at rest using modern encryption controls.",
+      title: "Private Storage Workflow",
+      description: "Files are handled through authenticated access and the configured private storage provider.",
       bgColor: "bg-[#eef2ff]"
     },
     {
@@ -78,7 +78,7 @@ export default function DocumentVaultServicePage() {
       <SEO 
         title="Secure Document Vault | MyEca" 
         description="Store and manage your sensitive tax and identity documents with secure account-based access."
-        keywords="document vault, secure storage, tax documents, identity proof, encryption"
+        keywords="document vault, private document access, tax documents, identity proof"
       />
 
       {/* Hero Section */}
@@ -92,7 +92,7 @@ export default function DocumentVaultServicePage() {
               className="inline-flex items-center gap-2 bg-white text-[var(--color-primary-700)] px-4 py-2 rounded-full text-sm font-medium shadow-sm border border-[var(--color-primary-100)]"
             >
               <Shield className="w-4 h-4 text-[var(--color-accent-600)]" />
-              <span>CA Assisted Secure Storage</span>
+              <span>CA Assisted Document Workflow</span>
               <span className="text-[var(--color-primary-400)]">|</span>
               <span className="text-[var(--color-success-600)] font-semibold">Controlled Access</span>
             </m.div>
@@ -143,7 +143,7 @@ export default function DocumentVaultServicePage() {
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     {[
-                      { title: "Encryption Controls", desc: "Sensitive documents are protected in transit and at rest." },
+                      { title: "Secure Transport", desc: "Sensitive documents should be shared through authenticated upload and download workflows." },
                       { title: "Role-Based Access", desc: "Access can be scoped to the user, CA, or assigned team member." },
                       { title: "Audit Trail Ready", desc: "Operational activity can be reviewed where administrative logging is enabled." },
                       { title: "Data Handling Controls", desc: "Production storage and retention follow the configured deployment provider and policy." }

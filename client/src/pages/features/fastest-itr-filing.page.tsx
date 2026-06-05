@@ -21,7 +21,7 @@ const steps = [
   {
     num: "03",
     title: "CA Review",
-    desc: "A licensed Chartered Accountant checks your return for errors, missed deductions, and compliance issues.",
+    desc: "A credential-checked tax professional can review eligible assisted returns for document issues and deduction questions.",
     icon: UserCheck,
     color: "bg-emerald-600",
   },

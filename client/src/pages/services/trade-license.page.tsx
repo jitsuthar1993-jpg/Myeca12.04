@@ -621,37 +621,37 @@ export default function TradeLicensePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.2 }}
         >
-          <Card className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
+          <Card className="border-blue-100 bg-gradient-to-br from-white via-blue-50 to-green-50 shadow-sm">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="text-2xl font-bold mb-4 text-slate-900">
                 Ready to Apply for Trade License?
               </h3>
-              <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 Our municipal compliance experts handle complete documentation, application filing, 
-                and follow-up across all major cities. We handle the paperwork so you can focus on your business.
+                and follow-up for supported cities. We help organize the paperwork so you can focus on your business.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 shadow-lg">
+                <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 px-8 shadow-sm">
                   <ShoppingBag className="w-5 h-5 mr-2" />
                   Apply Now from {"₹"}1,999
                 </Button>
                 <Link href="/expert-consultation?service=trade-license">
-                  <Button size="lg" className="bg-blue-700 hover:bg-blue-800 text-white border-0 px-8 shadow-lg font-semibold">
+                  <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 px-8 shadow-sm font-semibold">
                     <Phone className="w-5 h-5 mr-2" />
                     Get Expert Consultation
                   </Button>
                 </Link>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-blue-100">
+              <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>All Municipal Corporations Covered</span>
+                  <span>Supported Municipal Workflows</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>98% First-Time Approval</span>
+                  <span>Document Readiness Review</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />

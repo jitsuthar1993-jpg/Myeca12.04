@@ -173,7 +173,7 @@ const knowledgeCategories = [
     color: 'emerald',
     articles: [
       {
-        title: 'Best Tax Saving Investments',
+        title: 'Tax Saving Investments',
         description: 'ELSS, PPF, NPS, and other 80C options compared',
         readTime: '18 min',
         level: 'Beginner',
@@ -259,7 +259,7 @@ const featuredArticles = [
   },
   {
     title: 'Complete ITR Filing Checklist',
-    description: 'Step-by-step checklist to ensure error-free tax filing',
+    description: 'Step-by-step checklist to reduce filing mistakes',
     category: 'Filing Guide',
     readTime: '12 min',
     icon: Shield,
@@ -443,7 +443,7 @@ export default function KnowledgeBasePage() {
               <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
               <h3 className="text-2xl font-semibold mb-3">Need Expert Assistance?</h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Our CA experts are available to help you with personalized tax planning and filing
+                MyeCA tax experts are available to help you with personalized tax planning and filing questions
               </p>
               <div className="flex gap-4 justify-center">
                 <Link href="/expert-consultation">

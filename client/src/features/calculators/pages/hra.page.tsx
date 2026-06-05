@@ -9,7 +9,6 @@ import {
   Receipt,
   Info,
   ArrowRight,
-  Star,
   Calendar,
   CheckCircle2,
   Sparkles,
@@ -72,7 +71,7 @@ export default function HRACalculator() {
         title={seo?.title || "HRA Calculator 2025 | House Rent Allowance Exemption | MyeCA.in"}
         description={
           seo?.description ||
-          "Calculate your HRA exemption under Section 10(13A). Interactive visualization for maximum tax savings."
+          "Estimate your HRA exemption under Section 10(13A). Interactive visualization for eligible deduction review."
         }
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
@@ -105,12 +104,12 @@ export default function HRACalculator() {
                 ))}
               </div>
               <div className="pr-4 border-r border-[#F2F4F7]">
-                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Trusted by</p>
+                <p className="type-meta font-normal text-[#101828] uppercase tracking-wider">Estimate for</p>
                 <p className="text-xs font-normal text-[#444CE7]">HRA Estimate Tool</p>
               </div>
               <div className="pl-2">
-                <div className="flex text-amber-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-current" />)}
+                <div className="flex text-[#444CE7] gap-1">
+                  {[1, 2, 3].map(i => <CheckCircle2 key={i} className="w-3 h-3" />)}
                 </div>
                 <p className="type-meta font-normal text-[#667085]">Rule-Based</p>
               </div>
@@ -321,7 +320,7 @@ export default function HRACalculator() {
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">HRA Summary</h2>
                 <div className="bg-[#ECFDF3] text-[#027A48] type-meta font-normal px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
-                  <Star className="w-3 h-3 fill-[#027A48]" />
+                  <CheckCircle2 className="w-3 h-3" />
                   Section 10(13A)
                 </div>
               </div>

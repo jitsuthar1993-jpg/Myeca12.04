@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { getServiceById } from "@/data/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { invalidateWorkspaceCaseCaches } from "@/lib/workspace-cache";
 
 export default function ActivationPage() {
   const [, params] = useRoute("/services/activate/:serviceId") as [boolean, { serviceId?: string } | null];
@@ -70,6 +71,8 @@ export default function ActivationPage() {
               ? `Activation started after confirming documents: ${uploadedDocs.join(", ")}`
               : "Activation started from the guided service flow.",
             source: "service_activation",
+            formId: "service-activation-flow",
+            serviceIntent: service.id,
             requestedAt,
             originalServicePath: `/services/activate/${service.id}`,
           }
@@ -77,12 +80,12 @@ export default function ActivationPage() {
       });
       return response.json();
     },
-    onSuccess: (data: { id?: string }) => {
+    onSuccess: async (data: { id?: string }) => {
       if (data?.id) {
         setCreatedServiceId(data.id);
         setActivationReference(`MyeCA-${data.id.slice(0, 10).toUpperCase()}`);
       }
-      queryClient.invalidateQueries({ queryKey: ['/api/user-services'] });
+      await invalidateWorkspaceCaseCaches(queryClient, data?.id);
       setCurrentStep(totalSteps - 1); // Go to success step
     },
     onError: (err: any) => {
@@ -306,7 +309,7 @@ export default function ActivationPage() {
                     <ShieldCheck className="h-5 w-5 text-blue-600" />
                   </div>
                   <h4 className="font-black text-slate-900 text-sm mb-1">End-to-End Encrypted</h4>
-                  <p className="type-support font-bold text-slate-600">Your data is secured with enterprise-grade AES-256 encryption.</p>
+                  <p className="type-support font-bold text-slate-600">Your data should be shared through authenticated workflows with secure transport controls.</p>
                 </div>
                 <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-4">

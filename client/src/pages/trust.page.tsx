@@ -16,7 +16,7 @@ import { getSEOConfig } from "@/config/seo.config";
 
 const proofPoints = [
   {
-    title: "Scope before payment",
+    title: "Review before payment",
     desc: "Pricing, inclusions, exclusions, GST treatment, and review eligibility are shown before checkout or quote confirmation.",
     icon: ClipboardCheck,
   },
@@ -38,8 +38,8 @@ const proofPoints = [
 ];
 
 const documentFlow = [
-  "You choose the service and see the scope before sharing sensitive financial documents.",
-  "The workflow asks for the documents needed for preparation, review, or filing support.",
+  "You choose the service and see what is needed before sharing sensitive financial documents.",
+  "The service asks for documents needed for preparation, review, or filing support.",
   "Assigned service workflows use the documents for the requested tax or compliance purpose.",
   "Privacy and retention requests are routed through the published privacy/support contact path.",
 ];
@@ -132,7 +132,7 @@ export default function TrustPage() {
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Document workflow</p>
               <h2 className="type-section-title mt-3 font-extrabold text-slate-950">How sensitive tax documents move through the service</h2>
               <p className="mt-4 text-sm leading-6 text-slate-600 md:text-base">
-                The goal is to keep the workflow understandable: what is needed, why it is needed, who may review it, and which support route handles privacy questions.
+                The goal is to keep the process understandable: what is needed, why it is needed, who may review it, and which support route handles privacy questions.
               </p>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm md:p-6">
@@ -181,24 +181,24 @@ export default function TrustPage() {
           </div>
         </section>
 
-        <section className="bg-blue-700 py-12 text-white md:py-16">
+        <section className="border-t border-blue-100 bg-[#F8FAFC] py-12 md:py-16">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_0.8fr] lg:px-8 lg:items-center">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-200">Business cases</p>
-              <h2 className="type-section-title mt-3 font-extrabold">High-value cases should start with scope review.</h2>
-              <p className="mt-4 text-sm leading-6 text-slate-300 md:text-base">
-                For business income, GST, TDS, notices, capital gains, NRI facts, or higher-turnover cases, a scope review helps clarify documents, timelines, exclusions, and professional review needs before checkout.
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Business cases</p>
+              <h2 className="type-section-title mt-3 font-extrabold text-slate-950">High-value cases should start with document review.</h2>
+              <p className="mt-4 text-sm leading-6 text-slate-600 md:text-base">
+                For business income, GST, TDS, notices, capital gains, NRI facts, or higher-turnover cases, the first review should clarify documents, timelines, exclusions, and professional review needs before checkout.
               </p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/5 p-5">
+            <div className="rounded-lg border border-blue-100 bg-white p-5 shadow-sm">
               <div className="flex items-start gap-3">
-                <Mail className="mt-1 h-5 w-5 text-blue-200" />
+                <Mail className="mt-1 h-5 w-5 text-blue-700" />
                 <div>
-                  <h3 className="font-bold">Need privacy or scope clarity?</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                  <h3 className="font-bold text-slate-950">Need privacy or scope clarity?</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
                     Send the case type, filing year, and question. Do not email full PAN or complete financial documents unless support asks for them through the right workflow.
                   </p>
-                  <Link href="/contact" className="mt-5 inline-flex items-center text-sm font-bold text-white">
+                  <Link href="/contact" className="mt-5 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
                     Contact support <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </div>

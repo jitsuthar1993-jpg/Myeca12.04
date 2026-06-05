@@ -9,8 +9,8 @@ import { getTaxFilingPlans } from "@/data/pricing";
 
 const trustRows = [
   ["Written scope before payment", "Included in every paid plan"],
-  ["Named CA accountability", "Included in assisted and specialist plans"],
-  ["AIS / 26AS mismatch visibility", "Built into review workflow"],
+  ["CA-assisted review", "Included where the selected plan scope supports it"],
+  ["AIS / 26AS mismatch visibility", "Built into assisted review workflow"],
   ["Revision support window", "Shown before checkout by service type"],
   ["Mandatory vs optional charges", "Separated on business services"],
 ];
@@ -57,7 +57,7 @@ const popularPaths = [
 
 const comparisonColumns = ["Salary", "Expert", "Capital Gains", "Business"];
 const comparisonRows = [
-  ["Named CA review", "Add-on", "Yes", "Yes", "Dedicated owner"],
+  ["CA-assisted review", "Available where eligible", "Included where eligible", "Included where eligible", "Assigned owner"],
   ["AIS / 26AS check", "Checklist", "Yes", "Yes", "As applicable"],
   ["Document vault", "Basic", "Advanced", "Advanced", "Advanced"],
   ["Case timeline", "Basic", "Full", "Full", "Milestone based"],
@@ -194,6 +194,28 @@ export default function PricingPage() {
             <p className="max-w-xl text-sm leading-6 text-slate-600">
               Scope is confirmed before payment. Refund outcomes are never guaranteed by any filing plan.
             </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link href="#pricing">
+                <Button variant="brand" className="h-11 w-full rounded-lg px-5 sm:w-auto">
+                  Compare plans
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/expert-consultation?service=pricing-help">
+                <Button variant="outline" className="h-11 w-full rounded-lg border-blue-100 text-blue-700 hover:border-blue-200 hover:bg-blue-50 sm:w-auto">
+                  Ask for pricing help
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {heroHighlights.map(([label, value, helper]) => (
+                <div key={label} className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{label}</p>
+                  <p className="mt-2 text-xl font-extrabold text-slate-900">{value}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">{helper}</p>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             {popularPaths.map((path) => (
@@ -219,6 +241,7 @@ export default function PricingPage() {
 
       <StandardPricingSection
         mode="plan-grid"
+        className="border-b border-slate-100 bg-white"
         title="Choose by return complexity, not guesswork"
         description="Scope, CA review, GST treatment, timelines, and exclusions are visible before you start filing."
         plans={getTaxFilingPlans()}
@@ -249,7 +272,7 @@ export default function PricingPage() {
             {comparisonRows.map((row) => (
               <div key={row[0]} className="grid min-w-[760px] grid-cols-5 border-t border-slate-100 p-4 text-sm">
                 {row.map((cell, index) => (
-                  <span key={`${row[0]}-${index}`} className={index === 0 ? "font-black text-slate-950" : "font-semibold text-slate-700"}>
+                  <span key={`${row[0]}-${index}`} className={index === 0 ? "font-bold text-slate-900" : "font-semibold text-slate-700"}>
                     {cell}
                   </span>
                 ))}
@@ -267,8 +290,8 @@ export default function PricingPage() {
               Every paid action becomes a trackable case.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              This is the core difference from a plain checkout page: users can see the stage,
-              pending documents, CA review status and post-filing support path.
+              Users can see the stage, pending documents, CA review status where applicable,
+              and the post-filing support route before more work continues.
             </p>
             <Link href="/expert-consultation?service=pricing-help" className="mt-6 inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-800">
               Need help choosing a plan <ArrowRight className="ml-2 h-4 w-4" />

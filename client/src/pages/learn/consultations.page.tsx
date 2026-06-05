@@ -157,7 +157,7 @@ export default function ConsultationsPage() {
             <div>
               <h1 className="text-3xl font-bold">Expert Tax Consultations</h1>
               <p className="text-purple-200 mt-1">
-                Book a video call with certified Chartered Accountants
+                Book a video call with credential-checked tax professionals where available
               </p>
             </div>
           </div>
@@ -169,12 +169,12 @@ export default function ConsultationsPage() {
               <p className="text-sm text-purple-200">Experts</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold">4.8</p>
-              <p className="text-sm text-purple-200">Avg Rating</p>
+              <p className="text-2xl font-bold">Scope</p>
+              <p className="text-sm text-purple-200">Reviewed First</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold">5000+</p>
-              <p className="text-sm text-purple-200">Consultations</p>
+              <p className="text-2xl font-bold">Private</p>
+              <p className="text-sm text-purple-200">Case Notes</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold">₹299</p>
@@ -231,7 +231,7 @@ export default function ConsultationsPage() {
                     <Award className="h-6 w-6 text-purple-600" />
                   </div>
                   <h3 className="font-semibold">Verified CAs</h3>
-                  <p className="text-sm text-gray-600 mt-1">All experts are certified Chartered Accountants</p>
+                  <p className="text-sm text-gray-600 mt-1">Expert credentials are checked for scoped engagements where applicable.</p>
                 </div>
                 <div className="text-center">
                   <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">

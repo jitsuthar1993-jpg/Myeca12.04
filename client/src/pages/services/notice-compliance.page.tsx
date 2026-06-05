@@ -186,10 +186,10 @@ export default function NoticeCompliancePage() {
   ];
 
   const successStats = [
-    { label: "Notices Resolved", value: "5,000+", icon: FileText },
-    { label: "Success Rate", value: "95%", icon: TrendingUp },
-    { label: "Response Time", value: "24 Hrs", icon: Clock },
-    { label: "Expert CAs", value: "50+", icon: Users }
+    { label: "Notice types", value: "6", icon: FileText },
+    { label: "Review model", value: "Scoped", icon: TrendingUp },
+    { label: "Response timing", value: "Case-based", icon: Clock },
+    { label: "Expert review", value: "Available", icon: Users }
   ];
 
   return (
@@ -205,8 +205,8 @@ export default function NoticeCompliancePage() {
         type="service"
         serviceData={{
           price: "1499",
-          rating: "4.9",
-          reviews: "5000",
+          rating: "Unrated",
+          reviews: "0",
           availability: "https://schema.org/InStock"
         }}
         breadcrumbs={[
@@ -217,7 +217,7 @@ export default function NoticeCompliancePage() {
         faqPageData={[
           {
             question: "What should I do if I receive an Income Tax notice?",
-            answer: "Do not ignore it. Check the section under which it is issued and the deadline. Upload the notice on MyeCA.in for a free analysis by our CA experts."
+            answer: "Do not ignore it. Check the section under which it is issued and the deadline. Upload the notice on MyeCA.in for document-based review by assigned experts."
           },
           {
             question: "Is it mandatory to reply to a tax notice online?",
@@ -392,7 +392,7 @@ export default function NoticeCompliancePage() {
                    <Shield className="w-5 h-5 text-blue-600 mt-1" />
                    <div>
                      <h4 className="font-semibold text-blue-900 text-sm">Secure Handling</h4>
-                     <p className="text-xs text-blue-700 mt-1">Your data is encrypted and handled only by assigned experts.</p>
+                     <p className="text-xs text-blue-700 mt-1">Share notice data only through the authenticated workflow for assigned expert review.</p>
                    </div>
                  </CardContent>
                </Card>
@@ -400,8 +400,8 @@ export default function NoticeCompliancePage() {
                  <CardContent className="p-4 flex items-start gap-3">
                    <Award className="w-5 h-5 text-green-600 mt-1" />
                    <div>
-                     <h4 className="font-semibold text-green-900 text-sm">CA Certified</h4>
-                     <p className="text-xs text-green-700 mt-1">All responses drafted and reviewed by qualified Chartered Accountants.</p>
+                     <h4 className="font-semibold text-green-900 text-sm">Expert Review</h4>
+                     <p className="text-xs text-green-700 mt-1">Responses are prepared with professional review based on the selected scope.</p>
                    </div>
                  </CardContent>
                </Card>
@@ -547,7 +547,7 @@ export default function NoticeCompliancePage() {
                      The Response Strategy
                   </h3>
                   <p className="text-slate-600 leading-relaxed italic border-l-4 border-red-500 pl-6 py-2">
-                    "Accuracy is your best defense. When replying to a scrutiny notice, ensure your bank statement highlights match your income source claims exactly."
+                    "Accuracy strengthens your response. When replying to a scrutiny notice, ensure your bank statement highlights match your income source claims exactly."
                   </p>
                   <p className="text-slate-600 leading-relaxed mt-4">
                     Every notice has a <span className="font-bold">Document Identification Number (DIN)</span>. Always verify this on the e-filing portal before responding to prevent phishing attempts.
@@ -601,14 +601,14 @@ export default function NoticeCompliancePage() {
                    <div className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-blue-700 text-xs font-black text-white shadow-lg">TM</div>
                 </div>
                 <div>
-                   <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">E-E-A-T Certified Response Team</h3>
+                   <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Document-Based Response Team</h3>
                    <p className="text-xl text-slate-600 leading-relaxed mb-6 font-medium">
-                      Our responses are drafted by <span className="text-red-600 font-bold">Chartered Accountants</span> with over 15+ years of experience in representing cases before the Income Tax authorities. 
-                      Every response is backed by <span className="underline decoration-slate-300 underline-offset-4">Legal Precedents</span> and Case Laws to ensure the best possible resolution.
+                      Responses are prepared by assigned tax professionals based on the notice section, deadline, facts, and available evidence.
+                      Legal references and case-law notes are included where they are relevant to the selected service scope.
                    </p>
                    <div className="flex flex-wrap gap-4 pt-4">
                       <Button className="bg-red-600 text-white rounded-2xl font-black px-8 h-14 shadow-xl shadow-red-500/20 text-lg hover:scale-105 transition-all">Submit My Notice for Analysis</Button>
-                      <Button variant="ghost" className="text-slate-900 font-black text-lg underline decoration-2 decoration-red-500 underline-offset-8">Read Success Stories →</Button>
+                      <Button variant="ghost" className="text-slate-900 font-black text-lg underline decoration-2 decoration-red-500 underline-offset-8">Read Process Notes →</Button>
                    </div>
                 </div>
              </div>

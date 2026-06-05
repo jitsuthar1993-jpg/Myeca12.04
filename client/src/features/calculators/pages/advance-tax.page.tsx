@@ -135,6 +135,7 @@ export default function AdvanceTaxCalculatorPage() {
         icon={<Calculator className="w-6 h-6" />}
         variant="indigo"
         breadcrumbItems={[{ name: "Advance Tax" }]}
+        compact
       />
 
       <CalcLayout

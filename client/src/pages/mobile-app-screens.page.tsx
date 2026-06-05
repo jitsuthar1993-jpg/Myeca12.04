@@ -270,7 +270,7 @@ export default function MobileAppScreensPage() {
                     </div>
                     <div>
                       <p className="text-xs font-normal uppercase tracking-[0.22em] text-slate-400">Trust first</p>
-                      <p className="mt-1 text-sm font-normal text-slate-900">CA verification on every return</p>
+                      <p className="mt-1 text-sm font-normal text-slate-900">CA-assisted review where applicable</p>
                     </div>
                   </div>
                   <p className="mt-4 text-sm leading-6 text-slate-500">
@@ -345,7 +345,7 @@ export default function MobileAppScreensPage() {
                     <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Welcome back</p>
                     <h4 className="mt-2 text-2xl font-normal tracking-tight">File, track, and ask</h4>
                     <p className="mt-2 text-sm leading-6 text-white/80">
-                      Upload your documents, get AI help, and let a named CA review the filing before submission.
+                      Upload your documents, use guided help, and choose CA-assisted review where the filing scope includes it.
                     </p>
                   </div>
 
@@ -586,7 +586,7 @@ export default function MobileAppScreensPage() {
                 <p className="type-meta font-normal uppercase tracking-[0.28em] text-slate-400">Screen 05</p>
                 <h3 className="mt-1 text-xl font-normal tracking-tight text-slate-950">Document vault</h3>
               </div>
-              <ScreenTag label="Secure storage" />
+              <ScreenTag label="Private document area" />
             </div>
             <PhoneFrame>
               <div className="flex h-full flex-col bg-white">
@@ -594,7 +594,7 @@ export default function MobileAppScreensPage() {
                 <div className="flex-1 space-y-4 overflow-y-auto px-5 pb-4 pt-3 scrollbar-hide-mobile">
                   <PhoneHeader
                     title="Private document vault"
-                    subtitle="Store Form 16, AIS, rent receipts, and bank statements in one secure place."
+                    subtitle="Keep Form 16, AIS, rent receipts, and bank statements in a signed-in document area."
                     icon={FolderOpen}
                     accent="amber"
                   />

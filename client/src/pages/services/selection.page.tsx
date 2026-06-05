@@ -150,7 +150,7 @@ export default function ServiceSelectionPage() {
                 transition={{ delay: 0.2 }}
                 className="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed"
               >
-                Launch your business or secure your financial future with our range of professional CA services tailored for your success.
+                Launch your business or plan your next financial workflow with professional tax and compliance services.
               </m.p>
             </div>
 

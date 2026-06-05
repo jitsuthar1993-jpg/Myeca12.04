@@ -78,7 +78,7 @@ export function TaxOptimizer() {
       description: "PPF, ELSS, Life Insurance, NSC, 5-yr FD",
       suggestions: [
         "Invest in ELSS funds for tax + wealth creation",
-        "Open PPF account for guaranteed returns",
+        "Review PPF as a government-backed fixed-income option",
         "Pay children's tuition fees",
         "Claim home loan principal repayment"
       ],
@@ -221,13 +221,13 @@ export function TaxOptimizer() {
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full">
           <Sparkles className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">AI-Powered Tax Optimizer</span>
+          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Assistive Tax Optimizer</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Maximize Your Tax Savings
+          Estimate Eligible Tax Savings
         </h1>
         <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
-          Get personalized AY 2026-27 recommendations to reduce your tax liability under the Old Regime
+          Get AY 2026-27 deduction ideas based on your inputs under the Old Regime
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
           {TAX_TRANSITION_NOTE}

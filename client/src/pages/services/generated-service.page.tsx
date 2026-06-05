@@ -110,8 +110,8 @@ export default function GeneratedServicePage() {
         type="service"
         serviceData={{
           price: getServicePriceForSchema(page.slug, page.priceAmount),
-          rating: "4.8",
-          reviews: "500",
+          rating: "Unrated",
+          reviews: "0",
           availability: "https://schema.org/InStock",
         }}
         breadcrumbs={[

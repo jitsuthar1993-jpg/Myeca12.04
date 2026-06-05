@@ -20,6 +20,8 @@ const COLLECTION_TABLES: Record<string, string> = {
   referrals: "referrals",
   teams: "teams",
   notifications: "notifications",
+  workflow_events: "workflow_events",
+  reminders: "reminders",
   workflows: "workflows",
   reports: "reports",
   chat_sessions: "chat_sessions",

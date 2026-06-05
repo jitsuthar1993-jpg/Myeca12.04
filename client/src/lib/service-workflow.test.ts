@@ -7,6 +7,36 @@ import {
 } from './service-workflow';
 
 describe('service workflow helpers', () => {
+  it('builds a dashboard service request payload from a normalized catalog service', () => {
+    const payload = buildDashboardServiceRequestPayload(
+      'gst-registration',
+      {
+        id: 'gst-registration',
+        title: 'GST Registration',
+        categoryLabel: 'GST Services',
+        paymentAmount: 1499,
+        originalServicePath: '/services/gst-registration',
+      },
+      ' Need GST for a new firm ',
+      '2026-05-15T10:00:00.000Z',
+    );
+
+    expect(payload).toMatchObject({
+      serviceId: 'gst-registration',
+      serviceTitle: 'GST Registration',
+      serviceCategory: 'GST Services',
+      paymentAmount: 1499,
+      metadata: {
+        requestDescription: 'Need GST for a new firm',
+        source: 'dashboard_services',
+        formId: 'dashboard-service-modal',
+        serviceIntent: 'gst-registration',
+        requestedAt: '2026-05-15T10:00:00.000Z',
+        originalServicePath: '/services/gst-registration',
+      },
+    });
+  });
+
   it('builds a real dashboard service request payload with metadata', () => {
     const payload = buildDashboardServiceRequestPayload(
       'gst-registration',
@@ -32,6 +62,8 @@ describe('service workflow helpers', () => {
       metadata: {
         requestDescription: 'Need GST for a new firm',
         source: 'dashboard_services',
+        formId: 'dashboard-service-modal',
+        serviceIntent: 'gst-registration',
         requestedAt: '2026-05-15T10:00:00.000Z',
         originalServicePath: '/services/gst-registration',
       },

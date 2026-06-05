@@ -17,7 +17,7 @@ interface AuthorProfileProps {
 const AuthorProfile: React.FC<AuthorProfileProps> = ({
   name,
   role,
-  credentials = ['Chartered Accountant'],
+  credentials = ['Tax reviewer'],
   bio,
   avatarUrl,
   linkedinUrl,

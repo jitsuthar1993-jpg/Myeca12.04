@@ -107,7 +107,7 @@ const StartupServicesPage = () => {
       title: "Startup India Registration & DPIIT Recognition",
       price: "₹4,999 - ₹12,999",
       schemes: ["Startup India", "DPIIT Recognition"],
-      benefits: "3-year profit tax holiday under Section 80-IAC",
+      benefits: "Section 80-IAC eligibility review for eligible startups",
       icon: Rocket,
       color: "emerald",
       description: "Complete entity formation (LLP/Pvt Ltd) with DPIIT recognition for Startup India eligibility and ongoing compliance"
@@ -142,11 +142,11 @@ const StartupServicesPage = () => {
     {
       title: "Strategic Advisory & Mentorship",
       price: "₹18,999 - ₹50,000",
-      schemes: ["FFS", "Export Promotion", "ICAI Networks"],
+      schemes: ["FFS", "Export Promotion", "Mentor Networks"],
       benefits: "Holistic business growth & scaling support",
       icon: Briefcase,
       color: "indigo",
-      description: "Strategic business modeling, export promotion guidance, ICAI mentorship, and equity structuring for sustainable scaling"
+      description: "Strategic business modeling, export promotion guidance, mentor coordination, and equity structuring for sustainable scaling"
     },
     {
       title: "Comprehensive Compliance Management",
@@ -198,7 +198,7 @@ const StartupServicesPage = () => {
 
   const ourAdvantages = [
     {
-      title: "Expert CA Team",
+      title: "Expert-Assisted Team",
       description: "Startup-focused CA review for incorporation, tax, and compliance decisions",
       stat: "CA-led Review",
       benefit: "Practical compliance guidance",
@@ -239,7 +239,7 @@ const StartupServicesPage = () => {
                 </h1>
               </div>
               <p className="text-gray-600 text-lg max-w-2xl">
-                Leverage Startup India, SISFS, CGSS, PMMY and other government schemes for funding, tax benefits and growth with expert CA guidance.
+                Review Startup India, SISFS, CGSS, PMMY and other government schemes for funding, tax benefits and growth with expert-assisted guidance.
               </p>
             </div>
             
@@ -250,7 +250,7 @@ const StartupServicesPage = () => {
                </Button>
                <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50 font-semibold">
                  <Phone className="w-4 h-4 mr-2" />
-                 Free Consultation
+                 Request Consultation
                </Button>
             </div>
           </div>
@@ -613,7 +613,7 @@ const StartupServicesPage = () => {
                 </Button>
                 <Button size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8">
                   <Phone className="w-5 h-5 mr-2" />
-                  Free Startup Consultation
+                  Request Startup Consultation
                 </Button>
               </div>
 

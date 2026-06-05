@@ -243,7 +243,7 @@ export default function ITRFormRecommenderPage() {
                   </div>
                   <h2 className="type-section-title font-black mb-2 italic uppercase tracking-wide">Recommended: {recommendedForm}</h2>
                   <p className="type-support text-indigo-100 max-w-md mx-auto">
-                    Based on your inputs, this form is the best fit for your filing requirements.
+                    Based on your inputs, this form is the suggested fit for your filing requirements.
                   </p>
                 </div>
                 <CardContent className="p-8 md:p-12 space-y-8 bg-white">

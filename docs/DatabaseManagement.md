@@ -203,7 +203,7 @@ FOR VALUES FROM (1) TO (1000000);
 
 #### 8.1 Data Retention
 **Policy**:
-- User data: 7 years after last activity
+- User data: retained according to the current retention policy
 - Financial records: 8 years
 - Audit logs: 3 years
 - Temporary data: 30 days

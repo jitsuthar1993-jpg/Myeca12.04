@@ -30,7 +30,7 @@ const specialists: Record<string, any> = {
     exp: "12+ Years",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
     bio: "Credential-checked professionals support taxation, audit, GST, and cross-border tax compliance matters where specialist review is requested.",
-    education: ["FCA from ICAI", "B.Com from Shri Ram College of Commerce", "Diploma in International Taxation"],
+    education: ["Credential details shared during scoped engagement where applicable"],
     expertise: ["GST Litigation", "Corporate Tax Planning", "International Tax Treaties", "FEMA Compliance"],
     statistics: [
       { label: "Review Type", value: "GST" },
@@ -45,7 +45,7 @@ const specialists: Record<string, any> = {
     exp: "8 Years",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
     bio: "Advisors help founders understand incorporation, funding compliance, ROC filings, shareholder documentation, and ESOP workflows.",
-    education: ["ACA from ICAI", "CS from ICSI", "LLB from Delhi University"],
+    education: ["Credential details shared during scoped engagement where applicable"],
     expertise: ["Startup Funding", "ROC Filings", "Shareholder Agreements", "Intellectual Property"],
     statistics: [
       { label: "Review Type", value: "ROC" },
@@ -60,7 +60,7 @@ const specialists: Record<string, any> = {
     exp: "15+ Years",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
     bio: "Specialists help taxpayers respond accurately to notices, prepare filing positions, and claim eligible refunds with supporting documentation.",
-    education: ["FCA from ICAI", "B.Com in Accounting and Finance", "Advanced certification in direct tax litigation"],
+    education: ["Credential details shared during scoped engagement where applicable"],
     expertise: ["ITR Filing", "Tax Scrutiny", "Notice Handling", "Tax Advisory"],
     statistics: [
       { label: "Review Type", value: "ITR" },
@@ -89,7 +89,7 @@ export default function ExpertProfilePage() {
     <>
       <div className="min-h-screen bg-white">
       <MetaSEO
-        title={`${expert.name} - ${expert.role} | Certified Expert at MyeCA.in`}
+        title={`${expert.name} - ${expert.role} | MyeCA.in`}
         description={expert.bio.substring(0, 160)}
         type="article"
         breadcrumbs={[
