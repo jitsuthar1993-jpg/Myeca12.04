@@ -21,6 +21,18 @@ const sampleServices = [
     createdAt: "2026-01-01T00:00:00.000Z",
     updatedAt: "2026-01-02T00:00:00.000Z",
   },
+  {
+    id: "income-tax-calculator",
+    name: "Income Tax Calculator",
+    description: "Calculate your income tax",
+    category: "other",
+    price: 0,
+    isPopular: false,
+    isActive: true,
+    bookingsCount: 0,
+    createdAt: null,
+    updatedAt: null,
+  },
 ];
 
 vi.mock("@/components/AuthProvider", () => ({
@@ -75,6 +87,22 @@ describe("ServicesManagementPage", () => {
     expect(screen.getByPlaceholderText("Search services by name or description...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Add Service/i })).toHaveClass("rounded-lg");
     expect(screen.getByText("GST Registration")).toBeInTheDocument();
+  });
+
+  it("hides calculators returned by a stale admin catalog response", async () => {
+    renderWithQueryClient(<ServicesManagementPage />);
+
+    expect(await screen.findByText("GST Registration")).toBeInTheDocument();
+    expect(screen.queryByText("Income Tax Calculator")).not.toBeInTheDocument();
+  });
+
+  it("keeps service rows aligned in a fixed single-line table", async () => {
+    renderWithQueryClient(<ServicesManagementPage />);
+
+    const serviceName = await screen.findByText("GST Registration");
+    expect(screen.getByRole("table")).toHaveClass("table-fixed", "min-w-[1100px]");
+    expect(serviceName.closest("tr")).toHaveClass("align-middle");
+    expect(serviceName).toHaveClass("truncate", "whitespace-nowrap");
   });
 
   it("keeps the add service dialog workflow available", async () => {

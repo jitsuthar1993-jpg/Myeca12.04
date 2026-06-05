@@ -1,15 +1,23 @@
-export type AdminCatalogSourceService = {
+type AdminCatalogCandidate = {
+  id?: string | number;
+  name?: string;
+  title?: string;
+  path?: string;
+};
+
+export type AdminCatalogSourceService = AdminCatalogCandidate & {
   id: string;
   title: string;
   description: string;
   category: string;
-  path?: string;
   price?: string;
   popular?: boolean;
 };
 
-export function isAdminCatalogService(service: AdminCatalogSourceService) {
-  return service.path !== "/calculators" && !service.path?.startsWith("/calculators/");
+export function isAdminCatalogService(service: AdminCatalogCandidate) {
+  const path = service.path || "";
+  const identity = `${service.id || ""} ${service.name || ""} ${service.title || ""}`.toLowerCase();
+  return path !== "/calculators" && !path.startsWith("/calculators/") && !identity.includes("calculat");
 }
 
 function catalogPrice(value?: string) {

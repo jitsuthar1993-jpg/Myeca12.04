@@ -71,6 +71,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
+import { isAdminCatalogService } from "@shared/admin-service-catalog";
 import { normalizeAppRole } from "@shared/app-roles";
 
 const serviceSchema = z.object({
@@ -324,7 +325,9 @@ export default function ServicesManagementPage() {
     setIsViewDialogOpen(true);
   };
 
-  const filteredServices = services.filter((service: Service) => {
+  const catalogServices = services.filter(isAdminCatalogService);
+
+  const filteredServices = catalogServices.filter((service: Service) => {
     const matchesSearch =
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -338,12 +341,12 @@ export default function ServicesManagementPage() {
   });
 
   const serviceStats = {
-    total: services.length,
-    active: services.filter((service: Service) => service.isActive).length,
-    popular: services.filter((service: Service) => service.isPopular).length,
-    totalBookings: services.reduce((sum: number, service: Service) => sum + (service.bookingsCount || 0), 0),
-    avgPrice: services.length > 0
-      ? services.reduce((sum: number, service: Service) => sum + service.price, 0) / services.length
+    total: catalogServices.length,
+    active: catalogServices.filter((service: Service) => service.isActive).length,
+    popular: catalogServices.filter((service: Service) => service.isPopular).length,
+    totalBookings: catalogServices.reduce((sum: number, service: Service) => sum + (service.bookingsCount || 0), 0),
+    avgPrice: catalogServices.length > 0
+      ? catalogServices.reduce((sum: number, service: Service) => sum + service.price, 0) / catalogServices.length
       : 0,
   };
 
@@ -607,43 +610,52 @@ export default function ServicesManagementPage() {
         description="Compact catalog rows with status, booking, and pricing controls."
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="min-w-[1100px] table-fixed w-full text-left">
+            <colgroup>
+              <col className="w-[30%]" />
+              <col className="w-[14%]" />
+              <col className="w-[10%]" />
+              <col className="w-[16%]" />
+              <col className="w-[11%]" />
+              <col className="w-[11%]" />
+              <col className="w-[8%]" />
+            </colgroup>
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/60">
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Service</th>
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Category</th>
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Price</th>
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Status</th>
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Bookings</th>
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Updated</th>
-                <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Actions</th>
+              <tr className="align-middle border-b border-slate-100 bg-slate-50/60">
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Service</th>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Category</th>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Price</th>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Status</th>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Bookings</th>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Updated</th>
+                <th className="whitespace-nowrap px-4 py-3 text-right text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filteredServices.map((service: Service) => (
-                <tr key={service.id} className="transition-colors hover:bg-blue-50/30">
-                  <td className="px-4 py-4">
+                <tr key={service.id} className="align-middle transition-colors hover:bg-blue-50/30">
+                  <td className="px-4 py-4 align-middle">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                         <FileText className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="flex items-center gap-2 text-sm font-bold text-slate-950">
+                        <p className="flex items-center gap-2 truncate whitespace-nowrap text-sm font-bold text-slate-950">
                           {service.name}
-                          {service.isPopular ? <Star className="h-3.5 w-3.5 fill-current text-amber-500" /> : null}
+                          {service.isPopular ? <Star className="h-3.5 w-3.5 shrink-0 fill-current text-amber-500" /> : null}
                         </p>
                         <p className="mt-1 max-w-xs truncate text-xs font-medium text-slate-500">{service.description}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
+                  <td className="whitespace-nowrap px-4 py-4 align-middle">
                     <Badge variant="outline" className={cn("px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em]", getCategoryColor(service.category))}>
                       {categoryLabel(service.category)}
                     </Badge>
                   </td>
-                  <td className="px-4 py-4 text-sm font-bold text-slate-900">{priceLabel(service.price)}</td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-2">
+                  <td className="whitespace-nowrap px-4 py-4 align-middle text-sm font-bold text-slate-900">{priceLabel(service.price)}</td>
+                  <td className="whitespace-nowrap px-4 py-4 align-middle">
+                    <div className="flex items-center gap-2 whitespace-nowrap">
                       <Badge
                         variant="outline"
                         className={cn(
@@ -658,11 +670,11 @@ export default function ServicesManagementPage() {
                       <Switch checked={service.isActive} onCheckedChange={() => toggleActive(service)} aria-label="Toggle Active" />
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-sm font-medium text-slate-600">{service.bookingsCount || 0} bookings</td>
-                  <td className="px-4 py-4 text-xs font-medium text-slate-500">
+                  <td className="whitespace-nowrap px-4 py-4 align-middle text-sm font-medium text-slate-600">{service.bookingsCount || 0} bookings</td>
+                  <td className="whitespace-nowrap px-4 py-4 align-middle text-xs font-medium text-slate-500">
                     {service.updatedAt ? format(new Date(service.updatedAt), "MMM dd, yyyy") : "Code catalog"}
                   </td>
-                  <td className="px-4 py-4 text-right">
+                  <td className="whitespace-nowrap px-4 py-4 text-right align-middle">
                     <div className="flex items-center justify-end gap-1.5">
                       <DashboardIconButton label="Edit service" onClick={() => handleEdit(service)}>
                         <Edit className="h-4 w-4" />
