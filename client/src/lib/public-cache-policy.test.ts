@@ -59,16 +59,36 @@ describe("public performance cache policy", () => {
   it("sets Google Consent Mode defaults before loading Tag Manager", () => {
     const html = read("client/index.html");
     const bootstrap = read("client/public/gtm-consent-bootstrap.js");
+    const browserTelemetry = read("client/src/telemetry/browser.ts");
+    const envExample = read(".env.example");
+    const serverSecurity = read("server/middleware/security.ts");
+    const viteConfig = read("vite.config.ts");
+    const vercel = JSON.parse(read("vercel.json")) as {
+      headers: Array<{ source: string; headers: Array<{ key: string; value: string }> }>;
+    };
+    const vercelCsp = vercel.headers
+      .find((entry) => entry.source === "/(.*)")
+      ?.headers.find((header) => header.key === "Content-Security-Policy")
+      ?.value ?? "";
     const consentIndex = bootstrap.indexOf('"consent", "default"');
     const gtmIndex = bootstrap.indexOf("googletagmanager.com/gtm.js");
 
-    expect(html).toContain('<script src="/gtm-consent-bootstrap.js"></script>');
+    expect(html).toContain('<script src="/gtm-consent-bootstrap.js" data-gtm-id="%VITE_GTM_ID%"></script>');
+    expect(html).toMatch(/<body>\s*<!-- Google Tag Manager \(noscript\) -->/);
+    expect(html).toContain("googletagmanager.com/ns.html?id=%VITE_GTM_ID%");
+    expect(html).not.toContain("GTM-5H5QSCJC");
     expect(consentIndex).toBeGreaterThan(-1);
     expect(gtmIndex).toBeGreaterThan(-1);
     expect(consentIndex).toBeLessThan(gtmIndex);
     expect(bootstrap).toContain('ad_user_data: "denied"');
     expect(bootstrap).toContain('ad_personalization: "denied"');
-    expect(html).toContain("googletagmanager.com/ns.html?id=GTM-5H5QSCJC");
+    expect(bootstrap).toContain("document.currentScript");
+    expect(bootstrap).not.toContain("GTM-5H5QSCJC");
+    expect(envExample).toContain("VITE_GTM_ID=");
+    expect(viteConfig).toContain('process.env.VITE_GTM_ID ??= "";');
+    expect(browserTelemetry).toContain("config.gtmId || config.gaMeasurementId");
+    expect(serverSecurity).toMatch(/frameSrc: \[[^\]]*"https:\/\/www\.googletagmanager\.com"/);
+    expect(vercelCsp).toMatch(/frame-src[^;]*https:\/\/www\.googletagmanager\.com/);
   });
 
   it("keeps Workbox cache bounds tight for generated public assets", () => {

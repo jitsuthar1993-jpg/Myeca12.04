@@ -52,7 +52,7 @@ export const securityHeaders = helmet({
         "https://chat.myeca.in",
         "wss://client.relay.crisp.chat",
       ],
-      frameSrc: ["'self'", "https://client.crisp.chat", "https://chat.myeca.in"],
+      frameSrc: ["'self'", "https://www.googletagmanager.com", "https://client.crisp.chat", "https://chat.myeca.in"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],

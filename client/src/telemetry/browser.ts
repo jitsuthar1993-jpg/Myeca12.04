@@ -276,7 +276,7 @@ export async function initializeBrowserTelemetry(path = typeof window !== "undef
 
   const config = getBrowserTelemetryConfig();
   if (!shouldEnableTelemetry(config)) return;
-  if (config.gaMeasurementId) {
+  if (config.gtmId || config.gaMeasurementId) {
     ensureGoogleConsentModeDefault();
     updateGoogleConsentMode(getTelemetryConsent());
   }

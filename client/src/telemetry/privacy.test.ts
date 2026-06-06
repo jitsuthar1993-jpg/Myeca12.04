@@ -75,6 +75,7 @@ describe("telemetry privacy gates", () => {
 
   it("keeps telemetry disabled locally or without configured vendors", () => {
     expect(shouldEnableTelemetry(emptyConfig, true)).toBe(false);
+    expect(shouldEnableTelemetry({ ...emptyConfig, gtmId: "GTM-TEST" }, true)).toBe(true);
     expect(shouldEnableTelemetry({ ...emptyConfig, gaMeasurementId: "G-TEST" }, false)).toBe(false);
     expect(shouldEnableTelemetry({ ...emptyConfig, gaMeasurementId: "G-TEST" }, true)).toBe(true);
     expect(shouldEnableTelemetry({
