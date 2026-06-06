@@ -5,6 +5,7 @@ export const TELEMETRY_CONSENT_KEY = "myeca:telemetry-consent";
 export type TelemetryConsent = "granted" | "denied";
 
 export type BrowserTelemetryConfig = {
+  gtmId?: string;
   gaMeasurementId?: string;
   clarityProjectId?: string;
   posthogKey?: string;
@@ -17,6 +18,7 @@ export type BrowserTelemetryConfig = {
   chatwootWebsiteToken?: string;
 };
 
+const gtmId = String(import.meta.env.VITE_GTM_ID || "").trim() || undefined;
 const gaMeasurementId = String(import.meta.env.VITE_GA_MEASUREMENT_ID || "").trim() || undefined;
 const clarityProjectId = String(import.meta.env.VITE_CLARITY_PROJECT_ID || "").trim() || undefined;
 const posthogKey = String(import.meta.env.VITE_POSTHOG_KEY || "").trim() || undefined;
@@ -34,7 +36,8 @@ export const hasCrispTelemetryConfig = Boolean(crispWebsiteId);
 export const hasUmamiTelemetryConfig = Boolean(umamiWebsiteId && umamiScriptUrl);
 export const hasChatwootTelemetryConfig = Boolean(chatwootBaseUrl && chatwootWebsiteToken);
 export const hasBrowserTelemetryConfig = Boolean(
-  gaMeasurementId ||
+  gtmId ||
+    gaMeasurementId ||
     clarityProjectId ||
     posthogKey ||
     sentryDsn ||
@@ -72,6 +75,7 @@ export function setTelemetryConsent(value: TelemetryConsent) {
 
 export function getBrowserTelemetryConfig(): BrowserTelemetryConfig {
   return {
+    gtmId,
     gaMeasurementId,
     clarityProjectId,
     posthogKey,
@@ -90,7 +94,8 @@ export function shouldEnableTelemetry(
   productionTelemetry = shouldLoadProductionTelemetry(),
 ) {
   return productionTelemetry && Boolean(
-    config.gaMeasurementId ||
+    config.gtmId ||
+      config.gaMeasurementId ||
       config.clarityProjectId ||
       config.posthogKey ||
       config.sentryDsn ||

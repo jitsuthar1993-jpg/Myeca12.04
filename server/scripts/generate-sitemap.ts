@@ -24,6 +24,8 @@ function generateSitemap() {
     .map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const blogDateMap = new Map(blogPosts.map((post) => [`/blog/${post.slug}`, post.updatedAt || post.publishedAt]));
+  const guideDateMap = new Map(TAX_GUIDES.map((guide) => [`/learn/guide/${guide.slug}`, guide.lastUpdated]));
+  const dateMap = new Map([...blogDateMap, ...guideDateMap]);
   const urls = getIndexablePublicRoutes(
     [
       ...Object.keys(SEO_CONFIG).filter((url) => !SEO_CONFIG[url].noindex),
@@ -34,7 +36,7 @@ function generateSitemap() {
   
   const sitemapContent = buildSitemapXml(urls.map((url) => ({
     loc: toAbsoluteUrl(url),
-    lastmod: blogDateMap.get(url)?.split("T")[0] || new Date().toISOString().split("T")[0],
+    lastmod: dateMap.get(url)?.split("T")[0],
     changefreq: routeChangefreq(url),
     priority: routePriority(url),
   })));

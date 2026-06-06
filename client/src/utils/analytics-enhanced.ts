@@ -1,9 +1,12 @@
 // Enhanced Analytics Tracking with Conversion and E-commerce Support
 
+import { captureTelemetryEvent } from '@/telemetry/browser';
+import type { TelemetryValue } from '@/telemetry/privacy';
 import { trackEvent, trackConversion } from './analytics';
 
 // E-commerce tracking
 export interface EcommerceItem {
+  [key: string]: TelemetryValue;
   item_id: string;
   item_name: string;
   price: number;
@@ -65,9 +68,7 @@ export function trackServiceClick(serviceName: string, serviceId: string, action
 
 // E-commerce tracking functions
 export function trackViewItem(item: EcommerceItem): void {
-  if (!window.gtag) return;
-
-  window.gtag('event', 'view_item', {
+  captureTelemetryEvent('view_item', {
     currency: item.currency || 'INR',
     value: item.price,
     items: [item]
@@ -75,33 +76,23 @@ export function trackViewItem(item: EcommerceItem): void {
 }
 
 export function trackAddToCart(item: EcommerceItem): void {
-  if (!window.gtag) return;
-
-  window.gtag('event', 'add_to_cart', {
+  captureTelemetryEvent('add_to_cart', {
     currency: item.currency || 'INR',
     value: item.price,
     items: [item]
   });
-
-  trackEvent('add_to_cart', 'E-commerce', item.item_name, item.price);
 }
 
 export function trackBeginCheckout(items: EcommerceItem[], totalValue: number): void {
-  if (!window.gtag) return;
-
-  window.gtag('event', 'begin_checkout', {
+  captureTelemetryEvent('begin_checkout', {
     currency: 'INR',
     value: totalValue,
     items: items
   });
-
-  trackEvent('begin_checkout', 'E-commerce', `${items.length} items`, totalValue);
 }
 
 export function trackPurchase(transaction: EcommerceTransaction): void {
-  if (!window.gtag) return;
-
-  window.gtag('event', 'purchase', {
+  captureTelemetryEvent('purchase', {
     transaction_id: transaction.transaction_id,
     value: transaction.value,
     tax: transaction.tax || 0,
@@ -110,10 +101,6 @@ export function trackPurchase(transaction: EcommerceTransaction): void {
     coupon: transaction.coupon,
     items: transaction.items
   });
-
-  trackConversion('purchase', transaction.value);
-
-  trackEvent('purchase_complete', 'E-commerce', transaction.transaction_id, transaction.value);
 }
 
 // User engagement tracking
@@ -153,26 +140,20 @@ export function trackError(errorType: string, errorMessage: string, errorLocatio
 
 // Search tracking
 export function trackSiteSearch(searchTerm: string, resultsCount: number, searchType?: string): void {
-  if (!window.gtag) return;
-
-  window.gtag('event', 'search', {
-    search_term: searchTerm
+  captureTelemetryEvent('search', {
+    search_term: searchTerm,
+    results_count: resultsCount,
+    search_type: searchType,
   });
-
-  trackEvent('site_search', 'Search', searchTerm, resultsCount);
 }
 
 // Social sharing tracking
 export function trackSocialShare(platform: string, contentType: string, contentId?: string): void {
-  if (!window.gtag) return;
-
-  window.gtag('event', 'share', {
+  captureTelemetryEvent('share', {
     method: platform,
     content_type: contentType,
     item_id: contentId
   });
-
-  trackEvent('social_share', 'Social Engagement', `${platform} - ${contentType}`);
 }
 
 // Exit intent tracking

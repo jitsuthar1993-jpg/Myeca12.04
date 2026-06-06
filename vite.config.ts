@@ -13,6 +13,7 @@ const shouldUploadSentrySourcemaps = Boolean(
   process.env.SENTRY_PROJECT,
 );
 process.env.VITE_GOOGLE_SITE_VERIFICATION ??= "";
+process.env.VITE_GTM_ID ??= "";
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -79,12 +79,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const blogDateMap = new Map<string, string>();
       const blogRoutes = posts.map((post) => {
         const route = `/blog/${post.slug || post.id}`;
-        const dateVal = post.updatedAt || post.publishedAt || post.createdAt || new Date();
-        const d = new Date(dateVal);
-        blogDateMap.set(route, Number.isNaN(d.getTime()) ? new Date().toISOString().split("T")[0] : d.toISOString().split("T")[0]);
+        const dateVal = post.updatedAt || post.publishedAt || post.createdAt;
+        const d = dateVal ? new Date(dateVal) : null;
+        if (d && !Number.isNaN(d.getTime())) {
+          blogDateMap.set(route, d.toISOString().split("T")[0]);
+        }
         return route;
       });
       const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
+      const guideDateMap = new Map(TAX_GUIDES.map((guide) => [`/learn/guide/${guide.slug}`, guide.lastUpdated]));
+      const dateMap = new Map([...blogDateMap, ...guideDateMap]);
       const seoConfigRoutes = Object.entries(SEO_CONFIG)
         .filter(([, config]) => !config.noindex)
         .map(([route]) => route);
@@ -94,7 +98,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       const trimmedSitemap = buildSitemapXml(routes.map((route) => ({
         loc: toAbsoluteUrl(route),
-        lastmod: blogDateMap.get(route) || new Date().toISOString().split("T")[0],
+        lastmod: dateMap.get(route),
         changefreq: routeChangefreq(route),
         priority: routePriority(route),
       }))).trim();

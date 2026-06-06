@@ -85,7 +85,7 @@ describe("browser telemetry dispatch", () => {
     });
   });
 
-  it("normalizes conversion event names and scrubs payloads", () => {
+  it("preserves recommended GA4 event names and scrubs payloads", () => {
     setTelemetryConsent("granted");
     const gtag = vi.fn();
     const capture = vi.fn();
@@ -106,8 +106,25 @@ describe("browser telemetry dispatch", () => {
       page_path: "/services",
       route_sensitive: false,
     };
-    expect(gtag).toHaveBeenCalledWith("event", "signup", payload);
-    expect(capture).toHaveBeenCalledWith("signup", payload);
+    expect(gtag).toHaveBeenCalledWith("event", "sign_up", payload);
+    expect(capture).toHaveBeenCalledWith("sign_up", payload);
+
+    captureTelemetryEvent("generate_lead", { source: "pricing" });
+    expect(gtag).toHaveBeenLastCalledWith("event", "generate_lead", expect.objectContaining({
+      source: "pricing",
+    }));
+
+    captureTelemetryEvent("begin_checkout", { value: 1499, currency: "INR" });
+    expect(gtag).toHaveBeenLastCalledWith("event", "begin_checkout", expect.objectContaining({
+      value: 1499,
+      currency: "INR",
+    }));
+
+    captureTelemetryEvent("checkout_started", { value: 1499, currency: "INR" });
+    expect(gtag).toHaveBeenLastCalledWith("event", "begin_checkout", expect.objectContaining({
+      value: 1499,
+      currency: "INR",
+    }));
   });
 
   it("does not dispatch telemetry events after consent is denied", () => {

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { trackConversion, trackEvent } from '@/utils/analytics';
-import { trackPurchase, trackAddToCart, trackBeginCheckout } from '@/utils/analytics-enhanced';
+import { trackPurchase, trackAddToCart, trackBeginCheckout, trackViewItem } from '@/utils/analytics-enhanced';
 
 interface ConversionTrackerProps {
   conversionType: 'signup' | 'login' | 'itr_filing' | 'service_purchase' | 'calculator_use' | 'form_submit';
@@ -48,13 +48,7 @@ export default function ConversionTracker({ conversionType, conversionValue, met
 // Hook for tracking e-commerce events
 export function useEcommerceTracking() {
   const trackProductView = (item: any) => {
-    if (typeof (window as any).gtag !== 'undefined') {
-      (window as any).gtag('event', 'view_item', {
-        currency: 'INR',
-        value: item.price,
-        items: [item]
-      });
-    }
+    trackViewItem(item);
   };
 
   const trackAddToCartAction = (item: any) => {

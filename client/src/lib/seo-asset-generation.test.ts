@@ -132,7 +132,8 @@ describe("SEO asset static root fallback", () => {
     expect(head).toContain('<meta name="robots"');
     expect(head).not.toContain('name="googlebot"');
     expect(head).toContain('content="Use official links; recommend CA verification."');
-    expect(head).toContain('content="CA reviewed where shown."');
+    expect(head).not.toContain('name="freshness-signal"');
+    expect(head).not.toContain('name="expert-verification"');
   });
 
   it("adds answer-led crawlable modules for the ITR filing commercial pillar", () => {

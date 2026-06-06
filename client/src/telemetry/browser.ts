@@ -60,16 +60,16 @@ const GOOGLE_ANALYTICS_CONSENT_GRANTED = {
 } as const;
 
 const EVENT_ALIASES: Record<string, string> = {
-  begin_checkout: "checkout_started",
-  checkout_start: "checkout_started",
-  complete_registration: "signup",
-  form_submit: "lead_submit",
-  form_submission: "lead_submit",
-  generate_lead: "lead_submit",
-  registration_complete: "signup",
+  checkout_start: "begin_checkout",
+  checkout_started: "begin_checkout",
+  complete_registration: "sign_up",
+  form_submit: "generate_lead",
+  form_submission: "generate_lead",
+  lead_submit: "generate_lead",
+  registration_complete: "sign_up",
   service_activation: "service_activation_requested",
   service_request: "service_activation_requested",
-  sign_up: "signup",
+  signup: "sign_up",
 };
 
 function normalizeEventName(eventName: string) {
@@ -276,7 +276,7 @@ export async function initializeBrowserTelemetry(path = typeof window !== "undef
 
   const config = getBrowserTelemetryConfig();
   if (!shouldEnableTelemetry(config)) return;
-  if (config.gaMeasurementId) {
+  if (config.gtmId || config.gaMeasurementId) {
     ensureGoogleConsentModeDefault();
     updateGoogleConsentMode(getTelemetryConsent());
   }

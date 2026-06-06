@@ -170,13 +170,8 @@ export function useClickTracking(elementName: string, category: string) {
 // Track search interactions
 export function useSearchTracking() {
   const trackSearch = (searchTerm: string, resultsCount: number, searchType?: string) => {
-    if (typeof (window as any).gtag !== 'undefined') {
-      (window as any).gtag('event', 'search', {
-        search_term: searchTerm
-      });
-    }
-    void loadAnalytics().then(({ trackFeatureUse }) => {
-      trackFeatureUse('search', searchType || 'general', { term: searchTerm, results: resultsCount });
+    void loadAnalytics().then(({ trackSiteSearch }) => {
+      trackSiteSearch(searchTerm, resultsCount, searchType);
     });
   };
 

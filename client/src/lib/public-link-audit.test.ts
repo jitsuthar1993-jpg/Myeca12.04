@@ -193,6 +193,12 @@ describe("public link audit", () => {
     expect(sitemap).not.toContain("<loc>https://myeca.in/itr/filing</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/dashboard</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/documents</loc>");
+    expect(sitemap).not.toContain(
+      "<loc>https://myeca.in/services/pan-card</loc><lastmod>",
+    );
+    expect(sitemap).toContain(
+      `<loc>https://myeca.in/learn/guide/${TAX_GUIDES[0].slug}</loc><lastmod>${TAX_GUIDES[0].lastUpdated}</lastmod>`,
+    );
   });
 
   it("keeps runtime blog listings from shrinking below the static MDX catalog", async () => {

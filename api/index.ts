@@ -922,12 +922,17 @@ export function buildApiSitemapXml() {
   const blogResponse = listPublicBlogs(new URL("https://myeca.in/api/public/blogs?limit=500"));
   const blogRoutes = blogResponse.posts.map((post: any) => `/blog/${post.slug || post.id}`);
   const blogDateMap = new Map(
-    blogResponse.posts.map((post: any) => [
-      `/blog/${post.slug || post.id}`,
-      new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()).toISOString().split("T")[0],
-    ]),
+    blogResponse.posts.flatMap((post: any) => {
+      const value = post.updatedAt || post.publishedAt || post.createdAt;
+      const date = value ? new Date(value) : null;
+      return date && !Number.isNaN(date.getTime())
+        ? [[`/blog/${post.slug || post.id}`, date.toISOString().split("T")[0]] as const]
+        : [];
+    }),
   );
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
+  const guideDateMap = new Map(TAX_GUIDES.map((guide) => [`/learn/guide/${guide.slug}`, guide.lastUpdated]));
+  const dateMap = new Map([...blogDateMap, ...guideDateMap]);
   const routes = getIndexablePublicRoutes(
     [
       ...Object.entries(SEO_CONFIG)
@@ -940,7 +945,7 @@ export function buildApiSitemapXml() {
 
   return buildSitemapXml(routes.map((route) => ({
     loc: toAbsoluteUrl(route),
-    lastmod: blogDateMap.get(route) || new Date().toISOString().split("T")[0],
+    lastmod: dateMap.get(route),
     changefreq: routeChangefreq(route),
     priority: routePriority(route),
   })));

@@ -99,13 +99,18 @@ describe("static SEO overhaul", () => {
       },
       {
         loc: "https://myeca.in/calculators/income-tax",
-        lastmod: "2026-05-30",
         changefreq: "weekly",
         priority: "0.8",
       },
     ]);
 
     expect(sitemap).toContain("<url><loc>https://myeca.in/</loc>");
+    expect(sitemap).toContain(
+      "<url><loc>https://myeca.in/calculators/income-tax</loc><changefreq>weekly</changefreq>",
+    );
+    expect(sitemap).not.toContain(
+      "<loc>https://myeca.in/calculators/income-tax</loc><lastmod>",
+    );
     expect(sitemap).not.toContain("\n  <url>");
     expect(sitemap).not.toContain("\n    <loc>");
   });
