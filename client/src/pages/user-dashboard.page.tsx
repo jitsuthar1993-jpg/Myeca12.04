@@ -99,7 +99,7 @@ export default function UserDashboard() {
             { label: 'Active Services', value: activeServices.length, icon: Target, color: 'emerald' },
           ].map((stat) => (
             <Card key={stat.label} className="rounded-lg border-slate-200 shadow-none">
-              <CardContent className="flex min-h-[76px] items-center gap-3 px-3 py-3 sm:min-h-[80px] sm:px-4">
+              <CardContent className="grid min-h-[60px] grid-cols-[36px_minmax(0,1fr)] items-center gap-3 px-3 py-2 sm:px-4">
                 <div
                   className={cn(
                     'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
@@ -213,8 +213,8 @@ export default function UserDashboard() {
                 ) : activeServices.length ? (
                   activeServices.map((service) => (
                     <tr key={service.id} className="group transition-colors hover:bg-blue-50/30">
-                      <td className="align-middle px-4 py-3">
-                        <div className="flex min-w-0 items-center gap-3">
+                      <td className="align-top px-4 py-3">
+                        <div className="flex min-w-0 items-start gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                             <Briefcase className="h-4 w-4" />
                           </div>
@@ -228,9 +228,9 @@ export default function UserDashboard() {
                           </div>
                         </div>
                       </td>
-                      <td className="align-middle px-4 py-3">
-                        <div className="flex min-w-0 items-center gap-2.5">
-                          <ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" />
+                      <td className="align-top px-4 py-3">
+                        <div className="flex min-w-0 items-start gap-2.5">
+                          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                           <div className="min-w-0">
                             <p className="truncate text-sm font-bold text-slate-800">{assignedCaLabel(service)}</p>
                             {(service.assignedCaEmail || service.metadata?.assignedCa?.email) && (
