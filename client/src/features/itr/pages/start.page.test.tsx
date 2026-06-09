@@ -58,7 +58,7 @@ describe("ITR start form selector page", () => {
     expect(screen.getByText("Recommended form")).toBeInTheDocument();
     expect(screen.getByText("ITR-1")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Continue to MY ITR/i })).toBeInTheDocument();
-    expect(screen.getByText(/saved briefly and resumed after login/i)).toBeInTheDocument();
+    expect(screen.getByText(/can be resumed after login/i)).toBeInTheDocument();
 
     expect(screen.queryByText("Taxpayer type")).not.toBeInTheDocument();
     for (const unsupportedType of ["HUF", "Firm", "LLP", "Company", "Trust / other"]) {

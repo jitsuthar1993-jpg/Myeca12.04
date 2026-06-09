@@ -567,7 +567,7 @@ const HomePage = () => {
                   <p className="type-meta font-bold text-blue-700">Next step</p>
                   <h3 className="mt-2 text-base font-extrabold text-slate-950">Know your number? Check the ITR path.</h3>
                   <p className="mt-1 text-sm leading-6 text-slate-600">
-                    Start with a 60-second plan check before choosing a technical ITR form.
+                    Check your likely ITR path before choosing a technical ITR form.
                   </p>
                   <div className="mt-3 grid gap-2">
                     <Link href="/which-itr-form-to-file?source=homepage_mobile_tools">

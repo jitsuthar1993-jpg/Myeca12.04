@@ -630,7 +630,7 @@ export default function ITRStartPage() {
             </Button>
 
             <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">
-              Your selector answers are saved briefly and resumed after login. Form selection is guidance for the MyeCA draft and CA-assisted review flow. Official portal filing remains a separate authorized workflow.
+              Your selector answers can be resumed after login. Form selection is guidance for the MyeCA draft and CA-assisted review flow. Official portal filing remains a separate authorized workflow.
             </p>
           </aside>
         </div>

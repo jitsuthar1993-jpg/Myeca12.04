@@ -2,12 +2,13 @@ import { type ReactNode } from 'react';
 import { Link } from 'wouter';
 import { ArrowLeft, CheckCircle2, FileText, ShieldCheck, TrendingUp } from 'lucide-react';
 import BrandLockup from '@/components/ui/brand-lockup';
+import { cn } from '@/lib/utils';
 
 type PanelItem = { label: string; icon?: any };
 
 type AuthPageShellProps = {
   variant?: 'split' | 'compact';
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   children: ReactNode;
@@ -104,20 +105,21 @@ export function AuthPageShell({
           </header>
 
           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_24px_70px_-58px_rgba(15,23,42,0.8)] sm:p-6">
-            <div className="mb-4 flex justify-center">
+            <div className="mb-5 flex justify-center">
               <BrandLockup
                 logoSize="sm"
-                wordmarkSize="sm"
-                badge="Finance"
+                wordmarkSize="md"
                 compact
               />
             </div>
 
             <div className="mb-4 text-center">
-              <p className="type-meta font-bold uppercase text-emerald-700">
-                {eyebrow}
-              </p>
-              <h1 className="mt-2 text-2xl font-black leading-tight text-slate-950 sm:text-3xl">
+              {eyebrow ? (
+                <p className="type-meta font-bold uppercase text-emerald-700">
+                  {eyebrow}
+                </p>
+              ) : null}
+              <h1 className={cn("text-2xl font-black leading-tight text-slate-950 sm:text-3xl", eyebrow && "mt-2")}>
                 {title}
               </h1>
               {description ? (
@@ -168,16 +170,17 @@ export function AuthPageShell({
               <BrandLockup
                 logoSize="sm"
                 wordmarkSize="sm"
-                badge="Finance"
                 compact
               />
             </div>
 
             <div className="mb-7">
-              <p className="type-meta font-bold uppercase text-emerald-700">
-                {eyebrow}
-              </p>
-              <h1 className="type-page-title mt-2 font-black text-slate-950">
+              {eyebrow ? (
+                <p className="type-meta font-bold uppercase text-emerald-700">
+                  {eyebrow}
+                </p>
+              ) : null}
+              <h1 className={cn("type-page-title font-black text-slate-950", eyebrow && "mt-2")}>
                 {title}
               </h1>
               <p className="type-support mt-3 text-slate-600">{description}</p>
@@ -230,7 +233,7 @@ export function AuthPageShell({
               <div className="mx-auto w-full max-w-[430px]">
                 <div className="mb-6">
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                    Finance dashboard
+                    Secure workspace
                   </p>
                   <h2 className="type-section-title mt-3 font-black text-slate-950">
                     Simple access to your tax numbers.
@@ -249,7 +252,7 @@ export function AuthPageShell({
                       <p className="text-xs font-bold uppercase tracking-[0.12em] text-emerald-700">
                         {panelTitle}
                       </p>
-                      <h3 className="mt-2 text-xl font-black leading-tight text-slate-950">Financial snapshot</h3>
+                      <h3 className="mt-2 text-xl font-black leading-tight text-slate-950">Workspace snapshot</h3>
                       <p className="mt-2 text-sm leading-6 text-slate-600">{panelDescription}</p>
                     </div>
                   </div>

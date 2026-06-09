@@ -172,7 +172,6 @@ export default function LoginPage() {
   return (
     <AuthPageShell
       variant="compact"
-      eyebrow="Finance login"
       title="Sign in to MyeCA"
       description="Open your secure tax workspace and continue where you left off."
       notice={reasonState}
