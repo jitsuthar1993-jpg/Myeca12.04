@@ -155,7 +155,7 @@ export default function FastestITRFilingPage() {
         <div className="max-w-2xl mx-auto px-4">
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
           <h2 className="text-3xl font-extrabold mb-4">Ready to file your ITR?</h2>
-          <p className="text-blue-100 mb-8">A CA will review your return before it's submitted. Starts at ₹499.</p>
+          <p className="text-blue-100 mb-8">Choose an assisted-review plan when you want a pre-submission document and computation check. Plans start at ₹499 excluding GST.</p>
           <Link href="/itr/start?source=fastest_itr_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Get Started <ArrowRight className="w-5 h-5" />

@@ -36,7 +36,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to MyeCA.in!',
-    description: 'Your one-stop platform for tax filing, calculators, and professional CA services.',
+    description: 'Use tax filing workflows, calculators, document tools, and scoped professional support from one account.',
     icon: <Sparkles className="h-12 w-12 text-blue-500" />,
     tips: [
       'We help you save tax legally',
@@ -61,8 +61,8 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     id: 'itr-filing',
-    title: 'Easy ITR Filing',
-    description: 'File your Income Tax Return with guided workflows and expert assistance where applicable.',
+    title: 'Guided ITR Filing',
+    description: 'Organize filing facts and documents in a guided workflow, with assisted review available where the selected service includes it.',
     icon: <FileText className="h-12 w-12 text-purple-500" />,
     action: {
       label: 'Start Filing ITR',

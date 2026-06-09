@@ -258,7 +258,7 @@ export default function MSMEUdyamRegistrationPage() {
                   <AlertCircle className="w-4 h-4 text-green-600" />
                   Quick Tips
                 </CardTitle>
-                <CardDescription>Fast, document-free process</CardDescription>
+                <CardDescription>Aadhaar-based portal workflow; confirm the records needed for your entity</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-gray-700">
@@ -530,7 +530,7 @@ export default function MSMEUdyamRegistrationPage() {
                 Need Help with MSME Registration?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                While registration is free and simple, our experts can guide you through the process 
+                Registration on the official portal is free. Support may be useful when PAN, GST, activity, or turnover records need reconciliation
                 and help you understand all available benefits and schemes.
               </p>
 
@@ -546,7 +546,7 @@ export default function MSMEUdyamRegistrationPage() {
                   onClick={() => setIsCheckoutOpen(true)}
                 >
                   <Phone className="w-5 h-5 mr-2" />
-                  Expert Guidance {"₹"}499
+                  Document Review {"₹"}499
                 </Button>
               </div>
 

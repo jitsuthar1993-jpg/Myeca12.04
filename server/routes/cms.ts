@@ -8,6 +8,7 @@ import sharp from "sharp";
 import { put, list } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
 import { blogPostEditorSchema, blogPostUpdateSchema, type BlogCategory, type BlogPostEditorInput } from "../../shared/blog.js";
+import { assertBlogPublishable, ContentQualityError } from "../../shared/public-content-quality.js";
 import { defaultBlogCategories } from "../data/default-blog-content.js";
 import {
   buildBlogPostWriteData,
@@ -62,6 +63,14 @@ function storedPostToEditorInput(post: StoredBlogPost): BlogPostEditorInput {
     publishedAt: post.publishedAt,
     tags: post.tags,
     audience: post.audience,
+    targetAudience: post.targetAudience,
+    primaryKeyword: post.primaryKeyword,
+    secondaryKeywords: post.secondaryKeywords,
+    userIntent: post.userIntent,
+    keyTopics: post.keyTopics,
+    qualityStatus: post.qualityStatus,
+    editorialApprovedBy: post.editorialApprovedBy,
+    editorialApprovedAt: post.editorialApprovedAt,
     reviewedBy: post.reviewedBy,
     reviewedAt: post.reviewedAt,
     reviewerName: post.reviewerName,
@@ -127,7 +136,14 @@ router.post("/posts/:id/import", requireAuth, requireTeamMember, async (req: Aut
     }
 
     const postRef = adminDb.collection("blog_posts").doc();
-    const writeData = await buildBlogPostWriteData(storedPostToEditorInput(staticPost), {
+    const writeData = await buildBlogPostWriteData({
+      ...storedPostToEditorInput(staticPost),
+      status: "draft",
+      qualityStatus: "needs_revision",
+      editorialApprovedBy: null,
+      editorialApprovedAt: null,
+      publishedAt: null,
+    }, {
       authUserId: req.auth?.userId,
     });
 
@@ -137,6 +153,9 @@ router.post("/posts/:id/import", requireAuth, requireTeamMember, async (req: Aut
     const post = normalizeStoredBlogPostRecord(postRef.id, writeData as Record<string, unknown>, lookup);
     return res.json({ success: true, imported: true, post: withCmsInventoryFlags(post) });
   } catch (error) {
+    if (error instanceof ContentQualityError) {
+      return res.status(400).json({ error: error.message, issues: error.issues });
+    }
     if (error instanceof z.ZodError) {
       return errorResponse(res, 400, error.errors[0].message);
     }
@@ -160,6 +179,7 @@ router.get("/posts/:id", requireAuth, requireTeamMember, async (req: AuthRequest
 router.post("/posts", requireAuth, requireTeamMember, sanitize, async (req: AuthRequest, res: Response) => {
   try {
     const payload = blogPostEditorSchema.parse(req.body);
+    assertBlogPublishable(payload);
     const authUser = req.auth;
 
     const postRef = adminDb.collection("blog_posts").doc();
@@ -172,6 +192,9 @@ router.post("/posts", requireAuth, requireTeamMember, sanitize, async (req: Auth
     const post = normalizeStoredBlogPostRecord(postRef.id, writeData as Record<string, unknown>, lookup);
     res.json({ success: true, post });
   } catch (error) {
+    if (error instanceof ContentQualityError) {
+      return res.status(400).json({ error: error.message, issues: error.issues });
+    }
     if (error instanceof z.ZodError) {
       return errorResponse(res, 400, error.errors[0].message);
     }
@@ -196,6 +219,7 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
       ...storedPostToEditorInput(existing),
       ...payload,
     });
+    assertBlogPublishable(completePayload);
     const writeData = await buildBlogPostWriteData(completePayload, {
       existing,
       authUserId: req.auth?.userId,
@@ -208,6 +232,9 @@ router.put("/posts/:id", requireAuth, requireTeamMember, sanitize, async (req: A
     const post = normalizeStoredBlogPostRecord(id, writeData as Record<string, unknown>, updatedLookup);
     res.json({ success: true, post });
   } catch (error) {
+    if (error instanceof ContentQualityError) {
+      return res.status(400).json({ error: error.message, issues: error.issues });
+    }
     if (error instanceof z.ZodError) {
       return errorResponse(res, 400, error.errors[0].message);
     }

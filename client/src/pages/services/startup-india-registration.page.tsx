@@ -134,7 +134,7 @@ export default function StartupIndiaRegistrationPage() {
         "Income tax exemption for any 3 consecutive years out of first 10 years",
         "Section 80-IAC tax exemption review, subject to eligibility and approval",
         "Investment exemptions under Section 56(2)(VIIB)",
-        "Angel tax exemption for eligible investors"
+        "Investment-related tax-position review where applicable"
       ]
     },
     {
@@ -259,7 +259,7 @@ export default function StartupIndiaRegistrationPage() {
                   <AlertCircle className="w-4 h-4 text-purple-600" />
                   Quick Tips
                 </CardTitle>
-                <CardDescription>Get recognition fast</CardDescription>
+                <CardDescription>Prepare the recognition application and supporting records</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-gray-700">
@@ -511,8 +511,8 @@ export default function StartupIndiaRegistrationPage() {
                 Ready to Register Your Startup?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Get expert assistance with complete documentation, incorporation, and DPIIT registration. 
-                Our team helps review eligibility, documents, and available benefits before submission.
+                Get help checking DPIIT-recognition eligibility, preparing the application records, and identifying claims that require separate approval.
+                The filing scope is confirmed before submission.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

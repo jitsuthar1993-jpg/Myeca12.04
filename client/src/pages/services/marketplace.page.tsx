@@ -215,7 +215,7 @@ export default function ServicesMarketplacePage() {
                 transition={{ delay: 0.2 }}
                 className="text-lg text-slate-500 max-w-xl lg:mx-0 mx-auto mb-10 font-medium opacity-80"
               >
-                Professional tax, accounting, and compliance services at transparent, flat-rate prices. CA-verified and quality assured.
+                Compare professional tax, accounting, and compliance services by written scope, required records, dependencies, and displayed price.
               </m.p>
 
               {/* search + filter integrated */}
@@ -292,7 +292,7 @@ export default function ServicesMarketplacePage() {
                           { icon: Search, color: "text-blue-500", text: "Search to locate services by name." },
                           { icon: Star, color: "text-amber-500", text: "Check Popular Services for top picks." },
                           { icon: IndianRupee, color: "text-emerald-500", text: "Transparent pricing & no hidden costs." },
-                          { icon: Phone, color: "text-indigo-500", text: "Request consultation for tailored advice." }
+                          { icon: Phone, color: "text-indigo-500", text: "Request a consultation to review scope, records, and the next filing step." }
                         ].map((tip, i) => (
                           <li key={i} className="flex items-start gap-4">
                             <div className={cn("w-6 h-6 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center shrink-0", tip.color)}>
@@ -412,7 +412,7 @@ export default function ServicesMarketplacePage() {
             {[
               { icon: Shield,  label: "Secure workflow",   sub: "Protected document handling" },
               { icon: Award,   label: "Expert help",    sub: "Credential-checked where applicable" },
-              { icon: Clock,   label: "Quick Delivery", sub: "Never miss deadlines" },
+              { icon: Clock,   label: "Deadline tracking", sub: "See due dates and action items" },
               { icon: TrendingUp, label: "Clear pricing",   sub: "Transparent pricing" },
             ].map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex flex-col items-center">

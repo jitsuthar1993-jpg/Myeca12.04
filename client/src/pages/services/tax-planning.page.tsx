@@ -140,7 +140,7 @@ const TaxPlanningPage = () => {
                 <ul className="space-y-2.5 text-sm text-gray-700">
                   <li className="flex items-start">
                     <Shield className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
-                    Get DPIIT recognition to unlock 80-IAC benefits.
+                    Check DPIIT recognition and the separate conditions that apply before relying on Section 80-IAC.
                   </li>
                   <li className="flex items-start">
                     <TrendingUp className="w-4 h-4 mr-2 text-green-600 mt-0.5" />
@@ -170,7 +170,7 @@ const TaxPlanningPage = () => {
               Exclusive Startup Tax Benefits
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Government-backed incentives designed to help startups grow without tax burden
+              Startup incentives with separate eligibility, approval, and evidence requirements
             </p>
           </div>
 
@@ -217,7 +217,7 @@ const TaxPlanningPage = () => {
               Advanced Tax Planning Strategies
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Comprehensive strategies to minimize tax liability and maximize growth capital
+              Compare regime, deduction, timing, and cash-flow decisions using the available records
             </p>
           </div>
 
@@ -262,7 +262,7 @@ const TaxPlanningPage = () => {
                 Tax Compliance Calendar
               </CardTitle>
               <CardDescription className="text-base">
-                Never miss a deadline with our comprehensive tax calendar
+                Track advance-tax, return, investment-proof, and compliance deadlines
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -302,7 +302,7 @@ const TaxPlanningPage = () => {
                 Ready to Optimize Your Startup's Tax Strategy?
               </h3>
               <p className="text-lg mb-8 text-slate-600 max-w-2xl mx-auto">
-                Get personalized tax planning from our startup tax experts and save lakhs in taxes
+                Compare startup tax positions using current eligibility rules, actual transactions, and supporting records
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 

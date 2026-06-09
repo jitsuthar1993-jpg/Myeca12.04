@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { AppLink } from "@/components/ui/app-link";
 import SEO from "@/components/SEO";
 import { formatCurrency } from "@/lib/utils";
 
@@ -20,9 +21,9 @@ const taxRegimeData = {
   oldRegime: {
     slabs: [
       { min: 0, max: 250000, rate: 0 },
-      { min: 250001, max: 500000, rate: 5 },
-      { min: 500001, max: 1000000, rate: 20 },
-      { min: 1000001, max: Infinity, rate: 30 }
+      { min: 250000, max: 500000, rate: 5 },
+      { min: 500000, max: 1000000, rate: 20 },
+      { min: 1000000, max: Infinity, rate: 30 }
     ],
     deductions: [
       { name: "Section 80C", limit: 150000, description: "PPF, ELSS, LIC, etc." },
@@ -33,12 +34,13 @@ const taxRegimeData = {
   },
   newRegime: {
     slabs: [
-      { min: 0, max: 300000, rate: 0 },
-      { min: 300001, max: 600000, rate: 5 },
-      { min: 600001, max: 900000, rate: 10 },
-      { min: 900001, max: 1200000, rate: 15 },
-      { min: 1200001, max: 1500000, rate: 20 },
-      { min: 1500001, max: Infinity, rate: 30 }
+      { min: 0, max: 400000, rate: 0 },
+      { min: 400000, max: 800000, rate: 5 },
+      { min: 800000, max: 1200000, rate: 10 },
+      { min: 1200000, max: 1600000, rate: 15 },
+      { min: 1600000, max: 2000000, rate: 20 },
+      { min: 2000000, max: 2400000, rate: 25 },
+      { min: 2400000, max: Infinity, rate: 30 }
     ],
     deductions: [
       { name: "Standard Deduction", limit: 75000, description: "For salary or pension income (FY 2025-26)" },
@@ -46,6 +48,33 @@ const taxRegimeData = {
     ]
   }
 };
+
+export function calculateBasicSalaryTax(income: number, regime: "old" | "new") {
+  const data = regime === "old" ? taxRegimeData.oldRegime : taxRegimeData.newRegime;
+  const standardDeduction = regime === "old" ? 50000 : 75000;
+  const grossIncome = Number.isFinite(income) ? Math.max(0, income) : 0;
+  const taxableIncome = Math.max(0, grossIncome - standardDeduction);
+  let tax = 0;
+
+  for (const slab of data.slabs) {
+    const taxableInSlab = Math.max(0, Math.min(taxableIncome, slab.max) - slab.min);
+    tax += (taxableInSlab * slab.rate) / 100;
+  }
+
+  const rebateLimit = regime === "old" ? 500000 : 1200000;
+  const maximumRebate = regime === "old" ? 12500 : 60000;
+  if (taxableIncome <= rebateLimit) {
+    tax = Math.max(0, tax - Math.min(tax, maximumRebate));
+  }
+
+  return Math.round(tax * 1.04);
+}
+
+export function getSuggestedRegime(oldRegimeTax: number, newRegimeTax: number) {
+  if (oldRegimeTax < newRegimeTax) return "old";
+  if (newRegimeTax < oldRegimeTax) return "new";
+  return "same";
+}
 
 // Investment Options Data
 const investmentOptions = [
@@ -125,32 +154,10 @@ export default function ComparisonToolsPage() {
   const [loanAmount, setLoanAmount] = useState("1000000");
   const [loanTenure, setLoanTenure] = useState("5");
 
-  // Calculate tax for both regimes
-  const calculateTax = (income: number, regime: "old" | "new") => {
-    const data = regime === "old" ? taxRegimeData.oldRegime : taxRegimeData.newRegime;
-    let tax = 0;
-    
-    // Apply standard deduction
-    const standardDeduction = regime === "old" ? 50000 : 75000;
-    const taxableIncome = Math.max(0, income - standardDeduction);
-    
-    // Calculate tax based on slabs
-    for (const slab of data.slabs) {
-      if (taxableIncome > slab.min) {
-        const taxableInSlab = Math.min(taxableIncome - slab.min, slab.max - slab.min);
-        tax += (taxableInSlab * slab.rate) / 100;
-      }
-    }
-    
-    // Add cess
-    tax = tax * 1.04;
-    
-    return Math.round(tax);
-  };
-
-  const oldRegimeTax = calculateTax(Number(taxIncome), "old");
-  const newRegimeTax = calculateTax(Number(taxIncome), "new");
+  const oldRegimeTax = calculateBasicSalaryTax(Number(taxIncome), "old");
+  const newRegimeTax = calculateBasicSalaryTax(Number(taxIncome), "new");
   const taxSaving = oldRegimeTax - newRegimeTax;
+  const suggestedRegime = getSuggestedRegime(oldRegimeTax, newRegimeTax);
 
   // Calculate EMI
   const calculateEMI = (principal: number, rate: number, tenure: number) => {
@@ -165,7 +172,7 @@ export default function ComparisonToolsPage() {
     <div className="min-h-screen bg-gray-50 pt-6 pb-12">
       <SEO
         title="Comparison Tools - Tax Regimes, Investments & Loans | MyeCA.in"
-        description="Compare tax regimes, investment options, and loan types. Make informed financial decisions with our comprehensive comparison tools."
+        description="Compare tax regimes, investment options, and loan types using side-by-side assumptions, outputs, and limitations."
         keywords="tax regime comparison, investment comparison, loan comparison, old vs new tax regime, ELSS vs PPF"
       />
 
@@ -217,7 +224,7 @@ export default function ComparisonToolsPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <Label htmlFor="income">Annual Income</Label>
+                  <Label htmlFor="income">Annual salary or pension income</Label>
                   <Input
                     id="income"
                     type="number"
@@ -230,10 +237,10 @@ export default function ComparisonToolsPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   {/* Old Regime */}
-                  <Card className={taxSaving > 0 ? "border-green-200" : ""}>
+                  <Card className={suggestedRegime === "old" ? "border-green-200" : ""}>
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg">Old Tax Regime</CardTitle>
-                      {taxSaving > 0 && (
+                      {suggestedRegime === "old" && (
                         <Badge className="w-fit" variant="outline">Suggested Option</Badge>
                       )}
                     </CardHeader>
@@ -266,10 +273,10 @@ export default function ComparisonToolsPage() {
                   </Card>
 
                   {/* New Regime */}
-                  <Card className={taxSaving < 0 ? "border-green-200" : ""}>
+                  <Card className={suggestedRegime === "new" ? "border-green-200" : ""}>
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg">New Tax Regime</CardTitle>
-                      {taxSaving < 0 && (
+                      {suggestedRegime === "new" && (
                         <Badge className="w-fit" variant="outline">Suggested Option</Badge>
                       )}
                     </CardHeader>
@@ -313,15 +320,15 @@ export default function ComparisonToolsPage() {
                   <CardContent className="pt-6">
                     <div className="text-center">
                       <p className="text-lg font-medium text-blue-900">
-                        {taxSaving > 0 
+                        {suggestedRegime === "old"
                           ? `You save ${formatCurrency(Math.abs(taxSaving))} with Old Regime`
-                          : taxSaving < 0
+                          : suggestedRegime === "new"
                           ? `You save ${formatCurrency(Math.abs(taxSaving))} with New Regime`
                           : "Both regimes result in same tax"
                         }
                       </p>
                       <p className="text-sm text-blue-700 mt-1">
-                        Based on standard deduction only. Actual savings may vary with investments.
+                        Basic salary estimate using the standard deduction and resident-individual rebate only.
                       </p>
                     </div>
                   </CardContent>
@@ -493,6 +500,43 @@ export default function ComparisonToolsPage() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <Card className="mt-8">
+          <CardHeader>
+            <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900">How this comparison works</h2>
+            <CardDescription>
+              Read the assumptions before treating any displayed amount or option as suitable for your return.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-8 md:grid-cols-2">
+            <section>
+              <h3 className="font-semibold text-gray-900">Tax-regime methodology</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700">
+                <li>The input is treated as gross salary or pension income for a resident individual below age 60.</li>
+                <li>The old-regime estimate applies only the ₹50,000 standard deduction. Add eligible HRA, Chapter VI-A, home-loan, and other deductions in a full computation.</li>
+                <li>The new-regime estimate applies the ₹75,000 standard deduction, AY 2026-27 slabs, the resident-individual rebate up to taxable income of ₹12 lakh, and 4% cess.</li>
+                <li>Surcharge, marginal relief, special-rate income, business income, losses, and case-specific exemptions are excluded.</li>
+              </ul>
+            </section>
+            <section>
+              <h3 className="font-semibold text-gray-900">What to verify before deciding</h3>
+              <p className="mt-3 text-sm text-gray-700">
+                Reconcile the estimate with Form 16, salary slips, AIS, Form 26AS, investment proofs, rent and home-loan records, and income outside payroll. Investment returns and loan rates shown in the other tabs are illustrative, not recommendations or lender quotes.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3 text-sm font-medium">
+                <AppLink className="text-blue-700 hover:underline" href="/calculators/income-tax">
+                  Use the detailed tax calculator
+                </AppLink>
+                <AppLink className="text-blue-700 hover:underline" href="/blog/new-vs-old-regime-salary-fy-2025-26">
+                  Read the regime decision guide
+                </AppLink>
+                <AppLink className="text-blue-700 hover:underline" href="/trust">
+                  Review scope and trust details
+                </AppLink>
+              </div>
+            </section>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

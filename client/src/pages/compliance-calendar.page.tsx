@@ -188,7 +188,7 @@ export default function ComplianceCalendarPage() {
         faqPageData={[
           {
             question: "What is a Statutory Compliance Calendar?",
-            answer: "A statutory compliance calendar is a comprehensive schedule of all the legal deadlines and filing dates prescribed by various governing bodies like the Income Tax Department, GSTN, and MCA."
+            answer: "A statutory compliance calendar lists legal deadlines and filing dates prescribed by authorities such as the Income Tax Department, GSTN, and MCA."
           },
           {
             question: "Are these dates applicable for the Assessment Year 2027-28?",
@@ -199,7 +199,7 @@ export default function ComplianceCalendarPage() {
 
       <CalcHero
         title="Compliance Calendar"
-        description="Never miss a regulatory deadline. Interactive timeline for GST, Income Tax, and MCA filings for FY 2026-27."
+        description="Track GST, Income Tax, and MCA filing dates for FY 2026-27, then confirm the obligation and due date for your entity."
         icon={<CalendarDays className="w-6 h-6 text-blue-600" />}
         variant="blue"
         hideBreadcrumbs={true}
@@ -228,7 +228,7 @@ export default function ComplianceCalendarPage() {
         faqs={[
           {
             q: "What is a Statutory Compliance Calendar?",
-            a: "A statutory compliance calendar is a comprehensive schedule of all the legal deadlines and filing dates prescribed by various governing bodies like the Income Tax Department, GSTN, and MCA. It helps businesses and individuals stay compliant and avoid late fees or interest penalties."
+            a: "A statutory compliance calendar lists legal deadlines and filing dates prescribed by authorities such as the Income Tax Department, GSTN, and MCA. It helps businesses and individuals plan filings and identify possible late-fee or interest exposure."
           },
           {
             q: "Are these dates applicable for the Assessment Year 2027-28?",

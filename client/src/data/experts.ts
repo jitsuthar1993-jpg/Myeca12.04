@@ -47,7 +47,7 @@ export const CONSULTATION_TYPES: ConsultationType[] = [
   {
     id: 'tax-planning',
     name: 'Tax Planning Session',
-    description: 'Comprehensive tax planning and optimization',
+    description: 'Review income, deductions, regime choice, and planned transactions',
     duration: 45,
     price: 1499,
     icon: 'TrendingUp',

@@ -57,7 +57,7 @@ const SERVICES_DATA = [
     id: 'company-registration',
     title: 'Company Incorporation',
     category: 'startup',
-    description: 'End-to-end support for PVT LTD, LLP, or One Person Company.',
+    description: 'Compare PVT LTD, LLP, and One Person Company requirements before choosing the incorporation route.',
     price: '₹5,999 excluding GST',
     features: ['DIN & DSC Included', 'MOA/AOA Drafting', 'PAN/TAN Support'],
     color: 'violet',
@@ -76,7 +76,7 @@ const SERVICES_DATA = [
     id: 'msme-registration',
     title: 'MSME Registration',
     category: 'business',
-    description: 'Udyam registration to unlock government benefits and subsidies.',
+    description: 'Prepare Udyam registration details and preserve the issued MSME record for later applications.',
     price: '₹499 excluding GST',
     features: ['Portal Certificate', 'Government Perks', 'Priority Lending Documents'],
     color: 'cyan'
@@ -324,7 +324,7 @@ export default function ServiceSelectionPage() {
                 <Scale className="h-7 w-7 text-violet-600" />
               </div>
               <h3 className="text-xl font-black tracking-tight text-slate-900 mb-4">Legal Compliance</h3>
-              <p className="text-slate-500 font-medium text-sm leading-relaxed">Documents are reviewed by professionals to reduce filing errors and identify items that need expert attention.</p>
+              <p className="text-slate-500 font-medium text-sm leading-relaxed">The workflow identifies documents that need professional attention; reviewer availability and scope depend on the selected service.</p>
             </div>
           </div>
         </m.div>

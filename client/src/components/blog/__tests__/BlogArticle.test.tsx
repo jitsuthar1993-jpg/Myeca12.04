@@ -60,4 +60,26 @@ describe("BlogArticle", () => {
     expect(screen.getByText("Related articles")).toBeInTheDocument();
     expect(screen.getAllByText("Related article").length).toBeGreaterThan(0);
   });
+
+  it("shows review attribution only when the named reviewer has a credential", () => {
+    const { rerender } = render(
+      <BlogArticle post={{ ...basePost, reviewedBy: "Legacy Review Desk", reviewedAt: "2026-03-28T00:00:00.000Z" }} />,
+    );
+
+    expect(screen.queryByText(/Reviewed by Legacy Review Desk/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Expert reviewed/i)).not.toBeInTheDocument();
+
+    rerender(
+      <BlogArticle
+        post={{
+          ...basePost,
+          reviewerName: "Verified Reviewer",
+          reviewerCredentialName: "Chartered Accountant",
+          reviewerCredentialId: "M.No. 123456",
+        }}
+      />,
+    );
+
+    expect(screen.getAllByText(/Reviewed by Verified Reviewer/i).length).toBeGreaterThan(0);
+  });
 });

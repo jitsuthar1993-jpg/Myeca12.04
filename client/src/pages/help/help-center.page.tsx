@@ -156,7 +156,7 @@ export default function HelpCenterPage() {
     <>
       <SEO 
         title="Help Center - MyeCA.in"
-        description="Find answers to your questions about tax filing, ITR forms, calculators, and more in our comprehensive help center"
+        description="Find answers about tax filing, ITR forms, calculators, account access, documents, and support requests."
       />
       
       <div className="min-h-screen bg-gray-50">

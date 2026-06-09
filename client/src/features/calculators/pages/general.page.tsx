@@ -122,7 +122,7 @@ export default function GeneralCalculatorPage() {
   return (
     <>
       <MetaSEO
-        title={seo?.title || "General Calculator 2025 | Free Online Calculator | MyeCA.in"}
+        title={seo?.title || "General Calculator 2026 | Free Online Calculator | MyeCA.in"}
         description={seo?.description || "Free online general calculator with keyboard support, calculation history, and scientific functions. Clean, professional, and responsive calculations."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}

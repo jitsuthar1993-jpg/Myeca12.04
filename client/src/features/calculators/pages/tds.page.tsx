@@ -328,7 +328,7 @@ export default function TDSCalculatorPage() {
         {/* Bottom Trust Bar */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
+            { icon: <Headphones className="w-5 h-5" />, label: "TDS Review Option", desc: "Review the section, rate, and credit assumptions" },
             { icon: <Award className="w-5 h-5" />, label: "Rule-Based Estimate", desc: "Review section and deductee type" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }

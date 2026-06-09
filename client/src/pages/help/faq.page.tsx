@@ -29,15 +29,15 @@ const faqCategories = {
       },
       {
         question: 'How much does it cost to use MyeCA.in?',
-        answer: 'We offer multiple pricing plans: starter ITR intake, CA Assisted plans for expert guidance, and Business plans for comprehensive business tax solutions. All plans show scope before payment and include access to our tax calculators and support.'
+        answer: 'We offer starter ITR intake, CA Assisted plans with document-based review, and Business plans covering defined tax and compliance tasks. Each plan shows its scope before payment and includes access to relevant calculators and support.'
       },
       {
         question: 'What documents do I need to file my ITR?',
-        answer: 'Common documents include: Form 16 (from employer), Form 26AS (tax credit statement), bank statements, investment proofs (80C, 80D), home loan certificates, capital gains statements, business income/expense records, and PAN & Aadhaar cards. Our platform provides a personalized checklist based on your income sources.'
+        answer: 'Common documents include Form 16, Form 26AS, bank statements, deduction proofs, home-loan certificates, capital-gains statements, business records, PAN, and Aadhaar. The platform builds a preparation checklist from the income sources and filing facts you select.'
       },
       {
         question: 'Can I file returns for previous years?',
-        answer: 'Yes, you can file belated returns for up to 2 years from the end of the relevant assessment year. We support filing for AY 2023-24 and AY 2024-25. Note that late filing may attract penalties and you cannot carry forward certain losses.'
+        answer: 'The available route depends on the assessment year, the original filing position, and the applicable belated, revised, or updated-return rules. Check the assessment-year option and deadline shown on the Income Tax e-Filing portal before preparing the return; late filing can involve additional tax, fees, or restrictions.'
       }
     ]
   },
@@ -51,7 +51,7 @@ const faqCategories = {
       },
       {
         question: 'What is the deadline for filing ITR?',
-        answer: 'For individuals and HUFs (non-audit cases): July 31st. For businesses requiring audit: October 31st. For transfer pricing cases: November 30th. Late filing is allowed until December 31st with penalties. These dates may be extended by the government.'
+        answer: 'The due date depends on the assessment year, taxpayer type, audit requirement, and any official extension. Confirm the deadline shown for your filing category on the Income Tax e-Filing portal before relying on a calendar date.'
       },
       {
         question: 'How long does it take to file ITR through MyeCA.in?',
@@ -59,11 +59,11 @@ const faqCategories = {
       },
       {
         question: 'What happens after I file my ITR?',
-        answer: 'After filing: 1) E-verify within 120 days (we help with this), 2) Receive acknowledgment (ITR-V), 3) Processing by Income Tax Department (2-6 weeks), 4) Intimation u/s 143(1) sent, 5) Refund processed if applicable. We help you monitor the filing case and explain what to verify on the official portal.'
+        answer: 'Complete e-verification within the applicable time limit, currently 30 days from filing for returns filed on or after 1 August 2022. Save the acknowledgment, monitor the e-Filing portal for an intimation or action item, and validate the nominated bank account if a refund is expected. Department processing time varies by return and cannot be promised in advance.'
       },
       {
         question: 'Can I revise my ITR after filing?',
-        answer: 'Yes, you can file a revised return if you discover any mistakes or omissions. Revised returns can be filed before December 31st of the assessment year or before assessment completion, whichever is earlier. Our platform supports easy revision with change tracking.'
+        answer: 'A revised return may be available when an eligible original or belated return contains an omission or error. The deadline and any additional fee depend on the assessment year and applicable law, so first confirm the revision option on the Income Tax e-Filing portal and reconcile the changed figures against the original acknowledgment.'
       }
     ]
   },
@@ -89,7 +89,7 @@ const faqCategories = {
       },
       {
         question: 'How do I calculate capital gains tax?',
-        answer: 'Capital gains tax depends on asset type and holding period. Equity: STCG (< 1 year) at 20%, LTCG (> 1 year) at 12.5% above ₹1.25 lakh. Property/Gold: STCG at slab rate, LTCG at 20% with indexation. Our calculator handles all asset types with current rates.'
+        answer: 'Capital-gains treatment depends on the asset, acquisition and transfer dates, holding period, residency, cost evidence, exemptions, and special-rate rules. Recent law changes also affect long-term gains and indexation for some assets. Use the calculator as an estimate, then verify the result against the applicable assessment-year rules and transaction records before filing.'
       }
     ]
   },
@@ -99,19 +99,19 @@ const faqCategories = {
     questions: [
       {
         question: 'What payment methods do you accept?',
-        answer: 'We accept all major payment methods: Credit/Debit cards (Visa, Mastercard, Rupay), Net Banking (all major banks), UPI (Google Pay, PhonePe, Paytm), Wallets (Paytm, Amazon Pay), and EMI options on credit cards for amounts above ₹3,000.'
+        answer: 'The checkout page shows the payment methods currently available for the selected service and amount. Availability can differ by payment provider, card issuer, and transaction value.'
       },
       {
         question: 'Is there a refund policy?',
-        answer: 'Refunds are available if the service has not been used within 7 days of purchase. For CA-assisted plans, refund eligibility applies before document upload. After filing initiation, refunds are case-specific. No refund applies to government fees.'
+        answer: 'Refund eligibility depends on the purchased service, work already started, and third-party or government fees. Review the published refund policy and the scope shown at checkout before payment, then contact support with the order details if you need a case-specific review.'
       },
       {
         question: 'When will I receive my income tax refund?',
-        answer: 'Income tax refunds are typically processed within 4-8 weeks after ITR verification. Factors affecting timeline: return complexity, verification method, bank account validation. Status can be tracked on income tax website. We help expedite by ensuring accurate filing.'
+        answer: 'The Income Tax Department controls refund processing time. After e-verification, monitor the return status and any action item on the official e-Filing portal, and confirm that the nominated bank account is validated. A mismatch, notice, adjustment, or bank-validation issue can delay payment.'
       },
       {
         question: 'Do you provide invoices for your services?',
-        answer: 'Yes, GST invoices are automatically generated and emailed after payment. You can also download invoices from your dashboard anytime. Invoices include our GSTIN and are valid for claiming business expenses or reimbursements from your employer.'
+        answer: 'The payment receipt or invoice available for a completed purchase will show the billed service, amount, and applicable tax details. Whether an expense is deductible or reimbursable depends on your records and the relevant tax or employer policy.'
       },
       {
         question: 'Are there any hidden charges?',
@@ -151,7 +151,7 @@ const faqCategories = {
     questions: [
       {
         question: 'What business services does MyeCA.in offer?',
-        answer: 'Comprehensive business services including: GST registration and returns, Company incorporation (Pvt Ltd, LLP, OPC), Trademark registration, FSSAI license, Import/Export code, Labour law compliance, ISO certifications, Startup India registration, MSME/Udyam registration, and ongoing compliance management.'
+        answer: 'Business services include GST registration and returns, company incorporation, trademark registration, FSSAI licensing, import/export code support, labour-law compliance, ISO readiness, Startup India recognition, MSME/Udyam registration, and recurring compliance work.'
       },
       {
         question: 'How long does company registration take?',

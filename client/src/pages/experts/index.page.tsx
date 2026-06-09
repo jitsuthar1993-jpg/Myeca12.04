@@ -154,7 +154,7 @@ export default function ExpertsIndexPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-white border-2 border-slate-100 rounded-3xl p-10 md:p-16 text-center text-slate-900 relative overflow-hidden shadow-sm">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-            <h2 className="text-3xl font-black mb-6 text-slate-900">Our Experts are Your Advantage</h2>
+            <h2 className="text-3xl font-black mb-6 text-slate-900">Choose Support for the Question You Need Reviewed</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 { icon: ShieldCheck, title: "Credential Checked", desc: "Qualification details reviewed" },

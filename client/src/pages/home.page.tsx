@@ -206,7 +206,7 @@ const HomePage = () => {
           },
           {
             question: "Can I get a refund for my income tax through MyeCA.in?",
-            answer: "A refund depends on your income, TDS, advance tax, deductions, exemptions, and final processing by the Income Tax Department. MyeCA helps you review eligible claims based on the documents you provide."
+            answer: "A refund depends on your income, TDS, advance tax, deductions, exemptions, and final processing by the Income Tax Department. Review each claim against the documents you provide before filing."
           }
         ]}
       />

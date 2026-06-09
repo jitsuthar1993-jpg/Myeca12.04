@@ -101,7 +101,7 @@ export function getChatbotPageContext(path: string, rawTitle?: string): ChatbotP
       title: title || "MyeCA service",
       subtitle: "Service guidance",
       greeting:
-        "I can help you understand the service, documents required, next steps, and whether you should use self-help tools or expert CA support.",
+        "I can help you understand the service, documents required, next steps, and whether a self-help tool or assisted workflow fits the case.",
       placeholder: "Ask about service steps or documents...",
       suggestedQuestions: [
         "Which service is right for me?",

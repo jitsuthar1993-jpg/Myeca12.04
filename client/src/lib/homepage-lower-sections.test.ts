@@ -24,7 +24,7 @@ describe("homepage lower-section redesign", () => {
       readSource("client/src/components/OtherServicesSection.tsx") +
       readSource("client/src/components/ProfessionalServicesSection.tsx");
 
-    expect(features).toContain("Why MyeCA works better than self-filing");
+    expect(features).toContain("How guided filing differs from self-filing");
     expect(features).toContain("Guided filing with guardrails");
     expect(personaPaths).toContain("For Salaried Professionals");
     expect(personaPaths).toContain("For Business / GST");

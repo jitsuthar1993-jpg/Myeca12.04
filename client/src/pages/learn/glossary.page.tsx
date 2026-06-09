@@ -101,7 +101,7 @@ export default function GlossaryPage() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <SEO 
         title="Financial Glossary - MyeCA"
-        description="Decode financial jargon with our comprehensive dictionary of investment terms."
+        description="Look up investment, tax, and filing terms with short definitions and related guides."
       />
 
       <div className="text-center mb-10">

@@ -43,13 +43,13 @@ export default function FeaturedResources() {
       <div className="container mx-auto px-4">
         <div className="mx-auto mb-8 grid max-w-7xl gap-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">AI-search resources</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Tax decision resources</p>
             <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 lg:text-4xl">
               Questions people ask before choosing a tax service.
             </h2>
           </div>
           <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Resource cards use answer-led language and internal links so visitors and AI search crawlers can connect common questions to the right Myeca page.
+            Start with the question closest to your situation, then follow the linked records, calculator, or service path needed to resolve it.
           </p>
         </div>
 

@@ -57,8 +57,21 @@ type CmsPost = {
   createdAt?: string | null;
   tags: string[];
   audience?: "individuals" | "businesses" | "both" | null;
+  targetAudience?: string | null;
+  primaryKeyword?: string | null;
+  secondaryKeywords?: string[];
+  userIntent?: "informational" | "transactional" | "navigational" | "commercial";
+  keyTopics?: string[];
+  qualityStatus?: "approved" | "needs_revision" | "hold";
+  editorialApprovedBy?: string | null;
+  editorialApprovedAt?: string | null;
   reviewedBy?: string | null;
   reviewedAt?: string | null;
+  reviewerName?: string | null;
+  reviewerRole?: string | null;
+  reviewerCredentialName?: string | null;
+  reviewerCredentialId?: string | null;
+  reviewerCredentialAuthority?: string | null;
   sourceLinks?: BlogSourceLink[];
   serviceSlug?: string | null;
   calculatorSlug?: string | null;
@@ -91,8 +104,21 @@ type EditorState = {
   publishedAt: string;
   tags: string[];
   audience: "individuals" | "businesses" | "both";
+  targetAudience: string;
+  primaryKeyword: string;
+  secondaryKeywords: string[];
+  userIntent: "informational" | "transactional" | "navigational" | "commercial";
+  keyTopics: string[];
+  qualityStatus: "approved" | "needs_revision" | "hold";
+  editorialApprovedBy: string;
+  editorialApprovedAt: string;
   reviewedBy: string;
   reviewedAt: string;
+  reviewerName: string;
+  reviewerRole: string;
+  reviewerCredentialName: string;
+  reviewerCredentialId: string;
+  reviewerCredentialAuthority: string;
   sourceLinks: BlogSourceLink[];
   serviceSlug: string;
   calculatorSlug: string;
@@ -100,7 +126,7 @@ type EditorState = {
 };
 
 const emptyFaq = (): BlogFaqItem => ({ question: "", answer: "" });
-const emptySource = (): BlogSourceLink => ({ label: "", url: "" });
+const emptySource = (): BlogSourceLink => ({ label: "", url: "", checkedAt: null });
 const toDateInput = (value?: string | null) => (value ? new Date(value).toISOString().slice(0, 10) : "");
 const formatDate = (value?: string | null) => {
   if (!value) return "Draft";
@@ -134,8 +160,21 @@ function makeState(post: Partial<CmsPost> | null, user: any): EditorState {
     publishedAt: toDateInput(post?.publishedAt),
     tags: post?.tags?.length ? post.tags : [],
     audience: post?.audience ?? "both",
-    reviewedBy: post?.reviewedBy ?? "",
-    reviewedAt: toDateInput(post?.reviewedAt),
+    targetAudience: post?.targetAudience ?? "",
+    primaryKeyword: post?.primaryKeyword ?? "",
+    secondaryKeywords: post?.secondaryKeywords ?? [],
+    userIntent: post?.userIntent ?? "informational",
+    keyTopics: post?.keyTopics ?? [],
+    qualityStatus: post?.qualityStatus ?? "needs_revision",
+    editorialApprovedBy: post?.editorialApprovedBy ?? "",
+    editorialApprovedAt: toDateInput(post?.editorialApprovedAt),
+    reviewedBy: "",
+    reviewedAt: "",
+    reviewerName: post?.reviewerName ?? "",
+    reviewerRole: post?.reviewerRole ?? "",
+    reviewerCredentialName: post?.reviewerCredentialName ?? "",
+    reviewerCredentialId: post?.reviewerCredentialId ?? "",
+    reviewerCredentialAuthority: post?.reviewerCredentialAuthority ?? "",
     sourceLinks: post?.sourceLinks?.length ? post.sourceLinks : [emptySource()],
     serviceSlug: post?.serviceSlug ?? "",
     calculatorSlug: post?.calculatorSlug ?? "",
@@ -167,9 +206,22 @@ function toPayload(state: EditorState): BlogPostEditorInput {
     publishedAt: state.publishedAt || null,
     tags: normalizeStringArray(state.tags),
     audience: state.audience,
+    targetAudience: state.targetAudience.trim() || null,
+    primaryKeyword: state.primaryKeyword.trim() || null,
+    secondaryKeywords: normalizeStringArray(state.secondaryKeywords),
+    userIntent: state.userIntent,
+    keyTopics: normalizeStringArray(state.keyTopics),
+    qualityStatus: state.qualityStatus,
+    editorialApprovedBy: state.editorialApprovedBy.trim() || null,
+    editorialApprovedAt: state.editorialApprovedAt || null,
     reviewedBy: state.reviewedBy.trim() || null,
     reviewedAt: state.reviewedAt || null,
-    sourceLinks: state.sourceLinks.map((source) => ({ label: source.label.trim(), url: source.url.trim() })).filter((source) => source.label && source.url),
+    reviewerName: state.reviewerName.trim() || null,
+    reviewerRole: state.reviewerRole.trim() || null,
+    reviewerCredentialName: state.reviewerCredentialName.trim() || null,
+    reviewerCredentialId: state.reviewerCredentialId.trim() || null,
+    reviewerCredentialAuthority: state.reviewerCredentialAuthority.trim() || null,
+    sourceLinks: state.sourceLinks.map((source) => ({ label: source.label.trim(), url: source.url.trim(), checkedAt: source.checkedAt || null })).filter((source) => source.label && source.url),
     serviceSlug: state.serviceSlug.trim() || null,
     calculatorSlug: state.calculatorSlug.trim() || null,
     canonicalUrl: state.canonicalUrl.trim() || null,
@@ -298,10 +350,27 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
                       <SelectItem value="businesses">Businesses and MSMEs</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Input value={state.targetAudience} onChange={(e) => setField("targetAudience", e.target.value)} placeholder="Specific audience and user situation" />
                   <div className="grid gap-4 md:grid-cols-2">
-                    <Input value={state.reviewedBy} onChange={(e) => setField("reviewedBy", e.target.value)} placeholder="Reviewed by" />
-                    <Input type="date" value={state.reviewedAt} onChange={(e) => setField("reviewedAt", e.target.value)} />
+                    <Input value={state.primaryKeyword} onChange={(e) => setField("primaryKeyword", e.target.value)} placeholder="Primary keyword" />
+                    <Select value={state.userIntent} onValueChange={(value: EditorState["userIntent"]) => setField("userIntent", value)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="informational">Informational</SelectItem><SelectItem value="transactional">Transactional</SelectItem><SelectItem value="commercial">Commercial comparison</SelectItem><SelectItem value="navigational">Navigational</SelectItem></SelectContent></Select>
                   </div>
+                  <Input value={state.secondaryKeywords.join(", ")} onChange={(e) => setField("secondaryKeywords", e.target.value.split(",").map((item) => item.trim()).filter(Boolean))} placeholder="Secondary keywords, comma separated" />
+                  <Input value={state.keyTopics.join(", ")} onChange={(e) => setField("keyTopics", e.target.value.split(",").map((item) => item.trim()).filter(Boolean))} placeholder="Key topics and user decisions, comma separated" />
+                  <Separator />
+                  <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950">
+                    AI-assisted and incomplete content must remain a draft. Publishing requires approved quality status, official sources with check dates, and recorded human approval.
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Select value={state.qualityStatus} onValueChange={(value: EditorState["qualityStatus"]) => setField("qualityStatus", value)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="needs_revision">Needs revision</SelectItem><SelectItem value="approved">Approved</SelectItem><SelectItem value="hold">Hold / noindex</SelectItem></SelectContent></Select>
+                    <Input type="date" value={state.editorialApprovedAt} onChange={(e) => setField("editorialApprovedAt", e.target.value)} />
+                  </div>
+                  <Input value={state.editorialApprovedBy} onChange={(e) => setField("editorialApprovedBy", e.target.value)} placeholder="Human editorial approver" />
+                  <Separator />
+                  <p className="text-sm font-medium text-slate-900">Verified reviewer (optional)</p>
+                  <div className="grid gap-4 md:grid-cols-2"><Input value={state.reviewerName} onChange={(e) => setField("reviewerName", e.target.value)} placeholder="Reviewer name" /><Input value={state.reviewerRole} onChange={(e) => setField("reviewerRole", e.target.value)} placeholder="Reviewer role" /></div>
+                  <div className="grid gap-4 md:grid-cols-2"><Input value={state.reviewerCredentialName} onChange={(e) => setField("reviewerCredentialName", e.target.value)} placeholder="Credential name" /><Input value={state.reviewerCredentialId} onChange={(e) => setField("reviewerCredentialId", e.target.value)} placeholder="Credential ID" /></div>
+                  <Input value={state.reviewerCredentialAuthority} onChange={(e) => setField("reviewerCredentialAuthority", e.target.value)} placeholder="Credential authority" />
                   <div className="grid gap-4 md:grid-cols-2">
                     <Input value={state.serviceSlug} onChange={(e) => setField("serviceSlug", e.target.value)} placeholder="Related service slug" />
                     <Input value={state.calculatorSlug} onChange={(e) => setField("calculatorSlug", e.target.value)} placeholder="Related calculator slug" />
@@ -310,7 +379,7 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
                   <Separator />
                   <div className="space-y-3">
                     <div className="flex items-center justify-between"><Label>Source links</Label><Button variant="outline" className="rounded-full" onClick={() => setField("sourceLinks", [...state.sourceLinks, emptySource()])}><Plus className="mr-2 h-4 w-4" />Add</Button></div>
-                    {state.sourceLinks.map((source, index) => <div key={`source-${index}`} className="space-y-3 rounded-2xl border border-slate-200 p-3"><Input value={source.label} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], label: e.target.value }; setField("sourceLinks", next); }} placeholder="Source label" /><Input value={source.url} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], url: e.target.value }; setField("sourceLinks", next); }} placeholder="https://..." /><Button variant="outline" className="rounded-full" onClick={() => setField("sourceLinks", state.sourceLinks.filter((_, i) => i !== index))}>Remove source</Button></div>)}
+                    {state.sourceLinks.map((source, index) => <div key={`source-${index}`} className="space-y-3 rounded-2xl border border-slate-200 p-3"><Input value={source.label} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], label: e.target.value }; setField("sourceLinks", next); }} placeholder="Source label" /><Input value={source.url} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], url: e.target.value }; setField("sourceLinks", next); }} placeholder="https://..." /><Input type="date" value={source.checkedAt ?? ""} onChange={(e) => { const next = [...state.sourceLinks]; next[index] = { ...next[index], checkedAt: e.target.value || null }; setField("sourceLinks", next); }} /><Button variant="outline" className="rounded-full" onClick={() => setField("sourceLinks", state.sourceLinks.filter((_, i) => i !== index))}>Remove source</Button></div>)}
                   </div>
                 </CardContent></Card>
 
@@ -327,7 +396,7 @@ function Editor({ post, posts, categories, onClose, onSave }: { post: CmsPost | 
         </TabsContent>
 
         <TabsContent value="preview" className="min-h-0 flex-1 overflow-auto bg-white data-[state=inactive]:hidden">
-          <BlogArticle post={{ title: state.title || "Untitled article", slug: state.slug || "preview", excerpt: state.excerpt || null, category: categories.find((category) => category.id === state.categoryId) ?? null, coverImage: state.coverImage || null, authorName: state.authorName || "MyeCA Editorial Team", authorRole: state.authorRole || null, authorBio: state.authorBio || null, publishedAt: state.publishedAt || null, readingTimeMinutes: readingTime, content: state.content, keyHighlights: normalizeStringArray(state.keyHighlights), faqItems: state.faqItems.filter((faq) => faq.question.trim() && faq.answer.trim()), relatedPosts: related, toc, ctaLabel: state.ctaLabel || undefined, ctaHref: state.ctaHref || undefined, audience: state.audience, reviewedBy: state.reviewedBy || null, reviewedAt: state.reviewedAt || null, sourceLinks: state.sourceLinks.filter((source) => source.label.trim() && source.url.trim()), serviceSlug: state.serviceSlug || null, calculatorSlug: state.calculatorSlug || null, canonicalUrl: state.canonicalUrl || null }} isPreview />
+          <BlogArticle post={{ title: state.title || "Untitled article", slug: state.slug || "preview", excerpt: state.excerpt || null, category: categories.find((category) => category.id === state.categoryId) ?? null, coverImage: state.coverImage || null, authorName: state.authorName || "MyeCA Editorial Team", authorRole: state.authorRole || null, authorBio: state.authorBio || null, publishedAt: state.publishedAt || null, readingTimeMinutes: readingTime, content: state.content, keyHighlights: normalizeStringArray(state.keyHighlights), faqItems: state.faqItems.filter((faq) => faq.question.trim() && faq.answer.trim()), relatedPosts: related, toc, ctaLabel: state.ctaLabel || undefined, ctaHref: state.ctaHref || undefined, audience: state.audience, reviewedBy: state.reviewedBy || null, reviewedAt: state.reviewedAt || null, reviewerName: state.reviewerName || null, reviewerRole: state.reviewerRole || null, reviewerCredentialName: state.reviewerCredentialName || null, reviewerCredentialId: state.reviewerCredentialId || null, reviewerCredentialAuthority: state.reviewerCredentialAuthority || null, sourceLinks: state.sourceLinks.filter((source) => source.label.trim() && source.url.trim()), serviceSlug: state.serviceSlug || null, calculatorSlug: state.calculatorSlug || null, canonicalUrl: state.canonicalUrl || null }} isPreview />
         </TabsContent>
       </Tabs>
     </div>

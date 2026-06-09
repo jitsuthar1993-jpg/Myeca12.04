@@ -31,7 +31,7 @@ export default function CompetitorComparisonPage() {
           {
             question: `Is MyeCA a factual alternative to ${page.competitor}?`,
             answer:
-              "Yes. This page compares public positioning and product capabilities at a category level. It avoids private claims and focuses on MyeCA's own workflow, pricing clarity and expert-review strengths.",
+              "This page compares public information at a category level and describes MyeCA's own published workflow. Verify current pricing, scope, and terms with each provider before choosing.",
           },
           {
             question: "What makes MyeCA different?",
@@ -44,7 +44,7 @@ export default function CompetitorComparisonPage() {
       <section className="border-b border-slate-100 bg-slate-50">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-[1.1fr_0.9fr] md:px-6 lg:px-8">
           <div>
-            <Badge className="mb-5 border-blue-100 bg-blue-50 text-blue-700">Competitor capture page</Badge>
+            <Badge className="mb-5 border-blue-100 bg-blue-50 text-blue-700">Comparison methodology</Badge>
             <h1 className="type-page-title text-slate-950">{page.title}</h1>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{page.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -69,8 +69,8 @@ export default function CompetitorComparisonPage() {
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">MyeCA position</p>
-                  <h2 className="text-xl font-black text-slate-950">Expert-led, document-first filing</h2>
+                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">MyeCA workflow</p>
+                  <h2 className="text-xl font-black text-slate-950">Document-first assisted filing</h2>
                 </div>
               </div>
               <div className="mt-6 grid gap-3">
@@ -89,9 +89,9 @@ export default function CompetitorComparisonPage() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-14 md:grid-cols-2 md:px-6 lg:px-8">
         <Card className="rounded-[28px] border-slate-200">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-black text-slate-950">What {page.competitor} does well</h2>
+            <h2 className="text-2xl font-black text-slate-950">Public features listed by {page.competitor}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              These are the market strengths worth respecting and matching where relevant.
+              These points summarize the public source linked below. Confirm current availability and terms directly with the provider.
             </p>
             <div className="mt-6 space-y-3">
               {page.goodPoints.map((point) => (
@@ -105,9 +105,9 @@ export default function CompetitorComparisonPage() {
 
         <Card className="rounded-[28px] border-blue-200 bg-blue-50/40">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-black text-slate-950">Where MyeCA should win</h2>
+            <h2 className="text-2xl font-black text-slate-950">MyeCA capabilities to compare</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              The conversion angle is stronger trust, clearer scope and a real case workflow.
+              Compare these published workflow details with your required documents, support needs, budget, and filing complexity.
             </p>
             <div className="mt-6 space-y-3">
               {page.myeCAEdge.map((point) => (
@@ -126,7 +126,7 @@ export default function CompetitorComparisonPage() {
           <div className="max-w-3xl">
             <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-300">Case workflow</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
-              The advantage is not another form. It is a visible filing journey.
+              Check whether filing status, open questions, and next steps remain visible after intake.
             </h2>
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-4">
@@ -142,7 +142,9 @@ export default function CompetitorComparisonPage() {
 
       <section className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-12 md:flex-row md:items-center md:justify-between md:px-6 lg:px-8">
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest text-slate-400">Source reference</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-slate-400">
+            Source reference · checked {page.checkedAt}
+          </p>
           <a href={page.source} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-2 text-sm font-bold text-blue-700">
             Public {page.competitor} reference
             <ExternalLink className="h-4 w-4" />

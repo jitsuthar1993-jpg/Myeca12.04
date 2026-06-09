@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { getGuideBySlug, GUIDE_CATEGORIES, TaxGuide } from "@/data/tax-guides";
+import { getGuideBySlug, getGuideOfficialSources, GUIDE_CATEGORIES, TaxGuide } from "@/data/tax-guides";
 
 const DIFFICULTY_COLORS = {
   beginner: 'bg-green-100 text-green-700',
@@ -69,6 +69,7 @@ export default function GuidePage() {
 
   const category = GUIDE_CATEGORIES.find(c => c.id === guide.category);
   const currentStepData = guide.steps[currentStep];
+  const officialSources = getGuideOfficialSources(guide.slug);
   
   // Toggle checklist item
   const toggleItem = (stepId: string, item: string) => {
@@ -242,17 +243,17 @@ export default function GuidePage() {
                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                   <span>Step {currentStep + 1} of {guide.steps.length}</span>
                 </div>
-                <CardTitle className="text-xl">{currentStepData.title}</CardTitle>
+                <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
                 <CardDescription>{currentStepData.description}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Checklist */}
                 {currentStepData.checklist && (
                   <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-emerald-600" />
                       Checklist
-                    </h4>
+                    </h3>
                     <div className="space-y-2">
                       {currentStepData.checklist.map((item, index) => (
                         <div 
@@ -278,7 +279,7 @@ export default function GuidePage() {
                   <Alert className="bg-yellow-50 border-yellow-200">
                     <Lightbulb className="h-5 w-5 text-yellow-600" />
                     <AlertDescription>
-                      <h4 className="font-semibold text-yellow-800 mb-2">Pro Tips</h4>
+                      <h3 className="font-semibold text-yellow-800 mb-2">Review notes</h3>
                       <ul className="list-disc list-inside space-y-1 text-yellow-800">
                         {currentStepData.tips.map((tip, index) => (
                           <li key={index}>{tip}</li>
@@ -291,10 +292,10 @@ export default function GuidePage() {
                 {/* Related Links */}
                 {currentStepData.links && currentStepData.links.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
                       <ExternalLink className="h-5 w-5 text-blue-600" />
                       Helpful Resources
-                    </h4>
+                    </h3>
                     <div className="flex flex-wrap gap-2">
                       {currentStepData.links.map((link, index) => (
                         <Button key={index} variant="outline" size="sm" asChild>
@@ -339,6 +340,32 @@ export default function GuidePage() {
                 </Button>
               )}
             </div>
+
+            <Card>
+              <CardHeader>
+                <h2 className="text-lg font-semibold text-slate-950">Official sources</h2>
+                <CardDescription>
+                  Check time-sensitive thresholds, forms, and portal steps against these authority pages before acting.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {officialSources.map((source) => (
+                    <li key={source.href} className="flex flex-wrap items-center justify-between gap-2">
+                      <a
+                        href={source.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-700 hover:underline"
+                      >
+                        {source.label}
+                      </a>
+                      <span className="text-xs text-slate-500">Checked {source.checkedAt}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
 
             {/* Related Calculators */}
             {guide.relatedCalculators.length > 0 && (

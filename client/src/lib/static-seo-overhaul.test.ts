@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { SEO_CONFIG } from "../config/seo.config";
-import { getGeneratedPublicRoutes } from "../data/missing-pages";
+import {
+  generatedServicePages,
+  getGeneratedPublicRoutes,
+  getGeneratedRouteContent,
+  getGeneratedRouteSEOConfig,
+} from "../data/missing-pages";
 import { generateMetadata } from "./seo";
 import {
   buildAccountingServiceSchema,
@@ -115,6 +120,26 @@ describe("static SEO overhaul", () => {
     expect(sitemap).not.toContain("\n    <loc>");
   });
 
+  it("keeps generated service scope and visible FAQs route-specific", () => {
+    expect(generatedServicePages).toHaveLength(19);
+    for (const field of ["audience", "includedOutcome", "excludedWork", "delayRisk", "escalationTrigger", "nextStep"] as const) {
+      expect(new Set(generatedServicePages.map((page) => page[field])).size).toBe(generatedServicePages.length);
+    }
+
+    for (const page of generatedServicePages) {
+      const route = `/services/${page.slug}`;
+      const content = getGeneratedRouteContent(route);
+      const seo = getGeneratedRouteSEOConfig(route);
+
+      expect(page.process).toHaveLength(4);
+      expect(page.faqs).toHaveLength(3);
+      expect(content?.sections.map((section) => section.body).join(" ")).toContain(page.excludedWork);
+      expect(content?.faqItems).toEqual(page.faqs);
+      expect(seo?.faqItems).toEqual(page.faqs.map((faq) => ({ q: faq.question, a: faq.answer })));
+      expect(JSON.stringify(page)).not.toContain("Share your basic details and current requirement.");
+    }
+  });
+
   it("builds homepage and local business schema for Bikaner CA-led services", () => {
     const graph = buildHomepageGraph();
     const localBusiness = buildAccountingServiceSchema("https://myeca.in/contact");
@@ -167,7 +192,11 @@ describe("static SEO overhaul", () => {
     });
     expect(article).toMatchObject({
       "@type": "Article",
-      author: { "@type": "Organization", name: "Team myeca.in" },
+      author: {
+        "@type": "Organization",
+        name: "MyeCA Editorial Team",
+        url: "https://myeca.in/about",
+      },
       publisher: {
         "@type": "Organization",
         name: "myeca.in",
@@ -235,12 +264,43 @@ describe("static SEO overhaul", () => {
     expect(body).not.toContain("skel");
   });
 
-  it("loads blog posts from static MDX frontmatter with FAQ and HowTo data", () => {
+  it("uses a route-specific heading for crawlable related links", () => {
+    const body = renderStaticRouteBody({
+      route: "/services/gst-registration",
+      title: "GST Registration Services | MyeCA.in",
+      description: "Prepare GST registration records and understand the filing scope.",
+      kind: "service",
+      links: [
+        { label: "Review GST filing support", href: "/services/gst-returns" },
+        { label: "Calculate GST on an invoice", href: "/calculators/gst" },
+      ],
+    });
+
+    expect(body).toContain("<h2>Related services and preparation guides</h2>");
+    expect(body).not.toContain("Related tax filing resources");
+  });
+
+  it("does not duplicate a related-links section already present in article content", () => {
+    const body = renderStaticRouteBody({
+      route: "/blog/example-filing-guide",
+      title: "Example filing guide",
+      description: "Example filing guide description.",
+      kind: "blog-post",
+      links: [{ label: "Choose an ITR form", href: "/itr/form-selector" }],
+      bodyHtml: "<h2>Related filing and record guides</h2><p>Authored article links.</p>",
+    });
+
+    expect(body.match(/<h2>Related filing and record guides<\/h2>/g)).toHaveLength(1);
+    expect(body).not.toContain("Choose an ITR form");
+  });
+
+  it("loads blog posts from static MDX frontmatter with optional FAQ and HowTo data", () => {
     const posts = loadStaticMdxBlogPosts();
 
     expect(posts.length).toBeGreaterThanOrEqual(35);
     expect(posts.every((post) => post.title && post.slug && post.publishedAt && post.primaryKeyword)).toBe(true);
-    expect(posts.every((post) => post.faqItems.length > 0)).toBe(true);
+    expect(posts.every((post) => post.faqItems.every((faq) => faq.question.trim() && faq.answer.trim()))).toBe(true);
+    expect(posts.some((post) => post.faqItems.length === 0)).toBe(true);
     expect(posts.some((post) => post.contentType === "how-to" && post.howToSteps.length > 0 && post.totalTime)).toBe(true);
   });
 });

@@ -35,6 +35,7 @@ export default function GeneratedStartupTopicPage() {
       <MetaSEO
         title={`${page.title} | MyeCA.in`}
         description={page.description}
+        canonicalUrl={`/startup/${page.slug}`}
         keywords={[page.title, "startup services India", "MyeCA startup advisory"]}
         type="service"
         breadcrumbs={[

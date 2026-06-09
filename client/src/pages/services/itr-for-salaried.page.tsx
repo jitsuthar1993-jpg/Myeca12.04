@@ -192,7 +192,7 @@ export default function ITRForSalariedPage() {
     },
     {
       q: "Which tax regime is better for me?",
-      a: "The New Tax Regime is beneficial if you do not have many investments under 80C/80D or home loan interest. However, if your deductions exceed approximately ₹3.75 Lakhs, the Old Regime usually results in lower tax. Our experts calculate taxes under both and choose the optimal one."
+      a: "The result depends on income, eligible deductions, exemptions, special-rate income, and the applicable year. Compare both regimes using the same facts, then review the calculation and evidence before selecting the filing position."
     },
     {
       q: "What if there is a mismatch between my Form 16 and Form 26AS/AIS?",
@@ -204,7 +204,7 @@ export default function ITRForSalariedPage() {
     },
     {
       q: "Can I claim deductions if I don't have a Form 16?",
-      a: "Yes, you can file your ITR using your monthly payslips to calculate your total salary and TDS. However, ensuring your TDS is reflecting in Form 26AS is crucial for a smooth processing of your return."
+      a: "Yes. Use monthly payslips and bank credits to reconstruct salary when Form 16 is unavailable, then compare employer-reported TDS with Form 26AS before claiming the credit."
     },
     {
       q: "How long does it take to get my tax refund?",
@@ -233,7 +233,7 @@ export default function ITRForSalariedPage() {
                 </h1>
               </div>
               <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mb-8">
-                Hassle-free ITR filing with expert assistance. Review eligible deductions, reconcile Form 16 details, and choose the right support level before filing.
+                Prepare a salaried return from reconciled records. Review deductions, compare Form 16 with AIS and Form 26AS, and confirm the filing scope before submission.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button 
@@ -297,7 +297,7 @@ export default function ITRForSalariedPage() {
         <section>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-              Comprehensive ITR Filing
+              Salaried ITR Filing Scope
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Our service covers common salaried return complexities, with document-based review where deductions, house property, or capital gains need closer checks.
@@ -307,11 +307,11 @@ export default function ITRForSalariedPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { title: "Form 16 & Form 16A Parsing", icon: FileText, desc: "Use TDS certificate details as a starting point and review the extracted data before filing." },
-              { title: "Multiple Employers", icon: Users, desc: "Switched jobs? We seamlessly consolidate income and TDS from multiple employers." },
+              { title: "Multiple Employers", icon: Users, desc: "Reconcile salary, deductions, and TDS across every employer before selecting the return treatment." },
               { title: "Capital Gains Sync", icon: PieChart, desc: "Include your stock market and mutual fund gains directly using broker statements." },
               { title: "HRA & Rent Optimization", icon: Building2, desc: "Forgot to declare rent to employer? Claim HRA directly in your ITR." },
               { title: "Regime Optimization", icon: Scale, desc: "We calculate your tax liability under both regimes and pick the one with lower tax." },
-              { title: "Notice Assistance", icon: Shield, desc: "Get robust support in case of any intimation or notice from the Income Tax Dept." }
+              { title: "Notice Assistance", icon: Shield, desc: "Review the intimation or notice, response deadline, and records needed for the appropriate reply." }
             ].map((feature, i) => (
               <Card key={i} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
@@ -415,10 +415,10 @@ export default function ITRForSalariedPage() {
         <section>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-              Maximize Your Take-Home
+              Deductions to Verify Before Filing
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Key deductions every salaried employee should know about (Applicable mainly in the Old Regime).
+              Common deduction categories to verify against your records and old-regime eligibility.
             </p>
           </div>
 
@@ -441,7 +441,7 @@ export default function ITRForSalariedPage() {
         <section>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-semibold text-gray-900 mb-4">How We File Your ITR</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">A seamless 4-step process designed for absolute peace of mind.</p>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">A four-step process that keeps document checks, open questions, and filing decisions visible.</p>
           </div>
 
           <div className="relative max-w-5xl mx-auto px-4">

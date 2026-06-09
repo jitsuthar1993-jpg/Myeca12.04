@@ -4,6 +4,7 @@ import { SEO_CONFIG } from "../../client/src/config/seo.config";
 import { getGeneratedPublicRoutes } from "../../client/src/data/missing-pages";
 import { TAX_GUIDES } from "../../client/src/data/tax-guides";
 import { loadStaticBlogPosts } from "../data/static-blog-content.js";
+import { shouldIndexPublicContent } from "../../shared/public-content-quality.js";
 import {
   buildSitemapXml,
   getIndexablePublicRoutes,
@@ -20,7 +21,7 @@ function generateSitemap() {
 
   const blogPosts = loadStaticBlogPosts();
   const blogRoutes = blogPosts
-    .filter((post) => post.status === "published")
+    .filter((post) => post.status === "published" && shouldIndexPublicContent(post.qualityStatus ?? "needs_revision"))
     .map((post) => `/blog/${post.slug}`);
   const guideRoutes = TAX_GUIDES.map((guide) => `/learn/guide/${guide.slug}`);
   const blogDateMap = new Map(blogPosts.map((post) => [`/blog/${post.slug}`, post.updatedAt || post.publishedAt]));

@@ -173,7 +173,7 @@ export default function HeroWithOptimizedImages() {
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900">Website Launch Offer</div>
-                  <div className="text-sm text-gray-600">Save up to ₹500 on eligible plans</div>
+                  <div className="text-sm text-gray-600">See any eligible plan discount at checkout</div>
                 </div>
               </m.div>
             </m.div>
@@ -192,7 +192,7 @@ export default function HeroWithOptimizedImages() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
                 { step: 1, title: "Upload Documents", desc: "Form 16, bank statements", icon: "📄" },
-                { step: 2, title: "Fill Details", desc: "Our experts guide you", icon: "✍️" },
+                { step: 2, title: "Fill Details", desc: "Review the required records", icon: "✍️" },
                 { step: 3, title: "Review before filing", desc: "Add expert review for complex facts", icon: "3" },
                 { step: 4, title: "File ITR", desc: "E-verify and relax", icon: "✅" }
               ].map((item) => (

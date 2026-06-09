@@ -239,7 +239,7 @@ export function TrustStrip() {
       {[
         "Supabase-secured identity",
         "Private Blob document vault",
-        "CA-reviewed compliance",
+        "Professionally reviewed compliance",
       ].map((item) => (
         <div
           key={item}

@@ -380,7 +380,7 @@ export const servicePricingCatalog: ServicePricing[] = [
     exclusions: ["ITR filing", "Portfolio management", "Legal or FEMA advisory"],
     documents: ["Recent salary slips", "Current investments", "Previous ITR", "Tax questions"],
     timeline: "Scheduled booking",
-    caTouchpoints: "CA-led planning call",
+    caTouchpoints: "Scoped planning call with written next steps",
     primaryCta: { label: "Start planning", checkout: true },
     consultationCta: { label: "Consult expert", href: "/expert-consultation?service=tax-planning" },
   },

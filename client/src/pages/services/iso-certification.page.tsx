@@ -301,7 +301,7 @@ export default function ISOCertificationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Get ISO 9001, 14001, 27001, 45001 with expert guidance and international recognition.
+                Prepare scope, process records, and evidence for ISO 9001, 14001, 27001, or 45001 certification assessment.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold">
@@ -376,7 +376,7 @@ export default function ISOCertificationPage() {
               ISO Certification Cost & Timeline 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive cost breakdown by business size and ISO standard
+              Cost factors by business size and ISO standard
             </p>
           </div>
 
@@ -445,7 +445,7 @@ export default function ISOCertificationPage() {
               6-Phase ISO Certification Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Systematic approach to achieve ISO certification with expert guidance
+              Readiness steps before an independent certification assessment
             </p>
           </div>
 
@@ -569,7 +569,7 @@ export default function ISOCertificationPage() {
               Business Benefits & ROI
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive advantages of ISO certification for business growth
+              Operational and tender-related uses of ISO certification
             </p>
           </div>
 

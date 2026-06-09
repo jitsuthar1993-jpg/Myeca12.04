@@ -55,28 +55,28 @@ export default function GstRegistrationPage() {
 
   const gstThresholds = [
     {
-      state: "Regular States",
-      threshold: "₹40 lakhs",
-      description: "For supply of goods in most states",
-      mandatory: "Above threshold"
+      state: "Goods turnover reference",
+      threshold: "Often ₹40 lakhs",
+      description: "Confirm the state, supply mix, exclusions, and current notification.",
+      mandatory: "Verify applicability"
     },
     {
-      state: "Special Category States",
-      threshold: "₹20 lakhs", 
-      description: "NE states, Himachal Pradesh, Uttarakhand, J&K",
-      mandatory: "Above threshold"
+      state: "Services turnover reference",
+      threshold: "Often ₹20 lakhs",
+      description: "Check aggregate turnover, state rules, and the nature of services.",
+      mandatory: "Verify applicability"
     },
     {
-      state: "Services",
-      threshold: "₹20 lakhs",
-      description: "For service providers across India",
-      mandatory: "Above threshold"
+      state: "Lower-threshold states",
+      threshold: "May be lower",
+      description: "Do not rely on a regular-state threshold without checking the registration state.",
+      mandatory: "Verify state rule"
     },
     {
-      state: "E-commerce",
-      threshold: "₹0",
-      description: "Mandatory for all e-commerce operators",
-      mandatory: "Compulsory"
+      state: "Activity-based triggers",
+      threshold: "No single threshold",
+      description: "Check e-commerce, inter-state, reverse-charge, and notified activities separately.",
+      mandatory: "Verify transaction facts"
     }
   ];
 
@@ -93,7 +93,7 @@ export default function GstRegistrationPage() {
         "Inter-state supply allowed"
       ],
       documents: 8,
-      timeline: "7-10 days",
+      timeline: "Portal-dependent",
       color: "blue"
     },
     {
@@ -102,13 +102,13 @@ export default function GstRegistrationPage() {
       description: "Simplified GST scheme for small businesses",
       suitableFor: "Small retailers, restaurants, manufacturers",
       features: [
-        "Lower tax rates (1%, 2%, 5%)",
-        "Quarterly returns only",
+        "Lower-rate option where eligible",
+        "CMP-08 and annual-return obligations",
         "No input tax credit",
-        "Only intra-state supply"
+        "Supply restrictions apply"
       ],
       documents: 6,
-      timeline: "5-7 days", 
+      timeline: "Eligibility-dependent",
       color: "green"
     },
     {
@@ -117,13 +117,13 @@ export default function GstRegistrationPage() {
       description: "For occasional business activities",
       suitableFor: "Exhibition participants, event organizers",
       features: [
-        "Temporary registration",
-        "Maximum 90 days validity",
-        "Advance tax deposit required",
-        "Can be extended"
+        "Time-bound registration",
+        "Validity tied to the stated activity period",
+        "Advance estimated-tax deposit",
+        "Extension requires portal action"
       ],
       documents: 5,
-      timeline: "3-5 days",
+      timeline: "Before taxable activity",
       color: "orange"
     },
     {
@@ -132,13 +132,13 @@ export default function GstRegistrationPage() {
       description: "Optional registration below threshold",
       suitableFor: "Businesses below turnover threshold",
       features: [
-        "Input tax credit benefits",
-        "Professional credibility",
-        "Wider market access",
-        "Government tenders eligibility"
+        "Recurring GST returns after registration",
+        "Tax-invoice readiness",
+        "Input-credit eligibility subject to conditions",
+        "Cancellation requires a separate process"
       ],
       documents: 8,
-      timeline: "7-10 days",
+      timeline: "Portal-dependent",
       color: "purple"
     }
   ];
@@ -180,33 +180,33 @@ export default function GstRegistrationPage() {
 
   const gstBenefits = [
     {
-      title: "Input Tax Credit",
-      description: "Claim credit on taxes paid on purchases and reduce overall tax liability",
+      title: "Input tax credit eligibility",
+      description: "Assess whether eligible purchase credits can be claimed and supported by invoices and supplier data",
       icon: Calculator
     },
     {
-      title: "Legal Recognition", 
-      description: "Government-recognized business status enhancing credibility",
+      title: "Tax-invoice readiness",
+      description: "Prepare the records needed to issue compliant tax invoices after registration",
       icon: Award
     },
     {
-      title: "Nationwide Sales",
-      description: "Sell products/services across India with inter-state supply capability",
+      title: "Supply-model review",
+      description: "Check how registration affects inter-state, e-commerce, and place-of-supply obligations",
       icon: Globe
     },
     {
-      title: "Government Contracts",
-      description: "Participate in government tenders and get large business contracts", 
+      title: "Customer and tender requirements",
+      description: "Confirm whether a customer, marketplace, or tender genuinely requires a GSTIN",
       icon: Building2
     },
     {
-      title: "Easy Compliance",
-      description: "Simplified tax filing with online returns and automated processes",
+      title: "Recurring return obligations",
+      description: "Understand the return, invoice, payment, and reconciliation work that starts after registration",
       icon: FileText
     },
     {
-      title: "Business Growth",
-      description: "Scale operations, attract investors, and expand market reach",
+      title: "Defensible registration record",
+      description: "Keep the application, supporting documents, queries, and certificate in one traceable file",
       icon: TrendingUp
     }
   ];
@@ -229,7 +229,7 @@ export default function GstRegistrationPage() {
     {
       step: 3,
       title: "Online Submission",
-      description: "Submit application on GST portal with required fees and await acknowledgment",
+      description: "Submit GST REG-01 on the GST portal, record the ARN, and retain the filed application",
       icon: Upload,
       color: "purple"
     },
@@ -298,11 +298,11 @@ export default function GstRegistrationPage() {
         faqPageData={[
           {
             question: "What is the threshold for mandatory GST registration?",
-            answer: "Mandatory GST registration is required if your annual turnover exceeds ₹40 lakhs for goods or ₹20 lakhs for services (₹20L/₹10L for special category states)."
+            answer: "There is no single threshold that fits every business. Check aggregate turnover, state, goods and services mix, e-commerce or inter-state activity, reverse-charge exposure, and current GST notifications before deciding."
           },
           {
             question: "How long does it take to get a GST certificate?",
-            answer: "Typically, it takes 7–10 working days to get a GST registration certificate, depending on the department's verification process."
+            answer: "The timeline depends on document completeness, Aadhaar authentication, portal processing, and whether the officer raises a query. Treat any estimate as indicative, not guaranteed."
           },
           {
             question: "What documents are required for GST registration?",
@@ -324,7 +324,7 @@ export default function GstRegistrationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Registration support with expert guidance, documentation help, and portal filing support. Timelines depend on document readiness and department processing.
+                Registration support with document checks, application preparation, and portal filing support. Timelines depend on document readiness and department processing.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button 
@@ -359,7 +359,7 @@ export default function GstRegistrationPage() {
                 <ul className="space-y-2.5 text-sm text-gray-700">
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-green-600 mt-0.5" />
-                    Check turnover threshold: ₹40L goods, ₹20L services.
+                    Check the applicable turnover reference and activity-based triggers.
                   </li>
                   <li className="flex items-start">
                     <FileText className="w-4 h-4 mr-2 text-emerald-600 mt-0.5" />
@@ -367,11 +367,11 @@ export default function GstRegistrationPage() {
                   </li>
                   <li className="flex items-start">
                     <Globe className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
-                    Inter-state supply requires regular registration.
+                    Verify how inter-state supply affects your specific goods or services.
                   </li>
                   <li className="flex items-start">
                     <CreditCard className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
-                    E-commerce sellers must register regardless of turnover.
+                    Check current e-commerce registration exceptions and marketplace conditions.
                   </li>
                 </ul>
               </CardContent>
@@ -392,10 +392,10 @@ export default function GstRegistrationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-900">
                 <AlertCircle className="w-6 h-6" />
-                GST Registration Thresholds - FY 2025-26
+                GST registration trigger checklist
               </CardTitle>
               <CardDescription>
-                Know when GST registration becomes mandatory for your business
+                Use turnover references only after checking state, supply, and activity-specific rules
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -436,7 +436,7 @@ export default function GstRegistrationPage() {
               Types of GST Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose the right GST registration type based on your business needs
+               Compare eligibility, tax collection, input-credit, supply, and return obligations before choosing
             </p>
           </div>
 
@@ -598,7 +598,7 @@ export default function GstRegistrationPage() {
               Benefits of GST Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Unlock business growth opportunities with GST registration
+              Know when GST registration applies and what to prepare before filing
             </p>
           </div>
 
@@ -820,32 +820,29 @@ export default function GstRegistrationPage() {
           </div>
 
           <p className="text-sm text-gray-600 mt-8">
-            Expert CA team · Portal-aligned workflow · End-to-end support
+            Document review · Portal-aligned workflow · Query-response support
           </p>
         </m.div>
 
         {/* SEO Depth Section: Expert Guide on GST */}
         <div className="mt-24 space-y-16 border-t pt-16">
           <div className="max-w-4xl mx-auto text-left">
-            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Expert Guide: Mastering GST Compliance in India</h2>
+            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">GST registration decisions to resolve before applying</h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-8">
-              Goods and Services Tax (GST) is more than just a legal requirement—it's a gateway to <span className="text-green-600 font-bold">input tax credit</span> and national market access. 
-              Understanding the nuances of the <span className="font-bold">GST registration process</span> is crucial for any growing business in India.
+              GST registration can affect invoicing, input tax credit, and where a business may supply. Before applying, confirm the registration trigger, business constitution, principal place of business, and bank and authorised-signatory records.
             </p>
 
             <div className="grid md:grid-cols-2 gap-12">
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Mandatory vs Voluntary Registration</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    While businesses with turnover above ₹40L (goods) or ₹20L (services) MUST register, many small startups opt for <span className="font-bold">Voluntary GST Registration</span>. 
-                    Why? Because it allows you to claim credit for taxes paid on business expenses like laptops, office rent, and professional services, effectively reducing your costs.
+                    Mandatory registration can arise from turnover or a transaction-specific trigger. Voluntary registration may help in some supplier or customer workflows, but it also creates recurring return and record obligations. Confirm whether eligible input tax credit and commercial needs justify that ongoing work.
                   </p>
                </div>
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Composition Scheme Benefits</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Small dealers with turnover up to ₹1.5 Crore can opt for the <span className="font-bold">GST Composition Scheme</span>. 
-                    This simplifies returns to a quarterly frequency and reduces the tax rate (1% for manufacturers/traders), though you lose the ability to claim input tax credit.
+                    Composition eligibility depends on turnover, activity, state, supply model, and current rules. Before choosing it, confirm the applicable rate and return cycle, restrictions on supply, inability to claim input tax credit, and how invoices must be issued.
                   </p>
                </div>
             </div>
@@ -856,8 +853,8 @@ export default function GstRegistrationPage() {
              <CardHeader className="bg-emerald-900 text-white p-8">
                 <CardTitle className="text-2xl font-black italic">GST Registration Comparison</CardTitle>
              </CardHeader>
-             <CardContent className="p-0">
-                <table className="w-full text-left border-collapse">
+             <CardContent className="max-w-full overflow-x-auto p-0">
+                <table className="min-w-[640px] w-full text-left border-collapse">
                    <thead>
                       <tr className="bg-emerald-50 border-b border-emerald-100">
                          <th className="p-6 text-xs font-black text-emerald-900 uppercase tracking-widest">Feature</th>
@@ -873,7 +870,7 @@ export default function GstRegistrationPage() {
                       </tr>
                       <tr className="border-b border-emerald-50 hover:bg-emerald-50/30 transition-colors">
                          <td className="p-6 font-bold">Input Tax Credit</td>
-                         <td className="p-6 text-green-600">Available on all purchases</td>
+                          <td className="p-6 text-green-600">Available only on eligible, supported purchases</td>
                          <td className="p-6 text-red-500">Not Available</td>
                       </tr>
                       <tr className="border-b border-emerald-50 hover:bg-emerald-50/30 transition-colors">
@@ -892,19 +889,18 @@ export default function GstRegistrationPage() {
           </Card>
 
           {/* Penalty & Compliance Section */}
-          <div className="bg-red-50 rounded-[2.5rem] p-10 border border-red-100">
-             <div className="flex items-start gap-6">
+          <div className="bg-red-50 rounded-[2.5rem] border border-red-100 p-6 sm:p-10">
+             <div className="flex flex-col items-start gap-6 sm:flex-row">
                 <div className="w-16 h-16 rounded-3xl bg-red-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-red-200">
                    <AlertCircle className="w-8 h-8" />
                 </div>
-                <div>
-                   <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Warning: GST Non-Compliance Penalties</h3>
+                <div className="min-w-0">
+                    <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Resolve GST registration and return defaults early</h3>
                    <p className="text-slate-600 leading-relaxed mb-6 font-medium">
-                      Operating without a mandatory GSTIN can lead to a penalty of <span className="text-red-600 font-bold">₹10,000 or 10% of the tax due</span> (whichever is higher). 
-                      Additionally, late filing of returns (GSTR-1 or GSTR-3B) attracts late fees that vary by return type and facts. Use reminders and expert support to reduce missed-deadline risk.
+                      If registration was mandatory, tax, interest, penalty, invoice, and input-credit consequences depend on the facts and the notice or proceeding involved. Late-return fees also vary by return type and period. Review the applicable provision, portal record, and response deadline before acting.
                    </p>
                    <div className="flex flex-wrap gap-4">
-                      <Button className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold px-6 h-12 shadow-md">Fix GST Notices Now</Button>
+                      <Button className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold px-6 h-12 shadow-md">Review a GST notice</Button>
                       <Link href="/services/notice-compliance">
                         <Button variant="ghost" className="text-red-700 font-bold">Learn about Notice Management →</Button>
                       </Link>

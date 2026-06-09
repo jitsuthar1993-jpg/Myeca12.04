@@ -12,7 +12,7 @@ import BlogCard from "@/components/blog/BlogCard";
 import { getBlogCoverImageSrc, isGeneratedBlogCover } from "@/lib/blog-cover-assets";
 import { cn } from "@/lib/utils";
 import { sanitizeHTML } from "@/lib/sanitize";
-import { type BlogSourceLink, type BlogTocItem, type PublicBlogDetail, type PublicBlogSummary, normalizeBlogContent } from "@shared/blog";
+import { type BlogSourceLink, type BlogTocItem, type PublicBlogDetail, type PublicBlogSummary, normalizeBlogContent, normalizeBlogToc } from "@shared/blog";
 
 export interface EditorialArticleData {
   id?: string;
@@ -66,6 +66,15 @@ function isImageUrl(value: string | null | undefined) {
 
 function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+}
+
+function getVerifiedReviewer(post: EditorialArticleData) {
+  if (!post.reviewerName || !post.reviewerCredentialName || !post.reviewerCredentialId) return null;
+  return {
+    name: post.reviewerName,
+    credentialName: post.reviewerCredentialName,
+    credentialId: post.reviewerCredentialId,
+  };
 }
 
 function ActionLink({ href, label, variant = "solid", size = "md", className, children }: {
@@ -204,6 +213,8 @@ function RightSidebar({
   activeTab: "related" | "info";
   onTabChange: (tab: "related" | "info") => void;
 }) {
+  const verifiedReviewer = getVerifiedReviewer(post);
+
   return (
     <div className="space-y-5">
       {/* "In this article" TOC, always visible */}
@@ -334,9 +345,9 @@ function RightSidebar({
               </div>
               <h3 className="text-sm font-bold leading-snug mb-1.5 text-slate-950">Need expert help?</h3>
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
-                Talk to a MyeCA CA for your filing or compliance case.
+                Request a scope review for your filing or compliance case.
               </p>
-              <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="solid" size="sm" />
+              <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Request consultation"} variant="solid" size="sm" />
             </div>
 
             {/* Article info */}
@@ -357,10 +368,10 @@ function RightSidebar({
                   <CalendarDays className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                   <span>{formatDate(post.publishedAt)}</span>
                 </div>
-                {post.reviewedBy && (
+                {verifiedReviewer && (
                   <div className="flex items-center gap-2">
                     <BriefcaseBusiness className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                    <span>Reviewed by {post.reviewedBy}</span>
+                    <span>Reviewed by {verifiedReviewer.name}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
@@ -392,11 +403,12 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
   const normalized = useMemo(() => normalizeBlogContent(post.content), [post.content]);
   // DOMPurify allowlist sanitize at the render sink — the shared regex pass is not sufficient.
   const safeArticleHtml = useMemo(() => sanitizeHTML(normalized.html), [normalized.html]);
-  const toc = post.toc && post.toc.length > 0 ? post.toc : normalized.toc;
+  const toc = post.toc && post.toc.length > 0 ? normalizeBlogToc(post.toc) : normalized.toc;
   const highlights = post.keyHighlights ?? [];
   const faqs = post.faqItems ?? [];
   const relatedPosts = post.relatedPosts ?? [];
   const tags = post.tags ?? [];
+  const verifiedReviewer = getVerifiedReviewer(post);
 
   const [activeRightTab, setActiveRightTab] = useState<"related" | "info">(
     relatedPosts.length > 0 ? "related" : "info",
@@ -436,7 +448,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
       <div className="border-y border-blue-100 bg-blue-50/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
-            Optional CA review for eligible ITR plans - <span className="text-white font-semibold">starting ?999</span>
+            CA-assisted plans include documented review scope - <span className="font-semibold text-blue-700">starting Rs 999 excluding GST</span>
           </p>
           <Link href="/itr/start?source=blog_article_banner">
             <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
@@ -508,10 +520,10 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
               <CalendarDays className="h-4 w-4 text-blue-400" />
               {formatDate(post.publishedAt)}
             </span>
-            {post.reviewedBy && (
+            {verifiedReviewer && (
               <span className="flex items-center gap-1.5">
                 <BriefcaseBusiness className="h-4 w-4 text-blue-400" />
-                Reviewed by {post.reviewedBy}
+                Reviewed by {verifiedReviewer.name}
               </span>
             )}
             <span className="flex items-center gap-1.5">
@@ -598,9 +610,9 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                 </div>
                 <h3 className="text-base font-bold leading-snug mb-2 text-slate-950">Need expert help?</h3>
                 <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                  Talk to a MyeCA CA to apply these insights to your filing or compliance case.
+                  Request a scope review to apply these insights to your filing or compliance case.
                 </p>
-                <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Talk to a CA"} variant="solid" size="sm" />
+                <ActionLink href={post.ctaHref ?? "/expert-consultation"} label={post.ctaLabel ?? "Request consultation"} variant="solid" size="sm" />
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="mb-3 type-meta font-black text-slate-400 uppercase tracking-[2px]">Share this guide</p>
@@ -628,12 +640,14 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                     <div className="mt-4 flex items-center gap-3">
                       <div className="flex items-center gap-1.5 text-xs text-slate-400">
                         <FileText className="w-3.5 h-3.5" />
-                        <span>Verified CA author</span>
+                        <span>Editorial author</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>Expert reviewed</span>
-                      </div>
+                      {verifiedReviewer && (
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                          <span>Reviewed by {verifiedReviewer.name}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -700,7 +714,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
                     Ready to put this into action?
                   </h2>
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    Get hands-on help from MyeCA reviewers for ITR filing, GST, tax planning, and business compliance without the guesswork.
+                    Get hands-on help with ITR filing, GST, tax planning, and business compliance after confirming the scope and records required.
                   </p>
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

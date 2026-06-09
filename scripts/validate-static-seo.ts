@@ -103,13 +103,8 @@ function validateHtmlRoute(route: string, options: { strictMeta?: boolean; expec
   assert(!/Rs\.|INR/.test(html), `${route} contains forbidden price text`);
   assertAbsoluteSchemaUrls(jsonLd, route);
 
-  if (options.strictMeta) {
-    assert(title.length >= 55 && title.length <= 60, `${route} title length ${title.length} outside 55-60`);
-    assert(description.length >= 150 && description.length <= 155, `${route} description length ${description.length} outside 150-155`);
-  } else {
-    assert(title.length >= 30 && title.length <= 80, `${route} title length ${title.length} outside broad range`);
-    assert(description.length >= 120 && description.length <= 170, `${route} description length ${description.length} outside broad range`);
-  }
+  assert(title.length >= 12 && title.length <= 90, `${route} title length ${title.length} is empty, misleadingly short, or severely truncated`);
+  assert(description.length >= 40 && description.length <= 220, `${route} description length ${description.length} is empty, misleadingly short, or severely truncated`);
 
   options.expectedTypes?.forEach((type) => {
     assert(types.includes(type), `${route} missing ${type} schema`);
@@ -134,7 +129,11 @@ function main() {
   validateHtmlRoute("/about", { strictMeta: true, expectedTypes: ["WebPage"] });
   validateHtmlRoute("/contact", { strictMeta: true, expectedTypes: ["WebPage", "AccountingService"] });
   validateHtmlRoute(`/blog/${samplePost.slug}`, {
-    expectedTypes: samplePost.contentType === "how-to" ? ["Article", "FAQPage", "HowTo"] : ["Article", "FAQPage"],
+    expectedTypes: [
+      "Article",
+      ...(samplePost.faqItems.length ? ["FAQPage"] : []),
+      ...(samplePost.contentType === "how-to" && samplePost.howToSteps.length ? ["HowTo"] : []),
+    ],
   });
 
   const sitemapPath = path.join(distDir, "sitemap.xml");

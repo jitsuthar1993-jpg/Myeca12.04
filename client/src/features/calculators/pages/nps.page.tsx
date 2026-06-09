@@ -50,7 +50,7 @@ export default function NPSCalculatorPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
-        title={seo?.title || "NPS Calculator 2025 | Pension Corpus & Tax Savings | MyeCA.in"}
+        title={seo?.title || "NPS Calculator 2026 | Pension Corpus & Tax Savings | MyeCA.in"}
         description={seo?.description || "Calculate your NPS retirement corpus, monthly pension, and tax savings under Section 80CCD. Plan your retirement with India's National Pension System."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
@@ -347,7 +347,7 @@ export default function NPSCalculatorPage() {
         {/* Bottom Trust Bar */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Consult for 80CCD savings" },
+            { icon: <Headphones className="w-5 h-5" />, label: "NPS Tax Review", desc: "Check Section 80CCD eligibility and evidence" },
             { icon: <Award className="w-5 h-5" />, label: "PFRDA Regulated", desc: "Government backed tool" },
             { icon: <Lock className="w-5 h-5" />, label: "Privacy First", desc: "Data processed locally" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Wealth Analysis", desc: "Complete corpus projection" }

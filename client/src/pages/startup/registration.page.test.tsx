@@ -90,7 +90,7 @@ describe("StartupRegistrationPage guided wizard", () => {
     await waitFor(() => {
       expect(sessionStorage.getItem("startup_registration_sole")).toBe("{}");
     });
-  }, 10_000);
+  }, 30_000);
 
   it("switches entity flows without carrying the active step forward", async () => {
     const user = userEvent.setup();

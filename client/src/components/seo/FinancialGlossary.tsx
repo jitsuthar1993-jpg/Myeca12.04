@@ -21,7 +21,7 @@ const glossaryTerms = [
   { term: "GSTIN", category: "Business", definition: "Unique 15-digit identifier for every registered business under the Goods and Services Tax system in India.", href: "/services/gst-registration" },
   { term: "Form 26AS", category: "Reports", definition: "An annual consolidated tax statement showing tax deducted, collected, and paid against your PAN.", href: "/ais-viewer" },
   { term: "HRA Exemption", category: "Allowance", definition: "Exemption on House Rent Allowance under Section 10(13A) for employees living in rented accommodation.", href: "/calculators/hra" },
-  { term: "AIS", category: "Reports", definition: "Annual Information Statement provides a comprehensive view of a taxpayer's financial transactions.", href: "/ais-viewer" },
+  { term: "AIS", category: "Reports", definition: "Annual Information Statement shows financial information reported against a taxpayer's PAN and provides feedback options for displayed entries.", href: "/ais-viewer" },
   { term: "LTCG", category: "Capital Gains", definition: "Profit from the sale of a capital asset held for more than a specified period (usually 1-3 years).", href: "/calculators/capital-gains" },
   { term: "Advance Tax", category: "Direct Tax", definition: "Pre-payment of income tax in installments during the financial year.", href: "/calculators/advance-tax" },
   { term: "Standard Deduction", category: "Deductions", definition: "A flat deduction allowed from gross salary, providing tax relief without needing investment proofs.", href: "/calculators/income-tax" },

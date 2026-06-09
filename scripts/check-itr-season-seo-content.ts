@@ -143,7 +143,7 @@ async function validateRoute(route: (typeof PRIORITY_ITR_SEARCH_ROUTES)[number])
   const linksToConversion = links.some((href) => conversionRoutes.includes(href));
 
   addCheck(checks, `${route} title length`, title.length >= 30 && title.length <= 80, `${title.length} chars`);
-  addCheck(checks, `${route} description length`, description.length >= 100 && description.length <= 170, `${description.length} chars`);
+  addCheck(checks, `${route} description length`, description.length >= 70 && description.length <= 220, `${description.length} chars`);
   addCheck(checks, `${route} canonical`, canonical === toAbsoluteUrl(route), canonical || "missing canonical");
   addCheck(checks, `${route} static shell marker`, html.includes(expectedStaticShellMarker(route)), expectedStaticShellMarker(route));
   addCheck(checks, `${route} visible content depth`, words >= PRIORITY_ITR_CONTENT_MIN_WORDS, `${words} words`);

@@ -80,7 +80,7 @@ function inferVisualBrief(post: BlogCoverPost) {
   if (category === "tax-planning" || /calendar|planning|advance tax|march|april/.test(text)) {
     return "Year-round tax planning calendar with monthly checkpoints, deduction proofs, advance tax and filing reminders.";
   }
-  return "Clean Indian tax filing workspace with documents, calculator notes, checklist cards and a CA-reviewed filing path.";
+  return "Clean Indian tax filing workspace with documents, calculator notes, checklist cards and an assisted filing path.";
 }
 
 function visibleTitle(post: BlogCoverPost) {

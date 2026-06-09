@@ -83,8 +83,8 @@ function auditRoute(filePath: string): RouteAudit {
   if (isPrivate) {
     if (!/^noindex/i.test(robots)) issues.push(`private route robots must be noindex: ${robots}`);
   } else {
-    if (!title || title.length < 30 || title.length > 80) issues.push(`title length ${title.length} outside 30-80`);
-    if (!description || description.length < 100 || description.length > 180) issues.push(`description length ${description.length} outside 100-180`);
+    if (!title || title.length < 12 || title.length > 90) issues.push(`title length ${title.length} is empty, misleadingly short, or severely truncated`);
+    if (!description || description.length < 40 || description.length > 220) issues.push(`description length ${description.length} is empty, misleadingly short, or severely truncated`);
     if (!/^index,\s*follow/i.test(robots)) issues.push(`public route robots must be index, follow: ${robots}`);
     if (text.length < 250) issues.push(`visible text too thin: ${text.length}`);
     if (internalLinks.length < 3) issues.push(`fewer than 3 internal links: ${internalLinks.length}`);

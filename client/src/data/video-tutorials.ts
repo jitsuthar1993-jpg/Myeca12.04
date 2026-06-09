@@ -37,15 +37,15 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
   // ITR Filing Videos
   {
     id: 'itr-basics',
-    title: 'ITR Filing for Beginners - Complete Guide 2024',
-    description: 'Learn the basics of Income Tax Return filing in India. This comprehensive guide covers who needs to file, which ITR form to choose, and step-by-step filing process.',
+    title: 'ITR Filing for Beginners: Forms, Records and Filing Steps',
+    description: 'Learn who may need to file an Income Tax Return, how income sources affect form selection, and which records to reconcile before submission.',
     duration: '15:30',
     category: 'itr-filing',
     tags: ['ITR', 'beginners', 'tax filing', 'income tax'],
     thumbnail: '/images/tutorials/itr-basics.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-04-15',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['itr-form-selection', 'form16-upload'],
   },
   {
@@ -58,7 +58,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/itr-forms.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-04-20',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['itr-basics', 'salaried-itr'],
   },
   {
@@ -71,7 +71,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/salaried-itr.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-05-01',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['form16-upload', 'hra-claim'],
   },
   {
@@ -84,22 +84,22 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/form16.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-05-10',
-    instructor: 'Tech Team',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['salaried-itr', 'ais-verification'],
   },
 
   // Tax Saving Videos
   {
     id: 'tax-saving-80c',
-    title: "Section 80C Deductions Explained - Save Up to ₹46,800",
-    description: "Complete guide to Section 80C deductions including PPF, ELSS, LIC, EPF, home loan principal, and more. Learn how to maximize your ₹1.5 lakh limit.",
+    title: "Section 80C Deductions: Eligibility and Records",
+    description: "Review common Section 80C deduction categories, the records needed for a claim, and how regime choice affects availability.",
     duration: '18:45',
     category: 'tax-saving',
     tags: ['80C', 'deductions', 'tax saving', 'PPF', 'ELSS'],
     thumbnail: '/images/tutorials/80c.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-03-15',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['nps-benefits', 'health-insurance-80d'],
   },
   {
@@ -112,7 +112,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/nps.jpg',
     difficulty: 'intermediate',
     publishedDate: '2024-03-20',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['tax-saving-80c', 'retirement-planning'],
   },
   {
@@ -125,7 +125,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/80d.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-03-25',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['tax-saving-80c', 'home-loan-tax'],
   },
   {
@@ -138,7 +138,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/hra.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-04-01',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['salaried-itr', 'tax-saving-80c'],
   },
 
@@ -153,7 +153,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/calc-tax.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-04-05',
-    instructor: 'Tech Team',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['regime-comparison', 'sip-calc-guide'],
   },
   {
@@ -166,7 +166,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/calc-sip.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-04-10',
-    instructor: 'Tech Team',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['income-tax-calc', 'elss-comparison'],
   },
 
@@ -174,14 +174,14 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
   {
     id: 'elss-comparison',
     title: 'ELSS Funds 2024 - Tax Saving Mutual Funds Compared',
-    description: 'Comprehensive comparison of ELSS funds. Learn about returns, expense ratios, and how to choose a suitable tax-saving mutual fund.',
+    description: 'Compare ELSS funds by mandate, risk, expense ratio, lock-in, and performance record before deciding whether the investment fits your plan.',
     duration: '16:45',
     category: 'investments',
     tags: ['ELSS', 'mutual funds', 'tax saving', 'comparison'],
     thumbnail: '/images/tutorials/elss.jpg',
     difficulty: 'intermediate',
     publishedDate: '2024-02-20',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['tax-saving-80c', 'sip-calc-guide'],
   },
   {
@@ -194,7 +194,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/capital-gains.jpg',
     difficulty: 'intermediate',
     publishedDate: '2024-02-25',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['tax-loss-harvesting', 'portfolio-tax'],
   },
   {
@@ -207,7 +207,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/harvesting.jpg',
     difficulty: 'advanced',
     publishedDate: '2024-03-01',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['capital-gains-tax', 'portfolio-tax'],
   },
 
@@ -222,7 +222,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/gst-basics.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-01-15',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['gst-registration', 'gst-returns'],
   },
   {
@@ -235,14 +235,14 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/gst-reg.jpg',
     difficulty: 'beginner',
     publishedDate: '2024-01-20',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['gst-basics', 'gst-returns'],
   },
 
   // Business Videos
   {
     id: 'startup-tax',
-    title: 'Tax Planning for Startups - Complete Guide',
+    title: 'Tax Planning for Startups: Records, Elections and Deadlines',
     description: 'Essential tax planning strategies for startups. Learn about Section 80-IAC benefits, angel tax exemption, and compliance requirements.',
     duration: '22:00',
     category: 'business',
@@ -250,7 +250,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/startup-tax.jpg',
     difficulty: 'advanced',
     publishedDate: '2024-02-01',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['company-registration', 'gst-basics'],
   },
 
@@ -265,20 +265,20 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: '/images/tutorials/advance-tax.jpg',
     difficulty: 'intermediate',
     publishedDate: '2024-03-10',
-    instructor: 'CA Priya Sharma',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['income-tax-calc', 'tds-basics'],
   },
   {
     id: 'tds-basics',
     title: 'TDS Explained - Rates, Sections & Compliance',
-    description: 'Comprehensive guide to Tax Deducted at Source. Learn about different TDS sections, rates, and filing requirements.',
+    description: 'Understand how the payment type, payee, threshold, and applicable section affect TDS deduction, deposit, reporting, and record keeping.',
     duration: '18:30',
     category: 'compliance',
     tags: ['TDS', 'sections', 'rates', 'compliance'],
     thumbnail: '/images/tutorials/tds.jpg',
     difficulty: 'intermediate',
     publishedDate: '2024-03-05',
-    instructor: 'CA Rajesh Kumar',
+    instructor: 'MyeCA Editorial Team',
     relatedVideos: ['advance-tax', 'salaried-itr'],
   },
 ];

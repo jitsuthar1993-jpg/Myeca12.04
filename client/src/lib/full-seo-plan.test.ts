@@ -78,6 +78,16 @@ describe("full SEO plan contracts", () => {
     expect(body).toContain(faqSchema!.mainEntity![0].name);
   });
 
+  it("keeps representative non-blog fallbacks route-specific instead of padding them with shared copy", () => {
+    for (const route of ["/", "/about", "/calculators/car-loan", "/compare", "/contact", "/gst-filing"]) {
+      const meta = routeMeta(route);
+      const body = renderStaticRouteBody(meta.body!);
+      expect(meta.body?.sections?.length, route).toBeGreaterThanOrEqual(2);
+      expect(body, route).toContain(meta.body!.sections![0].heading);
+      expect(body, route).not.toContain("decision and verification record");
+    }
+  });
+
   it("uses absolute blog cover URLs and only emits verified reviewer credentials", () => {
     const unverified = blogMeta(blogPost({ reviewedBy: "CA Reviewer" }));
     const unverifiedArticle = unverified.jsonLd.find((block) => block["@type"] === "Article");

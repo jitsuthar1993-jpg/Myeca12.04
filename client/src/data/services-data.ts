@@ -34,7 +34,7 @@ export const servicesData: ServiceCategory[] = [
         price: "₹999 excluding GST",
         originalPrice: "₹1,499 excluding GST",
         duration: "After document review",
-        description: "Expert CA-assisted ITR filing for salary and other income sources",
+        description: "ITR filing support for salary and other income sources, with document reconciliation before submission",
         category: "tax-services",
         popular: true,
         features: [
@@ -563,7 +563,7 @@ export const testimonialsByCategory = {
 export const groupedServices = {
   "income-tax": {
     title: "Income Tax Services",
-    description: "Expert assistance for individual and business tax filing with eligible deduction review",
+    description: "Document-based filing support for individuals and businesses, including an eligible-deduction review",
     services: getServicesByCategory("tax-services")
   },
   "labour-law": {
@@ -573,7 +573,7 @@ export const groupedServices = {
   },
   "company-services": {
     title: "Company Services",
-    description: "End-to-end business solutions from company registration to accounting and GST compliance",
+    description: "Company registration, accounting setup, and GST compliance workflows with defined records and next steps",
     services: [
       ...getServicesByCategory("company-services"),
       ...getServicesByCategory("gst-services"), 

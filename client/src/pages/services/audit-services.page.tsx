@@ -51,7 +51,7 @@ const AuditServicesPage = () => {
     specialized: [
       {
         title: "Due Diligence Audit",
-        description: "Comprehensive review for investors and acquirers",
+        description: "Financial, tax, contract, and compliance review for investors and acquirers",
         includes: ["Financial due diligence", "Legal compliance check", "Tax position review", "Risk assessment"],
         ideal: "Fund raising, M&A, partnerships"
       },
@@ -144,7 +144,7 @@ const AuditServicesPage = () => {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Build investor confidence and ensure compliance with comprehensive audits.
+                Review financial records, controls, tax positions, and statutory filings before relying on the reported position.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button 
@@ -199,7 +199,7 @@ const AuditServicesPage = () => {
         <section className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Comprehensive Audit Solutions
+              Audit Scope by Business Need
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               From statutory compliance to investor due diligence, we've got you covered

@@ -165,9 +165,9 @@ describe("SEO asset static root fallback", () => {
 
   it("adds process-based trust and E-E-A-T crawlable modules", () => {
     const meta = routeMeta("/trust");
-    const bodyText = JSON.stringify(meta.body);
+    const bodyText = JSON.stringify(meta.body).toLowerCase();
 
-    expect(bodyText).toContain("CA review workflow");
+    expect(bodyText).toContain("professional review workflow");
     expect(bodyText).toContain("editorial policy");
     expect(bodyText).toContain("data handling");
     expect(bodyText).toContain("refund/payment scope");

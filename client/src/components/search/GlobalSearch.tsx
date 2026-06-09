@@ -44,7 +44,7 @@ const searchableContent = [
   // Help & Resources
   { id: 12, title: "How to File ITR", type: "help", url: "/help/user-guide", description: "Step-by-step guide to file income tax return", keywords: ["how to", "file", "itr", "guide"] },
   { id: 13, title: "Tax Saving Tips", type: "help", url: "/help/knowledge-base", description: "Practical tips to review eligible deductions", keywords: ["tax", "saving", "tips", "deduction"] },
-  { id: 14, title: "GST Compliance Guide", type: "help", url: "/help/knowledge-base", description: "Complete guide for GST compliance", keywords: ["gst", "compliance", "guide", "business"] },
+  { id: 14, title: "GST Compliance Guide", type: "help", url: "/help/knowledge-base", description: "GST registration, return, and record-keeping guidance", keywords: ["gst", "compliance", "guide", "business"] },
   { id: 15, title: "Document Checklist", type: "help", url: "/help/faq", description: "Required documents for tax filing", keywords: ["documents", "checklist", "required", "filing"] },
   
   // Pages

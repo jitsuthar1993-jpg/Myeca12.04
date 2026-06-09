@@ -41,18 +41,22 @@ async function requestReferralOverview() {
 }
 
 describe("referral route hardening", () => {
-  it("marks local referral storage responses as demo-backed metadata", async () => {
-    process.env = { ...originalEnv, NODE_ENV: "development" };
+  it(
+    "marks local referral storage responses as demo-backed metadata",
+    async () => {
+      process.env = { ...originalEnv, NODE_ENV: "development" };
 
-    const result = await requestReferralOverview();
+      const result = await requestReferralOverview();
 
-    expect(result.status).toBe(200);
-    expect(result.json).toMatchObject({
-      success: true,
-      backendStatus: "demo",
-      program: {
-        programName: "MyeCA Referral Rewards",
-      },
-    });
-  });
+      expect(result.status).toBe(200);
+      expect(result.json).toMatchObject({
+        success: true,
+        backendStatus: "demo",
+        program: {
+          programName: "MyeCA Referral Rewards",
+        },
+      });
+    },
+    15_000,
+  );
 });

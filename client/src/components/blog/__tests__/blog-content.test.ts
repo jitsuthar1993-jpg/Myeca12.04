@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { estimateReadingTimeMinutes, normalizeBlogContent } from "@shared/blog";
+import { estimateReadingTimeMinutes, normalizeBlogContent, normalizeBlogToc } from "@shared/blog";
 
 describe("blog content utilities", () => {
   it("derives stable heading ids and toc entries from markdown", () => {
@@ -24,6 +24,24 @@ Repeated heading.
     expect(result.html).toContain('id="first-section"');
     expect(result.html).toContain('id="child-section"');
     expect(result.html).toContain('id="first-section-2"');
+    expect(result.html).not.toContain("<h1");
+  });
+
+  it("decodes heading entities for readable toc labels and stable ids", () => {
+    const result = normalizeBlogContent("## F&O P&L review");
+
+    expect(result.toc).toEqual([
+      { id: "f-and-o-p-and-l-review", text: "F&O P&L review", level: 2 },
+    ]);
+    expect(result.html).toContain('id="f-and-o-p-and-l-review"');
+  });
+
+  it("decodes entities in precomputed toc labels", () => {
+    expect(normalizeBlogToc([
+      { id: "f-and-o-review", text: "F&amp;O P&amp;L review", level: 2 },
+    ])).toEqual([
+      { id: "f-and-o-review", text: "F&O P&L review", level: 2 },
+    ]);
   });
 
   it("sanitizes script tags and estimates reading time from html", () => {

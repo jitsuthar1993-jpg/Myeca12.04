@@ -75,7 +75,7 @@ export default function TrustPage() {
     <>
       <MetaSEO
         title={seo?.title || "Trust & Security | MyeCA.in"}
-        description={seo?.description || "Review how MyeCA.in handles tax documents, pricing scope, CA review, privacy, and security expectations before you start filing."}
+        description={seo?.description || "Review how MyeCA.in handles tax documents, pricing scope, professional-review boundaries, privacy, and security expectations before you start filing."}
         keywords={seo?.keywords}
         breadcrumbs={seo?.breadcrumbs}
       />

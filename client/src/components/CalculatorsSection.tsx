@@ -354,7 +354,7 @@ export default function CalculatorsSection({ searchTerm = "", selectedCategory =
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <p className="text-lg text-gray-600 mb-6">
-            Need personalized tax advice? MyeCA tax experts can help review your facts.
+            Need a case-specific answer? Prepare the calculation inputs and source records before requesting professional review.
           </p>
           <Button
             size="lg"

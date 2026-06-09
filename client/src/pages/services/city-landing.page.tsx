@@ -28,7 +28,7 @@ const cityData: Record<string, { name: string; landmark: string; population: str
 const serviceData: Record<string, { title: string; desc: string; icon: any }> = {
   "company-registration": { 
     title: "Company Registration", 
-    desc: "Fast-track Private Limited & LLP incorporation with local CA expertise.",
+    desc: "Private Limited and LLP incorporation support with city-specific stamp-duty and authority checks.",
     icon: Building2 
   },
   "gst-registration": { 
@@ -57,8 +57,8 @@ export default function CityLandingPage() {
     );
   }
 
-  const pageTitle = `${service.title} in ${city.name} | Expert CA Services ${city.name}`;
-  const pageDesc = `Get professional ${service.title} in ${city.name}. Expert assistance for ${city.landmark} businesses, with local context and document-based compliance support.`;
+  const pageTitle = `${service.title} in ${city.name} | Filing and Compliance Support`;
+  const pageDesc = `Prepare ${service.title} in ${city.name} with document checks, local-authority requirements, filing scope, and follow-up steps for ${city.landmark} businesses.`;
 
   return (
     <div className="min-h-screen bg-white">
@@ -101,7 +101,7 @@ export default function CityLandingPage() {
             
             <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl">
               Launch your venture with confidence. Our {city.name}-based CAs provide 
-              end-to-end support for businesses in {city.landmark} and across the NCR.
+              document preparation, filing-scope review, and authority follow-up for businesses in {city.landmark} and across the NCR.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -126,15 +126,15 @@ export default function CityLandingPage() {
                 Why Choose MyeCA for {service.title} in {city.name}?
               </h2>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                Navigating the local regulatory landscape in {city.name} requires more than just paperwork. 
-                Our team understands the specific requirements of the {city.name} ROC and local municipal bodies.
+                Requirements in {city.name} can depend on the business activity, premises, entity type, and responsible local authority.
+                Confirm the applicable ROC or municipal route and the documents it currently accepts before filing.
               </p>
               
               <div className="space-y-4">
                 {[
                   `Local Office visits available in ${city.landmark}`,
                   "Deep understanding of state-specific stamp duty",
-                  "Fast-track processing with local authorities",
+                  "Track processing and queries from local authorities",
                   "Guidance tailored to local authority requirements"
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -183,7 +183,7 @@ export default function CityLandingPage() {
               Serving All Major Neighborhoods in {city.name}
             </h2>
             <p className="text-lg text-slate-600 italic">
-              "CA-reviewed compliance services for businesses across {city.name}."
+              "Professionally assisted compliance services for businesses across {city.name}."
             </p>
           </div>
           
@@ -208,8 +208,7 @@ export default function CityLandingPage() {
                 Ready to Start your Business in {city.name}?
               </h2>
               <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-                Join the league of successful {city.name} entrepreneurs. Get your {service.title} 
-                started with expert assistance today.
+                Start the {service.title} workflow for {city.name} with a city-specific document and authority-requirement check.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 font-black h-14 px-10 rounded-xl transition-all hover:scale-105">

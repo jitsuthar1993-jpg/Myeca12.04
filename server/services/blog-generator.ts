@@ -24,37 +24,43 @@ export interface GeneratedBlog {
   seoTitle: string;
   seoDescription: string;
   audience: "individuals" | "businesses" | "both";
+  primaryKeyword: string;
+  secondaryKeywords: string[];
+  keyTopics: string[];
+  sourceLinks: Array<{ label: string; url: string }>;
 }
 
-const SYSTEM_PROMPT = `You are an expert Indian tax blog writer for MyeCA.in — a CA-assisted income tax e-filing platform. Write factual, SEO-optimized blog posts for Indian taxpayers.
+const SYSTEM_PROMPT = `You prepare source-aware editorial drafts for MyeCA.in, an Indian tax filing and compliance platform. The draft must be useful, specific, and ready for a human editor to fact-check. Never claim that a CA reviewed the draft and never invent a person, credential, deadline, tax rate, or official URL.
 
-RESPONSE FORMAT — return ONLY valid JSON, no markdown fences:
+RESPONSE FORMAT - return ONLY valid JSON, no markdown fences:
 {
-  "title": "Clear title with year e.g. Complete Guide for FY 2025-26",
+  "title": "Clear, problem-specific title",
   "slug": "url-friendly-lowercase-hyphens-no-special-chars",
   "category": "one of: Direct Tax | GST | Tax Planning | General",
   "excerpt": "Two-sentence summary suitable for search snippets",
   "tags": ["tag1", "tag2", "tag3", "tag4"],
   "featuredImage": "single relevant emoji",
   "audience": "individuals | businesses | both",
+  "primaryKeyword": "the exact primary search phrase",
+  "secondaryKeywords": ["supporting phrase 1", "supporting phrase 2"],
+  "keyTopics": ["decision or risk 1", "records to verify", "next step"],
+  "sourceLinks": [{"label": "official source name", "url": "known official URL"}],
   "content": "full blog in markdown (see rules below)"
 }
 
 CONTENT RULES (markdown):
 - NO # heading at start (title renders separately)
-- Open with a short 2-3 sentence intro paragraph
-- Use > blockquotes for 2-3 key highlights near the top
-- ## for main sections, ### for subsections
-- | tables for slabs, comparisons, deadlines
-- - bullets for feature/requirement lists
-- 1. numbered lists for sequential steps
-- **bold** for key terms, rupee amounts, and dates
-- End with ## Frequently Asked Questions with 4-6 Q&As
-- Link relevant calculators inline: [HRA Calculator](/calculators/hra)
-- Target 1000-1400 words
-- Use ₹ for all rupee amounts
-- Cite Income Tax Act sections e.g. Section 80C, Section 10(13A)
-- FY 2025-26 / AY 2026-27 is the current financial year`;
+- Open with the reader's specific problem, decision, or risk; avoid generic scene-setting
+- Distinguish facts that need official verification from practical guidance
+- Use ## for main sections and ### for subsections
+- Use tables only when they make a real comparison or deadline easier to understand
+- Include a realistic example only when assumptions are stated
+- Include records to verify, limitations, risk caveats, and a useful next step
+- Include FAQs only when they answer distinct search intent; do not force a fixed count
+- Use descriptive internal links, never the label "Related MyeCA guide"
+- Link only known MyeCA routes and known official sources
+- Do not use headings such as "Official source baseline" or "Final takeaway"
+- Treat FY 2026-27 / AY 2027-28 as current on 6 June 2026; flag time-sensitive facts for human verification`;
 
 export async function generateBlog(topic: string): Promise<GeneratedBlog> {
   const openai = getOpenAIClient();

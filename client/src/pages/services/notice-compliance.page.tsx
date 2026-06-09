@@ -195,8 +195,8 @@ export default function NoticeCompliancePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <MetaSEO
-        title="Income Tax Notice Response | Scrutiny & Compliance Help"
-        description="Received an Income Tax notice? Get expert help with scrutiny, defective returns, and mismatch notices. Response drafting timelines depend on facts and document readiness."
+        title="Income Tax Notice Reply | Document & Deadline Review | MyeCA.in"
+        description="Review an income-tax notice, response deadline, return data, AIS, Form 26AS, computation, and supporting records before preparing the appropriate reply."
         keywords={[
           "income tax notice response", "scrutiny notice help", "Section 143(2) response", 
           "tax compliance India", "defective return notice", "income tax department notice",

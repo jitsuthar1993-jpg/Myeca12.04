@@ -20,8 +20,8 @@ const caProcess = [
   },
   {
     num: "02",
-    title: "CA reviews your return",
-    desc: "An expert checks your form against source documents, verifies deductions, and flags issues based on document readiness.",
+    title: "Eligible cases enter CA review",
+    desc: "A credential-checked professional reviews the agreed scope against source documents and flags issues that need clarification.",
   },
   {
     num: "03",
@@ -51,7 +51,7 @@ export default function ExpertTaxReviewPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/itr/start?source=expert_review_feature_hero">
               <Button size="lg" className="gap-2">
-                Get CA-Reviewed Filing <ArrowRight className="w-5 h-5" />
+                Get Assisted Filing <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
             <Link href="/pricing">
@@ -157,11 +157,11 @@ export default function ExpertTaxReviewPage() {
       <section className="py-16 bg-[#315efb] text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
-          <h2 className="text-3xl font-extrabold mb-4">File with a CA reviewing your return.</h2>
-          <p className="text-blue-100 mb-8">ITR-1 starts at ₹499. CA review is included in every plan — not an add-on.</p>
+          <h2 className="text-3xl font-extrabold mb-4">Choose the filing scope that fits your return.</h2>
+          <p className="text-blue-100 mb-8">ITR-1 starts at ₹499 excluding GST. CA-assisted review is included only where the selected plan's written scope says so.</p>
           <Link href="/itr/start?source=expert_review_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
-              Start CA-Reviewed Filing <ArrowRight className="w-5 h-5" />
+              Start Assisted Filing <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
         </div>

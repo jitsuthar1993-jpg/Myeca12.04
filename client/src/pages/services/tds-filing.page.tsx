@@ -272,8 +272,8 @@ export default function TdsFilingPage() {
 
   const complianceFeatures = [
     {
-      title: "Expert CA Assistance",
-      description: "Assigned tax professionals support your TDS compliance workflow",
+      title: "Document and Filing Review",
+      description: "Assigned tax professionals review deductor records, return inputs, and open filing questions",
       icon: Users
     },
     {
@@ -320,7 +320,7 @@ export default function TdsFilingPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Complete compliance solution with quarterly return filing, certificate generation, and expert CA assistance.
+                Prepare quarterly TDS returns, reconcile challans and deductee records, and generate certificates from the filed data.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button
@@ -957,7 +957,7 @@ export default function TdsFilingPage() {
               Why Choose Our TDS Filing Services?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive TDS compliance support with review for deductee type, section, and threshold assumptions
+              TDS return preparation with checks for deductee type, section, threshold, challan, and PAN assumptions
             </p>
           </div>
 
@@ -993,7 +993,7 @@ export default function TdsFilingPage() {
                 Get Started with TDS Filing
               </CardTitle>
               <CardDescription>
-                Share your requirements and get expert assistance based on document readiness and filing complexity
+                Share the payment records, deductee details, and filing period so the required return and correction scope can be reviewed
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -1103,7 +1103,7 @@ export default function TdsFilingPage() {
                 <span className="text-lg text-gray-600">per quarter</span>
                 <Badge className="bg-green-100 text-green-800">Starting Price</Badge>
               </div>
-              <p className="text-gray-600">Comprehensive TDS filing with expert CA support</p>
+              <p className="text-gray-600">Quarterly TDS return preparation with documented review scope</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
@@ -1117,7 +1117,7 @@ export default function TdsFilingPage() {
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                Expert CA assistance
+                Document and filing review
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
@@ -1136,12 +1136,12 @@ export default function TdsFilingPage() {
               </Button>
               <Button size="lg" variant="outline" className="border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white px-8">
                 <Phone className="w-5 h-5 mr-2" />
-                Consult Expert CA
+                Discuss the Filing Scope
               </Button>
             </div>
 
             <p className="text-sm text-gray-600 mt-4">
-              Review-led filing support - TRACES workflow guidance - Expert CA team
+              Deductee reconciliation - TRACES workflow guidance - Query-response support
             </p>
           </Card>
         </m.div>

@@ -163,7 +163,7 @@ export default function DocumentScannerPage() {
         <div className="max-w-2xl mx-auto px-4">
           <ScanLine className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Stop entering numbers manually.</h2>
-          <p className="text-blue-100 mb-8">Upload your documents and let the scanner do the work. A CA reviews before filing.</p>
+          <p className="text-blue-100 mb-8">Upload supported documents, review the extracted values, and choose CA assistance where the selected plan includes it.</p>
           <Link href="/itr/start?source=document_scanner_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start with Document Upload <ArrowRight className="w-5 h-5" />

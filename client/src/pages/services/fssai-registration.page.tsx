@@ -47,33 +47,33 @@ export default function FSSAIRegistrationPage() {
   const licenseTypes = [
     {
       type: "Basic Registration",
-      turnover: "Less than ₹12 lakh",
+      turnover: "Petty food business; confirm FoSCoS eligibility",
       form: "Form A",
       authority: "Local/State Authority",
-      processingTime: "7 days",
-      fees: "₹100",
+      processingTime: "Authority and application dependent",
+      fees: "Confirm on FoSCoS",
       color: "green",
       icon: Building2,
       suitable: ["Small restaurants", "Home-based food businesses", "Street food vendors", "Catering services"]
     },
     {
       type: "State License",
-      turnover: "₹12 lakh - ₹20 crore",
+      turnover: "State-licence criteria depend on the kind of business",
       form: "Form B",
       authority: "State Government",
-      processingTime: "30 days",
-      fees: "₹2,000-5,000",
+      processingTime: "Authority and application dependent",
+      fees: "Confirm on FoSCoS",
       color: "blue",
       icon: Factory,
       suitable: ["Manufacturing units", "Large restaurants", "Food distributors", "Multi-city operations"]
     },
     {
       type: "Central License",
-      turnover: "Above ₹20 crore",
+      turnover: "Central-licence criteria depend on activity and scale",
       form: "Form B",
       authority: "Central Government",
-      processingTime: "45-90 days",
-      fees: "Varies",
+      processingTime: "Authority and application dependent",
+      fees: "Confirm on FoSCoS",
       color: "purple",
       icon: TrendingUp,
       suitable: ["Multi-state businesses", "Importers/Exporters", "Large manufacturing", "E-commerce food"]
@@ -117,43 +117,43 @@ export default function FSSAIRegistrationPage() {
     {
       step: 1,
       title: "Determine License Type",
-      description: "Choose Basic/State/Central based on turnover and business type",
-      duration: "15 minutes",
+      description: "Check the FoSCoS eligibility table using the kind of business, capacity, premises, turnover, and special category rules",
+      duration: "Classification check",
       icon: Calculator
     },
     {
       step: 2,
       title: "Gather Documents",
       description: "Prepare all required documents based on license category",
-      duration: "2-5 days",
+      duration: "Depends on records",
       icon: FileText
     },
     {
       step: 3,
       title: "Online Application",
       description: "Fill application on FoSCoS portal (foscos.fssai.gov.in)",
-      duration: "1-2 hours",
+      duration: "Portal submission",
       icon: Globe
     },
     {
       step: 4,
       title: "Upload Documents",
       description: "Submit all documents in specified format and size",
-      duration: "30 minutes",
+      duration: "Document check",
       icon: Upload
     },
     {
       step: 5,
       title: "Pay Fees",
       description: "Pay applicable fees through online payment gateway",
-      duration: "10 minutes",
+      duration: "Portal fee",
       icon: CreditCard
     },
     {
       step: 6,
       title: "Track & Receive",
       description: "Track application status and receive license certificate",
-      duration: "7-90 days",
+      duration: "Authority dependent",
       icon: Award
     }
   ];
@@ -209,7 +209,7 @@ export default function FSSAIRegistrationPage() {
     <div className="min-h-screen bg-gradient-to-br from-white to-red-50">
       <MetaSEO
         title="FSSAI Registration Online | Food License for Restaurants & Home Kitchens"
-        description="Get your FSSAI food license online with MyeCA.in. Expert assistance for Basic registration, State, and Central license. Mandatory for all food businesses in India."
+        description="Classify and prepare an FSSAI registration, State licence, or Central licence application using the current FoSCoS kind-of-business criteria."
         keywords={[
           "FSSAI registration online", "food license India", "FSSAI Basic registration", 
           "State food license", "Central food license", "FoSCoS portal filing",
@@ -234,7 +234,7 @@ export default function FSSAIRegistrationPage() {
           },
           {
             question: "What is the difference between FSSAI registration and license?",
-            answer: "FSSAI Registration (Basic) is for small businesses with turnover below ₹12 lakh. FSSAI License (State or Central) is for larger businesses with higher turnover or multi-state operations."
+            answer: "Basic registration is intended for eligible petty food businesses. State or Central licensing depends on the kind of business, production or handling capacity, premises, turnover, and special category rules. Use the current FoSCoS eligibility table before selecting a category."
           },
           {
             question: "What is FoSCoS?",
@@ -256,7 +256,7 @@ export default function FSSAIRegistrationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Mandatory food license with expert assistance for Basic, State, and Central categories.
+                Determine the applicable FoSCoS category, prepare the required records, and track application queries.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 font-semibold">
@@ -315,7 +315,7 @@ export default function FSSAIRegistrationPage() {
               Choose Your FSSAI License Type
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Select the appropriate license based on your business turnover and operations
+              Classify the application using the current FoSCoS kind-of-business criteria, not turnover alone.
             </p>
           </div>
 
@@ -441,7 +441,7 @@ export default function FSSAIRegistrationPage() {
                     Basic Registration Documents (Form A)
                   </CardTitle>
                   <CardDescription>
-                    For small food businesses with turnover less than ₹12 lakh
+                    Start with Form A only when the business meets the current petty-food-business eligibility criteria.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -465,7 +465,7 @@ export default function FSSAIRegistrationPage() {
                     State License Documents (Form B)
                   </CardTitle>
                   <CardDescription>
-                    For medium businesses with turnover ₹12 lakh - ₹20 crore
+                    Document requirements depend on the selected kind of business, activity, capacity, and premises.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -489,7 +489,7 @@ export default function FSSAIRegistrationPage() {
                     Central License Documents (Form B)
                   </CardTitle>
                   <CardDescription>
-                    For large businesses with turnover above ₹20 crore
+                    Central licensing can be triggered by specific activities or scale criteria; confirm the current FoSCoS classification.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -518,10 +518,10 @@ export default function FSSAIRegistrationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-purple-900">
                 <Star className="w-6 h-6" />
-                Special Categories Requiring Central License
+                Categories That May Trigger Central Licensing
               </CardTitle>
               <CardDescription>
-                These business types must obtain Central License regardless of turnover
+                Use this as a screening list only. The current FoSCoS eligibility table determines the licence category for the actual activity and premises.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -589,7 +589,7 @@ export default function FSSAIRegistrationPage() {
                 Ready to Get Your FSSAI License?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Our FSSAI experts handle documentation, application filing, and compliance guidance based on your business details.
+                Get help classifying the kind of business, preparing the applicable document set, and responding to portal or authority queries.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -606,7 +606,7 @@ export default function FSSAIRegistrationPage() {
               <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Expert Documentation Support</span>
+                  <span>Category-specific document review</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -620,12 +620,12 @@ export default function FSSAIRegistrationPage() {
             </CardContent>
           </Card>
         </m.div>
-        {/* SEO Depth Section: Expert Guide on FSSAI */}
+        {/* Food-safety compliance context */}
         <div className="mt-24 space-y-16 border-t pt-16">
           <div className="max-w-4xl mx-auto text-left">
-            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Expert Guide: Navigating Food Safety Compliance in 2025</h2>
+            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">What the FSSAI Application Must Establish</h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-8">
-              Securing an <span className="text-orange-600 font-bold">FSSAI license</span> is not just a legal hurdle—it is your badge of commitment to public health. With the launch of <span className="font-bold">FoSCoS 2.0</span>, the Ministry of Health has made the process faster, digital-first, and more transparent.
+              An <span className="text-orange-600 font-bold">FSSAI registration or licence</span> application must match the actual food activity, premises, scale, and responsible person. Before filing, compare those facts with the current FoSCoS eligibility table and retain the evidence used to choose the category.
             </p>
 
             <div className="grid md:grid-cols-2 gap-12">

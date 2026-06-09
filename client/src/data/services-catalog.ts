@@ -92,7 +92,7 @@ export const SERVICES: Service[] = [
     id: 'itr-3-filing',
     name: 'ITR-3 Filing',
     shortDescription: 'For business owners and professionals',
-    description: 'Comprehensive ITR-3 filing for individuals with business or professional income, including presumptive taxation.',
+    description: 'Prepare and file ITR-3 for eligible individuals with business or professional income, including a review of presumptive-taxation applicability.',
     category: 'individual',
     subCategory: 'ITR Filing',
     pricing: { type: 'starting', amount: 2999 },
@@ -153,8 +153,8 @@ export const SERVICES: Service[] = [
   {
     id: 'pvt-ltd-registration',
     name: 'Private Limited Company Registration',
-    shortDescription: 'Complete Pvt Ltd company incorporation',
-    description: 'End-to-end private limited company registration including name approval, DSC, DIN, MOA/AOA drafting, and incorporation certificate.',
+    shortDescription: 'Private Limited Company incorporation workflow',
+    description: 'Private Limited Company registration covering name application, DSC and DIN steps, MOA/AOA drafting, and incorporation filing.',
     category: 'business-registration',
     pricing: { type: 'starting', amount: 7999, originalAmount: 14999 },
     features: [
@@ -255,7 +255,7 @@ export const SERVICES: Service[] = [
     id: 'gst-annual-return',
     name: 'GST Annual Return (GSTR-9)',
     shortDescription: 'Annual GST reconciliation and filing',
-    description: 'Comprehensive annual GST return filing with reconciliation of all monthly returns and audit (if applicable).',
+    description: 'Prepare the annual GST return using a reconciliation of periodic returns, books, and the applicable annual filing requirements.',
     category: 'gst-services',
     pricing: { type: 'starting', amount: 4999 },
     features: [
@@ -396,7 +396,7 @@ export const SERVICES: Service[] = [
     id: 'virtual-cfo-growth',
     name: 'Virtual CFO - Growth',
     shortDescription: 'Complete financial management for growing businesses',
-    description: 'Comprehensive virtual CFO service including bookkeeping, MIS reports, cash flow management, and strategic financial planning.',
+    description: 'Monthly bookkeeping, MIS reporting, cash-flow review, and financial-planning support for growing businesses.',
     category: 'accounting',
     pricing: { type: 'monthly', amount: 19999 },
     features: [

@@ -232,8 +232,8 @@ export default function CompanyRegistrationPage() {
       icon: Building2
     },
     {
-      title: "Easy Fund Raising",
-      description: "Attract investors, VCs, and access various funding opportunities",
+      title: "Investor-Ready Structure",
+      description: "Maintain the ownership, governance, and company records investors commonly review",
       icon: TrendingUp
     },
     {
@@ -296,7 +296,7 @@ export default function CompanyRegistrationPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Incorporate as Pvt Ltd, OPC, Public Ltd or LLP with expert guidance. Timeline depends on document readiness and MCA approvals.
+                Prepare incorporation records for a Pvt Ltd company, OPC, Public Ltd company, or LLP. Timeline depends on document readiness and MCA approvals.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button 
@@ -818,7 +818,7 @@ export default function CompanyRegistrationPage() {
             </div>
 
             <p className="text-sm text-gray-600 mt-4">
-              MCA filing workflow support - Timeline depends on approvals - Expert guidance
+              MCA filing workflow support - Timeline depends on document readiness and MCA approvals
             </p>
           </Card>
         </m.div>
@@ -837,7 +837,7 @@ export default function CompanyRegistrationPage() {
                   <h3 className="text-xl font-bold text-slate-900">Startup India & DPIIT Benefits</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
                     Once registered as a Private Limited Company, you can apply for <span className="font-bold">DPIIT Recognition</span>. 
-                    This may unlock eligible income tax exemption benefits and access to government funding and procurement tenders. Only Private Limited Companies and LLPs are eligible for these schemes.
+                    Eligible entities may later apply for specific tax incentives, funding programmes, or procurement opportunities. Incorporation alone does not establish scheme eligibility; verify each programme's current conditions separately.
                   </p>
                </div>
                <div className="space-y-4">

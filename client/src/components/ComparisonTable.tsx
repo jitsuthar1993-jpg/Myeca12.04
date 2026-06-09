@@ -81,7 +81,7 @@ export function ComparisonTable() {
           <thead>
             <tr className="bg-slate-50">
               <th className="border-b border-slate-100 p-5 text-left text-xs font-black uppercase tracking-[0.16em] text-slate-500">Filing need</th>
-              <th className="border-b border-slate-100 bg-blue-50/70 p-5 text-left text-xs font-black uppercase tracking-[0.16em] text-blue-700">Where MyeCA helps</th>
+              <th className="border-b border-slate-100 bg-blue-50/70 p-5 text-left text-xs font-black uppercase tracking-[0.16em] text-blue-700">MyeCA support</th>
               <th className="border-b border-slate-100 p-5 text-left text-xs font-black uppercase tracking-[0.16em] text-slate-500">Prepare first</th>
               <th className="border-b border-slate-100 p-5 text-left text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best next step</th>
             </tr>

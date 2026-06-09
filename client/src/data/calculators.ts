@@ -55,7 +55,7 @@ export const investmentCalculators: CalculatorFeature[] = [
   {
     id: "fd",
     title: "FD Calculator",
-    description: "Calculate fixed deposit returns with quarterly compounding at current rates",
+    description: "Estimate fixed-deposit maturity value using the deposit, tenure, compounding frequency, and interest rate you enter",
     icon: "PiggyBank",
     path: "/calculators/fd",
     color: "blue"

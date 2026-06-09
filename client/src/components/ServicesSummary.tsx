@@ -31,7 +31,7 @@ export default function ServicesSummary() {
           Complete Service Portfolio
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-          Comprehensive business and tax solutions across {serviceCounts.total} specialized services
+          Compare scope, records, and next steps across {serviceCounts.total} business and tax services
         </p>
         
         <Link href="/all-services">

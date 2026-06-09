@@ -350,7 +350,7 @@ export default function BlogPage() {
     <div className="min-h-screen bg-slate-50 pb-16">
       <MetaSEO
         title="AY 2026-27 ITR Filing Guides | MyeCA.in Knowledge Hub"
-        description="Read CA-reviewed AY 2026-27 ITR filing guides on due dates, ITR forms, Form 16, AIS, refunds, tax regime, capital gains, NRI filing, and notices."
+        description="Read evidence-led AY 2026-27 ITR filing guides on due dates, ITR forms, Form 16, AIS, refunds, tax regime, capital gains, NRI filing, and notices."
         keywords={[
           'AY 2026-27 ITR filing',
           'ITR filing guide',
@@ -378,7 +378,7 @@ export default function BlogPage() {
                 </h1>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                Fresh CA-reviewed explainers for ITR filing, tax planning, refunds, notices, GST,
+                Fresh evidence-led explainers for ITR filing, tax planning, refunds, notices, GST,
                 capital gains, and business compliance, with filing paths when you need expert help.
               </p>
               <div className="mt-5 flex items-center gap-2 text-sm font-black">
@@ -418,7 +418,7 @@ export default function BlogPage() {
                 {[
                   { label: 'Guides', value: totalPosts, color: 'blue' },
                   { label: 'Topics', value: categories.length, color: 'indigo' },
-                  { label: 'Reviewed', value: 'CA', color: 'emerald' },
+                  { label: 'Reviewed', value: 'Editorial', color: 'emerald' },
                 ].map((stat) => (
                   <div
                     key={stat.label}
@@ -770,8 +770,8 @@ export default function BlogPage() {
                     Get free advice from a tax expert.
                   </h2>
                   <p className="mt-3 text-sm leading-6 text-slate-600">
-                    Ask MyeCA reviewers to review your tax position, deductions, GST compliance, or
-                    business filing path.
+                    Bring your tax position, deductions, GST compliance, or business filing question
+                    and confirm the records and review scope before proceeding.
                   </p>
                   <Link href="/expert-consultation">
                     <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-black text-white transition hover:bg-blue-700">

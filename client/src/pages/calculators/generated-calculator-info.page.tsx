@@ -46,13 +46,14 @@ export default function GeneratedCalculatorInfoPage() {
       <MetaSEO
         title={`${page.title} | MyeCA.in`}
         description={page.description}
+        canonicalUrl={`/calculators/${page.slug}`}
         keywords={[page.title, "tax calculator guide", "MyeCA calculators"]}
         type="calculator"
         calculatorData={{
           type: page.title,
           features: page.highlights,
           accuracy: "Planning guide",
-          updates: "Maintained by MyeCA reviewers",
+          updates: "Maintained by the MyeCA Editorial Team",
         }}
         breadcrumbs={[
           { name: "Home", url: "/" },

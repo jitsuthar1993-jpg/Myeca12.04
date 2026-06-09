@@ -12,6 +12,7 @@ import {
   toIsoDate,
 } from "../../shared/blog.js";
 import { defaultBlogPosts, type DefaultBlogPost } from "./default-blog-content.js";
+import { shouldIndexPublicContent } from "../../shared/public-content-quality.js";
 
 export type StaticBlogContentType = "how-to" | "explainer" | "news" | "comparison";
 
@@ -54,6 +55,12 @@ type StaticBlogFrontmatter = {
   createdAt?: string;
   tags: string[];
   audience?: BlogAudience;
+  targetAudience?: string | null;
+  userIntent?: "informational" | "transactional" | "navigational" | "commercial";
+  keyTopics?: string[];
+  qualityStatus?: "approved" | "needs_revision" | "hold";
+  editorialApprovedBy?: string | null;
+  editorialApprovedAt?: string | null;
   reviewedBy?: string | null;
   reviewedAt?: string | null;
   reviewerName?: string | null;
@@ -133,7 +140,7 @@ function parseFrontmatter(rawFrontmatter: string, fileName: string): StaticBlogF
     keyHighlights: normalizeStringArray(parsed.keyHighlights as Array<string | null | undefined> | null | undefined),
     relatedPostIds: normalizeStringArray(parsed.relatedPostIds as Array<string | null | undefined> | null | undefined),
     tags: normalizeStringArray(parsed.tags as Array<string | null | undefined> | null | undefined),
-    sourceLinks: normalizeSourceLinks(parsed.sourceLinks as Array<{ label?: string; url?: string } | null | undefined> | null | undefined),
+    sourceLinks: normalizeSourceLinks(parsed.sourceLinks as Array<{ label?: string; url?: string; checkedAt?: string | null } | null | undefined> | null | undefined),
   };
 }
 
@@ -150,13 +157,13 @@ function frontmatterToPost(meta: StaticBlogFrontmatter, body: string): StaticMdx
     slug: meta.slug,
     excerpt: normalizeCurrencyText(readString(meta.excerpt, meta.description)),
     content: normalizeCurrencyText(body.trim()),
-    status: "published",
+    status: shouldIndexPublicContent(meta.qualityStatus ?? "needs_revision") ? "published" : "draft",
     categoryId: readString(meta.categoryId, "itr-filing"),
     coverImage: meta.coverImage ?? null,
     authorId: readString(meta.authorId, "mye-ca-editorial"),
     authorName: readString(meta.authorName, "MyeCA Editorial Team"),
-    authorRole: readString(meta.authorRole, "CA-led tax editorial team"),
-    authorBio: readString(meta.authorBio, "Reviewed Indian tax and compliance guidance from the MyeCA editorial desk."),
+    authorRole: readString(meta.authorRole, "Tax and compliance editorial team"),
+    authorBio: readString(meta.authorBio, "Evidence-led Indian tax and compliance guidance from the MyeCA editorial team."),
     seoTitle: normalizeCurrencyText(readString(meta.seoTitle, `${meta.title} | MyeCA.in Blog`)),
     seoDescription: normalizeCurrencyText(readString(meta.seoDescription, meta.description)),
     keyHighlights: keyHighlights.map(normalizeCurrencyText),
@@ -176,6 +183,14 @@ function frontmatterToPost(meta: StaticBlogFrontmatter, body: string): StaticMdx
     updatedAt,
     tags: tags.map(normalizeCurrencyText),
     audience: meta.audience === "individuals" || meta.audience === "businesses" || meta.audience === "both" ? meta.audience : "both",
+    targetAudience: readNullableString(meta.targetAudience),
+    primaryKeyword: meta.primaryKeyword,
+    secondaryKeywords: meta.secondaryKeywords ?? [],
+    userIntent: meta.userIntent ?? (meta.contentType === "comparison" ? "commercial" : "informational"),
+    keyTopics: meta.keyTopics?.length ? meta.keyTopics : keyHighlights,
+    qualityStatus: meta.qualityStatus ?? "needs_revision",
+    editorialApprovedBy: readNullableString(meta.editorialApprovedBy),
+    editorialApprovedAt: toIsoDate(meta.editorialApprovedAt),
     reviewedBy: readNullableString(meta.reviewedBy),
     reviewedAt: toIsoDate(meta.reviewedAt),
     reviewerName: readNullableString(meta.reviewerName),
@@ -184,27 +199,25 @@ function frontmatterToPost(meta: StaticBlogFrontmatter, body: string): StaticMdx
     reviewerCredentialId: readNullableString(meta.reviewerCredentialId),
     reviewerCredentialAuthority: readNullableString(meta.reviewerCredentialAuthority),
     sourceLinks: meta.sourceLinks
-      .map((source) => ({ label: source.label ?? "", url: source.url ?? "" }))
+      .map((source) => ({ label: source.label ?? "", url: source.url ?? "", checkedAt: source.checkedAt ?? null }))
       .filter((source) => source.label && source.url),
     serviceSlug: readNullableString(meta.serviceSlug),
     calculatorSlug: readNullableString(meta.calculatorSlug),
     canonicalUrl: readNullableString(meta.canonicalUrl),
-    primaryKeyword: meta.primaryKeyword,
-    secondaryKeywords: meta.secondaryKeywords ?? [],
     contentType: meta.contentType,
     howToSteps: normalizeStringArray(meta.steps ?? []),
     totalTime: readNullableString(meta.totalTime),
   };
 }
 
-export function loadStaticMdxBlogPosts(): StaticMdxBlogPost[] {
-  if (!fs.existsSync(contentBlogDir)) return [];
+export function loadStaticMdxBlogPosts(sourceDir = contentBlogDir): StaticMdxBlogPost[] {
+  if (!fs.existsSync(sourceDir)) return [];
 
-  return fs.readdirSync(contentBlogDir)
+  return fs.readdirSync(sourceDir)
     .filter((fileName) => fileName.endsWith(".mdx"))
     .sort((left, right) => left.localeCompare(right))
     .map((fileName) => {
-      const filePath = path.join(contentBlogDir, fileName);
+      const filePath = path.join(sourceDir, fileName);
       const raw = fs.readFileSync(filePath, "utf8");
       const match = raw.match(FRONTMATTER_RE);
       if (!match) {

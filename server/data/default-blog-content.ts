@@ -14,7 +14,7 @@ export type DefaultBlogPost = {
   slug: string;
   excerpt: string;
   content: string;
-  status: "published";
+  status: "draft" | "published";
   categoryId: string;
   coverImage: string | null;
   authorId: string;
@@ -35,6 +35,14 @@ export type DefaultBlogPost = {
   updatedAt: string;
   tags: string[];
   audience?: "individuals" | "businesses" | "both";
+  targetAudience?: string | null;
+  primaryKeyword?: string | null;
+  secondaryKeywords?: string[];
+  userIntent?: "informational" | "transactional" | "navigational" | "commercial";
+  keyTopics?: string[];
+  qualityStatus?: "approved" | "needs_revision" | "hold";
+  editorialApprovedBy?: string | null;
+  editorialApprovedAt?: string | null;
   reviewedBy?: string | null;
   reviewedAt?: string | null;
   reviewerName?: string | null;
@@ -42,7 +50,7 @@ export type DefaultBlogPost = {
   reviewerCredentialName?: string | null;
   reviewerCredentialId?: string | null;
   reviewerCredentialAuthority?: string | null;
-  sourceLinks?: Array<{ label: string; url: string }>;
+  sourceLinks?: Array<{ label: string; url: string; checkedAt?: string | null }>;
   serviceSlug?: string | null;
   calculatorSlug?: string | null;
   canonicalUrl?: string | null;
@@ -131,8 +139,8 @@ function markdownTable(headers: string[], rows: string[][]) {
 }
 
 function standaloneSourceLinks(categoryId: string) {
-  if (categoryId === "business-compliance") return gstSourceLinks;
-  return incomeTaxSourceLinks;
+  const links = categoryId === "business-compliance" ? gstSourceLinks : incomeTaxSourceLinks;
+  return links.map((source) => ({ ...source, checkedAt: publishedAt.slice(0, 10) }));
 }
 
 function keyHighlightsTable(items: string[]) {
@@ -187,108 +195,48 @@ function routeRows(categoryId: string) {
   ];
 }
 
-function standaloneTechnicalNotes(post: DefaultBlogPost) {
+function standaloneRecordChecks(post: DefaultBlogPost) {
   const notes: Record<string, string> = {
     "mye-ca-guides":
-      "For MyeCA guide articles, the CA review should verify that the workflow maps to a real filing file: source documents, AIS/Form 26AS reconciliation, ITR form selection, deduction support, computation, review notes, e-verification, and final acknowledgement. The technical file should also show where the taxpayer moved from guided workflow to assisted review.",
+      "Keep a real filing file behind the workflow: source documents, AIS/Form 26AS reconciliation, ITR form selection, deduction support, computation, decision notes, e-verification proof, and the final acknowledgement. Record when the case moved from a guided workflow to assisted review.",
     "itr-filing":
-      "For ITR filing articles, the CA review should verify assessment year, filing section, ITR form, residential status, income heads, deductions, TDS/TCS credits, self-assessment tax, refund bank validation, e-verification, and whether any return is original, belated, revised, or updated.",
+      "Before submission, verify the assessment year, filing section, ITR form, residential status, income heads, deductions, TDS/TCS credits, self-assessment tax, refund-bank validation, e-verification route, and whether the return is original, belated, revised, or updated.",
     "business-compliance":
-      "For business compliance articles, the CA review should verify GST registration triggers, turnover, place of supply, tax invoices, ITC support, return frequency, payment challans, notices, reconciliations, and whether income-tax reporting aligns with GST and books.",
+      "Before a business-compliance filing, verify GST registration triggers, turnover, place of supply, tax invoices, ITC support, return frequency, payment challans, notices, reconciliations, and whether income-tax reporting aligns with GST records and books.",
     "tax-planning":
-      "For tax planning articles, the CA review should verify the old versus new regime comparison, eligible deductions, HRA support, 80C/80D/NPS evidence, advance tax exposure, capital gains, interest income, AIS entries, and whether planning decisions are supported before March-end.",
+      "Before acting on a tax plan, verify the old versus new regime comparison, eligible deductions, HRA support, 80C/80D/NPS evidence, advance-tax exposure, capital gains, interest income, AIS entries, and whether each planning decision is supported before March-end.",
   };
 
-  return notes[post.categoryId] ?? notes["itr-filing"];
+  return `For ${post.title.toLowerCase()}, ${notes[post.categoryId] ?? notes["itr-filing"]}`;
 }
 
 function expansionForStandalone(post: DefaultBlogPost) {
+  const topic = post.primaryKeyword?.trim() || post.tags[0] || post.slug.replace(/-/g, " ");
   return `
 
-## Key Highlights
+## Decisions behind ${topic}
 
 ${keyHighlightsTable(post.keyHighlights)}
 
-## Why this guide matters
-
-This guide should be read as a practical operating manual, not as a one-time checklist. Tax and compliance work becomes easier when the taxpayer can connect every number in the return, GST filing, notice response, or planning decision to a specific document, statement, calculation, or professional note.
-
-The common thread is evidence. If the evidence is ready, the filing or compliance action becomes predictable. If evidence is scattered, even a technically simple case can create refund delays, notices, ITC gaps, or repeated corrections.
-
-## Documents and records to keep ready
+## Records for ${topic}
 
 ${markdownTable(["Document", "Why it matters"], guideDocumentRows(post.categoryId))}
 
-For individual taxpayers, the core file usually includes Form 16, Form 16A where relevant, AIS, TIS, Form 26AS, bank interest certificates, rent proofs, insurance receipts, home loan certificates, investment proofs, capital gains reports, donation receipts, challans, and the final ITR acknowledgement. For business owners, the file should also include invoices, GST returns, payment challans, purchase records, ITC support, bank statements, payroll records, professional receipts, expense evidence, and any notice communication.
-
-## Step-by-step method
-
-### 1. Identify the exact year or tax period
-
-Confirm the relevant financial year, assessment year, tax year, GST period, return period, or notice period before acting. A correct answer for one period can be wrong for another.
-
-### 2. Build the evidence file
-
-Create a clean folder for the relevant year. Use separate subfolders for income, deductions, taxes paid, investments, business records, notices, and final filing. Prepare a one-page computation note that explains total income, deductions claimed, tax already paid, balance tax or refund, the return or compliance form used, and any special assumptions.
-
-### 3. Reconcile external records
-
-AIS and Form 26AS are not optional background documents for income-tax work; they are department-facing records that often drive processing, refund release, mismatch identification, and notice generation. For GST work, reconcile books, invoices, returns, challans, and GSTR-2B before claiming or defending input tax credit.
-
-### 4. Choose the correct action
+## Choose the correct ${topic} route
 
 ${markdownTable(["Situation", "Recommended route"], routeRows(post.categoryId))}
 
-The options are not interchangeable. A missed item may need a revised return if the window is open, rectification if the issue is an apparent processing mistake, an updated return only if law permits it, or a notice response if the department has already raised a communication.
-
-## Practical checklist
+## ${topic} checks before submission
 
 ${bulletList(post.keyHighlights)}
 
-- Confirm the relevant financial year, assessment year, tax period, or compliance month before acting.
-- Keep source documents for every income, deduction, tax credit, invoice, ITC claim, and adjustment.
-- Match AIS, TIS, Form 26AS, GST records, bank statements, or business ledgers where relevant.
-- Review whether the filing route, form, service, or calculator actually fits the taxpayer's facts.
-- Preserve acknowledgements, challans, computation sheets, and professional review notes.
-- Recheck the final preview before submission or payment.
-- Do not wait for a notice to build the evidence file.
-
-## Common mistakes and risk areas
-
-| Mistake | Why it matters |
-| --- | --- |
-| Acting from memory | Approximate salary, investment, GST, or bank numbers do not support a defensible filing position. |
-| Using only one record | Form 16 may miss bank interest, AIS may contain duplicates, GST returns may not match books, and broker reports may need classification. |
-| Choosing the wrong route | Revised return, rectification, updated return, grievance, GST amendment, and notice response solve different problems. |
-| Weak documentation | Missing rent proof, investment receipts, broker statements, GST invoices, challans, or portal downloads makes later review harder. |
-
-## Example
-
-Assume a salaried taxpayer is preparing an AY 2026-27 return and also has bank interest and mutual fund redemptions. A rushed filing may use Form 16 only. A stronger filing first checks AIS and Form 26AS, adds interest income, classifies capital gains from the fund statement, compares old and new regime if deductions exist, checks refund bank validation, and then saves the computation and acknowledgement after e-verification.
-
-For a small business, the same discipline means matching sales invoices, purchase invoices, GSTR-2B, cash ledger payments, bank receipts, and return acknowledgements before treating GST filing as complete.
-
-## Common questions this guide answers
+## Questions to resolve before acting
 
 ${faqQuestionList(post.faqItems)}
 
-These FAQ answers are intentionally short because the detailed filing decision depends on facts. Use the FAQ as a direction marker, then validate the actual return, notice, GST record, or planning decision with the taxpayer's documents.
+## Preserve the ${topic} decision trail
 
-## When to use MyeCA expert help
-
-Use expert review when the amount is material, the records conflict, a refund is large, a notice has been issued, a return needs correction, GST and income-tax records do not match, or the taxpayer has income from multiple sources. MyeCA support is especially useful where the next action is not obvious: choosing a return form, comparing tax regimes, responding to AIS mismatch, handling a demand, organizing a document vault, reviewing capital gains, or deciding whether business registration or compliance is required.
-
-Expert help should produce a clear action. The output should say what was reviewed, what documents were used, what numbers were accepted, what risks remain, and what the taxpayer should preserve after filing.
-
-## Final operating takeaway
-
-The strongest tax and compliance position is not the one that looks fastest on filing day. It is the one that can be explained later. A taxpayer should be able to answer: why this form, why this income figure, why this deduction, why this tax credit, why this refund or demand, and where is the proof?
-
-## CA Technical Notes
-
-${standaloneTechnicalNotes(post)}
-
-The technical file should end with a concise review note covering the documents checked, the computation method, the filing or compliance route selected, unresolved assumptions, and the next deadline. If the guide is applied to an actual taxpayer, the CA should preserve the calculation sheet, portal downloads, proof index, acknowledgement, and any communication trail. If the case involves a notice, GST mismatch, capital gains, foreign asset, large refund, or return correction, the note should also record the limitation period and the reason the chosen route is better than alternatives.
+${standaloneRecordChecks(post)}
 `;
 }
 
@@ -325,7 +273,7 @@ const standaloneBlogPosts: DefaultBlogPost[] = [
 
 Filing an income tax return is not just about entering numbers into a form. A good filing flow should help you understand your income, validate the tax already deducted, claim eligible deductions, avoid mismatches, and keep a clean record for future notices or refunds.
 
-MyeCA is designed around that end-to-end flow. Instead of treating tax filing as a single upload screen, the platform helps you move from document collection to assisted review and final filing in a structured way.
+MyeCA is designed around those filing stages. Instead of treating tax filing as a single upload screen, the platform helps you organize documents, prepare the return for assisted review, and track the final filing step.
 
 ## Who this guide is for
 
@@ -366,9 +314,9 @@ You should strongly consider assisted review when your return includes capital g
 
 After filing, save the acknowledgement, computation, final ITR copy, tax payment challans, and working notes. These records matter if you receive a notice or need to revise the return.
 
-## Final takeaway
+## Next step
 
-The strongest filing process is calm, documented, and reviewable. MyeCA helps you avoid the last-minute scramble by turning ITR filing into a guided workflow: collect, reconcile, calculate, review, file, and preserve records.
+The strongest filing process is calm, documented, and reviewable. A guided workflow should collect, reconcile, calculate, review, file, and preserve records before deadlines create avoidable pressure.
     `,
     status: "published",
     categoryId: "mye-ca-guides",
@@ -462,7 +410,7 @@ When documents are uploaded in one place, your CA can review faster and ask shar
 
 Upload only to trusted platforms, avoid unsecured document sharing, remove duplicates after confirming the final file, and keep acknowledgement and computation copies after filing.
 
-## Final takeaway
+## Next step
 
 A tax-ready document vault is not a luxury. It is the foundation for accurate filing and confident compliance. Build it once, update it monthly, and tax season becomes much quieter.
     `,
@@ -503,12 +451,12 @@ A tax-ready document vault is not a luxury. It is the foundation for accurate fi
   },
   {
     id: "itr-filing-mistakes-to-avoid",
-    title: "15 ITR Filing Mistakes MyeCA Helps You Avoid",
+    title: "15 ITR Filing Mistakes to Avoid",
     slug: "itr-filing-mistakes-to-avoid",
     excerpt:
       "A detailed checklist of common ITR mistakes, from AIS mismatches and wrong forms to missed interest income, incorrect deductions, and refund delays.",
     content: `
-# 15 ITR Filing Mistakes MyeCA Helps You Avoid
+# 15 ITR Filing Mistakes to Avoid
 
 Income tax filing errors are usually avoidable. They happen because taxpayers rush, rely only on Form 16, ignore AIS, or choose a form without checking their full income profile.
 
@@ -574,7 +522,7 @@ The acknowledgement alone is not enough. Save the final computation, ITR copy, c
 
 Capital gains, business income, foreign assets, and notices are not ideal unreviewed cases. CA review can prevent expensive corrections.
 
-## Final takeaway
+## Next step
 
 The best ITR filing experience is not only fast. It is complete, reconciled, and easy to defend later.
     `,
@@ -665,9 +613,9 @@ Small businesses often claim ITC before vendor reporting, use incorrect HSN or S
 
 ## How MyeCA can help
 
-MyeCA supports businesses by combining document organization, expert assistance, and compliance tracking. The goal is not only to file GST returns, but to create a monthly system where invoices, ITC, payments, and records stay aligned.
+MyeCA supports businesses with document organization, period-specific filing support, and compliance tracking. The goal is not only to file GST returns, but to create a monthly system where invoices, ITC, payments, and records stay aligned.
 
-## Final takeaway
+## Next step
 
 GST compliance is a process problem before it is a tax problem. Build the monthly rhythm early and your filings become faster, cleaner, and less risky.
     `,
@@ -753,7 +701,7 @@ Ask for help if you have a large refund or tax payable, capital gains, foreign a
 
 MyeCA is not only for deadline week. You can use it to organize documents, check calculators, evaluate tax regime choice, and prepare for assisted filing before the rush.
 
-## Final takeaway
+## Next step
 
 Tax planning should feel like a monthly habit, not a March emergency. A little structure across the year can reduce tax leakage and make filing much easier.
     `,

@@ -143,19 +143,19 @@ const StartupServicesPage = () => {
       title: "Strategic Advisory & Mentorship",
       price: "₹18,999 - ₹50,000",
       schemes: ["FFS", "Export Promotion", "Mentor Networks"],
-      benefits: "Holistic business growth & scaling support",
+      benefits: "Growth planning, funding readiness, and operating support",
       icon: Briefcase,
       color: "indigo",
       description: "Strategic business modeling, export promotion guidance, mentor coordination, and equity structuring for sustainable scaling"
     },
     {
-      title: "Comprehensive Compliance Management",
+      title: "Recurring Compliance Management",
       price: "₹9,999 - ₹28,000",
       schemes: ["ROC", "GST", "TDS", "FEMA", "Labor Law Self-Certification"],
       benefits: "Complete regulatory compliance coverage",
       icon: FileText,
       color: "teal",
-      description: "End-to-end compliance for all regulatory requirements including ROC, GST, TDS, FEMA filings and labor law compliance"
+      description: "Coordinate ROC, GST, TDS, FEMA, and labour-law records through a dated compliance calendar"
     }
   ];
 
@@ -182,7 +182,7 @@ const StartupServicesPage = () => {
       duration: "6-12 months",
       guarantee: "Process Ready",
       icon: Award,
-      description: "End-to-end IPO preparation, compliance, and listing advisory"
+      description: "Prepare IPO-readiness records, compliance workstreams, and listing-advisory scope"
     },
     {
       title: "Investor Pitch Deck",
@@ -200,7 +200,7 @@ const StartupServicesPage = () => {
     {
       title: "Expert-Assisted Team",
       description: "Startup-focused CA review for incorporation, tax, and compliance decisions",
-      stat: "CA-led Review",
+      stat: "Document Review",
       benefit: "Practical compliance guidance",
       icon: Users,
       color: "emerald"
@@ -277,7 +277,7 @@ const StartupServicesPage = () => {
               <span className="text-sm font-medium text-gray-700">Government Scheme Specialists</span>
             </m.div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Comprehensive CA Services Leveraging Government Schemes
+              Tax, Compliance, and Government-Scheme Readiness Services
             </h2>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto">
               Navigate funding, compliance, and growth with expert support across Startup India, SISFS, CGSS, PMMY, and other key government initiatives
@@ -357,7 +357,7 @@ const StartupServicesPage = () => {
               Choose Your Startup Growth Plan
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Affordable, scalable packages designed for every stage of your startup journey
+              Packages grouped by incorporation, compliance, funding-readiness, and operating needs
             </p>
           </div>
 
@@ -535,7 +535,7 @@ const StartupServicesPage = () => {
               Why Startups Choose MyeCA
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive startup support with proven expertise and innovative solutions
+              Startup support covering registrations, filings, records, and funding-readiness tasks
             </p>
           </div>
 
@@ -628,7 +628,7 @@ const StartupServicesPage = () => {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                  <span>CA-led Compliance Review</span>
+                  <span>Scoped Compliance Review</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />

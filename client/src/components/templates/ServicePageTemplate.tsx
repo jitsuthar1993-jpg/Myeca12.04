@@ -325,7 +325,7 @@ export function ServicePageTemplate({
                   Ready to Get Started?
                 </h2>
                 <p className="text-lg opacity-90 mb-6">
-                  Our expert team is here to help you every step of the way.
+                  Confirm the records, included work, dependencies, and follow-up scope before proceeding.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <Button size="lg" variant="secondary" className="gap-2">
@@ -356,7 +356,7 @@ export function ServicePageTemplate({
               </div>
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-yellow-500" />
-                <span>Expert Assistance</span>
+                <span>Assisted filing support</span>
               </div>
             </div>
           </div>

@@ -92,7 +92,7 @@ export default function GeneratedServicePage() {
     pricing: { qualifier: "starting", amount: page.priceAmount, gstTreatment: "excluding" },
     icon: Icon,
     included: page.highlights,
-    exclusions: ["Government fees unless stated", "Out-of-scope advisory or filing work", "Representation or hearing attendance unless scoped"],
+    exclusions: [page.excludedWork, "Government or third-party fees unless stated in the confirmed scope"],
     documents: page.documents,
     timeline: page.timeline,
     caTouchpoints: "MyeCA expert confirms scope, documents, and next steps before execution.",
@@ -106,6 +106,7 @@ export default function GeneratedServicePage() {
       <MetaSEO
         title={`${page.title} | MyeCA.in`}
         description={page.description}
+        canonicalUrl={`/services/${page.slug}`}
         keywords={[page.title, page.category, "MyeCA services", "CA assisted services"]}
         type="service"
         serviceData={{
@@ -128,6 +129,7 @@ export default function GeneratedServicePage() {
             <Badge className="mb-5 border-blue-100 bg-blue-50 text-blue-700">{page.subtitle}</Badge>
             <h1 className="type-page-title font-black text-slate-950">{page.title}</h1>
             <p className="type-body mt-6 max-w-3xl text-slate-600">{page.description}</p>
+            <p className="mt-4 max-w-3xl text-sm font-semibold leading-6 text-slate-700">{page.audience}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => setIsCheckoutOpen(true)}>
                 Start service
@@ -180,12 +182,43 @@ export default function GeneratedServicePage() {
         <InfoPanel title="Related Services" items={page.relatedLinks.map((link) => link.label)} links={page.relatedLinks} />
       </section>
 
+      <section className="border-y border-slate-100 bg-slate-50 py-14">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-xs font-black uppercase tracking-widest text-blue-700">Scope before checkout</p>
+            <h2 className="type-section-title mt-3 font-black text-slate-950">What the service resolves, and where it stops</h2>
+            <p className="type-body mt-4 text-slate-600">
+              Confirming these boundaries early prevents the most common document, timing, and expectation gaps.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            <DetailCard title="Included outcome" body={page.includedOutcome} />
+            <DetailCard title="Outside the initial scope" body={page.excludedWork} />
+            <DetailCard title="Likely delay risk" body={page.delayRisk} />
+            <DetailCard title="Escalation trigger" body={page.escalationTrigger} />
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-4 py-14 md:px-6 lg:px-8">
+        <div className="text-center">
+          <p className="text-xs font-black uppercase tracking-widest text-blue-700">Before you start</p>
+          <h2 className="type-section-title mt-3 font-black text-slate-950">{page.title} questions</h2>
+        </div>
+        <div className="mt-8 grid gap-4">
+          {page.faqs.map((faq) => (
+            <article key={faq.question} className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="type-card-title font-black text-slate-950">{faq.question}</h3>
+              <p className="mt-3 leading-7 text-slate-600">{faq.answer}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="border-t border-slate-100 bg-slate-50 py-14">
         <div className="mx-auto max-w-5xl px-4 text-center">
-          <h2 className="type-section-title font-black text-slate-950">Get the paperwork right before deadlines get noisy</h2>
-          <p className="type-body mx-auto mt-4 max-w-2xl text-slate-600">
-            MyeCA keeps the workflow simple: expert review, clear document requests, and status updates from intake to completion.
-          </p>
+          <h2 className="type-section-title font-black text-slate-950">Prepare the first review</h2>
+          <p className="type-body mx-auto mt-4 max-w-2xl text-slate-600">{page.nextStep}</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button size="lg" className="bg-blue-600 hover:bg-blue-700" onClick={() => setIsCheckoutOpen(true)}>
               Start now
@@ -208,6 +241,15 @@ export default function GeneratedServicePage() {
         priceAmount={checkoutAmount}
       />
     </main>
+  );
+}
+
+function DetailCard({ title, body }: { title: string; body: string }) {
+  return (
+    <article className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
+      <h3 className="type-card-title font-black text-slate-950">{title}</h3>
+      <p className="mt-3 leading-7 text-slate-600">{body}</p>
+    </article>
   );
 }
 

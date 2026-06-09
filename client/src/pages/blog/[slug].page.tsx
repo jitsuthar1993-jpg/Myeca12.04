@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { sanitizeHTML } from "@/lib/sanitize";
 import {
   normalizeBlogContent,
+  normalizeBlogToc,
   type BlogFaqItem,
   type BlogTocItem,
   type PublicBlogSummary,
@@ -85,7 +86,15 @@ function getReadTime(post: BlogDetail | BlogSummary) {
   return post.readingTimeMinutes ? `${post.readingTimeMinutes} min read` : post.readTime ?? "5 min read";
 }
 
-const ARTICLE_REVIEWER_NAME = "Team MyeCA.in";
+function getVerifiedReviewer(post: BlogDetail) {
+  if (!post.reviewerName || !post.reviewerCredentialName || !post.reviewerCredentialId) return null;
+  return {
+    name: post.reviewerName,
+    credentialName: post.reviewerCredentialName,
+    credentialId: post.reviewerCredentialId,
+    credentialAuthority: post.reviewerCredentialAuthority || undefined,
+  };
+}
 
 function getAudienceLabel(value: string | null | undefined) {
   if (value === "individuals") return "For taxpayers";
@@ -278,7 +287,7 @@ export default function BlogPostPage() {
   const normalizedContent = useMemo(() => normalizeBlogContent(post?.content ?? ""), [post?.content]);
   // DOMPurify allowlist sanitize at the render sink — the shared regex pass is not sufficient.
   const safeContentHtml = useMemo(() => sanitizeHTML(normalizedContent.html), [normalizedContent.html]);
-  const toc = post?.toc && post.toc.length > 0 ? post.toc : normalizedContent.toc;
+  const toc = post?.toc && post.toc.length > 0 ? normalizeBlogToc(post.toc) : normalizedContent.toc;
   const tags = useMemo(() => normalizeTags(post?.tags), [post?.tags]);
   const authorName = post ? getAuthorName(post) : "MyeCA Editorial Team";
   
@@ -364,6 +373,7 @@ export default function BlogPostPage() {
   const ctaLabel = post.ctaLabel || "Talk to a CA";
   const ctaHref = post.ctaHref || "/expert-consultation";
   const conversionLinks = getBlogConversionLinks(post);
+  const verifiedReviewer = getVerifiedReviewer(post);
 
   return (
     <div className="min-h-screen bg-white">
@@ -387,10 +397,18 @@ export default function BlogPostPage() {
             name: authorName,
             jobTitle: getAuthorRole(post),
           },
-          reviewedBy: post.reviewedBy || post.reviewedAt
+          reviewedBy: verifiedReviewer
             ? {
-                "@type": "Organization",
-                name: ARTICLE_REVIEWER_NAME,
+                "@type": "Person",
+                name: verifiedReviewer.name,
+                hasCredential: {
+                  "@type": "EducationalOccupationalCredential",
+                  name: verifiedReviewer.credentialName,
+                  credentialCategory: verifiedReviewer.credentialId,
+                  recognizedBy: verifiedReviewer.credentialAuthority
+                    ? { "@type": "Organization", name: verifiedReviewer.credentialAuthority }
+                    : undefined,
+                },
               }
             : undefined,
           about: [getCategoryName(post), ...tags].filter(Boolean),
@@ -405,13 +423,13 @@ export default function BlogPostPage() {
             <div className="flex min-h-10 min-w-0 translate-y-2 items-center gap-3">
               <Sparkles className="-translate-y-2 h-4 w-4 shrink-0 text-blue-600" />
               <p className="flex min-h-10 items-center gap-1 truncate text-sm font-semibold leading-none sm:text-base">
-                Stop Overpaying Taxes. <span className="opacity-90">Hire India’s Top Tax Experts to review your filing.</span>
+                Need a document-based filing review? <span className="opacity-90">Check the scope before you start.</span>
               </p>
             </div>
             <div className="flex min-h-10 shrink-0 items-center gap-4">
               <Link href={ctaHref}>
                 <span className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-full bg-blue-600 px-5 text-xs font-semibold leading-none text-white transition hover:bg-blue-700 active:scale-95 sm:text-sm">
-                  Book a CA Now <ArrowRight className="h-3.5 w-3.5" />
+                  Review filing options <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </Link>
               <button 
@@ -443,10 +461,10 @@ export default function BlogPostPage() {
               <span className="type-meta rounded-full border border-emerald-100 bg-emerald-50 px-4 py-1.5 font-semibold uppercase text-emerald-700">
                 {getAudienceLabel(post.audience)}
               </span>
-              {(post.reviewedBy || post.reviewedAt) && (
+              {verifiedReviewer && (
                 <span className="type-meta inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-white px-4 py-1.5 font-semibold uppercase text-blue-700 shadow-sm">
                   <ShieldCheck className="h-4 w-4 text-blue-500" />
-                  Expert reviewed
+                  Reviewed by {verifiedReviewer.name}
                 </span>
               )}
             </div>
@@ -564,11 +582,11 @@ export default function BlogPostPage() {
               <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                 <div className="max-w-xl">
                   <div className="type-meta mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-1.5 font-semibold uppercase text-blue-700">
-                    Expert Assistance
+                    Optional Review
                   </div>
-                  <h2 className="text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">Get a MyeCA Expert to review your case.</h2>
+                  <h2 className="text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">Review unresolved filing facts before submission.</h2>
                   <p className="mt-4 text-base leading-relaxed text-slate-600">
-                    Don't leave your taxes to chance. Connect with our experienced CAs for expert filing, notice management, and business advisory tailored to your exact needs.
+                    Use assisted review when records conflict, the correct route is unclear, or a notice or deadline changes the work. Confirm the included scope, documents, timeline, and price before starting.
                   </p>
                 </div>
                 <ActionLink
@@ -686,8 +704,8 @@ export default function BlogPostPage() {
                 <p><span className="font-semibold text-slate-900">Author:</span> {authorName}</p>
                 <p><span className="font-semibold text-slate-900">Updated:</span> {formatDate(getPublishedDate(post))}</p>
                 <p><span className="font-semibold text-slate-900">Read time:</span> {getReadTime(post)}</p>
-                {(post.reviewedBy || post.reviewedAt) && (
-                  <p className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /><span className="font-semibold text-slate-900">Reviewed by -</span> {ARTICLE_REVIEWER_NAME}</p>
+                {verifiedReviewer && (
+                  <p className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /><span className="font-semibold text-slate-900">Reviewed by -</span> {verifiedReviewer.name} ({verifiedReviewer.credentialName})</p>
                 )}
               </div>
               <div className="mt-5 border-t border-blue-100 pt-4">

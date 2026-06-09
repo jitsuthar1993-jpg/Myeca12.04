@@ -68,7 +68,7 @@ export default function HRACalculator() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
-        title={seo?.title || "HRA Calculator 2025 | House Rent Allowance Exemption | MyeCA.in"}
+        title={seo?.title || "HRA Calculator 2026 | House Rent Allowance Exemption | MyeCA.in"}
         description={
           seo?.description ||
           "Estimate your HRA exemption under Section 10(13A). Interactive visualization for eligible deduction review."
@@ -406,7 +406,7 @@ export default function HRACalculator() {
         {/* Bottom Trust Bar */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
+            { icon: <Headphones className="w-5 h-5" />, label: "HRA Claim Review", desc: "Check rent, salary, and employer records" },
             { icon: <Award className="w-5 h-5" />, label: "Rule-based", desc: "Review documents before filing" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }

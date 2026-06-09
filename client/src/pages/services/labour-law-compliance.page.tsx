@@ -131,7 +131,7 @@ export default function LabourLawCompliancePage() {
       icon: FileText,
       color: "blue",
       documents: [
-        "Written employment agreements (mandatory for all employees)",
+        "Written employment agreements where required by applicable law, policy, or the employment terms",
         "Service agreements for consultants and freelancers",
         "Standing orders (for establishments with 100+ employees)",
         "Appointment letters with clear terms and conditions",
@@ -198,7 +198,7 @@ export default function LabourLawCompliancePage() {
     {
       platform: "Shram Suvidha Portal",
       services: ["Unified registration", "Single window licensing", "Online returns"],
-      benefits: "One-stop compliance solution",
+      benefits: "Linked registration and return calendar",
       url: "shramsuvidha.gov.in"
     },
     {
@@ -210,7 +210,7 @@ export default function LabourLawCompliancePage() {
     {
       platform: "ESIC Portal",
       services: ["Contribution payments", "Employee registration", "Medical benefits"],
-      benefits: "Comprehensive ESI services",
+      benefits: "ESI registration and return support",
       url: "esic.in"
     }
   ];
@@ -294,7 +294,7 @@ export default function LabourLawCompliancePage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Complete PF, ESI, Contract Labour and Factory Act compliance with expert guidance.
+                Prepare PF, ESI, Contract Labour, and Factory Act registrations, payroll records, and recurring filings.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 font-semibold">
@@ -651,7 +651,7 @@ export default function LabourLawCompliancePage() {
               Labour Law Compliance Practices 2025
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Modern approaches to ensure seamless compliance and risk mitigation
+              Keep registrations, payroll records, return dates, and unresolved compliance items in one reviewable workflow
             </p>
           </div>
 

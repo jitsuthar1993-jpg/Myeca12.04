@@ -23,8 +23,8 @@ export interface SEOConfigItem {
 export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Core Pages
   '/': {
-    title: 'ITR Filing Services India AY 2026-27 | CA Help | myeca.in',
-    description: 'File ITR for FY 2025-26 and AY 2026-27 with CA-led review, secure uploads, AIS and Form 26AS checks, refund guidance, salary, MSME, GST support online.',
+    title: 'ITR Filing Services India AY 2026-27 | MyeCA.in',
+    description: 'File ITR for FY 2025-26 and AY 2026-27 with document-based professional review, secure uploads, AIS and Form 26AS checks, and refund guidance.',
     keywords: ['ITR filing India', 'income tax return online', 'CA assisted tax filing', 'e-filing 2026', 'tax consultant near me'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }]
@@ -46,7 +46,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
 
   '/all-services': {
     title: 'Professional Services Catalogue | MyeCA.in',
-    description: 'Explore our comprehensive directory of CA services, IT returns, business setup components, and intelligent financial calculators.',
+    description: 'Compare tax filing, GST, business-registration, compliance, document, and calculator workflows by scope and next step.',
     keywords: ['CA services', 'tax services', 'business registration', 'service catalogue', 'tax APIs'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'All Services', url: '/all-services' }]
@@ -103,7 +103,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   '/calculators/advance-tax': {
     title: 'Advance Tax Calculator 2026 | Installment Due Dates | MyeCA.in',
     description: 'Estimate advance tax liability and view installment due dates by selected financial year. Avoid Section 234B & 234C interest with timely planning.',
-    keywords: ['advance tax calculator', 'tax installments 2025', 'income tax due dates', 'section 234C calculator'],
+    keywords: ['advance tax calculator', 'tax installments 2026', 'income tax due dates', 'section 234C calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'Advance Tax Calculator',
@@ -114,7 +114,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Advance Tax', url: '/calculators/advance-tax' }]
   },
   '/calculators/hra': {
-    title: 'HRA Calculator 2025 | House Rent Allowance Exemption | MyeCA.in',
+    title: 'HRA Calculator 2026 | House Rent Allowance Exemption | MyeCA.in',
     description: 'Estimate your HRA tax exemption for FY 2025-26. Review the exempt and taxable portion of your house rent allowance before filing.',
     keywords: ['HRA calculator', 'house rent allowance exemption', 'calculate HRA tax', 'rent receipt calculator'],
     type: 'calculator',
@@ -127,9 +127,9 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'HRA Calculator', url: '/calculators/hra' }]
   },
   '/calculators/tax-regime': {
-    title: 'New vs Old Tax Regime Calculator 2025 | Which is Better? | MyeCA.in',
+    title: 'New vs Old Tax Regime Calculator 2026 | Which is Better? | MyeCA.in',
     description: 'Compare Old vs New Tax Regime for AY 2026-27. Real-time analysis of tax savings based on your investments, deductions, and Section 87A rebate.',
-    keywords: ['tax regime comparison', 'old vs new tax regime', 'best tax regime for me', 'tax savings 2025'],
+    keywords: ['tax regime comparison', 'old vs new tax regime', 'best tax regime for me', 'tax savings AY 2026-27'],
     type: 'calculator',
     calculatorData: {
       type: 'Regime Comparison Tool',
@@ -141,7 +141,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/calculators/regime-comparator': {
     title: 'Old vs New Tax Regime Comparator AY 2026-27 | MyeCA.in',
-    description: 'Compare old and new tax regimes side by side for AY 2026-27 with deductions, standard deduction, Section 87A rebate, and CA-reviewed guidance.',
+    description: 'Compare old and new tax regimes side by side for AY 2026-27 with deductions, standard deduction, Section 87A rebate, and evidence-led guidance.',
     keywords: ['old vs new tax regime comparator', 'tax regime comparison calculator', 'regime comparator India', 'AY 2026-27 tax comparison'],
     type: 'calculator',
     calculatorData: {
@@ -153,7 +153,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Regime Comparator', url: '/calculators/regime-comparator' }]
   },
   '/calculators/hsn-finder': {
-    title: 'HSN Code Finder 2025 | GST Rate Finder Online | MyeCA.in',
+    title: 'HSN Code Finder 2026 | GST Rate Finder Online | MyeCA.in',
     description: 'Search for GST HSN/SAC codes and check applicable GST rates. Easy search by product description or chapter.',
     keywords: ['hsn code finder', 'gst rate finder', 'hsn search online', 'sac codes list'],
     type: 'calculator',
@@ -285,7 +285,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
 
   // Investment Calculators
   '/calculators/sip': {
-    title: 'SIP Calculator 2025 | Mutual Fund SIP Return Calculator | MyeCA.in',
+    title: 'SIP Calculator 2026 | Mutual Fund SIP Return Calculator | MyeCA.in',
     description: 'Calculate your mutual fund returns with our SIP calculator. Project your wealth growth with compound interest and plan your financial goals.',
     keywords: ['sip calculator', 'mutual fund return calculator', 'calculate sip online', 'investment planner'],
     type: 'calculator',
@@ -293,12 +293,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'SIP Calculator',
       features: ['Compound interest projection', 'Monthly breakdown', 'Goal-based planning'],
       accuracy: 'Projection estimate',
-      updates: 'FY 2025 projection model'
+      updates: 'Projection uses user-entered assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'SIP Calculator', url: '/calculators/sip' }]
   },
   '/calculators/sip-enhanced': {
-    title: 'Enhanced SIP Calculator 2025 | Year-Wise Mutual Fund Growth | MyeCA.in',
+    title: 'Enhanced SIP Calculator 2026 | Year-Wise Mutual Fund Growth | MyeCA.in',
     description: 'Use an enhanced SIP calculator for mutual fund projections, year-wise growth, compound returns, wealth multiple, and long-term goal planning.',
     keywords: ['enhanced SIP calculator', 'SIP growth calculator', 'year wise SIP calculator', 'mutual fund SIP projection'],
     type: 'calculator',
@@ -306,12 +306,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Enhanced SIP Calculator',
       features: ['Year-wise growth chart', 'Wealth multiple', 'Compound return projection'],
       accuracy: 'Projection estimate',
-      updates: 'FY 2025 projection model'
+      updates: 'Projection uses user-entered assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Enhanced SIP Calculator', url: '/calculators/sip-enhanced' }]
   },
   '/calculators/nps': {
-    title: 'NPS Calculator 2025 | National Pension Scheme Returns | MyeCA.in',
+    title: 'NPS Calculator 2026 | National Pension Scheme Returns | MyeCA.in',
     description: 'Calculate your pension and lump sum maturity amount under National Pension Scheme (NPS). Plan your retirement with Section 80CCD tax benefits.',
     keywords: ['nps calculator', 'pension scheme returns', 'calculate nps online', 'retirement planning India'],
     type: 'calculator',
@@ -319,25 +319,25 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'NPS Calculator',
       features: ['Tier I & II projection', 'Annuity calculation', 'Tax benefit tracking'],
       accuracy: 'Projection estimate',
-      updates: 'FY 2025-26 planning assumptions'
+      updates: 'Projection uses user-entered assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'NPS Calculator', url: '/calculators/nps' }]
   },
   '/calculators/fd': {
-    title: 'Fixed Deposit (FD) Calculator 2025 | FD Interest Rates | MyeCA.in',
+    title: 'Fixed Deposit (FD) Calculator 2026 | FD Interest Rates | MyeCA.in',
     description: 'Calculate your FD maturity amount and interest earned. Compare rate assumptions and review post-tax returns before planning.',
-    keywords: ['fd calculator', 'fixed deposit calculator', 'fd interest rates 2025', 'maturity amount calculator'],
+    keywords: ['fd calculator', 'fixed deposit calculator', 'current fd interest rates', 'maturity amount calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'FD Calculator',
       features: ['Quarterly compounding', 'Senior citizen rates', 'TDS analysis'],
       accuracy: 'Projection estimate',
-      updates: '2025 bank rate assumptions'
+      updates: 'Projection uses the entered interest rate'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'FD Calculator', url: '/calculators/fd' }]
   },
   '/calculators/fd-enhanced': {
-    title: 'Enhanced FD Calculator 2025 | Post-Tax Bank FD Returns | MyeCA.in',
+    title: 'Enhanced FD Calculator 2026 | Post-Tax Bank FD Returns | MyeCA.in',
     description: 'Compare bank FD rates and calculate post-tax fixed deposit maturity value, effective yield, TDS impact, and compounding returns.',
     keywords: ['enhanced FD calculator', 'post tax FD calculator', 'bank FD rates comparison', 'fixed deposit tax calculator'],
     type: 'calculator',
@@ -345,28 +345,28 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Enhanced FD Calculator',
       features: ['Bank rate comparison', 'Post-tax returns', 'Compounding frequency options'],
       accuracy: 'Projection estimate',
-      updates: '2025 bank rate assumptions'
+      updates: 'Comparison uses entered bank-rate assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Enhanced FD Calculator', url: '/calculators/fd-enhanced' }]
   },
   '/calculators/ppf': {
-    title: 'PPF Calculator 2025 | Public Provident Fund Returns | MyeCA.in',
-    description: 'Calculate your PPF maturity amount with current 7.1% interest rate. Plan your 15-year tax-free investment and wealth creation.',
-    keywords: ['ppf calculator', 'public provident fund', 'ppf interest rate 2025', 'tax free investment calculator'],
+    title: 'PPF Calculator 2026 | Public Provident Fund Returns | MyeCA.in',
+    description: 'Estimate PPF maturity from your contribution and selected interest-rate assumption. Review the 15-year projection before planning.',
+    keywords: ['ppf calculator', 'public provident fund', 'current ppf interest rate', 'tax free investment calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'PPF Calculator',
       features: ['15-year projection', 'Extension options', 'Section 80C tracking'],
       accuracy: 'Rule-based estimate',
-      updates: 'Q1 2025 interest rates'
+      updates: 'Projection uses the selected interest-rate assumption'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'PPF Calculator', url: '/calculators/ppf' }]
   },
 
   // Service Pages
   '/itr-filing': {
-    title: 'ITR Filing Services AY 2026-27 | CA-Led Review | myeca.in',
-    description: 'File ITR for FY 2025-26 and AY 2026-27 with CA-led review, Form 16, AIS, refund checks, secure document handling, and guided filing support online now.',
+    title: 'ITR Filing Services AY 2026-27 | Document Review | myeca.in',
+    description: 'File ITR for FY 2025-26 and AY 2026-27 with document-based professional review, Form 16, AIS, refund checks, secure handling, and guided support.',
     keywords: ['ITR filing services', 'AY 2026-27 ITR filing', 'FY 2025-26 tax return', 'CA assisted ITR filing'],
     type: 'service',
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -374,7 +374,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/gst-filing': {
     title: 'GST Filing Services India | Returns, ITC Review | myeca.in',
-    description: 'Manage GST filing for FY 2025-26 with return prep, ITC review, invoice checks, due-date tracking, and CA-led support for MSMEs and manufacturers in India.',
+    description: 'Manage GST filing for FY 2025-26 with return preparation, ITC review, invoice checks, due-date tracking, and scoped filing support for Indian businesses.',
     keywords: ['GST filing services', 'GST return filing India', 'FY 2025-26 GST filing', 'ITC review support'],
     type: 'service',
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -382,14 +382,14 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/gst-returns': {
     title: 'GST Returns Filing Service India | GSTR-1 & GSTR-3B | MyeCA.in',
-    description: 'Prepare GST returns with GSTR-1, GSTR-3B, ITC reconciliation, invoice checks, due-date tracking, and CA-led filing support for Indian businesses.',
+    description: 'Prepare GST returns with GSTR-1, GSTR-3B, ITC reconciliation, invoice checks, due-date tracking, and scoped filing support for Indian businesses.',
     keywords: ['GST returns filing', 'GSTR-1 filing', 'GSTR-3B filing', 'ITC reconciliation', 'GST return service'],
     type: 'service',
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'GST Returns', url: '/services/gst-returns' }]
   },
   '/services/gst-registration': {
-    title: 'GST Registration Online India | Fast & Easy Process | MyeCA.in',
+    title: 'GST Registration Online India | Document & Filing Support | MyeCA.in',
     description: 'Get GST registration support online with document preparation, portal filing guidance, query support, and transparent pricing.',
     keywords: ['GST registration', 'new GST connection', 'GST certificate online', 'apply for GST India'],
     type: 'service',
@@ -398,23 +398,23 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/company-registration': {
     title: 'Private Limited Company Registration Online | MyeCA.in',
-    description: 'Register your company online with ease. Includes DSC, DIN, MOA, AOA, and PAN/TAN. Startup friendly pricing and expert support.',
+    description: 'Prepare private limited company registration with founder records, DSC and DIN steps, MOA and AOA drafting inputs, PAN and TAN, and filing-scope clarity.',
     keywords: ['company registration', 'register pvt ltd', 'company incorporation', 'startup registration India'],
     type: 'service',
     serviceData: { price: '₹6999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Company Registration', url: '/services/company-registration' }]
   },
   '/services/trademark-registration': {
-    title: 'Trademark Registration Online | Protect Your Brand | MyeCA.in',
-    description: 'Apply for trademark registration and protect your brand identity. Search, filing, and tracking by expert IP attorneys.',
+    title: 'Trademark Registration Online | Search & Filing Support | MyeCA.in',
+    description: 'Prepare a trademark search and filing with applicant records, mark and class details, use evidence, government-fee clarity, and application tracking.',
     keywords: ['trademark registration', 'register brand name', 'TM filing India', 'trademark consultant'],
     type: 'service',
     serviceData: { price: '₹12999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Trademark Registration', url: '/services/trademark-registration' }]
   },
   '/services/notice-compliance': {
-    title: 'Income Tax Notice Reply | Expert CA Compliance | MyeCA.in',
-    description: 'Received an income tax notice? Get expert CA assistance to draft and file accurate replies for Section 143(1), 139(9), etc.',
+    title: 'Income Tax Notice Reply | Document & Deadline Review | MyeCA.in',
+    description: 'Review an income-tax notice, response deadline, return data, AIS, Form 26AS, computation, and supporting records before preparing the appropriate reply.',
     keywords: ['income tax notice reply', 'respond to tax notice', '143(1) notice help', 'tax compliance services'],
     type: 'service',
     serviceData: { price: '₹2999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -430,7 +430,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/compliance-management': {
     title: 'Annual Business Compliance Management | ROC, MCA, GST | MyeCA.in',
-    description: 'Stay on top of every statutory filing with managed ROC, MCA, GST, TDS, and labour compliance support, deadline reminders, and document-ready CA reviews.',
+    description: 'Track ROC, MCA, GST, TDS, and labour compliance tasks with deadline reminders, document checks, filing scope, and unresolved-risk escalation.',
     keywords: ['annual compliance', 'company compliance India', 'ROC filing', 'MCA annual filing', 'statutory compliance service'],
     type: 'service',
     serviceData: { price: '₹4999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -438,7 +438,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/fssai-registration': {
     title: 'FSSAI Food License Registration Online | Basic, State, Central | MyeCA.in',
-    description: 'Apply for FSSAI food licensing — Basic, State, or Central — with document checklists, business-type guidance, and end-to-end CA-supported filing.',
+    description: 'Prepare for Basic, State, or Central FSSAI food licensing with business-type guidance, document checks, filing scope, and application tracking.',
     keywords: ['FSSAI registration', 'food license online', 'FSSAI basic license', 'FSSAI state license', 'food business license India'],
     type: 'service',
     serviceData: { price: '₹1499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -454,57 +454,73 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/audit-services': {
     title: 'Statutory & Internal Audit Services for Indian Businesses | MyeCA.in',
-    description: 'CA-led statutory, tax, internal, and management audits. Compliance verification, risk-control review, and audit-report support for Indian companies and LLPs.',
+    description: 'Prepare statutory, tax, internal, and management audit records with scope mapping, compliance verification, risk-control review, and audit-report support.',
     keywords: ['audit services India', 'statutory audit', 'internal audit service', 'tax audit', 'CA audit firm'],
     type: 'service',
     serviceData: { price: '₹9999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Audit Services', url: '/services/audit-services' }]
   },
+  '/services/iso-certification': {
+    title: 'ISO Certification Readiness Support for Indian Businesses | MyeCA.in',
+    description: 'Prepare for ISO certification with scope mapping, process and evidence checks, gap tracking, and a clear handoff to an independent certification body.',
+    keywords: ['ISO certification readiness', 'ISO documentation support', 'ISO audit preparation', 'business process evidence'],
+    type: 'service',
+    serviceData: { price: 'Custom quote', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'ISO Certification', url: '/services/iso-certification' }]
+  },
+  '/services/labour-law-compliance': {
+    title: 'Labour Law Compliance Support for Indian Employers | MyeCA.in',
+    description: 'Map labour-law obligations from workforce facts, reconcile payroll and registration records, and prepare recurring employer compliance files.',
+    keywords: ['labour law compliance', 'employer compliance India', 'payroll compliance', 'EPFO ESIC records'],
+    type: 'service',
+    serviceData: { price: 'Custom quote', rating: 'Unrated', reviews: '0', availability: 'InStock' },
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Labour Law Compliance', url: '/services/labour-law-compliance' }]
+  },
   '/about': {
-    title: 'About myeca.in CA Tax Filing Platform | Rajasthan India',
-    description: 'Learn how myeca.in blends CA-led tax filing, secure document workflows, and practical FY 2025-26 / AY 2026-27 compliance support from Bikaner, Rajasthan.',
+    title: 'About myeca.in Tax Filing Platform | Rajasthan India',
+    description: 'Learn how myeca.in combines tax filing support, secure document workflows, and practical FY 2025-26 / AY 2026-27 compliance guidance.',
     keywords: ['about myeca', 'tax experts India', 'fintech startup India', 'tax filing company'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'About Us', url: '/about' }]
   },
   '/trust': {
     title: 'Trust & Security | MyeCA.in Document Handling',
-    description: 'Review how MyeCA.in handles tax documents, pricing scope, CA review, privacy, and security expectations before you start filing.',
+    description: 'Review how MyeCA.in handles tax documents, pricing scope, professional-review boundaries, privacy, and security expectations before you start filing.',
     keywords: ['MyeCA trust', 'tax document security', 'ITR document privacy', 'secure tax filing India'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Trust & Security', url: '/trust' }]
   },
   '/contact': {
-    title: 'Contact myeca.in CA Tax Filing Help | Bikaner Rajasthan',
-    description: 'Contact myeca.in for FY 2025-26 and AY 2026-27 ITR filing, GST compliance, secure document support, and CA-led tax advisory from Bikaner, Rajasthan CA.',
+    title: 'Contact myeca.in Tax Filing Help | Bikaner Rajasthan',
+    description: 'Contact myeca.in for FY 2025-26 and AY 2026-27 ITR filing, GST compliance, secure document support, and scoped tax guidance.',
     keywords: ['contact tax expert', 'myeca support', 'tax helpline India', 'CA consultation online'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Contact Us', url: '/contact' }]
   },
   '/blog': {
-    title: 'ITR Filing Guides AY 2026-27 | CA Tax Guides | myeca.in',
-    description: 'Read CA-reviewed FY 2025-26 and AY 2026-27 tax guides on ITR forms, Form 16, AIS, refunds, GST, capital gains, NRI filing, and notices from myeca.in now.',
+    title: 'ITR Filing Guides AY 2026-27 | MyeCA.in',
+    description: 'Read evidence-led FY 2025-26 and AY 2026-27 guides on ITR forms, Form 16, AIS, refunds, GST, capital gains, NRI filing, and notices.',
     keywords: ['AY 2026-27 ITR filing', 'ITR filing guide', 'income tax return India', 'Form 16 guide', 'AIS Form 26AS', 'tax regime comparison'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'ITR Filing & Tax Guides AY 2026-27', url: '/blog' }]
   },
   '/experts': {
-    title: 'Expert CA Consultation Online | MyeCA.in Professional Network',
-    description: 'Connect with credential-checked tax professionals and MyeCA reviewers for personalized consultations and scoped professional advice.',
+    title: 'Tax Consultation Online | Scope and Document Review | MyeCA.in',
+    description: 'Prepare a focused tax or compliance question, share the relevant records securely, and confirm the professional consultation scope before proceeding.',
     keywords: ['online CA consultation', 'hire tax expert', 'CA network India', 'professional tax advice'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Experts', url: '/experts' }]
   },
   '/services/startup-india-registration': {
     title: 'Startup India Registration Online | DPIIT Recognition | MyeCA.in',
-    description: 'Get recognized by DPIIT under the Startup India initiative. Avail tax exemptions, patent benefits, and easy self-certification.',
+    description: 'Prepare a DPIIT recognition application with eligibility, incorporation, business-model, founder, and innovation-record checks.',
     keywords: ['startup india registration', 'dpiit recognition', 'startup tax benefits', 'register startup india'],
     type: 'service',
     serviceData: { price: '₹4999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Startup India', url: '/services/startup-india-registration' }]
   },
   '/calculators/emi': {
-    title: 'EMI Calculator 2025 | Home, Car & Personal Loan EMI | MyeCA.in',
+    title: 'EMI Calculator 2026 | Home, Car & Personal Loan EMI | MyeCA.in',
     description: 'Calculate your loan EMIs. Plan repayments for home loans, car loans, and personal loans with an estimate tool.',
     keywords: ['emi calculator', 'loan calculator', 'home loan emi', 'car loan emi calculator'],
     type: 'calculator',
@@ -512,12 +528,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'EMI Calculator',
       features: ['Amortization schedule', 'Total interest calculation', 'Repayment breakdown'],
       accuracy: 'Rule-based estimate',
-      updates: '2025 loan rates supported'
+      updates: 'Calculation uses the entered loan rate'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'EMI Calculator', url: '/calculators/emi' }]
   },
   '/calculators/car-loan': {
-    title: 'Car Loan EMI Calculator 2025 | Vehicle Loan Interest | MyeCA.in',
+    title: 'Car Loan EMI Calculator 2026 | Vehicle Loan Interest | MyeCA.in',
     description: 'Calculate your car loan EMI and total interest payable. Compare vehicle loan offers from top banks and plan your car purchase.',
     keywords: ['car loan emi calculator', 'vehicle loan calculator', 'auto loan emi', 'car loan interest rates'],
     type: 'calculator',
@@ -525,12 +541,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Car Loan Calculator',
       features: ['Amortization chart', 'Processing fee inclusion', 'Prepayment analysis'],
       accuracy: 'Rule-based estimate',
-      updates: '2025 vehicle loan rates'
+      updates: 'Calculation uses the entered vehicle-loan rate'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Car Loan', url: '/calculators/car-loan' }]
   },
   '/calculators/home-loan': {
-    title: 'Home Loan EMI Calculator 2025 | Mortgage Interest Calculator | MyeCA.in',
+    title: 'Home Loan EMI Calculator 2026 | Mortgage Interest Calculator | MyeCA.in',
     description: 'Calculate your home loan EMI, total interest, and principal repayment. Plan your home buying with detailed amortization schedules.',
     keywords: ['home loan emi calculator', 'mortgage calculator', 'house loan calculator', 'housing loan interest'],
     type: 'calculator',
@@ -538,12 +554,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Home Loan Calculator',
       features: ['Part-payment analysis', 'Tax benefit (Sec 24/80EEA)', 'Detailed amortization'],
       accuracy: 'Rule-based estimate',
-      updates: '2025 mortgage rates'
+      updates: 'Calculation uses the entered home-loan rate'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Home Loan', url: '/calculators/home-loan' }]
   },
   '/calculators/personal-loan': {
-    title: 'Personal Loan EMI Calculator 2025 | Interest & Affordability | MyeCA.in',
+    title: 'Personal Loan EMI Calculator 2026 | Interest & Affordability | MyeCA.in',
     description: 'Calculate personal loan EMI, total interest, total repayment and EMI-to-income ratio for unsecured loans in India.',
     keywords: ['personal loan emi calculator', 'personal loan calculator', 'EMI income ratio calculator', 'unsecured loan calculator'],
     type: 'calculator',
@@ -551,12 +567,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Personal Loan Calculator',
       features: ['EMI calculation', 'EMI-to-income ratio', 'Total interest estimate'],
       accuracy: 'Rule-based estimate',
-      updates: '2025 personal loan assumptions'
+      updates: 'Calculation uses user-entered loan assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Personal Loan', url: '/calculators/personal-loan' }]
   },
   '/calculators/education-loan': {
-    title: 'Education Loan EMI Calculator 2025 | Moratorium & 80E Benefit | MyeCA.in',
+    title: 'Education Loan EMI Calculator 2026 | Moratorium & 80E Benefit | MyeCA.in',
     description: 'Calculate education loan EMI after moratorium, interest during study period, total repayment and Section 80E tax benefit context.',
     keywords: ['education loan emi calculator', 'study loan calculator', 'education loan moratorium calculator', 'section 80E calculator'],
     type: 'calculator',
@@ -564,7 +580,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Education Loan Calculator',
       features: ['Moratorium interest', 'Post-study EMI', 'Section 80E tax context'],
       accuracy: 'Rule-based estimate',
-      updates: '2025 education loan assumptions'
+      updates: 'Calculation uses user-entered loan assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Education Loan', url: '/calculators/education-loan' }]
   },
@@ -582,7 +598,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'TDS Calculator', url: '/calculators/tds' }]
   },
   '/calculators/penalty': {
-    title: 'GST & Income Tax Penalty Calculator 2025 | MyeCA.in',
+    title: 'GST & Income Tax Penalty Calculator 2026 | MyeCA.in',
     description: 'Calculate late filing fees and interest penalties for GST returns, Income Tax, and TDS. Stay compliant and avoid heavy costs.',
     keywords: ['gst penalty calculator', 'income tax late fee', 'tds penalty', 'tax compliance cost'],
     type: 'calculator',
@@ -596,13 +612,13 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/compliance-calendar': {
     title: 'Compliance Calendar 2025-26 | GST & Tax Due Dates | MyeCA.in',
-    description: 'Stay ahead of tax deadlines with our comprehensive compliance calendar. Tracks GST, Income Tax, TDS, and MCA due dates for FY 2025-26.',
+    description: 'Track common GST, Income Tax, TDS, and MCA due dates for FY 2025-26, then confirm the obligation and deadline for your entity.',
     keywords: ['compliance calendar 2025', 'tax due dates', 'gst return deadlines', 'income tax dates'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compliance Calendar', url: '/compliance-calendar' }]
   },
   '/elss-comparator': {
-    title: 'ELSS Mutual Fund Comparator | Tax Saving Funds 2025 | MyeCA.in',
+    title: 'ELSS Mutual Fund Comparator | Tax Saving Funds 2026 | MyeCA.in',
     description: 'Compare top-performing ELSS mutual funds. Analyze returns, risk ratios, and tax-saving potential under Section 80C.',
     keywords: ['elss comparator', 'tax saving funds', 'compare elss mutual funds', '80C investments'],
     type: 'calculator',
@@ -675,7 +691,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/startup-services': {
     title: 'Complete Startup Solutions India | Launch & Scale | MyeCA.in',
-    description: 'All-in-one startup services including DPIIT recognition, funding support, and compliance management. Launch your dream venture with MyeCA.',
+    description: 'Plan DPIIT recognition, funding-readiness documents, and recurring startup compliance with clear scope, records, and next steps.',
     keywords: ['startup solutions', 'entrepreneur support', 'startup ecosystem India', 'launch business India'],
     type: 'service',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Startup Services', url: '/startup-services' }]
@@ -724,7 +740,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/help/faq': {
     title: 'MyeCA FAQs | Tax Filing and Service Questions',
-    description: 'Answers to common questions about MyeCA.in tax filing, CA review, refunds, GST services, documents, and payments.',
+    description: 'Answers to common questions about MyeCA.in tax filing, professional-review scope, refunds, GST services, documents, and payments.',
     keywords: ['MyeCA FAQ', 'ITR filing questions', 'tax filing FAQ India'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Help', url: '/help' }, { name: 'FAQ', url: '/help/faq' }]
@@ -768,7 +784,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/tds-filing': {
     title: 'TDS Filing Service India | 24Q, 26Q & Challan Review | MyeCA.in',
-    description: 'Prepare TDS filing with TAN, challan matching, deductee PAN checks, Form 24Q or 26Q data, Form 16 support, and CA-led compliance review.',
+    description: 'Prepare TDS filing with TAN, challan matching, deductee PAN checks, Form 24Q or 26Q data, Form 16 support, and scoped compliance review.',
     keywords: ['TDS filing service', 'TDS return filing', 'Form 24Q filing', 'Form 26Q filing', 'TAN challan review'],
     type: 'service',
     serviceData: { price: '₹999', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -783,7 +799,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/services/pan-card': {
     title: 'PAN Card Assistance Online | Correction & Business PAN Support | MyeCA.in',
-    description: 'Get PAN application, correction readiness, business PAN documentation, status guidance, and tax identity support from MyeCA reviewers.',
+    description: 'Prepare PAN application or correction records, business PAN documentation, status checks, and the next tax-identity support step.',
     keywords: ['PAN card assistance', 'PAN correction support', 'business PAN card', 'PAN application guidance', 'tax identity documentation'],
     type: 'service',
     serviceData: { price: '499', rating: 'Unrated', reviews: '0', availability: 'InStock' },
@@ -875,7 +891,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }]
   },
   '/compare/cleartax-alternative': {
-    title: 'ClearTax Alternative for CA-Reviewed ITR Filing | MyeCA.in',
+    title: 'ClearTax Alternative for Expert-Assisted ITR Filing | MyeCA.in',
     description: 'Compare MyeCA with ClearTax for CA-assisted review where applicable, AIS/26AS checks, document history, case tracking, and visible scope before payment.',
     keywords: ['ClearTax alternative', 'CA assisted ITR filing', 'MyeCA vs ClearTax', 'tax filing comparison'],
     type: 'website',
@@ -891,7 +907,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   '/compare/quicko-capital-gains-alternative': {
     title: 'Quicko Alternative for Capital Gains with CA Review | MyeCA.in',
     description: 'Compare MyeCA with Quicko for capital gains import, broker statement review, AIS mismatch checks, and CA-assisted investor filing.',
-    keywords: ['Quicko alternative', 'capital gains tax filing', 'broker statement import', 'CA reviewed capital gains'],
+    keywords: ['Quicko alternative', 'capital gains tax filing', 'broker statement import', 'capital gains document review'],
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Compare', url: '/compare' }, { name: 'Quicko Alternative', url: '/compare/quicko-capital-gains-alternative' }]
   },
@@ -915,7 +931,7 @@ const CALCULATOR_FAQ_ITEMS: Record<string, { q: string; a: string }[]> = {
   '/calculators/income-tax': [
     { q: 'How does the income tax calculator estimate AY 2026-27 tax?', a: 'It applies the selected income, deduction, rebate, surcharge, and cess inputs to compare old and new regime estimates for common resident individual cases.' },
     { q: 'Is the income tax calculator result my final ITR tax?', a: 'No. Use it as a planning estimate and verify Form 16, AIS, Form 26AS, bank interest, capital gains, and eligible deductions before filing.' },
-    { q: 'Can I compare old and new tax regimes before filing?', a: 'Yes. The calculator is designed to help compare regime outcomes before you choose the filing path or request CA review.' },
+    { q: 'Can I compare old and new tax regimes before filing?', a: 'Yes. Compare both estimates using the same income and deduction facts, then verify special-rate income, eligibility, and source records before filing.' },
   ],
   '/calculators/capital-gains': [
     { q: 'What capital gains can this calculator estimate?', a: 'It helps estimate common short-term and long-term capital gains on equity, mutual funds, property, gold, and similar assets before ITR review.' },

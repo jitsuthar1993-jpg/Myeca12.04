@@ -5,9 +5,7 @@ type Audience = "individuals" | "businesses" | "both";
 
 type ItrSeasonPost = DefaultBlogPost & {
   audience: Audience;
-  reviewedBy: string;
-  reviewedAt: string;
-  sourceLinks: Array<{ label: string; url: string }>;
+  sourceLinks: Array<{ label: string; url: string; checkedAt?: string | null }>;
   serviceSlug: string | null;
   calculatorSlug: string | null;
   canonicalUrl: string | null;
@@ -106,7 +104,7 @@ const topics: TopicSpec[] = [
     id: "when-will-itr-filing-start-ay-2026-27",
     title: "When Will ITR Filing Start for AY 2026-27?",
     slug: "when-will-itr-filing-start-ay-2026-27",
-    excerpt: "Reddit-style answer to when AY 2026-27 ITR filing opens, why many taxpayers wait for Form 16, AIS, TIS, and Form 26AS, and what to prepare first.",
+    excerpt: "A practical answer to when AY 2026-27 ITR filing opens, why many taxpayers wait for Form 16, AIS, TIS, and Form 26AS, and what to prepare first.",
     categoryId: "itr-filing",
     tags: ["ITR filing start", "AY 2026-27", "Form 16", "AIS", "Form 26AS"],
     redditSignal: "Recent Reddit threads ask whether AY 2026-27 filing is already open and whether salary taxpayers should wait for Form 16 and tax-credit data.",
@@ -462,7 +460,7 @@ const topics: TopicSpec[] = [
     id: "can-freelancers-use-itr-4-presumptive-taxation",
     title: "Can Freelancers Use ITR-4 Under Presumptive Taxation?",
     slug: "can-freelancers-use-itr-4-presumptive-taxation",
-    excerpt: "A Reddit-style freelancer guide to ITR-4, presumptive taxation, 44ADA, expenses, TDS, foreign clients, and when ITR-3 is safer.",
+    excerpt: "A freelancer guide to ITR-4, presumptive taxation, 44ADA, expenses, TDS, foreign clients, and when ITR-3 is safer.",
     categoryId: "business-freelancers",
     tags: ["freelancer ITR", "ITR-4", "presumptive taxation", "44ADA", "professional income"],
     redditSignal: "Questions around writing, consulting, and freelancing often ask whether ITR-4 is allowed or whether income is professional income.",
@@ -767,7 +765,7 @@ const topics: TopicSpec[] = [
     id: "belated-revised-updated-return-ay-2026-27",
     title: "How to File Belated, Revised, and Updated Returns for AY 2026-27",
     slug: "how-to-file-belated-revised-updated-return-ay-2026-27",
-    excerpt: "A Reddit-style correction guide: missed due date, wrong ITR, missed income, refund issue, revised return, belated return, and ITR-U.",
+    excerpt: "A correction guide covering a missed due date, wrong ITR, missed income, refund issue, revised return, belated return, and ITR-U.",
     categoryId: "refunds-notices",
     tags: ["belated return", "revised return", "updated return", "ITR-U", "AY 2026-27"],
     redditSignal: "Many Reddit questions ask what to do after missing a deadline, choosing the wrong regime, missing income, or receiving a notice.",
@@ -829,6 +827,18 @@ function markdownTable(headers: string[], rows: string[][]) {
   ].join("\n");
 }
 
+function inlinePhrase(value: string) {
+  return value.trim().replace(/[.!?]+$/, "");
+}
+
+function sentenceCase(value: string) {
+  return value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : value;
+}
+
+function lowerFirst(value: string) {
+  return value ? `${value.charAt(0).toLowerCase()}${value.slice(1)}` : value;
+}
+
 function keyHighlightsTable(spec: TopicSpec) {
   return markdownTable(
     ["Point", "What it means for you"],
@@ -837,41 +847,42 @@ function keyHighlightsTable(spec: TopicSpec) {
 }
 
 function documentTableFor(spec: TopicSpec) {
+  const topic = spec.tags[1] ?? spec.tags[0];
   const baseRows = [
-    ["AIS and TIS", "Reported income and transaction information to compare with your own records."],
-    ["Form 26AS", "TDS, TCS, advance tax, self-assessment tax, refund, and demand details mapped to PAN."],
-    ["Computation working", "The bridge between source documents, taxable income, tax paid, and refund or demand."],
-    ["Final ITR acknowledgement", "Proof that the return was submitted and later e-verified."],
+    ["AIS and TIS", `For ${topic}, compare reported income and transactions with the taxpayer's own records.`],
+    ["Form 26AS", `For ${topic}, verify TDS, TCS, tax payments, refunds, and demands mapped to PAN.`],
+    ["Computation working", `For ${topic}, show how source documents become taxable income, tax paid, and the final refund or demand.`],
+    ["Final ITR acknowledgement", `For ${topic}, retain proof that the return was submitted and later e-verified.`],
   ];
 
   const categoryRows: Record<string, string[][]> = {
     "itr-filing": [
-      ["Form 16 or Form 16A", "Salary or TDS certificate used to reconcile income and tax credit."],
-      ["Bank validation proof", "Helps prevent refund failure after processing."],
+      ["Form 16 or Form 16A", `Use the salary or TDS certificate to reconcile income and tax credit for ${topic}.`],
+      ["Bank validation proof", `Confirm the refund account used for ${topic} before filing.`],
     ],
     "income-tax": [
-      ["Salary, interest, and investment records", "Supports gross income, deductions, rebate, and final tax calculation."],
-      ["Tax challans", "Shows tax already paid outside TDS."],
+      ["Salary, interest, and investment records", `Support gross income, deductions, rebate, and the final ${topic} calculation.`],
+      ["Tax challans", `Show tax paid outside TDS for ${topic}.`],
     ],
     "tax-regime": [
-      ["Deduction proofs", "Needed to compare old regime benefit against new regime rates."],
-      ["Employer declaration and Form 16", "Helps reconcile payroll TDS with return-time regime selection."],
+      ["Deduction proofs", `Compare the old-regime benefit with new-regime rates for ${topic}.`],
+      ["Employer declaration and Form 16", `Reconcile payroll TDS with the return-time regime selected for ${topic}.`],
     ],
     "capital-gains": [
-      ["Broker or mutual fund capital gains report", "Supports sale value, cost, holding period, and STT where relevant."],
-      ["Transaction statement", "Useful when the return needs item-wise capital gains reporting."],
+      ["Broker or mutual fund capital gains report", `Support sale value, cost, holding period, and STT relevant to ${topic}.`],
+      ["Transaction statement", `Use item-wise transactions when ${topic} needs detailed capital-gains reporting.`],
     ],
     "business-freelancers": [
-      ["Invoices and bank statements", "Supports gross receipts, TDS, GST linkage, and cash-flow reconciliation."],
-      ["Expense proofs and books", "Supports business deductions and audit or presumptive-tax decisions."],
+      ["Invoices and bank statements", `Support gross receipts, TDS, GST linkage, and cash-flow reconciliation for ${topic}.`],
+      ["Expense proofs and books", `Support deductions and the audit or presumptive-tax decision for ${topic}.`],
     ],
     "foreign-assets-nri-tax": [
-      ["Foreign account or broker statements", "Supports Schedule FA values, dates, and ownership details."],
-      ["Foreign tax certificate and exchange-rate working", "Supports Form 67 and foreign tax credit where applicable."],
+      ["Foreign account or broker statements", `Support Schedule FA values, dates, and ownership details relevant to ${topic}.`],
+      ["Foreign tax certificate and exchange-rate working", `Support Form 67 and any foreign tax credit claimed for ${topic}.`],
     ],
     "refunds-notices": [
-      ["Notice or intimation PDF", "Defines the response route, deadline, and issue raised by the department."],
-      ["Response acknowledgement", "Proof that rectification, grievance, notice reply, or other action was submitted."],
+      ["Notice or intimation PDF", `Define the response route, deadline, and department issue relevant to ${topic}.`],
+      ["Response acknowledgement", `Prove that the rectification, grievance, reply, or other ${topic} action was submitted.`],
     ],
   };
 
@@ -879,164 +890,271 @@ function documentTableFor(spec: TopicSpec) {
 }
 
 function decisionTableFor(spec: TopicSpec) {
+  const firstCheck = inlinePhrase(spec.checklist[0]);
+  const secondCheck = inlinePhrase(spec.checklist[1]);
+  const thirdCheck = inlinePhrase(spec.checklist[2] ?? spec.checklist[0]);
   return markdownTable(
     ["Situation", "Practical next action"],
     [
-      ["Return not filed yet", "Reconcile records first, then choose the correct AY 2026-27 ITR form and schedules."],
-      ["Portal data and personal records differ", "Check the source document, give AIS feedback where relevant, and keep a note before filing."],
-      ["Return already filed with a mistake", "Check whether revised return, rectification, ITR-U, grievance, or notice response is the correct route."],
-      ["Refund, notice, capital gains, business income, or foreign assets involved", "Use CA review before submitting a final position."],
+      ["Return not filed yet", `${firstCheck}. ${secondCheck}. Then choose the AY 2026-27 form and schedules.`],
+      ["Portal data and personal records differ", `${thirdCheck}. Explain the difference, give AIS feedback where relevant, and retain the reconciliation note.`],
+      ["Return already filed with a mistake", `Assess whether revised return, rectification, ITR-U, grievance, or notice response can correct the ${spec.tags[1] ?? spec.tags[0]} issue described in the records.`],
+      ["Material uncertainty remains", `Obtain document-based review before taking a final position on the unresolved ${spec.tags[1] ?? "reporting"} issue.`],
     ],
   );
 }
 
-function categoryTechnicalNotes(categoryId: string) {
-  const notes: Record<string, string> = {
-    "itr-filing":
-      "For ITR filing topics, the technical review starts with the assessment year, residential status, income heads, form eligibility, prefilled data, e-verification status, and whether the return is original, belated, revised, or updated. A CA should verify that the selected ITR form supports every income type and schedule required for the taxpayer.",
-    "income-tax":
-      "For income tax computation topics, the technical review should separate gross income, exempt income, deductions, taxable income, slab computation, rebate, surcharge where relevant, cess, TDS/TCS credit, advance tax, self-assessment tax, and interest. Rebate and exemption should never be treated as the same concept.",
-    "tax-regime":
-      "For tax regime topics, the technical review should compare old and new regime using final taxable income, eligible exemptions, deduction evidence, employer TDS, Form 16, business or profession income status, and return-time eligibility. The regime chosen in payroll is not always the final return position, but the return position must be legally available.",
-    "capital-gains":
-      "For capital gains topics, the technical review should classify each transaction by asset type, holding period, sale value, cost, indexation or grandfathering where applicable, exemption claim, loss set-off, and correct ITR schedule. Delivery equity, mutual funds, intraday, F&O, crypto, and business trading cannot be merged into one generic line item.",
-    "business-freelancers":
-      "For business and freelancer topics, the technical review should examine the income head, books requirement, presumptive taxation eligibility, GST/TDS records, expense support, turnover, audit triggers, loss treatment, and whether ITR-3 or ITR-4 is appropriate. Simpler forms are useful only when the facts qualify.",
-    "foreign-assets-nri-tax":
-      "For foreign asset and NRI topics, the technical review starts with residential status. Then review Schedule FA, Schedule FSI, Schedule TR, Form 67, foreign tax paid, exchange-rate support, calendar-year reporting fields, peak values, acquisition dates, and whether the taxpayer holds foreign bank accounts, RSUs, ESPP, brokerage accounts, or other offshore assets.",
-    "refunds-notices":
-      "For refund and notice topics, the technical review should reconcile the filed return with Form 26AS, AIS, TIS, challans, intimation, defect code, demand computation, bank validation, e-verification, and response deadline. Rectification, revision, updated return, grievance, and payment are different routes and should not be used interchangeably.",
-  };
-
-  return notes[categoryId] ?? notes["itr-filing"];
-}
-
-function technicalNotesFor(spec: TopicSpec) {
-  return `${categoryTechnicalNotes(spec.categoryId)}
-
-For this specific topic, the reviewer should document the working position for "${spec.title}" using the taxpayer's facts, the selected AY 2026-27 form, the records used for computation, and the reason each major number appears in the return. The note should explicitly mention whether the issue affects form selection, income classification, deduction eligibility, tax credit matching, refund timing, notice response, or disclosure schedule completion.
-
-The minimum evidence file should include the source statement behind the answer, the calculation sheet, screenshots or downloads from the income tax portal where relevant, and proof for every adjustment. If the position depends on timing, such as AIS updates, Form 16 issue date, revised return deadline, ITR-U restrictions, e-verification, or a notice response window, the date should be written next to the decision. If the position depends on classification, such as capital gains versus business income, resident versus non-resident, old regime versus new regime, or foreign income versus Indian business receipts, the reason for that classification should be recorded before filing.`;
-}
-
 function faqItemsFor(spec: TopicSpec) {
-  return [
-    ...spec.faqs,
-    {
-      question: "Should I get CA review for this before filing?",
-      answer: "Yes, if the facts are not routine, if a refund or notice is involved, or if the return includes capital gains, foreign assets, business income, regime changes, or AIS/TDS mismatches.",
-    },
-  ];
+  return spec.faqs;
 }
 
-function contentFor(spec: TopicSpec) {
+function chooseForTopic<T>(spec: TopicSpec, salt: string, values: T[]) {
+  const seed = [...`${spec.slug}:${salt}`].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return values[seed % values.length];
+}
+
+function scopeHeading(scope: string, heading: string) {
+  let detail = heading.replace(/^[^:]{1,80}:\s*/, "");
+  const scopeSuffix = ` for ${scope}`.toLowerCase();
+  if (detail.toLowerCase().endsWith(scopeSuffix)) {
+    detail = detail.slice(0, -scopeSuffix.length);
+  }
+  return `${scope}: ${detail}`;
+}
+
+function evidenceLedContentFor(spec: TopicSpec) {
+  const topic = spec.tags[0];
+  const supportingTopic = spec.tags[1] ?? topic;
+  const headingTopic = sentenceCase(topic);
+  const headingSupportingTopic = sentenceCase(supportingTopic);
+  const firstCheck = inlinePhrase(spec.checklist[0]);
+  const secondCheck = inlinePhrase(spec.checklist[1]);
+  const thirdCheck = inlinePhrase(spec.checklist[2] ?? spec.checklist[0]);
+  const firstMistake = inlinePhrase(spec.mistakes[0]);
+  const secondMistake = inlinePhrase(spec.mistakes[1]);
+  const decisionHeading = chooseForTopic(spec, "decision-heading", [
+    `Facts that determine the ${topic} answer`,
+    `Start with the decision, not the portal`,
+    `What changes the filing position`,
+    `${headingTopic}: the material questions`,
+    `The first checks for ${topic}`,
+    `Decide ${topic} from the actual records`,
+  ]);
+  const ruleHeading = chooseForTopic(spec, "rule-heading", [
+    `The current rule behind ${topic}`,
+    `How the official position applies`,
+    `Rule to confirm before filing`,
+    `${headingTopic}: legal and portal position`,
+    `What the notified form requires`,
+    `The governing point for ${topic}`,
+  ]);
+  const recordsHeading = chooseForTopic(spec, "records-heading", [
+    `Build the evidence file for ${topic}`,
+    `Records that support the filing answer`,
+    `Documents to reconcile before filing`,
+    `${headingTopic}: source records and checks`,
+    `What belongs in the working file`,
+    `Evidence behind the reported position`,
+  ]);
+  const exampleHeading = chooseForTopic(spec, "example-heading", [
+    `${headingSupportingTopic}: a worked example`,
+    `How the issue appears in a real file`,
+    `Example using the available records`,
+    `Apply the rule to ${supportingTopic}`,
+    `A practical ${supportingTopic} scenario`,
+    `From source records to filing answer`,
+  ]);
+  const routeHeading = chooseForTopic(spec, "route-heading", [
+    `Choose the correct action from the filing stage`,
+    `Match the issue to the available route`,
+    `Filing, correction, and response options`,
+    `What to do next for ${topic}`,
+    `Use the supported route for ${supportingTopic}`,
+    `Move from review to the right action`,
+  ]);
+  const mistakesHeading = chooseForTopic(spec, "mistakes-heading", [
+    `Errors that change the ${supportingTopic} result`,
+    `Risks to resolve before submission`,
+    `Where ${supportingTopic} commonly goes wrong`,
+    `Do not carry these mistakes into the return`,
+    `Mistakes that affect tax, refund, or disclosure`,
+    `Check these failure points before filing`,
+  ]);
+  const linksHeading = chooseForTopic(spec, "links-heading", [
+    `Related filing and record tools`,
+    `Continue with the nearest practical action`,
+    `${supportingTopic}: useful routes after review`,
+    `${supportingTopic}: tools for the next filing step`,
+    `Move from guidance to action`,
+    `Supporting calculators, services, and guides`,
+  ]);
+  const archiveHeading = chooseForTopic(spec, "archive-heading", [
+    `Keep the ${supportingTopic} evidence trail`,
+    `Archive the completed filing file`,
+    `Records to retain after submission`,
+    `Preserve proof of the final position`,
+    `Close the file without losing the working`,
+    `What to save for later verification`,
+  ]);
+  const sourcesHeading = chooseForTopic(spec, "sources-heading", [
+    `Official instructions behind ${topic}`,
+    `Source pages to check for ${supportingTopic}`,
+    `Verify ${topic} against these official pages`,
+    `Current department guidance for ${supportingTopic}`,
+    `Rules and portal guidance used for ${topic}`,
+    `Official references for the filing decision`,
+  ]);
+  const sourceRows = officialSourceLinks.map((source, index) => {
+    const notes = [
+      `For ${supportingTopic}, confirm the filing or correction route before you ${lowerFirst(firstCheck)}.`,
+      `For ${supportingTopic}, check the current individual-filing position after you ${lowerFirst(secondCheck)}.`,
+      `For ${supportingTopic}, use this transition guidance if completing this check raises a question about the governing period or law: ${thirdCheck}.`,
+      `For ${supportingTopic}, use the AIS guidance when portal data differs from the supporting records.`,
+      `For ${supportingTopic}, read the Form 26AS guidance before choosing a correction route for an unresolved tax-credit difference.`,
+    ];
+    return [`[${source.label}](${source.url})`, notes[index]];
+  });
+  const sourceTable = markdownTable(["Official source", "What to confirm"], sourceRows);
+  const relatedLinks = linkList([
+    ...spec.internalLinks,
+    { label: `Browse related ${supportingTopic} filing guides`, href: "/blog" },
+    { label: `Choose the return form for ${supportingTopic}`, href: "/itr/form-selector" },
+    { label: `Review document handling before sharing ${supportingTopic} records`, href: "/trust" },
+  ]);
+  const controlSentence = chooseForTopic(spec, "control-sentence", [
+    `${firstCheck}. Next, complete this check: ${secondCheck}. Resolve any difference involving ${spec.tags.slice(1, 3).join(" or ")} before choosing the return position.`,
+    `Begin with a documented answer to this check: ${firstCheck}. Then complete: ${secondCheck}. Explain differences involving ${spec.tags.slice(1, 3).join(" or ")} before filing.`,
+    `The first control is simple: ${firstCheck}. The next control is: ${secondCheck}. Document any difference involving ${spec.tags.slice(1, 3).join(" or ")}.`,
+    `${headingSupportingTopic} should not move to a return treatment before both checks are complete: ${firstCheck}; ${secondCheck}. Resolve differences involving ${spec.tags.slice(1, 3).join(" or ")}.`,
+    `Use this as the starting control: ${firstCheck}. Follow it with a separate check: ${secondCheck}. Keep an explanation for differences involving ${spec.tags.slice(1, 3).join(" or ")}.`,
+    `Before filing, complete this check: ${firstCheck}. Then complete: ${secondCheck}. Address differences involving ${spec.tags.slice(1, 3).join(" or ")}.`,
+  ]);
   return `# ${spec.title}
 
 ${spec.shortAnswer}
 
 ${spec.excerpt}
 
-## Key Highlights
+## ${scopeHeading(headingSupportingTopic, decisionHeading)}
 
 ${keyHighlightsTable(spec)}
 
-## What this guide covers
+${controlSentence}
 
-This guide is for taxpayers dealing with ${spec.title.toLowerCase()} while filing FY 2025-26 income in AY 2026-27. It explains the practical rule, the documents to check, the decision points, and the mistakes that can create refund delays, defective returns, incorrect tax demands, or weak disclosure support.
-
-This answer is written for taxpayers filing FY 2025-26 income in AY 2026-27. It is intentionally practical: first decide the correct assessment year, then match the income and tax-credit records, then decide the form, regime, schedule, and correction route. Most mistakes happen when taxpayers start from a shortcut such as "portal prefill says this", "my employer selected that", or "a comment online said this form is enough" instead of matching the return to their actual facts.
-
-The safest approach is to treat the return as a reconciliation exercise. Your salary, interest, capital gains, freelance income, foreign assets, trading income, deductions, and tax paid should all have a source document. If the return creates a refund, demand, loss claim, foreign disclosure, or change in regime, the working papers should explain why the number is correct before the return is submitted.
-
-## Why taxpayers ask this question
-
-${spec.redditSignal} The pattern is understandable: the income tax portal, Form 16, AIS, Form 26AS, old vs new regime, foreign asset schedules, and ITR correction routes all use similar words for different compliance steps.
-
-The confusion usually falls into three buckets. First, taxpayers mix up timing: filing utility availability, Form 16 issue, AIS updates, TDS return processing, due dates, revised return windows, and updated return windows do not all happen on the same day. Second, taxpayers mix up eligibility: ITR-1, ITR-2, ITR-3, ITR-4, old regime, new regime, presumptive taxation, foreign asset schedules, and notice response options all depend on facts. Third, taxpayers mix up evidence: a screenshot, bank credit, broker statement, Form 16, Form 16A, AIS entry, Form 26AS credit, and final return computation each prove different things.
-
-That is why the best answer is rarely a one-line yes or no. The correct answer is usually: check the assessment year, identify the income head, match the tax credit, apply the right form and schedule, and then file or respond using the route that the law actually permits.
-
-## Official-rule view
+## ${scopeHeading(headingSupportingTopic, ruleHeading)}
 
 ${spec.officialRule}
 
-For AY 2026-27, income earned during FY 2025-26 should be filed by selecting AY 2026-27. The transition guidance also clarifies that this return continues under the Income Tax Act, 1961 framework for that year.
+## ${scopeHeading(headingSupportingTopic, sourcesHeading)}
 
-From a filing perspective, this means the return should be built around the law, form instructions, and portal utilities applicable to AY 2026-27, not around a generic current-year assumption. The Income Tax Department's records are useful, but they do not remove the taxpayer's responsibility to report the correct income. AIS and TIS help identify reported information. Form 26AS helps confirm tax credits and tax payments. Form 16 and Form 16A help reconcile TDS. Broker, bank, payroll, and foreign account statements support the figures that go into the schedules.
+${sourceTable}
 
-If the official records are incomplete or wrong, do not blindly copy them. Review the underlying evidence, submit AIS feedback where appropriate, ask the deductor to correct TDS returns where needed, and keep notes explaining your final treatment. If the official records are correct but your private records are incomplete, update your working file before filing.
-
-## Documents to keep ready
+## ${scopeHeading(headingSupportingTopic, recordsHeading)}
 
 ${documentTableFor(spec)}
 
-Use this table as a working file checklist. The Income Tax Department's prefilled data can help you start, but the taxpayer must still check the figures against source documents before filing or responding.
+${bulletList(spec.checklist)}
 
-## Example
+## ${scopeHeading(headingSupportingTopic, exampleHeading)}
 
 ${spec.example}
 
-Apply the example in three passes. In the first pass, identify the income period and assessment year. In the second pass, identify the form and schedule that can legally report the income. In the third pass, compare tax deducted, tax paid, and tax payable. If all three passes agree, the return is usually ready for final review. If one pass fails, pause before filing because that is where notices, refund delays, or defective returns usually begin.
-
-For a salary taxpayer, the equivalent records may be Form 16, monthly payslips, AIS, Form 26AS, bank interest certificate, rent proof, housing loan certificate, and investment proof. For an investor, the records may include broker capital gains reports, mutual fund statements, dividend entries, STT details, and AIS securities information. For a freelancer or business owner, the records may include invoices, bank statements, Form 16A, GST returns, expense evidence, and books. For foreign asset cases, the records may include foreign bank statements, RSU or ESPP statements, broker reports, foreign tax certificates, exchange-rate support, and Form 67 evidence.
-
-## Filing checklist
-
-${bulletList(spec.checklist)}
-
-Use this checklist as a pre-filing gate, not as a post-filing cleanup list. Before submission, confirm that each checklist item has either a document, a computation note, or a conscious "not applicable" decision. This is especially important when the article topic affects refunds, notices, foreign disclosures, capital gains, tax regime choice, or return correction routes.
-
-Also check the return preview before final submission. Verify name, PAN, assessment year, bank account, filing section, regime selection, ITR form, schedule count, taxable income, TDS, self-assessment tax, refund or demand, and e-verification mode. Many avoidable errors are visible in the preview if the taxpayer slows down for five minutes.
-
-## Which route should you use?
+## ${scopeHeading(headingSupportingTopic, routeHeading)}
 
 ${decisionTableFor(spec)}
 
-The route matters as much as the answer. Paying a demand, filing a revised return, using ITR-U, submitting AIS feedback, raising a grievance, or replying to a notice are separate actions. Choose the action that matches the document and statutory window in front of you.
-
-## Common mistakes to avoid
+## ${scopeHeading(headingSupportingTopic, mistakesHeading)}
 
 ${bulletList(spec.mistakes)}
 
-The most expensive mistake is not always a wrong number. Often it is a wrong route. For example, filing ITR-1 when ITR-2 or ITR-3 is required can create a defective return problem. Trying to use ITR-U to reduce tax or increase refund can fail because updated return has restrictions. Claiming TDS without reporting the related income can delay refund. Ignoring Schedule FA because the income is small can create a serious disclosure issue. Selecting a tax regime without checking deductions, business income rules, or Form 10-IEA implications can create demand or lost benefit.
+${firstMistake} and ${lowerFirst(secondMistake)} can change tax, refund, disclosure, or the evidence available for a later response; resolve both before submission.
 
-Another common mistake is treating portal data as complete too early in the season. AIS, Form 26AS, and TIS can update after deductors, banks, brokers, employers, or other reporting entities file or correct their statements. If your return depends on a large refund or a disputed entry, waiting for cleaner records or documenting your evidence is usually better than rushing.
+## ${scopeHeading(headingSupportingTopic, linksHeading)}
 
-Finally, avoid filing without preserving the working file. The return acknowledgement alone is not enough. Keep the computation, statements, proofs, screenshots, challans, and correspondence. If a notice arrives months later, the taxpayer who can reconstruct the return quickly is in a much stronger position.
+${relatedLinks}
 
-## Documents and evidence to keep
+## ${scopeHeading(headingSupportingTopic, archiveHeading)}
 
-Keep a simple folder for this topic with the final computation and supporting files. At minimum, include Form 16 or Form 16A where applicable, AIS, TIS, Form 26AS, bank statements, investment statements, deduction proofs, challans, and the final ITR acknowledgement. If the topic involves capital gains, add broker statements and transaction reports. If it involves foreign assets or foreign tax credit, add foreign account statements, tax certificates, exchange-rate workings, and Form 67 support. If it involves notices, add the intimation, notice PDF, response acknowledgement, and any rectification or revised return computation.
+- ${firstCheck}; retain the source statements and portal downloads used for that decision.
+- ${secondCheck}; keep a dated note of the result and any assumption that still needs confirmation.
+- Archive the final ${supportingTopic} form, acknowledgement, calculation, and evidence behind this check: ${firstCheck}.
+- ${secondCheck}; record the next correction, response, payment, or review deadline left open.
+`;
+}
 
-Name the files clearly, for example "AY-2026-27-AIS.pdf", "Form-16-employer-name.pdf", "Capital-gains-broker-report.xlsx", or "143-1-intimation-response.pdf". Clear file names save time when a CA reviews the case or when the department asks for details later.
+function contentFor(spec: TopicSpec) {
+  const topic = spec.tags[0];
+  const supportingTopic = spec.tags[1] ?? topic;
+  const headingTopic = sentenceCase(topic);
+  const headingSupportingTopic = sentenceCase(supportingTopic);
+  const firstCheck = inlinePhrase(spec.checklist[0]);
+  const secondCheck = inlinePhrase(spec.checklist[1]);
+  const thirdCheck = inlinePhrase(spec.checklist[2] ?? spec.checklist[0]);
+  const firstMistake = inlinePhrase(spec.mistakes[0]);
+  const secondMistake = inlinePhrase(spec.mistakes[1] ?? spec.mistakes[0]);
+  const sourceNotes = [
+    `Before you ${lowerFirst(firstCheck)}, confirm the available filing or correction route for ${supportingTopic}.`,
+    `After you ${lowerFirst(secondCheck)}, compare the result with the current individual filing guidance for ${supportingTopic}.`,
+    `If ${lowerFirst(thirdCheck)} raises a transition question, confirm which law and period govern the ${supportingTopic} answer.`,
+    `When the result after you ${lowerFirst(firstCheck)} differs from portal data, use this guidance to decide whether AIS feedback is appropriate.`,
+    `For a tax-credit difference left after you ${lowerFirst(secondCheck)}, read this FAQ before choosing a correction route.`,
+  ];
+  const sourceList = officialSourceLinks.map((source, index) =>
+    `- ${headingSupportingTopic} source check ${index + 1}: [${source.label}](${source.url}) - ${sourceNotes[index]}`,
+  ).join("\n");
+  const relatedLinks = linkList([
+    ...spec.internalLinks,
+    { label: `Browse related ${supportingTopic} filing guides`, href: "/blog" },
+    { label: `Review document handling before sharing ${supportingTopic} records`, href: "/trust" },
+  ]);
 
-## How to decide the next action
+  return `# ${spec.title}
 
-Use a simple decision flow. If the return has not been filed, complete reconciliation first and then file the correct form. If the return has been filed but the deadline for revision is open, check whether a revised return is the right correction route. If the issue is only an apparent processing mismatch, rectification may be relevant. If the filing window is closed and additional income or tax must be disclosed, updated return may be considered, but only within its restrictions. If there is a notice, read the notice before choosing any route.
+${spec.shortAnswer}
 
-Do not assume that paying a demand, filing a revised return, filing ITR-U, submitting AIS feedback, or raising a grievance are interchangeable. Each route solves a different problem. Pick the route based on the document in front of you and the statutory time limit.
+${spec.excerpt}
 
-## Useful MyeCA tools
+## ${headingTopic}: decide from the records
 
-${linkList(spec.internalLinks)}
+${spec.officialRule}
 
-Use these tools after the facts are organized. Calculators are most useful when the source numbers are reliable. The ITR form selector is most useful when all income heads are known. The AIS viewer is most useful when you compare each information item with your own statement. Expert consultation is most useful when there is a choice to make, such as regime selection, form selection, correction route, foreign disclosure, notice response, or treatment of trading income.
+For ${topic}, complete the first check: ${firstCheck}. Next, ${secondCheck}. Treat the portal's ${supportingTopic} data as a comparison point; the taxpayer's records decide whether an entry is complete, duplicated, incorrectly classified, or reported in the wrong schedule.
 
-## When to get expert help
+## ${headingSupportingTopic}: evidence to reconcile
 
-Use CA review when your case includes capital gains, trading income, foreign assets, foreign tax credit, freelance or business income, a large refund, AIS mismatch, a demand notice, a defective return notice, or any uncertainty about the correct ITR form.
+${bulletList(spec.checklist)}
 
-Expert review is also useful when the tax impact seems small but the compliance risk is high. Foreign asset disclosure, incorrect ITR form selection, missed business income, defective return notices, and invalid correction routes can create problems that are larger than the immediate tax amount. A CA review should not merely enter data; it should explain the filing position, check the evidence, and leave you with a clear computation.
+The ${supportingTopic} checklist should connect each material amount or taxpayer fact to a source record after you ${lowerFirst(firstCheck)}. Compare ${supportingTopic} entries in AIS, TIS, Form 26AS, and the portal with that evidence, then explain rather than copy any difference. The ${supportingTopic} computation should show how the supported answer reached the selected form and schedule.
 
-## Final takeaway
+## ${headingSupportingTopic}: a worked example
 
-${spec.highlights.join(" ")}
+${spec.example}
 
-Treat this topic as one part of the larger AY 2026-27 filing file. A clean return is not created by one answer; it is created by consistent treatment across the return, supporting statements, tax credits, schedules, and declarations. If the facts are routine, the checklist may be enough. If the facts are mixed, disputed, or high-value, get the treatment reviewed before filing.
+This ${supportingTopic} example is illustrative; the taxpayer's records control the filed answer. After you ${lowerFirst(thirdCheck)}, recalculate the result and confirm that the selected return can report the issue without omitting a required schedule or disclosure.
 
-## CA Technical Notes
+## ${headingSupportingTopic}: filing and correction routes
 
-${technicalNotesFor(spec)}
+${decisionTableFor(spec)}
+
+## ${headingTopic}: errors to resolve before filing
+
+${bulletList(spec.mistakes)}
+
+The first ${supportingTopic} risk is ${lowerFirst(firstMistake)}. Another is ${lowerFirst(secondMistake)}. Resolve both ${supportingTopic} risks before submission and retain the reason for the reported treatment so a later correction does not depend on memory.
+
+## ${headingSupportingTopic}: official instructions
+
+${sourceList}
+
+The ${supportingTopic} source check should be dated because forms, utilities, deadlines, and portal workflows can change. ${headingSupportingTopic} records should retain the instruction or acknowledgement used after you ${lowerFirst(firstCheck)} with the computation.
+
+## ${headingSupportingTopic}: related filing routes
+
+${relatedLinks}
+
+## ${headingSupportingTopic}: records to retain
+
+The ${supportingTopic} file should keep the records used to ${lowerFirst(firstCheck)}, the result after you ${lowerFirst(secondCheck)}, and the explanation for any issue found while you ${lowerFirst(thirdCheck)}. Add the final ${supportingTopic} return, computation, acknowledgement, and e-verification proof so a later review can identify what was reported and why.
 `;
 }
 
@@ -1045,14 +1163,14 @@ export const itrSeason2026BlogPosts: ItrSeasonPost[] = topics.map((spec, index) 
   title: spec.title,
   slug: spec.slug,
   excerpt: spec.excerpt,
-  content: contentFor(spec),
+  content: evidenceLedContentFor(spec),
   status: "published",
   categoryId: spec.categoryId,
   coverImage: blogTextCoverPath(spec.slug),
   authorId: "mye-ca-editorial",
   authorName: "MyeCA Editorial Team",
   authorRole: "ITR Filing Desk",
-  authorBio: "The MyeCA Editorial Team writes CA-reviewed guides for Indian taxpayers, freelancers, investors, and globally mobile individuals.",
+  authorBio: "The MyeCA Editorial Team prepares evidence-led guides for Indian taxpayers, freelancers, investors, and globally mobile individuals.",
   seoTitle: spec.seoTitle,
   seoDescription: spec.seoDescription,
   keyHighlights: spec.highlights,
@@ -1070,9 +1188,8 @@ export const itrSeason2026BlogPosts: ItrSeasonPost[] = topics.map((spec, index) 
   updatedAt: reviewedAt,
   tags: spec.tags,
   audience: spec.audience,
-  reviewedBy: "CA MyeCA Review Desk",
-  reviewedAt,
-  sourceLinks: officialSourceLinks,
+  qualityStatus: "needs_revision",
+  sourceLinks: officialSourceLinks.map((source) => ({ ...source, checkedAt: reviewedAt.slice(0, 10) })),
   serviceSlug: spec.serviceSlug ?? null,
   calculatorSlug: spec.calculatorSlug ?? null,
   canonicalUrl: null,

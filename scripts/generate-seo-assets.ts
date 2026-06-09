@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { SEO_CONFIG, type SEOConfigItem } from "../client/src/config/seo.config.js";
 import { TAX_GUIDES, type TaxGuide } from "../client/src/data/tax-guides.js";
 import {
+  getGeneratedRouteContent,
   getGeneratedPublicRoutes,
   getGeneratedRouteSEOConfig,
 } from "../client/src/data/missing-pages.js";
@@ -38,6 +39,12 @@ import {
   organizationNode,
 } from "../shared/seo-schema.js";
 import { renderStaticRouteBody, type StaticRouteBodyInput } from "../shared/static-seo-content.js";
+import {
+  expectedOfficialSourceAuthorities,
+  shouldIndexPublicContent,
+  type PublicContentContext,
+  type PublicPageType,
+} from "../shared/public-content-quality.js";
 
 type RouteMeta = {
   path: string;
@@ -53,6 +60,7 @@ type RouteMeta = {
   body?: StaticRouteBodyInput;
   staticHighlights?: string[];
   staticLinks?: Array<{ label: string; href: string }>;
+  contentContext?: PublicContentContext;
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -95,8 +103,8 @@ function storedPostToBuildPost(post: StoredBlogPost): StaticMdxBlogPost {
     coverImage: post.coverImage,
     authorId: post.authorId || "mye-ca-editorial",
     authorName: post.authorName || "MyeCA Editorial Team",
-    authorRole: post.authorRole || "CA-led tax editorial team",
-    authorBio: post.authorBio || "Reviewed Indian tax and compliance guidance from the MyeCA editorial desk.",
+    authorRole: post.authorRole || "Tax and compliance editorial team",
+    authorBio: post.authorBio || "Evidence-led Indian tax and compliance guidance from the MyeCA editorial team.",
     seoTitle: post.seoTitle || `${post.title} | MyeCA.in Blog`,
     seoDescription: post.seoDescription || excerpt,
     keyHighlights: post.keyHighlights.length ? post.keyHighlights : tags.slice(0, 5),
@@ -111,6 +119,12 @@ function storedPostToBuildPost(post: StoredBlogPost): StaticMdxBlogPost {
     updatedAt: post.updatedAt || fallbackDate,
     tags,
     audience: post.audience,
+    targetAudience: post.targetAudience,
+    userIntent: post.userIntent,
+    keyTopics: post.keyTopics,
+    qualityStatus: post.qualityStatus,
+    editorialApprovedBy: post.editorialApprovedBy,
+    editorialApprovedAt: post.editorialApprovedAt,
     reviewedBy: post.reviewedBy,
     reviewedAt: post.reviewedAt,
     reviewerName: post.reviewerName,
@@ -122,8 +136,8 @@ function storedPostToBuildPost(post: StoredBlogPost): StaticMdxBlogPost {
     serviceSlug: post.serviceSlug,
     calculatorSlug: post.calculatorSlug,
     canonicalUrl: post.canonicalUrl,
-    primaryKeyword: tags[0] || post.title,
-    secondaryKeywords: tags.slice(1),
+    primaryKeyword: post.primaryKeyword || tags[0] || post.title,
+    secondaryKeywords: post.secondaryKeywords?.length ? post.secondaryKeywords : tags.slice(1),
     contentType: "explainer",
     howToSteps: [],
     totalTime: null,
@@ -145,7 +159,9 @@ export function mergeBlogPostsForPrerender(
 }
 
 async function loadBlogPostsForPrerender(): Promise<DefaultBlogPost[]> {
-  const staticPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
+  const staticPosts = loadStaticBlogPosts().filter(
+    (post) => post.status === "published" && shouldIndexPublicContent(post.qualityStatus ?? "needs_revision"),
+  );
   if (process.env.USE_DATABASE_PUBLIC_BLOGS !== "true") {
     return staticPosts;
   }
@@ -391,6 +407,8 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
   const route = `/blog/${post.slug}`;
   const title = normalizeSeoTitle(post.seoTitle || `${post.title} | MyeCA.in Blog`);
   const description = normalizeSeoDescription(post.seoDescription || post.excerpt, title);
+  const primaryKeyword = post.primaryKeyword || post.tags[0] || post.title;
+  const secondaryKeywords = post.secondaryKeywords?.length ? post.secondaryKeywords : post.tags.slice(1);
   const staticPost = post as Partial<StaticMdxBlogPost>;
   const image = absoluteSiteUrl(post.coverImage);
   const reviewer =
@@ -451,12 +469,42 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
     image,
     robots: "index, follow",
     jsonLd,
-    aiSummary: `${post.title}: ${post.excerpt} Reviewed tax guidance for Indian taxpayers. Verify facts with a CA before filing.`,
+    aiSummary: `${post.title}: ${post.excerpt} Verify time-sensitive facts against the listed official sources before filing.`,
     staticHighlights: post.keyHighlights,
     staticLinks: [
       ...(post.ctaHref ? [{ label: post.ctaLabel || "Start filing", href: post.ctaHref }] : []),
       ...(post.sourceLinks ?? []).map((link) => ({ label: link.label, href: link.url })),
     ],
+    contentContext: routeContentContext({
+      route,
+      type: "article",
+      title: post.title,
+      keywords: [primaryKeyword, ...secondaryKeywords],
+      highlights: post.keyHighlights,
+      audience: post.targetAudience ? [post.targetAudience] : [post.audience ?? "both"],
+      userIntent: post.userIntent ?? "informational",
+      keyTopics: post.keyTopics?.length ? post.keyTopics : post.keyHighlights,
+      officialSources: (post.sourceLinks ?? []).map((source) => ({
+        label: source.label,
+        url: source.url,
+        checkedAt: source.checkedAt ?? null,
+      })),
+      authorName: post.authorName,
+      authorRole: post.authorRole,
+      reviewer: reviewer
+        ? {
+            name: reviewer.name,
+            credentialName: reviewer.credentialName,
+            credentialId: reviewer.credentialId,
+            credentialAuthority: reviewer.credentialAuthority ?? null,
+          }
+        : null,
+      qualityStatus: post.qualityStatus ?? "needs_revision",
+      editorialApproval:
+        post.editorialApprovedBy && post.editorialApprovedAt
+          ? { approvedBy: post.editorialApprovedBy, approvedAt: post.editorialApprovedAt }
+          : null,
+    }),
     body: {
       route,
       title: post.title,
@@ -468,7 +516,10 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
       modifiedAt: post.updatedAt,
       authorName: post.authorName,
       authorRole: post.authorRole,
-      reviewedBy: post.reviewedBy || post.reviewerName,
+      reviewedBy:
+        post.reviewerName && post.reviewerCredentialName && post.reviewerCredentialId
+          ? post.reviewerName
+          : undefined,
       reviewedAt: post.reviewedAt,
       reviewerCredentialName: post.reviewerCredentialName,
       reviewerCredentialId: post.reviewerCredentialId,
@@ -478,24 +529,17 @@ export function blogMeta(post: DefaultBlogPost): RouteMeta {
 }
 
 function normalizeSeoTitle(value: string) {
-  let title = value.trim();
-  if (title.length < 30) {
-    const base = title.replace(/\s*\|\s*MyeCA\.in\s*$/i, "").trim();
-    title = `${base} Tax Tools | MyeCA.in`;
+  const title = value.trim();
+  if (title.length > 90) {
+    return `${title.slice(0, 87).trimEnd()}...`;
   }
-  if (title.length > 80) {
-    title = `${title.slice(0, 77).trimEnd()}...`;
-  }
-  return title;
+  return title || SITE_NAME;
 }
 
 function normalizeSeoDescription(value: string, title: string) {
-  let description = value.trim();
-  if (description.length < 100) {
-    description = `${description} Use MyeCA to verify records, compare related tools, and choose the next filing or compliance step for India.`;
-  }
-  if (description.length > 180) {
-    description = `${description.slice(0, 177).trimEnd()}...`;
+  const description = value.trim();
+  if (description.length > 220) {
+    return `${description.slice(0, 217).trimEnd()}...`;
   }
   return description || `${title} on MyeCA.in with Indian tax, GST, startup, and compliance guidance.`;
 }
@@ -509,6 +553,22 @@ function uniqueLinks(links: Array<{ label: string; href: string }>) {
     const href = link.href.trim();
     if (!href || href === "#" || seen.has(href)) return false;
     seen.add(href);
+    return true;
+  });
+}
+
+function uniqueText(values: string[]) {
+  const seen = new Set<string>();
+  return values.filter((value) => {
+    const normalized = value
+      .trim()
+      .toLowerCase()
+      .replace(/&[a-z0-9#]+;/gi, " ")
+      .replace(/[^a-z0-9]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!normalized || seen.has(normalized)) return false;
+    seen.add(normalized);
     return true;
   });
 }
@@ -617,7 +677,18 @@ function guideMeta(guide: TaxGuide): RouteMeta {
     image,
     robots: "index, follow",
     jsonLd,
-    aiSummary: `${guide.title}: ${description} Step-by-step Indian tax guidance. Verify filing decisions with a CA before submission.`,
+    aiSummary: `${guide.title}: ${description} Verify time-sensitive filing decisions against official sources before submission.`,
+    contentContext: routeContentContext({
+      route,
+      type: "article",
+      title: guide.title,
+      keywords: guide.tags,
+      highlights: guide.tags,
+      audience: [`Taxpayers using ${guide.title} to prepare a filing decision`],
+      userIntent: "informational",
+      keyTopics: guide.steps.slice(0, 4).map((step) => step.title),
+      sections: guide.steps.slice(0, 4).map((step) => ({ heading: step.title, body: step.description })),
+    }),
     body: {
       route,
       title: guide.title,
@@ -640,15 +711,884 @@ function guideMeta(guide: TaxGuide): RouteMeta {
   };
 }
 
+function pageTypeForRoute(route: string, type: RouteMeta["type"]): PublicPageType {
+  if (route.startsWith("/blog/")) return "blog";
+  if (type === "service") return "service";
+  if (type === "calculator") return "calculator";
+  if (route.startsWith("/compare") || route.includes("comparison") || route.includes("comparator")) return "comparison";
+  if (route === "/") return "home";
+  if (
+    ["/all-services", "/blog", "/calculators", "/itr-season-2026", "/learn", "/learn/videos", "/services"]
+      .includes(route)
+  ) return "hub";
+  if (route.startsWith("/legal") || ["/privacy", "/terms", "/refund-policy"].includes(route)) return "legal";
+  if (route.includes("help") || route.includes("faq") || route.includes("contact")) return "help";
+  if (route.includes("trust") || route.includes("about")) return "trust";
+  if (type === "article") return "hub";
+  return "page";
+}
+
+function defaultOfficialSources(route: string, type: RouteMeta["type"]) {
+  const checkedAt = now;
+  const source = (label: string, url: string) => ({ label, url, checkedAt });
+  const firstPartySources: Record<string, Array<{ label: string; url: string; checkedAt: string }>> = {
+    "/": [
+      source("MyeCA service catalog", "https://myeca.in/services"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+      source("MyeCA trust and data-handling overview", "https://myeca.in/trust"),
+    ],
+    "/about": [
+      source("MyeCA trust and data-handling overview", "https://myeca.in/trust"),
+      source("MyeCA service catalog", "https://myeca.in/services"),
+    ],
+    "/all-services": [
+      source("MyeCA service catalog", "https://myeca.in/services"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/blog": [
+      source("MyeCA tax and compliance guide library", "https://myeca.in/learn/guides"),
+      source("MyeCA information-use disclaimer", "https://myeca.in/legal/disclaimer"),
+    ],
+    "/calculators": [
+      source("MyeCA calculator methodology overview", "https://myeca.in/features/tax-calculator"),
+      source("MyeCA estimate and information-use disclaimer", "https://myeca.in/legal/disclaimer"),
+    ],
+    "/contact": [
+      source("MyeCA help center", "https://myeca.in/help"),
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+    ],
+    "/expert-consultation": [
+      source("MyeCA tax consultation scope", "https://myeca.in/services/tax-consultation"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+      source("MyeCA information-use disclaimer", "https://myeca.in/legal/disclaimer"),
+    ],
+    "/experts": [
+      source("MyeCA tax consultation scope", "https://myeca.in/services/tax-consultation"),
+      source("MyeCA trust and data-handling overview", "https://myeca.in/trust"),
+    ],
+    "/features/document-scanner": [
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+      source("MyeCA trust and data-handling overview", "https://myeca.in/trust"),
+    ],
+    "/help": [
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+    ],
+    "/help/faq": [
+      source("MyeCA help center", "https://myeca.in/help"),
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+    ],
+    "/help/knowledge-base": [
+      source("MyeCA help center", "https://myeca.in/help"),
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+    ],
+    "/help/user-guide": [
+      source("MyeCA help center", "https://myeca.in/help"),
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+    ],
+    "/legal/disclaimer": [
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/legal/privacy-policy": [
+      source("MyeCA trust and data-handling overview", "https://myeca.in/trust"),
+      source("MyeCA contact and data-request route", "https://myeca.in/contact"),
+    ],
+    "/legal/refund-policy": [
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/legal/terms-of-service": [
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/mobile-app": [
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+      source("MyeCA user guide", "https://myeca.in/help/user-guide"),
+    ],
+    "/pricing": [
+      source("MyeCA refund policy", "https://myeca.in/legal/refund-policy"),
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+    ],
+    "/services": [
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+    ],
+    "/trust": [
+      source("MyeCA privacy policy", "https://myeca.in/legal/privacy-policy"),
+      source("MyeCA terms of service", "https://myeca.in/legal/terms-of-service"),
+    ],
+  };
+  if (firstPartySources[route]) return firstPartySources[route];
+
+  const comparisonSources: Record<string, Array<{ label: string; url: string; checkedAt: string }>> = {
+    "/compare": [
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+      source("Income Tax Department", "https://www.incometax.gov.in/"),
+    ],
+    "/compare/cleartax-alternative": [
+      source("ClearTax public pricing", "https://cleartax.in/s/pricing"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/compare/taxbuddy-alternative": [
+      source("TaxBuddy public pricing", "https://www.taxbuddy.com/pricing-itr-app"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/compare/quicko-capital-gains-alternative": [
+      source("Quicko public pricing", "https://quicko.com/pricing"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+    "/compare/indiafilings-alternative": [
+      source("IndiaFilings public service catalog", "https://www.indiafilings.com/"),
+      source("MyeCA startup service scope", "https://myeca.in/startup-services"),
+    ],
+    "/compare/best-ca-assisted-itr-filing": [
+      source("Income Tax Department", "https://www.incometax.gov.in/"),
+      source("MyeCA pricing and service scope", "https://myeca.in/pricing"),
+    ],
+  };
+  if (comparisonSources[route]) return comparisonSources[route];
+
+  const authorities = expectedOfficialSourceAuthorities({
+    route,
+    pageType: pageTypeForRoute(route, type),
+  });
+  if (authorities.length) {
+    return authorities.map((authority) => source(authority.label, authority.url));
+  }
+
+  if (route === "/learn" || route === "/learn/guides" || route === "/learn/glossary") {
+    return [
+      source("Income Tax Department", "https://www.incometax.gov.in/"),
+      source("GST Portal", "https://www.gst.gov.in/"),
+    ];
+  }
+  if (route.startsWith("/learn/")) return [source("MyeCA learning resource scope", toAbsoluteUrl(route))];
+  if (type === "calculator") return [source("MyeCA calculator methodology", toAbsoluteUrl(route))];
+  if (type === "service") return [source("MyeCA service scope", toAbsoluteUrl(route))];
+  return [];
+}
+
+const ROUTE_AUDIENCE_OVERRIDES: Record<string, string> = {
+  "/about": "Prospective customers and partners verifying MyeCA's business identity, service scope, and operating model",
+  "/all-services": "Taxpayers, founders, and business owners choosing a filing, registration, compliance, or advisory service",
+  "/blog": "Indian taxpayers and business owners looking for evidence-backed filing and compliance guidance",
+  "/calculators": "Taxpayers, borrowers, and investors choosing an estimate or planning tool for a specific decision",
+  "/compliance-calendar": "GST-registered businesses, employers, deductors, and taxpayers tracking statutory due dates",
+  "/contact": "Customers with a filing, account, payment, document, or service-support question",
+  "/expert-consultation": "Taxpayers and business owners with a fact-specific tax, GST, notice, startup, or compliance question",
+  "/experts": "Taxpayers and businesses deciding whether their records or filing position need professional review",
+  "/features/document-scanner": "Taxpayers organizing Form 16, AIS, statements, notices, and other filing records for review",
+  "/features/expert-tax-review": "Taxpayers with complex income, record mismatches, notices, or uncertain filing treatment",
+  "/features/fastest-itr-filing": "Taxpayers with filing-ready records who want to resolve blockers before submitting an ITR",
+  "/features/tax-calculator": "Taxpayers comparing regimes, deductions, credits, and estimated liability before filing",
+  "/help": "Customers resolving account, filing, document-upload, calculator, payment, or service questions",
+  "/help/faq": "Customers checking common filing, payment, document, privacy, and service-scope questions",
+  "/help/knowledge-base": "Customers troubleshooting a specific account, filing, document, calculator, or compliance step",
+  "/help/user-guide": "New and returning customers learning how to complete MyeCA filing and service workflows",
+  "/itr-season-2026": "Individuals preparing an AY 2026-27 return from salary, investments, business income, or other records",
+  "/itr-season-2026/ais-form-26as-mismatch-checklist": "Taxpayers whose AIS, Form 26AS, Form 16, or own records show different income or tax-credit figures",
+  "/itr-season-2026/capital-gains-broker-statement-checklist": "Investors and traders reconciling broker statements, AIS entries, and capital-gains schedules",
+  "/itr-season-2026/form-16-parser-guide": "Salaried taxpayers checking Form 16 values before using them in an income-tax return",
+  "/itr-season-2026/itr-deadline-refund-status-tracker": "Taxpayers tracking AY 2026-27 filing dates, return processing, refunds, or post-filing action",
+  "/itr/form-recommender": "Taxpayers choosing an ITR form after identifying every income source and disclosure requirement",
+  "/itr/form-selector": "Individual taxpayers deciding between ITR-1, ITR-2, ITR-3, and ITR-4",
+  "/itr/start": "Individuals ready to identify their return type and begin an income-tax filing workflow",
+  "/learn": "Indian taxpayers, founders, and finance teams learning a tax or compliance workflow before acting",
+  "/learn/glossary": "Taxpayers decoding income-tax, return, deduction, notice, and filing terminology",
+  "/learn/guides": "Taxpayers choosing a detailed guide for an income, deduction, notice, or filing question",
+  "/learn/videos": "Taxpayers who prefer short lesson outlines before completing a filing or compliance task",
+  "/legal/disclaimer": "Readers checking the limits of MyeCA's tax information, estimates, and professional-support scope",
+  "/legal/privacy-policy": "Customers deciding what personal and tax-document data to share with MyeCA",
+  "/legal/refund-policy": "Customers checking refund eligibility, exclusions, evidence, and request steps for a MyeCA payment",
+  "/legal/terms-of-service": "Customers reviewing account, payment, service-scope, third-party portal, and dispute terms",
+  "/mobile-app": "Taxpayers who want to manage filing records, tasks, and service progress from a mobile device",
+  "/pricing": "Individuals and businesses comparing MyeCA deliverables, exclusions, and fees before purchasing support",
+  "/services": "Individuals, founders, and businesses choosing tax, GST, registration, or recurring compliance support",
+  "/tax-assistant": "Taxpayers forming a complete tax question and deciding when an answer needs professional review",
+  "/tax-loss-harvesting": "Investors with realised gains and losses assessing year-end tax treatment before trading",
+  "/tds-refund-tracker": "Taxpayers reconciling TDS credits, return processing, and refund status after filing",
+  "/trust": "Taxpayers and businesses deciding whether to share financial records or purchase MyeCA support",
+
+  "/calculators/advance-tax": "Taxpayers with non-salary income estimating advance-tax instalments and interest exposure",
+  "/calculators/capital-gains": "Investors and property sellers estimating short-term and long-term capital-gains tax",
+  "/calculators/car-loan": "Vehicle buyers comparing monthly instalments and total borrowing cost",
+  "/calculators/deductions": "Taxpayers checking deduction categories, evidence gaps, and regime impact before filing",
+  "/calculators/education-loan": "Students and families modelling education-loan disbursement, moratorium, EMI, and interest",
+  "/calculators/elss": "Taxpayers assessing ELSS lock-in, 80C usage, investment risk, and filing records",
+  "/calculators/emi": "Borrowers comparing monthly instalments, tenure, and total interest across loan scenarios",
+  "/calculators/epf": "Employees reviewing EPF contributions, records, transfers, withdrawals, or retirement planning",
+  "/calculators/fd": "Deposit investors estimating fixed-deposit maturity and taxable interest",
+  "/calculators/fd-enhanced": "Deposit investors comparing compounding, maturity value, and post-tax fixed-deposit returns",
+  "/calculators/gratuity": "Employees leaving or retiring who need an indicative gratuity and tax-planning estimate",
+  "/calculators/gst": "Businesses calculating inclusive or exclusive GST values for an invoice or quotation",
+  "/calculators/home-loan": "Home buyers and borrowers comparing housing-loan EMI, interest, and affordability",
+  "/calculators/hra": "Salaried tenants estimating HRA exemption before choosing a tax regime or filing",
+  "/calculators/hsn-finder": "GST-registered sellers and service providers researching a product or service classification",
+  "/calculators/income-tax": "Individual taxpayers estimating AY 2026-27 liability and comparing old and new regimes",
+  "/calculators/inflation": "Households and investors estimating future cost or purchasing-power erosion",
+  "/calculators/loan-eligibility": "Borrowers estimating affordable debt from verified income and existing obligations",
+  "/calculators/lumpsum": "Investors projecting the future value of a one-time investment under different return assumptions",
+  "/calculators/nps": "Retirement savers estimating NPS corpus, annuity allocation, and contribution scenarios",
+  "/calculators/penalty": "Taxpayers, deductors, and GST registrants estimating a possible cost of delayed payment or filing",
+  "/calculators/personal-loan": "Borrowers comparing personal-loan EMI, affordability, and total borrowing cost",
+  "/calculators/ppf": "Long-term savers estimating PPF deposits, maturity value, and 80C planning impact",
+  "/calculators/rd": "Regular savers estimating recurring-deposit maturity from monthly deposits and booked rates",
+  "/calculators/regime-comparator": "Taxpayers with deductions and exemptions comparing old and new tax regimes",
+  "/calculators/salary": "Employees and job candidates estimating take-home pay from a CTC and deduction structure",
+  "/calculators/sip": "Long-term investors projecting monthly investment growth under stated return assumptions",
+  "/calculators/sip-enhanced": "Investors modelling SIP step-ups, year-wise growth, and different market-return scenarios",
+  "/calculators/swp": "Retirees and investors testing whether a withdrawal plan may deplete an investment corpus",
+  "/calculators/tax-regime": "Salaried taxpayers comparing regime outcomes from income, exemptions, and deduction evidence",
+  "/calculators/tds": "Deductors and payees estimating TDS on a defined payment type and threshold",
+  "/calculators/vda-tax": "Crypto and VDA investors organizing transaction, TDS, and filing records",
+  "/capital-gains-import": "Active investors converting broker tax P&L files into a review-ready capital-gains summary",
+  "/elss-comparator": "Taxpayers comparing ELSS funds after checking 80C capacity, lock-in, cost, and investment risk",
+  "/form16-parser": "Salaried taxpayers extracting and checking Form 16 values before ITR preparation",
+  "/tax-optimizer": "Individuals comparing regime, deduction, and tax-planning scenarios before filing or investing",
+
+  "/compare": "Taxpayers and business owners choosing between self-service and assisted filing or compliance support",
+  "/compare/best-ca-assisted-itr-filing": "Taxpayers with salary, capital gains, business income, foreign assets, or notice-response needs",
+  "/compare/cleartax-alternative": "Taxpayers who need assisted ITR filing with clear document-review and support scope",
+  "/compare/indiafilings-alternative": "Founders and small businesses choosing support for registration, GST, and recurring compliance",
+  "/compare/quicko-capital-gains-alternative": "Investors with broker statements, AIS mismatches, F&O, or VDA transactions",
+  "/compare/taxbuddy-alternative": "Taxpayers with document gaps, prior notices, or complex returns who need expert filing support",
+
+  "/gst-filing": "GST-registered businesses preparing returns and reconciling sales, purchases, tax payments, and input credits",
+  "/itr-filing": "Individuals preparing an income-tax return from salary, investments, property, business, or foreign-income records",
+  "/services/advisory": "Individuals and business owners deciding between tax, finance, loan, investment, or compliance options",
+  "/services/audit": "Businesses and professionals preparing books, reconciliations, and evidence for an appointed auditor",
+  "/services/audit-services": "Companies and owner-managed businesses preparing for statutory, internal, or tax-audit work",
+  "/services/business-advisory": "Founders and owner-managed businesses choosing a structure, finance workflow, or compliance plan",
+  "/services/company-registration": "Founders choosing and preparing to incorporate a private limited company",
+  "/services/compliance-management": "Companies and LLPs coordinating recurring ROC, MCA, GST, tax, and governance obligations",
+  "/services/director-identification": "Proposed and existing directors preparing DIN, KYC, or identity-correction records",
+  "/services/document-storage": "Taxpayers and businesses organizing a retrievable record set for filings, notices, and renewals",
+  "/services/document-vault": "Taxpayers and businesses controlling access to filing, notice, and compliance documents",
+  "/services/dsc": "Directors, authorised signatories, and professionals needing a digital signature for a defined portal workflow",
+  "/services/esi-registration": "Employers assessing ESIC applicability and preparing establishment and employee records",
+  "/services/foreign-remittance": "Residents and businesses preparing an overseas remittance and its tax, bank, or Form 15CA/15CB records",
+  "/services/fssai-registration": "Food businesses identifying the correct FSSAI licence and preparing premises and activity records",
+  "/services/gst-registration": "Businesses and professionals checking GST applicability and preparing registration records",
+  "/services/gst-return": "GST-registered businesses preparing a return from reconciled sales, purchase, tax-payment, and credit records",
+  "/services/gst-returns": "Monthly and quarterly GST filers reconciling GSTR-1, GSTR-3B, GSTR-2B, and payment records",
+  "/services/home-loan": "Home-loan borrowers comparing repayment, affordability, and tax implications",
+  "/services/investment-advisory": "Individuals and families organizing goals, risk constraints, tax considerations, and existing investments",
+  "/services/iso-certification": "Indian businesses preparing process and evidence records before approaching an ISO certification body",
+  "/services/itr-filing": "Individuals preparing an ITR from salary, property, investments, gains, foreign assets, or business income",
+  "/services/itr-for-salaried": "Salaried employees reconciling Form 16, AIS, tax credits, deductions, and regime choice before filing",
+  "/services/labour-law-compliance": "Indian employers mapping labour-law registrations, payroll records, and recurring obligations",
+  "/services/msme-registration": "Eligible proprietors, firms, LLPs, and companies preparing an Udyam registration or correction",
+  "/services/msme-udyam-registration": "Small businesses aligning Aadhaar, PAN, GST, activity, and turnover records for Udyam registration",
+  "/services/notice-compliance": "Taxpayers responding to an income-tax communication with a deadline and supporting records",
+  "/services/pan-card": "Individuals and entities applying for a PAN or correcting identity and status information",
+  "/services/professional-tax": "Employers, professionals, and businesses checking state-specific professional-tax obligations",
+  "/services/startup-india": "DPIIT-eligible startups preparing recognition records for a defined business objective",
+  "/services/startup-india-registration": "Eligible startups preparing incorporation, innovation, founder, and authorisation records for DPIIT recognition",
+  "/services/tan-registration": "Businesses, employers, and other deductors needing a TAN before depositing or reporting TDS",
+  "/services/tax-consultation": "Taxpayers needing a focused answer before filing, paying, correcting a return, or responding to a communication",
+  "/services/tax-planning": "Individuals and founders reviewing regime choice, deductions, gains, and transaction timing",
+  "/services/tds-filing": "Employers and other deductors preparing challans, deductee records, and quarterly TDS returns",
+  "/services/trade-license": "Businesses checking a municipal trade-licence requirement and preparing premises and activity proof",
+  "/services/trademark-registration": "Founders and brands preparing a trademark search, class selection, and application record",
+  "/services/wealth-management": "Individuals and families coordinating long-term goals, investments, liabilities, protection, and tax records",
+  "/startup-services": "Founders choosing incorporation, accounting, funding-readiness, and compliance support for their current stage",
+  "/startup/accounting": "Founders setting up books, invoice workflows, monthly close, and compliance-ready reporting",
+  "/startup/funding": "Founders preparing financial, ownership, compliance, and diligence records before fundraising",
+  "/startup/growth": "Founders connecting growth plans with unit economics, finance hygiene, funding readiness, and compliance",
+  "/startup/planning": "Idea-stage and early-stage founders turning a business model into a structure and operating roadmap",
+  "/startup/registration": "Founders choosing an entity and preparing incorporation and post-registration obligations",
+};
+
+function routeContentContext(input: {
+  route: string;
+  type: RouteMeta["type"];
+  title: string;
+  keywords?: string[];
+  highlights?: string[];
+  sections?: StaticRouteBodyInput["sections"];
+  audience?: string[];
+  userIntent?: PublicContentContext["userIntent"];
+  keyTopics?: string[];
+  officialSources?: PublicContentContext["officialSources"];
+  authorName?: string | null;
+  authorRole?: string | null;
+  reviewer?: PublicContentContext["reviewer"];
+  qualityStatus?: PublicContentContext["qualityStatus"];
+  editorialApproval?: PublicContentContext["editorialApproval"];
+}): PublicContentContext {
+  const pageType = pageTypeForRoute(input.route, input.type);
+  const fallbackKeyword = humanizeRoute(input.route);
+  const keywords = uniqueLinks(
+    (input.keywords ?? []).map((keyword) => ({ label: keyword, href: keyword.toLowerCase() })),
+  ).map((item) => item.label);
+  const keyTopics = uniqueText([
+    ...(input.keyTopics ?? []),
+    ...(input.highlights ?? []),
+    ...(input.sections ?? []).map((section) => section.heading),
+  ]).slice(0, 8);
+  const inferredAudience =
+    ROUTE_AUDIENCE_OVERRIDES[input.route]
+    ?? (pageType === "home"
+      ? "Indian taxpayers, founders, and small businesses"
+      : pageType === "service"
+        ? `${input.title} is for Indian taxpayers or businesses preparing the required records and deciding whether to proceed`
+        : pageType === "calculator"
+          ? `People using ${input.title} to test a documented estimate before acting`
+          : pageType === "comparison"
+            ? `People comparing the scope, records, support, and limitations covered by ${input.title}`
+            : pageType === "legal"
+              ? `MyeCA users checking ${input.title} before using the service`
+              : pageType === "help"
+                ? `MyeCA users looking for practical support through ${input.title}`
+                : pageType === "trust"
+                  ? `Prospective MyeCA customers reviewing ${input.title}, operating practices, and trust signals`
+                  : `People using ${input.title} to understand the topic and decide their next action`);
+
+  return {
+    route: input.route,
+    pageType,
+    audience: input.audience?.filter(Boolean).length ? input.audience.filter(Boolean) : [inferredAudience],
+    primaryKeyword: keywords[0] || fallbackKeyword,
+    secondaryKeywords: keywords.slice(1, 6).length ? keywords.slice(1, 6) : [input.title],
+    userIntent: input.userIntent ?? (
+      pageType === "service" || pageType === "calculator"
+        ? "transactional"
+        : pageType === "comparison"
+          ? "commercial"
+          : "informational"
+    ),
+    keyTopics: keyTopics.length ? keyTopics : [fallbackKeyword],
+    officialSources: input.officialSources ?? defaultOfficialSources(input.route, input.type),
+    author: {
+      name: input.authorName || "MyeCA Editorial Team",
+      role: input.authorRole || "Tax and compliance editorial team",
+    },
+    reviewer: input.reviewer ?? null,
+    editorialApproval: input.editorialApproval ?? null,
+    qualityStatus: input.qualityStatus ?? "needs_revision",
+  };
+}
+
+type AuthoredStaticRouteProfile = {
+  highlights: [string, string, string];
+  sections: StaticRouteBodyInput["sections"];
+};
+
+function authoredStaticRouteProfile(
+  highlights: [string, string, string],
+  bodies: [string, string, string],
+): AuthoredStaticRouteProfile {
+  return {
+    highlights,
+    sections: highlights.map((heading, index) => ({
+      heading,
+      body: bodies[index],
+    })),
+  };
+}
+
+const AUTHORED_STATIC_ROUTE_PROFILES: Record<string, AuthoredStaticRouteProfile> = {
+  "/about": authoredStaticRouteProfile(
+    ["What MyeCA does", "How to assess the service", "Where to verify scope"],
+    [
+      "Use this page to understand the tax, filing, and compliance problems MyeCA is built to handle, the customers it serves, and the role of its editorial and professional support teams.",
+      "Check the named services, support channels, published policies, and product workflows rather than relying on a broad trust claim. A service page or written proposal should define the deliverable for a specific case.",
+      "Review pricing, service inclusions, contact details, and legal policies before sharing records or paying. Raise unanswered scope or credential questions through the published contact channel.",
+    ],
+  ),
+  "/all-services": authoredStaticRouteProfile(
+    ["Choose by required outcome", "Prepare the case records", "Confirm scope before payment"],
+    [
+      "Start with the outcome you need: a return filed, a registration obtained, a notice answered, or an ongoing compliance task managed. The correct service depends on the authority, period, and current status.",
+      "Collect the registration details, prior filings, notices, financial records, and deadline that define the case. Missing or conflicting records can change the service required and the expected completion time.",
+      "Open the relevant service page and confirm inclusions, exclusions, government fees, dependencies, and escalation points. Ask for a written scope when the case spans more than one filing or authority.",
+    ],
+  ),
+  "/calculators": authoredStaticRouteProfile(
+    ["Pick the calculator for the decision", "Save inputs and assumptions", "Verify before acting"],
+    [
+      "Choose a calculator by the decision you are making, such as estimating tax, testing an EMI, projecting an investment, or checking a filing-related amount. Do not substitute one tool's output for another purpose.",
+      "Save the figures, rate, period, regime, and assumptions used for the estimate. A useful calculation is one that can be reproduced when a document, rate, or deadline changes.",
+      "Compare the result with source documents and the relevant official or lender rules before paying, filing, borrowing, or investing. Calculators provide planning estimates, not approvals or guaranteed outcomes.",
+    ],
+  ),
+  "/calculators/car-loan": authoredStaticRouteProfile(
+    ["Enter the vehicle-loan terms", "Read EMI and total interest", "Compare the lender offer"],
+    [
+      "Enter the financed amount after down payment, annual interest rate, and repayment tenure. Include any balloon payment separately because a standard EMI estimate will not model it correctly.",
+      "Use the result to compare monthly affordability and total interest. Processing fees, insurance, rate resets, prepayment charges, and late-payment costs are outside a basic EMI calculation.",
+      "Match the estimate against the lender's sanction letter and repayment schedule before signing. Recalculate when the disbursed amount, rate, tenure, or down payment changes.",
+    ],
+  ),
+  "/calculators/education-loan": authoredStaticRouteProfile(
+    ["Model disbursement and moratorium", "Understand the repayment estimate", "Check the sanction terms"],
+    [
+      "Use the expected disbursed amount, interest rate, moratorium treatment, and repayment tenure. Interest accrued during study or moratorium periods can materially change the first EMI.",
+      "Treat the output as a repayment scenario, not a lender approval. Currency movements, staged disbursements, subsidies, fees, and rate changes may not be reflected in the estimate.",
+      "Compare the calculation with the sanction letter, disbursement plan, and lender repayment schedule. Rework the scenario when the course cost, moratorium, or interest terms change.",
+    ],
+  ),
+  "/calculators/fd-enhanced": authoredStaticRouteProfile(
+    ["Set deposit and compounding terms", "Review maturity and post-tax return", "Verify the bank rate"],
+    [
+      "Enter the deposit amount, quoted annual rate, tenure, and compounding frequency shown by the bank. Select the correct payout or reinvestment treatment before comparing alternatives.",
+      "The maturity estimate may differ after TDS and the depositor's actual income-tax treatment. Premature-withdrawal penalties and future rate changes also need a separate check.",
+      "Keep the bank rate card, deposit receipt, nominee details, and maturity instruction with the estimate. The booked receipt controls the actual deposit terms.",
+    ],
+  ),
+  "/calculators/hsn-finder": authoredStaticRouteProfile(
+    ["Describe the product accurately", "Review code and GST rate", "Document the classification"],
+    [
+      "Search using the product's material, function, form, and trade description rather than a brand name alone. Small differences in composition or intended use can change the HSN classification.",
+      "Treat search results as a shortlist. Verify the selected code and GST rate against the current GST portal, tariff material, and any classification guidance relevant to the product.",
+      "Save the product description, supporting specification, selected HSN code, rate, and classification rationale with the invoice setup. Escalate ambiguous or high-value classifications before billing.",
+    ],
+  ),
+  "/calculators/inflation": authoredStaticRouteProfile(
+    ["Set today's cost and time horizon", "Interpret future purchasing power", "Use a range for planning"],
+    [
+      "Enter the current cost, number of years, and an inflation assumption suited to the expense being planned. Education, healthcare, and general household costs may not rise at the same rate.",
+      "The result illustrates how a constant inflation rate changes future cost or purchasing power. It is not a forecast and will not capture year-to-year volatility.",
+      "Test more than one inflation rate and retain the scenario used in the budget. Review the estimate periodically as actual prices and the planning horizon change.",
+    ],
+  ),
+  "/calculators/loan-eligibility": authoredStaticRouteProfile(
+    ["Enter income and existing obligations", "Review the indicative loan amount", "Confirm lender policy"],
+    [
+      "Use verified monthly income, existing EMIs, expected interest rate, and proposed tenure. Exclude irregular income unless the lender is likely to accept and document it.",
+      "The result is an affordability estimate based on the selected obligation ratio. Credit score, employment profile, collateral, age, and lender policy can reduce or change the sanctioned amount.",
+      "Compare the estimate with payslips, bank statements, current loan schedules, and the lender's eligibility rules before applying. Avoid treating the output as a sanction.",
+    ],
+  ),
+  "/calculators/lumpsum": authoredStaticRouteProfile(
+    ["Enter investment and holding period", "Read the projected value", "Stress-test the assumption"],
+    [
+      "Enter the one-time investment, expected annual return, and holding period. Use a return assumption that matches the asset class rather than a recent best-performing period.",
+      "The projected value is a compounding illustration, not a guaranteed return. Product costs, taxes, market losses, and the timing of withdrawal can change the amount received.",
+      "Compare several return scenarios and retain the assumptions used for the goal plan. Review product documents and risk before investing.",
+    ],
+  ),
+  "/calculators/penalty": authoredStaticRouteProfile(
+    ["Identify the default and dates", "Estimate fee or interest", "Verify the statutory amount"],
+    [
+      "Select the correct tax or GST default, original due date, actual payment or filing date, and amount involved. A late fee, interest charge, and statutory penalty are different liabilities.",
+      "Use the output to understand a possible cost of delay. Waivers, caps, notice facts, portal calculations, and changes in law can alter the amount payable.",
+      "Check the applicable provision, portal demand, and professional advice where the default is disputed or material. Keep the calculation with challans, returns, and correspondence.",
+    ],
+  ),
+  "/calculators/personal-loan": authoredStaticRouteProfile(
+    ["Enter principal, rate, and tenure", "Review EMI and borrowing cost", "Compare the sanction letter"],
+    [
+      "Use the amount actually borrowed, annual interest rate, and repayment tenure. Add processing fees and insurance separately when comparing the true cost of offers.",
+      "The EMI result helps test monthly affordability and total interest. Floating-rate changes, prepayment terms, late fees, and taxes are outside the basic estimate.",
+      "Compare the result with the lender's sanction letter and repayment schedule before accepting the loan. Recalculate if any fee, rate, or tenure changes.",
+    ],
+  ),
+  "/calculators/rd": authoredStaticRouteProfile(
+    ["Enter monthly deposit and tenure", "Review maturity estimate", "Match the deposit terms"],
+    [
+      "Enter the monthly instalment, quoted interest rate, tenure, and compounding method. Check whether missed or delayed deposits change the institution's calculation. Use the actual deposit date when the first instalment is not collected immediately.",
+      "The maturity value is an estimate before the depositor's final tax treatment. TDS, penalties, and premature closure can reduce the amount received. Interest may also be taxable before maturity, depending on the depositor's records and applicable rules.",
+      "Retain the rate card, recurring-deposit receipt, payment schedule, and maturity instruction. Compare the estimate with the institution's booked terms, including the maturity date and treatment of delayed instalments.",
+    ],
+  ),
+  "/calculators/salary": authoredStaticRouteProfile(
+    ["Enter pay components and deductions", "Review take-home estimate", "Reconcile with payroll records"],
+    [
+      "Enter fixed pay, variable pay, allowances, employer contributions, employee deductions, and the selected tax regime. Separate annual components from monthly cash pay.",
+      "The output is a planning estimate and may not reproduce an employer's payroll engine. Bonus timing, benefits, reimbursements, provident fund treatment, and TDS adjustments can change take-home pay.",
+      "Compare the result with the offer letter, salary structure, payslip, Form 16, and declared deductions. Resolve differences with payroll before using the estimate for a filing decision.",
+    ],
+  ),
+  "/calculators/sip-enhanced": authoredStaticRouteProfile(
+    ["Set contribution and step-up", "Review projected corpus", "Test market-risk scenarios"],
+    [
+      "Enter the regular contribution, investment horizon, expected return, and any planned annual step-up. Use a contribution schedule that can realistically be maintained.",
+      "The corpus projection assumes a smooth return and does not guarantee market performance. Fund costs, taxes, missed instalments, and volatility will affect the actual value.",
+      "Compare conservative, base, and optimistic scenarios before linking the plan to a goal. Review the selected investment's documents and risk separately.",
+    ],
+  ),
+  "/calculators/swp": authoredStaticRouteProfile(
+    ["Set corpus and withdrawal plan", "Review depletion risk", "Revisit the withdrawal rate"],
+    [
+      "Enter the opening corpus, withdrawal amount and frequency, expected return, and planning period. Include inflation when withdrawals are meant to support future living costs.",
+      "The projection can show how long a scenario may last, but actual market returns and withdrawal timing can cause faster depletion. Taxes and product charges also require a separate check.",
+      "Stress-test lower returns and higher withdrawals before adopting the plan. Review the withdrawal rate as market value, expenses, and time horizon change.",
+    ],
+  ),
+  "/compare": authoredStaticRouteProfile(
+    ["Define one comparison case", "Compare scope and total cost", "Verify current terms"],
+    [
+      "Use one taxpayer or business profile, the same filing period, and the same required outcome across every option. A comparison is misleading when one price covers a simple case and another covers a complex one.",
+      "Compare included work, exclusions, document support, review level, government fees, amendment handling, turnaround expectations, and post-filing support. Record the date each public term was checked.",
+      "Shortlist the option that fits the actual case, then confirm its current written scope before paying or uploading documents. No provider is universally best for every filing, business stage, support preference, deadline, or document condition.",
+    ],
+  ),
+  "/compliance-calendar": authoredStaticRouteProfile(
+    ["Build the calendar from registrations", "Assign records and owners", "Confirm changing due dates"],
+    [
+      "Start with the entity's active registrations, tax status, payroll obligations, and filing frequency. A generic calendar cannot identify every due date that applies to a specific business.",
+      "For each obligation, record the period, due date, responsible person, required data, reviewer, and filing acknowledgement. Include time for reconciliations before the statutory deadline.",
+      "Confirm dates on the relevant authority portal, especially after notifications or extensions. Update the calendar when the business adds a registration, employee group, location, or reporting obligation.",
+    ],
+  ),
+  "/contact": authoredStaticRouteProfile(
+    ["Choose the right support channel", "Send a clear case summary", "Keep the support record"],
+    [
+      "Use the contact route that matches the question: product help, filing support, service scoping, or an unresolved case. Include the relevant assessment year, service, and deadline.",
+      "Describe the issue, what has already been tried, and the exact outcome needed. Do not send passwords, OTPs, or unnecessary identity documents in an initial message.",
+      "Keep the ticket or message reference and any agreed next step. Escalate time-sensitive filing or notice issues early enough for the records to be reviewed.",
+    ],
+  ),
+  "/elss-comparator": authoredStaticRouteProfile(
+    ["Compare funds on one basis", "Understand risk and lock-in", "Check current scheme documents"],
+    [
+      "Compare ELSS funds using the same return period, plan type, and data date. Include expense ratio, portfolio concentration, benchmark, fund-manager tenure, and consistency rather than ranking only recent returns.",
+      "Every ELSS investment carries market risk and a statutory lock-in for each investment instalment. Tax benefit eligibility and eventual gains taxation depend on the investor's facts and current law.",
+      "Review the current scheme information document and risk disclosures before investing. Use the comparison as research, not a recommendation or return promise.",
+    ],
+  ),
+  "/expert-consultation": authoredStaticRouteProfile(
+    ["Define the question for review", "Prepare the supporting records", "Confirm the consultation scope"],
+    [
+      "State the decision or problem, relevant period, deadline, and the facts already known. A focused question helps the expert identify the rules and records that matter.",
+      "Prepare the return, notice, portal extract, computation, agreements, or transaction records that support the question. Flag missing documents and unresolved mismatches before the session.",
+      "Confirm whether the engagement covers advice only, document review, a filing, or follow-up work. Keep the written conclusion, material assumptions, identified limitations, and next action with the case file.",
+    ],
+  ),
+  "/experts": authoredStaticRouteProfile(
+    ["Choose expertise for the case", "Check scope and credentials", "Prepare for the first review"],
+    [
+      "Match the professional to the actual work, such as ITR filing, GST, company compliance, audit, or a notice response. General tax familiarity may not be enough for a specialist issue.",
+      "Confirm the professional's stated role, relevant experience, deliverable, fee, timeline, and conflict or independence requirements. Ask who will perform and review the work.",
+      "Share a concise case summary and organised records after the scope is agreed. Keep decisions, assumptions, and requested follow-up items in writing.",
+    ],
+  ),
+  "/features/document-scanner": authoredStaticRouteProfile(
+    ["Capture a readable source document", "Check extracted fields", "Keep the original record"],
+    [
+      "Scan the complete document in good light, including page edges, dates, totals, and identifiers needed for the task. Blurred, cropped, or partial pages can produce unreliable extraction.",
+      "Compare every extracted amount and label with the source before using it in a return or calculation. Automated extraction does not verify whether the document itself is correct or complete.",
+      "Retain the original file and the corrected extracted data together. Rescan or enter values manually when a field cannot be confirmed.",
+    ],
+  ),
+  "/features/expert-tax-review": authoredStaticRouteProfile(
+    ["Select the return or issue to review", "Provide complete supporting records", "Resolve review findings"],
+    [
+      "Define the review scope: form selection, income reporting, deductions, tax credits, a notice, or the complete return. That scope determines which records and schedules must be checked.",
+      "Provide the relevant assessment year, draft return, computation, AIS, Form 26AS, certificates, statements, and explanations for unusual items. A reviewer cannot validate records that are missing or withheld.",
+      "Resolve identified mismatches and document the final treatment before filing. Keep the reviewed computation and any limitations noted by the professional.",
+    ],
+  ),
+  "/features/fastest-itr-filing": authoredStaticRouteProfile(
+    ["Check whether the case is ready", "Reconcile before submission", "Use the correct filing path"],
+    [
+      "A faster filing path is suitable only when the taxpayer profile, assessment year, form, regime, and records are already clear. Complex income or unresolved mismatches need more preparation.",
+      "Compare Form 16, AIS, Form 26AS, bank interest, and other income records before submitting. Speed does not remove the need to report complete income and valid tax credits.",
+      "Choose the filing route that fits the records, then complete verification and retain the acknowledgement. Pause when a mismatch or unsupported claim appears.",
+    ],
+  ),
+  "/features/tax-calculator": authoredStaticRouteProfile(
+    ["Enter income and regime details", "Review the estimate", "Use verified figures for filing"],
+    [
+      "Enter income by head, eligible deductions, tax credits, age or status, and the correct financial year. Compare regimes using the same complete facts.",
+      "The calculation is an estimate and may not cover every surcharge, relief, special-rate income, or case-specific adjustment. It does not select an ITR form or file a return.",
+      "Reconcile the figures with certificates, statements, challans, and the applicable law before filing or paying tax. Save the dated assumptions used for the comparison.",
+    ],
+  ),
+  "/help": authoredStaticRouteProfile(
+    ["Identify the support topic", "Gather the case details", "Escalate unresolved issues"],
+    [
+      "Start with the product, filing step, payment, document, or service causing the problem. Use the closest help topic so the instructions match the current workflow.",
+      "Note the account email, relevant assessment year or service, error message, deadline, and steps already attempted. Share only the records needed to diagnose the issue.",
+      "Use the published support channel when the guide does not resolve the problem. Keep the ticket reference and escalate filing or notice deadlines promptly.",
+    ],
+  ),
+  "/help/faq": authoredStaticRouteProfile(
+    ["Find the question that matches", "Check the answer's limits", "Contact support with specifics"],
+    [
+      "Use the FAQ for common product, filing, service, and account questions. Read the full answer because a similar-sounding question may have a different assessment year, form, or workflow.",
+      "FAQ answers provide general guidance and cannot resolve facts hidden in a return, notice, payment, or account record. Verify time-sensitive tax steps against the relevant authority.",
+      "When the answer does not fit, contact support with the exact issue, deadline, and steps already taken. Avoid sending passwords or OTPs.",
+    ],
+  ),
+  "/help/knowledge-base": authoredStaticRouteProfile(
+    ["Search by task or error", "Follow the complete workflow", "Record the unresolved step"],
+    [
+      "Search for the task being attempted, the page or feature involved, and any visible error message. Choose an article that matches the current workflow rather than an older or adjacent process.",
+      "Follow prerequisites and steps in order, checking account state, selected period, documents, and confirmation messages. Skipping an earlier requirement often causes a later step to fail.",
+      "If the workflow still fails, note the last successful step and capture the exact error without exposing sensitive data. Send that summary through the support channel.",
+    ],
+  ),
+  "/help/user-guide": authoredStaticRouteProfile(
+    ["Start with the intended task", "Complete prerequisites first", "Keep confirmations and records"],
+    [
+      "Use the guide for the specific task you intend to complete, such as preparing a return, uploading records, using a tool, or requesting a service. Confirm the account and assessment year before beginning.",
+      "Collect the required records and complete each prerequisite before moving to the next screen. Review entered and extracted data against the original documents.",
+      "Save acknowledgements, payment references, and submitted records after completion. Contact support with the failed step and error message when the guide cannot be completed.",
+    ],
+  ),
+  "/itr-season-2026/ais-form-26as-mismatch-checklist": authoredStaticRouteProfile(
+    ["Compare AIS, Form 26AS, and certificates", "Classify each mismatch", "Resolve before claiming credit"],
+    [
+      "Match TDS, TCS, tax payments, and reported income across AIS, Form 26AS, certificates, and source records for AY 2026-27. Do not assume either portal statement is automatically complete.",
+      "Separate wrong PAN or TAN details, missing deductor filings, timing differences, duplicate entries, and income-reporting differences. Each category has a different correction route.",
+      "Request the appropriate correction or submit supported AIS feedback before claiming disputed credit. Keep certificates, communications, portal extracts, and the final reconciliation.",
+    ],
+  ),
+  "/itr-season-2026/capital-gains-broker-statement-checklist": authoredStaticRouteProfile(
+    ["Collect complete transaction statements", "Reconcile gains and holdings", "Prepare the correct schedules"],
+    [
+      "Collect broker tax P&L, contract notes, ledger, holding statement, and corporate-action records for every account used during the year. Include transactions not shown in a single broker report.",
+      "Check acquisition cost, sale value, dates, expenses, classification, carried-forward losses, and AIS entries. Review whether trading activity belongs under business income rather than capital gains.",
+      "Prepare transaction-level working that supports the selected ITR schedules and tax treatment. Escalate missing cost data, off-market transfers, or mixed trading and investment cases.",
+    ],
+  ),
+  "/itr-season-2026/form-16-parser-guide": authoredStaticRouteProfile(
+    ["Upload the correct Form 16", "Verify every extracted figure", "Reconcile before filing"],
+    [
+      "Use the complete Form 16 for the relevant employer and financial year, including both Part A and Part B. Add certificates from every employer when employment changed during the year.",
+      "Compare extracted salary, exemptions, deductions, TAN, and TDS with the source certificate. Parsing can save entry time but cannot establish that the employer's figures or tax treatment are correct.",
+      "Reconcile the result with payslips, AIS, Form 26AS, and other income before filing. Correct extraction errors and investigate tax-credit differences first.",
+    ],
+  ),
+  "/itr-season-2026/itr-deadline-refund-status-tracker": authoredStaticRouteProfile(
+    ["Record filing and verification dates", "Read the current status", "Escalate with evidence"],
+    [
+      "Track the applicable filing deadline, actual filing date, e-verification date, acknowledgement number, and any notice or refund communication for AY 2026-27.",
+      "A portal status shows the return's current processing stage; it does not promise a refund date or prove that every claim has been accepted. Read status changes with the related communication.",
+      "Use the Income Tax portal for the latest status and keep acknowledgement, verification proof, bank validation, demands, and grievance references together before escalating a delay.",
+    ],
+  ),
+  "/itr/form-recommender": authoredStaticRouteProfile(
+    ["Describe every income source", "Check form eligibility", "Review before filing"],
+    [
+      "Enter the taxpayer status and every income source, including salary, house property, capital gains, business or professional income, foreign assets, and exempt income where relevant.",
+      "Use the recommendation to narrow the form choice, then check the current eligibility and exclusions for that form. One disqualifying fact can change the required ITR.",
+      "Confirm the assessment year, regime, schedules, and source records before filing. Seek review when income classification or form eligibility remains uncertain.",
+    ],
+  ),
+  "/itr/start": authoredStaticRouteProfile(
+    ["Map the taxpayer profile", "Select the likely ITR form", "Prepare the filing file"],
+    [
+      "Begin with taxpayer status, assessment year, residency, income heads, business activity, capital gains, and foreign reporting facts. Form selection follows the complete profile, not the largest income source alone.",
+      "Check the current eligibility and exclusions for ITR-1, ITR-2, ITR-3, or ITR-4 before proceeding. Presumptive income, directorships, unlisted shares, or foreign assets can change the route.",
+      "Collect the form-specific schedules and reconcile AIS, Form 26AS, certificates, statements, and challans before filing. Pause when a fact does not fit the selected form.",
+    ],
+  ),
+  "/learn": authoredStaticRouteProfile(
+    ["Choose a topic by task", "Check the applicable period", "Move from guidance to records"],
+    [
+      "Browse by the tax, GST, filing, or compliance task you need to complete. Start with an overview, then open the guide that matches the specific form, document, or issue.",
+      "Confirm the financial year, assessment year, taxpayer type, and current official rule before applying an article. Older guidance can remain useful for concepts while being wrong for a current deadline or threshold.",
+      "Turn the guidance into a checklist against the actual records. Use a calculator, service, or official portal only after the facts and unresolved questions are clear.",
+    ],
+  ),
+  "/learn/glossary": authoredStaticRouteProfile(
+    ["Find the tax or compliance term", "Read it in context", "Check the controlling source"],
+    [
+      "Use the glossary to understand an unfamiliar filing, tax, GST, or compliance term before acting on a notice, return, or service requirement.",
+      "Read the definition with the relevant assessment year, document, and workflow. Similar terms can have different meanings across income tax, GST, company law, and financial products.",
+      "Open the linked guide or official source when the term affects a filing position, deadline, eligibility rule, or payment. A short definition is not a substitute for the controlling provision.",
+    ],
+  ),
+  "/learn/guides": authoredStaticRouteProfile(
+    ["Select the guide for the case", "Work through source documents", "Confirm the final action"],
+    [
+      "Choose a guide that matches the taxpayer or business profile, relevant period, and exact filing or compliance task. Broad guides provide orientation; specialist guides handle exceptions and document checks.",
+      "Follow the guide with the actual certificates, statements, portal records, notices, and prior filings open. Mark assumptions and unresolved differences rather than filling gaps by guesswork.",
+      "Verify time-sensitive rules and deadlines against official sources before filing, paying, or responding. Keep the completed checklist with the final acknowledgement or communication.",
+    ],
+  ),
+  "/learn/videos": authoredStaticRouteProfile(
+    ["Choose a lesson by outcome", "Follow with the records open", "Verify changing rules"],
+    [
+      "Pick the lesson that matches the task you are completing, such as selecting an ITR form, reconciling tax credits, or understanding a GST step. Use the sequence as a learning aid, not a shortcut around prerequisites.",
+      "Pause at each example and compare it with the relevant form, certificate, statement, or portal screen. Note where the facts in the lesson differ from the real case.",
+      "Confirm current deadlines, thresholds, and portal steps before acting because recorded lessons can age. Move to the linked guide or support channel when the case has exceptions.",
+    ],
+  ),
+  "/legal/disclaimer": authoredStaticRouteProfile(
+    ["What the disclaimer covers", "Limits of general information", "When case-specific review is needed"],
+    [
+      "Read this disclaimer to understand the limits of general tax, compliance, calculator, and educational information published by MyeCA and how those limits apply before a user acts.",
+      "A page, tool, or support response cannot account for facts that have not been provided or verified. Time-sensitive rules, authority decisions, and third-party information can also change.",
+      "Use current official sources and case records for material decisions, and obtain appropriate professional advice when the treatment, deadline, eligibility, or financial consequence remains uncertain.",
+    ],
+  ),
+  "/legal/privacy-policy": authoredStaticRouteProfile(
+    ["Information covered by the policy", "How records are used and protected", "Privacy questions and requests"],
+    [
+      "Read the privacy policy to understand which account, contact, payment, document, usage, and service information may be collected when using MyeCA.",
+      "Review the stated purposes, sharing conditions, retention approach, security measures, and choices that apply to personal and business records. Avoid uploading information that is not required for the task.",
+      "Use the published privacy contact for access, correction, deletion, or other policy questions. Keep the relevant account, service, and communication details so the request can be located.",
+    ],
+  ),
+  "/legal/refund-policy": authoredStaticRouteProfile(
+    ["Check whether the purchase is covered", "Prepare payment and service records", "Submit a traceable refund request"],
+    [
+      "Read the refund policy against the service or product purchased, payment date, work already performed, and the reason for the request. Eligibility can depend on the stage of delivery.",
+      "Keep the invoice, payment reference, order or service details, communications, and evidence of the issue. Government fees and completed or consumed work may be treated separately.",
+      "Submit the request through the stated channel within the applicable period and keep its reference. Ask for clarification when the written policy does not address the purchase status.",
+    ],
+  ),
+  "/legal/terms-of-service": authoredStaticRouteProfile(
+    ["Terms that govern use", "Responsibilities and service limits", "Questions before accepting"],
+    [
+      "Read the terms before using an account, tool, document workflow, paid service, or professional-support feature. The applicable service page and written scope may add task-specific conditions.",
+      "Review user responsibilities, acceptable use, payment terms, third-party dependencies, intellectual-property provisions, service limitations, and dispute or termination terms.",
+      "Keep the accepted terms, order, invoice, and written service scope with the transaction records. Raise unclear conditions before paying or submitting sensitive documents.",
+    ],
+  ),
+  "/mobile-app": authoredStaticRouteProfile(
+    ["Choose the mobile task", "Protect account and documents", "Keep filing confirmations"],
+    [
+      "Use the mobile app for supported account, document, calculator, and filing-preparation tasks. Check that the selected profile and assessment year match the work being performed.",
+      "Review permissions, device security, uploaded records, and extracted values before submission. Never share passwords or OTPs through support messages or document uploads.",
+      "Retain payment references, acknowledgements, and submitted files after completing a task. Move to desktop or support when a workflow needs records or review that the mobile screen cannot handle clearly.",
+    ],
+  ),
+  "/pricing": authoredStaticRouteProfile(
+    ["Match price to the case", "Check inclusions and exclusions", "Confirm the written scope"],
+    [
+      "Select a plan only after identifying the taxpayer or business profile, filing period, income sources, registrations, notices, and required outcome. A low headline price may cover only a simple case.",
+      "Review included forms, schedules, document review, amendments, support, turnaround expectations, government fees, and post-filing work. Ask how complex income or additional registrations affect the fee.",
+      "Confirm the current price and written scope before payment. Keep the invoice and agreed deliverable with the service records.",
+    ],
+  ),
+  "/services": authoredStaticRouteProfile(
+    ["Find the service by outcome", "Check documents and dependencies", "Agree scope and timeline"],
+    [
+      "Choose the service that matches the required filing, registration, review, notice response, or recurring compliance outcome. Similar service names may involve different authorities and deliverables.",
+      "Review the required records, existing registration status, relevant period, government dependencies, and unresolved issues. These facts determine whether the standard scope is sufficient.",
+      "Confirm inclusions, exclusions, fees, expected timeline, and escalation triggers before work starts. Keep the written scope and final acknowledgement or deliverable.",
+    ],
+  ),
+  "/services/audit-services": authoredStaticRouteProfile(
+    ["Define audit type and period", "Prepare evidence and reconciliations", "Resolve findings and deliverables"],
+    [
+      "Confirm whether the engagement is a statutory audit, tax audit, internal audit, or a limited review, along with the entity, reporting period, applicable framework, and deadline. Identify the appointed auditor, applicable independence requirements, and whether branch or component records are involved.",
+      "Prepare ledgers, financial statements, bank reconciliations, returns, agreements, supporting vouchers, prior reports, and management explanations. Missing evidence or unreconciled balances can delay fieldwork. Close opening-balance differences and maintain schedules for related parties, fixed assets, inventory, borrowings, and statutory dues.",
+      "Agree the report, management letter, filing responsibility, exclusions, and response timetable before work begins. Track findings to evidence and management action. Escalate suspected fraud, material misstatement, overdue statutory liabilities, and management-scope restrictions promptly. Confirm how audit adjustments, representations, unresolved observations, and final signed statements will be approved and retained. Record the evidence owner, reviewer, and due date for every open audit request. Close the request log only after the final evidence is accepted.",
+    ],
+  ),
+  "/services/compliance-management": authoredStaticRouteProfile(
+    ["Map every active obligation", "Set an evidence-backed calendar", "Escalate exceptions early"],
+    [
+      "List the entity's registrations, locations, employee obligations, tax filings, licences, and recurring corporate actions. The compliance scope must reflect the business as it operates today. Record which obligations remain with internal teams, payroll providers, auditors, or other advisers.",
+      "Assign an owner, due date, data cut-off, reviewer, filing proof, and retention record to each obligation. Prior filings and open notices should be included in the handover. Use a recurring close process for GST, TDS, payroll, board, and annual-return data rather than collecting records only at the deadline.",
+      "Confirm which filings, corrections, government fees, and authority follow-ups are included. Escalate missing data, portal access problems, and deadline risks before they become defaults. Add a change-control step when the entity opens a location, hires employees, changes directors, or crosses a threshold. Review the completed calendar monthly against acknowledgements, payment proofs, notice responses, and open exceptions. Reassign ownership whenever a responsible person leaves or changes role.",
+    ],
+  ),
+  "/services/document-vault": authoredStaticRouteProfile(
+    ["Organise documents by case and period", "Control access and versions", "Export records when needed"],
+    [
+      "Store tax, filing, and compliance documents under the correct taxpayer or entity, assessment year, and workflow. Use clear names so the final source can be distinguished from drafts. Separate permanent records, such as registrations and deeds, from period-specific returns, challans, and reconciliations.",
+      "Review who can access sensitive records, replace outdated versions deliberately, and verify that uploaded files are complete and readable. A vault organises records; it does not validate their contents. Remove access when a staff member, adviser, or service provider no longer needs the case.",
+      "Download and retain the documents needed for filings, reviews, notices, or migration. Remove unnecessary duplicates and escalate missing records before a deadline. Periodically test that critical files can be opened and exported with enough context to identify the final submitted version. Record retention periods, legal holds, backup ownership, and deletion responsibility for each document class. Keep a dated export before changing systems or service providers.",
+    ],
+  ),
+  "/services/fssai-registration": authoredStaticRouteProfile(
+    ["Identify business and licence category", "Prepare premises and food records", "Track authority queries"],
+    [
+      "Confirm the food-business activity, turnover, capacity, premises, states of operation, and product categories before choosing basic registration, state licence, or central licence. Manufacturers, importers, transporters, restaurants, retailers, and online sellers can have different category and premises requirements.",
+      "Prepare identity, entity, premises, product, layout, and activity records required for the selected category. Incorrect classification or incomplete premises details can trigger queries or rejection. Verify the food-category list, nominated responsible person, water or testing records where relevant, and address shown on supporting documents.",
+      "Confirm government fees, inspection or authority dependencies, renewal responsibility, and the deliverable included in the service. Keep the application, query responses, and issued registration together. Escalate when the premises, product, capacity, or operating state changes before the licence is issued or renewed. Track expiry, display requirements, product changes, and modification duties after approval. Keep the approved food categories aligned with actual operations.",
+    ],
+  ),
+  "/services/trade-license": authoredStaticRouteProfile(
+    ["Check local licence requirement", "Prepare premises and activity proof", "Plan for municipal follow-up"],
+    [
+      "Identify the municipality, premises, business activity, occupancy status, and local licence category. Requirements and validity periods differ across local authorities. Check whether fire, health, signage, pollution, or establishment approvals must be obtained separately.",
+      "Prepare entity records, identity proof, premises documents, owner consent, activity details, and any local clearances. A mismatch in address or use can delay the application. Compare the proposed activity with the lease, property-use permission, and local zoning or building records before submission.",
+      "Confirm government fees, inspection dependencies, renewal dates, and what follow-up is included. Keep the submitted application, receipts, queries, and issued licence. Escalate an adverse inspection note, ownership dispute, prohibited activity, or premises-use mismatch before relying on the application. Record the operating conditions imposed by the licence, display requirements, inspection findings, local amendments, and the person responsible for renewal. Recheck the licence before expanding or changing the activity.",
+    ],
+  ),
+  "/startup-services": authoredStaticRouteProfile(
+    ["Choose the startup milestone", "Build the company record set", "Coordinate linked obligations"],
+    [
+      "Start with the milestone the founders need: entity formation, tax registrations, agreements, funding readiness, or recurring compliance. The sequence depends on ownership, activity, location, and funding plans. A founder seeking investment may need a different structure and record trail from a self-funded local business.",
+      "Prepare founder identity, address, ownership, business-object, capital, banking, and existing registration records. Record decisions that affect later tax, payroll, and corporate filings. Include intellectual-property ownership, founder vesting, proposed hires, contracts, and regulated activities in the early-stage review.",
+      "Confirm which registrations, documents, government fees, and post-incorporation tasks are included. Coordinate linked deadlines so one incomplete step does not block the next. Escalate unresolved ownership, foreign-investment, sector-licence, or premises issues before incorporation or fundraising. Assign the first accounting close, statutory registers, and founder approvals before operations expand. Map which founder, adviser, or employee owns each filing, bank, contract, payroll, and investor-readiness task.",
+    ],
+  ),
+  "/startup/funding": authoredStaticRouteProfile(
+    ["Define the funding objective", "Prepare investor-ready records", "Separate readiness from fundraising"],
+    [
+      "Clarify the amount, use of funds, runway, instrument, investor type, and stage of the business. Funding preparation should begin with a coherent operating and financial case. Reconcile the requested amount with hiring, product, sales, capital expenditure, and contingency assumptions.",
+      "Prepare financial statements, forecasts, cap table, incorporation and compliance records, contracts, tax filings, intellectual-property details, and material risk disclosures. Resolve founder-equity records, overdue filings, undocumented related-party transactions, and material customer or vendor dependencies before diligence.",
+      "Confirm whether the service covers document readiness, valuation support, data-room organisation, or introductions. No readiness service can promise investment or investor approval. Legal negotiation, securities filings, tax structuring, and investor due diligence may require separate scoped work. Track each investor request, document owner, confidentiality restriction, and unresolved diligence point. Before sharing the data room, reconcile issued shares, options, convertible instruments, founder transfers, valuation records, and board approvals with the cap table. Restrict sensitive folders to the agreed diligence stage.",
+    ],
+  ),
+  "/startup/registration": authoredStaticRouteProfile(
+    ["Choose entity and registration path", "Prepare founder and business records", "Plan post-registration compliance"],
+    [
+      "Select the entity form and registrations after considering founders, liability, ownership, capital, activity, tax treatment, and expected funding. DPIIT recognition is separate from incorporation. Document why a proprietorship, partnership, LLP, or company fits the ownership and risk plan.",
+      "Prepare founder identity and address records, registered-office proof, business objects, ownership details, and incorporation documents. Resolve name, address, and activity inconsistencies before filing. Confirm proposed directors or partners, contribution or shareholding, authorised signatories, and any sector approval.",
+      "Confirm government fees, registrations included, authority dependencies, and post-registration filings. Keep issued certificates, credentials, and the first compliance calendar together. Plan bank-account opening, tax registrations, accounting, founder agreements, and recurring filings rather than treating incorporation as the final step. Assign custody of portal credentials, statutory registers, and issued certificates. Record the first board or partner decisions, capital contribution evidence, beneficial ownership details, and deadlines triggered by incorporation. Verify that invoices and contracts use the issued entity details.",
+    ],
+  ),
+  "/tax-assistant": authoredStaticRouteProfile(
+    ["Ask a fact-complete tax question", "Check the answer against records", "Escalate uncertain treatment"],
+    [
+      "Include the relevant assessment year, taxpayer status, income type, document, deadline, and decision needed. A vague question can produce an answer that does not fit the case.",
+      "Treat the response as a starting point and compare it with certificates, statements, portal records, and current official guidance. Do not rely on generated text for a material filing position without verification.",
+      "Use a calculator, guide, or professional review when the answer depends on missing facts, conflicting records, a notice, or a high-value transaction. Keep the final rationale with the case file.",
+    ],
+  ),
+  "/tax-optimizer": authoredStaticRouteProfile(
+    ["Enter complete income and deductions", "Compare regimes and scenarios", "Verify eligible evidence"],
+    [
+      "Use complete income, tax credits, eligible deductions, exemptions, investments, and the correct financial year. Compare scenarios using the same taxpayer facts.",
+      "The result can show how selected assumptions affect estimated tax; it cannot create eligibility or account for every special-rate item, relief, surcharge, or future law change.",
+      "Confirm every planned claim with the applicable rule and supporting record before investing, paying, or filing. Save the chosen dated scenario, rejected alternatives, assumptions, and evidence list.",
+    ],
+  ),
+  "/tds-refund-tracker": authoredStaticRouteProfile(
+    ["Use the correct return details", "Interpret refund status", "Prepare evidence for follow-up"],
+    [
+      "Track the assessment year, PAN-linked return, acknowledgement, e-verification date, bank validation, and any outstanding demand. Refund processing cannot begin correctly when these records do not align.",
+      "A status message shows the current portal stage, not a guaranteed payment date. Read it with any intimation, demand adjustment, failed-bank-credit message, or communication.",
+      "Check the latest status on the Income Tax portal and keep the acknowledgement, verification proof, bank details, intimation, and grievance reference ready before escalating.",
+    ],
+  ),
+};
+
+const AUTHORED_ROUTE_DESCRIPTIONS: Record<string, string> = {
+  "/expert-consultation":
+    "Prepare a focused tax, GST, notice, startup, or compliance question, confirm the consultation scope, and keep the written conclusion with the case records.",
+  "/features/document-scanner":
+    "Scan tax and compliance documents into a review-ready file, then verify legibility, page order, identifiers, and extracted values against the original.",
+  "/features/expert-tax-review":
+    "Understand when document-based tax review helps, which records to prepare, what the reviewer checks, and which filing decisions still need resolution.",
+  "/features/fastest-itr-filing":
+    "Prepare a faster ITR filing by resolving form selection, missing records, AIS and Form 26AS differences, tax payment, and e-verification before submission.",
+  "/features/tax-calculator":
+    "Estimate tax and compare scenarios, then verify the inputs, special-rate income, credits, and supporting records before paying or filing.",
+  "/help/knowledge-base":
+    "Find filing, account, document, calculator, and compliance guidance, with clear prerequisites and support routes for an unresolved step.",
+  "/legal/privacy-policy":
+    "Read how MyeCA collects, uses, stores, shares, and protects personal and tax-document data, including user choices and privacy contact routes.",
+  "/legal/refund-policy":
+    "Review when a MyeCA service payment may qualify for a refund, which costs are excluded, what evidence is required, and how to submit a request.",
+  "/legal/terms-of-service":
+    "Review the terms governing MyeCA accounts, service scope, user responsibilities, payments, professional support, third-party portals, and disputes.",
+  "/tax-loss-harvesting":
+    "Review realised capital gains and eligible losses before year end, test set-off and carry-forward treatment, and keep tax decisions separate from investment suitability.",
+};
+
 export function routeMeta(route: string): RouteMeta {
   const pathName = normalizePublicPath(route);
   const config = SEO_CONFIG[pathName] ?? getGeneratedRouteSEOConfig(pathName);
+  const generatedContent = getGeneratedRouteContent(pathName);
   const priorityContent = PRIORITY_ITR_ROUTE_CONTENT[pathName as keyof typeof PRIORITY_ITR_ROUTE_CONTENT];
   const title = normalizeSeoTitle(config?.title || `${humanizeRoute(pathName)} | ${SITE_NAME}`);
-  const description = normalizeSeoDescription(
-    config?.description || `${humanizeRoute(pathName)} on MyeCA.in: Indian tax, GST, startup, and compliance guidance with practical next steps.`,
-    title,
-  );
+  const authoredDescription = config?.description || generatedContent?.description || AUTHORED_ROUTE_DESCRIPTIONS[pathName];
+  if (!authoredDescription) {
+    throw new Error(`Missing authored SEO description for indexable route ${pathName}.`);
+  }
+  const description = normalizeSeoDescription(authoredDescription, title);
   const image = SHARED_DEFAULT_OG_IMAGE;
   const faqItems = normalizeFaqItems(config?.faqItems);
   const faqSchema = buildFaqPageSchema(faqItems);
@@ -681,34 +1621,59 @@ export function routeMeta(route: string): RouteMeta {
 
   const kind: StaticRouteBodyInput["kind"] =
     pathName === "/" ? "home" : config?.type === "service" ? "service" : "page";
-  const highlights = priorityContent?.highlights ?? config?.keywords?.slice(0, 5) ?? [
-    "CA-led Indian tax support",
-    "ITR e-filing",
-    "GST compliance",
-    "Secure document workflows",
-  ];
+  const authoredProfile = AUTHORED_STATIC_ROUTE_PROFILES[pathName];
+  const configKeywords = config?.keywords?.slice(0, 5) ?? [];
+  const primaryConfigKeyword = configKeywords[0]?.toLowerCase();
+  const nonRepeatingConfigKeywords = configKeywords
+    .slice(1)
+    .filter((keyword) => !primaryConfigKeyword || !keyword.toLowerCase().includes(primaryConfigKeyword));
+  const highlights = priorityContent?.highlights ?? generatedContent?.highlights ?? [
+    ...(configKeywords.slice(0, 1)),
+    ...nonRepeatingConfigKeywords,
+    ...(authoredProfile?.highlights ?? []),
+  ].slice(0, 5);
+  const type = config?.type || (pathName.startsWith("/legal") ? "legal" : "website");
+  const authoredSections = priorityContent?.sections ?? generatedContent?.sections ?? authoredProfile?.sections;
+  if (!authoredSections) {
+    throw new Error(`Missing authored static SEO content for indexable route ${pathName}.`);
+  }
+  const contentContext = routeContentContext({
+    route: pathName,
+    type,
+    title,
+    keywords: config?.keywords,
+    highlights,
+    sections: authoredSections,
+    audience: generatedContent?.audience,
+  });
+  const sections = authoredSections;
+  const routeLinks = buildStaticRouteLinks(pathName, [
+    ...(priorityContent?.links ?? generatedContent?.links ?? []),
+    ...contentContext.officialSources.map((source) => ({ label: source.label, href: source.url })),
+  ]);
 
   return {
     path: pathName,
     title,
     description,
     keywords: config?.keywords,
-    type: config?.type || (pathName.startsWith("/legal") ? "legal" : "website"),
+    type,
     canonicalUrl: toAbsoluteUrl(pathName),
     image,
     robots: "index, follow",
     jsonLd,
-    aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify tax actions with a CA.`,
-    staticLinks: buildStaticRouteLinks(pathName, priorityContent?.links),
+    aiSummary: `${title}. ${description} MyeCA serves India-wide tax, GST, startup, and compliance queries. Verify time-sensitive actions against official sources.`,
+    staticLinks: routeLinks,
+    contentContext,
     body: {
       route: pathName,
       title,
       description,
       kind,
       highlights,
-      sections: priorityContent?.sections,
-      faqItems,
-      links: buildStaticRouteLinks(pathName, priorityContent?.links),
+      sections,
+      faqItems: generatedContent?.faqItems ?? faqItems,
+      links: routeLinks,
     },
   };
 }
@@ -795,24 +1760,33 @@ async function writeRouteHtml(template: string, meta: RouteMeta) {
   fs.writeFileSync(outputPath, minifyStaticRouteHtml(html), "utf8");
 }
 
-function routeNeighborLinks(route: string, publicRoutes: string[]) {
-  if (publicRoutes.length < 2) return [];
-  const index = publicRoutes.indexOf(route);
-  const safeIndex = index >= 0 ? index : 0;
-  const previous = publicRoutes[(safeIndex + publicRoutes.length - 1) % publicRoutes.length];
-  const next = publicRoutes[(safeIndex + 1) % publicRoutes.length];
-  return uniqueLinks([
-    previous ? { label: humanizeRoute(previous), href: previous } : null,
-    next ? { label: humanizeRoute(next), href: next } : null,
-  ].filter((link): link is { label: string; href: string } => Boolean(link)));
+function parentHubForRoute(route: string, publicRoutes: Set<string>) {
+  const pathName = normalizePublicPath(route);
+  const preferredHub =
+    pathName.startsWith("/blog/") ? "/blog"
+      : pathName.startsWith("/calculators/") ? "/calculators"
+        : pathName.startsWith("/services/") ? "/services"
+          : pathName.startsWith("/startup/") ? "/startup-services"
+            : pathName.startsWith("/compare/") ? "/compare"
+              : pathName.startsWith("/help/") ? "/help"
+                : pathName.startsWith("/learn/guide/") ? "/learn/guides"
+                  : pathName.startsWith("/learn/") ? "/learn"
+                    : pathName.startsWith("/itr-season-2026/") ? "/learn/guides"
+                      : pathName.startsWith("/itr/") ? "/services/itr-filing"
+                        : pathName.startsWith("/legal/") ? "/trust"
+                          : "/";
+
+  if (preferredHub !== pathName && publicRoutes.has(preferredHub)) return preferredHub;
+  return pathName === "/" ? null : "/";
 }
 
 function withGeneratedRouteLinks(meta: RouteMeta, publicRoutes: string[]): RouteMeta {
   if (meta.robots !== "index, follow") return meta;
-  const links = buildStaticRouteLinks(meta.path, [
-    ...(meta.body?.links ?? []),
-    ...routeNeighborLinks(meta.path, publicRoutes),
-  ]);
+  const publicRouteSet = new Set(publicRoutes.map(normalizePublicPath));
+  const childLinks = publicRoutes
+    .filter((route) => parentHubForRoute(route, publicRouteSet) === meta.path)
+    .map((route) => ({ label: humanizeRoute(route), href: route }));
+  const links = buildStaticRouteLinks(meta.path, [...(meta.body?.links ?? []), ...childLinks]);
 
   return {
     ...meta,
@@ -847,7 +1821,7 @@ export function getSeoTextAssetTargets(
 
 function writeTextAssets(blogPosts: StaticMdxBlogPost[]) {
   const blogEntries = blogPosts
-    .filter((post) => post.status === "published")
+    .filter((post) => post.status === "published" && shouldIndexPublicContent(post.qualityStatus ?? "needs_revision"))
     .map((post) => ({
       route: `/blog/${post.slug}`,
       lastmod: new Date(post.updatedAt || post.publishedAt || now).toISOString().split("T")[0],
@@ -926,6 +1900,7 @@ async function main() {
     ],
     [...blogRoutes, ...guideRoutes],
   );
+  const contentContexts: PublicContentContext[] = [];
 
   for (const route of publicRoutes) {
     const post = route.startsWith("/blog/")
@@ -935,12 +1910,18 @@ async function main() {
       ? TAX_GUIDES.find((candidate) => `/learn/guide/${candidate.slug}` === route)
       : undefined;
     const meta = withGeneratedRouteLinks(post ? blogMeta(post) : guide ? guideMeta(guide) : routeMeta(route), publicRoutes);
+    if (meta.contentContext) contentContexts.push(meta.contentContext);
     await writeRouteHtml(template, meta);
   }
 
   for (const route of PRIVATE_NOINDEX_ROUTES) {
     await writeRouteHtml(template, privateMeta(route));
   }
+  fs.writeFileSync(
+    path.join(distDir, "content-context.json"),
+    `${JSON.stringify(contentContexts, null, 2)}\n`,
+    "utf8",
+  );
   writeTextAssets(blogPosts);
   pruneUnusedPublicAssets();
 

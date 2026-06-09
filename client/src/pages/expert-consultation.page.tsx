@@ -64,7 +64,7 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
     eyebrow: "GST return help today",
     title: "File GST returns without missed ITC, late fees, or portal confusion.",
     subtitle:
-      "A CA-led team checks your sales, purchases, ITC, GSTR-1 and GSTR-3B before filing. Share your GSTIN and we will call back with the exact next step.",
+      "The review checks your sales, purchases, ITC, GSTR-1 and GSTR-3B records before filing. Share your GSTIN and we will call back with the exact next step.",
     formTitle: "Get GST return callback",
     cta: "Get GST Return Help",
     defaultMessage: "I need help with GST returns filing, ITC reconciliation, and pending compliance.",
@@ -189,7 +189,7 @@ export default function ExpertConsultationPage() {
       });
       toast({
         title: "Callback request received",
-        description: "Our expert team will review your request during business hours.",
+        description: "A tax or compliance professional will review the question, records, and requested scope during business hours.",
       });
       setFormData((current) => ({
         ...current,

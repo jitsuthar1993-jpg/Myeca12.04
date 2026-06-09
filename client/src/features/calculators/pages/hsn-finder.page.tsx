@@ -201,7 +201,7 @@ export default function HSNFinderPage() {
               icon: <ShieldCheck className="w-5 h-5" />,
               iconBg: "bg-emerald-50 text-emerald-600",
               title: "ITC Protection",
-              desc: "Correct HSN codes are mandatory for your customers to claim Input Tax Credit seamlessly."
+              desc: "A supportable HSN classification helps customers assess input-tax-credit eligibility and reduces invoice correction work."
             }
           ]}
           howItWorks={{

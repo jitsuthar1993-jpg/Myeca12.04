@@ -79,7 +79,7 @@ export default function TradeLicensePage() {
       icon: User,
       color: "blue",
       documents: [
-        "PAN Card (Mandatory for all applicants)",
+        "PAN or the identity and tax record required by the relevant authority",
         "Aadhaar Card (Required as identity proof)",
         "Address Proof (Driving License/Passport/Voter ID)",
         "Passport-size photograph"
@@ -296,7 +296,7 @@ export default function TradeLicensePage() {
                 </Button>
                 <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 px-5 py-2.5 font-semibold">
                   <Phone className="w-4 h-4 mr-2" />
-                  Expert Guidance
+                  Application Review
                 </Button>
               </div>
             </div>

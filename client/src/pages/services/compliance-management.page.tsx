@@ -51,13 +51,13 @@ const ComplianceManagementPage = () => {
         title: "DPIIT Recognition",
         description: "Startup India recognition for tax benefits and exemptions",
         requirements: ["Certificate of Incorporation", "PAN Card", "Business Description"],
-        benefits: ["3-year tax holiday", "Angel tax exemption", "Fast-track patents"]
+        benefits: ["Section 80-IAC eligibility review", "Investment-related tax-position review", "IP facilitation eligibility check"]
       },
       {
         title: "Startup Compliance Calendar",
         description: "Customized compliance tracking for startups",
         requirements: ["Company type", "State of incorporation", "Business activities"],
-        benefits: ["Never miss deadlines", "Penalty avoidance", "Peace of mind"]
+        benefits: ["Visible deadline calendar", "Exception tracking", "Documented follow-up"]
       },
       {
         title: "FEMA Compliance",
@@ -146,7 +146,7 @@ const ComplianceManagementPage = () => {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                Never miss a compliance deadline. We manage statutory filings while you scale.
+                Track statutory filings against a documented calendar, responsibility owner, and evidence checklist.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 font-semibold">
@@ -197,7 +197,7 @@ const ComplianceManagementPage = () => {
         <section className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Comprehensive Compliance Services
+              Compliance Services by Filing Type
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               From incorporation to IPO, we handle all your compliance needs
@@ -421,7 +421,7 @@ const ComplianceManagementPage = () => {
                 Stop Worrying About Compliance Deadlines
               </h3>
               <p className="text-lg mb-8 text-slate-600 max-w-2xl mx-auto">
-                Let our experts handle your compliance while you focus on growth. 
+                Assign owners, dates, and evidence to each recurring compliance task so open items remain visible.
                 Get started with a free compliance audit.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

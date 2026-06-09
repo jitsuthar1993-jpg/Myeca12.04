@@ -55,4 +55,39 @@ describe("ITR season SEO content signals", () => {
     expect(body).toContain('href="/itr/form-selector"');
     expect(body).toContain('href="/form16-parser"');
   });
+
+  it("gives priority commercial routes intent-specific decision content", () => {
+    const commercialRoutes = Object.keys(PRIORITY_ITR_ROUTE_CONTENT).filter(
+      (route) =>
+        route.startsWith("/calculators/")
+        || route.startsWith("/services/")
+        || route.startsWith("/compare/")
+        || route === "/capital-gains-import"
+        || route === "/gst-filing",
+    );
+
+    for (const route of commercialRoutes) {
+      const content = PRIORITY_ITR_ROUTE_CONTENT[route];
+      const text = content.sections
+        .flatMap((section) => [section.heading, section.body, ...(section.items ?? [])])
+        .join(" ")
+        .toLowerCase();
+
+      if (route.startsWith("/compare/")) {
+        expect(text, route).toContain("method");
+        expect(text, route).toContain("current terms");
+        expect(text, route).toContain("does not establish superiority");
+      } else if (route.startsWith("/services/") || route === "/gst-filing") {
+        expect(text, route).toContain("included");
+        expect(text, route).toContain("outside");
+        expect(text, route).toContain("delay");
+        expect(text, route).toContain("escalate");
+      } else {
+        expect(text, route).toContain("input");
+        expect(text, route).toContain("output");
+        expect(text, route).toContain("limit");
+        expect(text, route).toContain("verify");
+      }
+    }
+  });
 });

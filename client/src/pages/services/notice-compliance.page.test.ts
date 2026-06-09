@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { SEO_CONFIG } from "@/config/seo.config";
 import { noticeLawTransitionRows } from "./notice-compliance.page";
 
 describe("notice compliance legal transition content", () => {
@@ -29,5 +31,13 @@ describe("notice compliance legal transition content", () => {
     );
 
     expect(noticeLawTransitionRows.every((row) => row.responseFocus.length > 24)).toBe(true);
+  });
+
+  it("keeps hydrated metadata aligned with the static notice route", () => {
+    const source = readFileSync("client/src/pages/services/notice-compliance.page.tsx", "utf8");
+    const seo = SEO_CONFIG["/services/notice-compliance"];
+
+    expect(source).toContain(`title="${seo.title}"`);
+    expect(source).toContain(`description="${seo.description}"`);
   });
 });

@@ -1,6 +1,7 @@
 import { defaultBlogCategories, type DefaultBlogPost } from "../server/data/default-blog-content.js";
 import { loadStaticBlogPosts } from "../server/data/static-blog-content.js";
 import { normalizeBlogContent, normalizeBlogCta } from "../shared/blog.js";
+import { shouldIndexPublicContent } from "../shared/public-content-quality.js";
 
 const CACHE_HEADER = "public, s-maxage=300, stale-while-revalidate=3600";
 
@@ -46,6 +47,7 @@ function publicSummary(post: DefaultBlogPost) {
     createdAt: post.createdAt,
     tags: post.tags,
     audience: post.audience ?? "both",
+    targetAudience: post.targetAudience ?? null,
     reviewedBy: post.reviewedBy ?? null,
     reviewedAt: post.reviewedAt ?? null,
     serviceSlug: post.serviceSlug ?? null,
@@ -61,7 +63,7 @@ function publicSummary(post: DefaultBlogPost) {
 
 function sortPosts(posts: DefaultBlogPost[]) {
   return [...posts]
-    .filter((post) => post.status === "published")
+    .filter((post) => post.status === "published" && shouldIndexPublicContent(post.qualityStatus ?? "needs_revision"))
     .sort((left, right) => {
       if (left.isFeatured !== right.isFeatured) {
         return Number(right.isFeatured) - Number(left.isFeatured);

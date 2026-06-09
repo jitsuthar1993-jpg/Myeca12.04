@@ -4,6 +4,7 @@ import { z } from "zod";
 import { adminDb } from "../data-admin.js";
 import { sanitize } from "../middleware/sanitize.js";
 import { blogPostEditorSchema, type BlogPostEditorInput } from "../../shared/blog.js";
+import { assertBlogPublishable, ContentQualityError } from "../../shared/public-content-quality.js";
 import {
   buildBlogPostWriteData,
   getCategoryLookup,
@@ -45,6 +46,7 @@ router.post("/blog-post", sanitize, async (req: Request, res: Response) => {
     }
 
     const payload = blogWebhookSchema.parse(req.body) as BlogPostEditorInput;
+    assertBlogPublishable(payload);
     const lookup = await getCategoryLookup();
 
     const existingSnapshot = await adminDb.collection("blog_posts")
@@ -83,6 +85,9 @@ router.post("/blog-post", sanitize, async (req: Request, res: Response) => {
       post,
     });
   } catch (error) {
+    if (error instanceof ContentQualityError) {
+      return res.status(400).json({ error: error.message, issues: error.issues });
+    }
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors[0].message });
     }

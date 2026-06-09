@@ -239,7 +239,7 @@ export const startupTooltips: TooltipData[] = [
   {
     id: "schemes",
     title: "Government Schemes",
-    message: "Access up to ₹50L funding through SISFS, BIG, CGSS & PMMY schemes. Our experts guide you through the entire application process.",
+    message: "Compare current SISFS, BIG, CGSS, and PMMY eligibility on the responsible official portals, then prepare the records required for the selected application.",
     icon: Coins,
     actionText: "View Funding Services",
     actionUrl: "#funding-services",
@@ -250,7 +250,7 @@ export const startupTooltips: TooltipData[] = [
   {
     id: "benefits",
     title: "Tax Benefits & Savings",
-    message: "Review Section 80-IAC eligibility through Startup India recognition support with expert guidance.",
+    message: "Review Section 80-IAC eligibility, Startup India recognition, and the records needed before claiming the benefit.",
     icon: Target,
     actionText: "Learn More",
     actionUrl: "#tax-benefits",
@@ -263,7 +263,7 @@ export const startupTooltips: TooltipData[] = [
     title: "Plan Your Startup Applications",
     message: "Organize scheme eligibility, documents, and next steps before submitting funding or recognition applications.",
     icon: CheckCircle,
-    actionText: "Start Your Journey",
+    actionText: "Review Eligibility",
     actionUrl: "#get-started",
     position: { x: 500, y: 500 },
     delay: 500,

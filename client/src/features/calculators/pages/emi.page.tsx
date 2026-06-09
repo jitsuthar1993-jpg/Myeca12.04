@@ -34,7 +34,7 @@ export default function EMICalculator() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
-        title={seo?.title || "EMI Calculator 2025 | Home, Car & Personal Loan | MyeCA.in"}
+        title={seo?.title || "EMI Calculator 2026 | Home, Car & Personal Loan | MyeCA.in"}
         description={seo?.description || "Calculate monthly EMIs for any loan. See total interest payable and principal breakdown with interactive charts."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
@@ -295,7 +295,7 @@ export default function EMICalculator() {
                 </div>
                 <div>
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Save on Interest?</h4>
-                  <p className="type-support text-[#667085] mb-2 leading-tight">Reduce your tenure or EMI with balance transfer expert guidance.</p>
+              <p className="type-support text-[#667085] mb-2 leading-tight">Compare the revised rate, transfer fees, remaining tenure, and total interest before switching lenders.</p>
                   <Link href="/services/tax-planning">
                     <button className="text-sm font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
                       Consult CA Expert
@@ -311,7 +311,7 @@ export default function EMICalculator() {
         {/* Bottom Trust Bar */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Plan your loan deductions" },
+            { icon: <Headphones className="w-5 h-5" />, label: "Loan Estimate Review", desc: "Check lender terms and any tax assumptions" },
             { icon: <Award className="w-5 h-5" />, label: "Formula Estimate", desc: "Standard amortization math" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Zero data collection" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Tax Analysis", desc: "Analyze 24b implications" }

@@ -103,7 +103,7 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
     description:
       "A step-by-step workflow for extracting salary, TDS, deductions, and employer details from Form 16 before ITR filing.",
     audience: "Salary earners, job switchers, HR teams, and users preparing ITR-1 or ITR-2.",
-    intent: "Move users from document preparation into a guided filing or CA review workflow.",
+    intent: "Move users from document preparation into a guided filing or professional review workflow.",
     icon: "form",
     coverImage: "/assets/blog/text-covers/mye-ca-complete-tax-filing-playbook.svg",
     checklist: [

@@ -7,6 +7,8 @@ import {
   type BlogAudience,
   type BlogSourceLink,
   type BlogPostEditorInput,
+  type PublicContentQualityStatus,
+  type PublicUserIntent,
   DEFAULT_BLOG_CTA,
   estimateReadingTimeMinutes,
   normalizeBlogContent,
@@ -18,6 +20,7 @@ import {
   slugifyHeading,
   toIsoDate,
 } from "../../shared/blog.js";
+import { shouldIndexPublicContent } from "../../shared/public-content-quality.js";
 
 export interface StoredBlogPost {
   id: string;
@@ -47,6 +50,14 @@ export interface StoredBlogPost {
   updatedAt: string | null;
   tags: string[];
   audience: BlogAudience;
+  targetAudience: string | null;
+  primaryKeyword: string | null;
+  secondaryKeywords: string[];
+  userIntent: PublicUserIntent;
+  keyTopics: string[];
+  qualityStatus: PublicContentQualityStatus;
+  editorialApprovedBy: string | null;
+  editorialApprovedAt: string | null;
   reviewedBy: string | null;
   reviewedAt: string | null;
   reviewerName: string | null;
@@ -105,6 +116,16 @@ function parseNumeric(value: unknown): number | null {
 
 function normalizeAudience(value: unknown): BlogAudience {
   return value === "individuals" || value === "businesses" || value === "both" ? value : "both";
+}
+
+function normalizeUserIntent(value: unknown): PublicUserIntent {
+  return value === "transactional" || value === "navigational" || value === "commercial"
+    ? value
+    : "informational";
+}
+
+function normalizeQualityStatus(value: unknown): PublicContentQualityStatus {
+  return value === "approved" || value === "hold" ? value : "needs_revision";
 }
 
 async function getUserSnapshot(userId: string | null | undefined) {
@@ -238,6 +259,14 @@ export function normalizeStoredBlogPostRecord(
     updatedAt: toIsoDate(data.updatedAt) ?? null,
     tags,
     audience: normalizeAudience(data.audience),
+    targetAudience: trimNullable(data.targetAudience),
+    primaryKeyword: trimNullable(data.primaryKeyword),
+    secondaryKeywords: normalizeStringArray(data.secondaryKeywords as Array<string | null | undefined> | null | undefined),
+    userIntent: normalizeUserIntent(data.userIntent),
+    keyTopics: normalizeStringArray(data.keyTopics as Array<string | null | undefined> | null | undefined),
+    qualityStatus: normalizeQualityStatus(data.qualityStatus),
+    editorialApprovedBy: trimNullable(data.editorialApprovedBy),
+    editorialApprovedAt: toIsoDate(data.editorialApprovedAt) ?? null,
     reviewedBy: trimNullable(data.reviewedBy),
     reviewedAt: toIsoDate(data.reviewedAt) ?? null,
     reviewerName: trimNullable(data.reviewerName),
@@ -312,7 +341,7 @@ export async function listPublishedBlogPosts(
 
 export function listDefaultPublishedBlogPosts(): StoredBlogPost[] {
   return listDefaultBlogPosts()
-    .filter((post) => post.status === "published");
+    .filter(isPubliclyVisibleBlogPost);
 }
 
 function listDefaultBlogPosts(lookup: CategoryLookup = getDefaultCategoryLookup()): StoredBlogPost[] {
@@ -358,11 +387,11 @@ export function mergePublishedBlogPosts(
   const bySlug = new Map<string, StoredBlogPost>();
 
   staticPosts
-    .filter((post) => post.status === "published")
+    .filter(isPubliclyVisibleBlogPost)
     .forEach((post) => bySlug.set(post.slug || post.id, post));
 
   databasePosts
-    .filter((post) => post.status === "published")
+    .filter(isPubliclyVisibleBlogPost)
     .forEach((post) => bySlug.set(post.slug || post.id, post));
 
   return sortPublishedPosts([...bySlug.values()]);
@@ -434,6 +463,14 @@ export async function buildBlogPostWriteData(
     updatedAt: now,
     tags: normalizeStringArray(input.tags),
     audience: normalizeAudience(input.audience),
+    targetAudience: trimNullable(input.targetAudience),
+    primaryKeyword: trimNullable(input.primaryKeyword),
+    secondaryKeywords: normalizeStringArray(input.secondaryKeywords),
+    userIntent: normalizeUserIntent(input.userIntent),
+    keyTopics: normalizeStringArray(input.keyTopics),
+    qualityStatus: normalizeQualityStatus(input.qualityStatus),
+    editorialApprovedBy: trimNullable(input.editorialApprovedBy),
+    editorialApprovedAt: input.editorialApprovedAt ? new Date(input.editorialApprovedAt) : null,
     reviewedBy: trimNullable(input.reviewedBy),
     reviewedAt: input.reviewedAt ? new Date(input.reviewedAt) : null,
     reviewerName: trimNullable(input.reviewerName),
@@ -450,7 +487,7 @@ export async function buildBlogPostWriteData(
 
 export function sortPublishedPosts(posts: StoredBlogPost[]): StoredBlogPost[] {
   return [...posts]
-    .filter((post) => post.status === "published")
+    .filter(isPubliclyVisibleBlogPost)
     .sort((left, right) => {
       if (left.isFeatured !== right.isFeatured) {
         return Number(right.isFeatured) - Number(left.isFeatured);
@@ -466,6 +503,12 @@ export function sortPublishedPosts(posts: StoredBlogPost[]): StoredBlogPost[] {
       const rightUpdated = right.updatedAt ? new Date(right.updatedAt).getTime() : 0;
       return rightUpdated - leftUpdated;
     });
+}
+
+export function isPubliclyVisibleBlogPost(
+  post: Pick<StoredBlogPost, "status" | "qualityStatus">,
+): boolean {
+  return post.status === "published" && shouldIndexPublicContent(post.qualityStatus);
 }
 
 export function sortBlogInventoryPosts<T extends StoredBlogPost>(posts: T[]): T[] {
@@ -508,6 +551,14 @@ export function toPublicBlogSummary(post: StoredBlogPost) {
     updatedAt: post.updatedAt,
     tags: post.tags,
     audience: post.audience,
+    targetAudience: post.targetAudience,
+    primaryKeyword: post.primaryKeyword,
+    secondaryKeywords: post.secondaryKeywords,
+    userIntent: post.userIntent,
+    keyTopics: post.keyTopics,
+    qualityStatus: post.qualityStatus,
+    editorialApprovedBy: post.editorialApprovedBy,
+    editorialApprovedAt: post.editorialApprovedAt,
     reviewedBy: post.reviewedBy,
     reviewedAt: post.reviewedAt,
     reviewerName: post.reviewerName,

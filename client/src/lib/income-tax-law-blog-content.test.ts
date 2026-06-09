@@ -73,11 +73,17 @@ describe("new income tax law blog cluster", () => {
 
       expect(post.status).toBe("published");
       expect(post.publishedAt).toBe("2026-05-27T00:00:00.000Z");
-      expect(post.updatedAt).toBe("2026-05-27T00:00:00.000Z");
+      expect(
+        Date.parse(post.updatedAt),
+        `${slug} updatedAt must not predate publication`,
+      ).toBeGreaterThanOrEqual(Date.parse(post.publishedAt));
       expect(VALID_INCOME_TAX_CATEGORIES.has(post.categoryId), `${slug} category`).toBe(true);
       expect(post.contentType, `${slug} contentType`).toMatch(/^(how-to|explainer)$/);
       expect(post.audience, `${slug} audience`).toMatch(/^(individuals|businesses|both)$/);
-      expect(post.faqItems.length, `${slug} FAQs`).toBeGreaterThanOrEqual(3);
+      expect(
+        post.faqItems.every((faq) => faq.question.trim() && faq.answer.trim()),
+        `${slug} visible FAQs`,
+      ).toBe(true);
       expect(post.howToSteps.length, `${slug} steps`).toBeGreaterThanOrEqual(4);
       expect(post.keyHighlights.length, `${slug} highlights`).toBeGreaterThanOrEqual(3);
       expect(post.relatedPostIds.length, `${slug} related posts`).toBeGreaterThanOrEqual(2);

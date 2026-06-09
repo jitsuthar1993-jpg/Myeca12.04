@@ -70,7 +70,7 @@ export default function EnhancedFDCalculator() {
   return (
     <>
       <MetaSEO
-        title={seo?.title || "Enhanced FD Calculator 2025 | Bank Rates Comparison | MyeCA.in"}
+        title={seo?.title || "Enhanced FD Calculator 2026 | Bank Rates Comparison | MyeCA.in"}
         description={seo?.description || "Compare FD interest rates across major Indian banks. Plan your fixed deposits with tax-adjusted maturity calculations."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}

@@ -193,7 +193,7 @@ const calculatorCards = [
 ] as const;
 
 const serviceRows = [
-  { title: "ITR Filing", desc: "CA-reviewed return in 4 steps", price: "From ₹999 excluding GST", tone: "bg-blue-50 text-[#315efb]" },
+  { title: "ITR Filing", desc: "Assisted return workflow in 4 steps", price: "From ₹999 excluding GST", tone: "bg-blue-50 text-[#315efb]" },
   { title: "GST Registration", desc: "Documents, filing, activation", price: "₹2,999", tone: "bg-emerald-50 text-emerald-700" },
   { title: "Company Setup", desc: "Pvt Ltd, LLP, OPC", price: "₹7,999", tone: "bg-indigo-50 text-indigo-600" },
   { title: "Notice Help", desc: "Draft the response with a CA", price: "₹2,999", tone: "bg-amber-50 text-amber-700" },
@@ -231,7 +231,7 @@ export default function MobileAppScreensPage() {
 
               <div className="flex flex-wrap gap-3">
                 <Badge className="rounded-full bg-blue-50 px-4 py-2 text-[#315efb] hover:bg-blue-50">
-                  CA-reviewed filing
+                  Assisted filing
                 </Badge>
                 <Badge className="rounded-full bg-emerald-50 px-4 py-2 text-emerald-700 hover:bg-emerald-50">
                   Secure document vault
@@ -359,7 +359,7 @@ export default function MobileAppScreensPage() {
                   </div>
 
                   <div className="mt-6 flex flex-wrap gap-2">
-                    {["CA verified", "Secure login", "Fast setup"].map((item) => (
+                    {["Review status shown", "Secure login", "Guided setup"].map((item) => (
                       <Badge key={item} className="rounded-full bg-white/10 px-3 py-1 type-meta text-white hover:bg-white/10">
                         {item}
                       </Badge>

@@ -111,13 +111,14 @@ export const competitorPages = [
   {
     slug: "cleartax-alternative",
     competitor: "ClearTax",
-    title: "ClearTax Alternative for CA-Reviewed ITR Filing",
+    title: "ClearTax Alternative for Assisted ITR Filing",
     description:
       "Compare MyeCA with ClearTax if you want CA-assisted review where applicable, visible AIS/26AS checks, document history and transparent scope before payment.",
-    goodPoints: ["Large brand recall", "Deep tax guides and calculators", "DIY and CA-assisted filing", "Security and trust messaging"],
-    myeCAEdge: ["Scoped expert visibility", "Pay-after-review messaging", "Case timeline with issue log", "Document workflow tied to filing cases"],
+    goodPoints: ["Publishes tax guides and calculators", "Lists DIY and assisted filing options", "Publishes pricing information", "Publishes security and trust information"],
+    myeCAEdge: ["Written service scope", "Document review before payment where offered", "Case timeline with issue log", "Document workflow tied to filing cases"],
     primaryCta: "/pricing",
     source: "https://cleartax.in/s/pricing",
+    checkedAt: "2026-06-06",
   },
   {
     slug: "taxbuddy-alternative",
@@ -125,21 +126,23 @@ export const competitorPages = [
     title: "TaxBuddy Alternative with Case Tracking",
     description:
       "Use MyeCA when you want assisted filing plus self-serve document status, clear plan scope and post-filing support visibility.",
-    goodPoints: ["Strong assisted filing pitch", "AI-powered positioning", "Notice and compliance services", "Affordable entry plans"],
+    goodPoints: ["Publishes assisted filing plans", "Markets AI-supported features", "Lists notice and compliance services", "Publishes entry-plan pricing"],
     myeCAEdge: ["Customer-visible case stages", "Document viewer with extraction review", "Visible scope notes", "Review comments attached to files"],
     primaryCta: "/services/document-vault",
     source: "https://www.taxbuddy.com/pricing-itr-app",
+    checkedAt: "2026-06-06",
   },
   {
     slug: "quicko-capital-gains-alternative",
     competitor: "Quicko",
-    title: "Quicko Alternative for Capital Gains with CA Review",
+    title: "Quicko Alternative for Capital Gains Filing",
     description:
       "MyeCA matches investor tooling with broker upload workflows and adds CA-assisted review, issue flags and a reusable tax document workflow.",
-    goodPoints: ["Investor-first product", "Low-cost paid plans", "App connections", "Tax-loss harvesting and capital gains focus"],
-    myeCAEdge: ["CA-reviewed capital gains", "F&O audit flagging", "Crypto/VDA checklist", "AIS mismatch review before filing"],
+    goodPoints: ["Publishes investor-focused tax workflows", "Publishes paid plan pricing", "Lists app connections", "Covers tax-loss harvesting and capital gains"],
+    myeCAEdge: ["Capital-gains document review", "F&O audit flagging", "Crypto/VDA checklist", "AIS mismatch review before filing"],
     primaryCta: "/capital-gains-import",
     source: "https://quicko.com/pricing",
+    checkedAt: "2026-06-06",
   },
   {
     slug: "tax2win-alternative",
@@ -147,10 +150,11 @@ export const competitorPages = [
     title: "Tax2Win Alternative for Scope-First CA-Assisted ITR Filing",
     description:
       "Compare MyeCA with Tax2Win if you want ITR filing that starts with scope clarity, document-led review, AIS checks and CA assistance before sensitive details move into a full filing workflow.",
-    goodPoints: ["Strong tax tools menu", "Form 16 upload positioning", "Assisted filing claims", "Ratings and social proof"],
+    goodPoints: ["Lists tax tools", "Publishes a Form 16 upload workflow", "Lists assisted filing options", "Publishes ratings and testimonials"],
     myeCAEdge: ["Scope-first CA-assisted tax filing", "Document-led review before checkout pressure", "No-blind-checkout messaging", "Case history tied to uploads and clarifications"],
     primaryCta: "/itr/start?source=competitive_tax2win_page",
     source: "https://tax2win.in/",
+    checkedAt: "2026-06-06",
   },
   {
     slug: "indiafilings-alternative",
@@ -158,10 +162,11 @@ export const competitorPages = [
     title: "IndiaFilings Alternative for Transparent Startup Compliance",
     description:
       "MyeCA packages GST, company registration and compliance with milestone tracking, mandatory-vs-optional cost clarity and renewal reminders.",
-    goodPoints: ["Very broad service catalog", "Startup and business setup focus", "GST, MCA, payroll and trademark coverage", "Strong business positioning"],
+    goodPoints: ["Lists a broad service catalog", "Covers startup and business setup", "Lists GST, MCA, payroll and trademark services", "Publishes business-service information"],
     myeCAEdge: ["Transparent add-on policy", "Founder compliance dashboard", "Service milestone tracker", "Document checklist before payment"],
     primaryCta: "/startup-services",
     source: "https://www.indiafilings.com/",
+    checkedAt: "2026-06-06",
   },
   {
     slug: "best-ca-assisted-itr-filing",
@@ -169,10 +174,11 @@ export const competitorPages = [
     title: "CA-Assisted ITR Filing Comparison for Complex Indian Taxpayers",
     description:
       "A factual guide for choosing MyeCA when your return needs CA review, document reconciliation, capital gains, NRI checks, GST or notice support.",
-    goodPoints: ["Many portals work well for simple returns", "Low-cost assisted filing options exist", "Large brands have broad content", "Local CAs offer personal trust"],
-    myeCAEdge: ["Expert-led digital workflow", "Written scope and visible exclusions", "Secure vault and case history", "Tax plus compliance upgrade path"],
+    goodPoints: ["DIY workflows may fit simple returns", "Assisted filing plans vary by scope", "Content depth varies by provider", "Local professional support may suit users who prefer offline contact"],
+    myeCAEdge: ["Document-first assisted workflow", "Written scope and visible exclusions", "Private vault and case history", "Tax and compliance service paths"],
     primaryCta: "/pricing",
     source: "https://myeca.in/pricing",
+    checkedAt: "2026-06-06",
   },
 ];
 

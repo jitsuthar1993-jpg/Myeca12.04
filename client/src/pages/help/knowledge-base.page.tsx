@@ -30,7 +30,7 @@ const knowledgeCategories = [
     articles: [
       { 
         title: 'Understanding Income Tax in India',
-        description: 'Complete guide to Indian income tax system, slabs, and calculation',
+        description: 'Guide to income-tax concepts, slab calculations, and records used for filing',
         readTime: '15 min',
         level: 'Beginner',
         href: '/calculators/income-tax'
@@ -44,7 +44,7 @@ const knowledgeCategories = [
       },
       {
         title: 'Tax Deductions Under Section 80',
-        description: 'Comprehensive list of all deductions available under Section 80',
+        description: 'Section 80 deduction list with eligibility and record checks',
         readTime: '20 min',
         level: 'Intermediate',
         href: '/calculators/tax-regime'
@@ -101,7 +101,7 @@ const knowledgeCategories = [
     color: 'green',
     articles: [
       {
-        title: 'GST Complete Guide',
+        title: 'GST Registration and Return Guide',
         description: 'Registration, returns, ITC, and compliance',
         readTime: '35 min',
         level: 'Intermediate',
@@ -210,7 +210,7 @@ const knowledgeCategories = [
     articles: [
       {
         title: 'NRI Taxation Guide',
-        description: 'Complete guide for Non-Resident Indians',
+        description: 'Guide to residency, India-source income, reporting, and filing records for non-residents',
         readTime: '28 min',
         level: 'Advanced',
         href: '/expert-consultation'
@@ -300,7 +300,7 @@ export default function KnowledgeBasePage() {
     <>
       <SEO 
         title="Knowledge Base - Tax Guides & Articles | MyeCA.in"
-        description="Comprehensive tax knowledge base with guides on income tax, GST, investments, and business taxation"
+        description="Tax knowledge base with guides on income tax, GST, investments, and business taxation."
       />
       
       <div className="min-h-screen bg-gray-50">
@@ -441,7 +441,7 @@ export default function KnowledgeBasePage() {
           <Card className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="text-center py-8">
               <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
-              <h3 className="text-2xl font-semibold mb-3">Need Expert Assistance?</h3>
+              <h3 className="text-2xl font-semibold mb-3">Need Help Choosing the Next Step?</h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
                 MyeCA tax experts are available to help you with personalized tax planning and filing questions
               </p>

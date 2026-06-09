@@ -77,7 +77,7 @@ const services = [
   },
   {
     title: "Tax & Compliance HQ",
-    desc: "Comprehensive GST, TDS, and Income Tax management supported by assigned tax experts.",
+    desc: "GST, TDS, and income-tax calendars, reconciliations, and filings supported by assigned tax experts.",
     icon: ShieldCheck,
     color: "bg-purple-50 text-purple-600",
   },

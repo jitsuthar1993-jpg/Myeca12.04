@@ -1,11 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { defaultBlogPosts, type DefaultBlogPost } from "../server/data/default-blog-content.js";
+import { itrSeason2026BlogPosts } from "../server/data/itr-season-2026-content.js";
 
 const outputDir = path.resolve(process.cwd(), "content", "blog");
 
-function normalizeCurrencyText(value: string) {
+function legacyNormalizeCurrencyText(value: string) {
   return value.replace(/\bINR\b/g, "₹").replace(/\bRs\.?\s*/gi, "₹");
+}
+
+function normalizeCurrencyText(value: string) {
+  return value.replace(/\bINR\b/g, "\u20B9").replace(/\bRs\.?\s*(?=\d)/gi, "\u20B9");
 }
 
 function inferContentType(post: DefaultBlogPost) {
@@ -67,8 +72,19 @@ function frontmatterFor(post: DefaultBlogPost) {
     createdAt: post.createdAt,
     tags: post.tags.map(normalizeCurrencyText),
     audience: post.audience ?? "both",
+    targetAudience: post.targetAudience ?? null,
+    userIntent: post.userIntent ?? "informational",
+    keyTopics: post.keyTopics?.length ? post.keyTopics.map(normalizeCurrencyText) : post.keyHighlights.map(normalizeCurrencyText),
+    qualityStatus: post.qualityStatus ?? "needs_revision",
+    editorialApprovedBy: post.editorialApprovedBy ?? null,
+    editorialApprovedAt: post.editorialApprovedAt ?? null,
     reviewedBy: post.reviewedBy ?? null,
     reviewedAt: post.reviewedAt ?? null,
+    reviewerName: post.reviewerName ?? null,
+    reviewerRole: post.reviewerRole ?? null,
+    reviewerCredentialName: post.reviewerCredentialName ?? null,
+    reviewerCredentialId: post.reviewerCredentialId ?? null,
+    reviewerCredentialAuthority: post.reviewerCredentialAuthority ?? null,
     sourceLinks: post.sourceLinks ?? [],
     serviceSlug: post.serviceSlug ?? null,
     calculatorSlug: post.calculatorSlug ?? null,
@@ -78,10 +94,12 @@ function frontmatterFor(post: DefaultBlogPost) {
 
 fs.mkdirSync(outputDir, { recursive: true });
 
-for (const post of defaultBlogPosts.filter((candidate) => candidate.status === "published")) {
+const exportPosts = process.argv.includes("--itr-season") ? itrSeason2026BlogPosts : defaultBlogPosts;
+
+for (const post of exportPosts.filter((candidate) => candidate.status === "published")) {
   const filePath = path.join(outputDir, `${post.slug}.mdx`);
   const frontmatter = JSON.stringify(frontmatterFor(post), null, 2);
   fs.writeFileSync(filePath, `---\n${frontmatter}\n---\n\n${normalizeCurrencyText(post.content.trim())}\n`, "utf8");
 }
 
-console.log(`Exported ${defaultBlogPosts.length} blog posts to ${outputDir}`);
+console.log(`Exported ${exportPosts.length} blog posts to ${outputDir}`);

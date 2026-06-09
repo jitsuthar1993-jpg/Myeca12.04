@@ -36,7 +36,7 @@ const categories = [
     title: "Individual Tax",
     icon: UserRound,
     audience: "Salaried, investors, freelancers, NRIs",
-    summary: "ITR filing, refunds, capital gains, and notices with CA-backed review.",
+    summary: "ITR filing, refunds, capital gains, and notices with scoped professional review.",
     services: [
       {
         title: "ITR Filing",
@@ -250,7 +250,7 @@ export default function ServicesPage() {
     <main className="min-h-screen bg-slate-50 text-slate-950">
       <MetaSEO
         title="MyeCA Services Marketplace | ITR, GST, Company Registration, NRI Tax"
-        description="Explore MyeCA's CA-reviewed tax, GST, business compliance, NRI, and document services."
+        description="Explore MyeCA's tax, GST, business compliance, NRI, and document services with clear scope and review steps."
         keywords={["ITR filing", "GST registration", "company incorporation", "tax notice", "NRI tax"]}
       />
 
@@ -262,7 +262,7 @@ export default function ServicesPage() {
                 eyebrow="Services marketplace"
                 icon={<Sparkles className="h-3.5 w-3.5" />}
                 title="Find the right service"
-                description="ITR, GST, notices, company setup, and NRI tax with CA-reviewed next steps."
+                description="ITR, GST, notices, company setup, and NRI tax with clear next steps."
               />
             </div>
 
@@ -275,7 +275,7 @@ export default function ServicesPage() {
                 Find the right tax and compliance service without decoding forms.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg">
-                Explore CA-reviewed services for ITR, GST, notices, company setup, NRI tax, and
+                Explore scoped services for ITR, GST, notices, company setup, NRI tax, and
                 business compliance with clear timelines and next steps.
               </p>
             </div>

@@ -275,7 +275,7 @@ export default function LearnPage() {
                 </div>
                 Step-by-Step Guides
               </h2>
-              <p className="text-gray-500 mt-1 ml-11">Comprehensive reading materials</p>
+              <p className="text-gray-500 mt-1 ml-11">Reading materials grouped by tax and compliance topic</p>
             </div>
             <Button variant="ghost" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" asChild>
               <Link href="/learn/guides">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
@@ -325,7 +325,7 @@ export default function LearnPage() {
                 </div>
                 Our Tax Experts
               </h2>
-              <p className="text-gray-500 mt-1 ml-11">Get personalized advice</p>
+              <p className="text-gray-500 mt-1 ml-11">Discuss a defined question and document set</p>
             </div>
             <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50" asChild>
               <Link href="/learn/consultations">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
@@ -378,7 +378,7 @@ export default function LearnPage() {
               </h2>
               <p className="text-indigo-100 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
                 Can't find what you're looking for? Our AI Tax Assistant can help you with guided answers,
-                or book a consultation with MyeCA tax experts for personalized advice.
+                or book a consultation for a scoped review of the question and supporting records.
               </p>
               <div className="flex flex-wrap justify-center gap-6">
                 <Button size="lg" className="bg-white text-indigo-600 hover:bg-indigo-50 font-bold h-14 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all" asChild>

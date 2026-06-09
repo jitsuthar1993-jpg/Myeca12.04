@@ -245,8 +245,12 @@ async function main() {
   const checks = (await Promise.all(priorityRoutes.map((route) => validateRoute(route)))).flat();
   checks.forEach(printCheck);
 
-  if (checks.some((check) => !check.ok)) {
-    console.error(`\nPriority SEO sweep failed for ${priorityRoutes.length} route(s).`);
+  const failedChecks = checks.filter((check) => !check.ok);
+  if (failedChecks.length > 0) {
+    const failedRoutes = new Set(
+      failedChecks.flatMap((check) => priorityRoutes.filter((route) => check.label.startsWith(`${route} `))),
+    );
+    console.error(`\nPriority SEO sweep failed ${failedChecks.length} check(s) across ${failedRoutes.size} route(s).`);
     process.exit(1);
   }
 

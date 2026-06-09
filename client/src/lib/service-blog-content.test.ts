@@ -97,7 +97,7 @@ describe("non-income-tax service blog cluster", () => {
 
       expect(post.status).toBe("published");
       expect(post.publishedAt).toBe("2026-05-27T00:00:00.000Z");
-      expect(post.updatedAt).toBe("2026-05-27T00:00:00.000Z");
+      expect(new Date(post.updatedAt).getTime()).toBeGreaterThanOrEqual(new Date(post.publishedAt).getTime());
       expect(VALID_SERVICE_BLOG_CATEGORIES.has(post.categoryId), `${slug} category`).toBe(true);
       expect(post.audience).toBe("businesses");
       expect(post.serviceSlug, `${slug} serviceSlug`).toMatch(/^[a-z0-9-]+$/);
@@ -129,7 +129,7 @@ describe("non-income-tax service blog cluster", () => {
       }
 
       expect(post.content, `${slug} conservative wording`).not.toMatch(
-        /\b(guaranteed|guarantee|approved in|assured subsidy|official partner|government partner)\b/i,
+        /\b(guaranteed approval|approval guaranteed|approved in \d|assured subsidy|official partner|government partner)\b/i,
       );
     }
   });

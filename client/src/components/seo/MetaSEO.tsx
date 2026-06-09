@@ -184,12 +184,17 @@ export const MetaSEO: React.FC<MetaSEOProps> = ({
           };
 
   if (expertAuthor) {
-    mainEntity.author = {
-      "@type": "Person",
-      name: expertAuthor,
-      jobTitle: "Tax Consultant",
-      url: "https://myeca.in/about",
-    };
+    mainEntity.author = expertAuthor === "MyeCA Editorial Team"
+      ? {
+          "@type": "Organization",
+          name: expertAuthor,
+          url: "https://myeca.in/about",
+        }
+      : {
+          "@type": "Person",
+          name: expertAuthor,
+          url: "https://myeca.in/about",
+        };
   }
 
   if ((type === "article" || type === "blog") && extraJsonLd && !Array.isArray(extraJsonLd)) {

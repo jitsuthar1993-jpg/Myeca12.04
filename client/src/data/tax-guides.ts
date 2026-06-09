@@ -27,7 +27,54 @@ export interface TaxGuide {
   author: string;
 }
 
+export interface GuideOfficialSource {
+  label: string;
+  href: string;
+  checkedAt: string;
+}
+
 export type GuideCategory = 'salaried' | 'business' | 'capital-gains' | 'nri' | 'deductions' | 'compliance';
+
+const GUIDE_SOURCE_CHECKED_AT = '2026-06-07';
+const INCOME_TAX_PORTAL_SOURCE: GuideOfficialSource = {
+  label: 'Income Tax e-Filing Portal',
+  href: 'https://www.incometax.gov.in/iec/foportal/',
+  checkedAt: GUIDE_SOURCE_CHECKED_AT,
+};
+const INCOME_TAX_INDIVIDUAL_RETURN_SOURCE: GuideOfficialSource = {
+  label: 'Income Tax Department - individual return guidance',
+  href: 'https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1',
+  checkedAt: GUIDE_SOURCE_CHECKED_AT,
+};
+const INCOME_TAX_AIS_SOURCE: GuideOfficialSource = {
+  label: 'Income Tax Department - Annual Information Statement',
+  href: 'https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/ais-annual-information-statement',
+  checkedAt: GUIDE_SOURCE_CHECKED_AT,
+};
+const GST_PORTAL_SOURCE: GuideOfficialSource = {
+  label: 'GST Portal',
+  href: 'https://www.gst.gov.in/',
+  checkedAt: GUIDE_SOURCE_CHECKED_AT,
+};
+const GST_NOTICE_SOURCE: GuideOfficialSource = {
+  label: 'GST Portal - demand and recovery guidance',
+  href: 'https://tutorial.gst.gov.in/userguide/demandsandrecovery/FAQs_GST_FORM_DRC-03.htm',
+  checkedAt: GUIDE_SOURCE_CHECKED_AT,
+};
+
+const GUIDE_OFFICIAL_SOURCES: Record<string, GuideOfficialSource[]> = {
+  'complete-itr-guide-salaried': [INCOME_TAX_INDIVIDUAL_RETURN_SOURCE, INCOME_TAX_AIS_SOURCE],
+  'itr-1-filing-guide-ay-2026-27': [INCOME_TAX_INDIVIDUAL_RETURN_SOURCE, INCOME_TAX_AIS_SOURCE],
+  'salary-tax-calculator-guide-ay-2026-27': [INCOME_TAX_INDIVIDUAL_RETURN_SOURCE, INCOME_TAX_AIS_SOURCE],
+  'section-80c-deductions-ay-2026-27': [INCOME_TAX_INDIVIDUAL_RETURN_SOURCE],
+  'ais-explained-ay-2026-27': [INCOME_TAX_AIS_SOURCE],
+  'hra-exemption-claim': [INCOME_TAX_INDIVIDUAL_RETURN_SOURCE],
+  'stock-capital-gains-tax': [INCOME_TAX_PORTAL_SOURCE],
+  'maximize-tax-deductions': [INCOME_TAX_INDIVIDUAL_RETURN_SOURCE],
+  'freelancer-tax-filing': [INCOME_TAX_PORTAL_SOURCE],
+  'important-tax-deadlines': [INCOME_TAX_PORTAL_SOURCE, GST_PORTAL_SOURCE],
+  'gst-notice-handling-guide': [GST_NOTICE_SOURCE, GST_PORTAL_SOURCE],
+};
 
 export const GUIDE_CATEGORIES: { id: GuideCategory; name: string; icon: string; color: string }[] = [
   { id: 'salaried', name: 'Salaried Employees', icon: 'Briefcase', color: 'blue' },
@@ -50,7 +97,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     estimatedTime: '30 mins',
     tags: ['ITR-1', 'Form 16', 'salary', 'tax filing'],
     lastUpdated: '2026-05-05',
-    author: 'CA Rajesh Kumar',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/income-tax', '/calculators/hra'],
     steps: [
       {
@@ -91,7 +138,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         ],
         tips: [
           'If there are discrepancies, contact your employer immediately',
-          'TDS in Form 16 should match Form 26AS exactly',
+          'Investigate any difference between Form 16 and Form 26AS before using the credit in the return',
         ],
       },
       {
@@ -101,7 +148,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         checklist: [
           'Calculate tax under old regime with all deductions',
           'Calculate tax under new regime (lower rates, no deductions)',
-          'Compare both and choose the beneficial one',
+          'Compare both and record why the selected regime gives the lower final liability for the complete income profile',
           'Note: New regime under Section 115BAC (2025 Act: Section 202) is default for AY 2026-27',
         ],
         tips: [
@@ -145,7 +192,7 @@ export const TAX_GUIDES: TaxGuide[] = [
           'E-verify using Aadhaar OTP / Net Banking / EVC',
         ],
         tips: [
-          'E-verification must be done within 30 days of filing',
+          'Confirm the current e-verification timeline on the filing portal and complete it promptly',
           'Keep acknowledgment number safe for future reference',
           'Download ITR-V for your records',
         ],
@@ -162,7 +209,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     estimatedTime: '25 mins',
     tags: ['ITR-1', 'Sahaj', 'AY 2026-27', 'salary return'],
     lastUpdated: '2026-05-24',
-    author: 'MyeCA Tax Desk',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/income-tax', '/itr/form-selector'],
     relatedResources: [
       { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
@@ -258,7 +305,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     estimatedTime: '20 mins',
     tags: ['salary tax calculator', 'Form 16', 'tax regime', 'AY 2026-27'],
     lastUpdated: '2026-05-26',
-    author: 'MyeCA Tax Desk',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/salary', '/calculators/income-tax', '/calculators/regime-comparator'],
     relatedResources: [
       { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
@@ -354,7 +401,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     estimatedTime: '20 mins',
     tags: ['80C', 'deductions', 'old regime', 'tax saving'],
     lastUpdated: '2026-05-24',
-    author: 'MyeCA Tax Desk',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/income-tax', '/calculators/elss', '/calculators/ppf'],
     relatedResources: [
       { label: 'Tax Planning Service', href: '/services/tax-planning' },
@@ -444,7 +491,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     estimatedTime: '18 mins',
     tags: ['AIS', 'TIS', 'Form 26AS', 'ITR mismatch'],
     lastUpdated: '2026-05-24',
-    author: 'MyeCA Tax Desk',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/income-tax', '/itr/form-selector'],
     relatedResources: [
       { label: 'Expert Consultation', href: '/expert-consultation' },
@@ -523,13 +570,13 @@ export const TAX_GUIDES: TaxGuide[] = [
     id: 'hra-exemption-guide',
     slug: 'hra-exemption-claim',
     title: 'How to Claim HRA Exemption',
-    description: 'Complete guide to understanding and claiming House Rent Allowance exemption with proper documentation.',
+    description: 'Understand the HRA exemption inputs, calculation limits, rent evidence, and filing records.',
     category: 'salaried',
     difficulty: 'beginner',
     estimatedTime: '15 mins',
     tags: ['HRA', 'exemption', 'rent', 'deduction'],
-    lastUpdated: '2024-05-20',
-    author: 'CA Priya Sharma',
+    lastUpdated: '2026-06-07',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/hra'],
     steps: [
       {
@@ -559,7 +606,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         tips: [
           'Metro cities are Delhi, Mumbai, Chennai, and Kolkata',
           'Salary = Basic + DA (if part of retirement benefits)',
-          'Use our HRA calculator for accurate computation',
+          'Use the HRA calculator as an estimate, then verify the salary definition and inputs before claiming',
         ],
         links: [
           { label: 'HRA Calculator', href: '/calculators/hra' },
@@ -572,12 +619,12 @@ export const TAX_GUIDES: TaxGuide[] = [
         checklist: [
           'Rent receipts for each month (signed by landlord)',
           'Rental agreement copy',
-          'Landlord PAN card (if rent > ₹1 lakh/year)',
+          'Landlord PAN details where required by employer or return rules for the rent amount',
           'Bank statements showing rent payments',
         ],
         tips: [
           'Rent receipts must include landlord name, address, and period',
-          'Revenue stamps required on receipts above ₹5,000',
+          'Check the employer\'s accepted receipt format and keep traceable rent-payment evidence',
           'Keep copies of bank transfer records as proof',
         ],
       },
@@ -609,8 +656,8 @@ export const TAX_GUIDES: TaxGuide[] = [
     difficulty: 'intermediate',
     estimatedTime: '25 mins',
     tags: ['capital gains', 'stocks', 'mutual funds', 'STCG', 'LTCG'],
-    lastUpdated: '2024-06-01',
-    author: 'CA Rajesh Kumar',
+    lastUpdated: '2026-06-07',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/capital-gains', '/capital-gains-import'],
     steps: [
       {
@@ -625,13 +672,13 @@ export const TAX_GUIDES: TaxGuide[] = [
         ],
         tips: [
           'Holding period is from purchase date to sale date',
-          'STT should be paid on both buy and sell for preferential rates',
+          'Check whether each transaction satisfies the conditions for the applicable listed-equity rate',
         ],
       },
       {
         id: 'tax-rates',
         title: 'Know the Tax Rates',
-        description: 'Current tax-rate estimate for equity capital gains (FY 2025-26).',
+        description: 'Rate checkpoint for listed-equity gains in FY 2025-26; acquisition date, sale date, and transaction type can change the result.',
         checklist: [
           'STCG: 20% flat rate',
           'LTCG: 12.5% above ₹1.25 lakh exemption',
@@ -655,7 +702,7 @@ export const TAX_GUIDES: TaxGuide[] = [
           'Sum up gains/losses by category',
         ],
         tips: [
-          'Include brokerage and STT in expenses',
+          'Separate brokerage and other allowable transfer expenses; do not assume STT is deductible',
           'For SIP investments, each installment has different holding period',
           'Use FIFO method for partial sales',
         ],
@@ -676,7 +723,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         ],
         tips: [
           'Consider tax-loss harvesting before March 31',
-          'Book losses strategically to offset future gains',
+          'Do not trade solely for a tax result; keep investment suitability separate from the tax calculation',
         ],
         links: [
           { label: 'Tax Loss Harvesting Tool', href: '/tax-loss-harvesting' },
@@ -687,13 +734,13 @@ export const TAX_GUIDES: TaxGuide[] = [
         title: 'File in ITR',
         description: 'Reporting capital gains in your tax return.',
         checklist: [
-          'Use ITR-2 if you have capital gains',
+          'Use the form selector and current return instructions because the permitted capital-gains cases differ by form',
           'Fill Schedule CG with transaction details',
           'Provide scrip-wise details for equity',
           'Declare exempt LTCG up to ₹1.25L',
         ],
         tips: [
-          'ITR-1 cannot be used if you have capital gains',
+          'Do not assume ITR-1 eligibility or ineligibility from the words capital gains alone; verify the current form conditions',
           'Broker statements can be imported in many tax portals',
         ],
       },
@@ -704,14 +751,14 @@ export const TAX_GUIDES: TaxGuide[] = [
   {
     id: 'maximize-deductions',
     slug: 'maximize-tax-deductions',
-    title: 'Maximize Your Tax Deductions - Complete Guide',
-    description: 'Comprehensive AY 2026-27 guide to deductions under Income-tax Act, 1961 sections, with 2025 Act cross-references for 80C, 80D, 80G, and more.',
+    title: 'Tax Deductions: Eligibility and Records Guide',
+    description: 'AY 2026-27 guide to deduction eligibility and records under Income-tax Act, 1961 sections, with 2025 Act cross-references for 80C, 80D, 80G, and more.',
     category: 'deductions',
     difficulty: 'beginner',
     estimatedTime: '35 mins',
     tags: ['80C', '80D', 'deductions', 'tax saving'],
     lastUpdated: '2026-05-05',
-    author: 'CA Priya Sharma',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/income-tax', '/calculators/nps', '/elss-comparator'],
     steps: [
       {
@@ -732,7 +779,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         ],
         tips: [
           'Total limit is ₹1.5 lakh combining all 80C investments',
-          'ELSS has shortest lock-in with highest return potential',
+          'ELSS has a three-year lock-in and market risk; returns are not guaranteed',
           'EPF automatically covers part of your 80C limit',
         ],
         links: [
@@ -780,7 +827,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         description: 'Deduction on home loan interest for self-occupied property.',
         checklist: [
           'Self-occupied property: Up to ₹2 lakh interest',
-          'Let-out property: No limit on interest deduction',
+          'Compute let-out-property interest and apply the current set-off and carry-forward limits',
           'Under construction: Interest deductible in 5 installments',
           'Joint loan: Each co-owner claims separately',
         ],
@@ -803,7 +850,7 @@ export const TAX_GUIDES: TaxGuide[] = [
           '80DDB: Medical treatment for specified diseases',
         ],
         tips: [
-          '80E has no limit - great for expensive education',
+          'Verify the eligible lender, borrower, and interest period before claiming education-loan interest',
           '80G donations need proper receipts with PAN of charity',
           '80TTA doesn\'t apply to FD interest',
         ],
@@ -816,13 +863,13 @@ export const TAX_GUIDES: TaxGuide[] = [
     id: 'freelancer-tax-guide',
     slug: 'freelancer-tax-filing',
     title: 'Tax Filing Guide for Freelancers',
-    description: 'Complete guide for freelancers and consultants on income reporting, expenses, advance tax, and ITR filing.',
+    description: 'Guide for freelancers and consultants on income reporting, expense records, advance tax, and ITR filing.',
     category: 'business',
     difficulty: 'intermediate',
     estimatedTime: '40 mins',
     tags: ['freelancer', 'consultant', 'ITR-4', 'presumptive'],
-    lastUpdated: '2024-06-10',
-    author: 'CA Rajesh Kumar',
+    lastUpdated: '2026-06-07',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/income-tax', '/calculators/advance-tax'],
     steps: [
       {
@@ -839,7 +886,7 @@ export const TAX_GUIDES: TaxGuide[] = [
         tips: [
           'Use accounting software or spreadsheet for tracking',
           'Match TDS deducted with Form 26AS',
-          'Income is taxable on accrual basis (when earned, not received)',
+          'Confirm the accounting method used and reconcile invoices, receipts, and outstanding amounts consistently',
         ],
       },
       {
@@ -869,12 +916,12 @@ export const TAX_GUIDES: TaxGuide[] = [
           'Regular: Actual profit (Income - Expenses)',
           'Presumptive 44ADA: 50% of gross receipts as profit',
           'Presumptive limit: ₹75 lakh (₹50L if cash > 5%)',
-          'No expense documentation needed for presumptive',
+          'Presumptive taxation changes profit computation, but receipts, bank records, and eligibility evidence still matter',
         ],
         tips: [
-          'Presumptive is simpler - no books maintenance required',
+          'Check the recordkeeping and audit obligations that apply before choosing presumptive taxation',
           'If expenses > 50%, regular scheme may be better',
-          "Once opted out of presumptive, can't come back for 5 years",
+          'Do not apply the Section 44AD lockout rule to Section 44ADA without checking the provision that covers the profession',
         ],
       },
       {
@@ -898,18 +945,18 @@ export const TAX_GUIDES: TaxGuide[] = [
       },
       {
         id: 'file-return',
-        title: 'File ITR-4',
-        description: 'File your tax return before due date.',
+        title: 'Select the Return Form and File',
+        description: 'Choose the return form from the complete income profile, then confirm the current due date and verification step.',
         checklist: [
-          'Use ITR-4 for presumptive income',
+          'Use ITR-4 only when the taxpayer and presumptive-income facts meet its current eligibility conditions',
           'Use ITR-3 for regular business income',
-          'Due date: July 31 (extended sometimes)',
+          'Confirm the notified due date for the taxpayer and audit position',
           'Include all income sources',
           'E-verify within 30 days',
         ],
         tips: [
           'Keep GST separate from ITR (if registered)',
-          'TDS credits will reflect automatically from 26AS',
+          'Reconcile claimed TDS credits with Form 26AS and supporting certificates',
           'Claim refund if TDS > tax liability',
         ],
       },
@@ -921,29 +968,28 @@ export const TAX_GUIDES: TaxGuide[] = [
     id: 'tax-deadlines',
     slug: 'important-tax-deadlines',
     title: 'Important Tax Deadlines & Compliance Calendar',
-    description: 'Never miss a tax deadline with this comprehensive compliance calendar for individuals and businesses.',
+    description: 'Track common tax deadlines for individuals and businesses, then confirm the due date and filing obligation for the relevant case.',
     category: 'compliance',
     difficulty: 'beginner',
     estimatedTime: '10 mins',
     tags: ['deadlines', 'due dates', 'compliance', 'calendar'],
-    lastUpdated: '2024-06-01',
-    author: 'CA Priya Sharma',
+    lastUpdated: '2026-06-07',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/compliance-calendar'],
     steps: [
       {
         id: 'itr-deadlines',
         title: 'ITR Filing Deadlines',
-        description: 'Annual income tax return due dates.',
+        description: 'Identify the return category and confirm the notified filing and verification dates.',
         checklist: [
-          'July 31: ITR for individuals (non-audit)',
-          'October 31: ITR for audit cases',
-          'November 30: Transfer pricing cases',
-          'December 31: Belated/Revised return deadline',
+          'Identify whether the taxpayer falls under a non-audit, audit, transfer-pricing, belated, or revised-return route',
+          'Confirm the notified due date on the Income Tax e-Filing Portal for the relevant assessment year',
+          'Record any extension notification instead of relying on an old calendar',
+          'Track return filing and e-verification as separate deadlines',
         ],
         tips: [
-          'File early to avoid last-minute rush',
-          'Penalty of ₹5,000 for late filing (₹1,000 if income < ₹5L)',
-          'Cannot claim losses if filed late',
+          'File early enough to resolve record mismatches before the notified date',
+          'Check the current late-filing consequences and loss carry-forward rules for the return',
         ],
       },
       {
@@ -955,42 +1001,39 @@ export const TAX_GUIDES: TaxGuide[] = [
           'September 15: 45% of tax liability',
           'December 15: 75% of tax liability',
           'March 15: 100% of tax liability',
+          'Confirm applicability, exceptions, and the current instalment schedule before paying',
         ],
         tips: [
-          'Not required if tax liability < ₹10,000',
-          'Senior citizens exempt if no business income',
+          'Reforecast the year when income or credits change instead of reusing the first estimate',
+          'Check current threshold and senior-citizen exceptions against the official instruction',
         ],
       },
       {
         id: 'tds-dates',
         title: 'TDS Compliance Dates',
-        description: 'TDS payment and return filing deadlines.',
+        description: 'Build the TDS calendar from the deduction type, challan month, and quarterly statement.',
         checklist: [
-          'TDS Payment: 7th of next month (30 April for March)',
-          'Q1 TDS Return: July 31',
-          'Q2 TDS Return: October 31',
-          'Q3 TDS Return: January 31',
-          'Q4 TDS Return: May 31',
+          'Identify the applicable TDS section, challan month, and quarterly return form',
+          'Confirm the deposit date and statement due date for the relevant period',
+          'Assign an owner for deductee PAN checks, challan matching, and return preparation',
+          'Retain challans, filed statements, acknowledgements, and correction records',
         ],
         tips: [
-          'Delay in TDS payment attracts 1.5% per month interest',
-          'Late filing fee of ₹200 per day',
+          'Interest, late fee, and correction exposure depend on the actual delay and filing facts',
         ],
       },
       {
         id: 'gst-dates',
         title: 'GST Compliance Dates',
-        description: 'GST return filing deadlines.',
+        description: 'Build the GST calendar from registration status, return frequency, and state-specific facts.',
         checklist: [
-          'GSTR-3B: 20th of next month',
-          'GSTR-1: 11th of next month (monthly)',
-          'GSTR-1: 13th of next quarter (QRMP)',
-          'GSTR-9: December 31 (annual)',
-          'GSTR-9C: December 31 (audit)',
+          'Identify each registration, return form, filing frequency, and tax period',
+          'Confirm the due date and any extension on the GST Portal',
+          'Schedule invoice, input-tax-credit, liability, and ledger reconciliation before filing',
+          'Retain ARN, payment, amendment, and annual-return records',
         ],
         tips: [
-          'Late fee: ₹50/day (₹20 for nil return)',
-          'Interest: 18% on late tax payment',
+          'Late fee and interest depend on the return, delay, liability, and current notification',
         ],
       },
     ],
@@ -1005,7 +1048,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     estimatedTime: '30 mins',
     tags: ['GST notice', 'DRC-01', 'DRC-03', 'GST compliance'],
     lastUpdated: '2026-05-24',
-    author: 'MyeCA Tax Desk',
+    author: 'MyeCA Editorial Team',
     relatedCalculators: ['/calculators/gst'],
     relatedResources: [
       { label: 'GST Notice Compliance Service', href: '/services/notice-compliance' },
@@ -1092,6 +1135,10 @@ export function getGuidesByCategory(category: GuideCategory): TaxGuide[] {
 
 export function getGuideBySlug(slug: string): TaxGuide | undefined {
   return TAX_GUIDES.find(g => g.slug === slug);
+}
+
+export function getGuideOfficialSources(slug: string): GuideOfficialSource[] {
+  return GUIDE_OFFICIAL_SOURCES[slug] ?? [];
 }
 
 export function searchGuides(query: string): TaxGuide[] {

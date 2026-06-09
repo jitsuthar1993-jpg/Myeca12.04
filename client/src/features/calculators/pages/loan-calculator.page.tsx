@@ -165,7 +165,7 @@ export default function UnifiedLoanCalculatorPage() {
   return (
     <>
       <MetaSEO 
-        title={seo?.title || "Loan EMI Calculator 2025 | MyeCA.in"}
+        title={seo?.title || "Loan EMI Calculator 2026 | MyeCA.in"}
         description={seo?.description || "Professional EMI planning with affordability estimates and tax benefit insights."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}

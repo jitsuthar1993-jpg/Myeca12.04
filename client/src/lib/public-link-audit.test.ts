@@ -204,6 +204,14 @@ describe("public link audit", () => {
   it("keeps runtime blog listings from shrinking below the static MDX catalog", async () => {
     const staticPosts = loadStaticBlogPosts().filter((post) => post.status === "published");
     const [databasePost, staticOnlyPost] = staticPosts;
+    const heldDatabasePost = {
+      ...databasePost,
+      id: "legacy-published-hold",
+      slug: "legacy-published-hold",
+      title: "Legacy published hold",
+      qualityStatus: "hold" as const,
+      status: "published" as const,
+    };
     const fakeDb = {
       collection(name: string) {
         if (name === "categories") {
@@ -223,6 +231,10 @@ describe("public link audit", () => {
                     id: databasePost.id,
                     data: () => databasePost,
                   },
+                  {
+                    id: heldDatabasePost.id,
+                    data: () => heldDatabasePost,
+                  },
                 ],
               }),
             }),
@@ -239,6 +251,7 @@ describe("public link audit", () => {
     expect(posts.length).toBeGreaterThanOrEqual(staticPosts.length);
     expect(slugs).toContain(databasePost.slug);
     expect(slugs).toContain(staticOnlyPost.slug);
+    expect(slugs).not.toContain(heldDatabasePost.slug);
   });
 
   it("indexes the ITR season campaign assets and competitor capture pages", () => {

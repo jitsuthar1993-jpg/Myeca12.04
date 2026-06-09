@@ -49,51 +49,51 @@ export default function GSTReturnsPage() {
   const gstReturns = [
     {
       return: "GSTR-1",
-      frequency: "Monthly/Quarterly", 
-      dueDate: "11th of following month",
+      frequency: "Monthly or quarterly",
+      dueDate: "Confirm for the filing period",
       description: "Outward supplies of taxable goods and/or services",
-      applicability: "All registered taxpayers",
-      penalty: "₹200 per day (max ₹5,000)",
-      changes2025: "3-year filing limit introduced, auto-locking after deadline",
+      applicability: "Registered persons required to furnish outward-supply details",
+      penalty: "Late fee and downstream filing restrictions may apply",
+      updateCheck: "Confirm the period-specific due date and whether an older return remains available under the GST portal's three-year filing restriction.",
       icon: Receipt,
       color: "blue"
     },
     {
       return: "GSTR-3B",
-      frequency: "Monthly",
-      dueDate: "20th of following month", 
+      frequency: "Monthly or quarterly",
+      dueDate: "Confirm for the filing period",
       description: "Summary return with tax liability and input tax credit",
-      applicability: "All registered taxpayers",
-      penalty: "₹50 per day per return",
-      changes2025: "Hard locking implemented, no filing after 3 years",
+      applicability: "Registered persons required to furnish a summary return",
+      penalty: "Late fee and interest may apply",
+      updateCheck: "Reconcile liability, cash ledger, and eligible credit before filing; portal validations and filing restrictions can change the available action.",
       icon: FileText,
       color: "green"
     },
     {
-      return: "GSTR-2A",
+      return: "GSTR-2B",
       frequency: "Auto-generated",
       dueDate: "Not applicable",
-      description: "Auto-drafted ITC statement based on supplier filings",
-      applicability: "All registered taxpayers",
-      penalty: "No penalty (system generated)",
-      changes2025: "Supplier filing updates flow into GSTR-2A",
+      description: "Static auto-drafted ITC statement for the period",
+      applicability: "Used with purchase records to review eligible input tax credit",
+      penalty: "No filing obligation for the statement itself",
+      updateCheck: "Compare GSTR-2B with purchase records and investigate missing, duplicated, blocked, or otherwise ineligible credit before claiming ITC.",
       icon: Download,
       color: "purple"
     },
     {
       return: "GSTR-9",
       frequency: "Annual",
-      dueDate: "31st December (for previous FY)",
+      dueDate: "Confirm for the financial year",
       description: "Annual return consolidating all monthly/quarterly returns",
-      applicability: "Turnover > ₹2 crores",
-      penalty: "0.25% of turnover (min ₹25,000)",
-      changes2025: "Simplified format with auto-population from monthly returns",
+      applicability: "Turnover- and category-based applicability; exemptions can vary by year",
+      penalty: "Late fee may apply when the return is required",
+      updateCheck: "Confirm annual-return applicability, threshold, exemption notifications, and due date for the relevant financial year.",
       icon: BookOpen,
       color: "orange"
     }
   ];
 
-  const gstRates2025 = [
+  const gstRateExamples = [
     {
       rate: "0%",
       items: ["Essential food items", "Educational services", "Healthcare", "Books & newspapers"],
@@ -211,7 +211,7 @@ export default function GSTReturnsPage() {
       icon: Award,
       color: "purple",
       documents: [
-        "GSTR-2A downloaded from portal",
+        "GSTR-2B downloaded from portal",
         "ITC reconciliation statements",
         "Input tax credit eligibility certificates",
         "Stock transfer and branch transfer invoices",
@@ -224,41 +224,41 @@ export default function GSTReturnsPage() {
   const penaltyStructure = [
     {
       violation: "Late filing of GSTR-1",
-      timeLimit: "Beyond due date",
-      penalty: "₹200 per day (max ₹5,000)",
-      additionalConsequences: "Restriction on filing GSTR-3B"
+      timeLimit: "After the period-specific due date",
+      penalty: "Late fee depends on the return, delay, and current relief notifications",
+      additionalConsequences: "Downstream filing or invoice-reporting restrictions may apply"
     },
     {
       violation: "Late filing of GSTR-3B",
-      timeLimit: "Beyond 20th",
-      penalty: "₹50 per day per return",
-      additionalConsequences: "Interest @18% on outstanding tax"
+      timeLimit: "After the period-specific due date",
+      penalty: "Late fee and interest on unpaid tax may apply",
+      additionalConsequences: "Ledger balances and later filings can be affected"
     },
     {
       violation: "Non-filing of Annual Return",
-      timeLimit: "Beyond 31st December",
-      penalty: "0.25% of turnover (min ₹25,000)",
-      additionalConsequences: "Cancellation of registration"
+      timeLimit: "After the applicable annual-return due date",
+      penalty: "Late fee depends on current law and turnover-linked rules",
+      additionalConsequences: "The portal may surface compliance action or notices"
     },
     {
       violation: "Incorrect ITC Claims",
-      timeLimit: "Upon detection",
-      penalty: "Interest + 24% additional tax",
-      additionalConsequences: "Prosecution for tax evasion"
+      timeLimit: "When identified through reconciliation or review",
+      penalty: "Reversal, tax, interest, and penalty exposure depend on the facts",
+      additionalConsequences: "Document the correction and response trail"
     }
   ];
 
-  const newFeatures2025 = [
+  const portalChecks = [
     {
       feature: "3-Year Filing Limit",
-      description: "Returns older than 3 years cannot be filed",
-      impact: "Strict deadline adherence required",
+      description: "Older returns can become unavailable under the portal filing restriction",
+      impact: "Check open periods early",
       icon: Clock
     },
     {
-      feature: "Hard Locking System",
-      description: "Auto-lock returns after deadline passes",
-      impact: "No amendments possible after lock",
+      feature: "Portal Availability",
+      description: "Available actions depend on return status, period, and linked filings",
+      impact: "Review before submission",
       icon: Shield
     },
     {
@@ -292,7 +292,7 @@ export default function GSTReturnsPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
-                File GSTR-1, GSTR-3B, and Annual Return with 2025 compliance updates and expert help.
+                Reconcile books, identify the returns due for the period, and review portal validations before filing.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold">
@@ -319,15 +319,15 @@ export default function GSTReturnsPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
-                    GSTR-1 by 11th, GSTR-3B by 20th each month.
+                    Confirm each return's due date and filing frequency on the GST portal.
                   </li>
                   <li className="flex items-start">
                     <Download className="w-4 h-4 mr-2 text-indigo-600 mt-0.5" />
-                    Reconcile GSTR-2A with purchases monthly.
+                    Reconcile purchase records with GSTR-2B before claiming ITC.
                   </li>
                   <li className="flex items-start">
                     <Shield className="w-4 h-4 mr-2 text-green-600 mt-0.5" />
-                    Hard locking after deadlines; avoid late fees.
+                    Review older open periods before the portal's three-year restriction applies.
                   </li>
                   <li className="flex items-start">
                     <Award className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
@@ -353,7 +353,7 @@ export default function GSTReturnsPage() {
               GST Returns Filing Guidance
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Complete guide to GST return types, compliance requirements, and update checks
+              Return-by-return scope, record requirements, and portal checks
             </p>
           </div>
 
@@ -390,9 +390,9 @@ export default function GSTReturnsPage() {
                   </div>
                   
                   <div className="mb-4">
-                    <h4 className="font-semibold text-sm mb-2">2025 Changes:</h4>
+                    <h4 className="font-semibold text-sm mb-2">What to verify:</h4>
                     <p className="text-xs text-gray-700 bg-yellow-50 p-2 rounded border-l-2 border-yellow-400">
-                      {returnType.changes2025}
+                      {returnType.updateCheck}
                     </p>
                   </div>
 
@@ -406,7 +406,7 @@ export default function GSTReturnsPage() {
           </div>
         </m.div>
 
-        {/* GST Rates 2025 */}
+        {/* GST rate classification examples */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -415,10 +415,10 @@ export default function GSTReturnsPage() {
         >
           <div className="text-center mb-12">
             <h2 className="type-section-title font-bold text-gray-900 mb-4">
-              Current GST Rate Structure 2025
+              GST Rate Slabs for Classification Review
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Updated GST rates and applicable goods/services categories
+              These are broad examples, not a rate determination. Verify the HSN or SAC, notification, supply facts, and conditions before invoicing.
             </p>
           </div>
 
@@ -432,7 +432,7 @@ export default function GSTReturnsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {gstRates2025.map((rate, index) => (
+                {gstRateExamples.map((rate, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 font-bold text-lg text-blue-600">{rate.rate}</td>
                     <td className="px-6 py-4">
@@ -524,7 +524,7 @@ export default function GSTReturnsPage() {
           </div>
         </m.div>
 
-        {/* New Features 2025 */}
+        {/* GST portal checks */}
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -533,15 +533,15 @@ export default function GSTReturnsPage() {
         >
           <div className="text-center mb-12">
             <h2 className="type-section-title font-bold text-gray-900 mb-4">
-              New GST Portal Features 2025
+              GST Portal Checks Before Filing
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Technology enhancements for improved GST compliance
+              The portal can validate, restrict, or change available actions based on the filing period and linked returns.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newFeatures2025.map((feature, index) => (
+            {portalChecks.map((feature, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
                   <div className="w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-600">
@@ -618,10 +618,10 @@ export default function GSTReturnsPage() {
         >
           <div className="text-center mb-12">
             <h2 className="type-section-title font-bold text-gray-900 mb-4">
-              GST Penalty Structure 2025
+              Late-Filing and Correction Risks
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Detailed penalty information for various GST compliance violations
+              Exact late fees, interest, relief, and consequences depend on the return, period, facts, and current notifications.
             </p>
           </div>
 
@@ -670,22 +670,22 @@ export default function GSTReturnsPage() {
               {
                 id: 1,
                 question: "What is GST and who needs to file GST returns?",
-                answer: "GST (Goods and Services Tax) is an indirect tax levied on the supply of goods and services in India. Businesses with annual turnover exceeding ₹20 lakh (₹10 lakh for special category states) must register for GST and file monthly/quarterly returns. Even voluntary registrations require regular filing."
+                answer: "GST is an indirect tax on supplies of goods and services. Registration and return obligations depend on turnover, state, supply type, business category, compulsory-registration provisions, exemptions, and whether the person registered voluntarily. Confirm the applicable trigger before treating any single turnover figure as decisive."
               },
               {
                 id: 2,
-                question: "What are the key changes in GST filing for 2025?",
-                answer: "Key GST filing changes include stricter time limits for delayed returns, tighter amendment windows, and stronger portal validations. Review your GST data before filing and confirm the applicable rules on the GST portal or with your advisor."
+                question: "What should I check before filing a GST return?",
+                answer: "Confirm the return and period shown on the GST portal, reconcile sales and purchase records, review GSTR-2B before claiming ITC, check cash and credit ledgers, and resolve portal validations. Also review current notifications when relying on an extension, waiver, or exemption."
               },
               {
                 id: 3,
                 question: "What happens if I file GSTR-1 or GSTR-3B late?",
-                answer: "GSTR-1 late filing: ₹200 per day penalty (maximum ₹5,000) plus restriction on filing GSTR-3B. GSTR-3B late filing: ₹50 per day penalty plus 18% interest on outstanding tax liability. With the new hard locking system, late filing becomes impossible after the 3-year limit."
+                answer: "Late filing can trigger late fees, interest on unpaid tax, downstream filing restrictions, and loss of access to older periods under the portal's three-year filing restriction. The exact result depends on the return, period, liability, and any current relief notification; check the portal calculation before payment or submission."
               },
               {
                 id: 4,
-                question: "How do I reconcile my GSTR-2A with purchase invoices?",
-                answer: "GSTR-2A is auto-generated based on your suppliers' GSTR-1 filings. Compare your purchase invoices with GSTR-2A data monthly. Discrepancies may arise from supplier non-filing, incorrect GSTIN on invoices, or delayed supplier returns. Contact suppliers immediately for mismatches and maintain proper documentation."
+                question: "How do I reconcile GSTR-2B with purchase invoices?",
+                answer: "Match GSTR-2B against the purchase register by supplier GSTIN, invoice number, date, taxable value, tax amount, place of supply, and eligibility. Investigate missing or duplicate invoices, supplier amendments, blocked credits, and prior-period claims before deciding the ITC amount to report."
               },
               {
                 id: 5,
@@ -695,7 +695,7 @@ export default function GSTReturnsPage() {
               {
                 id: 6,
                 question: "What documents should I maintain for GST compliance?",
-                answer: "Maintain all sales/purchase invoices, credit/debit notes, e-way bills, bank statements, GSTR-2A downloads, export/import documents, job work challans, stock transfer documents, and payment proof for taxes. Records must be preserved for 72 months from the due date of annual return filing."
+                answer: "Maintain sales and purchase invoices, credit and debit notes, e-way bills, bank and ledger evidence, GSTR-2B reconciliation, export or import documents, job-work and stock-transfer records, and tax-payment proof. Retention requirements depend on the applicable GST record-keeping rule and any ongoing proceeding, so document the relevant period before archiving."
               },
               {
                 id: 7,
@@ -738,8 +738,7 @@ export default function GSTReturnsPage() {
                 Need Expert GST Filing Assistance?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Our GST experts ensure accurate and timely filing of all returns with complete 
-                compliance to 2025 regulations. Avoid penalties with professional assistance.
+                Get help identifying the returns due, reconciling books with portal data, and preparing a filing-ready exception list. Final filing still depends on your records and the current portal position.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -766,7 +765,7 @@ export default function GSTReturnsPage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>2025 Compliance Updates</span>
+                  <span>Period-specific compliance checks</span>
                 </div>
               </div>
             </CardContent>

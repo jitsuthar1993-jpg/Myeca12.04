@@ -216,6 +216,13 @@ function asStoredPost(overrides: Partial<StoredBlogPost>): StoredBlogPost {
     updatedAt: "2026-05-01T00:00:00.000Z",
     tags: [],
     audience: "both",
+    primaryKeyword: null,
+    secondaryKeywords: [],
+    userIntent: "informational",
+    keyTopics: [],
+    qualityStatus: "needs_revision",
+    editorialApprovedBy: null,
+    editorialApprovedAt: null,
     reviewedBy: null,
     reviewedAt: null,
     reviewerName: null,
@@ -227,6 +234,52 @@ function asStoredPost(overrides: Partial<StoredBlogPost>): StoredBlogPost {
     serviceSlug: null,
     calculatorSlug: null,
     canonicalUrl: null,
+    ...overrides,
+  };
+}
+
+function makeEditorPayload(overrides: Record<string, unknown> = {}) {
+  return {
+    title: "Advance tax due dates and payment checks",
+    slug: "advance-tax-due-dates-payment-checks",
+    excerpt: "Use the correct advance-tax dates and verify payment records before filing.",
+    content: [
+      "<h2>Check whether advance tax applies</h2>",
+      "<p>Advance tax becomes relevant when the estimated tax still payable after expected TDS and other credits crosses the applicable threshold. Begin with income already earned and a reasonable estimate of income expected for the rest of the financial year. Separate salary, professional receipts, business profit, interest, rent, dividends, and taxable gains because their timing and available records differ. Then reduce only credits that are supported by payroll data, certificates, Form 26AS, or other reliable statements. This first calculation establishes whether an instalment is needed and prevents a portal figure from replacing the taxpayer's own working.</p>",
+      "<p>The estimate should use the tax regime and deductions that are actually available for the year. A salaried taxpayer may need to compare employer TDS with income outside payroll, while a freelancer or business owner may need current books, invoice totals, expenses, and GST records. Investors should update the working after a material sale rather than assuming last year's gains will repeat. Record each assumption, the date it was made, and the document used. That note makes the next estimate faster and explains why an instalment changed during the year.</p>",
+      "<h2>Choose the instalment from current records</h2>",
+      "<p>Compare the estimated balance with the instalment schedule that applies on the calculation date. Do not simply divide the annual estimate into equal payments after a late income event. Instead, identify what was known before each due date and update the remaining payments when receipts, gains, deductions, or TDS change. If a customer delays payment or an employer corrects payroll TDS, retain the revised working beside the earlier version. The sequence should show how the amount paid was reached without relying on memory at return-filing time.</p>",
+      "<h2>Keep records that support the payment</h2>",
+      "<p>Retain the challan, payment reference, computation, and income records so the final return can be reconciled. Match the assessment year, PAN, payment date, amount, and tax-payment category before treating a challan as complete. Save the bank confirmation and later verify that the credit appears in the relevant tax records. If a payment is missing or mapped incorrectly, preserve the complaint or correction trail as well. A screenshot alone is weaker evidence than a challan and bank debit that can be matched to the final computation.</p>",
+      "<h2>Recalculate when the facts change</h2>",
+      "<p>Review the estimate after a large bonus, new contract, property transaction, investment sale, unexpected interest receipt, deduction change, or correction to TDS. Recalculation is also useful before the final instalment because most of the year's records are then available. If the estimate remains uncertain, identify the disputed item instead of hiding it inside a rounded total. A document-based review is appropriate when the tax treatment, income head, loss adjustment, residential status, or available credit could materially change the payment or create avoidable interest.</p>",
+      "<h2>Close the advance-tax file before filing</h2>",
+      "<p>Before preparing the return, reconcile every instalment with the final income and tax-credit records. Keep the last estimate, each earlier working that explains a material revision, all challans, and proof of any correction request. Compare the resulting tax payable or refund with the return computation and investigate unexplained differences. This closing step turns advance tax from a set of isolated bank payments into an evidence trail that supports the filed return and helps answer a later processing query.</p>",
+      "<h2>Example: revise the estimate after an investment sale</h2>",
+      "<p>Suppose a salaried taxpayer sells an investment in January after the employer has already calculated payroll TDS. The taxpayer should add the supported gain or loss calculation to the existing salary and other-income estimate, then compare the revised annual liability with TDS and instalments already paid. The broker statement, acquisition-cost record, sale contract note, and tax-credit statements should remain beside the revised computation. If the sale produces a material balance before the next instalment date, the working should explain the additional payment and preserve its challan. If the cost or classification remains uncertain, the taxpayer should resolve that point before treating the estimate as final.</p>",
+    ].join(""),
+    status: "draft",
+    authorName: "MyeCA Editorial Team",
+    audience: "individuals",
+    targetAudience: "Individual taxpayers estimating advance-tax instalments from current income and supported tax credits",
+    primaryKeyword: "advance tax due dates",
+    secondaryKeywords: ["advance tax interest"],
+    userIntent: "informational",
+    keyTopics: ["due dates", "payment records"],
+    relatedPostIds: [
+      "advance-tax-tax-year-2026-27-new-act-checklist",
+      "self-assessment-tax-challan-act-1961-ay-2026-27",
+      "tax-credit-mismatch-tds-form-26as-ay-2026-27",
+      "wait-for-ais-form-26as-before-filing-itr-ay-2026-27",
+    ],
+    sourceLinks: [
+      {
+        label: "Income Tax Department",
+        url: "https://www.incometax.gov.in/",
+        checkedAt: "2026-06-06",
+      },
+    ],
+    qualityStatus: "needs_revision",
     ...overrides,
   };
 }
@@ -287,7 +340,7 @@ describe("admin blog CMS content", () => {
     const { response, json } = await request("/api/cms/posts");
     const row = json.posts.find((post: any) => post.slug === staticPost.slug);
 
-    expect(response.status).toBe(200);
+    expect(response.status, JSON.stringify(json)).toBe(200);
     expect(row).toMatchObject({
       source: "static",
       canEdit: false,
@@ -330,7 +383,7 @@ describe("admin blog CMS content", () => {
   it("includes bundled static blog categories in the CMS category route", async () => {
     const { response, json } = await request("/api/cms/categories");
 
-    expect(response.status).toBe(200);
+    expect(response.status, JSON.stringify(json)).toBe(200);
     expect(json.categories.some((category: any) => category.id === "itr-filing")).toBe(true);
   });
 
@@ -342,5 +395,81 @@ describe("admin blog CMS content", () => {
     expect(source).toContain('/api/cms/posts/${id}/import');
     expect(source).toContain("post.canEdit");
     expect(source).toContain("post.canDelete");
+  });
+
+  it("allows an AI-assisted or incomplete post to be saved as a draft", async () => {
+    const { response, json } = await request("/api/cms/posts", {
+      method: "POST",
+      body: JSON.stringify(makeEditorPayload()),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json.post).toMatchObject({
+      status: "draft",
+      qualityStatus: "needs_revision",
+    });
+  });
+
+  it("blocks publishing until quality approval and human approval are recorded", async () => {
+    const { response, json } = await request("/api/cms/posts", {
+      method: "POST",
+      body: JSON.stringify(makeEditorPayload({ status: "published" })),
+    });
+
+    expect(response.status).toBe(400);
+    expect(json.error).toContain("cannot be published");
+    expect(readCollection("blog_posts")).toHaveLength(0);
+  });
+
+  it("blocks publishing content placed on hold even when approval fields are supplied", async () => {
+    const { response, json } = await request("/api/cms/posts", {
+      method: "POST",
+      body: JSON.stringify(
+        makeEditorPayload({
+          status: "published",
+          qualityStatus: "hold",
+          editorialApprovedBy: "team@example.com",
+          editorialApprovedAt: "2026-06-06",
+        }),
+      ),
+    });
+
+    expect(response.status).toBe(400);
+    expect(json.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: "hold_route_publish" }),
+    ]));
+    expect(readCollection("blog_posts")).toHaveLength(0);
+  });
+
+  it("publishes a complete approved post with recorded human approval", async () => {
+    const { response, json } = await request("/api/cms/posts", {
+      method: "POST",
+      body: JSON.stringify(
+        makeEditorPayload({
+          status: "published",
+          qualityStatus: "approved",
+          editorialApprovedBy: "team@example.com",
+          editorialApprovedAt: "2026-06-06",
+        }),
+      ),
+    });
+
+    expect(response.status, JSON.stringify(json)).toBe(200);
+    expect(json.post).toMatchObject({
+      status: "published",
+      qualityStatus: "approved",
+      editorialApprovedBy: "team@example.com",
+    });
+  });
+
+  it("keeps webhook imports gated and WhatsApp generation draft-only", () => {
+    const webhookSource = readFileSync("server/routes/blog-webhooks.ts", "utf8");
+    const whatsappSource = readFileSync("server/routes/whatsapp.ts", "utf8");
+
+    expect(webhookSource).toContain("assertBlogPublishable(payload)");
+    expect(whatsappSource).toContain('status: "draft"');
+    expect(whatsappSource).toContain('qualityStatus: "needs_revision"');
+    expect(whatsappSource).toContain("Draft saved for human review");
+    expect(whatsappSource).not.toContain('status: "published"');
   });
 });

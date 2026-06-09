@@ -12,7 +12,7 @@ type ConvState =
   | { phase: "idle" }
   | { phase: "generating"; topic: string }
   | { phase: "review"; blog: GeneratedBlog }
-  | { phase: "publishing" };
+  | { phase: "saving" };
 
 const sessions = new Map<string, ConvState>();
 
@@ -68,15 +68,15 @@ function formatPreview(blog: GeneratedBlog): string {
     ``,
     `------------------------`,
     `Reply with:`,
-    `  *upload* - publish to myeca.in`,
+    `  *upload* - save to the CMS as a draft`,
     `  *edit: [your notes]* - revise and resend`,
     `  *full* - see the full blog text`,
     `  *cancel* - discard this draft`,
   ].join("\n");
 }
 
-// Publish blog via the blog write path, reusing cache clearing.
-async function publishBlog(blog: GeneratedBlog): Promise<string> {
+// Generated content is always saved as a draft. Publishing requires a human CMS approval.
+async function saveBlogDraft(blog: GeneratedBlog): Promise<string> {
   const lookup = await getCategoryLookup();
 
   const existing = await adminDb
@@ -96,7 +96,7 @@ async function publishBlog(blog: GeneratedBlog): Promise<string> {
       slug: blog.slug,
       content: blog.content,
       excerpt: blog.excerpt ?? null,
-      status: "published",
+      status: "draft",
       tags: blog.tags,
       categoryId: null,
       coverImage: null,
@@ -113,11 +113,18 @@ async function publishBlog(blog: GeneratedBlog): Promise<string> {
       ctaHref: null,
       isFeatured: false,
       readingTimeMinutes: blog.readingTimeMinutes ?? null,
-      publishedAt: new Date().toISOString(),
+      publishedAt: null,
       audience: blog.audience ?? null,
+      primaryKeyword: blog.primaryKeyword ?? blog.title,
+      secondaryKeywords: blog.secondaryKeywords ?? blog.tags,
+      userIntent: "informational",
+      keyTopics: blog.keyTopics ?? blog.tags,
+      qualityStatus: "needs_revision",
+      editorialApprovedBy: null,
+      editorialApprovedAt: null,
       reviewedBy: null,
       reviewedAt: null,
-      sourceLinks: [],
+      sourceLinks: (blog.sourceLinks ?? []).map((source) => ({ ...source, checkedAt: null })),
       serviceSlug: null,
       calculatorSlug: null,
       canonicalUrl: null,
@@ -192,15 +199,15 @@ router.post("/webhook", async (req: Request, res: Response) => {
     }
 
     if (lower === "upload" && state.phase === "review") {
-      sessions.set(from, { phase: "publishing" });
-      await sendWA(from, "Publishing to myeca.in...");
+      sessions.set(from, { phase: "saving" });
+      await sendWA(from, "Saving the draft to the CMS...");
 
-      const url = await publishBlog(state.blog);
+      const url = await saveBlogDraft(state.blog);
 
       sessions.delete(from);
       await sendWA(
         from,
-        `*Published!*\n\n${url}\n\nThe post will appear on the blog index within ~5 minutes (cache refreshes automatically).\n\nSend another topic to write a new blog!`
+        `*Draft saved for human review.*\n\n${url}\n\nA CMS editor must verify sources, approve quality, and publish it.\n\nSend another topic to write a new draft!`
       );
       return;
     }
@@ -224,7 +231,7 @@ router.post("/webhook", async (req: Request, res: Response) => {
       return;
     }
 
-    if (state.phase === "generating" || state.phase === "publishing") {
+    if (state.phase === "generating" || state.phase === "saving") {
       await sendWA(from, "Still working on the previous request, please wait...");
       return;
     }

@@ -100,7 +100,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1 }}
           >
-            <h3 className="text-xl font-bold text-center mb-6 text-gray-800">ITR Filing Made Easy</h3>
+            <h3 className="text-xl font-bold text-center mb-6 text-gray-800">How the ITR Filing Workflow Works</h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Step 1 */}
               <div className="text-center">

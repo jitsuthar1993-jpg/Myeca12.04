@@ -52,7 +52,7 @@ export default function SIPCalculator() {
   return (
     <>
       <MetaSEO
-        title={seo?.title || "SIP Calculator 2025 | Mutual Fund Returns | MyeCA.in"}
+        title={seo?.title || "SIP Calculator 2026 | Mutual Fund Returns | MyeCA.in"}
         description={seo?.description || "Plan your wealth with our professional SIP calculator. Interactive compounding growth visualization for mutual fund SIP investments."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
@@ -64,7 +64,7 @@ export default function SIPCalculator() {
         title={isEnhancedRoute ? "Enhanced SIP Calculator" : "SIP Calculator"}
         description={
           isEnhancedRoute
-            ? "Plan mutual fund SIP returns with compounding projections, year-wise growth and CA-reviewed investment context."
+            ? "Plan mutual fund SIP returns with compounding projections, year-wise growth and clear investment limitations."
             : "Plan your long-term wealth creation with our professional Systematic Investment Plan calculator."
         }
         category="Investment Tools"

@@ -308,7 +308,7 @@ export default function ActivationPage() {
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-4">
                     <ShieldCheck className="h-5 w-5 text-blue-600" />
                   </div>
-                  <h4 className="font-black text-slate-900 text-sm mb-1">End-to-End Encrypted</h4>
+                  <h4 className="font-black text-slate-900 text-sm mb-1">Encrypted Document Transfer</h4>
                   <p className="type-support font-bold text-slate-600">Your data should be shared through authenticated workflows with secure transport controls.</p>
                 </div>
                 <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100">
@@ -349,7 +349,7 @@ export default function ActivationPage() {
               <div className="space-y-4">
                 <h2 className="text-4xl font-black text-slate-900 tracking-tight">Activation Successful!</h2>
                 <p className="text-lg text-slate-500 font-medium max-w-sm mx-auto">
-                  We've created your <span className="font-black text-slate-700">{service.title}</span> workspace. Upload the real documents there so our experts can review them.
+                  We've created your <span className="font-black text-slate-700">{service.title}</span> workspace. Upload the relevant documents there for the scoped review.
                 </p>
               </div>
 

@@ -43,10 +43,10 @@ export default function FeaturesSection() {
               Why MyeCA
             </div>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-950 lg:text-4xl">
-              Why MyeCA works better than self-filing
+              How guided filing differs from self-filing
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-              Self-filing works when every number is clear. MyeCA adds structure, scope clarity, and optional CA-assisted review for the cases where a missed document or wrong form can cost more than the fee.
+              Self-filing can fit straightforward cases with complete records. MyeCA adds a documented workflow, scope clarity, and optional CA-assisted review when the return needs more checks.
             </p>
 
             <div className="mt-6 space-y-3">

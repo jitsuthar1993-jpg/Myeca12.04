@@ -14,7 +14,7 @@ const baseUrl = normalizeBaseUrl(process.argv[2] || process.env.MYECA_STRUCTURED
 const requiredTypesByRoute = {
   "/": ["Organization", "WebSite", "AccountingService", "BreadcrumbList"],
   "/blog": ["Organization", "BreadcrumbList", "WebPage"],
-  "/blog/when-will-itr-filing-start-ay-2026-27": ["Organization", "BreadcrumbList", "Article", "FAQPage", "HowTo"],
+  "/blog/when-will-itr-filing-start-ay-2026-27": ["Organization", "BreadcrumbList", "Article", "HowTo"],
   "/services/itr-for-salaried": ["Organization", "BreadcrumbList", "Service"],
   "/calculators/income-tax": ["Organization", "BreadcrumbList", "SoftwareApplication"],
   "/itr/form-selector": ["Organization", "BreadcrumbList", "WebPage"],

@@ -80,14 +80,32 @@ function renderSections(sections: StaticRouteBodySection[] = []) {
   return rendered;
 }
 
-function renderLinks(links: StaticRouteBodyLink[] = []) {
-  const items = links
-    .filter((link) => link.label.trim() && link.href.trim())
-    .slice(0, 10);
-  if (!items.length) return "";
+function relatedLinksHeading(input: StaticRouteBodyInput) {
+  if (input.kind === "home" || input.kind === "homepage") return "Explore tax filing tools and guides";
+  if (input.kind === "blog-index") return "Browse guides by filing question";
+  if (input.route.startsWith("/services/") || input.route.startsWith("/startup/")) {
+    return "Related services and preparation guides";
+  }
+  if (input.route.startsWith("/calculators/") || input.route.includes("calculator") || input.route.includes("comparator")) {
+    return "Related calculators and filing guides";
+  }
+  if (input.kind === "article" || input.kind === "blog-post") {
+    return "Related filing and record guides";
+  }
+  if (input.route.startsWith("/legal/") || ["/privacy", "/terms", "/refund-policy", "/trust", "/help"].includes(input.route)) {
+    return "Related trust and support pages";
+  }
+  return "Related tax and compliance resources";
+}
 
-  return `<nav aria-label="Related tax filing resources">
-    <h2>Related tax filing resources</h2>
+function renderLinks(input: StaticRouteBodyInput) {
+  const items = (input.links ?? [])
+    .filter((link) => link.label.trim() && link.href.trim());
+  if (!items.length) return "";
+  const heading = relatedLinksHeading(input);
+
+  return `<nav aria-label="${escapeHtml(heading)}">
+    <h2>${escapeHtml(heading)}</h2>
     <ul>${items
       .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
       .join("")}</ul>
@@ -111,6 +129,12 @@ function renderFaqs(faqItems: StaticRouteBodyFaqItem[] = []) {
   </section>`;
 }
 
+function bodyHasHeading(bodyHtml: string, heading: string) {
+  const expected = heading.replace(/\s+/g, " ").trim().toLowerCase();
+  return [...bodyHtml.matchAll(/<h[2-4]\b[^>]*>([\s\S]*?)<\/h[2-4]>/gi)]
+    .some((match) => stripHtml(match[1]).replace(/\s+/g, " ").trim().toLowerCase() === expected);
+}
+
 function renderByline(input: StaticRouteBodyInput) {
   const lines: string[] = [];
   if (input.authorName?.trim()) {
@@ -130,7 +154,7 @@ function renderByline(input: StaticRouteBodyInput) {
 }
 
 function labelForKind(kind: StaticRouteBodyInput["kind"]) {
-  if (kind === "home" || kind === "homepage") return "CA-led tax-tech platform";
+  if (kind === "home" || kind === "homepage") return "Indian tax-tech platform";
   if (kind === "service") return "Tax filing service";
   if (kind === "article") return "Tax guide";
   if (kind === "blog-index") return "Tax knowledge hub";
@@ -144,6 +168,8 @@ export function renderStaticRouteBody(input: StaticRouteBodyInput) {
   const description = escapeHtml(stripHtml(input.description));
   const shell = input.route === "/" ? "home" : "route";
   const safeBody = input.bodyHtml?.trim() || "";
+  const faqHtml = bodyHasHeading(safeBody, "Frequently asked questions") ? "" : renderFaqs(input.faqItems);
+  const relatedLinksHtml = bodyHasHeading(safeBody, relatedLinksHeading(input)) ? "" : renderLinks(input);
   const dateLine =
     input.publishedAt || input.modifiedAt
       ? `<p class="static-seo-meta">Published ${escapeHtml(input.publishedAt || input.modifiedAt || "")}</p>`
@@ -159,8 +185,8 @@ export function renderStaticRouteBody(input: StaticRouteBodyInput) {
   </section>
   ${renderHighlights(input.highlights)}
   ${renderSections(input.sections)}
-  ${renderFaqs(input.faqItems)}
-  ${renderLinks(input.links)}
+  ${faqHtml}
+  ${relatedLinksHtml}
   ${safeBody ? `<article>${safeBody}</article>` : ""}
 </main>`;
 }

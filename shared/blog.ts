@@ -12,7 +12,11 @@ export const blogAudienceSchema = z.enum(["individuals", "businesses", "both"]);
 export const blogSourceLinkSchema = z.object({
   label: z.string().trim().min(1),
   url: z.string().trim().min(1),
+  checkedAt: z.string().trim().optional().nullable(),
 });
+
+export const publicContentQualityStatusSchema = z.enum(["approved", "needs_revision", "hold"]);
+export const publicUserIntentSchema = z.enum(["informational", "transactional", "navigational", "commercial"]);
 
 export const blogTocItemSchema = z.object({
   id: z.string(),
@@ -51,6 +55,14 @@ export const blogPostEditorSchema = z.object({
   publishedAt: z.string().trim().optional().nullable(),
   tags: z.array(z.string().trim()).optional().default([]),
   audience: blogAudienceSchema.optional().nullable(),
+  targetAudience: z.string().trim().min(10).optional().nullable(),
+  primaryKeyword: z.string().trim().optional().nullable(),
+  secondaryKeywords: z.array(z.string().trim()).optional().default([]),
+  userIntent: publicUserIntentSchema.optional().default("informational"),
+  keyTopics: z.array(z.string().trim()).optional().default([]),
+  qualityStatus: publicContentQualityStatusSchema.optional().default("needs_revision"),
+  editorialApprovedBy: z.string().trim().optional().nullable(),
+  editorialApprovedAt: z.string().trim().optional().nullable(),
   reviewedBy: z.string().trim().optional().nullable(),
   reviewedAt: z.string().trim().optional().nullable(),
   reviewerName: z.string().trim().optional().nullable(),
@@ -81,6 +93,14 @@ export const publicBlogSummarySchema = z.object({
   updatedAt: z.string().nullable(),
   tags: z.array(z.string()),
   audience: blogAudienceSchema.optional().nullable(),
+  targetAudience: z.string().optional().nullable(),
+  primaryKeyword: z.string().optional().nullable(),
+  secondaryKeywords: z.array(z.string()).optional().default([]),
+  userIntent: publicUserIntentSchema.optional().default("informational"),
+  keyTopics: z.array(z.string()).optional().default([]),
+  qualityStatus: publicContentQualityStatusSchema.optional().default("needs_revision"),
+  editorialApprovedBy: z.string().optional().nullable(),
+  editorialApprovedAt: z.string().optional().nullable(),
   reviewedBy: z.string().optional().nullable(),
   reviewedAt: z.string().optional().nullable(),
   reviewerName: z.string().optional().nullable(),
@@ -110,6 +130,8 @@ export const publicBlogDetailSchema = publicBlogSummarySchema.extend({
 export type BlogFaqItem = z.infer<typeof blogFaqItemSchema>;
 export type BlogAudience = z.infer<typeof blogAudienceSchema>;
 export type BlogSourceLink = z.infer<typeof blogSourceLinkSchema>;
+export type PublicContentQualityStatus = z.infer<typeof publicContentQualityStatusSchema>;
+export type PublicUserIntent = z.infer<typeof publicUserIntentSchema>;
 export type BlogTocItem = z.infer<typeof blogTocItemSchema>;
 export type BlogCategory = z.infer<typeof blogCategorySchema>;
 export type BlogPostEditorInput = z.infer<typeof blogPostEditorSchema>;
@@ -130,12 +152,28 @@ const STYLE_TAG_RE = /<\s*style[^>]*>[\s\S]*?<\s*\/\s*style\s*>/gi;
 const EVENT_HANDLER_RE = /[\s/]on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 const JS_PROTOCOL_RE = /\s(href|src)\s*=\s*(?:"\s*javascript:[^"]*"|'\s*javascript:[^']*'|[^\s>]*javascript:[^\s>]*)/gi;
 
+function decodeHtmlCodePoint(entity: string, radix: 10 | 16): string {
+  const codePoint = Number.parseInt(entity, radix);
+  return Number.isInteger(codePoint) && codePoint >= 0 && codePoint <= 0x10ffff
+    ? String.fromCodePoint(codePoint)
+    : `&#${radix === 16 ? "x" : ""}${entity};`;
+}
+
 export function stripHtml(input: string): string {
   return input
     .replace(/<br\s*\/?>/gi, " ")
     .replace(/<\/p>/gi, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/gi, " ")
+    .replace(/&#x([0-9a-f]+);/gi, (_match, code) => decodeHtmlCodePoint(code, 16))
+    .replace(/&#(\d+);/g, (_match, code) => decodeHtmlCodePoint(code, 10))
+    .replace(/&(amp|lt|gt|quot|apos);/gi, (_match, entity) => ({
+      amp: "&",
+      lt: "<",
+      gt: ">",
+      quot: '"',
+      apos: "'",
+    })[entity.toLowerCase()] ?? _match)
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -359,9 +397,16 @@ export function normalizeSourceLinks(values: Array<Partial<BlogSourceLink> | nul
     .map((value): BlogSourceLink | null => {
       const label = (value?.label ?? "").trim();
       const url = (value?.url ?? "").trim();
-      return label && url ? { label, url } : null;
+      const checkedAt = (value?.checkedAt ?? "").trim() || null;
+      return label && url ? { label, url, checkedAt } : null;
     })
     .filter((item): item is BlogSourceLink => item !== null);
+}
+
+export function normalizeBlogToc(values: BlogTocItem[] | null | undefined): BlogTocItem[] {
+  return (values ?? [])
+    .map((item) => ({ ...item, text: stripHtml(item.text) }))
+    .filter((item) => item.id.trim().length > 0 && item.text.length > 0);
 }
 
 export function normalizeBlogCta(ctaLabel?: string | null, ctaHref?: string | null) {
@@ -373,10 +418,13 @@ export function normalizeBlogCta(ctaLabel?: string | null, ctaHref?: string | nu
 
 export function normalizeBlogContent(input: string): { html: string; toc: BlogTocItem[] } {
   const html = ensureHtmlContent(input);
+  // The article layout owns the page H1. Imported body H1s are usually a
+  // repeated title, so omit them from the rendered article and its TOC.
+  const articleBodyHtml = html.replace(/<h1[^>]*>[\s\S]*?<\/h1>/gi, "");
   const toc: BlogTocItem[] = [];
   const usedIds = new Map<string, number>();
 
-  const normalizedHtml = html.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_match, level, attrs, innerHtml) => {
+  const normalizedHtml = articleBodyHtml.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_match, level, attrs, innerHtml) => {
     const text = stripHtml(innerHtml);
     const baseId = slugifyHeading(text);
     const nextIndex = usedIds.get(baseId) ?? 0;
@@ -388,7 +436,7 @@ export function normalizeBlogContent(input: string): { html: string; toc: BlogTo
     return `<h${level}${attrText} id="${id}">${innerHtml}</h${level}>`;
   });
 
-  return { html: normalizedHtml, toc };
+  return { html: normalizedHtml, toc: normalizeBlogToc(toc) };
 }
 
 export function serializeTags(tags: string[] | string | null | undefined): string[] {

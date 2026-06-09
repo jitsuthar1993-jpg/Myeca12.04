@@ -893,7 +893,7 @@ export default function IncomeTaxCalculator() {
         {/* Bottom Trust Bar */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
+            { icon: <Headphones className="w-5 h-5" />, label: "Return Review Option", desc: "Check calculator inputs against source records" },
             { icon: <Award className="w-5 h-5" />, label: "Current Slabs", desc: "Common AY 2026-27 cases" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }

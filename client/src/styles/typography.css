@@ -113,6 +113,13 @@
         line-height: var(--leading-snug);
     }
 
+    .type-article-prose :where(table) {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
     @media (min-width: 768px) {
         .type-hero-title {
             font-size: var(--type-hero-title-lg);

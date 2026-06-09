@@ -23,7 +23,7 @@ const userGuides = [
   {
     id: 'getting-started',
     title: 'Getting Started Guide',
-    description: 'Everything you need to know to begin your tax filing journey',
+    description: 'Prepare account details, tax records, and filing choices before starting',
     icon: Rocket,
     readTime: '10 min',
     sections: [
@@ -140,7 +140,7 @@ const userGuides = [
   {
     id: 'business-guide',
     title: 'Business Tax Guide',
-    description: 'Complete guide for business owners and freelancers',
+    description: 'Income, expense-record, filing, and compliance guide for business owners and freelancers',
     icon: Building,
     readTime: '20 min',
     sections: [
@@ -222,7 +222,7 @@ export default function UserGuidePage() {
     <>
       <SEO 
         title="User Guide - MyeCA.in"
-        description="Comprehensive user guides for tax filing, ITR forms, tax planning, and business compliance"
+        description="User guides for tax filing, ITR forms, tax planning, account tasks, and business compliance."
       />
       
       <div className="min-h-screen bg-gray-50">

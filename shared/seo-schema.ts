@@ -221,7 +221,8 @@ export function buildArticleSchema(input: ArticleSchemaInput): Thing {
     dateModified: modifiedAt,
     author: author ?? {
       "@type": "Organization",
-      name: "Team myeca.in",
+      name: "MyeCA Editorial Team",
+      url: `${SITE_URL}/about`,
     },
     ...(reviewer?.hasCredential ? { reviewedBy: reviewer } : {}),
     publisher: {

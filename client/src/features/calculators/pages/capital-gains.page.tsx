@@ -56,7 +56,7 @@ export default function CapitalGainsCalculatorPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
-        title={seo?.title || "Capital Gains Calculator 2025 | STCG & LTCG Tax | MyeCA.in"}
+        title={seo?.title || "Capital Gains Calculator 2026 | STCG & LTCG Tax | MyeCA.in"}
         description={seo?.description || "Estimate capital gains tax for common equity, property, gold, and bond cases. Complex exemptions, acquisition dates, and special assets need review."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
@@ -365,7 +365,7 @@ export default function CapitalGainsCalculatorPage() {
         {/* Bottom Trust Bar */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Get guidance from tax experts" },
+            { icon: <Headphones className="w-5 h-5" />, label: "Capital Gains Review", desc: "Check transaction records and tax treatment" },
             { icon: <Award className="w-5 h-5" />, label: "Estimate Tool", desc: "Review complex cases" },
             { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }

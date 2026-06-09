@@ -29,13 +29,13 @@ const FundingPage = () => {
   const governmentSchemes = [
     {
       name: "Startup India Seed Fund Scheme (SISFS)",
-      amount: "Up to ₹70 Lakhs",
-      description: "Comprehensive early-stage support for proof of concept, prototype development, and market entry",
+      amount: "Grant and investment routes",
+      description: "Early-stage funding routes for proof of concept, prototype development, and market entry",
       highlights: [
-        "₹20 lakhs grant for concept validation",
-        "₹50 lakhs debt/convertible debentures for scaling",
-        "₹916.91 crore approved across 217 incubators",
-        "No collateral or personal guarantee required"
+        "Grant support can cover proof of concept, prototype development, or product trials",
+        "Debt or convertible instruments can support market entry or commercialization",
+        "Applications are evaluated through participating incubators",
+        "Confirm current funding limits and disbursement terms on the official scheme portal"
       ],
       eligibility: [
         "DPIIT-recognized startups ≤2 years old",
@@ -51,15 +51,15 @@ const FundingPage = () => {
       amount: "Up to ₹20 Crores",
       description: "Collateral-free loans with government backing for growth-stage startups",
       highlights: [
-        "85% guarantee for loans up to ₹10 crore",
-        "75% guarantee for loans above ₹10 crore",
-        "No collateral required",
-        "2% annual guarantee fee only"
+        "Credit guarantee support is routed through eligible lending institutions",
+        "Coverage depends on loan size and current scheme rules",
+        "Collateral-free lending remains subject to lender appraisal",
+        "Confirm fees, guarantee coverage, and repayment terms before accepting an offer"
       ],
       eligibility: [
         "DPIIT-recognized startups",
-        "Any stage of business",
-        "Apply through 25+ member banks/NBFCs"
+        "Meets the current borrower and credit-facility criteria",
+        "Apply through an eligible member lending institution"
       ],
       link: "https://www.startupindia.gov.in/credit-guarantee-scheme-for-startups.html",
       color: "green"
@@ -325,8 +325,8 @@ const FundingPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO 
-        title="Startup Funding & Grants 2025 | Government Schemes, VCs & Angel Investors"
-        description="Access comprehensive funding opportunities for Indian startups - Government grants up to ₹20Cr, international accelerators, top VCs like Peak XV & Accel, and angel investors. Updated for 2025."
+        title="Startup Funding Routes | Grants, Guarantees, VCs and Angels"
+        description="Compare grants, incubators, accelerators, venture funds, and angel routes for Indian startups using current eligibility and application records."
         keywords="startup funding India, government grants, SISFS, CGSS, venture capital, angel investors, Peak XV Partners, Accel India, Tiger Global"
       />
 
@@ -348,7 +348,7 @@ const FundingPage = () => {
                 </h1>
               </div>
               <p className="text-gray-600 text-lg max-w-2xl">
-                Access Government Grants up to {"₹"}20 Crores, International Programs, and connect with Top VCs & Angels.
+                Compare grants, guarantee-backed credit, incubators, AIFs, venture funds, and angel routes by stage, eligibility, and evidence required.
               </p>
             </div>
             
@@ -368,26 +368,26 @@ const FundingPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             <Card className="bg-purple-50 border-purple-100 shadow-sm">
               <CardContent className="p-4">
-                <div className="text-2xl font-bold text-purple-700">{"₹"}10,000Cr</div>
-                <div className="text-xs font-medium text-purple-600 uppercase tracking-wide">Total Fund Corpus</div>
+                <div className="text-2xl font-bold text-purple-700">Grant</div>
+                <div className="text-xs font-medium text-purple-600 uppercase tracking-wide">Milestone-based support</div>
               </CardContent>
             </Card>
             <Card className="bg-blue-50 border-blue-100 shadow-sm">
               <CardContent className="p-4">
-                <div className="text-2xl font-bold text-blue-700">25+</div>
-                <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">Funding Sources</div>
+                <div className="text-2xl font-bold text-blue-700">Debt</div>
+                <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">Repayment and security review</div>
               </CardContent>
             </Card>
             <Card className="bg-emerald-50 border-emerald-100 shadow-sm">
               <CardContent className="p-4">
-                <div className="text-2xl font-bold text-emerald-700">217</div>
-                <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide">SISFS Incubators</div>
+                <div className="text-2xl font-bold text-emerald-700">Equity</div>
+                <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide">Ownership and dilution review</div>
               </CardContent>
             </Card>
             <Card className="bg-orange-50 border-orange-100 shadow-sm">
               <CardContent className="p-4">
-                <div className="text-2xl font-bold text-orange-700">{"₹"}20Cr</div>
-                <div className="text-xs font-medium text-orange-600 uppercase tracking-wide">Max CGSS Loan</div>
+                <div className="text-2xl font-bold text-orange-700">Guarantee</div>
+                <div className="text-xs font-medium text-orange-600 uppercase tracking-wide">Lender-led eligibility review</div>
               </CardContent>
             </Card>
           </div>
@@ -398,7 +398,7 @@ const FundingPage = () => {
       <div className="container mx-auto px-4 py-12">
         {/* Funding Steps */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-center mb-8">Your Funding Journey</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">Funding Stages and Evidence</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {fundingSteps.map((item, index) => (
               <m.div
@@ -673,7 +673,7 @@ const FundingPage = () => {
             Need Help with Funding Applications?
           </h2>
           <p className="text-lg mb-6 text-gray-600">
-            MyeCA reviewers help you review the funding landscape, eligibility, and application readiness
+            Prepare the financial, ownership, compliance, and milestone records that an investor or scheme application may require
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Link href="/services/funding-assistance">
@@ -699,9 +699,9 @@ const FundingPage = () => {
           <ul className="space-y-1 text-sm text-gray-700">
             <li>• Always verify current eligibility criteria on official websites before applying</li>
             <li>• Most government schemes require DPIIT recognition - apply first at startupindia.gov.in</li>
-            <li>• Prepare comprehensive documentation including business plan, financials, and pitch deck</li>
-            <li>• Apply to multiple relevant schemes to maximize funding opportunities</li>
-            <li>• Consider hiring professional consultants for complex applications</li>
+            <li>• Prepare the business plan, financial statements, use-of-funds note, and pitch deck requested by the selected route</li>
+            <li>• Apply only where the stage, use of funds, ownership, and evidence match the route's current criteria</li>
+            <li>• Compare dilution, repayment, guarantee fees, reporting duties, and milestone conditions before accepting funds</li>
           </ul>
         </div>
       </div>

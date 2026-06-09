@@ -62,7 +62,7 @@ export default function TrademarkRegistrationPage() {
       step: 1,
       title: "Trademark Search",
       duration: "1-2 days",
-      description: "Comprehensive search across existing trademarks to ensure uniqueness",
+      description: "Search existing marks, similar names, and relevant classes before filing",
       activities: ["Database search", "Similarity analysis", "Class identification", "Risk assessment"],
       icon: Search,
       color: "blue"
@@ -302,7 +302,7 @@ export default function TrademarkRegistrationPage() {
     {
       reason: "Similarity with existing trademark",
       frequency: "Common",
-      solution: "Comprehensive pre-filing search and modification",
+      solution: "Pre-filing similarity search and mark review",
       icon: Search,
       color: "red"
     },
@@ -316,7 +316,7 @@ export default function TrademarkRegistrationPage() {
     {
       reason: "Improper class specification",
       frequency: "Common",
-      solution: "Accurate class selection with expert guidance",
+      solution: "Class selection based on the listed goods and services",
       icon: FileCheck,
       color: "yellow"
     },
@@ -410,7 +410,7 @@ export default function TrademarkRegistrationPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start">
                     <Search className="w-4 h-4 mr-2 text-purple-600 mt-0.5" />
-                    Do a comprehensive search to reduce rejection risk.
+                    Search similar marks and relevant classes before filing.
                   </li>
                   <li className="flex items-start">
                     <FileText className="w-4 h-4 mr-2 text-indigo-600 mt-0.5" />
@@ -444,7 +444,7 @@ export default function TrademarkRegistrationPage() {
               Complete 6-Step Registration Process
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              End-to-end trademark registration process with expert guidance at each step
+              Trademark search, class selection, filing preparation, and objection-response scope
             </p>
           </div>
 
@@ -659,7 +659,7 @@ export default function TrademarkRegistrationPage() {
               Key Benefits of Trademark Registration
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive protection and business advantages of registered trademarks
+              Rights and business uses associated with a registered trademark
             </p>
           </div>
 
@@ -805,7 +805,7 @@ export default function TrademarkRegistrationPage() {
               {
                 id: 5,
                 question: "How do I choose the right class for my trademark?",
-                answer: "Select classes based on your actual goods/services. Popular classes include: Class 9 (software/electronics), Class 25 (clothing), Class 35 (business services/retail), Class 42 (IT services). You can register in multiple classes but must pay separate fees for each. Our experts help identify the most appropriate classes for your business."
+                answer: "Select classes from the goods and services you actually use or plan to use. Common examples include Class 9 for software or electronics, Class 25 for clothing, Class 35 for business services or retail, and Class 42 for IT services. Multiple classes require separate fees, so verify the classification against the current registry before filing."
               },
               {
                 id: 6,

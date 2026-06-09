@@ -16,7 +16,7 @@ interface LeadMagnetProps {
 }
 
 export const LeadMagnet: React.FC<LeadMagnetProps> = ({
-  title = "Unlock the 2025 Compliance Checklist",
+  title = "Download the Current Compliance Checklist",
   resourceName
 }) => {
   const [step, setStep] = useState<"initial" | "checklist">("initial");

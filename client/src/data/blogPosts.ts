@@ -41,7 +41,7 @@ export const blogPosts = [
         <li>Forgetting to e-verify the return</li>
       </ul>
     `,
-    author: "CA Priya Sharma",
+    author: "MyeCA Editorial Team",
     date: "January 18, 2025",
     readTime: "8 min read",
     category: "Tax Filing",
@@ -104,7 +104,7 @@ export const blogPosts = [
         <li>Multiple deductions exceeding Rs 2.5 lakh annually</li>
       </ul>
     `,
-    author: "CA Rajesh Kumar",
+    author: "MyeCA Editorial Team",
     date: "January 15, 2025",
     readTime: "6 min read",
     category: "Tax Planning",
@@ -191,7 +191,7 @@ export const blogPosts = [
         <li><strong>First-Time Buyers:</strong> Additional Rs 50,000 under 80EE</li>
       </ul>
     `,
-    author: "CA Neha Gupta",
+    author: "MyeCA Editorial Team",
     date: "January 12, 2025",
     readTime: "7 min read",
     category: "Investment",
@@ -258,7 +258,7 @@ export const blogPosts = [
         <li>Regular internal audits</li>
       </ol>
     `,
-    author: "CA Amit Verma",
+    author: "MyeCA Editorial Team",
     date: "January 10, 2025",
     readTime: "6 min read",
     category: "GST",
@@ -319,7 +319,7 @@ export const blogPosts = [
         <li>Stay updated with official announcements</li>
       </ul>
     `,
-    author: "CA Sunita Reddy",
+    author: "MyeCA Editorial Team",
     date: "January 8, 2025",
     readTime: "5 min read",
     category: "Tax News",
@@ -395,7 +395,7 @@ export const blogPosts = [
         <li>Can still file ITR with available documents</li>
       </ul>
     `,
-    author: "CA Vikram Singh",
+    author: "MyeCA Editorial Team",
     date: "January 5, 2025",
     readTime: "6 min read",
     category: "Documentation",
@@ -486,7 +486,7 @@ export const blogPosts = [
         <li>Plan investments for wealth rather than just tax saving</li>
       </ol>
     `,
-    author: "CA Neha Gupta",
+    author: "MyeCA Editorial Team",
     date: "January 20, 2025",
     readTime: "10 min read",
     category: "Tax Planning",
@@ -580,7 +580,7 @@ export const blogPosts = [
       <h3>Professional Advice</h3>
       <p>While the extension provides relief, it's advisable to file early to avoid technical glitches and ensure compliance. Use this time to review your tax position thoroughly and maximize legitimate deductions.</p>
     `,
-    author: "CA Rajesh Kumar",
+    author: "MyeCA Editorial Team",
     date: "January 19, 2025",
     readTime: "8 min read",
     category: "Tax Filing",
@@ -706,7 +706,7 @@ export const blogPosts = [
         <li>E-verify immediately after filing for faster processing</li>
       </ol>
     `,
-    author: "CA Anita Desai",
+    author: "MyeCA Editorial Team",
     date: "January 18, 2025",
     readTime: "12 min read",
     category: "Tax Filing",
@@ -841,7 +841,7 @@ export const blogPosts = [
         <li>Keep capital gains account for reinvestment</li>
       </ul>
     `,
-    author: "CA Suresh Mehta",
+    author: "MyeCA Editorial Team",
     date: "January 17, 2025",
     readTime: "15 min read",
     category: "Tax Planning",
@@ -880,9 +880,9 @@ export const blogPosts = [
       <p>4. Get your Recognition Certificate.</p>
 
       <h3>MyeCA.in Helps Startups Grow</h3>
-      <p>We provide end-to-end support for Startup India registration, from documentation to applying for tax exemptions. Talk to our experts today to unlock your startup benefits.</p>
+      <p>We help founders organize Startup India recognition documents, prepare the application record, and identify separate benefit applications that may need additional eligibility evidence.</p>
     `,
-    author: "CA Vikram Singh",
+    author: "MyeCA Editorial Team",
     date: "January 22, 2025",
     readTime: "9 min read",
     category: "Startup",
@@ -942,7 +942,7 @@ export const blogPosts = [
       <h3>How MyeCA.in Can Help</h3>
       <p>We handle the entire incorporation process from DIN/DSC application to Name Approval and SPICe+ filing. Get your company registered in as little as 10 days with MyeCA.in.</p>
     `,
-    author: "CA Amit Verma",
+    author: "MyeCA Editorial Team",
     date: "January 20, 2025",
     readTime: "11 min read",
     category: "Business Setup",

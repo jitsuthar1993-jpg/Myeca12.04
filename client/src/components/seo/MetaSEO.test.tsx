@@ -29,4 +29,15 @@ describe("MetaSEO author trust signals", () => {
   it("includes an explicitly supplied author", () => {
     expect(JSON.stringify(renderJsonLd("CA Example Reviewer"))).toContain("CA Example Reviewer");
   });
+
+  it("marks the editorial team as an organization rather than a named tax consultant", () => {
+    const schema = JSON.stringify(renderJsonLd("MyeCA Editorial Team"));
+
+    expect(schema).toContain('"@type":"Organization","name":"MyeCA Editorial Team"');
+    expect(schema).not.toContain('"jobTitle":"Tax Consultant"');
+  });
+
+  it("does not add an unverified professional title to a named person", () => {
+    expect(JSON.stringify(renderJsonLd("Example Author"))).not.toContain('"jobTitle":"Tax Consultant"');
+  });
 });

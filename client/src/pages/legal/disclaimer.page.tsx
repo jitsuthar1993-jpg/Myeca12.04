@@ -139,7 +139,7 @@ export default function DisclaimerPage() {
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <p className="text-blue-800 text-sm mb-2 font-medium">Estimation Purpose Only</p>
                     <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
-                      <li>Calculators provide estimates based on current rates and standard assumptions</li>
+                      <li>Calculators provide estimates from the inputs, rates, and assumptions shown in the tool</li>
                       <li>Actual calculations may vary based on individual circumstances</li>
                       <li>Interest rates, tax slabs, and exemption limits are subject to change</li>
                       <li>Professional consultation recommended for important financial decisions</li>

@@ -23,7 +23,7 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          CA-reviewed ITR filing with document-led checks and clear status updates.
+          Assisted ITR filing with document-led checks and clear status updates.
         </m.p>
         
         <m.div

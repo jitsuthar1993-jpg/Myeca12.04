@@ -30,7 +30,7 @@ export default function PPFCalculatorPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
-        title={seo?.title || "PPF Calculator 2025 | Maturity & Returns | MyeCA.in"}
+        title={seo?.title || "PPF Calculator 2026 | Maturity & Returns | MyeCA.in"}
         description={seo?.description || "Calculate PPF returns with current 7.1% interest rate. Professional planning with 80C tax benefits and EEE status insights."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
@@ -254,10 +254,10 @@ export default function PPFCalculatorPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Plan 80C Savings?</h4>
-                  <p className="type-support text-[#667085] mb-2 leading-tight">Maximize your tax-free returns with professional wealth planning.</p>
+                  <p className="type-support text-[#667085] mb-2 leading-tight">Review contribution limits, lock-in, rate assumptions, and tax treatment before planning.</p>
                   <Link href="/services/tax-planning">
                     <button className="text-sm font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
-                      Consult a CA Expert
+                      Review tax planning service
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </Link>
@@ -270,7 +270,7 @@ export default function PPFCalculatorPage() {
         {/* Bottom Trust Bar */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: <Headphones className="w-5 h-5" />, label: "Expert CA Support", desc: "Plan your 80C deductions" },
+            { icon: <Headphones className="w-5 h-5" />, label: "PPF Tax Review", desc: "Check contribution and deduction evidence" },
             { icon: <Award className="w-5 h-5" />, label: "Government Backed", desc: "PPF scheme returns" },
             { icon: <Lock className="w-5 h-5" />, label: "Private & Local", desc: "Zero data collection" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Tax-Free Maturity", desc: "EEE status verified" }

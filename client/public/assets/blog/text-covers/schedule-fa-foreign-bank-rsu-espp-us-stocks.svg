@@ -20,7 +20,7 @@
   <line x1="96" y1="356" x2="710" y2="356" stroke="#ddd6fe" stroke-width="4" stroke-linecap="round"/>
   <g transform="translate(96 492)">
     <rect x="0" y="0" width="178" height="48" rx="14" fill="#ddd6fe"/>
-    <text x="22" y="31" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="900" fill="#2d2450">CA-reviewed</text>
+    <text x="22" y="31" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="900" fill="#2d2450">Editorial guide</text>
   </g>
   <g transform="translate(292 492)">
     <rect x="0" y="0" width="210" height="48" rx="14" fill="#ffffff" stroke="#ddd6fe" stroke-width="3"/>
