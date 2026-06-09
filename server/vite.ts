@@ -25,6 +25,7 @@ import {
   injectNoindexFallbackMeta,
 } from "../shared/spa-fallback-policy.js";
 import { isCrawlerUserAgent } from "../shared/bot-detection.js";
+import { resolveStaticRouteShell } from "./lib/static-route-shell.js";
 
 const viteLogger = createLogger();
 const BLOG_SEO_CACHE_TTL = 5 * 60 * 1000;
@@ -183,6 +184,19 @@ export function serveStatic(app: Express) {
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
   }
+
+  app.get("*", (req, res, next) => {
+    const routeIndex = resolveStaticRouteShell(distPath, req.path);
+    if (!routeIndex) return next();
+
+    res
+      .set({
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Expires: "0",
+        Pragma: "no-cache",
+      })
+      .sendFile(routeIndex);
+  });
 
   // Serve static assets with appropriate cache headers
   app.use(express.static(distPath, {

@@ -11,7 +11,7 @@ export const CONTENT_ROUTES = [
   route("/experts", "content", "client/src/pages/experts/index.page.tsx"),
   route("/experts/:id", "content", "client/src/pages/experts/profile.page.tsx"),
   route("/profiles", "content", "client/src/pages/profiles.page.tsx"),
-  route("/itr/start", "content", "client/src/features/itr/pages/start.page.tsx"),
+  route("/which-itr-form-to-file", "content", "client/src/features/itr/pages/start.page.tsx"),
   route("/itr/form-selector", "content", "client/src/features/itr/pages/form-selector.page.tsx"),
   route("/itr/form-recommender", "content", "client/src/features/itr/pages/form-recommender.page.tsx"),
   route("/itr/success", "content", "client/src/features/itr/pages/success.page.tsx"),

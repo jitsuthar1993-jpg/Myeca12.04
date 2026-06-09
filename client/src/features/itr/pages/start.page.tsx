@@ -221,19 +221,19 @@ function BooleanTile({
       className={cn(
         "min-h-[72px] rounded-lg border p-3 text-left transition-colors",
         selected
-          ? "border-slate-900 bg-slate-900 text-white"
+          ? "border-blue-500 bg-blue-50 text-slate-950 ring-2 ring-blue-100"
           : "border-slate-200 bg-white text-slate-900 hover:border-blue-200 hover:bg-slate-50",
       )}
     >
       <span className="flex items-start gap-2">
         {selected ? (
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-700" />
         ) : (
           <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
         )}
         <span>
           <span className="block text-sm font-black">{label}</span>
-          <span className={cn("mt-1 block text-xs font-semibold leading-5", selected ? "text-slate-200" : "text-slate-600")}>
+          <span className="mt-1 block text-xs font-semibold leading-5 text-slate-600">
             {helper}
           </span>
         </span>
@@ -346,7 +346,7 @@ export default function ITRStartPage() {
         description="Use the MyeCA individual ITR form selector for AY 2026-27. Answer public facts and get an ITR-1, ITR-2, ITR-3, ITR-4, or CA scope review recommendation."
         breadcrumbs={[
           { name: "Home", url: "/" },
-          { name: "Individual ITR Form Selector", url: "/itr/start" },
+          { name: "Individual ITR Form Selector", url: "/which-itr-form-to-file" },
         ]}
       />
 

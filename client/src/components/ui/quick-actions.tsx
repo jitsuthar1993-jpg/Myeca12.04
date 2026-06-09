@@ -32,7 +32,7 @@ const quickActions = [
     title: "File ITR",
     description: "Start your income tax return filing",
     icon: FileText,
-    href: "/itr/start?source=quick_actions",
+    href: "/which-itr-form-to-file?source=quick_actions",
     color: "bg-green-500",
     gradient: "from-green-500 to-green-600",
     priority: "high",

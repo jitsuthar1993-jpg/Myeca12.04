@@ -58,7 +58,7 @@ export default function FeaturesSection() {
               ))}
             </div>
 
-            <Link href="/itr/start?source=features_section" className="mt-6 inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700">
+            <Link href="/which-itr-form-to-file?source=features_section" className="mt-6 inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700">
               Start ITR Filing
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

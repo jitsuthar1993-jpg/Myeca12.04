@@ -77,7 +77,7 @@ describe("service worker update notification", () => {
   it("surfaces waiting updates quickly on public conversion routes", async () => {
     vi.useFakeTimers();
     vi.stubEnv("NODE_ENV", "production");
-    window.history.replaceState({}, "", "/itr/start?source=public_mobile_sticky_bar");
+    window.history.replaceState({}, "", "/which-itr-form-to-file?source=public_mobile_sticky_bar");
 
     const registration = {
       active: {},

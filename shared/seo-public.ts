@@ -123,6 +123,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/itr-filing",
   "/itr/form-recommender",
   "/itr/form-selector",
+  "/which-itr-form-to-file",
   "/itr-season-2026",
   "/itr-season-2026/ais-form-26as-mismatch-checklist",
   "/itr-season-2026/capital-gains-broker-statement-checklist",
@@ -213,6 +214,7 @@ export function routePriority(route: string) {
   if (path === "/itr-filing" || path === "/gst-filing") return "0.9";
   if (path === "/blog") return "0.8";
   if (path === "/contact") return "0.6";
+  if (path === "/which-itr-form-to-file") return "0.8";
   if (path.startsWith("/itr-season-2026")) return "0.7";
   if (path.startsWith("/blog/")) return "0.7";
   if (path.startsWith("/services") || path.startsWith("/calculators") || path.startsWith("/itr")) return "0.8";

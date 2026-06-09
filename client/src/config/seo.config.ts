@@ -643,12 +643,12 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Form 16 Parser', url: '/form16-parser' }]
   },
-  '/itr/start': {
+  '/which-itr-form-to-file': {
     title: 'Individual ITR Form Selector AY 2026-27 | Find ITR-1, ITR-2, ITR-3 or ITR-4 | MyeCA.in',
     description: 'Answer individual filing facts and get an AY 2026-27 ITR-1, ITR-2, ITR-3, ITR-4, or CA scope review recommendation before continuing to the filing draft.',
     keywords: ['individual ITR form selector', 'which ITR form', 'ITR-1 ITR-2 ITR-3 ITR-4', 'AY 2026-27 ITR', 'income tax return form'],
     type: 'website',
-    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Individual ITR Form Selector', url: '/itr/start' }]
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Individual ITR Form Selector', url: '/which-itr-form-to-file' }]
   },
   '/itr/form-selector': {
     title: 'Which ITR Return Should You File for AY 2026-27? | MyeCA.in',

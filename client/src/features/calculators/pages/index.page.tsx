@@ -528,7 +528,7 @@ export default function CalculatorsPage() {
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row md:gap-3">
-              <Link href="/itr/start?source=calculator_library_cta">
+              <Link href="/which-itr-form-to-file?source=calculator_library_cta">
                 <Button className="h-11 w-full rounded-lg bg-blue-600 px-5 text-white hover:bg-blue-700 sm:w-auto">
                   Start ITR Filing
                 </Button>

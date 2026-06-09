@@ -123,7 +123,7 @@ export default function Header() {
     isAuthenticated ? privatePath : `/auth/login?next=${encodeURIComponent(privatePath)}`;
   const loginDashboardHref = "/auth/login?next=%2Fdashboard";
   const desktopLoginFileHref = loginDashboardHref;
-  const mobileFileHref = !isLoading && !isAuthenticated ? loginDashboardHref : "/itr/start?source=mobile_menu_footer";
+  const mobileFileHref = !isLoading && !isAuthenticated ? loginDashboardHref : "/which-itr-form-to-file?source=mobile_menu_footer";
   const mobileFileLabel = !isLoading && !isAuthenticated ? "Login & File ITR" : "Check ITR plan";
 
   const isActive = (path: string) => location === path;
@@ -173,7 +173,7 @@ export default function Header() {
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 Guided filing and CA review available
               </span>
-              <Link href="/itr/start?source=promo_banner" onMouseEnter={() => preloadOnHover('/itr/start')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full type-meta font-bold hover:bg-blue-800 transition-colors ml-2">
+              <Link href="/which-itr-form-to-file?source=promo_banner" onMouseEnter={() => preloadOnHover('/which-itr-form-to-file')} className="bg-blue-700 text-[#FDE047] px-3 py-1 rounded-full type-meta font-bold hover:bg-blue-800 transition-colors ml-2">
                 CHECK PLAN →
               </Link>
             </div>
@@ -876,7 +876,7 @@ export default function Header() {
                 )}
 
                 {!isLoading && isAuthenticated && (
-                  <Link href="/itr/start?source=header_desktop" onMouseEnter={() => preloadOnHover('/itr/start')} className="hidden lg:block">
+                  <Link href="/which-itr-form-to-file?source=header_desktop" onMouseEnter={() => preloadOnHover('/which-itr-form-to-file')} className="hidden lg:block">
                     <Button className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-normal text-white shadow-[0_8px_20px_-6px_rgba(37,99,235,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.45)]">
                       <FileText className="mr-2 h-4 w-4" />
                       File ITR
@@ -1142,7 +1142,7 @@ export default function Header() {
                         href={mobileFileHref}
                         onTouchStart={() => {
                           if (!isLoading && !isAuthenticated) preloadOnHover("/auth/login");
-                          if (!isLoading && isAuthenticated) preloadOnHover("/itr/start");
+                          if (!isLoading && isAuthenticated) preloadOnHover("/which-itr-form-to-file");
                         }}
                         onClick={() => setMobileMenuOpen(false)}
                       >

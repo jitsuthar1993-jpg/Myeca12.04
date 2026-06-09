@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { trackPublicCtaClick } from "@/lib/public-conversion-events";
 
 const HIDDEN_PATH_PREFIXES = [
-  "/itr/start",
+  "/which-itr-form-to-file",
   "/auth",
   "/dashboard",
   "/documents",
@@ -105,7 +105,7 @@ export default function PublicMobileConversionBar({ currentPath = "/" }: { curre
     >
       <div className="mx-auto grid max-w-md grid-cols-[1fr_1fr] gap-2">
         <Link
-          href="/itr/start?source=public_mobile_sticky_bar"
+          href="/which-itr-form-to-file?source=public_mobile_sticky_bar"
           onClick={() => trackPublicCtaClick("Start ITR Filing", "public_mobile_sticky_bar")}
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 text-sm font-black text-white shadow-sm shadow-blue-200 transition hover:bg-blue-700"
         >

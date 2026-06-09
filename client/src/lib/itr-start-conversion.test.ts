@@ -55,7 +55,7 @@ describe("ITR start conversion recommendation", () => {
 
     expect(metadata).toMatchObject({
       source: "itr_start_funnel",
-      originalServicePath: "/itr/start",
+      originalServicePath: "/which-itr-form-to-file",
       conversionSource: "homepage_hero",
       recommendedPlanId: "salary",
       assessmentYear: "2026-27",

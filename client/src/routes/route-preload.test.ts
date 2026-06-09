@@ -4,9 +4,9 @@ import { getRouteModuleLoaderKeys, resolveRoutePreloadTarget } from "./route-pre
 
 describe("route preload resolution", () => {
   it("normalizes query strings before resolving a route chunk", () => {
-    expect(resolveRoutePreloadTarget("/itr/start?source=header_desktop", false)).toMatchObject({
-      path: "/itr/start",
-      routePath: "/itr/start",
+    expect(resolveRoutePreloadTarget("/which-itr-form-to-file?source=header_desktop", false)).toMatchObject({
+      path: "/which-itr-form-to-file",
+      routePath: "/which-itr-form-to-file",
     });
   });
 

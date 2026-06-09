@@ -134,7 +134,7 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Capital gains", "Business income", "Foreign assets"],
     caTouchpoints: "CA review available where eligible",
     sla: "After complete document review",
-    cta: { label: "Start Salary ITR - Rs 499", href: "/itr/start?plan=salary&source=pricing_plan_card" },
+    cta: { label: "Start Salary ITR - Rs 499", href: "/which-itr-form-to-file?plan=salary&source=pricing_plan_card" },
     consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=salary-itr" },
   },
   {
@@ -150,7 +150,7 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["F&O audit", "Foreign tax credit", "GST books"],
     caTouchpoints: "CA-assisted review plus one clarification loop",
     sla: "After complete document review",
-    cta: { label: "Start CA-Assisted ITR - Rs 999", href: "/itr/start?plan=expert-assisted&source=pricing_plan_card" },
+    cta: { label: "Start CA-Assisted ITR - Rs 999", href: "/which-itr-form-to-file?plan=expert-assisted&source=pricing_plan_card" },
     consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=expert-assisted-itr" },
   },
   {
@@ -165,7 +165,7 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Tax audit", "Foreign broker statements", "Unlisted share valuation"],
     caTouchpoints: "CA review for gain classification and set-off",
     sla: "2-3 business days",
-    cta: { label: "Get Scope Review", href: "/itr/start?profile=capital-gains&source=pricing_plan_card" },
+    cta: { label: "Get Scope Review", href: "/which-itr-form-to-file?profile=capital-gains&source=pricing_plan_card" },
     consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=capital-gains" },
   },
   {
@@ -180,7 +180,7 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Statutory audit", "Monthly GST filing", "Bookkeeping cleanup"],
     caTouchpoints: "CA review for business income, deductions and compliance risk",
     sla: "3-5 business days",
-    cta: { label: "Get Scope Review", href: "/itr/start?profile=business-freelance&source=pricing_plan_card" },
+    cta: { label: "Get Scope Review", href: "/which-itr-form-to-file?profile=business-freelance&source=pricing_plan_card" },
     consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=freelancer-tax" },
   },
   {
@@ -195,7 +195,7 @@ export const taxFilingPlans: PricingPlan[] = [
     exclusions: ["Overseas tax filing", "FEMA advisory beyond India tax", "Transfer pricing"],
     caTouchpoints: "Specialist CA review with written risk notes",
     sla: "5-7 business days",
-    cta: { label: "Get Scope Review", href: "/itr/start?profile=nri-foreign&source=pricing_plan_card" },
+    cta: { label: "Get Scope Review", href: "/which-itr-form-to-file?profile=nri-foreign&source=pricing_plan_card" },
     consultationCta: { label: "Talk to Expert", href: "/expert-consultation?service=nri-tax" },
   },
   {
@@ -229,7 +229,7 @@ export const servicePricingCatalog: ServicePricing[] = [
     documents: ["PAN", "Aadhaar", "Form 16", "Bank details"],
     timeline: "After document review",
     caTouchpoints: "Checklist-assisted filing with optional CA review",
-    primaryCta: { label: "Check ITR plan", href: "/itr/start?plan=salary&source=service_pricing" },
+    primaryCta: { label: "Check ITR plan", href: "/which-itr-form-to-file?plan=salary&source=service_pricing" },
     consultationCta: { label: "Consult expert", href: "/expert-consultation?service=itr-1-filing" },
   },
   {

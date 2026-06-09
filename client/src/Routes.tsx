@@ -1,4 +1,4 @@
-import { Route, Router as StaticRouter, Switch, type BaseLocationHook } from "wouter";
+import { Redirect, Route, Router as StaticRouter, Switch, type BaseLocationHook } from "wouter";
 import { Suspense, lazy, useMemo, useState } from 'react';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
@@ -8,7 +8,19 @@ import {
 } from '@/components/routing/route-transition';
 import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import HomePage from "@/pages/home.page";
+import {
+  LEGACY_ITR_START_ROUTE,
+  buildItrStartRedirectLocation,
+} from "@shared/itr-start-route";
 const MobileAppScreensPage = lazyWithRetry(() => import("@/pages/mobile-app-screens.page"));
+
+function LegacyItrStartRedirect() {
+  const sourceUrl = typeof window === "undefined"
+    ? LEGACY_ITR_START_ROUTE
+    : `${LEGACY_ITR_START_ROUTE}${window.location.search}${window.location.hash}`;
+
+  return <Redirect to={buildItrStartRedirectLocation(sourceUrl)} replace />;
+}
 
 // Route components loaded lazily to reduce initial bundle size
 const NotFound = lazyWithRetry(() => import("@/pages/not-found"));
@@ -441,7 +453,8 @@ function RouteSwitch() {
             <CADashboard />
           </RequireRole>
         )} />
-        <Route path="/itr/start" component={ITRStartPage} />
+        <Route path={LEGACY_ITR_START_ROUTE} component={LegacyItrStartRedirect} />
+        <Route path="/which-itr-form-to-file" component={ITRStartPage} />
         <Route path="/itr/form-selector" component={ITRFormSelectorPage} />
         <Route path="/itr/form-recommender" component={ITRFormRecommenderPage} />
         <Route path="/itr/filing" component={() => <RequireAuth><ITRFilingPage /></RequireAuth>} />

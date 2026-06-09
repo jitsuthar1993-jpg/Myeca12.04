@@ -440,7 +440,7 @@ describe("user service routes", () => {
           requestDescription: "ITR start diagnosis recommended Salary plan.",
           source: "itr_start_funnel",
           requestedAt: "2026-05-31T12:00:00.000Z",
-          originalServicePath: "/itr/start",
+          originalServicePath: "/which-itr-form-to-file",
           conversionSource: "homepage_hero",
           recommendedPlanId: "salary",
           assessmentYear: "2026-27",
@@ -454,7 +454,7 @@ describe("user service routes", () => {
     expect(response.status).toBe(200);
     expect(json.service.metadata).toMatchObject({
       source: "itr_start_funnel",
-      originalServicePath: "/itr/start",
+      originalServicePath: "/which-itr-form-to-file",
       conversionSource: "homepage_hero",
       recommendedPlanId: "salary",
       assessmentYear: "2026-27",

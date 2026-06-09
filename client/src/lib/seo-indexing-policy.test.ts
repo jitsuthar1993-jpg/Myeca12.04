@@ -49,6 +49,30 @@ describe("SEO indexing policy", () => {
     expect(noindexSources).not.toContain("/ca(.*)");
   });
 
+  it("uses a descriptive canonical ITR selector route and permanently redirects the legacy URL", () => {
+    const vercelConfig = JSON.parse(
+      readFileSync(path.join(process.cwd(), "vercel.json"), "utf8"),
+    ) as {
+      redirects: Array<{
+        destination: string;
+        permanent: boolean;
+        source: string;
+      }>;
+    };
+
+    expect(vercelConfig.redirects).toContainEqual({
+      destination: "/which-itr-form-to-file",
+      permanent: true,
+      source: "/itr/start",
+    });
+    expect(SEO_CONFIG["/which-itr-form-to-file"]).toBeDefined();
+    expect(SEO_CONFIG["/itr/start"]).toBeUndefined();
+
+    const routes = getIndexablePublicRoutes(Object.keys(SEO_CONFIG), []);
+    expect(routes).toContain("/which-itr-form-to-file");
+    expect(routes).not.toContain("/itr/start");
+  });
+
   it("routes the IndexNow key file through the API before the static app fallback", () => {
     const vercelConfig = JSON.parse(
       readFileSync(path.join(process.cwd(), "vercel.json"), "utf8"),
@@ -402,6 +426,8 @@ describe("SEO indexing policy", () => {
     expect(sitemap).toContain("<loc>https://myeca.in/startup/planning</loc>");
     expect(sitemap).toContain("<loc>https://myeca.in/learn/guide/complete-itr-guide-salaried</loc>");
     expect(sitemap).toContain("<loc>https://myeca.in/itr/form-selector</loc>");
+    expect(sitemap).toContain("<loc>https://myeca.in/which-itr-form-to-file</loc>");
+    expect(sitemap).not.toContain("<loc>https://myeca.in/itr/start</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/itr/filing</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/dashboard</loc>");
     expect(sitemap).not.toContain("<loc>https://myeca.in/documents</loc>");

@@ -214,7 +214,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     relatedResources: [
       { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
       { label: 'Pricing', href: '/pricing' },
-      { label: 'Start Filing', href: '/itr/start?source=tax_guide_itr1' },
+      { label: 'Start Filing', href: '/which-itr-form-to-file?source=tax_guide_itr1' },
     ],
     steps: [
       {
@@ -311,7 +311,7 @@ export const TAX_GUIDES: TaxGuide[] = [
       { label: 'ITR for Salaried Employees', href: '/services/itr-for-salaried' },
       { label: 'Tax Planning Service', href: '/services/tax-planning' },
       { label: 'Pricing', href: '/pricing' },
-      { label: 'Start Filing', href: '/itr/start?source=tax_guide_salary_calculator' },
+      { label: 'Start Filing', href: '/which-itr-form-to-file?source=tax_guide_salary_calculator' },
     ],
     steps: [
       {
@@ -496,7 +496,7 @@ export const TAX_GUIDES: TaxGuide[] = [
     relatedResources: [
       { label: 'Expert Consultation', href: '/expert-consultation' },
       { label: 'Pricing', href: '/pricing' },
-      { label: 'Start Filing', href: '/itr/start?source=tax_guide_filing_action' },
+      { label: 'Start Filing', href: '/which-itr-form-to-file?source=tax_guide_filing_action' },
     ],
     steps: [
       {

@@ -7,7 +7,7 @@ const audiencePaths = [
     title: "For Salaried Professionals",
     description: "Move from Form 16 and AIS review to the right ITR form with fewer surprises.",
     icon: UserRound,
-    href: "/itr/start?source=everything_section_salary_path",
+    href: "/which-itr-form-to-file?source=everything_section_salary_path",
     cta: "Start ITR Filing",
     tone: "bg-blue-50 text-blue-700",
     steps: ["Check salary and Form 16", "Review deductions and AIS", "File with expert help if needed"],

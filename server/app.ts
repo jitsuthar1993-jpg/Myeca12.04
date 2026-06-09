@@ -13,6 +13,10 @@ import { generalRateLimit } from "./middleware/rateLimiting.js";
 import { getRequestId, requestIdMiddleware } from "./middleware/request-id.js";
 import { initServerSentry, setupServerSentryErrorHandler } from "./telemetry/sentry.js";
 import { isPrivateRoute } from "../shared/seo-public.js";
+import {
+  LEGACY_ITR_START_ROUTE,
+  buildItrStartRedirectLocation,
+} from "../shared/itr-start-route.js";
 import { isAllowedOrigin, isLocalHost } from "./lib/origin-policy.js";
 
 initServerSentry();
@@ -43,6 +47,10 @@ app.use((req, res, next) => {
     },
     credentials: true,
   })(req, res, next);
+});
+
+app.all(LEGACY_ITR_START_ROUTE, (req, res) => {
+  res.redirect(308, buildItrStartRedirectLocation(req.originalUrl));
 });
 
 app.use(express.json({ limit: "10mb" }));

@@ -27,7 +27,7 @@ export const TAX_INTENTS: ChatIntent[] = [
     quickActions: [
       { label: 'Calculate Tax', action: 'calculate_tax', href: '/calculators/income-tax' },
       { label: 'Compare Regimes', action: 'compare_regimes', href: '/calculators/regime-comparator' },
-      { label: 'File ITR', action: 'file_itr', href: '/itr/start?source=chatbot_tax_planning' },
+      { label: 'File ITR', action: 'file_itr', href: '/which-itr-form-to-file?source=chatbot_tax_planning' },
     ],
   },
 
@@ -37,7 +37,7 @@ export const TAX_INTENTS: ChatIntent[] = [
     patterns: ['deadline', 'due date', 'last date', 'when to file', 'itr deadline', 'filing date'],
     response: "📅 **ITR Filing Deadlines for FY 2025-26 (AY 2026-27):**\n\n• **Individual/HUF (no audit):** usually July 31 of the assessment year, unless extended\n• **Audit cases:** usually October 31\n• **Transfer pricing cases:** usually November 30\n• **Revised/Belated Return:** usually December 31\n\n⚠️ Check the Income Tax Department portal for extensions before filing.",
     quickActions: [
-      { label: 'Start Filing Now', action: 'file_itr', href: '/itr/start?source=chatbot_deadline' },
+      { label: 'Start Filing Now', action: 'file_itr', href: '/which-itr-form-to-file?source=chatbot_deadline' },
       { label: 'Set Reminder', action: 'set_reminder' },
     ],
   },
@@ -171,7 +171,7 @@ export const TAX_INTENTS: ChatIntent[] = [
     patterns: ['help', 'what can you do', 'features', 'options', 'menu'],
     response: "🤖 **I can help you with:**\n\n📊 **Calculations:**\n• Income tax (old & new regime)\n• HRA, Capital Gains, TDS\n• Advance tax, SIP, PPF\n\n📝 **ITR Filing:**\n• Form selection guidance\n• Filing process steps\n• e-Verification help\n\n💰 **Tax Planning:**\n• 80C, 80D deductions\n• Tax-saving investments\n• Regime comparison\n\n📅 **Deadlines & Status:**\n• Filing deadlines\n• Refund tracking\n• ITR status check\n\nJust ask me anything!",
     quickActions: [
-      { label: 'Start Filing', action: 'file', href: '/itr/start?source=chatbot_help' },
+      { label: 'Start Filing', action: 'file', href: '/which-itr-form-to-file?source=chatbot_help' },
       { label: 'Calculators', action: 'calc', href: '/calculators' },
       { label: 'Tax Optimizer', action: 'optimize', href: '/tax-optimizer' },
     ],

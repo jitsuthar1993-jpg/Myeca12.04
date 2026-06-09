@@ -56,7 +56,7 @@ export default function DocumentScannerPage() {
             Form 16, AIS, bank statements, CAS — supported extraction helps organize details before you review and confirm them.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/itr/start?source=document_scanner_feature_hero">
+            <Link href="/which-itr-form-to-file?source=document_scanner_feature_hero">
               <Button size="lg" className="gap-2">
                 Upload & Start Filing <ArrowRight className="w-5 h-5" />
               </Button>
@@ -164,7 +164,7 @@ export default function DocumentScannerPage() {
           <ScanLine className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Stop entering numbers manually.</h2>
           <p className="text-blue-100 mb-8">Upload supported documents, review the extracted values, and choose CA assistance where the selected plan includes it.</p>
-          <Link href="/itr/start?source=document_scanner_feature_cta">
+          <Link href="/which-itr-form-to-file?source=document_scanner_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start with Document Upload <ArrowRight className="w-5 h-5" />
             </Button>

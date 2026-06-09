@@ -162,6 +162,11 @@
   ],
   "redirects": [
     {
+      "source": "/itr/start",
+      "destination": "/which-itr-form-to-file",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.myeca.in" }],
       "destination": "https://myeca.in/$1",

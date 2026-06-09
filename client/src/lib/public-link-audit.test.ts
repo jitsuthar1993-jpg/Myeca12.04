@@ -358,7 +358,7 @@ describe("public link audit", () => {
       expect(links.some((href) => href.startsWith("/calculators/")), post.slug).toBe(true);
       expect(links.some((href) => href.startsWith("/services/") || href === "/expert-consultation"), post.slug).toBe(true);
       expect(links, post.slug).toContain("/pricing");
-      expect(links.some((href) => href.startsWith("/itr/start") || href.startsWith("/services/")), post.slug).toBe(true);
+      expect(links.some((href) => href.startsWith("/which-itr-form-to-file") || href.startsWith("/services/")), post.slug).toBe(true);
     });
   });
 
@@ -373,7 +373,7 @@ describe("public link audit", () => {
       expect(links.some((href) => href.startsWith("/calculators/")), post.slug).toBe(true);
       expect(links.some((href) => href.startsWith("/services/") || href === "/expert-consultation"), post.slug).toBe(true);
       expect(links, post.slug).toContain("/pricing");
-      expect(links.some((href) => href.startsWith("/itr/start") || href.startsWith("/services/")), post.slug).toBe(true);
+      expect(links.some((href) => href.startsWith("/which-itr-form-to-file") || href.startsWith("/services/")), post.slug).toBe(true);
     });
   });
 

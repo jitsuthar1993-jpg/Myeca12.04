@@ -4,15 +4,15 @@ import { useAuth } from '@/components/AuthProvider';
 import { preloadRouteModule } from '@/routes/route-preload';
 
 const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
-  '/': ['/itr/start', '/calculators', '/services', '/experts'],
+  '/': ['/which-itr-form-to-file', '/calculators', '/services', '/experts'],
   '/calculators': ['/calculators/income-tax', '/calculators/sip', '/calculators/hra', '/calculators/emi', '/calculators/hsn-finder'],
-  '/services': ['/services/gst-registration', '/services/company-registration', '/itr/start', '/experts'],
+  '/services': ['/services/gst-registration', '/services/company-registration', '/which-itr-form-to-file', '/experts'],
   '/blog': ['/blog/:slug'],
   '/auth/login': ['/auth/register'],
   '/auth/register': ['/auth/login'],
-  '/dashboard': ['/profiles', '/documents', '/payments', '/settings', '/itr/filing', '/itr/start'],
-  '/itr': ['/itr/start', '/itr/form-selector', '/itr/status-tracker'],
-  '/itr/start': ['/itr/form-selector', '/expert-consultation'],
+  '/dashboard': ['/profiles', '/documents', '/payments', '/settings', '/itr/filing', '/which-itr-form-to-file'],
+  '/itr': ['/which-itr-form-to-file', '/itr/form-selector', '/itr/status-tracker'],
+  '/which-itr-form-to-file': ['/itr/form-selector', '/expert-consultation'],
   '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],
   '/experts': ['/experts/ca-rahul-sharma', '/experts/ca-priya-nair'],
 };

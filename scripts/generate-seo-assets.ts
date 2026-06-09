@@ -595,7 +595,7 @@ export function renderStaticRootFallback(meta: StaticRootFallbackMeta) {
       <p>MyeCA.in helps Indian taxpayers start scope-first ITR filing, GST returns, notice support, and business compliance before payment.</p>
       <nav aria-label="Priority filing links">
         <a href="/calculators/income-tax">Income tax calculator</a>
-        <a href="/itr/start">Start ITR filing</a>
+        <a href="/which-itr-form-to-file">Start ITR filing</a>
         <a href="/services/itr-for-salaried">ITR for salaried</a>
       </nav>
     </main>`;
@@ -893,7 +893,7 @@ const ROUTE_AUDIENCE_OVERRIDES: Record<string, string> = {
   "/itr-season-2026/itr-deadline-refund-status-tracker": "Taxpayers tracking AY 2026-27 filing dates, return processing, refunds, or post-filing action",
   "/itr/form-recommender": "Taxpayers choosing an ITR form after identifying every income source and disclosure requirement",
   "/itr/form-selector": "Individual taxpayers deciding between ITR-1, ITR-2, ITR-3, and ITR-4",
-  "/itr/start": "Individuals ready to identify their return type and begin an income-tax filing workflow",
+  "/which-itr-form-to-file": "Individuals ready to identify their return type and begin an income-tax filing workflow",
   "/learn": "Indian taxpayers, founders, and finance teams learning a tax or compliance workflow before acting",
   "/learn/glossary": "Taxpayers decoding income-tax, return, deduction, notice, and filing terminology",
   "/learn/guides": "Taxpayers choosing a detailed guide for an income, deduction, notice, or filing question",
@@ -1369,7 +1369,7 @@ const AUTHORED_STATIC_ROUTE_PROFILES: Record<string, AuthoredStaticRouteProfile>
       "Confirm the assessment year, regime, schedules, and source records before filing. Seek review when income classification or form eligibility remains uncertain.",
     ],
   ),
-  "/itr/start": authoredStaticRouteProfile(
+  "/which-itr-form-to-file": authoredStaticRouteProfile(
     ["Map the taxpayer profile", "Select the likely ITR form", "Prepare the filing file"],
     [
       "Begin with taxpayer status, assessment year, residency, income heads, business activity, capital gains, and foreign reporting facts. Form selection follows the complete profile, not the largest income source alone.",

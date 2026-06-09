@@ -1,4 +1,6 @@
-export const ITR_START_ROUTE = "/itr/start";
+import { ITR_START_ROUTE } from "@shared/itr-start-route";
+
+export { ITR_START_ROUTE } from "@shared/itr-start-route";
 
 export const ITR_COMPLEX_PROFILE_IDS = [
   "capital-gains",

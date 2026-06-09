@@ -30,7 +30,7 @@ let shouldReloadForServiceWorkerUpdate = false;
 let updateNotificationTimer: number | undefined;
 
 const UPDATE_NOTIFICATION_DELAY_MS = 5_000;
-const UPDATE_NOTIFICATION_CONVERSION_PATHS = ["/", "/pricing", "/itr/start", "/itr/form-selector"];
+const UPDATE_NOTIFICATION_CONVERSION_PATHS = ["/", "/pricing", "/which-itr-form-to-file", "/itr/form-selector"];
 const SW_DEV_UNREGISTERED_KEY = "sw_dev_unregistered";
 
 function getRuntimeStorage(options?: ServiceWorkerRuntimeOptions) {

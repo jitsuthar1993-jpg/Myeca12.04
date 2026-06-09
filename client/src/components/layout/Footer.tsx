@@ -265,7 +265,7 @@ export default function Footer() {
               <h3 className="text-2xl font-bold text-slate-900 mb-2 relative z-10">Ready to File Your ITR?</h3>
               <p className="text-slate-500 mb-8 max-w-xl mx-auto text-base font-medium relative z-10">Start with a guided workflow and add CA review where your case needs it.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-10">
-                <Link href="/itr/start?source=footer_cta" onMouseEnter={() => preloadOnHover("/itr/start")}>
+                <Link href="/which-itr-form-to-file?source=footer_cta" onMouseEnter={() => preloadOnHover("/which-itr-form-to-file")}>
                   <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-500 transition-all duration-300 font-semibold text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     Start Filing Now
                   </button>

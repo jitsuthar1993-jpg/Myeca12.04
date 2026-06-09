@@ -28,14 +28,14 @@ const popularPaths = [
     name: "Salary",
     price: "Rs 499",
     detail: "Simple salary and interest income",
-    href: "/itr/start?plan=salary&source=pricing_popular_paths",
+    href: "/which-itr-form-to-file?plan=salary&source=pricing_popular_paths",
     cta: "Start ITR Filing",
   },
   {
     name: "Expert Assisted",
     price: "Rs 999",
     detail: "CA review, AIS/26AS checks, Form 16 support",
-    href: "/itr/start?plan=expert-assisted&source=pricing_popular_paths",
+    href: "/which-itr-form-to-file?plan=expert-assisted&source=pricing_popular_paths",
     cta: "Start ITR Filing",
     featured: true,
   },
@@ -43,7 +43,7 @@ const popularPaths = [
     name: "Capital Gains",
     price: "Rs 1,499+",
     detail: "Stocks, mutual funds, property, crypto/VDA",
-    href: "/itr/start?profile=capital-gains&source=pricing_popular_paths",
+    href: "/which-itr-form-to-file?profile=capital-gains&source=pricing_popular_paths",
     cta: "Start ITR Filing",
   },
   {
@@ -153,7 +153,7 @@ export default function PricingPage() {
               GST treatment, timelines, and exclusions visible before you start.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row md:mt-8">
-              <Link href="/itr/start?source=pricing_hero" className="w-full sm:w-auto">
+              <Link href="/which-itr-form-to-file?source=pricing_hero" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full bg-slate-800 hover:bg-slate-900 sm:w-auto">
                   Start ITR Filing
                   <ArrowRight className="h-4 w-4" />

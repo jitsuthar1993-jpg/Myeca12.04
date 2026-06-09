@@ -101,7 +101,7 @@ function CampaignHubPage() {
               calculator-backed estimates, and scoped expert review where the facts need a CA.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link href="/itr/start?source=itr_season_hero">
+              <Link href="/which-itr-form-to-file?source=itr_season_hero">
                 <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700">
                   Start ITR path <ArrowRight className="h-4 w-4" />
                 </Button>

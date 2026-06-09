@@ -20,7 +20,7 @@ describe("SEO asset static root fallback", () => {
 
     expect(fallback).toContain('data-seo-static-shell="home"');
     expect(fallback).toContain("File ITR, GST returns and tax notices with CA assistance.");
-    expect(fallback).toContain("/itr/start");
+    expect(fallback).toContain("/which-itr-form-to-file");
     expect(fallback).toContain("/calculators/income-tax");
   });
 

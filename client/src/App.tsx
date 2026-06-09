@@ -115,7 +115,7 @@ function Router() {
 
   const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath;
   const hideFooter = currentPath === '/tax-assistant';
-  const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/itr/start');
+  const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/which-itr-form-to-file');
 
   useRoutePreload({ preloadRelated: true });
 

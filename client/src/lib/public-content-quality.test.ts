@@ -1631,7 +1631,7 @@ describe("public content quality evaluator", () => {
         "<h2>Upload documents</h2>",
         "<p>Upload your documents and let the scanner do the work. A CA reviews before filing.</p>",
       ].join(""),
-      internalLinks: ["/pricing", "/itr/start", "/trust", "/contact"],
+      internalLinks: ["/pricing", "/which-itr-form-to-file", "/trust", "/contact"],
     });
 
     expect(issues).toContainEqual(expect.objectContaining({ code: "generic_generated_filler", severity: "error" }));

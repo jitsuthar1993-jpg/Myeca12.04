@@ -107,7 +107,7 @@ export default function HeroWithOptimizedImages() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/itr/start?source=optimized_hero">
+                <Link href="/which-itr-form-to-file?source=optimized_hero">
                   <m.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

@@ -450,7 +450,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
           <p className="text-sm text-slate-600 font-medium hidden sm:block [&_span]:text-slate-950">
             CA-assisted plans include documented review scope - <span className="font-semibold text-blue-700">starting Rs 999 excluding GST</span>
           </p>
-          <Link href="/itr/start?source=blog_article_banner">
+          <Link href="/which-itr-form-to-file?source=blog_article_banner">
             <span className="inline-flex items-center gap-1.5 text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full hover:bg-blue-700 transition shrink-0">
               File Now <ArrowRight className="w-3 h-3" />
             </span>

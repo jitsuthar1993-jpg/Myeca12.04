@@ -69,7 +69,7 @@ const mobileSummaryCards = [
     label: "For salaried professionals",
     title: "Start with the right ITR path.",
     description: "Check salary, Form 16, deductions, AIS, capital gains, and refund readiness before filing.",
-    href: "/itr/start?source=homepage_mobile_summary",
+    href: "/which-itr-form-to-file?source=homepage_mobile_summary",
     cta: "Start ITR Filing",
     icon: FileText,
   },
@@ -245,7 +245,7 @@ const HomePage = () => {
 
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7">
                 <Link
-                  href="/itr/start?source=homepage_hero"
+                  href="/which-itr-form-to-file?source=homepage_hero"
                   onClick={() => trackPublicCtaClick("Start Filing Now", "homepage_hero")}
                   className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-slate-800 px-8 text-base font-black text-white shadow-lg shadow-slate-300 transition-colors hover:bg-slate-900 sm:w-auto"
                 >
@@ -570,7 +570,7 @@ const HomePage = () => {
                     Start with a 60-second plan check before choosing a technical ITR form.
                   </p>
                   <div className="mt-3 grid gap-2">
-                    <Link href="/itr/start?source=homepage_mobile_tools">
+                    <Link href="/which-itr-form-to-file?source=homepage_mobile_tools">
                       <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
                         Check my ITR plan
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -655,7 +655,7 @@ const HomePage = () => {
                 </p>
 
                 <div className="flex flex-col gap-2 sm:flex-row md:justify-center md:gap-4">
-                  <Link href="/itr/start?source=homepage_final_cta">
+                  <Link href="/which-itr-form-to-file?source=homepage_final_cta">
                     <Button variant="brand" size="xl" className="h-11 w-full rounded-lg px-6 shadow-sm shadow-brand-500/25 transition-all sm:w-auto md:px-8 md:hover:-translate-y-0.5">
                       <Rocket className="mr-2 h-5 w-5" />
                        Start ITR Filing

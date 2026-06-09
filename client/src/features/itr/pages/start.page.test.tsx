@@ -22,7 +22,7 @@ vi.mock("wouter", () => ({
       {children}
     </a>
   ),
-  useLocation: () => ["/itr/start?source=homepage_hero", navigateMock],
+  useLocation: () => ["/which-itr-form-to-file?source=homepage_hero", navigateMock],
 }));
 
 vi.mock("@/components/AuthProvider", () => ({
@@ -43,7 +43,7 @@ vi.mock("@/components/seo/MetaSEO", () => ({
 describe("ITR start form selector page", () => {
   beforeEach(() => {
     navigateMock.mockClear();
-    window.history.pushState({}, "", "/itr/start?source=homepage_hero");
+    window.history.pushState({}, "", "/which-itr-form-to-file?source=homepage_hero");
     window.localStorage.clear();
     window.sessionStorage.clear();
     clearItrStartHandoff();
@@ -78,6 +78,22 @@ describe("ITR start form selector page", () => {
     expect(screen.getByText("ITR-1 cannot be used for short-term capital gains.")).toBeInTheDocument();
   });
 
+  it("keeps selected boolean facts light like the other selected choices", async () => {
+    render(<ITRStartPage />);
+
+    const salaryOption = screen.getByRole("button", { name: /Salary or pension/i });
+    const agriculturalIncomeOption = screen.getByRole("button", { name: /Agricultural income above Rs 5,000/i });
+
+    expect(salaryOption).toHaveClass("bg-blue-50", "text-slate-950");
+    expect(salaryOption).not.toHaveClass("bg-slate-900", "text-white");
+
+    await userEvent.click(agriculturalIncomeOption);
+
+    expect(agriculturalIncomeOption).toHaveAttribute("aria-pressed", "true");
+    expect(agriculturalIncomeOption).toHaveClass("bg-blue-50", "text-slate-950");
+    expect(agriculturalIncomeOption).not.toHaveClass("bg-slate-900", "text-white");
+  });
+
   it("routes unauthenticated users through auth and back to the filing draft", async () => {
     render(<ITRStartPage />);
 
@@ -89,7 +105,7 @@ describe("ITR start form selector page", () => {
   });
 
   it("redirects legacy header login-file visits to login for the dashboard", async () => {
-    window.history.pushState({}, "", "/itr/start?source=header_desktop_login_file");
+    window.history.pushState({}, "", "/which-itr-form-to-file?source=header_desktop_login_file");
 
     render(<ITRStartPage />);
 
@@ -120,7 +136,7 @@ describe("ITR start form selector page", () => {
       },
       source: "resume_test",
     });
-    window.history.pushState({}, "", "/itr/start?source=resume_test&resume=1");
+    window.history.pushState({}, "", "/which-itr-form-to-file?source=resume_test&resume=1");
 
     render(<ITRStartPage />);
 

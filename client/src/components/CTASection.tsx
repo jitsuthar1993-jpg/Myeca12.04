@@ -33,7 +33,7 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <Link href="/itr/start?source=cta_section">
+          <Link href="/which-itr-form-to-file?source=cta_section">
             <Button size="lg">Start Filing Now</Button>
           </Link>
           <Link href="/expert-consultation?service=itr-filing">

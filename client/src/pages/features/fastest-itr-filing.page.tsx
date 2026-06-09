@@ -62,7 +62,7 @@ export default function FastestITRFilingPage() {
             Upload your documents, review assisted extraction where available, choose CA review when needed, and file from one guided workflow.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/itr/start?source=fastest_itr_feature_hero">
+            <Link href="/which-itr-form-to-file?source=fastest_itr_feature_hero">
               <Button size="lg" className="gap-2">
                 Start Filing Now <ArrowRight className="w-5 h-5" />
               </Button>
@@ -156,7 +156,7 @@ export default function FastestITRFilingPage() {
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
           <h2 className="text-3xl font-extrabold mb-4">Ready to file your ITR?</h2>
           <p className="text-blue-100 mb-8">Choose an assisted-review plan when you want a pre-submission document and computation check. Plans start at ₹499 excluding GST.</p>
-          <Link href="/itr/start?source=fastest_itr_feature_cta">
+          <Link href="/which-itr-form-to-file?source=fastest_itr_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Get Started <ArrowRight className="w-5 h-5" />
             </Button>

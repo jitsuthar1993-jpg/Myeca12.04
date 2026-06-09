@@ -33,7 +33,7 @@ export const PUBLIC_HEADER_PRIMARY_LINKS: PublicHeaderPrimaryLink[] = [
 ];
 
 export const PUBLIC_HEADER_MOBILE_START_LINKS: PublicHeaderIconLink[] = [
-  { href: "/itr/start?source=mobile_menu", icon: "file-text", label: "File ITR" },
+  { href: "/which-itr-form-to-file?source=mobile_menu", icon: "file-text", label: "File ITR" },
   { href: "/calculators/income-tax", icon: "calculator", label: "Income Tax" },
   { href: "/calculators/regime-comparator", icon: "scale", label: "Regime" },
   { href: "/calculators/hra", icon: "home", label: "HRA" },
@@ -73,7 +73,7 @@ export const PUBLIC_HEADER_MOBILE_CALCULATOR_LINKS: PublicNavigationLink[] = [
 ];
 
 export const PUBLIC_FOOTER_MOBILE_PRIMARY_LINKS: PublicNavigationLink[] = [
-  { href: "/itr/start?source=footer_mobile_primary", label: "File ITR" },
+  { href: "/which-itr-form-to-file?source=footer_mobile_primary", label: "File ITR" },
   { href: "/itr-season-2026", label: "AY 2026 Hub" },
   { href: "/calculators/income-tax", label: "Estimate Tax" },
   { href: "/calculators/regime-comparator", label: "Compare Regimes" },

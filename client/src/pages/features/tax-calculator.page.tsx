@@ -75,7 +75,7 @@ export default function TaxCalculatorFeaturePage() {
                 Calculate Your Tax <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/itr/start?source=tax_calculator_feature_hero">
+            <Link href="/which-itr-form-to-file?source=tax_calculator_feature_hero">
               <Button size="lg" variant="outline">File ITR with a CA</Button>
             </Link>
           </div>
@@ -160,7 +160,7 @@ export default function TaxCalculatorFeaturePage() {
           <Calculator className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Calculated your tax? File it with a CA.</h2>
           <p className="text-blue-100 mb-8">Use the estimate to organize your filing records, then confirm the review scope before submission. Starting at ₹499.</p>
-          <Link href="/itr/start?source=tax_calculator_feature_cta">
+          <Link href="/which-itr-form-to-file?source=tax_calculator_feature_cta">
             <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
               Start ITR Filing <ArrowRight className="w-5 h-5" />
             </Button>

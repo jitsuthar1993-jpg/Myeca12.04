@@ -41,7 +41,7 @@ function ctaFor(category: ItrReturnFormCtaCategory) {
   if (category === "individual-selector") {
     return {
       label: "Start individual selector",
-      href: "/itr/start?source=form_selector_full_guide",
+      href: "/which-itr-form-to-file?source=form_selector_full_guide",
       external: false,
     };
   }
@@ -201,7 +201,7 @@ export default function ITRFormSelectorPage() {
               for FY 2025-26 continue under the Income Tax Act, 1961 framework.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link href="/itr/start?source=form_selector_full_guide">
+              <Link href="/which-itr-form-to-file?source=form_selector_full_guide">
                 <Button size="lg" className="h-12 bg-blue-600 font-black text-white hover:bg-blue-700">
                   Check my ITR plan in 60 sec
                   <ArrowRight className="h-4 w-4" />

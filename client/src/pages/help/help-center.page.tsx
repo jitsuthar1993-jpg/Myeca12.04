@@ -370,7 +370,7 @@ export default function HelpCenterPage() {
                 <CardContent>
                   <ul className="space-y-2">
                     <li>
-                      <Link href="/itr/start?source=help_center_quick_link">
+                      <Link href="/which-itr-form-to-file?source=help_center_quick_link">
                         <span className="text-blue-600 hover:underline cursor-pointer">
                           Start ITR Filing
                         </span>

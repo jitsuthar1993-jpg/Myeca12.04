@@ -45,7 +45,7 @@ describe("public growth roadmap implementation", () => {
     expect(appSource).toContain("PublicMobileConversionBar");
     expect(barSource).toContain("Start ITR");
     expect(barSource).toContain("Talk to Expert");
-    expect(barSource).toContain("/itr/start");
+    expect(barSource).toContain("/which-itr-form-to-file");
     expect(barSource).toContain("HIDDEN_PATH_PREFIXES");
     expect(barSource).toContain('"/auth"');
     expect(barSource).toContain("hasScrolledPastFirstViewport");
@@ -124,7 +124,7 @@ describe("public growth roadmap implementation", () => {
     expect(formSelectorSource).toContain("ITR-U");
     expect(formSelectorSource).toContain("AY 2026-27");
     expect(formSelectorSource).toContain("Income Tax Act, 1961");
-    expect(formSelectorSource).toContain("/itr/start?source=form_selector_full_guide");
+    expect(formSelectorSource).toContain("/which-itr-form-to-file?source=form_selector_full_guide");
     expect(formSelectorSource).toContain("/expert-consultation?service=itr-filing&source=form_selector_full_guide");
   });
 

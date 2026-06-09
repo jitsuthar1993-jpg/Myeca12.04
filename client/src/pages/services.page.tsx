@@ -41,7 +41,7 @@ const categories = [
       {
         title: "ITR Filing",
         description: "ITR-1 to ITR-4 with CA review, deductions, and e-verification support.",
-        href: "/itr/start?source=services_individual_card",
+        href: "/which-itr-form-to-file?source=services_individual_card",
         price: priceFor("itr-filing", "From ₹999 excluding GST"),
         meta: "Document-led",
       },
@@ -204,7 +204,7 @@ const supportCards = [
 ];
 
 const guidedServicePaths = [
-  { label: "Salary ITR", detail: "Form 16, deductions, refund and regime checks", href: "/itr/start?plan=salary&source=services_guided_paths" },
+  { label: "Salary ITR", detail: "Form 16, deductions, refund and regime checks", href: "/which-itr-form-to-file?plan=salary&source=services_guided_paths" },
   { label: "Capital gains", detail: "Stocks, mutual funds, property, ESOPs or VDA", href: "/capital-gains-import" },
   { label: "Notice help", detail: "Income tax or GST notice review before reply", href: "/services/notice-compliance" },
   { label: "Business / GST", detail: "Registration, returns, TDS, MCA and compliance", href: "/services" },

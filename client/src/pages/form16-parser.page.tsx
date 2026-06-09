@@ -237,7 +237,7 @@ export default function Form16ParserPage() {
                     Try sample parser
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
-                  <Link href="/itr/start?source=form16_parser_header">
+                  <Link href="/which-itr-form-to-file?source=form16_parser_header">
                     <Button variant="outline" className="h-11 w-full rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-50 md:w-auto">
                       Start ITR after review
                     </Button>
@@ -470,7 +470,7 @@ export default function Form16ParserPage() {
                       Calculate tax
                     </Button>
                   </Link>
-                  <Link href="/itr/start?source=form16_parser_results">
+                  <Link href="/which-itr-form-to-file?source=form16_parser_results">
                     <Button className="h-11 w-full rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
                       Start ITR filing
                       <ArrowRight className="ml-2 h-4 w-4" />
