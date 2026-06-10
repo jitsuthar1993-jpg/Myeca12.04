@@ -10,7 +10,7 @@ import { Suspense } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
-import { SafeAuthProvider, useAuth } from '@/components/AuthProvider';
+import { SafeAuthProvider } from '@/components/AuthProvider';
 import Routes from './Routes';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
@@ -63,7 +63,6 @@ const HeaderLoadingShell = () => (
   </header>
 );
 const authLayoutRoutes = ['/login', '/register', '/forgot-password'];
-const adaptiveWorkspacePaths = ['/expert-consultation', '/consultation'];
 
 function isAuthLayoutPath(path: string) {
   return path.startsWith('/auth/') || authLayoutRoutes.includes(path);
@@ -87,7 +86,6 @@ function useDeferredGlobalChrome(timeout = 800) {
 
 function Router() {
   const [currentPath] = useLocation();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
   useRouteScrollManager(currentPath);
   
   // Define paths that should NOT show the global site header and footer
@@ -115,9 +113,7 @@ function Router() {
     currentPath === path || currentPath.startsWith(`${path}/`)
   );
 
-  const isAdaptiveWorkspacePath = adaptiveWorkspacePaths.includes(currentPath);
-  const usesAdaptiveWorkspaceChrome = isAdaptiveWorkspacePath && (isAuthenticated || authLoading);
-  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome;
+  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath;
   const hideFooter = currentPath === '/tax-assistant';
   const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/which-itr-form-to-file');
 

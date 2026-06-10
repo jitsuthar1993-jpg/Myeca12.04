@@ -16,28 +16,4 @@ describe("app layout routing", () => {
     expect(dashboardPaths).toContain("/account");
     expect(dashboardPaths).not.toContain("/itr");
   });
-
-  it("uses workspace chrome for consultation routes only while auth is loading or authenticated", () => {
-    const appSource = readFileSync(resolve(__dirname, "App.tsx"), "utf8");
-    const adaptiveWorkspacePathsBlock =
-      appSource.match(/const adaptiveWorkspacePaths = \[([\s\S]*?)\];/)?.[1] ?? "";
-    const adaptiveWorkspacePaths = Array.from(
-      adaptiveWorkspacePathsBlock.matchAll(/'([^']+)'/g),
-      (match) => match[1],
-    );
-
-    expect(adaptiveWorkspacePaths).toEqual([
-      "/expert-consultation",
-      "/consultation",
-    ]);
-    expect(appSource).toContain(
-      "const { isAuthenticated, isLoading: authLoading } = useAuth();",
-    );
-    expect(appSource).toContain(
-      "const usesAdaptiveWorkspaceChrome = isAdaptiveWorkspacePath && (isAuthenticated || authLoading);",
-    );
-    expect(appSource).toContain(
-      "const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome;",
-    );
-  });
 });
