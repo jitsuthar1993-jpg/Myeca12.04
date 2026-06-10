@@ -28,7 +28,18 @@ export function getDocumentGeneratorPreviewData<T extends Record<string, unknown
 }
 
 const generatorLoaders: Record<string, GeneratorLoader> = {
-  'invoice': () => import('./invoice'),
+  'invoice': () => import('./financial-transactions'),
+  'gst-quotation': () => import('./financial-transactions'),
+  'proforma-invoice': () => import('./financial-transactions'),
+  'purchase-order': () => import('./financial-transactions'),
+  'delivery-challan': () => import('./financial-transactions'),
+  'payment-receipt': () => import('./financial-transactions'),
+  'gst-credit-debit-note': () => import('./financial-transactions'),
+  'expense-reimbursement': () => import('./financial-transactions'),
+  'loan-agreement': () => import('./loan-agreement'),
+  'msme-cash-flow': () => import('./financial-statements'),
+  'projected-balance-sheet': () => import('./financial-statements'),
+  'net-worth-statement': () => import('./financial-statements'),
   'rent-agreement-rc': () => import('./rent-agreement-rc'),
   'resume': () => import('./resume'),
   'offer-letter': () => import('./offer-letter'),
@@ -81,6 +92,17 @@ const generatorLoaders: Record<string, GeneratorLoader> = {
 
 const generatorExportNames: Record<string, string> = {
   'invoice': 'InvoiceGenerator',
+  'gst-quotation': 'GstQuotationGenerator',
+  'proforma-invoice': 'ProformaInvoiceGenerator',
+  'purchase-order': 'PurchaseOrderGenerator',
+  'delivery-challan': 'DeliveryChallanGenerator',
+  'payment-receipt': 'PaymentReceiptGenerator',
+  'gst-credit-debit-note': 'GstCreditDebitNoteGenerator',
+  'expense-reimbursement': 'ExpenseReimbursementGenerator',
+  'loan-agreement': 'LoanAgreementGenerator',
+  'msme-cash-flow': 'MsmeCashFlowGenerator',
+  'projected-balance-sheet': 'ProjectedBalanceSheetGenerator',
+  'net-worth-statement': 'NetWorthStatementGenerator',
   'rent-agreement-rc': 'RentAgreement',
   'resume': 'ResumeGenerator',
   'offer-letter': 'OfferLetterGenerator',

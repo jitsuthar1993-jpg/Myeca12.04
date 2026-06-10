@@ -1,9 +1,6 @@
 import { route, type ClientRouteDefinition } from "../route-types";
 
 export const WORKSPACE_ROUTES = [
-  route("/documents/generator", "workspace", "client/src/pages/documents/registry.page.tsx"),
-  route("/documents/generator_page", "workspace", "client/src/pages/documents/registry.page.tsx"),
-  route("/documents/generator/:type", "workspace", "client/src/pages/documents/generator.page.tsx"),
   route("/business/dashboard", "workspace", "client/src/pages/business/dashboard.page.tsx"),
   route("/payments", "workspace", "client/src/pages/payments.page.tsx"),
   route("/dashboard/services/:id", "workspace", "client/src/pages/dashboard/service-detail.page.tsx"),

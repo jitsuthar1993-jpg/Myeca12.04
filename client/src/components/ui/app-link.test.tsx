@@ -22,7 +22,7 @@ describe("AppLink", () => {
     expect(link).toHaveAttribute("rel", expect.stringContaining("noreferrer"));
   });
 
-  it("uses an explicit public fallback before sending public users to private routes", () => {
+  it("keeps public document-generator routes public even when a fallback is supplied", () => {
     render(
       <AppLink href="/documents/generator" publicFallbackHref="/auth/login?next=%2Fdocuments%2Fgenerator">
         Document generator
@@ -31,7 +31,7 @@ describe("AppLink", () => {
 
     expect(screen.getByRole("link", { name: "Document generator" })).toHaveAttribute(
       "href",
-      "/auth/login?next=%2Fdocuments%2Fgenerator",
+      "/documents/generator",
     );
   });
 });

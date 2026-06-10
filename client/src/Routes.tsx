@@ -285,9 +285,9 @@ function RouteSwitch() {
         <Route path="/services/selection" component={ServiceSelectionPage} />
         <Route path="/services/activate/:serviceId" component={ServiceActivationPage} />
         <Route path="/services/marketplace" component={ServicesMarketplacePage} />
-        <Route path="/documents/generator" component={() => <RequireAuth><DocumentGeneratorRegistry /></RequireAuth>} />
-        <Route path="/documents/generator_page" component={() => <RequireAuth><DocumentGeneratorRegistry /></RequireAuth>} />
-        <Route path="/documents/generator/:type" component={() => <RequireAuth><DocumentGeneratorPage /></RequireAuth>} />
+        <Route path="/documents/generator" component={DocumentGeneratorRegistry} />
+        <Route path="/documents/generator_page" component={DocumentGeneratorRegistry} />
+        <Route path="/documents/generator/:type" component={DocumentGeneratorPage} />
         <Route path="/business/dashboard" component={() => <RequireAuth><BusinessDashboardPage /></RequireAuth>} />
         <Route path="/business/virtual-cfo" component={VirtualCFOPage} />
 

@@ -326,7 +326,7 @@ export default function Header() {
                               {[
                                 { href: "/services/company-registration", icon: Briefcase, title: "Company Registration", desc: "Pvt Ltd, LLP, OPC & more", color: "indigo" },
                                 { href: "/services/trademark-registration", icon: Scale, title: "IPR Services", desc: "Trademark & Copyright", color: "purple" },
-                                { href: publicGuardedHref("/documents/generator"), icon: FileCheck, title: "Legal Documents", desc: "Agreements & Contracts", color: "blue" }
+                                { href: "/documents/generator", icon: FileCheck, title: "Document Generators", desc: "Preview Indian drafts online", color: "blue" }
                               ].map((item, idx) => {
                                 const Icon = item.icon as any;
                                 return (

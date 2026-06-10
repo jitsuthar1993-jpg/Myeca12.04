@@ -31,6 +31,12 @@ test("keeps growth-roadmap public pages responsive across key widths", async ({ 
 test("shows the mobile public conversion bar on public marketing pages", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await expect.poll(() => page.evaluate(
+    () => document.documentElement.scrollHeight > window.innerHeight * 2,
+  )).toBe(true);
+  await page.waitForTimeout(500);
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight + 100));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(360);
 
   const mobileBar = page.getByRole("navigation", { name: "Public conversion actions" });
   await expect(mobileBar).toBeVisible();

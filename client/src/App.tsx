@@ -111,9 +111,13 @@ function Router() {
     '/export'
   ];
 
-  const isDashboardPath = dashboardPaths.some(path => 
+  const isDocumentGeneratorPath =
+    currentPath === '/documents/generator_page' ||
+    currentPath === '/documents/generator' ||
+    currentPath.startsWith('/documents/generator/');
+  const isDashboardPath = dashboardPaths.some(path =>
     currentPath === path || currentPath.startsWith(`${path}/`)
-  );
+  ) && !(isDocumentGeneratorPath && !isAuthenticated);
 
   const isAdaptiveWorkspacePath = adaptiveWorkspacePaths.includes(currentPath);
   const usesAdaptiveWorkspaceChrome = isAdaptiveWorkspacePath && (isAuthenticated || authLoading);

@@ -89,8 +89,6 @@ describe("document generator workspace contract", () => {
       category: "legal",
       status: "available",
     });
-    expect(registrySource).toContain("id: 'huf-affidavit'");
-
     const config = await loadDocumentGenerator("huf-affidavit");
 
     expect(config).not.toBeNull();

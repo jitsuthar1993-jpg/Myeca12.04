@@ -10,7 +10,7 @@ Disallow: /auth/
 Disallow: /business/dashboard/
 Disallow: /ca/
 Disallow: /dashboard/
-Disallow: /documents/
+Disallow: /documents$
 Disallow: /export/
 Disallow: /forgot-password/
 Disallow: /integrations/

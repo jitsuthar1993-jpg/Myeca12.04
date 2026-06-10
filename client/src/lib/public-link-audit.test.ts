@@ -413,7 +413,8 @@ describe("public link audit", () => {
     const headerSource = readFileSync("client/src/components/layout/Header.tsx", "utf8");
 
     expect(headerSource).not.toContain('href="https://myeca.in"');
-    expect(headerSource).not.toMatch(/href:\s*"\/documents\/generator"/);
+    expect(headerSource).toMatch(/href:\s*"\/documents\/generator"/);
+    expect(headerSource).not.toContain('publicGuardedHref("/documents/generator")');
     expect(headerSource).not.toMatch(/href:\s*"\/business\/dashboard"/);
   });
 

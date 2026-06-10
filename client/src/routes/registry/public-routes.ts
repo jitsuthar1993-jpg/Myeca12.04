@@ -18,6 +18,9 @@ export const PUBLIC_ROUTES = [
   route("/contact", "public", "client/src/pages/contact.page.tsx"),
   route("/about", "public", "client/src/pages/about.page.tsx"),
   route("/trust", "public", "client/src/pages/trust.page.tsx"),
+  route("/documents/generator", "public", "client/src/pages/documents/registry.page.tsx"),
+  route("/documents/generator_page", "public", "client/src/pages/documents/registry.page.tsx"),
+  route("/documents/generator/:type", "public", "client/src/pages/documents/generator.page.tsx"),
   route("/403", "public", "client/src/pages/forbidden.page.tsx"),
   route("/500", "public", "client/src/pages/server-error.page.tsx"),
 ] as const satisfies readonly ClientRouteDefinition[];

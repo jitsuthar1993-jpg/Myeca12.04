@@ -14,7 +14,6 @@ export const PRIVATE_ROUTE_PREFIXES = [
   "/business/dashboard",
   "/ca",
   "/dashboard",
-  "/documents",
   "/export",
   "/forgot-password",
   "/integrations",
@@ -45,7 +44,6 @@ export const PRIVATE_NOINDEX_ROUTES = [
   "/dashboard",
   "/dashboard/services",
   "/documents",
-  "/documents/generator",
   "/documents/generator_page",
   "/export",
   "/integrations",
@@ -166,7 +164,22 @@ export const PUBLIC_STATIC_ROUTES = [
   "/tax-optimizer",
   "/tds-refund-tracker",
   "/trust",
+  "/documents/generator",
+  "/documents/generator/gst-quotation",
+  "/documents/generator/proforma-invoice",
+  "/documents/generator/purchase-order",
+  "/documents/generator/delivery-challan",
+  "/documents/generator/payment-receipt",
+  "/documents/generator/gst-credit-debit-note",
+  "/documents/generator/loan-agreement",
+  "/documents/generator/expense-reimbursement",
+  "/documents/generator/msme-cash-flow",
+  "/documents/generator/projected-balance-sheet",
+  "/documents/generator/net-worth-statement",
+  "/documents/generator/invoice",
 ] as const;
+
+const PRIVATE_EXACT_ROUTES = ["/documents"] as const;
 
 export type SitemapEntry = {
   loc: string;
@@ -183,7 +196,8 @@ export function normalizePublicPath(route: string) {
 
 export function isPrivateRoute(route: string) {
   const path = normalizePublicPath(route);
-  return PRIVATE_ROUTE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+  return PRIVATE_EXACT_ROUTES.includes(path as (typeof PRIVATE_EXACT_ROUTES)[number])
+    || PRIVATE_ROUTE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
 export function isIndexablePublicRoute(route: string) {
@@ -245,8 +259,8 @@ export function buildSitemapXml(entries: SitemapEntry[]) {
 }
 
 export function buildRobotsTxt() {
-  const disallowLines = PRIVATE_ROUTE_PREFIXES
-    .map((prefix) => `Disallow: ${prefix}/`)
+  const disallowLines = [...PRIVATE_ROUTE_PREFIXES.map((prefix) => `${prefix}/`), "/documents$"]
+    .map((prefix) => `Disallow: ${prefix}`)
     .join("\n");
   const aiCrawlerAgents = [
     "GPTBot",

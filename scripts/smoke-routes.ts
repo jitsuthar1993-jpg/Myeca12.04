@@ -48,8 +48,6 @@ const privateRoutes = [
   "/admin/analytics/overview",
   "/reports",
   "/documents",
-  "/documents/generator",
-  "/documents/generator/resume",
   "/workflows",
   "/teams",
   "/referrals",
@@ -149,10 +147,13 @@ async function assertAssetEndpoints() {
   if (!robots.text.includes("Sitemap:")) {
     throw new Error("/robots.txt is missing sitemap metadata");
   }
-  for (const privateRoute of ["/dashboard/", "/admin/", "/reports/", "/documents/", "/integrations/"]) {
+  for (const privateRoute of ["/dashboard/", "/admin/", "/reports/", "/integrations/"]) {
     if (!robots.text.includes(`Disallow: ${privateRoute}`)) {
       throw new Error(`/robots.txt is missing Disallow for ${privateRoute}`);
     }
+  }
+  if (!robots.text.includes("Disallow: /documents$")) {
+    throw new Error("/robots.txt is missing the exact private /documents route rule");
   }
 
   const sitemap = await fetchText("/sitemap.xml");

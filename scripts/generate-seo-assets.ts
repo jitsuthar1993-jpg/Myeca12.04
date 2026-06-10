@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SEO_CONFIG, type SEOConfigItem } from "../client/src/config/seo.config.js";
 import { TAX_GUIDES, type TaxGuide } from "../client/src/data/tax-guides.js";
+import { FINANCIAL_GENERATOR_CATALOGUE } from "../client/src/data/generator-catalog.js";
 import {
   getGeneratedRouteContent,
   getGeneratedPublicRoutes,
@@ -1564,6 +1565,187 @@ const AUTHORED_STATIC_ROUTE_PROFILES: Record<string, AuthoredStaticRouteProfile>
   ),
 };
 
+AUTHORED_STATIC_ROUTE_PROFILES["/documents/generator"] = authoredStaticRouteProfile(
+  ["Choose the document by purpose", "Prepare and review the draft", "Complete required external steps"],
+  [
+    "Choose a generator by the document you actually need: a commercial record, GST document, legal draft, internal voucher, financial statement, application, or certificate. Read the document label and limitation before entering information so a quotation, proforma, receipt, or challan is not mistaken for a tax invoice.",
+    "Enter the parties, dates, identifiers, amounts, terms, and supporting facts shown in the guided form. Preview the complete draft and verify names, PAN or GSTIN formats, place of supply, tax treatment, totals, clauses, and signature blocks against source records before export.",
+    "Sign in only when saving, exporting, or converting a draft. MyeCA document generators do not by themselves file returns, generate IRNs or e-way bills, pay stamp duty, notarise, register, audit, certify, legally execute, or secure lender or authority approval.",
+  ],
+);
+
+const FINANCIAL_GENERATOR_STATIC_PROFILES: Record<string, AuthoredStaticRouteProfile> = {
+  "gst-quotation": authoredStaticRouteProfile(
+    ["Set the commercial offer", "Check estimated GST and validity", "Move an accepted quote forward"],
+    [
+      "Record the seller, prospective customer, quotation number, validity date, items, HSN or SAC, rates, discounts, delivery expectation, and commercial terms. A quotation can estimate GST while remaining clearly labelled as not being a tax invoice.",
+      "Compare supplier state and selected place of supply before reviewing the CGST and SGST or IGST estimate. Confirm item classification, rate, discount basis, cess where relevant, and the date until which the price and terms remain open.",
+      "An accepted quotation can supply compatible party and line-item details to a proforma invoice, purchase order, or GST invoice draft. Approval, supply, invoicing, portal reporting, and payment remain separate events.",
+    ],
+  ),
+  "proforma-invoice": authoredStaticRouteProfile(
+    ["Describe the expected supply", "Separate proforma from tax invoice", "Convert only after approval"],
+    [
+      "Enter the proposed supply, expected date, validity, advance instructions, bank details, customer information, and estimated taxes. The proforma should tell the recipient what is expected without claiming that a taxable supply or GST liability has already arisen.",
+      "Keep the heading and limitation visible: a proforma invoice is not a tax invoice and does not generate an IRN. Recheck the advance amount, payment reference instructions, place of supply, line values, and assumptions before sending it.",
+      "Once the commercial terms and actual supply facts are confirmed, carry reviewed fields into a GST invoice draft and recalculate totals. The final tax invoice, e-invoice process, and return reporting must follow the applicable transaction facts.",
+    ],
+  ),
+  "purchase-order": authoredStaticRouteProfile(
+    ["Issue the buyer's order", "Reconcile delivery and tax terms", "Create the movement record"],
+    [
+      "A purchase order should identify the buyer, supplier, bill-to and ship-to locations, PO number, requested items, expected delivery date, freight, payment terms, inspection conditions, and approving person. It records the commercial order rather than a tax invoice.",
+      "Compare the PO with the accepted quotation and make any variance explicit. Review quantity, rate, HSN or SAC, estimated GST, delivery address, acceptance criteria, and the responsibility for freight or other charges before issue.",
+      "When goods are ready to move without an invoice, compatible PO lines can be carried into a delivery challan draft. Receipt, inspection, supplier invoicing, payment, and accounting entries still need their own records.",
+    ],
+  ),
+  "delivery-challan": authoredStaticRouteProfile(
+    ["State why goods move without invoice", "Verify Rule 55 particulars", "Keep transport compliance separate"],
+    [
+      "Select the movement reason, such as job work, approval basis, stock transfer, transport without supply, or unknown quantity. Record consignor, consignee, GSTINs, challan number and date, goods, provisional quantity, taxable value, place of supply, and transport reference.",
+      "Review the original, duplicate, and triplicate copy labels together with HSN, tax details where applicable, reason for movement, and signature. The challan should match the actual goods and movement facts, including later quantity corrections.",
+      "This generator does not create an e-way bill. Complete any required e-way bill process separately, keep transporter evidence, and use reviewed challan lines when preparing the eventual GST invoice.",
+    ],
+  ),
+  "payment-receipt": authoredStaticRouteProfile(
+    ["Choose receipt or GST voucher mode", "Trace the payment received", "Report advances separately where required"],
+    [
+      "Use general receipt mode for an ordinary payment acknowledgement and GST advance receipt-voucher mode only when the prescribed GST particulars are relevant. Enter payer, recipient, amount, date, payment method, reference, purpose, and linked invoice or document.",
+      "Match the amount received with the bank, cash, UPI, cheque, or card evidence. In GST voucher mode, review supplier and recipient details, place of supply, taxable basis, and tax breakup without presenting the receipt as a tax invoice.",
+      "A printable receipt does not itself post books, adjust an invoice, report an advance in a GST return, or issue a refund voucher. Keep the receipt reference connected to the underlying invoice, order, or advance record.",
+    ],
+  ),
+  "gst-credit-debit-note": authoredStaticRouteProfile(
+    ["Identify the original invoice", "Measure the adjustment", "Complete GST reporting separately"],
+    [
+      "Choose credit-note or debit-note mode and record the supplier, recipient, original invoice number and date, reason, adjusted items, taxable value, and tax effect. The note should explain the change rather than overwrite the original invoice.",
+      "Recalculate the adjustment using the original place of supply, classification, GST rate, discounts, and cess where relevant. Check whether the commercial change, tax change, and payment or receivable change all point in the same direction.",
+      "Generating the note does not amend a GST return or generate an IRN. Retain the original invoice and adjustment evidence, then complete any e-invoice, return-period, accounting, and counterparty communication steps that apply.",
+    ],
+  ),
+  "loan-agreement": authoredStaticRouteProfile(
+    ["Define the lending arrangement", "Inspect repayment and default terms", "Check state execution requirements"],
+    [
+      "Choose personal or business-loan mode and identify the lender, borrower, principal, disbursement method, interest rate, repayment frequency, instalments, security, guarantor, jurisdiction, and witnesses. The schedule is an indicative calculation based on entered terms.",
+      "Read the repayment table alongside prepayment, late-payment, default, security, and guarantor clauses. Compare those clauses with the parties' actual understanding and any lender-specific sanction or policy before signing.",
+      "Stamp duty, registration, security creation, enforceability, and execution formalities vary by state and transaction. Obtain appropriate legal or professional review and complete the required state process before treating the draft as executed.",
+    ],
+  ),
+  "expense-reimbursement": authoredStaticRouteProfile(
+    ["Document the business expense", "Calculate the eligible reimbursement", "Complete internal approvals"],
+    [
+      "Record the employee or vendor, department, cost centre, business purpose, expense dates, categories, invoice references, payment method, receipt status, and line amounts. The voucher is an internal claim record and not a tax invoice.",
+      "Review each claimed line against the organisation's policy and supporting bill. Deduct personal, unsupported, excess, or otherwise non-reimbursable amounts so the displayed reimbursement total reflects the approved claim basis.",
+      "Capture the claimant declaration and manager or accounts approvals before payment. Input-tax-credit eligibility, payroll treatment, bookkeeping, and recovery from a client require separate review from the reimbursement voucher.",
+    ],
+  ),
+  "msme-cash-flow": authoredStaticRouteProfile(
+    ["Build a direct-method cash view", "Test projections and debt service", "Carry reviewed closing cash forward"],
+    [
+      "Enter current-period and three projected-year operating receipts, supplier and employee payments, taxes, investing flows, financing flows, debt service, opening cash, and assumptions. The direct-method layout is intended for MSME planning and lender discussions.",
+      "Check cash surplus or deficit, net movement, closing cash, and indicative DSCR against the sales plan, expense budget, loan schedule, and working-capital cycle. A projection should make assumptions visible rather than imply audited historical certainty.",
+      "Reviewed closing cash and debt values can be carried into the projected balance-sheet draft. The output is self-prepared, not audited or certified, and a lender may require a different format, evidence pack, or professional report.",
+    ],
+  ),
+  "projected-balance-sheet": authoredStaticRouteProfile(
+    ["Project assets and funding", "Read ratios without a plug figure", "Resolve every balance difference"],
+    [
+      "Enter three projected financial years of capital, reserves, secured and unsecured loans, current liabilities, fixed assets, investments, inventory, receivables, cash, and other assets. Imported cash-flow values remain editable assumptions.",
+      "Use working capital, current ratio, and debt-equity ratio to inspect the projection, but do not treat those ratios as lender acceptance. The balance difference shows whether total assets equal equity and liabilities for every year.",
+      "Export remains blocked while any projected year is out of balance; the tool never inserts a hidden balancing figure. Resolve the underlying assumption or classification and obtain any required lender or professional review separately.",
+    ],
+  ),
+  "net-worth-statement": authoredStaticRouteProfile(
+    ["Record assets and obligations", "Distinguish liquid net worth", "Request certification only when needed"],
+    [
+      "State the valuation date and enter personal or business assets, investments, property, receivables, secured and unsecured loans, other liabilities, and contingent liabilities. Add the valuation basis and supporting-document notes for material figures.",
+      "Gross assets, total liabilities, net worth, and liquid net worth answer different questions. Review ownership share, encumbrances, realisability, valuation dates, and contingent exposures before relying on the self-prepared statement.",
+      "The output is explicitly not CA certified and does not promise institutional acceptance. A separate CA-review or certification request may require source documents, valuation evidence, professional judgement, and UDIN where applicable.",
+    ],
+  ),
+  invoice: authoredStaticRouteProfile(
+    ["Capture the taxable supply", "Verify GST breakup and invoice label", "Handle IRN and return steps outside the draft"],
+    [
+      "Enter supplier and recipient details, invoice number and date, explicit place of supply, HSN or SAC, quantity, rate, discounts, tax treatment, GST rate, cess, freight, terms, and payment details. The shared tax engine determines intra-state or inter-state breakup from the selected states.",
+      "Check taxable, exempt, nil-rated, non-GST, and reverse-charge lines individually. Compare the preview with the actual supply, GST registration details, classification, rate, tax calculation, round-off, and required declarations before issue.",
+      "This invoice generator does not create an IRN, QR code, e-way bill, or GST-return entry. Complete those processes separately where required, then use the reviewed invoice as the source for a receipt or credit or debit note draft.",
+    ],
+  ),
+};
+
+FINANCIAL_GENERATOR_CATALOGUE.forEach((entry) => {
+  AUTHORED_STATIC_ROUTE_PROFILES[`/documents/generator/${entry.id}`] =
+    FINANCIAL_GENERATOR_STATIC_PROFILES[entry.id];
+});
+
+const DOCUMENT_GENERATOR_AUDIENCES: Record<string, string> = {
+  "/documents/generator": "Indian individuals, MSMEs, finance teams, employers, and founders choosing a self-service document draft",
+  "/documents/generator/gst-quotation": "Indian sellers and service providers preparing a priced commercial offer before supply",
+  "/documents/generator/proforma-invoice": "Indian suppliers requesting approval or advance payment before issuing a tax invoice",
+  "/documents/generator/purchase-order": "Indian buyers placing a documented order with a supplier or vendor",
+  "/documents/generator/delivery-challan": "GST-registered consignors moving goods without a tax invoice under an applicable reason",
+  "/documents/generator/payment-receipt": "Indian businesses acknowledging a general payment or GST advance from a payer",
+  "/documents/generator/gst-credit-debit-note": "GST suppliers adjusting a previously issued invoice after a commercial or tax change",
+  "/documents/generator/loan-agreement": "Individuals and businesses documenting a private lending arrangement before execution",
+  "/documents/generator/expense-reimbursement": "Employees, vendors, managers, and accounts teams documenting a business-expense claim",
+  "/documents/generator/msme-cash-flow": "Indian MSME owners preparing current and projected cash flows for planning or lender discussion",
+  "/documents/generator/projected-balance-sheet": "Indian MSMEs projecting assets, liabilities, equity, and banking ratios across three years",
+  "/documents/generator/net-worth-statement": "Indian individuals, proprietors, directors, partners, or guarantors declaring assets and liabilities",
+  "/documents/generator/invoice": "GST-registered Indian suppliers preparing a tax-invoice draft from actual supply details",
+};
+
+const documentGeneratorSource = (
+  label: string,
+  url: string,
+): PublicContentContext["officialSources"][number] => ({ label, url, checkedAt: now });
+
+const MYECA_DOCUMENT_GENERATOR_SOURCE = documentGeneratorSource(
+  "MyeCA document-generator scope",
+  "https://myeca.in/documents/generator",
+);
+const GST_DOCUMENT_SOURCES = [
+  MYECA_DOCUMENT_GENERATOR_SOURCE,
+  documentGeneratorSource("CBIC GST Invoice Rules", "https://cbic-gst.gov.in/gst-invoice-rules.html"),
+  documentGeneratorSource("GST E-Invoice Portal", "https://einvoice1.gst.gov.in/"),
+];
+const DOCUMENT_GENERATOR_SOURCES: Record<string, PublicContentContext["officialSources"]> = {
+  "/documents/generator": [
+    MYECA_DOCUMENT_GENERATOR_SOURCE,
+    documentGeneratorSource("CBIC GST Invoice Rules", "https://cbic-gst.gov.in/gst-invoice-rules.html"),
+    documentGeneratorSource("ICAI UDIN Portal", "https://udin.icai.org/"),
+  ],
+  "/documents/generator/gst-quotation": GST_DOCUMENT_SOURCES,
+  "/documents/generator/proforma-invoice": GST_DOCUMENT_SOURCES,
+  "/documents/generator/purchase-order": GST_DOCUMENT_SOURCES,
+  "/documents/generator/delivery-challan": GST_DOCUMENT_SOURCES,
+  "/documents/generator/payment-receipt": GST_DOCUMENT_SOURCES,
+  "/documents/generator/gst-credit-debit-note": GST_DOCUMENT_SOURCES,
+  "/documents/generator/invoice": GST_DOCUMENT_SOURCES,
+  "/documents/generator/loan-agreement": [
+    MYECA_DOCUMENT_GENERATOR_SOURCE,
+    documentGeneratorSource("India Code", "https://www.indiacode.nic.in/"),
+    documentGeneratorSource("Reserve Bank of India", "https://www.rbi.org.in/"),
+  ],
+  "/documents/generator/expense-reimbursement": [
+    MYECA_DOCUMENT_GENERATOR_SOURCE,
+    documentGeneratorSource("Income Tax Department", "https://www.incometax.gov.in/"),
+  ],
+  "/documents/generator/msme-cash-flow": [
+    MYECA_DOCUMENT_GENERATOR_SOURCE,
+    documentGeneratorSource("Reserve Bank of India", "https://www.rbi.org.in/"),
+    documentGeneratorSource("ICAI UDIN Portal", "https://udin.icai.org/"),
+  ],
+  "/documents/generator/projected-balance-sheet": [
+    MYECA_DOCUMENT_GENERATOR_SOURCE,
+    documentGeneratorSource("Reserve Bank of India", "https://www.rbi.org.in/"),
+    documentGeneratorSource("ICAI UDIN Portal", "https://udin.icai.org/"),
+  ],
+  "/documents/generator/net-worth-statement": [
+    MYECA_DOCUMENT_GENERATOR_SOURCE,
+    documentGeneratorSource("ICAI UDIN Portal", "https://udin.icai.org/"),
+  ],
+};
+
 const AUTHORED_ROUTE_DESCRIPTIONS: Record<string, string> = {
   "/expert-consultation":
     "Prepare a focused tax, GST, notice, startup, or compliance question, confirm the consultation scope, and keep the written conclusion with the case records.",
@@ -1654,6 +1836,12 @@ export function routeMeta(route: string): RouteMeta {
     highlights,
     sections: authoredSections,
     audience: generatedContent?.audience,
+    ...(DOCUMENT_GENERATOR_AUDIENCES[pathName]
+      ? { audience: [DOCUMENT_GENERATOR_AUDIENCES[pathName]] }
+      : {}),
+    ...(DOCUMENT_GENERATOR_SOURCES[pathName]
+      ? { officialSources: DOCUMENT_GENERATOR_SOURCES[pathName] }
+      : {}),
   });
   const sections = authoredSections;
   const routeLinks = buildStaticRouteLinks(pathName, [

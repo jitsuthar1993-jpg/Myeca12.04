@@ -1,4 +1,5 @@
 import { SITE_URL, isPrivateRoute, normalizePublicPath } from "./seo-public.js";
+import generatorRegistry from "../client/src/data/generator-registry.json";
 
 export const SPA_FALLBACK_EXACT_ROUTES = [
   "/403",
@@ -38,6 +39,7 @@ export type SpaFallbackClassification = {
   reason:
     | "api-route"
     | "city-landing"
+    | "document-generator"
     | "exact-route"
     | "expert-profile"
     | "private-route"
@@ -88,6 +90,16 @@ function isKnownExpertProfileRoute(path: string) {
   return EXPERT_PROFILE_SLUGS.includes(expertSlug as (typeof EXPERT_PROFILE_SLUGS)[number]);
 }
 
+const AVAILABLE_DOCUMENT_GENERATOR_ROUTES = new Set(
+  generatorRegistry.generators
+    .filter((generator) => generator.status === "available")
+    .map((generator) => `/documents/generator/${generator.id}`),
+);
+
+function isKnownDocumentGeneratorRoute(path: string) {
+  return AVAILABLE_DOCUMENT_GENERATOR_ROUTES.has(path);
+}
+
 export function classifySpaFallbackPath(
   route: string,
   options: SpaFallbackOptions = {},
@@ -120,6 +132,10 @@ export function classifySpaFallbackPath(
 
   if (isKnownExpertProfileRoute(path)) {
     return { ...base, known: true, reason: "expert-profile", status: 200 };
+  }
+
+  if (isKnownDocumentGeneratorRoute(path)) {
+    return { ...base, known: true, reason: "document-generator", status: 200 };
   }
 
   return { ...base, known: false, reason: "unknown-route", status: 404 };

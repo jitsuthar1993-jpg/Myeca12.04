@@ -356,6 +356,7 @@ describe("SEO indexing policy", () => {
       "/services/company-registration/mumbai",
       "/experts/ca-amit-verma",
       "/search",
+      "/documents/generator/will",
     ].forEach((route) => {
       expect(classifySpaFallbackPath(route, { activationServiceIds })).toMatchObject({
         known: true,
@@ -373,6 +374,10 @@ describe("SEO indexing policy", () => {
         known: false,
         status: 404,
       });
+    expect(classifySpaFallbackPath("/documents/generator/face-serum-gxrcld")).toMatchObject({
+      known: false,
+      status: 404,
+    });
   });
 
   it("keeps every direct client route either generated, private, or explicitly noindex fallback-safe", () => {

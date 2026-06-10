@@ -164,7 +164,7 @@ const generateMarkdown = (data: any) => `# Commercial Lease Agreement generated 
 export const CommercialLeaseGenerator: DocumentGeneratorConfig = {
   id: 'rent-agreement-comm',
   title: 'Commercial Lease Agreement',
-  description: 'Comprehensive lease for office spaces or shops with provisions for lock-in periods, maintenance, and GST billing.',
+  description: 'Commercial lease draft for offices or shops covering lock-in periods, maintenance, and GST billing terms.',
   icon: <Building2 className="w-5 h-5" />,
   schema,
   defaultValues,

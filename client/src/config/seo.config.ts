@@ -1,3 +1,5 @@
+import { FINANCIAL_GENERATOR_CATALOGUE } from "@/data/generator-catalog";
+
 export interface SEOConfigItem {
   title: string;
   description: string;
@@ -1016,6 +1018,40 @@ Object.entries(CALCULATOR_FAQ_ITEMS).forEach(([route, faqItems]) => {
   if (SEO_CONFIG[route]) {
     SEO_CONFIG[route].faqItems = faqItems;
   }
+});
+
+SEO_CONFIG["/documents/generator"] = {
+  title: "Indian Financial, Legal and Business Document Generators | MyeCA.in",
+  description: "Create and preview Indian financial, GST, legal, business, tax, employment, and application documents. Sign in only when saving or exporting.",
+  keywords: ["document generator India", "financial document generator", "GST document format", "legal document templates India"],
+  type: "website",
+  breadcrumbs: [{ name: "Home", url: "/" }, { name: "Document Generator", url: "/documents/generator" }],
+};
+
+FINANCIAL_GENERATOR_CATALOGUE.forEach((entry) => {
+  const featureSummary = entry.features.slice(0, 2).join(" and ").toLowerCase();
+  SEO_CONFIG[`/documents/generator/${entry.id}`] = {
+    title: `${entry.title} Generator India | MyeCA.in`,
+    description: `${entry.description.replace(/\.$/, "")}; review ${featureSummary} in a public preview before signed-in export.`,
+    keywords: entry.seo?.keywords || [
+      `${entry.title} generator`,
+      `${entry.title} format India`,
+      `${entry.title} online`,
+      "Indian document generator",
+    ],
+    type: "calculator",
+    calculatorData: {
+      type: entry.title,
+      features: entry.features,
+      accuracy: "Prepared from user-entered information",
+      updates: "Indian-market document draft",
+    },
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "Document Generator", url: "/documents/generator" },
+      { name: entry.title, url: `/documents/generator/${entry.id}` },
+    ],
+  };
 });
 
 export const getSEOConfig = (path: string): SEOConfigItem | undefined => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useMemo } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { sanitizeHTML } from '@/lib/sanitize';
 import MetaSEO from "@/components/seo/MetaSEO";
 import { useRoute, useLocation } from 'wouter';
@@ -25,15 +25,18 @@ import {
   RotateCcw,
   File,
   FileCode,
-  FileSpreadsheet,
   Loader2,
   AlertCircle,
   CheckCircle,
+  ArrowRight,
+  ShieldCheck,
   X,
 } from 'lucide-react';
 import { getDocumentGeneratorPreviewData, loadDocumentGenerator } from './generators';
-import { DocumentGeneratorConfig } from './generators/types';
+import { DocumentGeneratorConfig, type DocumentExportFormat } from './generators/types';
+import { convertFinancialDocument, type FinancialDocumentKind } from './financial';
 import { useToast } from '@/hooks/use-toast';
+import { captureTelemetryEvent } from '@/telemetry/browser';
 
 const A4_PAGE_HEIGHT_MM = 297;
 
@@ -155,12 +158,13 @@ export default function DocumentGenerator() {
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const [exportFormat, setExportFormat] = useState<'pdf' | 'docx' | 'html' | 'markdown'>('pdf');
+  const [exportFormat, setExportFormat] = useState<DocumentExportFormat>('pdf');
   const [documentId, setDocumentId] = useState<string | null>(null);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [config, setConfig] = useState<DocumentGeneratorConfig | null>(null);
   const [isConfigLoading, setIsConfigLoading] = useState(true);
+  const formStartedRef = useRef(false);
 
   // Fallback to 'resume' if the document is not properly loaded yet in Phase 1
   const documentType = params?.type || 'resume';
@@ -177,6 +181,24 @@ export default function DocumentGenerator() {
     resolver: config ? zodResolver(config.schema) : undefined,
     defaultValues: config?.defaultValues,
   });
+
+  const pendingDraftKey = `myeca_generator_pending_${documentType}`;
+  const conversionDraftKey = `myeca_generator_conversion_${documentType}`;
+  const availableExportFormats = config?.exportFormats || ['pdf', 'html', 'markdown'];
+
+  const requireAuthenticatedGeneratorAction = (action: 'save' | 'export' | 'convert') => {
+    if (user) return true;
+
+    sessionStorage.setItem(pendingDraftKey, JSON.stringify(getValues()));
+    sessionStorage.setItem('myeca_generator_pending_action', action);
+    captureTelemetryEvent('generator_login_gate_shown', { generator_type: documentType, action });
+    toast({
+      title: "Sign in to continue",
+      description: "Your entered information is preserved in this browser session.",
+    });
+    setLocation(`/auth/login?next=${encodeURIComponent(`/documents/generator/${documentType}`)}`);
+    return false;
+  };
 
   useEffect(() => {
     let isActive = true;
@@ -216,14 +238,44 @@ export default function DocumentGenerator() {
     [config, formData],
   );
 
-  // Load existing draft on mount
+  useEffect(() => {
+    if (!config) return;
+    if (!availableExportFormats.includes(exportFormat)) {
+      setExportFormat(availableExportFormats[0] || 'pdf');
+    }
+    captureTelemetryEvent('generator_viewed', { generator_type: documentType });
+  }, [config, documentType]);
+
+  useEffect(() => {
+    if (!config || formStartedRef.current) return;
+    if (JSON.stringify(formData) !== JSON.stringify(config.defaultValues)) {
+      formStartedRef.current = true;
+      captureTelemetryEvent('generator_form_started', { generator_type: documentType });
+    }
+  }, [config, documentType, formData]);
+
+  // Restore a guest draft, converted document, or signed-in saved draft.
   useEffect(() => {
     const loadDraft = async () => {
-      if (!user || !config) return;
+      if (!config) return;
       
       try {
-        setSaveStatus('saving'); // Show loading state
-        
+        const convertedData = sessionStorage.getItem(conversionDraftKey);
+        if (convertedData && config.applyFinancialDraft) {
+          reset(config.applyFinancialDraft(JSON.parse(convertedData)));
+          sessionStorage.removeItem(conversionDraftKey);
+          return;
+        }
+
+        const pendingData = sessionStorage.getItem(pendingDraftKey);
+        if (pendingData) {
+          reset(JSON.parse(pendingData));
+          if (user) sessionStorage.removeItem(pendingDraftKey);
+          return;
+        }
+
+        if (!user) return;
+        setSaveStatus('saving');
         const localData = localStorage.getItem(`myeca_doc_latest_${user.id}_${documentType}`)
           || localStorage.getItem(`myeca_doc_latest_${documentType}`);
         if (localData) {
@@ -242,7 +294,7 @@ export default function DocumentGenerator() {
     };
 
     loadDraft();
-  }, [user, documentType, config, reset]);
+  }, [user, documentType, config, conversionDraftKey, pendingDraftKey, reset]);
 
   useEffect(() => {
     if (!autoSaveEnabled || !user || !config) return;
@@ -285,16 +337,7 @@ export default function DocumentGenerator() {
   };
 
   const onSubmit = async (data: any) => {
-    if (!user) {
-      // Still save to local storage for guest
-      localStorage.setItem(`myeca_doc_latest_${documentType}`, JSON.stringify(data));
-      setSaveStatus('saved');
-      toast({
-        title: "Draft saved locally",
-        description: "Sign in to sync document drafts securely to your account.",
-      });
-      return;
-    }
+    if (!requireAuthenticatedGeneratorAction('save') || !user) return;
 
     setIsSaving(true);
     try {
@@ -314,6 +357,7 @@ export default function DocumentGenerator() {
 
       setSaveStatus('saved');
       setLastSaved(new Date());
+      captureTelemetryEvent('generator_draft_saved', { generator_type: documentType });
     } catch (error) {
       console.error('Failed to save document draft:', error);
       toast({
@@ -335,11 +379,22 @@ export default function DocumentGenerator() {
       });
       return;
     }
+    if (!requireAuthenticatedGeneratorAction('export')) return;
+
+    const data = getValues();
+    const exportBlockReason = config.exportBlockReason?.(data);
+    if (exportBlockReason) {
+      toast({
+        title: "Export blocked",
+        description: exportBlockReason,
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsExporting(true);
     try {
-      const data = getValues();
-      const htmlContent = config.generateHTML(data);
+      const htmlContent = sanitizeHTML(config.generateHTML(data));
 
       // exportHistory table is not yet implemented in the backend. 
       // Proceeding directly to local export formatting.
@@ -360,15 +415,12 @@ export default function DocumentGenerator() {
           const markdown = config.generateMarkdown(data);
           downloadFile(markdown, `${documentType}_${Date.now()}.md`, 'text/markdown');
           break;
-        case 'docx':
-          downloadFile(
-            htmlContent,
-            `${documentType}_${Date.now()}.docx`,
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-          );
-          break;
       }
 
+      captureTelemetryEvent('generator_export_completed', {
+        generator_type: documentType,
+        export_format: exportFormat,
+      });
       toast({
         title: "Document exported",
         description: `Exported as ${exportFormat.toUpperCase()}.`,
@@ -383,6 +435,32 @@ export default function DocumentGenerator() {
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const handleConversion = (target: FinancialDocumentKind) => {
+    if (!config?.buildFinancialDraft || !requireAuthenticatedGeneratorAction('convert')) return;
+
+    try {
+      const sourceDraft = config.buildFinancialDraft(getValues(), documentId);
+      const convertedDraft = convertFinancialDocument(sourceDraft, target);
+      sessionStorage.setItem(`myeca_generator_conversion_${target}`, JSON.stringify(convertedDraft));
+      captureTelemetryEvent('generator_conversion_completed', {
+        generator_type: documentType,
+        target_type: target,
+      });
+      setLocation(`/documents/generator/${target}`);
+    } catch (error) {
+      toast({
+        title: "Conversion unavailable",
+        description: error instanceof Error ? error.message : "Unable to convert this document.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCaReview = () => {
+    captureTelemetryEvent('generator_ca_review_clicked', { generator_type: documentType });
+    setLocation(`/expert-consultation?source=${encodeURIComponent(documentType)}`);
   };
 
   const downloadFile = (content: string, filename: string, mimeType: string) => {
@@ -439,15 +517,25 @@ export default function DocumentGenerator() {
 
   const FormComponent = config.FormComponent;
   const currentTitle = `${config.title} Generator | MyeCA.in`;
+  const offersCaReview = ['msme-cash-flow', 'projected-balance-sheet', 'net-worth-statement'].includes(documentType);
 
   return (
     <div
       data-testid="focused-document-editor"
-      className="flex h-[100dvh] flex-col overflow-hidden bg-slate-50 font-sans text-slate-950"
+      className={`flex flex-col overflow-hidden bg-slate-50 font-sans text-slate-950 ${user ? 'h-[100dvh]' : 'h-[calc(100dvh-60px)] md:h-[calc(100dvh-74px)]'}`}
     >
       <MetaSEO 
         title={currentTitle}
-        description={`Create and download your ${config.title} online with expert-approved clauses for the Indian legal system.`}
+        description={config.description}
+        keywords={config.seo?.keywords}
+        faqPageData={config.seo?.faqs}
+        type="calculator"
+        calculatorData={{
+          type: config.title,
+          features: ["Guided Indian-market fields", "Live document preview", "Printable export after sign in"],
+          accuracy: "Prepared from user-entered information",
+          updates: "Reviewed for current document-generator requirements",
+        }}
         breadcrumbs={[
           { name: "Home", url: "/" }, 
           { name: "Registry", url: "/documents/generator" },
@@ -526,30 +614,24 @@ export default function DocumentGenerator() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="rounded-lg border-slate-200 shadow-xl">
-                <SelectItem value="pdf" className="font-medium cursor-pointer">
+                {availableExportFormats.includes('pdf') && <SelectItem value="pdf" className="font-medium cursor-pointer">
                   <div className="flex items-center space-x-2">
                     <File className="w-4 h-4 text-red-500" />
                     <span>PDF Document</span>
                   </div>
-                </SelectItem>
-                <SelectItem value="docx" className="font-medium cursor-pointer">
-                  <div className="flex items-center space-x-2">
-                    <FileSpreadsheet className="w-4 h-4 text-blue-500" />
-                    <span>Word (DOCX)</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="html" className="font-medium cursor-pointer">
+                </SelectItem>}
+                {availableExportFormats.includes('html') && <SelectItem value="html" className="font-medium cursor-pointer">
                   <div className="flex items-center space-x-2">
                     <FileCode className="w-4 h-4 text-green-500" />
                     <span>Raw HTML</span>
                   </div>
-                </SelectItem>
-                <SelectItem value="markdown" className="font-medium cursor-pointer">
+                </SelectItem>}
+                {availableExportFormats.includes('markdown') && <SelectItem value="markdown" className="font-medium cursor-pointer">
                   <div className="flex items-center space-x-2">
                     <FileText className="w-4 h-4 text-slate-500" />
                     <span>Markdown</span>
                   </div>
-                </SelectItem>
+                </SelectItem>}
               </SelectContent>
             </Select>
 
@@ -576,7 +658,7 @@ export default function DocumentGenerator() {
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              <span>Save</span>
+              <span>{user ? 'Save' : 'Sign in to Save'}</span>
             </Button>
 
             <Button
@@ -590,7 +672,7 @@ export default function DocumentGenerator() {
               ) : (
                 <Download className="w-4 h-4" />
               )}
-              <span>Export</span>
+              <span>{user ? 'Export' : 'Sign in to Export'}</span>
             </Button>
           </div>
         </div>
@@ -603,6 +685,78 @@ export default function DocumentGenerator() {
           className={`${isPreviewVisible ? 'w-full lg:w-[45%]' : 'w-full'} relative overflow-y-auto border-r border-slate-200 bg-slate-50 transition-all duration-300 ease-in-out`}
         >
           <div className="relative z-10 mx-auto max-w-4xl p-4 pb-32 sm:p-6 lg:p-8">
+            {config.complianceNotice && (
+              <Alert className="mb-4 border-amber-200 bg-amber-50 text-amber-950">
+                <ShieldCheck className="h-4 w-4" />
+                <AlertDescription className="font-semibold">{config.complianceNotice}</AlertDescription>
+              </Alert>
+            )}
+            {(config.conversionTargets?.length || config.relatedLinks?.length || offersCaReview) && (
+              <Card className="mb-4 border-blue-100 bg-blue-50/60">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Connected next steps</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-wrap gap-2">
+                  {config.conversionTargets?.map((target) => (
+                    <Button key={target.kind} type="button" variant="outline" onClick={() => handleConversion(target.kind)} className="bg-white">
+                      {target.label}<ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ))}
+                  {config.relatedLinks?.map((link) => (
+                    <Button key={link.href} type="button" variant="outline" onClick={() => setLocation(link.href)} className="bg-white">
+                      {link.label}<ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ))}
+                  {offersCaReview && (
+                    <Button type="button" variant="outline" onClick={handleCaReview} className="border-blue-200 bg-white text-blue-800">
+                      Request optional CA review<ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            {!user && config.seo && (
+              <Card className="mb-4 border-slate-200 bg-white">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Prepare this Indian document draft</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-5 text-sm text-slate-700 md:grid-cols-2">
+                  <section>
+                    <h2 className="mb-2 font-black text-slate-950">Keep these details ready</h2>
+                    <ul className="space-y-2">
+                      {config.seo.requiredInputs.map((input) => (
+                        <li key={input} className="flex gap-2">
+                          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                          <span>{input}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section>
+                    <h2 className="mb-2 font-black text-slate-950">Important limitations</h2>
+                    <ul className="space-y-2">
+                      {config.seo.limitations.map((limitation) => (
+                        <li key={limitation} className="flex gap-2">
+                          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                          <span>{limitation}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section className="md:col-span-2">
+                    <h2 className="mb-2 font-black text-slate-950">Common questions</h2>
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {config.seo.faqs.map((faq) => (
+                        <div key={faq.question} className="rounded-lg bg-slate-50 p-3">
+                          <h3 className="font-bold text-slate-950">{faq.question}</h3>
+                          <p className="mt-1 mb-0 text-slate-600">{faq.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </CardContent>
+              </Card>
+            )}
             <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <FormComponent register={register} errors={errors} control={control} watch={watch} />
