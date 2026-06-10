@@ -8,7 +8,7 @@ Secondary conversion: expert consultation for complex cases.
 
 Campaign window: 90 days from June 2026 through the main AY 2026-27 filing season.
 
-Budget: INR 200,000 monthly paid budget, split across high-intent search, retargeting, Meta retargeting, and LinkedIn/YouTube tests. Use `docs/marketing/itr-season-2026-paid-media-plan.csv` as the execution sheet.
+Budget: INR 200,000 monthly paid budget ceiling. Release an INR 25,000 Google Search pilot first, then use a 75% Search, 20% retargeting, and 5% experiments allocation only when the scale gates pass. Use `docs/marketing/itr-season-2026-paid-media-plan.csv` and `docs/marketing/itr-season-2026-paid-scale-gates.md` as the execution controls.
 
 Core message: File your ITR confidently with guided workflows, clear scope before payment, and optional CA assistance.
 
@@ -55,7 +55,8 @@ Awareness entry points:
 
 Engagement tools:
 
-- `/itr/form-selector`
+- `/which-itr-form-to-file?source=paid_search`
+- `/itr/form-selector` as the educational SEO guide
 - `/form16-parser`
 - `/calculators/income-tax`
 - `/calculators/regime-comparator`
@@ -63,9 +64,9 @@ Engagement tools:
 
 Conversion paths:
 
-- Simple filing-ready users: `/itr/form-selector`
-- Salary document users: `/form16-parser` to `/itr/form-selector`
-- Estimate users: `/calculators/income-tax` or `/calculators/regime-comparator` to `/itr/form-selector`
+- Simple filing-ready users: `/which-itr-form-to-file?source=paid_search`
+- Salary document users: `/form16-parser` to `/which-itr-form-to-file`
+- Estimate users: `/calculators/income-tax` or `/calculators/regime-comparator` to `/which-itr-form-to-file`
 - Capital-gains users: `/capital-gains-import` to `/expert-consultation?service=capital-gains`
 - Complex or notice-risk users: `/expert-consultation`
 
@@ -73,7 +74,8 @@ Conversion paths:
 
 Weeks 1-2:
 
-- Refresh one high-intent ITR page per working day before writing lower-intent posts.
+- Human-review and approve only the 12-20 routes directly supporting active ad groups before writing lower-intent posts.
+- Keep the remaining editorial queue in its existing review state; do not bulk-approve or blanket-hold it.
 - Publish short answers around filing start, Form 16, AIS mismatch, refund status, old/new regime, and form selection.
 - Add tool CTAs to every promoted page: one calculator/tool, one paid filing path, one expert-review path where the facts are complex.
 
@@ -89,14 +91,16 @@ Weeks 7-13:
 - Consolidate thin or overlapping articles into stronger hub guides.
 - Retarget visitors who used a tool but did not start paid filing.
 
+Use Search Console impressions and paid conversion data before consolidating or removing off-core content. Refresh existing tools and guides instead of building replacement pages during the season.
+
 ## Paid Amplification Rules
 
 Use paid only where the next action is obvious.
 
-- Google Search captures filing-intent users and sends them to `/itr/form-selector`, `/form16-parser`, `/calculators/income-tax`, and asset pages.
+- Google Search captures filing-intent users and sends conversion-focused traffic to `/which-itr-form-to-file?source=paid_search`.
 - Remarketing brings back blog, checklist, and tool visitors who have not started filing.
-- Meta retargeting uses checklist and deadline reminders for warm visitors.
-- LinkedIn/YouTube tests reach salaried, founder, freelancer, and professional segments with short educational explainers.
+- Experiments remain capped at 5% of the full ceiling.
+- LinkedIn/YouTube acquisition tests stay paused until at least 100 paid clients have been measured.
 
 Negative keyword themes: free-only, government login-only, refund promise, jobs, PDF-only, unrelated GST-only, and non-India queries.
 
@@ -121,7 +125,7 @@ Use `docs/marketing/itr-season-2026-lead-nurture-sequence.csv` for the channel c
 
 ## Measurement
 
-Weekly reporting uses `docs/marketing/itr-season-2026-weekly-kpi-template.csv`.
+Daily reporting uses `docs/marketing/itr-season-2026-daily-growth-ops-template.csv`. Weekly reporting uses `docs/marketing/itr-season-2026-weekly-kpi-template.csv`, including partner capacity activated, partner-sourced clients, approved campaign routes, organic impressions, earned placements, reviews, and source-level contribution margin.
 
 Track:
 

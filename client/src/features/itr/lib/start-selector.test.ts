@@ -85,6 +85,12 @@ describe("ITR start form selector mapper", () => {
         capitalGains: "short-term",
       },
       source: "unit_test",
+      attribution: {
+        source: "paid_search",
+        utmCampaign: "itr-season-2026",
+        partnerCode: "CA-DELHI-01",
+        firstTouchAt: "2026-06-01T10:00:00.000Z",
+      },
       now,
     });
 
@@ -94,6 +100,11 @@ describe("ITR start form selector mapper", () => {
       version: 1,
       flowId: written.flowId,
       source: "unit_test",
+      attribution: {
+        source: "paid_search",
+        utmCampaign: "itr-season-2026",
+        partnerCode: "CA-DELHI-01",
+      },
       answers: { capitalGains: "short-term" },
       recommendation: { form: "ITR-2" },
     });

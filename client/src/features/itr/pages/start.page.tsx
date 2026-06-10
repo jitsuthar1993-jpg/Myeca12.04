@@ -16,10 +16,12 @@ import {
   UserRound,
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { ItrDeadlineNotice } from "@/components/campaign/ItrDeadlineNotice";
 import { useAuth } from "@/components/AuthProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { captureCampaignAttribution } from "@/lib/campaign-attribution";
 import { captureTelemetryEvent } from "@/telemetry/browser";
 import {
   buildItrStartDraft,
@@ -268,6 +270,7 @@ export default function ITRStartPage() {
   const [answers, setAnswers] = useState<ItrStartSelectorAnswers>(() => readInitialAnswers());
   const params = new URLSearchParams(window.location.search);
   const conversionSource = params.get("source") || "itr_start_page";
+  const attribution = useMemo(() => captureCampaignAttribution(params), []);
   const isLegacyLoginFileSource = legacyLoginFileSources.has(conversionSource);
   const draft = useMemo(() => buildItrStartDraft(answers), [answers]);
   const recommendation = useMemo(() => recommendItrForm(draft), [draft]);
@@ -279,6 +282,21 @@ export default function ITRStartPage() {
 
     navigate(isAuthenticated ? "/dashboard" : "/auth/login?next=%2Fdashboard");
   }, [isAuthenticated, isLegacyLoginFileSource, isLoading, navigate]);
+
+  useEffect(() => {
+    if (isLegacyLoginFileSource) return;
+
+    captureTelemetryEvent("landing_view", {
+      source: conversionSource,
+      partner_code: attribution?.partnerCode,
+      utm_campaign: attribution?.utmCampaign,
+    });
+    captureTelemetryEvent("itr_selector_start", {
+      source: conversionSource,
+      partner_code: attribution?.partnerCode,
+      utm_campaign: attribution?.utmCampaign,
+    });
+  }, [attribution?.partnerCode, attribution?.utmCampaign, conversionSource, isLegacyLoginFileSource]);
 
   useEffect(() => {
     if (isLegacyLoginFileSource) return;
@@ -319,8 +337,15 @@ export default function ITRStartPage() {
     writeItrStartHandoff({
       answers,
       source: conversionSource,
+      attribution,
     });
 
+    captureTelemetryEvent("itr_selector_complete", {
+      source: conversionSource,
+      recommended_form: recommendation.form,
+      partner_code: attribution?.partnerCode,
+      utm_campaign: attribution?.utmCampaign,
+    });
     captureTelemetryEvent("itr_form_selector_continue", {
       source: conversionSource,
       recommended_form: recommendation.form,
@@ -378,6 +403,9 @@ export default function ITRStartPage() {
       </section>
 
       <main className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-5 max-w-7xl">
+          <ItrDeadlineNotice category={answers.businessOrProfession === "none" ? "salaried" : "business-profession"} />
+        </div>
         <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,0.64fr)_minmax(360px,0.36fr)] lg:items-start">
           <div className="space-y-5">
             <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">

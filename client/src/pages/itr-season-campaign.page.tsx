@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { ItrDeadlineNotice } from "@/components/campaign/ItrDeadlineNotice";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getBlogCoverImageSrc } from "@/lib/blog-cover-assets";
@@ -109,6 +110,9 @@ function CampaignHubPage() {
               <Link href="/form16-parser">
                 <Button size="lg" variant="outline">Parse Form 16</Button>
               </Link>
+            </div>
+            <div className="mt-5">
+              <ItrDeadlineNotice />
             </div>
           </div>
 

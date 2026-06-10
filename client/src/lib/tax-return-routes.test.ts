@@ -58,6 +58,12 @@ vi.mock("../../../server/data-admin.js", () => ({
     collection: (name: string) => ({
       ...makeQuery(name),
       doc: (id?: string) => makeDocRef(name, id || `${name}_${++mockState.counter}`),
+      add: async (data: Record<string, any>) => {
+        const id = `${name}_${++mockState.counter}`;
+        const records = collectionStore(name);
+        records.set(id, { ...data });
+        return makeDocRef(name, id, records);
+      },
     }),
   },
 }));
@@ -150,6 +156,12 @@ describe("tax return routes", () => {
           income: { salary: 900000, otherSources: 40000 },
           taxPaid: { tds: 65000 },
         },
+        attribution: {
+          source: "paid_search",
+          utmCampaign: "itr-season-2026",
+          partnerCode: "CA-DELHI-01",
+          firstTouchAt: "2026-06-10T06:00:00.000Z",
+        },
       }),
     });
 
@@ -161,6 +173,11 @@ describe("tax return routes", () => {
       assessmentYear: "2026-27",
       itrType: "ITR-1",
       status: "draft",
+      attribution: {
+        source: "paid_search",
+        utmCampaign: "itr-season-2026",
+        partnerCode: "CA-DELHI-01",
+      },
     });
     expect(json.recommendation.form).toBe("ITR-1");
   });
@@ -323,6 +340,15 @@ describe("tax return routes", () => {
     expect(json.taxReturn.status).toBe("ready_for_review");
     expect(json.reviewPacket.recommendation.form).toBe("ITR-1");
     expect(json.reviewPacket.summary.totalIncome).toBe(940000);
+    expect(Array.from(collectionStore("workflow_events").values())).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "service_case_created",
+          sourceType: "user_service",
+          userId: "user_1",
+        }),
+      ]),
+    );
   });
 
   it("keeps lifecycle status changes out of the owner draft update route", async () => {

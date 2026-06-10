@@ -24,6 +24,8 @@ import {
   getUserOwnedRecords,
   recordBelongsToUser,
 } from "../utils/access-control.js";
+import { recordWorkflowEvent } from "../utils/workflow-events.js";
+import { campaignAttributionSchema, normalizeCampaignAttribution } from "../../shared/campaign-attribution.js";
 
 const router = Router();
 
@@ -31,12 +33,14 @@ const createTaxReturnSchema = z.object({
   assessmentYear: z.string().trim().min(1).default("2026-27"),
   profileId: z.string().trim().min(1).nullable().optional(),
   draft: z.unknown().optional(),
+  attribution: campaignAttributionSchema.optional(),
 });
 
 const updateTaxReturnSchema = z.object({
   assessmentYear: z.string().trim().min(1).optional(),
   profileId: z.string().trim().min(1).nullable().optional(),
   draft: z.unknown().optional(),
+  attribution: campaignAttributionSchema.optional(),
 });
 
 const linkDocumentSchema = z.object({
@@ -165,6 +169,7 @@ function serializeTaxReturn(id: string, data: Record<string, any>) {
     filedAt: data.filedAt ?? null,
     createdAt: data.createdAt ?? null,
     updatedAt: data.updatedAt ?? null,
+    attribution: normalizeCampaignAttribution(data.attribution) ?? null,
   };
 }
 
@@ -270,6 +275,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       documentChecklist: getItrDocumentChecklist(draft),
       taxSummary,
       calculatedTax,
+      attribution: normalizeCampaignAttribution(data.attribution) ?? null,
       createdAt: now,
       updatedAt: now,
     };
@@ -375,6 +381,7 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
     const calculatedTax = computeItrTaxLiability(draft);
     const updateData = {
       ...(data.profileId !== undefined ? { profileId: data.profileId } : {}),
+      ...(data.attribution !== undefined ? { attribution: normalizeCampaignAttribution(data.attribution) ?? null } : {}),
       assessmentYear: draft.assessmentYear,
       itrType: recommendation.form,
       formData: JSON.stringify(secureDraftForStorage(draft)),
@@ -431,6 +438,47 @@ router.post("/:id/submit-review", authenticateToken, async (req: AuthRequest, re
     const reviewPacket = buildItrReviewPacket(draft, doc.id);
     const taxSummary = buildTaxSummary(draft);
     const calculatedTax = computeItrTaxLiability(draft);
+    let userServiceId = existing.userServiceId as string | undefined;
+    if (!userServiceId) {
+      const serviceRef = adminDb.collection("user_services").doc();
+      await serviceRef.set({
+        userId: existing.userId,
+        serviceId: "itr-filing",
+        serviceTitle: "CA ITR Filing Review",
+        serviceCategory: "Income Tax",
+        profileId: existing.profileId ?? null,
+        paymentAmount: null,
+        paymentStatus: "pending",
+        status: "pending",
+        metadata: {
+          source: "itr_filing_workspace",
+          linkedTaxReturnId: doc.id,
+          assessmentYear: existing.assessmentYear ?? draft.assessmentYear,
+          recommendedForm: recommendation.form,
+          attribution: normalizeCampaignAttribution(existing.attribution) ?? null,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      userServiceId = serviceRef.id;
+      await recordWorkflowEvent({
+        type: "service_case_created",
+        title: "ITR review service case created",
+        message: "A service case was created from the submitted ITR review packet.",
+        sourceType: "user_service",
+        sourceId: serviceRef.id,
+        caseId: serviceRef.id,
+        userId: existing.userId,
+        targetRole: "team_member",
+        actorUserId: existing.userId,
+        actorRole: "user",
+        priority: "high",
+        metadata: {
+          linkedTaxReturnId: doc.id,
+          attribution: normalizeCampaignAttribution(existing.attribution) ?? null,
+        },
+      });
+    }
     const updateData = {
       status: "ready_for_review",
       reviewStatus: "ready_for_review",
@@ -439,6 +487,7 @@ router.post("/:id/submit-review", authenticateToken, async (req: AuthRequest, re
       reviewPacket: secureReviewPacketForStorage(reviewPacket),
       taxSummary,
       calculatedTax,
+      userServiceId,
       updatedAt: new Date(),
     };
 

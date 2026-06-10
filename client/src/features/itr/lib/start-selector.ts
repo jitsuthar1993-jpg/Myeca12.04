@@ -4,6 +4,7 @@ import {
   type ItrFilingDraft,
   type ItrFormRecommendation,
 } from "@shared/itr-filing";
+import { normalizeCampaignAttribution, type CampaignAttribution } from "@shared/campaign-attribution";
 
 export const ITR_START_SELECTOR_STORAGE_KEY = "myeca:itr-start-form-selector";
 export const ITR_START_HANDOFF_VERSION = 1;
@@ -40,6 +41,7 @@ export type ItrStartHandoffPayload = {
   createdAt: number;
   expiresAt: number;
   source: string;
+  attribution?: CampaignAttribution;
   answers: ItrStartSelectorAnswers;
   draft: ItrFilingDraft;
   recommendation: ItrFormRecommendation;
@@ -243,11 +245,13 @@ function generateFlowId(now: number) {
 export function buildItrStartHandoffPayload({
   answers,
   source,
+  attribution,
   now = Date.now(),
   flowId = generateFlowId(now),
 }: {
   answers: Partial<ItrStartSelectorAnswers>;
   source: string;
+  attribution?: CampaignAttribution;
   now?: number;
   flowId?: string;
 }): ItrStartHandoffPayload {
@@ -260,6 +264,7 @@ export function buildItrStartHandoffPayload({
     createdAt: now,
     expiresAt: now + ITR_START_HANDOFF_TTL_MS,
     source,
+    ...(normalizeCampaignAttribution(attribution) ? { attribution: normalizeCampaignAttribution(attribution) } : {}),
     answers: normalizedAnswers,
     draft,
     recommendation: recommendItrForm(draft),
@@ -279,6 +284,7 @@ export function clearItrStartHandoff() {
 export function writeItrStartHandoff(input: {
   answers: Partial<ItrStartSelectorAnswers>;
   source: string;
+  attribution?: CampaignAttribution;
   now?: number;
 }): ItrStartHandoffPayload {
   const payload = buildItrStartHandoffPayload(input);
@@ -316,6 +322,7 @@ export function readItrStartHandoff({ now = Date.now() }: { now?: number } = {})
       return buildItrStartHandoffPayload({
         answers: parsed.answers,
         source: parsed.source,
+        attribution: parsed.attribution,
         now: parsed.createdAt,
         flowId: parsed.flowId || generateFlowId(parsed.createdAt),
       });

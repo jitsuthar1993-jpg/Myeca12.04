@@ -1,0 +1,2 @@
+partner_code,partner_name,partner_type,agreement_status,approved_case_types,daily_capacity,start_date,end_date,sla_hours,qa_status,owner,notes
+TBD,TBD,ca-overflow,draft,"salaried; multiple-form16",0,YYYY-MM-DD,YYYY-MM-DD,24,pending,TBD,"No taxpayer documents until agreement consent and explicit case assignment"

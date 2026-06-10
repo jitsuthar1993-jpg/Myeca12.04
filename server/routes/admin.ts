@@ -83,6 +83,8 @@ const updateConsultationRequestSchema = z.object({
 const updatePaymentLinkRequestSchema = z.object({
   status: z.enum(["requested", "link_sent", "paid", "cancelled"]).optional(),
   adminNote: optionalAdminNote,
+  netCollectedRevenue: z.number().finite().positive().optional(),
+  hasStackedDiscount: z.boolean().optional(),
   paymentLink: z.preprocess(
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.string().trim().url().max(1000).optional(),
@@ -278,6 +280,8 @@ router.patch(
           const serviceUpdates: Record<string, any> = { metadata, updatedAt: new Date() };
           if (updates.status === "link_sent") serviceUpdates.paymentStatus = "link_sent";
           if (updates.status === "paid") serviceUpdates.paymentStatus = "paid";
+          if (updates.netCollectedRevenue !== undefined) serviceUpdates.netCollectedRevenue = updates.netCollectedRevenue;
+          if (updates.hasStackedDiscount !== undefined) serviceUpdates.hasStackedDiscount = updates.hasStackedDiscount;
           if (
             updates.status === "cancelled" &&
             ["link_requested", "link_sent"].includes(service.paymentStatus)
@@ -289,9 +293,13 @@ router.patch(
       }
 
       await recordWorkflowEvent({
-        type: "payment_link_updated",
-        title: "Payment link request updated",
-        message: updates.status === "link_sent" ? "A payment link was shared for the service case." : "Payment link request was updated.",
+        type: updates.status === "paid" ? "payment_success" : "payment_link_updated",
+        title: updates.status === "paid" ? "Payment recorded" : "Payment link request updated",
+        message: updates.status === "paid"
+          ? "Payment was recorded for the service case."
+          : updates.status === "link_sent"
+            ? "A payment link was shared for the service case."
+            : "Payment link request was updated.",
         sourceType: "payment_link_request",
         sourceId: req.params.id,
         caseId: current.userServiceId ?? null,
@@ -301,7 +309,13 @@ router.patch(
         actorUserId: req.auth?.userId ?? null,
         actorRole: req.user?.role || "admin",
         priority: updates.status === "link_sent" ? "high" : "medium",
-        metadata: { status: updates.status ?? null, paymentLink: updates.paymentLink ?? null },
+        metadata: {
+          status: updates.status ?? null,
+          paymentLink: updates.paymentLink ?? null,
+          netCollectedRevenue: updates.netCollectedRevenue ?? null,
+          hasStackedDiscount: updates.hasStackedDiscount ?? null,
+          attribution: current.attribution ?? null,
+        },
       });
 
       if (updates.status === "link_sent" && current.userId) {

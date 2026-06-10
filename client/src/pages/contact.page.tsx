@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { BadgeCheck, Clock, FileText, Mail, MessageSquare, Phone, Send, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +10,8 @@ import MetaSEO from "@/components/seo/MetaSEO";
 import { getSEOConfig } from "@/config/seo.config";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { captureCampaignAttribution } from "@/lib/campaign-attribution";
+import { captureTelemetryEvent } from "@/telemetry/browser";
 
 const initialForm = {
   name: "",
@@ -26,6 +28,7 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof typeof initialForm, string>>>({});
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const attribution = useMemo(() => captureCampaignAttribution(), []);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData((current) => ({ ...current, [field]: value }));
@@ -72,7 +75,14 @@ export default function ContactPage() {
           source: "contact_page",
           formId: "contact-form",
           serviceIntent: formData.subject.trim(),
+          attribution,
         }),
+      });
+      captureTelemetryEvent("consultation_request_created", {
+        source: attribution?.partnerCode ? "partner" : "contact_page",
+        service_intent: formData.subject.trim(),
+        partner_code: attribution?.partnerCode,
+        utm_campaign: attribution?.utmCampaign,
       });
       toast({
         title: "Message sent",

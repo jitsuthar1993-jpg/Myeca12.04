@@ -26,6 +26,8 @@ import MetaSEO from "@/components/seo/MetaSEO";
 import { CONTACT } from "@/config/contact";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { captureCampaignAttribution } from "@/lib/campaign-attribution";
+import { captureTelemetryEvent } from "@/telemetry/browser";
 
 type ServiceProfile = {
   eyebrow: string;
@@ -119,6 +121,7 @@ export default function ExpertConsultationPage() {
   const [location] = useLocation();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const attribution = useMemo(() => captureCampaignAttribution(), [location]);
   const [serviceKey, setServiceKey] = useState("general");
   const [formData, setFormData] = useState({
     name: "",
@@ -182,10 +185,17 @@ export default function ExpertConsultationPage() {
         method: "POST",
         body: JSON.stringify({
           ...formData,
-          source: `expert_consultation:${serviceKey}`,
+          source: attribution?.partnerCode ? "partner" : `expert_consultation:${serviceKey}`,
           formId: "expert-consultation-form",
           serviceIntent: serviceKey,
+          attribution,
         }),
+      });
+      captureTelemetryEvent("consultation_request_created", {
+        source: attribution?.partnerCode ? "partner" : "expert_consultation",
+        service_intent: serviceKey,
+        partner_code: attribution?.partnerCode,
+        utm_campaign: attribution?.utmCampaign,
       });
       toast({
         title: "Callback request received",

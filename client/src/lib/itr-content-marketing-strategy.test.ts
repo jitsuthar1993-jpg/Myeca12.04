@@ -5,6 +5,9 @@ const strategyPath = "docs/marketing/itr-season-2026-paid-content-funnel.md";
 const paidMediaPath = "docs/marketing/itr-season-2026-paid-media-plan.csv";
 const nurturePath = "docs/marketing/itr-season-2026-lead-nurture-sequence.csv";
 const kpiPath = "docs/marketing/itr-season-2026-weekly-kpi-template.csv";
+const dailyOpsPath = "docs/marketing/itr-season-2026-daily-growth-ops-template.csv";
+const partnerCapacityPath = "docs/marketing/itr-season-2026-partner-capacity-roster.csv";
+const scaleGatesPath = "docs/marketing/itr-season-2026-paid-scale-gates.md";
 const campaignPath = "docs/marketing/itr-season-2026-content-growth-campaign.md";
 
 function read(path: string) {
@@ -62,7 +65,7 @@ function assertCampaignUtm(url: string, label: string) {
 
 describe("ITR content marketing strategy implementation", () => {
   it("ships the strategy runbook and campaign execution files", () => {
-    [strategyPath, paidMediaPath, nurturePath, kpiPath].forEach((path) => {
+    [strategyPath, paidMediaPath, nurturePath, kpiPath, dailyOpsPath, partnerCapacityPath, scaleGatesPath].forEach((path) => {
       expect(existsSync(path), path).toBe(true);
     });
   });
@@ -97,10 +100,9 @@ describe("ITR content marketing strategy implementation", () => {
   it("allocates the INR 200,000 paid media budget across the approved launch channels", () => {
     const rows = parseCsv(read(paidMediaPath));
     const expectedBudgets = new Map([
-      ["Google Search", 100000],
-      ["Remarketing", 50000],
-      ["Meta Retargeting", 30000],
-      ["LinkedIn/YouTube Tests", 20000],
+      ["Google Search", 150000],
+      ["Retargeting", 40000],
+      ["Experiments", 10000],
     ]);
 
     expect(rows).toHaveLength(expectedBudgets.size);
@@ -108,10 +110,55 @@ describe("ITR content marketing strategy implementation", () => {
 
     rows.forEach((row) => {
       expect(Number(row.monthly_budget_inr), row.channel).toBe(expectedBudgets.get(row.channel));
-      expect(row.primary_conversion, row.channel).toBe("paid_filing_start");
-      expect(row.guardrail, row.channel).toMatch(/negative keywords|retarget|no refund guarantees/i);
+      expect(row.primary_conversion, row.channel).toBe("payment_success");
+      expect(row.guardrail, row.channel).toMatch(/negative keywords|retarget|pilot|30 paid clients/i);
       assertCampaignUtm(row.utm_url, row.channel);
     });
+  });
+
+  it("defines pilot release gates and allowable CPA economics", () => {
+    const gates = read(scaleGatesPath);
+
+    [
+      "INR 25,000 pilot",
+      "30 reconciled payments",
+      "95% attribution accuracy",
+      "1.5x forecast demand",
+      "SLA breach rate below 5%",
+      "refund and cancellation rate below 10%",
+      "20% contribution-margin reserve",
+    ].forEach((phrase) => expect(gates.toLowerCase()).toContain(phrase.toLowerCase()));
+  });
+
+  it("ships daily growth operations and seasonal partner capacity templates", () => {
+    const dailyHeader = read(dailyOpsPath).split(/\r?\n/)[0];
+    const capacityHeader = read(partnerCapacityPath).split(/\r?\n/)[0];
+
+    [
+      "spend_inr",
+      "clicks",
+      "selector_completions",
+      "checkout_starts",
+      "payments",
+      "paid_cpa_inr",
+      "revenue_inr",
+      "aov_inr",
+      "available_seven_day_capacity",
+      "unassigned_backlog",
+      "sla_breaches",
+      "cancellations",
+      "completed_filings",
+    ].forEach((column) => expect(dailyHeader).toContain(column));
+
+    [
+      "partner_code",
+      "partner_type",
+      "agreement_status",
+      "approved_case_types",
+      "daily_capacity",
+      "sla_hours",
+      "qa_status",
+    ].forEach((column) => expect(capacityHeader).toContain(column));
   });
 
   it("defines the five-touch lead nurture path from checklist/tool usage to paid filing", () => {
@@ -160,6 +207,9 @@ describe("ITR content marketing strategy implementation", () => {
     expect(campaign).toContain(paidMediaPath);
     expect(campaign).toContain(nurturePath);
     expect(campaign).toContain(kpiPath);
-    expect(campaign).toContain("paid_filing_start");
+    expect(campaign).toContain(dailyOpsPath);
+    expect(campaign).toContain(partnerCapacityPath);
+    expect(campaign).toContain(scaleGatesPath);
+    expect(campaign).toContain("payment_success");
   });
 });

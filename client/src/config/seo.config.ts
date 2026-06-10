@@ -483,6 +483,13 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     type: 'website',
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'About Us', url: '/about' }]
   },
+  '/partners': {
+    title: 'MyeCA ITR Fulfillment and Employer Partners',
+    description: 'Partner with MyeCA for seasonal CA overflow fulfillment or tracked employer and HR ITR distribution with capacity, consent, SLA, and QA controls.',
+    keywords: ['CA overflow partnership', 'ITR filing partner', 'employee ITR filing'],
+    type: 'service',
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Partners', url: '/partners' }]
+  },
   '/trust': {
     title: 'Trust & Security | MyeCA.in Document Handling',
     description: 'Review how MyeCA.in handles tax documents, pricing scope, professional-review boundaries, privacy, and security expectations before you start filing.',

@@ -12,6 +12,7 @@ import { notifyLeadAutomation } from "../services/lead-automation.js";
 import { createReminder, listReminders } from "../utils/reminders.js";
 import { listWorkflowEvents, recordWorkflowEvent } from "../utils/workflow-events.js";
 import { notifyAdmins, notifyRole, notifyUser } from "../utils/workflow-notifications.js";
+import { campaignAttributionSchema, normalizeCampaignAttribution } from "../../shared/campaign-attribution.js";
 
 const router = Router();
 const updateProfileSchema = z.object({
@@ -44,6 +45,7 @@ const createUserServiceSchema = z.object({
       .optional(),
     assistanceLevel: z.enum(["guided", "ca-assisted", "not-sure"]).optional(),
     ctaVariant: z.string().trim().max(120).optional(),
+    attribution: campaignAttributionSchema.optional(),
   }).strict().optional(),
 }).strict();
 
@@ -66,6 +68,7 @@ const consultationRequestSchema = z.object({
   source: z.string().trim().max(120).optional(),
   formId: z.string().trim().max(120).optional(),
   serviceIntent: z.string().trim().max(160).optional(),
+  attribution: campaignAttributionSchema.optional(),
 });
 
 const paymentLinkRequestSchema = z.object({
@@ -83,6 +86,7 @@ const itrDraftSchema = z.object({
   estimateSummary: z.record(z.any()).optional(),
   documentChecklist: z.array(z.record(z.any())).optional(),
   workspaceState: z.record(z.any()).optional(),
+  attribution: campaignAttributionSchema.optional(),
 }).strict();
 
 const submitItrReviewSchema = z.object({
@@ -386,6 +390,7 @@ router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrRevie
         status: "pending",
         metadata: {
           source: "itr_filing_workspace",
+          ...(draftData.attribution ? { attribution: normalizeCampaignAttribution(draftData.attribution) } : {}),
           linkedTaxReturnId: draft.id,
           recommendedForm: draftData.recommendedForm || null,
           assessmentYear: draftData.assessmentYear || "2026-27",
@@ -402,6 +407,7 @@ router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrRevie
         metadata: {
           ...(current.metadata || {}),
           source: "itr_filing_workspace",
+          ...(draftData.attribution ? { attribution: normalizeCampaignAttribution(draftData.attribution) } : {}),
           linkedTaxReturnId: draft.id,
           recommendedForm: draftData.recommendedForm || null,
           assessmentYear: draftData.assessmentYear || "2026-27",
@@ -537,7 +543,12 @@ router.post("/user-services", requireAnyAuth, validateRequest(createUserServiceS
       paymentStatus: "pending",
       assignedCaId: user.assignedCaId || null,
       status: "pending",
-      metadata: metadata || {},
+      metadata: metadata
+        ? {
+            ...metadata,
+            ...(metadata.attribution ? { attribution: normalizeCampaignAttribution(metadata.attribution) } : {}),
+          }
+        : {},
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -562,6 +573,24 @@ router.post("/user-services", requireAnyAuth, validateRequest(createUserServiceS
         metadata: {
           source: metadata?.source || "user_services",
           formId: metadata?.formId || null,
+          serviceIntent: metadata?.serviceIntent || serviceId,
+        },
+      })),
+      runServiceSideEffect("record service case creation", () => recordWorkflowEvent({
+        type: "service_case_created",
+        title: "Service case created",
+        message: `${savedService.serviceTitle || "A service case"} was created.`,
+        sourceType: "user_service",
+        sourceId: docRef.id,
+        caseId: docRef.id,
+        userId: user.id,
+        targetRole: savedService.assignedCaId ? "ca" : "team_member",
+        targetUserId: savedService.assignedCaId || null,
+        actorUserId: user.id,
+        actorRole: user.role || "user",
+        priority: "medium",
+        metadata: {
+          attribution: savedService.metadata?.attribution || null,
           serviceIntent: metadata?.serviceIntent || serviceId,
         },
       })),
@@ -676,6 +705,7 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
       turnover: request.turnover || null,
       preferredTime: request.preferredTime || "Call now",
       source: request.source || "expert_consultation",
+      ...(request.attribution ? { attribution: normalizeCampaignAttribution(request.attribution) } : {}),
       userId: req.user?.id || null,
       status: "new",
       createdAt: new Date(),
@@ -698,6 +728,7 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
         source: newRequest.source,
         formId: request.formId || null,
         serviceIntent: request.serviceIntent || request.service,
+        attribution: newRequest.attribution || null,
       },
     });
     await createReminder({
@@ -711,6 +742,7 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
         source: newRequest.source,
         formId: request.formId || null,
         serviceIntent: request.serviceIntent || request.service,
+        attribution: newRequest.attribution || null,
       },
     });
     await notifyRole("team_member", {
@@ -748,6 +780,7 @@ router.post("/payments/request-link", requireAnyAuth, validateRequest(paymentLin
       userServiceId: req.body.userServiceId,
       serviceTitle: serviceData.serviceTitle || serviceData.serviceId || "Service",
       paymentAmount: serviceData.paymentAmount ?? null,
+      attribution: normalizeCampaignAttribution(serviceData.metadata?.attribution) ?? null,
       status: "requested",
       note: req.body.note || null,
       createdAt: new Date(),

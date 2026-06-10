@@ -48,6 +48,7 @@ import {
 } from "@/features/itr/lib/start-selector";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
+import type { CampaignAttribution } from "@shared/campaign-attribution";
 import {
   ITR_REVIEW_STATUSES,
   buildItrReviewPacket,
@@ -143,6 +144,7 @@ type DocumentsResponse = {
 
 type CreateDraftInput = {
   draft?: ItrFilingDraft;
+  attribution?: CampaignAttribution;
   clearHandoff?: boolean;
 };
 
@@ -343,6 +345,7 @@ export default function ITRFilingPage() {
         body: JSON.stringify({
           assessmentYear: draftToCreate.assessmentYear,
           draft: draftToCreate,
+          attribution: input?.attribution,
         }),
       });
       return response.json() as Promise<{ taxReturn: TaxReturnRecord }>;
@@ -364,7 +367,7 @@ export default function ITRFilingPage() {
       if (!activeReturn?.id || !selectorHandoff) throw new Error("No saved selector handoff to apply.");
       const response = await apiRequest(`/api/tax-returns/${activeReturn.id}`, {
         method: "PATCH",
-        body: JSON.stringify({ draft: selectorHandoff.draft }),
+        body: JSON.stringify({ draft: selectorHandoff.draft, attribution: selectorHandoff.attribution }),
       });
       return response.json() as Promise<{ taxReturn: TaxReturnRecord }>;
     },
@@ -383,7 +386,11 @@ export default function ITRFilingPage() {
 
     if (autoCreateHandoffRef.current === selectorHandoff.flowId) return;
     autoCreateHandoffRef.current = selectorHandoff.flowId;
-    createDraftMutation.mutate({ draft: selectorHandoff.draft, clearHandoff: true });
+    createDraftMutation.mutate({
+      draft: selectorHandoff.draft,
+      attribution: selectorHandoff.attribution,
+      clearHandoff: true,
+    });
   }, [
     createDraftMutation,
     handoffChecked,

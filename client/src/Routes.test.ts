@@ -15,4 +15,11 @@ describe("account route ownership", () => {
     expect(source).not.toContain('import("@/pages/settings.page")');
     expect(source).not.toContain('import("@/pages/settings/account.page")');
   });
+
+  it("publishes the seasonal partner intake route", () => {
+    const source = readFileSync(resolve(__dirname, "Routes.tsx"), "utf8");
+
+    expect(source).toContain('const PartnersPage = lazyWithRetry(() => import("@/pages/partners.page"))');
+    expect(source).toContain('<Route path="/partners" component={PartnersPage} />');
+  });
 });

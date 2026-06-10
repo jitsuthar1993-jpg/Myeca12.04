@@ -903,6 +903,7 @@ const ROUTE_AUDIENCE_OVERRIDES: Record<string, string> = {
   "/legal/refund-policy": "Customers checking refund eligibility, exclusions, evidence, and request steps for a MyeCA payment",
   "/legal/terms-of-service": "Customers reviewing account, payment, service-scope, third-party portal, and dispute terms",
   "/mobile-app": "Taxpayers who want to manage filing records, tasks, and service progress from a mobile device",
+  "/partners": "CA firms, independent tax professionals, employers, and HR teams evaluating a seasonal ITR partnership",
   "/pricing": "Individuals and businesses comparing MyeCA deliverables, exclusions, and fees before purchasing support",
   "/services": "Individuals, founders, and businesses choosing tax, GST, registration, or recurring compliance support",
   "/tax-assistant": "Taxpayers forming a complete tax question and deciding when an answer needs professional review",
@@ -1255,6 +1256,14 @@ const AUTHORED_STATIC_ROUTE_PROFILES: Record<string, AuthoredStaticRouteProfile>
       "State the decision or problem, relevant period, deadline, and the facts already known. A focused question helps the expert identify the rules and records that matter.",
       "Prepare the return, notice, portal extract, computation, agreements, or transaction records that support the question. Flag missing documents and unresolved mismatches before the session.",
       "Confirm whether the engagement covers advice only, document review, a filing, or follow-up work. Keep the written conclusion, material assumptions, identified limitations, and next action with the case file.",
+    ],
+  ),
+  "/partners": authoredStaticRouteProfile(
+    ["Choose the partner path", "Confirm capacity and controls", "Protect taxpayer records"],
+    [
+      "Use the CA overflow path when a vetted professional or firm can accept defined ITR case types under MyeCA's existing assignment workflow. The initial scope may cover simple salaried returns, multiple Form 16 or AIS reconciliation, or specifically approved business and capital-gains cases. Use the employer and HR path when an organisation wants to distribute a tracked filing-readiness route to employees without becoming part of the filing engagement.",
+      "Before activation, record approved case types, daily capacity, available seven-day capacity, agreement status, service-level expectations, review ownership, and quality status. Capacity should be released gradually and reviewed against unassigned backlog, forecast demand, and SLA performance. Pause new assignments when capacity coverage falls short, SLA breaches rise, or quality review identifies unresolved work. The existing MyeCA assignment workflow remains the operating record for each accepted case.",
+      "Do not exchange taxpayer documents through the initial partner form, employer, or informal messaging channel. Share records only after the taxpayer consents, the partner agreement is active, and the case is explicitly assigned inside the service workflow. Limit access to the assigned scope, retain the review trail, and remove access when the assignment ends. Employers may distribute the filing route and receive aggregate programme updates, but they should not receive an employee's tax records or return details.",
     ],
   ),
   "/experts": authoredStaticRouteProfile(

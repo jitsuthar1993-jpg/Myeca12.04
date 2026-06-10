@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { AlertCircle, CheckCircle2, Chrome, Loader2, Lock, Mail, Send, UserRound } from "lucide-react";
 import { AuthPageShell } from "@/components/auth/AuthPageShell";
@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
 import { getAuthRedirectPath } from "@/lib/auth-confirmation";
+import { captureCampaignAttribution } from "@/lib/campaign-attribution";
+import { normalizeReferralCode, normalizeReferralService } from "@shared/campaign-attribution";
 
 export default function RegisterPage() {
   const { register, loginWithGoogle, resendSignupConfirmation } = useAuth();
@@ -14,6 +16,9 @@ export default function RegisterPage() {
   const params = new URLSearchParams(window.location.search);
   const redirectUrl = getAuthRedirectPath(params.get("redirect_url") || params.get("next"));
   const signInUrl = `/auth/login?redirect_url=${encodeURIComponent(redirectUrl)}`;
+  const campaignAttribution = useMemo(() => captureCampaignAttribution(params), []);
+  const referralCode = normalizeReferralCode(params.get("ref"));
+  const referralService = normalizeReferralService(params.get("service"));
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,7 +48,11 @@ export default function RegisterPage() {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         phoneNumber: null,
-      }, redirectUrl);
+      }, redirectUrl, {
+        campaignAttribution,
+        referralCode,
+        referralService,
+      });
       if (result.needsEmailConfirmation) {
         setPassword("");
         setConfirmPassword("");

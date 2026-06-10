@@ -1,0 +1,2 @@
+date,campaign_window,spend_inr,clicks,landing_views,selector_starts,selector_completions,checkout_starts,payments,paid_cpa_inr,revenue_inr,aov_inr,attribution_accuracy_percent,available_seven_day_capacity,forecast_seven_day_demand,unassigned_backlog,sla_breaches,cancellations,completed_filings,scale_pause_decision,owner_notes
+YYYY-MM-DD,June 10-16 pilot,0,0,0,0,0,0,0,0,0,0,0%,0,0,0,0,0,0,hold,TBD

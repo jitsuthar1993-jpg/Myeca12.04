@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { buildPaymentLinkRequestPayload, serviceNeedsPayment } from '@/lib/service-workflow';
 import { invalidatePaymentCaches } from '@/lib/workspace-cache';
+import { captureTelemetryEvent } from '@/telemetry/browser';
 
 type UserService = {
   id: string;
@@ -53,8 +54,16 @@ export default function PaymentsPage() {
       });
       return response.json();
     },
-    onSuccess: async () => {
+    onSuccess: async (_data, userServiceId) => {
       await invalidatePaymentCaches(queryClient);
+      const service = services.find((item) => item.id === userServiceId);
+      captureTelemetryEvent('checkout_started', {
+        service_case_id: userServiceId,
+        value: typeof service?.paymentAmount === 'number' ? service.paymentAmount : undefined,
+        currency: 'INR',
+        source: service?.metadata?.attribution?.source || service?.metadata?.source,
+        partner_code: service?.metadata?.attribution?.partnerCode,
+      });
       toast({ title: 'Payment link requested', description: 'The team will share a secure payment link after review.' });
     },
     onError: (error: any) => {

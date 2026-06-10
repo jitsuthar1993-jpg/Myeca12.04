@@ -163,21 +163,6 @@ export default function ReferralsPage() {
       }
    });
 
-   // Redeem reward mutation
-   const redeemRewardMutation = useMutation({
-      mutationFn: (rewardId: number) => apiRequest(`/api/referrals/rewards/${rewardId}/redeem`, {
-         method: "POST"
-      }),
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["/api/referrals/rewards"] });
-         queryClient.invalidateQueries({ queryKey: ["/api/referrals/stats"] });
-         toast({
-            title: "Reward redeemed successfully",
-            description: "Your reward has been processed."
-         });
-      }
-   });
-
    // Bulk import mutation
    const bulkImportMutation = useMutation({
       mutationFn: async (formData: FormData) => {
@@ -267,8 +252,8 @@ export default function ReferralsPage() {
       <Layout>
          <SEO
             title="Referral Program | MyeCA.in"
-            description="Earn rewards by referring clients to our tax and business services"
-            keywords="referral program, rewards, tax referrals, business referrals"
+            description="Track post-completion account credit from eligible client referrals."
+            keywords="referral program, account credit, tax referrals, business referrals"
          />
 
          <div className="flex flex-col lg:flex-row gap-12 items-start bg-slate-50/50 rounded-[48px] p-2">
@@ -286,7 +271,7 @@ export default function ReferralsPage() {
                            </div>
                         </div>
                         <div className="mt-5 text-center">
-                           <h2 className="text-xl font-black text-slate-900 tracking-tight">Earning Hub</h2>
+                           <h2 className="text-xl font-black text-slate-900 tracking-tight">Account Credit Hub</h2>
                            <Badge variant="outline" className="mt-2 bg-emerald-50 text-emerald-700 border-none font-black type-meta uppercase tracking-widest px-2.5 py-0.5">
                               ₹{stats.availableRewards} Available
                            </Badge>
@@ -297,7 +282,7 @@ export default function ReferralsPage() {
                         {[
                            { label: "Referrals", value: stats.totalReferrals, icon: Users, color: "blue" },
                            { label: "Converted", value: stats.successfulReferrals, icon: TrendingUp, color: "emerald" },
-                           { label: "Earnings", value: `₹${stats.totalRewards}`, icon: Coins, color: "amber" },
+                           { label: "Account Credit", value: `₹${stats.totalRewards}`, icon: Coins, color: "amber" },
                            { label: "Rank", value: "#04", icon: Trophy, color: "indigo" }
                         ].map((stat, i) => (
                            <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
@@ -352,9 +337,9 @@ export default function ReferralsPage() {
                         <div className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
                         <span className="type-meta font-black uppercase tracking-[0.2em] text-indigo-600">Referral Management</span>
                      </div>
-                     <h1 className="text-4xl font-black tracking-tight text-slate-900">Earning Program</h1>
+                     <h1 className="text-4xl font-black tracking-tight text-slate-900">Referral Account Credit</h1>
                      <p className="text-slate-500 max-w-2xl text-base font-medium leading-relaxed">
-                        Coordinate client referrals, track conversion yields, and request earned rewards through the payout workflow.
+                        Coordinate client referrals and track post-completion account credit capped at 10% of net collected revenue.
                      </p>
                   </div>
                   <div className="flex gap-4">
@@ -378,7 +363,7 @@ export default function ReferralsPage() {
                <Tabs defaultValue="referrals" className="space-y-10">
                   <TabsList className="h-16 p-2 bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-x-auto no-scrollbar justify-start sm:justify-center">
                      <TabsTrigger value="referrals" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Active Queue</TabsTrigger>
-                     <TabsTrigger value="rewards" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Reward Vault</TabsTrigger>
+                     <TabsTrigger value="rewards" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Credit Ledger</TabsTrigger>
                      <TabsTrigger value="leaderboard" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Leaderboard</TabsTrigger>
                      <TabsTrigger value="bulk-import" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Batch Import</TabsTrigger>
                      <TabsTrigger value="analytics" className="rounded-2xl px-8 h-full font-black type-meta uppercase tracking-widest data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Performance Analytics</TabsTrigger>
@@ -454,38 +439,38 @@ export default function ReferralsPage() {
                            <div className="h-16 w-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6">
                               <Coins className="h-8 w-8" />
                            </div>
-                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Liquid Rewards</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Available Account Credit</p>
                            <h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{stats.availableRewards}</h4>
-                           <Button className="mt-8 w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black type-meta uppercase tracking-widest">Redeem to Bank</Button>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">No cash payout or discount stacking</p>
                         </Card>
                         <Card className="border-none shadow-sm rounded-[40px] bg-white p-10 flex flex-col items-center text-center">
                            <div className="h-16 w-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
                               <Gift className="h-8 w-8" />
                            </div>
-                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Total Minted</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Total Account Credit</p>
                            <h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{stats.totalRewards}</h4>
-                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">Lifetime Yield</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">Eligible completed services</p>
                         </Card>
                         <Card className="border-none shadow-sm rounded-[40px] bg-white p-10 flex flex-col items-center text-center">
                            <div className="h-16 w-16 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
                               <Trophy className="h-8 w-8" />
                            </div>
-                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Rewards Claimed</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-1">Credit Used</p>
                            <h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{stats.redeemedRewards}</h4>
-                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">Verified Payouts</p>
+                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mt-4">Recorded account usage</p>
                         </Card>
                      </div>
 
                      <Card className="border-none shadow-sm rounded-[48px] overflow-hidden bg-white border border-slate-100/50">
                         <CardHeader className="p-12 border-b border-slate-50">
-                           <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Reward Ledger</CardTitle>
-                           <CardDescription className="text-base font-medium text-slate-500">Track and liquidate your individual earning units.</CardDescription>
+                           <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">Account Credit Ledger</CardTitle>
+                           <CardDescription className="text-base font-medium text-slate-500">Track credit created after eligible referred services are paid and completed.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-0">
                            {rewards.length === 0 ? (
                               <div className="py-32 text-center bg-slate-50/20">
                                  <Coins className="h-16 w-16 text-slate-100 mx-auto mb-6" />
-                                 <p className="text-base font-black text-slate-400 uppercase tracking-widest">No individual rewards found</p>
+                                 <p className="text-base font-black text-slate-400 uppercase tracking-widest">No account credit found</p>
                               </div>
                            ) : (
                               <div className="divide-y divide-slate-50">
@@ -502,11 +487,7 @@ export default function ReferralsPage() {
                                           </div>
                                        </div>
                                        <div>
-                                          {reward.status === "available" ? (
-                                             <Button size="sm" onClick={() => redeemRewardMutation.mutate(reward.id)} className="h-11 px-8 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black type-meta uppercase tracking-widest">Redeem</Button>
-                                          ) : (
-                                             <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black type-meta uppercase tracking-widest">{reward.status}</Badge>
-                                          )}
+                                          <Badge variant="outline" className="h-10 px-6 rounded-2xl border-slate-100 font-black type-meta uppercase tracking-widest">{reward.status}</Badge>
                                        </div>
                                     </div>
                                  ))}
@@ -542,7 +523,7 @@ export default function ReferralsPage() {
                                     </div>
                                     <div className="text-right">
                                        <p className={cn("text-2xl font-black tracking-tighter", index === 0 ? "text-white" : "text-emerald-600")}>₹{leader.totalRewards}</p>
-                                       <p className={cn("type-meta font-black uppercase tracking-widest", index === 0 ? "text-indigo-100" : "text-slate-400")}>Total Earnings</p>
+                                       <p className={cn("type-meta font-black uppercase tracking-widest", index === 0 ? "text-indigo-100" : "text-slate-400")}>Total Account Credit</p>
                                     </div>
                                  </div>
                               ))}
@@ -623,7 +604,7 @@ export default function ReferralsPage() {
                                     </div>
                                     <div>
                                        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Conversion Funnel</h3>
-                                       <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Outreach to Liquid Reward lifecycle</p>
+                                       <p className="type-meta font-black text-slate-400 uppercase tracking-widest">Outreach to completed-service account credit</p>
                                     </div>
                                  </div>
                                  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

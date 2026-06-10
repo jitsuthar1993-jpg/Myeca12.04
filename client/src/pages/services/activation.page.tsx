@@ -23,12 +23,15 @@ import { getServiceById } from "@/data/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { invalidateWorkspaceCaseCaches } from "@/lib/workspace-cache";
+import { captureCampaignAttribution } from "@/lib/campaign-attribution";
+import { captureTelemetryEvent } from "@/telemetry/browser";
 
 export default function ActivationPage() {
   const [, params] = useRoute("/services/activate/:serviceId") as [boolean, { serviceId?: string } | null];
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const attribution = useMemo(() => captureCampaignAttribution(), []);
   
   const service = useMemo(() => {
     if (!params?.serviceId) return null;
@@ -75,6 +78,7 @@ export default function ActivationPage() {
             serviceIntent: service.id,
             requestedAt,
             originalServicePath: `/services/activate/${service.id}`,
+            attribution,
           }
         })
       });
@@ -84,6 +88,12 @@ export default function ActivationPage() {
       if (data?.id) {
         setCreatedServiceId(data.id);
         setActivationReference(`MyeCA-${data.id.slice(0, 10).toUpperCase()}`);
+        captureTelemetryEvent("service_case_created", {
+          service_case_id: data.id,
+          service_id: service.id,
+          source: attribution?.source || "service_activation",
+          partner_code: attribution?.partnerCode,
+        });
       }
       await invalidateWorkspaceCaseCaches(queryClient, data?.id);
       setCurrentStep(totalSteps - 1); // Go to success step

@@ -624,6 +624,12 @@ describe("user service routes", () => {
         serviceIntent: "gst-returns",
         preferredTime: "Tomorrow morning",
         message: "Need support with GST return filing.",
+        attribution: {
+          source: "partner",
+          partnerCode: "CA-DELHI-01",
+          utmCampaign: "itr-season-2026",
+          firstTouchAt: "2026-06-10T06:00:00.000Z",
+        },
       }),
     });
 
@@ -637,6 +643,11 @@ describe("user service routes", () => {
       formId: "expert-consultation-form",
       serviceIntent: "gst-returns",
       preferredTime: "Tomorrow morning",
+      attribution: {
+        source: "partner",
+        partnerCode: "CA-DELHI-01",
+        utmCampaign: "itr-season-2026",
+      },
     });
     expect(readCollection("workflow_events")).toEqual(
       expect.arrayContaining([
@@ -755,7 +766,13 @@ describe("user service routes", () => {
       serviceCategory: "Tax Notice",
       paymentAmount: 2500,
       paymentStatus: "pending",
-      metadata: {},
+      metadata: {
+        attribution: {
+          source: "paid_search",
+          utmCampaign: "itr-season-2026",
+          firstTouchAt: "2026-06-10T06:00:00.000Z",
+        },
+      },
     });
 
     const { response, json } = await request("/api/payments/request-link", {
@@ -774,6 +791,10 @@ describe("user service routes", () => {
       serviceTitle: "Notice Compliance",
       paymentAmount: 2500,
       status: "requested",
+      attribution: {
+        source: "paid_search",
+        utmCampaign: "itr-season-2026",
+      },
     });
     expect(collectionStore("user_services").get("service_1")).toMatchObject({
       paymentStatus: "link_requested",
@@ -1034,6 +1055,13 @@ describe("ITR draft and handoff routes", () => {
       { id: "form16-form16a", title: "Form 16 / Form 16A", uploaded: true },
       { id: "capital-gains-reports", title: "Capital gains reports", uploaded: false },
     ],
+    attribution: {
+      source: "paid_search",
+      utmSource: "google",
+      utmCampaign: "itr-season-2026",
+      partnerCode: "CA-MUMBAI-02",
+      firstTouchAt: "2026-06-10T06:00:00.000Z",
+    },
   };
 
   it("saves and reloads a private MY ITR draft for the signed-in user", async () => {
@@ -1137,6 +1165,12 @@ describe("ITR draft and handoff routes", () => {
       source: "itr_filing_workspace",
       userNote: "Please review before filing.",
       linkedTaxReturnId: submitted.json.taxReturn.id,
+      attribution: {
+        source: "paid_search",
+        utmSource: "google",
+        utmCampaign: "itr-season-2026",
+        partnerCode: "CA-MUMBAI-02",
+      },
     });
     expect(collectionStore("tax_returns").get(submitted.json.taxReturn.id)).toMatchObject({
       userServiceId: submitted.json.service.id,
@@ -1337,6 +1371,43 @@ describe("admin request routes", () => {
       },
     });
     expect(readCollection("audit_logs")).toHaveLength(1);
+  });
+
+  it("records server-side referral economics when an admin confirms payment", async () => {
+    seed("payment_link_requests", "pay_1", {
+      userId: "user_1",
+      userServiceId: "service_1",
+      serviceTitle: "ITR Filing",
+      paymentAmount: 2500,
+      status: "link_sent",
+      createdAt: new Date("2026-05-15T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-15T08:00:00.000Z"),
+    });
+    seed("user_services", "service_1", {
+      userId: "user_1",
+      serviceTitle: "ITR Filing",
+      paymentStatus: "link_sent",
+      metadata: {},
+    });
+
+    const updated = await request("/api/admin/requests/payment-links/pay_1", {
+      method: "PATCH",
+      body: JSON.stringify({
+        status: "paid",
+        netCollectedRevenue: 2100,
+        hasStackedDiscount: false,
+      }),
+    });
+
+    expect(updated.response.status).toBe(200);
+    expect(collectionStore("user_services").get("service_1")).toMatchObject({
+      paymentStatus: "paid",
+      netCollectedRevenue: 2100,
+      hasStackedDiscount: false,
+    });
+    expect(readCollection("workflow_events")).toEqual(
+      expect.arrayContaining([expect.objectContaining({ type: "payment_success", caseId: "service_1" })]),
+    );
   });
 
   it("resets linked service payment status when a sent payment link is cancelled", async () => {

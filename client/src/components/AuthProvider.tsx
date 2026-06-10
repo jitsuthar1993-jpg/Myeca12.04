@@ -3,6 +3,12 @@ import { type User as SupabaseUser } from "@supabase/supabase-js";
 import { type User as AppUser } from "@shared/schema";
 import { normalizeAppRole, type AppRole } from "@shared/app-roles";
 import {
+  normalizeCampaignAttribution,
+  normalizeReferralCode,
+  normalizeReferralService,
+  type CampaignAttribution,
+} from "@shared/campaign-attribution";
+import {
   createTemporaryAppUser,
   getTemporaryTestUserByEmail,
   TEMPORARY_TEST_AUTH_STORAGE_KEY,
@@ -25,13 +31,25 @@ import { allowLocalAuthFallbacks } from "@/utils/runtime-env";
 
 type LogoutReason = "manual" | "timeout" | "session_expired";
 
+type SignupTrackingMetadata = {
+  campaignAttribution?: CampaignAttribution;
+  referralCode?: string;
+  referralService?: string;
+};
+
 interface AuthContextType {
   user: AppUser | null;
   authUser: SupabaseUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<AppUser>;
-  register: (email: string, password: string, userData: Partial<AppUser>, redirectPath?: string | null) => Promise<{ needsEmailConfirmation: boolean }>;
+  register: (
+    email: string,
+    password: string,
+    userData: Partial<AppUser>,
+    redirectPath?: string | null,
+    tracking?: SignupTrackingMetadata,
+  ) => Promise<{ needsEmailConfirmation: boolean }>;
   resendSignupConfirmation: (email: string, redirectPath?: string | null) => Promise<void>;
   loginWithGoogle: (redirectPath?: string | null) => Promise<void>;
   logout: (reason?: LogoutReason) => Promise<void>;
@@ -362,7 +380,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, userData: Partial<AppUser>, redirectPath?: string | null) => {
+  const register = async (
+    email: string,
+    password: string,
+    userData: Partial<AppUser>,
+    redirectPath?: string | null,
+    tracking?: SignupTrackingMetadata,
+  ) => {
     clearTemporaryAuthState();
     clearAuthToken();
     setAuthUser(null);
@@ -384,6 +408,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const supabase = await getSupabaseClient();
       const redirectTo = buildSignupConfirmationRedirectUrl(redirectPath);
+      const campaignAttribution = normalizeCampaignAttribution(tracking?.campaignAttribution);
+      const referralCode = normalizeReferralCode(tracking?.referralCode);
+      const referralService = normalizeReferralService(tracking?.referralService);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -393,6 +420,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             firstName: userData.firstName,
             lastName: userData.lastName,
             phoneNumber: userData.phoneNumber,
+            ...(campaignAttribution ? { campaignAttribution } : {}),
+            ...(referralCode ? { referralCode } : {}),
+            ...(referralService ? { referralService } : {}),
           },
         },
       });

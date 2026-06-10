@@ -20,6 +20,7 @@ export const CONTENT_ROUTES = [
   route("/search", "content", "client/src/pages/search.page.tsx"),
   route("/itr-season-2026", "content", "client/src/pages/itr-season-campaign.page.tsx"),
   route("/itr-season-2026/:slug", "content", "client/src/pages/itr-season-campaign.page.tsx"),
+  route("/partners", "content", "client/src/pages/partners.page.tsx"),
   route("/blog", "content", "client/src/pages/blog.page.tsx"),
   route("/blog/:slug", "content", "client/src/pages/blog/[slug].page.tsx"),
   route("/legal/privacy-policy", "content", "client/src/pages/legal/privacy-policy.page.tsx"),

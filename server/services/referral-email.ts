@@ -9,7 +9,7 @@ interface ReferralEmailData {
   referralLink: string;
   serviceType: string;
   message?: string;
-  discount: string;
+  benefitTerms: string;
   expiryDate: string;
 }
 
@@ -99,9 +99,9 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
           ${data.message ? `<p><strong>Personal message from ${data.referrerName}:</strong><br>"${data.message}"</p>` : ''}
           
           <div class="benefits">
-            <h2>Your Exclusive Benefits:</h2>
+            <h2>Referral programme terms:</h2>
             <ul>
-              <li><strong>${data.discount} discount</strong> on ${data.serviceType.replace(/_/g, ' ')}</li>
+              <li><strong>${data.benefitTerms}</strong></li>
               <li>Expert CA assistance throughout the process</li>
               <li>Eligible deduction review</li>
               <li>Secure document workflow and privacy review</li>
@@ -109,7 +109,7 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
           </div>
           
           <div class="code-box">
-            <p>Use this referral code at checkout:</p>
+            <p>Use this referral code when registering or starting the service:</p>
             <div class="code">${data.referralCode}</div>
             <p style="color: #666; font-size: 14px;">Valid until ${new Date(data.expiryDate).toLocaleDateString()}</p>
           </div>
@@ -134,9 +134,9 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
 
     await sendEmail(
       data.refereeEmail,
-      `${data.referrerName} has invited you to save on tax filing!`,
+      `${data.referrerName} has invited you to MyeCA.in`,
       refereeEmailHtml,
-      `Hi ${data.refereeName}, ${data.referrerName} has referred you to MyeCA.in. Use code ${data.referralCode} to get ${data.discount} off. Visit: ${data.referralLink}`
+      `Hi ${data.refereeName}, ${data.referrerName} has referred you to MyeCA.in. Use code ${data.referralCode}. Programme terms: ${data.benefitTerms}. Visit: ${data.referralLink}`
     );
 
     // Send confirmation email to referrer
@@ -168,8 +168,8 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
             <ul>
               <li><strong>Referral Code:</strong> ${data.referralCode}</li>
               <li><strong>Service:</strong> ${data.serviceType.replace(/_/g, ' ')}</li>
-              <li><strong>Their Discount:</strong> ${data.discount}</li>
-              <li><strong>Your Reward:</strong> Will be credited after successful conversion</li>
+              <li><strong>Programme Terms:</strong> ${data.benefitTerms}</li>
+              <li><strong>Your Account Credit:</strong> Created only after a paid service is completed</li>
               <li><strong>Valid Until:</strong> ${new Date(data.expiryDate).toLocaleDateString()}</li>
             </ul>
           </div>
@@ -182,7 +182,7 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
         </div>
         
         <div class="footer">
-          <p>Keep referring and earning! There's no limit to how many friends you can refer.</p>
+          <p>Referral account credit is subject to service completion, payment confirmation, and programme checks.</p>
           <p>(c) 2025 MyeCA.in - Your Trusted Tax Partner</p>
         </div>
       </body>
@@ -193,7 +193,7 @@ export async function sendReferralInvitation(data: ReferralEmailData) {
       data.referrerEmail,
       `Referral sent to ${data.refereeName} - MyeCA.in`,
       referrerEmailHtml,
-      `Hi ${data.referrerName}, your referral to ${data.refereeName} has been sent successfully. They can use code ${data.referralCode} to get ${data.discount} off. Track your referrals at: ${referralsUrl}`
+      `Hi ${data.referrerName}, your referral to ${data.refereeName} has been sent successfully. Programme terms: ${data.benefitTerms}. Track your referrals at: ${referralsUrl}`
     );
 
     return { success: true };
@@ -219,25 +219,26 @@ export async function sendReferralReminder(data: ReferralEmailData) {
     </head>
     <body>
       <div class="header">
-        <h1>Don't Miss Out on Your Tax Savings!</h1>
-        <p>Your referral discount is expiring soon</p>
+        <h1>Your MyeCA Referral Link Is Still Available</h1>
+        <p>Continue the service journey before the referral link expires</p>
       </div>
       
       <div class="content">
         <p>Hi ${data.refereeName},</p>
         
-        <p>Just a friendly reminder that your exclusive referral discount from ${data.referrerName} is still available, but not for long!</p>
+        <p>Just a friendly reminder that the MyeCA referral link from ${data.referrerName} is still available.</p>
         
         <div class="urgency-box">
-          <h2>Time is Running Out!</h2>
-          <p><strong>Your ${data.discount} discount expires on ${new Date(data.expiryDate).toLocaleDateString()}</strong></p>
+          <h2>Referral link details</h2>
+          <p><strong>${data.benefitTerms}</strong></p>
+          <p>This link expires on ${new Date(data.expiryDate).toLocaleDateString()}.</p>
           <p>Use code: <strong style="font-size: 20px; color: #d97706;">${data.referralCode}</strong></p>
         </div>
         
         <p>Don't wait until the last minute to file your taxes. Our tax reviewers can help you check eligible refund and adjustment steps.</p>
         
         <div style="text-align: center;">
-          <a href="${data.referralLink}" class="button">Claim Your Discount Now</a>
+          <a href="${data.referralLink}" class="button">Continue With Referral Link</a>
         </div>
       </div>
       
@@ -251,9 +252,9 @@ export async function sendReferralReminder(data: ReferralEmailData) {
 
   await sendEmail(
     data.refereeEmail,
-    `Your tax filing discount expires soon - MyeCA.in`,
+    `Your MyeCA referral link expires soon`,
     reminderHtml,
-    `Hi ${data.refereeName}, reminder that your referral discount from ${data.referrerName} expires on ${new Date(data.expiryDate).toLocaleDateString()}. Use code ${data.referralCode} to save ${data.discount}. Visit: ${data.referralLink}`
+    `Hi ${data.refereeName}, your referral link from ${data.referrerName} expires on ${new Date(data.expiryDate).toLocaleDateString()}. Programme terms: ${data.benefitTerms}. Use code ${data.referralCode}. Visit: ${data.referralLink}`
   );
 }
 
@@ -275,7 +276,7 @@ export async function sendReferralConversionNotification(referrerEmail: string, 
     </head>
     <body>
       <div class="header">
-        <h1>Congratulations! You've Earned a Reward!</h1>
+        <h1>Your Referral Account Credit Is Ready</h1>
         <p>Your referral was successful</p>
       </div>
       
@@ -285,12 +286,12 @@ export async function sendReferralConversionNotification(referrerEmail: string, 
         <p>Fantastic news! ${refereeName} has successfully used your referral and completed their ${serviceType.replace(/_/g, ' ')}.</p>
         
         <div class="reward-box">
-          <p>You've earned:</p>
+          <p>Post-completion account credit:</p>
           <div class="reward-amount">Rs ${rewardAmount}</div>
-          <p>This reward has been added to your account</p>
+          <p>This credit has been added to your account</p>
         </div>
         
-        <p>Your reward is now available in your account and can be redeemed at any time. Keep referring to earn more!</p>
+        <p>Your account credit is now available under the referral programme terms.</p>
         
         <div style="text-align: center;">
           <a href="${referralsUrl}" class="button">View My Rewards</a>
@@ -307,8 +308,8 @@ export async function sendReferralConversionNotification(referrerEmail: string, 
 
   await sendEmail(
     referrerEmail,
-    `You've earned Rs ${rewardAmount} - Referral successful!`,
-    conversionHtml,
-    `Hi ${referrerName}, great news! ${refereeName} has successfully used your referral. You've earned Rs ${rewardAmount}. View your rewards at: ${referralsUrl}`
+      `Rs ${rewardAmount} referral account credit added`,
+      conversionHtml,
+      `Hi ${referrerName}, ${refereeName} completed a paid referred service. Rs ${rewardAmount} account credit is now available. View it at: ${referralsUrl}`
   );
 }

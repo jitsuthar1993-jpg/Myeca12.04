@@ -8,7 +8,8 @@ Primary audience: Indian taxpayers preparing FY 2025-26 income returns in AY 202
 
 Primary conversion routes:
 
-- `/itr/form-selector`
+- `/which-itr-form-to-file?source=paid_search`
+- `/itr/form-selector` as the educational SEO guide
 - `/form16-parser`
 - `/calculators/income-tax`
 - `/calculators/regime-comparator`
@@ -25,19 +26,22 @@ Public campaign hub:
 
 ## Hybrid Content and Paid Conversion Plan
 
-Primary conversion event: `paid_filing_start`.
+Primary conversion event: `payment_success`.
 
 Use `docs/marketing/itr-season-2026-paid-content-funnel.md` as the controlling strategy for the 90-day hybrid organic and paid funnel. It defines the paid ITR filing start goal, expert-consultation secondary route, content pillars, current official-source checks, and the split between repo-side readiness and owner-side performance proof.
 
 Execution files:
 
-- `docs/marketing/itr-season-2026-paid-media-plan.csv`: INR 200,000 monthly paid allocation across Google Search, remarketing, Meta retargeting, and LinkedIn/YouTube tests.
+- `docs/marketing/itr-season-2026-paid-media-plan.csv`: INR 200,000 monthly ceiling using a 75% Google Search, 20% retargeting, and 5% experiments allocation after the pilot gates pass.
 - `docs/marketing/itr-season-2026-lead-nurture-sequence.csv`: day 0, 2, 4, 6, and 10 email/WhatsApp follow-up from checklist or tool engagement to paid filing.
 - `docs/marketing/itr-season-2026-weekly-kpi-template.csv`: weekly reporting sheet for attract, engage, and convert metrics.
+- `docs/marketing/itr-season-2026-daily-growth-ops-template.csv`: daily spend, conversion, capacity, backlog, SLA, cancellation, and completion controls.
+- `docs/marketing/itr-season-2026-partner-capacity-roster.csv`: seasonal approved case types, daily capacity, agreement, SLA, and QA roster.
+- `docs/marketing/itr-season-2026-paid-scale-gates.md`: INR 25,000 pilot, reconciliation, allowable CPA, capacity, and stop rules.
 
 Paid amplification rules:
 
-- Send high-intent search traffic to `/itr/form-selector`, `/form16-parser`, `/calculators/income-tax`, `/calculators/regime-comparator`, or `/capital-gains-import` only when the page has a clear filing next step.
+- Send conversion-focused high-intent search traffic to `/which-itr-form-to-file?source=paid_search`; retain `/itr/form-selector` as the educational SEO guide.
 - Retarget blog, checklist, calculator, and parser visitors who have not started paid filing.
 - Exclude completed paid filing users and consultation leads from reminder campaigns.
 - Use negative keywords for free-only, government login-only, refund-promise, jobs, PDF-only, unrelated GST-only, and non-India searches.
@@ -127,10 +131,10 @@ Quality bar:
 - Reject any placement that requires refund guarantees, fake reviews, exact-match anchor stuffing, or unrelated content.
 - Track earned referring domains separately from raw link count.
 
-Daily outreach target:
+Weekly outreach target while paid acquisition is primary:
 
-- Days 1-30: 25 personalized pitches per working day.
-- Days 31-90: 10-15 follow-ups or fresh pitches per working day.
+- Send 5-10 high-quality personalized pitches each week.
+- Prioritize HR/payroll partners, finance editors, CA communities, and resources with a direct audience fit.
 - Follow-up timing: day 4 and day 10 after the first pitch.
 
 ## Pitch Angles
@@ -200,7 +204,7 @@ Every ITR-season page needs:
 
 - Awareness question: send users to `/itr-season-2026` or a specific checklist first.
 - Document preparation: send users to `/form16-parser`, `/capital-gains-import`, or `/tds-refund-tracker`.
-- Filing-ready user: send users to `/itr/form-selector`.
+- Filing-ready user: send users to `/which-itr-form-to-file`.
 - Regime or estimate intent: send users to `/calculators/income-tax` or `/calculators/regime-comparator`.
 - Complex case: send users to `/expert-consultation`.
 - Competitor/evaluation intent: send users to the relevant `/compare/...` page, then to pricing, filing path, or expert consultation.

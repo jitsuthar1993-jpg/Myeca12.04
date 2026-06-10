@@ -56,6 +56,8 @@ type PaymentLinkRequest = {
   status?: "requested" | "link_sent" | "paid" | "cancelled";
   adminNote?: string;
   paymentLink?: string;
+  netCollectedRevenue?: number | null;
+  hasStackedDiscount?: boolean;
   createdAt?: string;
 };
 
@@ -128,6 +130,8 @@ export default function AdminRequestsPage() {
   const [consultationNote, setConsultationNote] = useState("");
   const [paymentLink, setPaymentLink] = useState("");
   const [paymentNote, setPaymentNote] = useState("");
+  const [netCollectedRevenue, setNetCollectedRevenue] = useState("");
+  const [hasStackedDiscount, setHasStackedDiscount] = useState(false);
   const [caseNote, setCaseNote] = useState("");
 
   const consultationQuery = useQuery<{ requests: ConsultationRequest[]; total: number }>({
@@ -215,7 +219,14 @@ export default function AdminRequestsPage() {
   });
 
   const updatePayment = useMutation({
-    mutationFn: async ({ id, ...payload }: { id: string; status?: string; adminNote?: string; paymentLink?: string }) => {
+    mutationFn: async ({ id, ...payload }: {
+      id: string;
+      status?: string;
+      adminNote?: string;
+      paymentLink?: string;
+      netCollectedRevenue?: number;
+      hasStackedDiscount?: boolean;
+    }) => {
       const response = await apiRequest(`/api/admin/requests/payment-links/${id}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
@@ -228,6 +239,8 @@ export default function AdminRequestsPage() {
       setSelectedPayment(null);
       setPaymentLink("");
       setPaymentNote("");
+      setNetCollectedRevenue("");
+      setHasStackedDiscount(false);
       toast({ title: "Payment request updated", description: "The linked service payment status was refreshed." });
     },
     onError: (error: any) => {
@@ -508,6 +521,8 @@ export default function AdminRequestsPage() {
                               setSelectedPayment(request);
                               setPaymentLink(request.paymentLink || "");
                               setPaymentNote(request.adminNote || "");
+                              setNetCollectedRevenue(request.netCollectedRevenue ? String(request.netCollectedRevenue) : "");
+                              setHasStackedDiscount(request.hasStackedDiscount === true);
                             }}
                           >
                             Review
@@ -691,6 +706,29 @@ export default function AdminRequestsPage() {
                 placeholder="Internal payment note..."
                 className="min-h-24 rounded-xl border-slate-200"
               />
+              <div className="grid gap-3 sm:grid-cols-[1fr_190px]">
+                <Input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={netCollectedRevenue}
+                  onChange={(event) => setNetCollectedRevenue(event.target.value)}
+                  placeholder="Net collected revenue"
+                  className="rounded-xl border-slate-200"
+                />
+                <Select
+                  value={hasStackedDiscount ? "yes" : "no"}
+                  onValueChange={(value) => setHasStackedDiscount(value === "yes")}
+                >
+                  <SelectTrigger className="rounded-xl border-slate-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="no">No stacked discount</SelectItem>
+                    <SelectItem value="yes">Discount stacked</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="flex flex-col gap-3 sm:flex-row">
                 {selectedPayment.userServiceId && (
                   <Link href={`/dashboard/services/${selectedPayment.userServiceId}`}>
@@ -709,6 +747,8 @@ export default function AdminRequestsPage() {
                       status: selectedPayment.status || "requested",
                       paymentLink: paymentLink || undefined,
                       adminNote: paymentNote,
+                      netCollectedRevenue: netCollectedRevenue ? Number(netCollectedRevenue) : undefined,
+                      hasStackedDiscount,
                     })
                   }
                 >

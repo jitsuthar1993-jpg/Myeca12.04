@@ -187,9 +187,11 @@ router.patch("/cases/:id", requireAuth, requireCA, async (req: AuthRequest, res:
     await serviceRef.update(payload);
 
     await recordWorkflowEvent({
-      type: "case_ca_updated",
-      title: "CA updated case",
-      message: updates.caNote || `Case status updated to ${updates.status || current.status || "updated"}.`,
+      type: updates.status === "completed" ? "filing_completed" : "case_ca_updated",
+      title: updates.status === "completed" ? "Service case completed" : "CA updated case",
+      message: updates.caNote || (updates.status === "completed"
+        ? "The assigned CA marked the service case complete."
+        : `Case status updated to ${updates.status || current.status || "updated"}.`),
       sourceType: "user_service",
       sourceId: req.params.id,
       caseId: req.params.id,

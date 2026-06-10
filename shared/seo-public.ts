@@ -138,6 +138,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/legal/refund-policy",
   "/legal/terms-of-service",
   "/mobile-app",
+  "/partners",
   "/pricing",
   "/services",
   "/services/audit-services",

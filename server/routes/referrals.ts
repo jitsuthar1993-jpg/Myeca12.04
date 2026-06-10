@@ -8,6 +8,8 @@ import csv from "csv-parser";
 import { Readable } from "stream";
 import QRCode from "qrcode";
 import crypto from "crypto";
+import { calculateReferralAccountCredit } from "../../shared/referral-economics.js";
+import { normalizeReferralCode } from "../../shared/campaign-attribution.js";
 
 const router = Router();
 
@@ -18,6 +20,15 @@ const createReferralSchema = z.object({
   message: z.string().optional(),
   serviceType: z.enum(["itr_filing", "gst_registration", "company_registration", "all_services"]).optional()
 });
+
+const generateReferralLinkSchema = z.object({
+  serviceType: z.enum(["itr_filing", "gst_registration", "company_registration", "all_services"]).optional().default("all_services"),
+}).strict();
+
+const linkReferralServiceSchema = z.object({
+  referralCode: z.string().trim().min(1).max(120).optional(),
+  userServiceId: z.string().trim().min(1).max(160),
+}).strict();
 
 // Local development in-memory storage. Production uses the persistent adminDb collections.
 const referrals = new Map<number, any>();
@@ -91,6 +102,17 @@ async function findReferralByCode(referralCode: string) {
   }
 
   const snapshot = await adminDb.collection("referrals").where("referralCode", "==", referralCode).get();
+  const doc = snapshot.docs[0];
+  return doc ? { key: doc.id, referral: { id: doc.id, ...doc.data() } } : null;
+}
+
+async function findReferralByLinkedServiceId(userServiceId: string) {
+  if (!usePersistentStore) {
+    const entry = Array.from(referrals.entries()).find(([, referral]) => referral.linkedUserServiceId === userServiceId);
+    return entry ? { key: entry[0], referral: entry[1] } : null;
+  }
+
+  const snapshot = await adminDb.collection("referrals").where("linkedUserServiceId", "==", userServiceId).get();
   const doc = snapshot.docs[0];
   return doc ? { key: doc.id, referral: { id: doc.id, ...doc.data() } } : null;
 }
@@ -178,42 +200,43 @@ function getAppBaseUrl() {
 router.get("/overview", authenticateToken, (req: Request, res: Response) => {
   const programDetails = {
     programName: "MyeCA Referral Rewards",
-    description: "Earn rewards by referring clients to our tax and compliance services",
+    description: "Earn post-completion account credit by referring clients to our tax and compliance services",
     benefits: [
       {
         service: "ITR Filing",
-        referrerReward: "Rs 300 cashback",
-        refereeDiscount: "15% off first filing"
+        referrerReward: "Account credit capped at 10% of net collected revenue",
+        refereeDiscount: "No discount stacking"
       },
       {
         service: "GST Registration",
-        referrerReward: "Rs 500 cashback",
-        refereeDiscount: "Rs 1000 discount"
+        referrerReward: "Account credit capped at 10% of net collected revenue",
+        refereeDiscount: "No discount stacking"
       },
       {
         service: "Company Registration",
-        referrerReward: "Rs 1000 cashback",
-        refereeDiscount: "Rs 2000 discount"
+        referrerReward: "Account credit capped at 10% of net collected revenue",
+        refereeDiscount: "No discount stacking"
       },
       {
         service: "Business Consultation",
-        referrerReward: "Rs 800 cashback",
-        refereeDiscount: "First consultation free"
+        referrerReward: "Account credit capped at 10% of net collected revenue",
+        refereeDiscount: "No discount stacking"
       }
     ],
     terms: [
-      "Rewards are credited within 7 days of successful service completion",
+      "Account credit is created only after payment and successful service completion are verified",
+      "Account credit is capped at 10% of net collected revenue and is not a cash payout",
       "Referral codes are valid for 90 days from generation",
       "Maximum 10 referrals per month per user",
-      "Rewards expire after 6 months if not redeemed",
+      "Account credit cannot be stacked with another discount and expires after 90 days if unused",
       "Self-referrals are not allowed"
     ],
     howItWorks: [
       "Generate your unique referral code",
       "Share the code with friends and clients",
       "They use your code when booking services",
-      "Both you and your referral get rewards",
-      "Track your earnings in the dashboard"
+      "Account credit is created only after the referred service is completed",
+      "Track account credit in the dashboard"
     ]
   };
   
@@ -252,6 +275,10 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = getUserId(req);
     const referralData = createReferralSchema.parse(req.body);
+    const currentUserEmail = String((req as any).user?.email || "").trim().toLowerCase();
+    if (currentUserEmail && referralData.refereeEmail.trim().toLowerCase() === currentUserEmail) {
+      return res.status(400).json({ error: "You cannot refer your own email address" });
+    }
     
     // Check if email already referred by this user
     const existingReferral = await findExistingReferral(userId, referralData.refereeEmail);
@@ -287,16 +314,9 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       
       // Generate referral link
       const baseUrl = getAppBaseUrl();
-      const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${referralData.serviceType || 'all_services'}`;
+      const referralLink = `${baseUrl}/auth/register?ref=${referralCode}&service=${referralData.serviceType || 'all_services'}`;
       
       // Get discount based on service type
-      const discounts: Record<string, string> = {
-        itr_filing: "Rs 200 OFF",
-        gst_registration: "Rs 500 OFF",
-        company_registration: "Rs 1000 OFF",
-        all_services: "Up to Rs 1000 OFF"
-      };
-      
       await sendReferralInvitation({
         referrerName: userName,
         referrerEmail: userEmail,
@@ -306,7 +326,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
         referralLink,
         serviceType: referralData.serviceType || 'all_services',
         message: referralData.message,
-        discount: discounts[referralData.serviceType || 'all_services'] || "Special Discount",
+        benefitTerms: "The referrer may receive post-completion account credit capped at 10% of net collected revenue; no discount stacking",
         expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
       });
     } catch (emailError) {
@@ -378,37 +398,57 @@ router.post("/rewards/:rewardId/redeem", authenticateToken, async (req: Request,
 
 // Generate referral link
 router.post("/generate-link", authenticateToken, async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const { serviceType = "all_services" } = req.body;
-  
-  const referralCode = `REF-${userId}-${Date.now().toString(36).toUpperCase()}`;
-  const baseUrl = getAppBaseUrl();
-  
-  const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${serviceType}`;
-  
-  let qrCode: string | null = null;
-  let qrCodeAvailable = true;
   try {
-    qrCode = await QRCode.toDataURL(referralLink, {
-      width: 200,
-      margin: 2,
-      color: {
-        dark: '#3b82f6',
-        light: '#ffffff'
-      }
+    const userId = getUserId(req);
+    const { serviceType } = generateReferralLinkSchema.parse(req.body);
+    const referralCode = `REF-${userId}-${Date.now().toString(36).toUpperCase()}`;
+    const baseUrl = getAppBaseUrl();
+    const referralLink = `${baseUrl}/auth/register?ref=${referralCode}&service=${serviceType}`;
+    const referralId = createRecordId("ref") || referrals.size + 1;
+
+    await saveReferral({
+      id: referralId,
+      referrerId: userId,
+      refereeEmail: null,
+      refereeName: null,
+      serviceType,
+      referralCode,
+      status: "pending",
+      source: "shared_referral_link",
+      createdAt: new Date(),
+      rewardEarned: null,
+      conversionDate: null,
     });
+
+    let qrCode: string | null = null;
+    let qrCodeAvailable = true;
+    try {
+      qrCode = await QRCode.toDataURL(referralLink, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#3b82f6',
+          light: '#ffffff'
+        }
+      });
+    } catch (error) {
+      console.error('QR Code generation error:', error);
+      qrCodeAvailable = false;
+    }
+
+    res.json(withBackendStatus({
+      success: true,
+      referralCode,
+      referralLink,
+      qrCode,
+      qrCodeAvailable
+    }));
   } catch (error) {
-    console.error('QR Code generation error:', error);
-    qrCodeAvailable = false;
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors[0]?.message || "Invalid referral link details" });
+    }
+    res.status(500).json({ error: "Failed to generate referral link" });
   }
-  
-  res.json(withBackendStatus({
-    success: true,
-    referralCode,
-    referralLink,
-    qrCode,
-    qrCodeAvailable
-  }));
 });
 
 // Leaderboard
@@ -548,14 +588,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
             // Send email if requested
             if (req.body.sendEmails === 'true') {
               const baseUrl = getAppBaseUrl();
-              const referralLink = `${baseUrl}/signup?ref=${referralCode}&service=${serviceType}`;
-              
-              const discounts: Record<string, string> = {
-                itr_filing: "Rs 200 OFF",
-                gst_registration: "Rs 500 OFF",
-                company_registration: "Rs 1000 OFF",
-                all_services: "Up to Rs 1000 OFF"
-              };
+              const referralLink = `${baseUrl}/auth/register?ref=${referralCode}&service=${serviceType}`;
               
               try {
                 await sendReferralInvitation({
@@ -567,7 +600,7 @@ router.post("/bulk-import", authenticateToken, upload.single('file'), async (req
                   referralLink,
                   serviceType,
                   message: row.message || '',
-                  discount: discounts[serviceType] || "Special Discount",
+                  benefitTerms: "The referrer may receive post-completion account credit capped at 10% of net collected revenue; no discount stacking",
                   expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
                 });
               } catch (emailError) {
@@ -673,30 +706,68 @@ router.get("/analytics", authenticateToken, async (req: Request, res: Response) 
 // Link referral to service purchase
 router.post("/link-service", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const { referralCode } = req.body;
-    
+    const data = linkReferralServiceSchema.parse(req.body);
+    const userId = getUserId(req);
+    const currentUserEmail = String((req as any).user?.email || "").trim().toLowerCase();
+
+    const serviceDoc = await adminDb.collection("user_services").doc(data.userServiceId).get();
+    const service = serviceDoc.exists ? serviceDoc.data() as Record<string, any> : null;
+    if (!service || String(service.userId || "") !== userId) {
+      return res.status(404).json({ error: "Completed paid service not found" });
+    }
+    if (service.status !== "completed" || service.paymentStatus !== "paid") {
+      return res.status(400).json({ error: "Referral credit is available only after a paid service is completed." });
+    }
+
+    const referralCode = normalizeReferralCode(
+      data.referralCode ?? service.metadata?.attribution?.referralCode ?? service.attribution?.referralCode,
+    );
+    if (!referralCode) {
+      return res.status(400).json({ error: "A persisted referral code is required for this service." });
+    }
+
     const referralRecord = await findReferralByCode(referralCode);
     const foundReferral = referralRecord?.referral;
     const referralId = referralRecord?.key;
-    
     if (!foundReferral || foundReferral.status !== "pending") {
       return res.status(404).json({ error: "Valid referral not found" });
     }
+    if (String(foundReferral.referrerId || "") === userId) {
+      return res.status(400).json({ error: "A referrer cannot convert their own referral." });
+    }
+    const invitedEmail = String(foundReferral.refereeEmail || "").trim().toLowerCase();
+    if (invitedEmail && currentUserEmail && invitedEmail !== currentUserEmail) {
+      return res.status(404).json({ error: "Valid referral not found" });
+    }
+
+    const existingServiceLink = await findReferralByLinkedServiceId(data.userServiceId);
+    if (existingServiceLink) {
+      return res.status(409).json({ error: "This service is already linked to a referral." });
+    }
+
+    const netCollectedRevenue = Number(service.netCollectedRevenue);
+    const hasStackedDiscount = service.hasStackedDiscount === true;
+    if (!Number.isFinite(netCollectedRevenue) || netCollectedRevenue <= 0) {
+      return res.status(400).json({ error: "Net collected revenue must be recorded before referral credit is created." });
+    }
     
-    // Calculate reward based on service type
-    const rewardRates: Record<string, number> = {
-      itr_filing: 300,
-      gst_registration: 500,
-      company_registration: 1000,
-      all_services: 300
-    };
-    
-    const rewardAmount = rewardRates[foundReferral.serviceType] || 300;
+    const rewardAmount = calculateReferralAccountCredit({
+      netCollectedRevenue,
+      serviceCompleted: true,
+      hasStackedDiscount,
+    });
+    if (!rewardAmount) {
+      return res.status(400).json({ error: "This completed service does not qualify for referral credit." });
+    }
     
     // Update referral status
     foundReferral.status = "converted";
     foundReferral.conversionDate = new Date();
     foundReferral.rewardEarned = rewardAmount;
+    foundReferral.linkedUserServiceId = data.userServiceId;
+    foundReferral.netCollectedRevenue = netCollectedRevenue;
+    if (!foundReferral.refereeEmail && currentUserEmail) foundReferral.refereeEmail = currentUserEmail;
+    if (!foundReferral.refereeName && currentUserEmail) foundReferral.refereeName = currentUserEmail;
     await saveReferral(foundReferral);
     
     // Create reward for referrer
@@ -705,9 +776,10 @@ router.post("/link-service", authenticateToken, async (req: Request, res: Respon
       id: rewardId,
       userId: foundReferral.referrerId,
       referralId,
-      type: "cashback",
+      userServiceId: data.userServiceId,
+      type: "account_credit",
       amount: rewardAmount,
-      description: `Referral reward for ${foundReferral.refereeName}`,
+      description: `Post-completion referral account credit for ${foundReferral.refereeName}`,
       status: "available",
       expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
       earnedAt: new Date()
@@ -722,6 +794,9 @@ router.post("/link-service", authenticateToken, async (req: Request, res: Respon
       reward: newReward
     }));
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors[0]?.message || "Invalid referral conversion details" });
+    }
     res.status(500).json({ error: "Failed to link referral to service" });
   }
 });
@@ -745,14 +820,7 @@ router.post("/:referralId/send-reminder", authenticateToken, async (req: Request
     const userEmail = user.email;
     
     const baseUrl = getAppBaseUrl();
-    const referralLink = `${baseUrl}/signup?ref=${referral.referralCode}&service=${referral.serviceType}`;
-    
-    const discounts: Record<string, string> = {
-      itr_filing: "Rs 200 OFF",
-      gst_registration: "Rs 500 OFF",
-      company_registration: "Rs 1000 OFF",
-      all_services: "Up to Rs 1000 OFF"
-    };
+    const referralLink = `${baseUrl}/auth/register?ref=${referral.referralCode}&service=${referral.serviceType}`;
     
     await sendReferralReminder({
       referrerName: userName,
@@ -763,7 +831,7 @@ router.post("/:referralId/send-reminder", authenticateToken, async (req: Request
       referralLink,
       serviceType: referral.serviceType,
       message: referral.message || '',
-      discount: discounts[referral.serviceType] || "Special Discount",
+      benefitTerms: "The referrer may receive post-completion account credit capped at 10% of net collected revenue; no discount stacking",
       expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     });
     
