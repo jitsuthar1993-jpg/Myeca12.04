@@ -58,9 +58,11 @@ describe("dashboard style contract", () => {
     expect(source).toContain(
       'className="grid min-h-[60px] grid-cols-[36px_minmax(0,1fr)] items-center gap-3 px-3 py-2 sm:px-4"',
     );
-    expect(source.match(/<td className="align-top px-4 py-3">/g)).toHaveLength(2);
-    expect(source).toContain('<div className="flex min-w-0 items-start gap-3">');
-    expect(source).toContain('<div className="flex min-w-0 items-start gap-2.5">');
-    expect(source).toContain('<ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />');
+    expect(source).toContain('<div className="min-w-0 [&>p]:mb-0">');
+    expect(source.match(/<td className="align-middle px-4 py-3">/g)).toHaveLength(3);
+    expect(source).toContain('<div className="flex min-w-0 items-center gap-3">');
+    expect(source).toContain('<div className="flex min-w-0 items-center gap-2.5">');
+    expect(source).toContain('<ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" />');
+    expect(source).toContain('<div className="min-w-0 flex-1 [&>p]:mb-0">');
   });
 });

@@ -46,13 +46,19 @@ describe('DashboardServicesPage', () => {
     expect(screen.queryByText('Marketplace')).not.toBeInTheDocument();
   });
 
-  it('shows rich service details after choosing a rainfall row', async () => {
+  it('opens rich service details directly after the chosen rainfall row', async () => {
     const user = userEvent.setup();
     renderWithQueryClient(<DashboardServicesPage />);
 
-    await user.click(screen.getByRole('button', { name: /GST Registration/i }));
+    const rainfallSelector = screen.getByRole('region', { name: 'Rainfall service selector' });
+    const selectedRow = within(rainfallSelector).getByRole('button', { name: /GST Registration/i });
 
-    expect(screen.getByRole('heading', { name: 'GST Registration' })).toBeInTheDocument();
+    await user.click(selectedRow);
+
+    const details = within(rainfallSelector).getByRole('region', { name: 'GST Registration service details' });
+
+    expect(selectedRow.nextElementSibling).toBe(details);
+    expect(within(details).getByRole('heading', { name: 'GST Registration' })).toBeInTheDocument();
     expect(screen.getByText(/Complete GST registration assistance/i)).toBeInTheDocument();
     expect(screen.getByText('Required documents')).toBeInTheDocument();
     expect(screen.getByText('GST Calculator')).toBeInTheDocument();

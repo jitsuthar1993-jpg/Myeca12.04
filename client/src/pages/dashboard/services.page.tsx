@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -155,6 +155,173 @@ function getRelatedTools(service: Service) {
     .slice(0, 4);
 }
 
+type SelectedServiceDetailsProps = {
+  service?: Service;
+  isCustomRequest: boolean;
+  relatedTools: RelatedTool[];
+};
+
+function SelectedServiceDetails({
+  service,
+  isCustomRequest,
+  relatedTools,
+}: SelectedServiceDetailsProps) {
+  const title = isCustomRequest ? 'Custom service request' : service!.name;
+  const description = isCustomRequest
+    ? 'Share the requirement and the team will review the right service path before assigning the case.'
+    : service!.description;
+
+  return (
+    <m.section
+      role="region"
+      aria-label={`${title} service details`}
+      data-testid="inline-service-details"
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className="overflow-hidden rounded-xl border border-blue-200 bg-white shadow-[0_14px_36px_-24px_rgba(37,99,235,0.45)] md:col-span-2"
+    >
+      <div className="h-1 bg-blue-600" />
+      <div className="p-4 sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <div className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-blue-700">
+              <CheckCircle2 className="h-4 w-4" />
+              Selected service
+            </div>
+            <h2 className="text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
+              {title}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-slate-600">
+              {description}
+            </p>
+          </div>
+
+          <Badge className="w-fit shrink-0 border border-blue-200 bg-blue-50 px-3 py-1 text-blue-800 shadow-none">
+            {isCustomRequest ? 'Scope review' : getCategoryLabel(service!.category)}
+          </Badge>
+        </div>
+
+        <dl className="mt-5 grid gap-2 sm:grid-cols-3">
+          {[
+            {
+              label: 'Professional fee',
+              value: isCustomRequest ? 'Scope based' : getServicePriceLabel(service!),
+              icon: CreditCard,
+            },
+            {
+              label: 'Timeline',
+              value: isCustomRequest ? 'After review' : service!.timeline,
+              icon: Clock,
+            },
+            {
+              label: 'Documents',
+              value: isCustomRequest ? 'Shared after review' : `${service!.documents.length} listed`,
+              icon: FileText,
+            },
+          ].map((item) => (
+            <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 p-3.5">
+              <dt className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">
+                <item.icon className="h-4 w-4 text-blue-600" />
+                {item.label}
+              </dt>
+              <dd className="mt-1.5 text-sm font-black text-slate-950">{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {!isCustomRequest && getOriginalAmountLabel(service!) && (
+          <p className="mt-3 text-xs font-bold text-slate-500">
+            Listed reference price: <span className="line-through">{getOriginalAmountLabel(service!)}</span>
+          </p>
+        )}
+      </div>
+
+      {!isCustomRequest && (
+        <>
+          <div className="grid border-t border-slate-200 lg:grid-cols-3">
+            <section className="p-4 sm:p-5 lg:border-r lg:border-slate-200">
+              <div className="mb-3 flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <h3 className="text-sm font-black text-slate-950">Included</h3>
+              </div>
+              <ul className="space-y-2">
+                {service!.features.map((feature) => (
+                  <li key={feature} className="flex gap-2 text-xs font-semibold leading-5 text-slate-600">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="border-t border-slate-200 p-4 sm:p-5 lg:border-r lg:border-t-0 lg:border-slate-200">
+              <div className="mb-3 flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-blue-600" />
+                <h3 className="text-sm font-black text-slate-950">Deliverables</h3>
+              </div>
+              <ul className="space-y-2">
+                {service!.deliverables.map((deliverable) => (
+                  <li key={deliverable} className="flex gap-2 text-xs font-semibold leading-5 text-slate-600">
+                    <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+                    {deliverable}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="border-t border-slate-200 p-4 sm:p-5 lg:border-t-0">
+              <div className="mb-3 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-blue-600" />
+                <h3 className="text-sm font-black text-slate-950">Required documents</h3>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {service!.documents.map((document) => (
+                  <Badge key={document} variant="outline" className="rounded-md border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] text-slate-700">
+                    {document}
+                  </Badge>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {relatedTools.length > 0 && (
+            <section className="border-t border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <Calculator className="h-4 w-4 text-blue-600" />
+                <h3 className="text-sm font-black text-slate-950">Related tools</h3>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {relatedTools.map((tool) => (
+                  <Button
+                    key={tool.href}
+                    asChild
+                    variant="outline"
+                    className="h-auto w-full justify-between rounded-lg border-slate-200 bg-white p-3 text-left"
+                  >
+                    <Link href={tool.href}>
+                      <span className="flex min-w-0 items-start gap-2.5">
+                        <tool.icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                        <span className="min-w-0">
+                          <span className="block text-xs font-black text-slate-900">{tool.title}</span>
+                          <span className="mt-0.5 block whitespace-normal text-[11px] font-semibold leading-4 text-slate-500">
+                            {tool.description}
+                          </span>
+                        </span>
+                      </span>
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                    </Link>
+                  </Button>
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
+    </m.section>
+  );
+}
+
 export default function DashboardServicesPage() {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [requestDescription, setRequestDescription] = useState('');
@@ -266,8 +433,8 @@ export default function DashboardServicesPage() {
                         rainfallIndex += 1;
 
                         return (
+                          <Fragment key={service.id}>
                           <m.button
-                            key={service.id}
                             type="button"
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -295,6 +462,14 @@ export default function DashboardServicesPage() {
                               <Check className="h-3.5 w-3.5" />
                             </span>
                           </m.button>
+                          {isSelected && (
+                            <SelectedServiceDetails
+                              service={service}
+                              isCustomRequest={false}
+                              relatedTools={selectedCategoryTools}
+                            />
+                          )}
+                          </Fragment>
                         );
                       })}
                     </div>
@@ -323,153 +498,13 @@ export default function DashboardServicesPage() {
                 </span>
                 <ArrowRight className="h-4 w-4 text-slate-400" />
               </m.button>
+              {isCustomRequest && (
+                <SelectedServiceDetails
+                  isCustomRequest
+                  relatedTools={[]}
+                />
+              )}
             </section>
-
-            {!selectedService && !isCustomRequest ? (
-              <section className="rounded-lg border border-slate-200 bg-slate-50 p-5">
-                <Briefcase className="mb-3 h-6 w-6 text-slate-400" />
-                <h2 className="text-lg font-black text-slate-950">Select a row to see details</h2>
-                <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
-                  The service scope, required documents, related tools, and case action will open here.
-                </p>
-              </section>
-            ) : (
-              <section className="space-y-5">
-                <div className="rounded-lg border border-slate-200 bg-white p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <Badge className="mb-3 border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700 shadow-none">
-                        {isCustomRequest ? 'Custom Service' : getCategoryLabel(selectedService!.category)}
-                      </Badge>
-                      <h2 className="text-2xl font-black tracking-tight text-slate-950">
-                        {isCustomRequest ? 'Custom service request' : selectedService!.name}
-                      </h2>
-                      <p className="mt-3 max-w-3xl text-sm font-medium leading-6 text-slate-600">
-                        {isCustomRequest
-                          ? 'Share the requirement and the team will review the right service path before assigning the case.'
-                          : selectedService!.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <dl className="mt-5 grid gap-3 sm:grid-cols-3">
-                    {[
-                      {
-                        label: 'Professional fee',
-                        value: isCustomRequest ? 'Scope based' : getServicePriceLabel(selectedService!),
-                        icon: CreditCard,
-                      },
-                      {
-                        label: 'Timeline',
-                        value: isCustomRequest ? 'After review' : selectedService!.timeline,
-                        icon: Clock,
-                      },
-                      {
-                        label: 'Documents',
-                        value: isCustomRequest ? 'Shared after review' : `${selectedService!.documents.length} listed`,
-                        icon: FileText,
-                      },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                        <dt className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-slate-500">
-                          <item.icon className="h-4 w-4 text-blue-600" />
-                          {item.label}
-                        </dt>
-                        <dd className="mt-2 text-sm font-black text-slate-950">{item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-
-                  {!isCustomRequest && getOriginalAmountLabel(selectedService!) && (
-                    <p className="mt-3 text-xs font-bold text-slate-500">
-                      Listed reference price: <span className="line-through">{getOriginalAmountLabel(selectedService!)}</span>
-                    </p>
-                  )}
-                </div>
-
-                {!isCustomRequest && (
-                  <div className="grid gap-4 lg:grid-cols-2">
-                    <section className="rounded-lg border border-slate-200 bg-white p-5">
-                      <div className="mb-4 flex items-center gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                        <h3 className="text-base font-black text-slate-950">Included</h3>
-                      </div>
-                      <ul className="space-y-3">
-                        {selectedService!.features.map((feature) => (
-                          <li key={feature} className="flex gap-3 text-sm font-medium leading-6 text-slate-600">
-                            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-blue-600" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-
-                    <section className="rounded-lg border border-slate-200 bg-white p-5">
-                      <div className="mb-4 flex items-center gap-2">
-                        <Briefcase className="h-5 w-5 text-blue-600" />
-                        <h3 className="text-base font-black text-slate-950">Deliverables</h3>
-                      </div>
-                      <ul className="space-y-3">
-                        {selectedService!.deliverables.map((deliverable) => (
-                          <li key={deliverable} className="flex gap-3 text-sm font-medium leading-6 text-slate-600">
-                            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-400" />
-                            {deliverable}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  </div>
-                )}
-
-                {!isCustomRequest && (
-                  <section className="rounded-lg border border-slate-200 bg-white p-5">
-                    <div className="mb-4 flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-blue-600" />
-                      <h3 className="text-base font-black text-slate-950">Required documents</h3>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedService!.documents.map((document) => (
-                        <Badge key={document} variant="outline" className="rounded-md border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-700">
-                          {document}
-                        </Badge>
-                      ))}
-                    </div>
-                  </section>
-                )}
-
-                {!isCustomRequest && selectedCategoryTools.length > 0 && (
-                  <section className="rounded-lg border border-slate-200 bg-white p-5">
-                    <div className="mb-4 flex items-center gap-2">
-                      <Calculator className="h-5 w-5 text-blue-600" />
-                      <h3 className="text-base font-black text-slate-950">Related tools</h3>
-                    </div>
-                    <div className="grid gap-3 md:grid-cols-2">
-                      {selectedCategoryTools.map((tool) => (
-                        <Button
-                          key={tool.href}
-                          asChild
-                          variant="outline"
-                          className="h-auto w-full justify-between rounded-lg border-slate-200 p-4 text-left"
-                        >
-                          <Link href={tool.href}>
-                            <span className="flex min-w-0 items-start gap-3">
-                              <tool.icon className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-                              <span className="min-w-0">
-                                <span className="block text-sm font-black text-slate-900">{tool.title}</span>
-                                <span className="mt-1 block whitespace-normal text-xs font-medium leading-5 text-slate-500">
-                                  {tool.description}
-                                </span>
-                              </span>
-                            </span>
-                            <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
-                          </Link>
-                        </Button>
-                      ))}
-                    </div>
-                  </section>
-                )}
-              </section>
-            )}
           </div>
 
           <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">

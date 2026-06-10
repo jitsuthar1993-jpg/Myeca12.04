@@ -22,6 +22,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { useAuth } from "@/components/AuthProvider";
+import { Layout } from "@/components/admin/Layout";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { CONTACT } from "@/config/contact";
 import { useToast } from "@/hooks/use-toast";
@@ -114,12 +117,16 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
 };
 
 const services = Object.values(SERVICE_LABELS);
+const SERVICE_KEYS_BY_LABEL = Object.fromEntries(
+  Object.entries(SERVICE_LABELS).map(([key, label]) => [label, key]),
+);
 const timeSlots = ["Call now", "Today before 1 PM", "Today 2 PM - 4 PM", "Today 4 PM - 6 PM", "Tomorrow morning"];
 const turnoverBands = ["Under ₹20 lakh", "₹20 lakh - ₹1 crore", "₹1 crore - ₹5 crore", "Above ₹5 crore"];
 
 export default function ExpertConsultationPage() {
   const [location] = useLocation();
   const { toast } = useToast();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const attribution = useMemo(() => captureCampaignAttribution(), [location]);
   const [serviceKey, setServiceKey] = useState("general");
@@ -134,6 +141,10 @@ export default function ExpertConsultationPage() {
     preferredTime: "Call now",
     message: SERVICE_PROFILES.general.defaultMessage,
   });
+  const accountName =
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+    user?.email?.split("@")[0] ||
+    "";
 
   useEffect(() => {
     const service = new URLSearchParams(window.location.search).get("service") || "general";
@@ -146,6 +157,17 @@ export default function ExpertConsultationPage() {
       message: current.message === SERVICE_PROFILES.general.defaultMessage ? nextProfile.defaultMessage : current.message,
     }));
   }, [location]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setFormData((current) => ({
+      ...current,
+      name: current.name || accountName,
+      email: current.email || user.email || "",
+      phone: current.phone || user.phoneNumber || "",
+    }));
+  }, [accountName, user?.email, user?.phoneNumber]);
 
   const profile = SERVICE_PROFILES[serviceKey] || SERVICE_PROFILES.general;
   const isGstReturns = serviceKey === "gst-returns";
@@ -176,6 +198,17 @@ export default function ExpertConsultationPage() {
     setFormData((current) => ({ ...current, [field]: value }));
   };
 
+  const handleServiceChange = (service: string) => {
+    const nextServiceKey = SERVICE_KEYS_BY_LABEL[service] || "general";
+    const nextProfile = SERVICE_PROFILES[nextServiceKey] || SERVICE_PROFILES.general;
+    setServiceKey(nextServiceKey);
+    setFormData((current) => ({
+      ...current,
+      service,
+      message: current.message === profile.defaultMessage ? nextProfile.defaultMessage : current.message,
+    }));
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -185,8 +218,8 @@ export default function ExpertConsultationPage() {
         method: "POST",
         body: JSON.stringify({
           ...formData,
-          source: attribution?.partnerCode ? "partner" : `expert_consultation:${serviceKey}`,
-          formId: "expert-consultation-form",
+          source: attribution?.partnerCode ? "partner" : `${isAuthenticated ? "workspace_support_request" : "expert_consultation"}:${serviceKey}`,
+          formId: isAuthenticated ? "authenticated-support-form" : "expert-consultation-form",
           serviceIntent: serviceKey,
           attribution,
         }),
@@ -203,9 +236,9 @@ export default function ExpertConsultationPage() {
       });
       setFormData((current) => ({
         ...current,
-        name: "",
-        phone: "",
-        email: "",
+        name: isAuthenticated ? accountName : "",
+        phone: isAuthenticated ? user?.phoneNumber || current.phone : "",
+        email: isAuthenticated ? user?.email || current.email : "",
         gstin: "",
         company: "",
         turnover: "",
@@ -221,6 +254,187 @@ export default function ExpertConsultationPage() {
     }
   };
 
+  if (authLoading) {
+    return <PageSkeleton />;
+  }
+
+  if (isAuthenticated) {
+    return (
+      <>
+        <MetaSEO
+          title={`${profile.formTitle} | MyeCA.in`}
+          description={seoDescription}
+          keywords={["tax consultation", "CA consultation", "tax support request"]}
+          type="service"
+          canonicalUrl="https://myeca.in/expert-consultation"
+          breadcrumbs={[{ name: "Home", url: "/" }, { name: "Expert Consultation", url: "/expert-consultation" }]}
+        />
+        <Layout title="Support Request">
+          <div
+            data-testid="authenticated-support-workspace"
+            className="mx-auto w-full max-w-4xl px-4 py-5 sm:px-6 sm:py-8"
+          >
+            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+              <div className="border-b border-slate-200 px-5 py-5 sm:px-6">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                    <MessageCircle className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1 [&>p]:mb-0">
+                    <h1 className="type-page-title text-slate-950">Request expert support</h1>
+                    <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
+                      Share the issue and your preferred callback time. Your account details are attached automatically.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+                  <span className="font-bold text-slate-800">{accountName || "Signed-in user"}</span>
+                  <span className="hidden h-4 w-px bg-slate-300 sm:block" />
+                  <span className="truncate text-slate-500">{user?.email}</span>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
+                {(!formData.name || !formData.email) && (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {!formData.name && (
+                      <div className="space-y-1.5">
+                        <Label htmlFor="account-name">Name *</Label>
+                        <Input
+                          id="account-name"
+                          value={formData.name}
+                          onChange={(event) => handleInputChange("name", event.target.value)}
+                          placeholder="Your name"
+                          required
+                          className="h-11 rounded-lg"
+                        />
+                      </div>
+                    )}
+                    {!formData.email && (
+                      <div className="space-y-1.5">
+                        <Label htmlFor="account-email">Email *</Label>
+                        <Input
+                          id="account-email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(event) => handleInputChange("email", event.target.value)}
+                          placeholder="you@example.com"
+                          required
+                          className="h-11 rounded-lg"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label>Support area</Label>
+                    <Select value={formData.service} onValueChange={handleServiceChange}>
+                      <SelectTrigger className="h-11 rounded-lg border-slate-300 bg-white text-slate-900">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {services.map((service) => <SelectItem key={service} value={service}>{service}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="support-phone">Callback number *</Label>
+                    <Input
+                      id="support-phone"
+                      value={formData.phone}
+                      onChange={(event) => handleInputChange("phone", event.target.value)}
+                      placeholder={CONTACT.phonePlaceholder}
+                      required
+                      className="h-11 rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label>Preferred callback time</Label>
+                    <Select value={formData.preferredTime} onValueChange={(value) => handleInputChange("preferredTime", value)}>
+                      <SelectTrigger className="h-11 rounded-lg border-slate-300 bg-white text-slate-900">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeSlots.map((slot) => <SelectItem key={slot} value={slot}>{slot}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {showsTurnoverScope && (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="support-gstin">{identityLabel}</Label>
+                      <Input
+                        id="support-gstin"
+                        value={formData.gstin}
+                        onChange={(event) => handleInputChange("gstin", event.target.value.toUpperCase())}
+                        placeholder={identityPlaceholder}
+                        className="h-11 rounded-lg uppercase"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {showsTurnoverScope && (
+                  <div className="space-y-1.5">
+                    <Label>{turnoverLabel}</Label>
+                    <Select value={formData.turnover} onValueChange={(value) => handleInputChange("turnover", value)}>
+                      <SelectTrigger className="h-11 rounded-lg border-slate-300 bg-white text-slate-900">
+                        <SelectValue placeholder="Select range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {turnoverBands.map((band) => <SelectItem key={band} value={band}>{band}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="support-message">{messageLabel}</Label>
+                  <Textarea
+                    id="support-message"
+                    value={formData.message}
+                    onChange={(event) => handleInputChange("message", event.target.value)}
+                    rows={5}
+                    required
+                    className="rounded-lg"
+                  />
+                </div>
+
+                <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="mb-0 max-w-xl type-meta leading-5 text-slate-500">
+                    Do not upload sensitive documents here. The support team will confirm the next secure step.
+                  </p>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="h-11 shrink-0 rounded-lg bg-blue-700 px-5 font-bold text-white hover:bg-blue-800"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Clock className="mr-2 h-4 w-4 animate-spin" />
+                        Sending request...
+                      </>
+                    ) : (
+                      <>
+                        Send support request
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Layout>
+      </>
+    );
+  }
+
   return (
     <>
       <MetaSEO
@@ -231,7 +445,7 @@ export default function ExpertConsultationPage() {
         canonicalUrl="https://myeca.in/expert-consultation"
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Expert Consultation", url: "/expert-consultation" }]}
       />
-      <div className="min-h-screen bg-[#f7f9fc] pb-20 text-slate-950 lg:pb-0">
+      <div data-testid="public-consultation-page" className="min-h-screen bg-[#f7f9fc] pb-20 text-slate-950 lg:pb-0">
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 py-5 sm:py-8 lg:grid-cols-[1fr_430px] lg:items-start lg:gap-8 lg:py-10">
           <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="min-w-0">
@@ -294,6 +508,19 @@ export default function ExpertConsultationPage() {
                 </div>
               </div>
 
+              <div className="space-y-1.5">
+                <Label htmlFor="public-email">Email *</Label>
+                <Input
+                  id="public-email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(event) => handleInputChange("email", event.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="h-11 rounded-lg"
+                />
+              </div>
+
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="gstin">{identityLabel}</Label>
@@ -327,7 +554,7 @@ export default function ExpertConsultationPage() {
               ) : (
                 <div className="space-y-1.5">
                   <Label>Service</Label>
-                  <Select value={formData.service} onValueChange={(value) => handleInputChange("service", value)}>
+                  <Select value={formData.service} onValueChange={handleServiceChange}>
                     <SelectTrigger className="h-11 rounded-lg border-gray-300 bg-white text-gray-900">
                       <SelectValue />
                     </SelectTrigger>

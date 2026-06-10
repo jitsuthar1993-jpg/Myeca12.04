@@ -111,7 +111,7 @@ export default function UserDashboard() {
                 >
                   <stat.icon className="h-5 w-5" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 [&>p]:mb-0">
                   <p className="type-meta font-bold uppercase leading-tight text-slate-400">{stat.label}</p>
                   <p className="mt-0.5 text-xl font-bold leading-none text-slate-900">{stat.value}</p>
                 </div>
@@ -149,7 +149,7 @@ export default function UserDashboard() {
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                       <Briefcase className="h-5 w-5" />
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 [&>p]:mb-0">
                       <p className="truncate text-sm font-bold text-slate-900">
                         {service.serviceTitle || service.serviceId || 'Service request'}
                       </p>
@@ -213,12 +213,12 @@ export default function UserDashboard() {
                 ) : activeServices.length ? (
                   activeServices.map((service) => (
                     <tr key={service.id} className="group transition-colors hover:bg-blue-50/30">
-                      <td className="align-top px-4 py-3">
-                        <div className="flex min-w-0 items-start gap-3">
+                      <td className="align-middle px-4 py-3">
+                        <div className="flex min-w-0 items-center gap-3">
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                             <Briefcase className="h-4 w-4" />
                           </div>
-                          <div className="min-w-0">
+                          <div className="min-w-0 [&>p]:mb-0">
                             <p className="truncate text-sm font-bold leading-tight text-slate-900">
                               {service.serviceTitle || service.serviceId || 'Service request'}
                             </p>
@@ -228,10 +228,10 @@ export default function UserDashboard() {
                           </div>
                         </div>
                       </td>
-                      <td className="align-top px-4 py-3">
-                        <div className="flex min-w-0 items-start gap-2.5">
-                          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
-                          <div className="min-w-0">
+                      <td className="align-middle px-4 py-3">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" />
+                          <div className="min-w-0 [&>p]:mb-0">
                             <p className="truncate text-sm font-bold text-slate-800">{assignedCaLabel(service)}</p>
                             {(service.assignedCaEmail || service.metadata?.assignedCa?.email) && (
                               <p className="type-meta mt-0.5 truncate font-semibold text-slate-400">
