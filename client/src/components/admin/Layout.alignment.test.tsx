@@ -92,7 +92,36 @@ describe("role-aware dashboard shell alignment", () => {
     expect(screen.getByTestId("mobile-nav-more")).toHaveTextContent("More");
     expect(
       Array.from(mobileNav.querySelectorAll("a,button")).map((item) => item.textContent?.trim()),
-    ).toEqual(["Home", "MY ITR", "Services", "Docs", "More"]);
+    ).toEqual(["Home", "MY ITR", "Services", "Docs", "Generator", "More"]);
+    expect(mobileNav.firstElementChild).toHaveClass("grid-cols-6");
+  });
+
+  it("keeps Documents inactive while a Document Generator route is active", () => {
+    window.history.pushState({}, "", "/documents/generator");
+
+    renderWithQueryClient(
+      <Layout>
+        <div>Generator content</div>
+      </Layout>,
+    );
+
+    expect(screen.getByRole("link", { name: "Documents" })).not.toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Document Generator" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Generator" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("keeps the compatible generator_page alias active under Document Generator", () => {
+    window.history.pushState({}, "", "/documents/generator_page");
+
+    renderWithQueryClient(
+      <Layout>
+        <div>Generator alias content</div>
+      </Layout>,
+    );
+
+    expect(screen.getByRole("link", { name: "Documents" })).not.toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Document Generator" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Generator" })).toHaveAttribute("aria-current", "page");
   });
 
   it("keeps secondary user destinations inside the mobile More menu without payments", async () => {

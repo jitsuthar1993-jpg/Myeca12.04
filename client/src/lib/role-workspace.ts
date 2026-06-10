@@ -3,6 +3,7 @@ import {
   BarChart3,
   Briefcase,
   Database,
+  FilePenLine,
   FileText,
   FolderOpen,
   Globe,
@@ -92,6 +93,7 @@ export const ROLE_NAV_GROUPS: Record<AppRole, RoleNavGroup[]> = {
         { icon: FileText, label: "MY ITR", href: "/itr/filing" },
         { icon: Zap, label: "Services", href: "/dashboard/services" },
         { icon: FolderOpen, label: "Documents", href: "/documents" },
+        { icon: FilePenLine, label: "Document Generator", href: "/documents/generator" },
       ],
     },
     {

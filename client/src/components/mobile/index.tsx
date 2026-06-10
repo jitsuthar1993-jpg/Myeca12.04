@@ -132,13 +132,18 @@ export function MobileBottomNav({ items, className }: MobileBottomNavProps) {
         className,
       )}
     >
-      <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
+      <div
+        className={cn(
+          "mx-auto grid max-w-md gap-1",
+          items.length === 6 ? "grid-cols-6" : "grid-cols-5",
+        )}
+      >
         {items.map((item) => {
           const Icon = item.icon;
           const content = (
             <>
               <Icon className="h-5 w-5" />
-              <span className="mt-1 max-w-full truncate text-[0.68rem] font-black leading-none">{item.label}</span>
+              <span className="mt-1 max-w-full truncate text-[0.62rem] font-black leading-none sm:text-[0.68rem]">{item.label}</span>
             </>
           );
           const className = cn(

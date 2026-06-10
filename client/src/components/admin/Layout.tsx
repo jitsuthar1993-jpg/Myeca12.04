@@ -2,6 +2,7 @@ import { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import {
   Command,
+  FilePenLine,
   FileText,
   FolderOpen,
   HelpCircle,
@@ -47,12 +48,21 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
   const isUserRole = role === 'user';
   const userName = user?.firstName || user?.email?.split('@')[0] || 'User';
   const isActivePath = (href: string) => location === href || location.startsWith(`${href}/`);
+  const isDocumentGeneratorPath =
+    location === '/documents/generator_page' || isActivePath('/documents/generator');
+  const isWorkspaceNavItemActive = (href: string) =>
+    href === '/documents'
+      ? location === href
+      : href === '/documents/generator'
+        ? isDocumentGeneratorPath
+        : isActivePath(href);
 
   const mobileNavItems: MobileNavItem[] = [
     { icon: LayoutGrid, label: 'Home', href: '/dashboard', active: isActivePath('/dashboard') && !isActivePath('/dashboard/services') },
     { icon: FileText, label: 'MY ITR', href: '/itr/filing', active: isActivePath('/itr/filing') },
     { icon: Zap, label: 'Services', href: '/dashboard/services', active: isActivePath('/dashboard/services') },
-    { icon: FolderOpen, label: 'Docs', href: '/documents', active: isActivePath('/documents') },
+    { icon: FolderOpen, label: 'Docs', href: '/documents', active: isWorkspaceNavItemActive('/documents') },
+    { icon: FilePenLine, label: 'Generator', href: '/documents/generator', active: isDocumentGeneratorPath },
     { icon: MoreHorizontal, label: 'More', onClick: () => setMoreOpen(true), active: moreOpen, testId: 'mobile-nav-more' },
   ];
 
@@ -111,9 +121,13 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                     </p>
                     {group.items.map((item) => {
                       const Icon = item.icon;
-                      const isActive = location === item.href || location.startsWith(`${item.href}/`);
+                      const isActive = isWorkspaceNavItemActive(item.href);
                       return (
-                        <Link key={`${group.label}-${item.label}-${item.href}`} href={item.href}>
+                        <Link
+                          key={`${group.label}-${item.label}-${item.href}`}
+                          href={item.href}
+                          aria-current={isActive ? 'page' : undefined}
+                        >
                           <div
                             className={cn(
                               'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors',

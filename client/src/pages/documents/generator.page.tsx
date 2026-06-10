@@ -29,6 +29,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle,
+  X,
 } from 'lucide-react';
 import { loadDocumentGenerator } from './generators';
 import { DocumentGeneratorConfig } from './generators/types';
@@ -150,6 +151,7 @@ export default function DocumentGenerator() {
   const { toast } = useToast();
 
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -438,7 +440,10 @@ export default function DocumentGenerator() {
   const currentTitle = `${config.title} Generator | MyeCA.in`;
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 overflow-hidden font-sans">
+    <div
+      data-testid="focused-document-editor"
+      className="flex h-[100dvh] flex-col overflow-hidden bg-slate-50 font-sans text-slate-950"
+    >
       <MetaSEO 
         title={currentTitle}
         description={`Create and download your ${config.title} online with expert-approved clauses for the Indian legal system.`}
@@ -448,34 +453,34 @@ export default function DocumentGenerator() {
           { name: config.title, url: `/documents/generator/${documentType}` }
         ]}
       />
-      {/* Premium Header Pipeline */}
-      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/80 px-4 md:px-6 py-3 shrink-0 shadow-sm z-20 relative">
-        <div className="flex items-center justify-between max-w-[1600px] mx-auto">
-          <div className="flex items-center space-x-4">
+      <header className="relative z-20 shrink-0 border-b border-slate-200 bg-white/95 px-3 py-3 shadow-sm backdrop-blur sm:px-5">
+        <div className="mx-auto flex max-w-[1600px] flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <Button
               variant="ghost"
               onClick={() => setLocation('/documents/generator')}
-              className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full px-4"
+              className="h-9 shrink-0 rounded-lg px-3 text-slate-600 hover:bg-slate-100 hover:text-slate-950"
             >
               <FileText className="w-4 h-4" />
-              <span className="font-semibold">Back to Hub</span>
+              <span className="hidden font-black sm:inline">Back to Document Generator</span>
+              <span className="font-black sm:hidden">Back</span>
             </Button>
-            <Separator orientation="vertical" className="h-8 bg-slate-200" />
-            <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 rounded-xl shrink-0 ring-1 ring-blue-100 shadow-inner">
+            <Separator orientation="vertical" className="hidden h-8 bg-slate-200 sm:block" />
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700">
                 {config.icon}
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">
+              <div className="min-w-0 [&>p]:mb-0">
+                <h1 className="truncate text-base font-black leading-tight text-slate-950 sm:text-lg">
                   {config.title}
                 </h1>
-                <p className="text-xs text-slate-500 font-medium">{config.description}</p>
+                <p className="mt-0.5 hidden truncate text-xs font-semibold text-slate-500 md:block">{config.description}</p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 text-sm text-slate-500 mr-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 xl:pb-0">
+            <div className="mr-2 hidden shrink-0 items-center gap-2 text-xs font-bold text-slate-500 lg:flex">
               {saveStatus === 'saving' && (
                 <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
               )}
@@ -495,23 +500,31 @@ export default function DocumentGenerator() {
               variant="outline"
               size="sm"
               onClick={() => setIsPreviewVisible(!isPreviewVisible)}
-              className="flex items-center space-x-2 bg-white hover:bg-slate-50 border-slate-200 text-slate-700 rounded-full px-4 h-9 shadow-sm"
+              className="hidden h-9 shrink-0 items-center gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 shadow-none hover:bg-slate-50 lg:flex"
             >
               {isPreviewVisible ? (
                 <EyeOff className="w-4 h-4 text-slate-500" />
               ) : (
                 <Eye className="w-4 h-4 text-slate-500" />
               )}
-              <span className="font-medium">{isPreviewVisible ? 'Hide View' : 'Show View'}</span>
+              <span className="font-black">{isPreviewVisible ? 'Hide preview' : 'Show preview'}</span>
             </Button>
 
-            <Separator orientation="vertical" className="h-6 mx-2 bg-slate-200" />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsMobilePreviewOpen(true)}
+              className="h-9 shrink-0 rounded-lg border-slate-200 px-3 font-black lg:hidden"
+            >
+              <Eye className="h-4 w-4" />
+              Preview
+            </Button>
 
             <Select value={exportFormat} onValueChange={(value: any) => setExportFormat(value)}>
-              <SelectTrigger className="w-32 bg-white h-9 shadow-sm rounded-full border-slate-200 font-medium text-slate-700 focus:ring-blue-500">
+              <SelectTrigger className="h-9 w-28 shrink-0 rounded-lg border-slate-200 bg-white text-xs font-black text-slate-700 shadow-none focus:ring-blue-500 sm:w-32">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+              <SelectContent className="rounded-lg border-slate-200 shadow-xl">
                 <SelectItem value="pdf" className="font-medium cursor-pointer">
                   <div className="flex items-center space-x-2">
                     <File className="w-4 h-4 text-red-500" />
@@ -543,10 +556,11 @@ export default function DocumentGenerator() {
               variant="ghost"
               size="sm"
               onClick={handleReset}
-              className="flex items-center space-x-2 h-9 rounded-full px-4 text-slate-600 hover:text-red-600 hover:bg-red-50 transition-colors"
+              className="h-9 shrink-0 rounded-lg px-3 text-slate-600 hover:bg-red-50 hover:text-red-600"
+              aria-label="Reset document"
             >
               <RotateCcw className="w-4 h-4" />
-              <span className="font-medium">Reset</span>
+              <span className="hidden font-black sm:inline">Reset</span>
             </Button>
 
             <Button
@@ -554,44 +568,41 @@ export default function DocumentGenerator() {
               size="sm"
               onClick={handleSubmit(onSubmit)}
               disabled={isSaving}
-              className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-600/20 rounded-full px-5 h-9 border-0 transition-all duration-300"
+              className="h-9 shrink-0 rounded-lg bg-blue-700 px-3 font-black text-white shadow-none hover:bg-blue-800"
             >
               {isSaving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              <span className="font-semibold">Save Draft</span>
+              <span>Save</span>
             </Button>
 
             <Button
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="flex items-center space-x-2 bg-blue-700 hover:bg-blue-800 text-white shadow-md rounded-full px-5 h-9 transition-all duration-300"
+              className="h-9 shrink-0 rounded-lg bg-slate-950 px-3 font-black text-white shadow-none hover:bg-slate-800"
             >
               {isExporting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Download className="w-4 h-4" />
               )}
-              <span className="font-semibold">Export Now</span>
+              <span>Export</span>
             </Button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Workspace Area */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Form Panel */}
         <div
-          className={`${isPreviewVisible ? 'w-full lg:w-[45%]' : 'w-full'} bg-slate-50/50 overflow-y-auto no-scrollbar border-r border-slate-200/60 transition-all duration-300 ease-in-out relative`}
+          className={`${isPreviewVisible ? 'w-full lg:w-[45%]' : 'w-full'} relative overflow-y-auto border-r border-slate-200 bg-slate-50 transition-all duration-300 ease-in-out`}
         >
-          {/* Subtle background gradient for form panel */}
-          <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
-
-          <div className="p-6 md:p-8 max-w-4xl mx-auto relative z-10 pb-32">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 md:p-10 mb-8">
+          <div className="relative z-10 mx-auto max-w-4xl p-4 pb-32 sm:p-6 lg:p-8">
+            <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <FormComponent register={register} errors={errors} control={control} watch={watch} />
               </form>
@@ -601,17 +612,41 @@ export default function DocumentGenerator() {
 
         {/* Live Preview Panel (Dark Premium Theme) */}
         {isPreviewVisible && (
-          <div className="hidden lg:flex lg:w-[55%] bg-[#0f172a] overflow-y-auto relative no-scrollbar transition-all duration-300 ease-in-out border-l border-slate-800 justify-center pt-12 pb-24">
-            
-            {/* Premium Dark Background Radial Gradient */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800/40 via-[#0f172a] to-[#0f172a] pointer-events-none"></div>
-
-            <div className="max-w-5xl mx-auto relative z-10 w-full flex justify-center">
+          <div className="relative hidden overflow-y-auto border-l border-slate-800 bg-slate-950 pb-24 pt-10 lg:flex lg:w-[55%] lg:justify-center">
+            <div className="relative z-10 mx-auto flex w-full max-w-5xl justify-center">
               <DocumentPreview htmlContent={config.generateHTML(formData)} />
             </div>
           </div>
         )}
       </div>
+
+      {isMobilePreviewOpen && (
+        <div
+          data-testid="mobile-document-preview"
+          className="fixed inset-0 z-50 flex flex-col bg-slate-950 lg:hidden"
+        >
+          <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-800 bg-slate-900 px-4 text-white">
+            <div className="min-w-0 [&>p]:mb-0">
+              <p className="truncate text-sm font-black">{config.title}</p>
+              <p className="mt-0.5 text-xs font-semibold text-slate-400">Document preview</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobilePreviewOpen(false)}
+              className="h-9 w-9 rounded-lg text-white hover:bg-slate-800 hover:text-white"
+              aria-label="Close document preview"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex-1 overflow-auto p-4">
+            <div className="min-w-[820px]">
+              <DocumentPreview htmlContent={config.generateHTML(formData)} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

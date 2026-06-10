@@ -1,7 +1,7 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
-import { m, AnimatePresence } from 'framer-motion';
 import MetaSEO from "@/components/seo/MetaSEO";
+import { Layout } from '@/components/admin/Layout';
 import {
   FileText,
   User,
@@ -16,11 +16,7 @@ import {
   Building2,
   Home as HomeIcon,
   Search,
-  ChevronRight,
-  ArrowRight,
-  Eye,
   CheckCircle2,
-  ChevronDown,
   CheckCircle,
   Download,
   ExternalLink,
@@ -28,7 +24,6 @@ import {
   RefreshCw,
 } from 'lucide-react';
 
-import { useAuth } from '@/components/AuthProvider';
 import {
   incomeTaxFormDownloads,
   incomeTaxFormsAssessmentYear,
@@ -703,7 +698,7 @@ function formatSyncDate(value: string) {
 }
 
 export default function DocumentGeneratorRegistry() {
-  const mainContentRef = useRef<HTMLElement | null>(null);
+  const [activeView, setActiveView] = useState<'templates' | 'official'>('templates');
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [incomeTaxSearchQuery, setIncomeTaxSearchQuery] = useState('');
@@ -722,13 +717,15 @@ export default function DocumentGeneratorRegistry() {
   ];
 
   const filteredDocs = useMemo(() => {
-    if (activeCategory === 'income-tax-forms') return [];
-
     return documentGenerators.filter((doc) => {
       const matchesCategory = activeCategory === 'all' || doc.category === activeCategory;
-      const matchesSearch =
-        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()));
+      const query = searchQuery.trim().toLowerCase();
+      const matchesSearch = !query || [
+        doc.title,
+        doc.description,
+        doc.validity,
+        ...doc.features,
+      ].some((value) => value.toLowerCase().includes(query));
       return matchesCategory && matchesSearch;
     });
   }, [activeCategory, searchQuery]);
@@ -759,20 +756,10 @@ export default function DocumentGeneratorRegistry() {
   const getCategoryStyle = (catId: string) => {
     return CATEGORIES.find((c) => c.id === catId) || CATEGORIES[1];
   };
-
-  const showIncomeTaxForms =
-    activeCategory === 'tax' || activeCategory === 'income-tax-forms';
-  const showDocumentGrid = activeCategory !== 'income-tax-forms';
-
-  const handleCategoryChange = (categoryId: string) => {
-    setActiveCategory(categoryId);
-    requestAnimationFrame(() => {
-      mainContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  };
+  const templateCategories = CATEGORIES.filter((category) => category.id !== 'income-tax-forms');
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <Layout title="Document Generator">
       <MetaSEO 
         title="Legal Documents & Agreements Online India | MyeCA.in"
         description="Create, edit, and download 50+ legal and business documents including Rent Agreements, NDAs, Offer Letters, and Board Resolutions. CA-verified drafts for Indian market."
@@ -782,367 +769,269 @@ export default function DocumentGeneratorRegistry() {
         ]}
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Document Registry", url: "/documents/generator" }]}
       />
-      {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-white border-r border-gray-200 p-6 shrink-0 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
-        <div className="mb-8">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-            MyeCA Forms
-          </h2>
-          <p className="text-xs text-gray-500 font-medium tracking-wide mt-1 uppercase">
-            Indian Market Focused
-          </p>
-        </div>
+      <div className="space-y-6 pb-16">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="type-meta font-black uppercase tracking-[0.16em] text-blue-700">Document Generator</p>
+              <h1 className="mt-2 type-page-title font-black text-slate-950">Create documents from ready templates</h1>
+              <p className="mt-2 type-body text-slate-600">
+                Choose a template, complete the guided fields, preview the result, and export the finished document.
+              </p>
+            </div>
+            <Link
+              href="/documents"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 hover:bg-slate-50"
+            >
+              Open Documents
+            </Link>
+          </div>
 
-        <nav className="space-y-1">
-          {CATEGORIES.map((category) => (
+          <div className="mt-5 inline-flex w-full rounded-lg bg-slate-100 p-1 sm:w-auto">
             <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeCategory === category.id
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              type="button"
+              onClick={() => setActiveView('templates')}
+              className={`flex-1 rounded-md px-4 py-2 text-sm font-black sm:flex-none ${
+                activeView === 'templates' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'
               }`}
             >
-              <div
-                className={`${activeCategory === category.id ? 'text-blue-600' : 'text-gray-400'}`}
-              >
-                {category.icon}
-              </div>
-              <span className="min-w-0 flex-1 whitespace-nowrap text-left type-support md:text-sm">
-                {category.name}
-              </span>
-              {activeCategory === category.id && (
-                <ChevronRight className="w-4 h-4 shrink-0 text-blue-600" />
-              )}
+              Document templates
             </button>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main Content Area */}
-      <main ref={mainContentRef} className="flex-1 min-w-0 p-6 md:p-8 lg:p-10">
-        {/* Top Search & Filter Bar */}
-        <div className="max-w-7xl mx-auto mb-10">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="relative w-full md:max-w-xl">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search rent agreements, GST forms, NDA..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow outline-none text-gray-900 placeholder:text-gray-400"
-              />
-            </div>
-
-            <div className="w-full md:w-auto flex shrink-0 items-center bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
-              <span className="text-sm text-gray-500 mr-2 flex-shrink-0">Jurisdiction:</span>
-              <select
-                title="Select State"
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-                className="text-sm font-medium text-gray-900 bg-transparent outline-none focus:ring-0 appearance-none pr-6 cursor-pointer"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                  backgroundPosition: 'right center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: '1.25rem',
-                }}
-              >
-                {INDIAN_STATES.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <button
+              type="button"
+              onClick={() => setActiveView('official')}
+              className={`flex-1 rounded-md px-4 py-2 text-sm font-black sm:flex-none ${
+                activeView === 'official' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'
+              }`}
+            >
+              Official Forms
+            </button>
           </div>
-        </div>
+        </section>
 
-        {/* Income Tax Forms Downloads */}
-        {showIncomeTaxForms && (
-        <section className="max-w-7xl mx-auto mb-12">
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-            <div className="p-6 md:p-7 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-white">
-              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
-                <div className="max-w-3xl">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-3">
-                    <RefreshCw className="h-3.5 w-3.5" />
-                    Last synced {formatSyncDate(incomeTaxFormsLastSynced)}
-                  </div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-                    Income Tax Forms for FY {incomeTaxFormsFinancialYearLabel}
-                  </h2>
-                  <p className="mt-2 text-sm md:text-base text-gray-600 leading-relaxed">
-                    ITR utilities, schemas, and locally mirrored PDF documents for the official
-                    2025-26 return downloads catalog.
-                  </p>
-                </div>
-
-                <a
-                  href={incomeTaxFormsSourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:border-blue-200 hover:text-blue-700"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Official source
-                </a>
-              </div>
-
-              <div className="mt-6 relative max-w-2xl">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search ITR forms, utilities, schemas..."
-                  value={incomeTaxSearchQuery}
-                  onChange={(event) => setIncomeTaxSearchQuery(event.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow outline-none text-gray-900 placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-
-            <div className="p-5 md:p-6">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <p className="text-sm font-medium text-gray-600">
-                  Showing {filteredIncomeTaxForms.length} of {incomeTaxFormDownloads.length} official
-                  download entries
-                </p>
-                {incomeTaxSearchQuery && (
-                  <button
-                    onClick={() => setIncomeTaxSearchQuery('')}
-                    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+        {activeView === 'templates' ? (
+          <>
+            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px]">
+                <label className="relative">
+                  <span className="sr-only">Search document templates</span>
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="search"
+                    placeholder="Search agreements, affidavits, invoices, letters..."
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm font-semibold text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  />
+                </label>
+                <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm">
+                  <span className="font-semibold text-slate-500">Jurisdiction</span>
+                  <select
+                    value={selectedState}
+                    onChange={(event) => setSelectedState(event.target.value)}
+                    className="min-w-0 flex-1 bg-transparent font-black text-slate-800 outline-none"
+                    title="Select State"
                   >
-                    Clear
+                    {INDIAN_STATES.map((state) => <option key={state}>{state}</option>)}
+                  </select>
+                </label>
+              </div>
+              <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+                {templateCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black ${
+                      activeCategory === category.id
+                        ? 'border-blue-200 bg-blue-50 text-blue-700'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {category.icon}
+                    {category.name}
                   </button>
-                )}
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <h2 className="type-card-title font-black text-slate-950">
+                    {templateCategories.find((category) => category.id === activeCategory)?.name}
+                  </h2>
+                  <p className="mt-1 type-support text-slate-500">{filteredDocs.length} templates available</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {filteredIncomeTaxForms.map((form) => {
-                  const typeStyle = incomeTaxFileTypeStyles[form.fileType];
-                  const downloadHref = form.downloadUrl || form.officialUrl;
-                  const isMirroredPdf = Boolean(form.downloadUrl);
-
+              <div
+                data-testid="document-template-gallery"
+                className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+              >
+                {filteredDocs.map((doc) => {
+                  const categoryStyle = getCategoryStyle(doc.category);
                   return (
                     <article
-                      key={form.id}
-                      className="flex flex-col rounded-xl border border-gray-200 bg-white p-4 hover:border-emerald-200 hover:shadow-md transition-all"
+                      key={doc.id}
+                      className="flex min-h-[285px] flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="text-base font-bold text-gray-900 leading-snug">
-                            {form.title}
-                          </h3>
-                          <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <span
-                              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${typeStyle.className}`}
-                            >
-                              {typeStyle.icon}
-                              {typeStyle.label}
-                            </span>
-                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                              FY {incomeTaxFormsFinancialYearLabel}
-                            </span>
-                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                              AY {incomeTaxFormsAssessmentYear}
-                            </span>
-                            {form.version && (
-                              <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                                v{form.version}
-                              </span>
-                            )}
-                            {form.size && (
-                              <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                                {form.size}
-                              </span>
-                            )}
-                          </div>
+                        <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${categoryStyle.bg} ${categoryStyle.color}`}>
+                          {doc.icon}
                         </div>
+                        <span className={`rounded-md px-2 py-1 type-meta font-black uppercase tracking-[0.08em] ${
+                          doc.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                          {doc.status === 'active' ? 'Ready' : 'Soon'}
+                        </span>
                       </div>
-
-                      <p className="mt-3 text-sm text-gray-600 leading-relaxed line-clamp-3">
-                        {form.description || 'Official Income Tax Department form download.'}
-                      </p>
-
-                      {form.latestReleaseDate && (
-                        <p className="mt-3 text-xs font-medium text-gray-500">
-                          Latest release: {form.latestReleaseDate}
-                        </p>
-                      )}
-
-                      <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                        <a
-                          href={downloadHref}
-                          target={isMirroredPdf ? undefined : '_blank'}
-                          rel={isMirroredPdf ? undefined : 'noopener noreferrer'}
-                          download={isMirroredPdf ? true : undefined}
-                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
-                        >
-                          {isMirroredPdf ? (
-                            <>
-                              <Download className="h-4 w-4" />
-                              Download PDF
-                            </>
-                          ) : (
-                            <>
-                              <ExternalLink className="h-4 w-4" />
-                              Open official file
-                            </>
-                          )}
-                        </a>
-                        <a
-                          href={form.officialUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 hover:border-blue-200 hover:text-blue-700"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Official source
-                        </a>
+                      <h3 className="mt-4 type-card-title font-black text-slate-950">{doc.title}</h3>
+                      <p className="mt-2 line-clamp-3 type-support leading-5 text-slate-600">{doc.description}</p>
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {doc.features.slice(0, 2).map((feature) => (
+                          <span key={feature} className="rounded-md bg-slate-50 px-2 py-1 type-meta font-bold text-slate-600">
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="mt-auto border-t border-slate-100 pt-4">
+                        {doc.status === 'active' ? (
+                          <Link
+                            href={`/documents/generator/${doc.id}`}
+                            className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-blue-700 px-4 text-sm font-black text-white hover:bg-blue-800"
+                          >
+                            Create document
+                          </Link>
+                        ) : (
+                          <button disabled className="h-10 w-full rounded-lg bg-slate-100 text-sm font-black text-slate-400">
+                            In development
+                          </button>
+                        )}
                       </div>
                     </article>
                   );
                 })}
               </div>
 
+              {filteredDocs.length === 0 && (
+                <div className="rounded-lg border border-dashed border-slate-300 bg-white py-14 text-center">
+                  <Search className="mx-auto h-9 w-9 text-slate-300" />
+                  <h3 className="mt-3 type-card-title font-black text-slate-950">No templates found</h3>
+                  <p className="mt-1 type-support text-slate-500">Try another search or category.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setActiveCategory('all');
+                    }}
+                    className="mt-4 text-sm font-black text-blue-700"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )}
+            </section>
+          </>
+        ) : (
+          <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-100 p-5 sm:p-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <div className="flex items-center gap-2 text-emerald-700">
+                    <RefreshCw className="h-4 w-4" />
+                    <span className="type-meta font-black uppercase tracking-[0.12em]">Synced {formatSyncDate(incomeTaxFormsLastSynced)}</span>
+                  </div>
+                  <h2 className="mt-2 type-card-title font-black text-slate-950">
+                    Income Tax Forms for FY {incomeTaxFormsFinancialYearLabel}
+                  </h2>
+                  <p className="mt-1 type-support text-slate-500">Official utilities, schemas, and PDF downloads.</p>
+                </div>
+                <a
+                  href={incomeTaxFormsSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 text-sm font-black text-slate-700 hover:bg-slate-50"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Official source
+                </a>
+              </div>
+              <label className="relative mt-5 block max-w-xl">
+                <span className="sr-only">Search official forms</span>
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="search"
+                  placeholder="Search ITR forms, utilities, schemas..."
+                  value={incomeTaxSearchQuery}
+                  onChange={(event) => setIncomeTaxSearchQuery(event.target.value)}
+                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm font-semibold outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+              {filteredIncomeTaxForms.map((form) => {
+                const typeStyle = incomeTaxFileTypeStyles[form.fileType];
+                const downloadHref = form.downloadUrl || form.officialUrl;
+                const isMirroredPdf = Boolean(form.downloadUrl);
+                return (
+                  <article key={form.id} className="flex flex-col rounded-lg border border-slate-200 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="type-support font-black text-slate-950">{form.title}</h3>
+                      <span className={`inline-flex shrink-0 items-center gap-1 rounded-md border px-2 py-1 type-meta font-black ${typeStyle.className}`}>
+                        {typeStyle.icon}
+                        {typeStyle.label}
+                      </span>
+                    </div>
+                    <p className="mt-2 line-clamp-3 type-support leading-5 text-slate-500">
+                      {form.description || 'Official Income Tax Department form download.'}
+                    </p>
+                    <p className="mt-3 type-meta font-bold text-slate-500">
+                      FY {incomeTaxFormsFinancialYearLabel} · AY {incomeTaxFormsAssessmentYear}
+                    </p>
+                    <div className="mt-auto grid gap-2 pt-4 sm:grid-cols-2">
+                      <a
+                        href={downloadHref}
+                        target={isMirroredPdf ? undefined : '_blank'}
+                        rel={isMirroredPdf ? undefined : 'noopener noreferrer'}
+                        download={isMirroredPdf ? true : undefined}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 text-xs font-black text-white"
+                      >
+                        {isMirroredPdf ? <Download className="h-4 w-4" /> : <ExternalLink className="h-4 w-4" />}
+                        {isMirroredPdf ? 'Download' : 'Open file'}
+                      </a>
+                      <a
+                        href={form.officialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 text-xs font-black text-slate-700"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Source
+                      </a>
+                    </div>
+                  </article>
+                );
+              })}
               {filteredIncomeTaxForms.length === 0 && (
-                <div className="text-center py-12 border border-dashed border-gray-300 rounded-xl">
-                  <Search className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <h3 className="text-base font-bold text-gray-900">No Income Tax forms found</h3>
-                  <p className="text-sm text-gray-500 mt-1">Try a different form number or keyword.</p>
+                <div className="rounded-lg border border-dashed border-slate-300 py-12 text-center sm:col-span-2">
+                  <Search className="mx-auto h-9 w-9 text-slate-300" />
+                  <h3 className="mt-3 type-card-title font-black text-slate-950">No official forms found</h3>
+                  <p className="mt-1 type-support text-slate-500">Try another form number or keyword.</p>
+                  <button
+                    type="button"
+                    onClick={() => setIncomeTaxSearchQuery('')}
+                    className="mt-4 text-sm font-black text-blue-700"
+                  >
+                    Clear search
+                  </button>
                 </div>
               )}
             </div>
-          </div>
-        </section>
+          </section>
         )}
-
-        {/* Categories Header */}
-        {showDocumentGrid && (
-        <>
-        <div className="max-w-7xl mx-auto mb-8 flex items-baseline justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            {CATEGORIES.find((c) => c.id === activeCategory)?.name}
-            <span className="text-gray-400 font-normal ml-3 text-2xl">({filteredDocs.length})</span>
-          </h1>
-        </div>
-
-        {/* Document Grid (Geometric Layout) */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredDocs.map((doc, i) => {
-              const catStyle = getCategoryStyle(doc.category);
-
-              return (
-                <m.div
-                  key={doc.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3, delay: i * 0.05 }}
-                  className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-xl hover:-translate-y-1 hover:border-blue-200 transition-all duration-300 flex flex-col h-full overflow-hidden isolate"
-                >
-                  {/* Geometric Background Element */}
-                  <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 rounded-full bg-gray-50 group-hover:bg-blue-50/50 transition-colors -z-10 blur-xl"></div>
-
-                  {/* Header Row */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div
-                      className={`p-3 rounded-xl ${catStyle.bg} ${catStyle.color} shadow-sm ring-1 ring-black/5`}
-                    >
-                      {doc.icon}
-                    </div>
-                    {doc.status === 'active' ? (
-                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700 tracking-wide uppercase">
-                        Active
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500 uppercase tracking-wide">
-                        Soon
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2 group-hover:text-blue-700 transition-colors">
-                      {doc.title}
-                    </h3>
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Scale className="w-3.5 h-3.5 text-gray-400" />
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {doc.validity}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Metadata / Features */}
-                  <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col min-h-[160px]">
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                      {doc.description}
-                    </p>
-
-                    <ul className="grid grid-cols-1 gap-1.5 mb-5 mt-auto">
-                      {doc.features.map((feat, idx) => (
-                        <li
-                          key={idx}
-                          className="flex items-start text-xs text-gray-700 font-medium"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-blue-500 mr-2 shrink-0 relative top-[1px]" />
-                          <span className="leading-tight">{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-2 mt-auto">
-                      {doc.status === 'active' ? (
-                        <>
-                          <Link
-                            href={`/documents/generator/${doc.id}`}
-                            className="flex-1 bg-white border-2 border-blue-600 text-blue-700 hover:bg-blue-600 hover:text-white font-semibold py-2.5 px-3 rounded-xl text-sm text-center transition-colors shadow-sm"
-                          >
-                            Create
-                          </Link>
-                        </>
-                      ) : (
-                        <button
-                          disabled
-                          className="w-full bg-gray-50 border border-gray-200 text-gray-400 font-medium py-2.5 px-3 rounded-xl text-sm cursor-not-allowed"
-                        >
-                          In Development
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </m.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
-
-        {filteredDocs.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300 mx-auto max-w-2xl mt-12">
-            <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-gray-900 mb-1">No documents found</h3>
-            <p className="text-gray-500">Try adjusting your search or category filter.</p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setActiveCategory('all');
-              }}
-              className="mt-6 text-blue-600 font-medium hover:text-blue-700"
-            >
-              Clear filters
-            </button>
-          </div>
-        )}
-        </>
-        )}
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }
