@@ -3,6 +3,30 @@ import { DocumentGeneratorConfig } from './types';
 type GeneratorModule = Record<string, DocumentGeneratorConfig>;
 type GeneratorLoader = () => Promise<GeneratorModule>;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function mergeDefinedPreviewValues(defaultValue: unknown, formValue: unknown): unknown {
+  if (formValue === undefined) return defaultValue;
+  if (!isRecord(defaultValue) || !isRecord(formValue)) return formValue;
+
+  const keys = new Set([...Object.keys(defaultValue), ...Object.keys(formValue)]);
+  return Object.fromEntries(
+    [...keys].map((key) => [
+      key,
+      mergeDefinedPreviewValues(defaultValue[key], formValue[key]),
+    ]),
+  );
+}
+
+export function getDocumentGeneratorPreviewData<T extends Record<string, unknown>>(
+  defaultValues: T,
+  formData: Partial<T> | undefined,
+): T {
+  return mergeDefinedPreviewValues(defaultValues, formData ?? {}) as T;
+}
+
 const generatorLoaders: Record<string, GeneratorLoader> = {
   'invoice': () => import('./invoice'),
   'rent-agreement-rc': () => import('./rent-agreement-rc'),
@@ -18,6 +42,7 @@ const generatorLoaders: Record<string, GeneratorLoader> = {
   'warning-letter': () => import('./warning-letter'),
   'board-resolution-bank': () => import('./board-resolution-bank'),
   'will': () => import('./will'),
+  'huf-affidavit': () => import('./huf-affidavit'),
   'rent-agreement-comm': () => import('./rent-agreement-comm'),
   'affidavit-name': () => import('./affidavit-name'),
   'affidavit-address': () => import('./affidavit-address'),
@@ -69,6 +94,7 @@ const generatorExportNames: Record<string, string> = {
   'warning-letter': 'WarningLetterGenerator',
   'board-resolution-bank': 'BoardResolutionBankGenerator',
   'will': 'WillGenerator',
+  'huf-affidavit': 'HufAffidavitGenerator',
   'rent-agreement-comm': 'CommercialLeaseGenerator',
   'affidavit-name': 'NameChangeAffidavitGenerator',
   'affidavit-address': 'AddressProofAffidavitGenerator',

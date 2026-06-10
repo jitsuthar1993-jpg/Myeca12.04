@@ -96,7 +96,7 @@ const CATEGORIES = [
 
 // Extended Generator Cards mapped to categories
 const documentGenerators = [
-  // LEGAL & PERSONAL (11 documents)
+  // LEGAL & PERSONAL (12 documents)
   {
     id: 'rent-agreement-rc',
     title: 'Residential Rent Agreement',
@@ -173,6 +173,17 @@ const documentGenerators = [
     status: 'active',
     validity: 'Succession Act',
     features: ['Executor Appointment', 'Beneficiary Allocation', 'Witness Blocks'],
+  },
+  {
+    id: 'huf-affidavit',
+    title: 'HUF Affidavit',
+    description:
+      'Create a Karta affidavit recording HUF formation, the initial corpus gift, and family-member details.',
+    category: 'legal',
+    icon: <Users className="w-5 h-5" />,
+    status: 'active',
+    validity: 'All India',
+    features: ['Corpus Gift Declaration', 'Member Details Table', 'Karta Signature Block'],
   },
   {
     id: 'gift-deed',

@@ -31,7 +31,7 @@ import {
   CheckCircle,
   X,
 } from 'lucide-react';
-import { loadDocumentGenerator } from './generators';
+import { getDocumentGeneratorPreviewData, loadDocumentGenerator } from './generators';
 import { DocumentGeneratorConfig } from './generators/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -165,6 +165,19 @@ export default function DocumentGenerator() {
   // Fallback to 'resume' if the document is not properly loaded yet in Phase 1
   const documentType = params?.type || 'resume';
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+    getValues,
+    control,
+  } = useForm({
+    resolver: config ? zodResolver(config.schema) : undefined,
+    defaultValues: config?.defaultValues,
+  });
+
   useEffect(() => {
     let isActive = true;
 
@@ -174,6 +187,9 @@ export default function DocumentGenerator() {
     loadDocumentGenerator(documentType)
       .then((loadedConfig) => {
         if (isActive) {
+          if (loadedConfig) {
+            reset(loadedConfig.defaultValues);
+          }
           setConfig(loadedConfig);
         }
       })
@@ -192,28 +208,13 @@ export default function DocumentGenerator() {
     return () => {
       isActive = false;
     };
-  }, [documentType]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    reset,
-    getValues,
-    control,
-  } = useForm({
-    resolver: config ? zodResolver(config.schema) : undefined,
-    defaultValues: config?.defaultValues,
-  });
+  }, [documentType, reset]);
 
   const formData = watch();
-
-  useEffect(() => {
-    if (config) {
-      reset(config.defaultValues);
-    }
-  }, [config, reset]);
+  const previewData = useMemo(
+    () => (config ? getDocumentGeneratorPreviewData(config.defaultValues, formData) : formData),
+    [config, formData],
+  );
 
   // Load existing draft on mount
   useEffect(() => {
@@ -614,7 +615,7 @@ export default function DocumentGenerator() {
         {isPreviewVisible && (
           <div className="relative hidden overflow-y-auto border-l border-slate-800 bg-slate-950 pb-24 pt-10 lg:flex lg:w-[55%] lg:justify-center">
             <div className="relative z-10 mx-auto flex w-full max-w-5xl justify-center">
-              <DocumentPreview htmlContent={config.generateHTML(formData)} />
+              <DocumentPreview htmlContent={config.generateHTML(previewData)} />
             </div>
           </div>
         )}
@@ -642,7 +643,7 @@ export default function DocumentGenerator() {
           </div>
           <div className="flex-1 overflow-auto p-4">
             <div className="min-w-[820px]">
-              <DocumentPreview htmlContent={config.generateHTML(formData)} />
+              <DocumentPreview htmlContent={config.generateHTML(previewData)} />
             </div>
           </div>
         </div>
