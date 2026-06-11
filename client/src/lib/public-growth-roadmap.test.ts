@@ -137,10 +137,10 @@ describe("public growth roadmap implementation", () => {
     expect(pricingSource).toContain("lg:hidden");
     expect(pricingSource).toContain("mobile pricing promise");
 
-    expect(blogSource).toContain("isTopicFilterOpen");
+    expect(blogSource).toContain("Topic filters");
     expect(blogSource).toContain("selectedCategoryLabel");
-    expect(blogSource).toContain("Topic");
-    expect(blogSource).toContain("hidden md:flex");
+    expect(blogSource).toContain("snap-x");
+    expect(blogSource).toContain("aria-pressed");
     expect(blogSource).toContain("mobile-first-content-cta");
   });
 });

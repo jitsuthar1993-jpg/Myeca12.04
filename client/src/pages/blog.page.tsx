@@ -1,20 +1,40 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import {
   ArrowRight,
   BookOpen,
-  CalendarDays,
-  Clock3,
-  FileText,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  History,
   Loader2,
   Search,
+  Sparkles,
   TrendingUp,
   Users,
-  Building2,
-  ChevronRight,
+  X,
 } from 'lucide-react';
 import MetaSEO from '@/components/seo/MetaSEO';
+import { BlogCardSkeleton, BlogPostCard } from '@/components/blog/BlogPostCard';
+import {
+  clearBlogLastRead,
+  getCategory,
+  getCoverImage,
+  isImageUrl,
+  normalizeKey,
+  readBlogLastRead,
+  type BlogLastRead,
+} from '@/components/blog/blog-post-helpers';
+import OptimizedImage from '@/components/ui/optimized-image';
+import { Skeleton } from '@/components/ui/skeleton';
+import { buttonVariants } from '@/components/ui/button';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+} from '@/components/ui/pagination';
 import {
   DEFAULT_PUBLIC_BLOG_CATEGORIES,
   fetchPublicBlogCategories,
@@ -28,6 +48,8 @@ import { getBlogCoverImageSrc, isGeneratedBlogCover } from '@/lib/blog-cover-ass
 import { queryClient } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
 import type { BlogCategory } from '@shared/blog';
+
+const PAGE_SIZE = 13;
 
 const AUDIENCE_FILTERS = [
   { key: 'all', label: 'All readers', description: 'Tax, GST, filing, and compliance guides' },
@@ -61,77 +83,15 @@ const HUB_FAQS = [
   },
 ];
 
-function isImageUrl(value: string | null | undefined) {
-  return Boolean(value && /^(https?:\/\/|\/)/.test(value));
-}
-
-function normalizeKey(value: string | null | undefined) {
-  return (value ?? '').trim().toLowerCase();
-}
-
-function getCategory(post: BlogSummary): BlogCategory | null {
-  if (post.category && typeof post.category === 'object') return post.category;
-  return post.categoryName
-    ? {
-        id: post.categoryName,
-        name: post.categoryName,
-        slug: post.categoryName.toLowerCase().replace(/\s+/g, '-'),
-        description: null,
-      }
-    : null;
-}
-
-function getCategoryName(post: BlogSummary) {
-  return getCategory(post)?.name ?? 'Tax Guide';
-}
-
-function getCategoryTokens(post: BlogSummary) {
-  const category = getCategory(post);
-  return [category?.id, category?.name, category?.slug, post.categoryName]
-    .map(normalizeKey)
-    .filter(Boolean);
-}
-
-function getAuthorName(post: BlogSummary) {
-  if (post.authorName) return post.authorName;
-  if (post.author?.name) return post.author.name;
-  return (
-    [post.author?.firstName, post.author?.lastName].filter(Boolean).join(' ') ||
-    'MyeCA Editorial Team'
-  );
-}
-
-function getCoverImage(post: BlogSummary) {
-  return post.coverImage ?? post.featuredImage ?? post.image ?? null;
-}
-
-function getPublishedDate(post: BlogSummary) {
-  return post.publishedAt ?? post.createdAt ?? post.updatedAt ?? null;
-}
-
-function formatDate(value: string | null | undefined) {
-  if (!value) return 'Recently updated';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Recently updated';
-  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
-function getReadTime(post: BlogSummary) {
-  return post.readingTimeMinutes
-    ? `${post.readingTimeMinutes} min read`
-    : (post.readTime ?? '5 min read');
-}
-
-function getInitials(name: string) {
-  return (
-    name
-      .split(' ')
-      .map((part) => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2) || 'ME'
-  );
-}
+const SEASON_SHORTCUTS = [
+  { label: 'Check my ITR form in 60 sec', href: '/itr/form-recommender' },
+  { label: 'When does ITR filing start?', href: '/blog/when-will-itr-filing-start-ay-2026-27' },
+  { label: 'Complete AY 2026-27 filing guide', href: '/blog/complete-ay-2026-27-itr-filing-guide' },
+  {
+    label: 'Pick the right ITR form',
+    href: '/blog/itr-form-selection-master-guide-ay-2026-27',
+  },
+];
 
 function normalizeCategories(
   posts: BlogSummary[],
@@ -181,123 +141,38 @@ function preloadBlogArticle(slug: string) {
   }
 }
 
-function ArticleCard({
-  post,
-  compact = false,
-  priority = false,
-}: {
-  post: BlogSummary;
-  compact?: boolean;
-  priority?: boolean;
-}) {
-  const coverImage = getCoverImage(post);
-  const generatedCover = isGeneratedBlogCover(coverImage);
-  const authorName = getAuthorName(post);
+function getPaginationItems(current: number, total: number): Array<number | 'ellipsis'> {
+  if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1);
 
-  return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="block"
-      onMouseEnter={() => preloadBlogArticle(post.slug)}
-      onFocus={() => preloadBlogArticle(post.slug)}
-    >
-      <article
-        className={cn(
-          'group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md',
-          compact ? 'flex h-full flex-col' : 'md:grid md:grid-cols-[240px_minmax(0,1fr)]'
-        )}
-      >
-        <div
-          className={cn(
-            'relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50',
-            compact ? 'h-36' : 'h-32 sm:h-40 md:h-full md:min-h-[210px]'
-          )}
-        >
-          {isImageUrl(coverImage) ? (
-            <img
-              src={getBlogCoverImageSrc(coverImage)}
-              alt={post.title}
-              width={compact ? 480 : 640}
-              height={compact ? 240 : 420}
-              loading={priority ? 'eager' : 'lazy'}
-              fetchPriority={priority ? 'high' : 'auto'}
-              decoding="async"
-              className={cn(
-                'h-full w-full transition duration-500',
-                generatedCover
-                  ? 'bg-white object-contain p-0'
-                  : 'object-cover group-hover:scale-105'
-              )}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <FileText className="h-14 w-14 text-blue-200" />
-            </div>
-          )}
-          {!generatedCover && (
-            <div className="absolute left-3 top-3 rounded-full border border-white/70 bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm backdrop-blur">
-              {getCategoryName(post)}
-            </div>
-          )}
-        </div>
+  const pages = new Set<number>([1, total]);
+  for (let candidate = current - 1; candidate <= current + 1; candidate += 1) {
+    if (candidate >= 1 && candidate <= total) pages.add(candidate);
+  }
 
-        <div className={cn('flex flex-1 flex-col', compact ? 'p-4' : 'p-5 sm:p-6')}>
-          <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500">
-            <span>By {authorName}</span>
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="h-3.5 w-3.5 text-blue-400" />
-              {formatDate(getPublishedDate(post))}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Clock3 className="h-3.5 w-3.5 text-blue-400" />
-              {getReadTime(post)}
-            </span>
-          </div>
-
-          <h3
-            className={cn(
-              'font-black leading-snug tracking-tight text-slate-950 transition group-hover:text-blue-700',
-              compact ? 'text-lg' : 'text-xl sm:text-2xl'
-            )}
-          >
-            {post.title}
-          </h3>
-
-          {post.excerpt && !compact && (
-            <p className="mt-3 line-clamp-3 max-w-3xl text-sm leading-7 text-slate-600">
-              {post.excerpt}
-            </p>
-          )}
-
-          <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-            <div className="flex h-8 w-[124px] shrink-0 items-center gap-2 text-xs font-semibold text-slate-500">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                {getInitials(authorName)}
-              </div>
-              <p className="m-0 whitespace-nowrap leading-none">MyeCA insights</p>
-            </div>
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black text-blue-700 transition-all group-hover:bg-blue-600 group-hover:text-white">
-              Read article <ArrowRight className="h-3.5 w-3.5" />
-            </span>
-          </div>
-        </div>
-      </article>
-    </Link>
-  );
+  const sorted = [...pages].sort((a, b) => a - b);
+  const items: Array<number | 'ellipsis'> = [];
+  let previous = 0;
+  for (const pageNumber of sorted) {
+    if (previous && pageNumber - previous > 1) items.push('ellipsis');
+    items.push(pageNumber);
+    previous = pageNumber;
+  }
+  return items;
 }
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAudience, setSelectedAudience] = useState('all');
-  const [isTopicFilterOpen, setIsTopicFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const [lastRead, setLastRead] = useState<BlogLastRead | null>(() => readBlogLastRead());
+  const resultsRef = useRef<HTMLDivElement | null>(null);
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
 
   const blogListParams = useMemo(
     () => ({
       page,
-      limit: 13,
+      limit: PAGE_SIZE,
       search: debouncedSearchQuery,
       category: selectedCategory,
       audience: selectedAudience,
@@ -328,8 +203,25 @@ export default function BlogPage() {
     () => normalizeCategories(posts, categoriesData?.categories),
     [posts, categoriesData?.categories]
   );
-  const featuredPost = posts.find((post) => post.isFeatured) ?? posts[0];
-  const regularPosts = featuredPost ? posts.filter((post) => post.id !== featuredPost.id) : posts;
+
+  const hasActiveFilters =
+    selectedCategory !== 'all' ||
+    selectedAudience !== 'all' ||
+    debouncedSearchQuery.trim().length > 0;
+  const showDiscovery = !hasActiveFilters && page === 1;
+
+  const heroShowcasePost = posts.find((post) => post.isFeatured) ?? posts[0];
+  const featuredPost = showDiscovery ? heroShowcasePost : undefined;
+  const editorsPicks = useMemo(() => {
+    if (!showDiscovery || !featuredPost) return [];
+    return posts.filter((post) => post.isFeatured && post.id !== featuredPost.id).slice(0, 6);
+  }, [featuredPost, posts, showDiscovery]);
+  const gridPosts = useMemo(() => {
+    if (!featuredPost) return posts;
+    const excluded = new Set([featuredPost.id, ...editorsPicks.map((pick) => pick.id)]);
+    return posts.filter((post) => !excluded.has(post.id));
+  }, [editorsPicks, featuredPost, posts]);
+
   const popularTopics = categories.slice(0, 8);
   const selectedCategoryLabel = useMemo(() => {
     if (selectedCategory === 'all') return 'All guides';
@@ -340,10 +232,37 @@ export default function BlogPage() {
     );
   }, [categories, selectedCategory]);
 
+  const startIndex = posts.length > 0 ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const endIndex = posts.length > 0 ? startIndex + posts.length - 1 : 0;
+  const totalPages =
+    typeof postsData?.total === 'number' && postsData.total > 0
+      ? Math.max(1, Math.ceil(postsData.total / PAGE_SIZE))
+      : null;
+  const paginationItems = totalPages ? getPaginationItems(page, totalPages) : [];
+
   const selectCategory = (categoryKey: string) => {
     setSelectedCategory(categoryKey);
     setPage(1);
-    setIsTopicFilterOpen(false);
+  };
+
+  const goToPage = (nextPage: number) => {
+    if (nextPage === page || nextPage < 1) return;
+    if (totalPages && nextPage > totalPages) return;
+    setPage(nextPage);
+    requestAnimationFrame(() => {
+      const target = resultsRef.current;
+      if (!target) return;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({
+        top: target.getBoundingClientRect().top + window.scrollY - 96,
+        behavior: reduceMotion ? 'auto' : 'smooth',
+      });
+    });
+  };
+
+  const dismissLastRead = () => {
+    clearBlogLastRead();
+    setLastRead(null);
   };
 
   return (
@@ -392,18 +311,17 @@ export default function BlogPage() {
 
             <div className="hidden rounded-2xl border border-blue-100 bg-blue-50/60 p-3 shadow-sm md:block">
               <div className="overflow-hidden rounded-xl bg-white">
-                {featuredPost && isImageUrl(getCoverImage(featuredPost)) ? (
-                  <img
-                    src={getBlogCoverImageSrc(getCoverImage(featuredPost))}
-                    alt={featuredPost.title}
+                {heroShowcasePost && isImageUrl(getCoverImage(heroShowcasePost)) ? (
+                  <OptimizedImage
+                    src={getBlogCoverImageSrc(getCoverImage(heroShowcasePost))}
+                    alt={heroShowcasePost.title}
                     width={640}
                     height={360}
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
+                    priority
+                    containerClassName="h-28 w-full"
                     className={cn(
-                      'h-28 w-full',
-                      isGeneratedBlogCover(getCoverImage(featuredPost))
+                      'h-full w-full',
+                      isGeneratedBlogCover(getCoverImage(heroShowcasePost))
                         ? 'bg-white object-contain p-1.5'
                         : 'object-cover'
                     )}
@@ -450,6 +368,7 @@ export default function BlogPage() {
               <Search className="h-5 w-5 shrink-0 text-blue-500" />
               <input
                 id="blog-search"
+                aria-label="Search guides"
                 className="type-body w-full bg-transparent font-bold text-slate-950 outline-none placeholder:text-slate-400"
                 placeholder="Search tax, GST, ITR, deductions..."
                 value={searchQuery}
@@ -458,21 +377,39 @@ export default function BlogPage() {
                   setPage(1);
                 }}
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setPage(1);
+                  }}
+                  className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 rounded-lg bg-slate-50 p-1.5">
+            <div
+              role="group"
+              aria-label="Filter guides by reader type"
+              className="grid grid-cols-3 gap-2 rounded-lg bg-slate-50 p-1.5"
+            >
               {AUDIENCE_FILTERS.map((audience) => {
                 const active = selectedAudience === audience.key;
                 return (
                   <button
                     key={audience.key}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => {
                       setSelectedAudience(audience.key);
                       setPage(1);
                     }}
                     className={cn(
-                      'rounded-lg px-2 py-3 text-left transition sm:px-3',
+                      'rounded-lg px-2 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:px-3',
                       active
                         ? 'bg-blue-50 text-blue-700'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-blue-700'
@@ -501,87 +438,43 @@ export default function BlogPage() {
           </div>
         </div>
 
-        <div className="mb-5 md:hidden">
-          <button
-            type="button"
-            aria-expanded={isTopicFilterOpen}
-            onClick={() => setIsTopicFilterOpen((isOpen) => !isOpen)}
-            className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 text-left text-sm font-black text-slate-950 shadow-sm"
-          >
-            <span className="inline-flex items-center gap-2 text-blue-700">
-              <BookOpen className="h-4 w-4" />
-              Topic
-            </span>
-            <span className="min-w-0 truncate text-right text-slate-700">{selectedCategoryLabel}</span>
-          </button>
-          {isTopicFilterOpen ? (
-            <div className="mt-2 grid gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
-              <button
-                type="button"
-                onClick={() => selectCategory('all')}
-                className={cn(
-                  'rounded-lg border px-3 py-2 text-left text-sm font-bold transition',
-                  selectedCategory === 'all'
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:text-blue-700'
-                )}
-              >
-                All guides
-              </button>
-              {categories.map((category) => {
-                const key = normalizeKey(category.id || category.slug || category.name);
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => selectCategory(key)}
-                    className={cn(
-                      'rounded-lg border px-3 py-2 text-left text-sm font-bold transition',
-                      selectedCategory === key
-                        ? 'border-blue-600 bg-blue-600 text-white'
-                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:text-blue-700'
-                    )}
-                  >
-                    {category.name}
-                  </button>
-                );
-              })}
-            </div>
-          ) : null}
-        </div>
-
-        <div className="mb-7 hidden md:flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <button
-            type="button"
-            onClick={() => selectCategory('all')}
-            className={cn(
-              'shrink-0 rounded-lg border px-4 py-2 text-sm font-bold transition',
-              selectedCategory === 'all'
-                ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
-                : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700'
-            )}
-          >
-            All guides
-          </button>
-          {categories.map((category) => {
-            const key = normalizeKey(category.id || category.slug || category.name);
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => selectCategory(key)}
-                className={cn(
-                  'shrink-0 rounded-lg border px-4 py-2 text-sm font-bold transition',
-                  selectedCategory === key
-                    ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700'
-                )}
-              >
-                {category.name}
-              </button>
-            );
-          })}
-        </div>
+        <nav aria-label="Topic filters" className="mb-7">
+          <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 md:flex-wrap md:overflow-visible">
+            <button
+              type="button"
+              aria-pressed={selectedCategory === 'all'}
+              onClick={() => selectCategory('all')}
+              className={cn(
+                'min-h-11 shrink-0 snap-start rounded-full border px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+                selectedCategory === 'all'
+                  ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700'
+              )}
+            >
+              All guides
+            </button>
+            {categories.map((category) => {
+              const key = normalizeKey(category.id || category.slug || category.name);
+              const active = selectedCategory === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => selectCategory(key)}
+                  className={cn(
+                    'min-h-11 shrink-0 snap-start rounded-full border px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+                    active
+                      ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:text-blue-700'
+                  )}
+                >
+                  {category.name}
+                </button>
+              );
+            })}
+          </div>
+        </nav>
 
         <section className="mb-7 hidden rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:block md:p-5">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
@@ -612,9 +505,25 @@ export default function BlogPage() {
         </section>
 
         {showPostsLoader ? (
-          <div className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-blue-100 bg-white">
-            <Loader2 className="mb-4 h-8 w-8 animate-spin text-blue-600" />
-            <p className="text-sm font-semibold text-slate-500">Loading expert guides...</p>
+          <div aria-busy="true" aria-label="Loading guides">
+            <div className="mb-7 flex items-end justify-between gap-3 border-b border-slate-200 pb-3">
+              <Skeleton className="h-8 w-44" />
+              <Skeleton className="h-4 w-40" />
+            </div>
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+              <div className="min-w-0 space-y-8">
+                <BlogCardSkeleton variant="hero" />
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <BlogCardSkeleton key={index} />
+                  ))}
+                </div>
+              </div>
+              <div className="hidden space-y-5 lg:block">
+                <Skeleton className="h-72 w-full rounded-2xl" />
+                <Skeleton className="h-60 w-full rounded-2xl" />
+              </div>
+            </div>
           </div>
         ) : posts.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-blue-200 bg-white p-10 text-center">
@@ -638,9 +547,12 @@ export default function BlogPage() {
           </div>
         ) : (
           <div>
-            <div className="mb-7 flex items-end justify-between border-b border-slate-200">
+            <div
+              ref={resultsRef}
+              className="mb-7 flex flex-wrap items-end justify-between gap-3 border-b border-slate-200"
+            >
               <h2 className="type-section-title border-b-2 border-blue-600 pb-2 font-black text-slate-950">
-                Latest Posts
+                {hasActiveFilters ? 'Matching guides' : 'Latest guides'}
               </h2>
               <div className="flex items-center gap-3 pb-3">
                 {isRefreshingPosts && (
@@ -649,13 +561,50 @@ export default function BlogPage() {
                     Updating
                   </span>
                 )}
-                <span className="text-sm font-black text-blue-700">{totalPosts} guides</span>
+                <p className="text-sm font-black text-blue-700">
+                  Showing {startIndex}&ndash;{endIndex} of {totalPosts} guides
+                  {selectedCategory !== 'all' && (
+                    <span className="font-bold text-slate-500"> &middot; {selectedCategoryLabel}</span>
+                  )}
+                </p>
               </div>
             </div>
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="min-w-0 space-y-8">
-                {featuredPost && <ArticleCard post={featuredPost} priority />}
+                {lastRead && showDiscovery && lastRead.slug && (
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-3">
+                    <Link
+                      href={`/blog/${lastRead.slug}`}
+                      className="flex min-w-0 items-center gap-3"
+                      onMouseEnter={() => preloadBlogArticle(lastRead.slug)}
+                      onFocus={() => preloadBlogArticle(lastRead.slug)}
+                    >
+                      <History className="h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
+                      <span className="min-w-0 truncate text-sm font-bold text-blue-800">
+                        Continue reading: <span className="font-black">{lastRead.title}</span>
+                      </span>
+                    </Link>
+                    <button
+                      type="button"
+                      aria-label="Dismiss continue reading"
+                      onClick={dismissLastRead}
+                      className="rounded-full p-1.5 text-blue-400 transition hover:bg-white hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
+                {featuredPost && (
+                  <BlogPostCard
+                    post={featuredPost}
+                    variant="hero"
+                    priority
+                    onPrefetch={preloadBlogArticle}
+                  />
+                )}
+
                 <section className="mobile-first-content-cta rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:hidden">
                   <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
                     ITR readiness check
@@ -679,32 +628,124 @@ export default function BlogPage() {
                     </Link>
                   </div>
                 </section>
-                {regularPosts.map((post) => (
-                  <ArticleCard key={post.id} post={post} />
-                ))}
 
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-sm font-semibold text-slate-500">
-                    Page {page} - {totalPosts} matching guides
-                  </p>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      disabled={page === 1}
-                      onClick={() => setPage((current) => Math.max(1, current - 1))}
-                      className="rounded-full border border-slate-200 px-5 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      disabled={!postsData?.hasMore}
-                      onClick={() => setPage((current) => current + 1)}
-                      className="rounded-full bg-blue-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      Next
-                    </button>
-                  </div>
+                {editorsPicks.length > 0 && (
+                  <section aria-label="Editor's picks">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-blue-600" aria-hidden="true" />
+                      <h3 className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">
+                        Editor's picks
+                      </h3>
+                    </div>
+                    <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
+                      {editorsPicks.map((pick) => (
+                        <BlogPostCard
+                          key={pick.id}
+                          post={pick}
+                          variant="compact"
+                          onPrefetch={preloadBlogArticle}
+                          className="w-[240px] shrink-0 snap-start sm:w-[260px]"
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {gridPosts.map((post) => (
+                    <BlogPostCard key={post.id} post={post} onPrefetch={preloadBlogArticle} />
+                  ))}
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  {totalPages && totalPages > 1 ? (
+                    <Pagination>
+                      <PaginationContent className="flex-wrap">
+                        <PaginationItem>
+                          <button
+                            type="button"
+                            aria-label="Go to previous page"
+                            disabled={page === 1}
+                            onClick={() => goToPage(page - 1)}
+                            className={cn(
+                              buttonVariants({ variant: 'ghost', size: 'default' }),
+                              'gap-1 pl-2.5 font-bold',
+                              page === 1 && 'pointer-events-none opacity-40'
+                            )}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                            <span className="hidden sm:inline">Previous</span>
+                          </button>
+                        </PaginationItem>
+                        {paginationItems.map((item, index) =>
+                          item === 'ellipsis' ? (
+                            <PaginationItem key={`ellipsis-${index}`}>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          ) : (
+                            <PaginationItem key={item}>
+                              <button
+                                type="button"
+                                aria-label={`Go to page ${item}`}
+                                aria-current={item === page ? 'page' : undefined}
+                                onClick={() => goToPage(item)}
+                                className={cn(
+                                  buttonVariants({
+                                    variant: item === page ? 'outline' : 'ghost',
+                                    size: 'icon',
+                                  }),
+                                  'min-w-10 font-bold',
+                                  item === page && 'border-blue-600 text-blue-700'
+                                )}
+                              >
+                                {item}
+                              </button>
+                            </PaginationItem>
+                          )
+                        )}
+                        <PaginationItem>
+                          <button
+                            type="button"
+                            aria-label="Go to next page"
+                            disabled={page === totalPages}
+                            onClick={() => goToPage(page + 1)}
+                            className={cn(
+                              buttonVariants({ variant: 'ghost', size: 'default' }),
+                              'gap-1 pr-2.5 font-bold',
+                              page === totalPages && 'pointer-events-none opacity-40'
+                            )}
+                          >
+                            <span className="hidden sm:inline">Next</span>
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  ) : (
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <p className="text-sm font-semibold text-slate-500">
+                        Page {page} &middot; {totalPosts} matching guides
+                      </p>
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          disabled={page === 1}
+                          onClick={() => goToPage(page - 1)}
+                          className="rounded-full border border-slate-200 px-5 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Previous
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!postsData?.hasMore}
+                          onClick={() => goToPage(page + 1)}
+                          className="rounded-full bg-blue-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -781,13 +822,19 @@ export default function BlogPage() {
                 </div>
 
                 <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-500">
-                    Reading tip
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">
+                    Most useful this season
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">
-                    Start with a guide, then use the article CTAs when you want a CA to apply it to
-                    your exact filing or compliance case.
-                  </p>
+                  <div className="mt-3 space-y-2">
+                    {SEASON_SHORTCUTS.map((shortcut) => (
+                      <Link key={shortcut.href} href={shortcut.href}>
+                        <span className="group flex items-center justify-between gap-3 rounded-xl border border-blue-100 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700">
+                          <span className="min-w-0 truncate">{shortcut.label}</span>
+                          <ArrowRight className="h-4 w-4 shrink-0 text-blue-300 transition group-hover:translate-x-0.5 group-hover:text-blue-600" />
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </aside>
             </div>
