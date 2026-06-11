@@ -51,8 +51,8 @@ const validDraft = {
   taxPaid: { tds: 65000 },
 };
 
-async function mockAuthenticatedFiling(page: Page) {
-  let draft = structuredClone(validDraft);
+async function mockAuthenticatedFiling(page: Page, initialDraft: Record<string, unknown> = validDraft) {
+  let draft = structuredClone(initialDraft);
   let status = "draft";
 
   await page.addInitScript((token) => {
@@ -75,7 +75,7 @@ async function mockAuthenticatedFiling(page: Page) {
       return;
     }
     if (request.method() === "PATCH") {
-      const body = request.postDataJSON() as { draft?: typeof validDraft };
+      const body = request.postDataJSON() as { draft?: Record<string, unknown> };
       if (body.draft) draft = body.draft;
     }
     await route.fulfill({
@@ -101,18 +101,25 @@ async function mockAuthenticatedFiling(page: Page) {
         }],
       }),
     }));
+
+  return {
+    getDraft: () => structuredClone(draft),
+  };
 }
 
 test("mobile salaried filer traverses panes, defers a document, and submits for review", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Mobile filing journey only.");
-  await mockAuthenticatedFiling(page);
+  const filing = await mockAuthenticatedFiling(page);
   await page.goto("/itr/filing", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("button", { name: "My own ITR" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Save draft/i })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.getByRole("button", { name: /Continue/i }).click();
   await expect(page.getByLabel("First name")).toBeVisible();
   await expect(page.getByRole("textbox", { name: "PAN" })).toHaveCount(0);
   await expect(page.getByLabel("First name")).toHaveAttribute("autocomplete", "given-name");
+  await expect(page.getByLabel("First name")).toHaveAttribute("data-filing-field", "true");
 
   await page.getByRole("button", { name: /Continue/i }).click();
   await expect(page.getByRole("textbox", { name: "PAN" })).toBeVisible();
@@ -126,6 +133,7 @@ test("mobile salaried filer traverses panes, defers a document, and submits for 
   await page.getByRole("button", { name: /Continue/i }).click();
   await expect(page.getByRole("button", { name: /Provide later/i })).toBeVisible();
   await page.getByRole("button", { name: /Provide later/i }).click();
+  await expect.poll(() => Boolean((filing.getDraft() as any).documentDeferrals?.form16)).toBe(true);
   await expect(page.getByRole("button", { name: /Provide later/i })).toBeVisible();
 
   while (await page.getByText("Review packet", { exact: true }).count() === 0) {
@@ -134,4 +142,33 @@ test("mobile salaried filer traverses panes, defers a document, and submits for 
   await expect(page.getByText(/document checks/i)).toBeVisible();
   await page.getByRole("button", { name: /Submit for CA review/i }).click();
   await expect(page.getByText(/Submitted for CA review/i)).toBeVisible();
+});
+
+test("mobile validation stays on the pane until identity formats are corrected", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Mobile filing journey only.");
+  await mockAuthenticatedFiling(page, {
+    ...validDraft,
+    taxpayer: {
+      ...validDraft.taxpayer,
+      pan: "",
+      aadhaar: "",
+    },
+  });
+  await page.goto("/itr/filing", { waitUntil: "domcontentloaded" });
+
+  await page.getByRole("button", { name: /Continue/i }).click();
+  await page.getByRole("button", { name: /Continue/i }).click();
+  await expect(page.getByRole("textbox", { name: "PAN" })).toBeVisible();
+
+  await page.getByRole("button", { name: /Continue/i }).click();
+  await expect(page.getByText("PAN format needs correction")).toBeVisible();
+  await expect(page.getByText("Aadhaar format needs correction")).toBeVisible();
+
+  await page.getByRole("textbox", { name: "PAN" }).fill("ABCDE1234F");
+  await page.getByRole("textbox", { name: "Aadhaar" }).fill("123412341234");
+  await page.getByRole("button", { name: /Continue/i }).click();
+  const mobileInput = page.getByRole("textbox", { name: "Mobile" });
+  await expect(mobileInput).toBeVisible();
+  await expect(mobileInput).toHaveAttribute("inputmode", "tel");
+  await expect(mobileInput).toHaveAttribute("autocomplete", "tel-national");
 });

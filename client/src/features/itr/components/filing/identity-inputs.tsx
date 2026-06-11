@@ -75,6 +75,7 @@ export function PanInput({
       </div>
       <Input
         {...inputProps}
+        data-filing-field
         id={inputId}
         type="text"
         inputMode="text"
@@ -120,6 +121,7 @@ export function AadhaarInput({
       <div className="mt-2 flex gap-2">
         <Input
           {...inputProps}
+          data-filing-field
           id={inputId}
           type={visible ? "text" : "password"}
           inputMode="numeric"
@@ -175,6 +177,7 @@ export function IfscInput({
       </div>
       <Input
         {...inputProps}
+        data-filing-field
         id={inputId}
         type="text"
         inputMode="text"

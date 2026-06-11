@@ -323,7 +323,7 @@ describe("ITR filing workspace", () => {
 
   it("shows one focused pane at a time on mobile", async () => {
     isMobile = true;
-    setupApi([taxReturn()]);
+    setupApi([taxReturn({ formData: validDraft() })]);
 
     renderFilingPage();
 
@@ -341,6 +341,134 @@ describe("ITR filing workspace", () => {
     }));
     expect(await screen.findByLabelText("First name")).toBeInTheDocument();
     expect(screen.queryByLabelText("PAN")).not.toBeInTheDocument();
+  });
+
+  it("keeps a mobile filer on an invalid identity pane and shows inline errors", async () => {
+    isMobile = true;
+    setupApi([taxReturn({
+      formData: {
+        ...validDraft(),
+        taxpayer: {
+          ...validDraft().taxpayer,
+          pan: "",
+          aadhaar: "",
+        },
+      },
+    })]);
+    renderFilingPage();
+
+    await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    expect(await screen.findByLabelText("PAN")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    expect(screen.getByLabelText("PAN")).toBeInTheDocument();
+    expect(screen.getByText(/PAN format needs correction/i)).toBeInTheDocument();
+    expect(screen.getByText(/Aadhaar format needs correction/i)).toBeInTheDocument();
+  });
+
+  it("hides Save draft on mobile and persists Provide later as a deferral", async () => {
+    isMobile = true;
+    setupApi([taxReturn({ formData: validDraft() })]);
+    renderFilingPage();
+
+    expect(await screen.findByRole("button", { name: /Continue/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Save draft/i })).not.toBeInTheDocument();
+
+    while (screen.queryAllByText("Document checklist", { exact: true }).length === 0) {
+      await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    }
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /Provide later/i }));
+
+    await waitFor(() => {
+      const patchCall = apiRequestMock.mock.calls.filter(([url, options]) =>
+        url === "/api/tax-returns/return_1" && options?.method === "PATCH"
+      ).at(-1);
+      expect(JSON.parse(patchCall?.[1]?.body || "{}").draft.documentDeferrals.form16).toBe(true);
+    });
+  }, 10_000);
+
+  it("shows only masked identity values in the review recap", async () => {
+    setupApi([taxReturn({ formData: validDraft() })]);
+    renderFilingPage();
+
+    const reviewStep = (await screen.findAllByText("Review")).find((node) => node.closest("button"));
+    await userEvent.click(reviewStep!.closest("button") as HTMLButtonElement);
+
+    expect(screen.getByText("ABCDE••••F")).toBeInTheDocument();
+    expect(screen.getByText("•••• •••• 1234")).toBeInTheDocument();
+    expect(screen.getByText("••••••••9012")).toBeInTheDocument();
+    expect(screen.queryByText("ABCDE1234F")).not.toBeInTheDocument();
+    expect(screen.queryByText("123412341234")).not.toBeInTheDocument();
+    expect(screen.queryByText("123456789012")).not.toBeInTheDocument();
+  });
+
+  it("remasks sensitive account fields after leaving the mobile account pane", async () => {
+    isMobile = true;
+    setupApi([taxReturn({ formData: validDraft() })]);
+    renderFilingPage();
+
+    for (let index = 0; index < 5; index += 1) {
+      await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
+    }
+    const accountInput = await screen.findByLabelText("Account number");
+    expect(accountInput).toHaveAttribute("type", "password");
+
+    await userEvent.click(screen.getByRole("switch", { name: "Show account numbers" }));
+    expect(accountInput).toHaveAttribute("type", "text");
+    await userEvent.click(screen.getByRole("button", { name: "Previous pane" }));
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+
+    expect(await screen.findByLabelText("Account number")).toHaveAttribute("type", "password");
+  });
+
+  it("moves through mobile fields with Enter and completes the pane from the final field", async () => {
+    isMobile = true;
+    setupApi([taxReturn({ formData: validDraft() })]);
+    renderFilingPage();
+
+    await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
+    const firstName = await screen.findByLabelText("First name");
+    firstName.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(screen.getByLabelText("Last name")).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    expect(screen.getByLabelText("Date of birth")).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+
+    expect(await screen.findByLabelText("PAN")).toBeInTheDocument();
+  });
+
+  it("requires explicit no-income confirmation before leaving an empty income pane", async () => {
+    isMobile = true;
+    setupApi([taxReturn({
+      formData: {
+        ...validDraft(),
+        income: { selectedTypes: [], noIncomeConfirmed: false },
+      },
+    })]);
+    renderFilingPage();
+
+    for (let index = 0; index < 6; index += 1) {
+      await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
+    }
+    expect(await screen.findByText("No income to report")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    expect(screen.getByText("Confirm that no income type applies")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: /No income to report/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    expect(await screen.findByLabelText("80C")).toBeInTheDocument();
+  });
+
+  it("truthfully explains that offline edits require the page to stay open", async () => {
+    Object.defineProperty(window.navigator, "onLine", { configurable: true, value: false });
+    setupApi([taxReturn({ formData: validDraft() })]);
+    renderFilingPage();
+
+    expect(await screen.findByText("Offline. Keep this page open; changes will save after reconnecting.")).toBeInTheDocument();
+    Object.defineProperty(window.navigator, "onLine", { configurable: true, value: true });
   });
 
   it("selects income types without inserting fake amounts", async () => {

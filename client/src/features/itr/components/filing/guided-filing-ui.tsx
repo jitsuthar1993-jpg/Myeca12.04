@@ -137,6 +137,7 @@ export function TextInput({
       <Label htmlFor={inputId}>{label}</Label>
       <Input
         {...inputProps}
+        data-filing-field
         id={inputId}
         type={type}
         value={value ?? ""}
@@ -193,7 +194,7 @@ export function ToggleRow({
         <p className="text-sm font-black text-slate-950">{title}</p>
         <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{description}</p>
       </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+      <Switch aria-label={title} checked={checked} onCheckedChange={onCheckedChange} />
     </div>
   );
 }

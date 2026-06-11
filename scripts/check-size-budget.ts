@@ -20,6 +20,10 @@ const budgets = {
   jsGzipTargetBytes: 1.1 * mb,
   jsGzipHardBytes: 1.5 * mb,
   largestJsRawBytes: 350 * kb,
+  cssRawTargetBytes: 250 * kb,
+  cssRawHardBytes: 280 * kb,
+  ogDefaultBytes: 100 * kb,
+  itrFilingChunkGzipBytes: 90 * kb,
   apiIndexFunctionBytes: 4 * mb,
 };
 
@@ -71,10 +75,18 @@ const files = walkFiles(distPublic).map(fileInfo);
 const jsFiles = files.filter((file) => file.path.endsWith(".js"));
 const cssFiles = files.filter((file) => file.path.endsWith(".css"));
 const pdfFiles = files.filter((file) => file.path.endsWith(".pdf"));
+const htmlFiles = files.filter((file) => file.path.endsWith(".html"));
 const totalBytes = files.reduce((total, file) => total + file.size, 0);
 const jsGzipBytes = jsFiles.reduce((total, file) => total + file.gzipSize, 0);
 const cssGzipBytes = cssFiles.reduce((total, file) => total + file.gzipSize, 0);
+const cssRawBytes = cssFiles.reduce((total, file) => total + file.size, 0);
+const htmlRawBytes = htmlFiles.reduce((total, file) => total + file.size, 0);
 const largestJs = [...jsFiles].sort((a, b) => b.size - a.size)[0];
+const largestCss = [...cssFiles].sort((a, b) => b.size - a.size)[0];
+const largestArtifacts = [...files].sort((a, b) => b.size - a.size).slice(0, 5);
+const itrFilingChunk = jsFiles.find((file) => /\/filing\.page-[^/]+\.js$/.test(file.path));
+const contentContext = files.find((file) => file.path.endsWith("/content-context.json"));
+const ogDefault = files.find((file) => file.path.endsWith("/og-default.png"));
 const apiIndexFunctionBytes = findApiIndexFunctionSize();
 
 const failures: string[] = [];
@@ -94,6 +106,28 @@ if (largestJs && largestJs.size > budgets.largestJsRawBytes) {
   warnings.push(`largest JS chunk is ${largestJs.path} at ${formatBytes(largestJs.size)}; target is ${formatBytes(budgets.largestJsRawBytes)}.`);
 }
 
+if (cssRawBytes > budgets.cssRawHardBytes) {
+  failures.push(`total CSS raw is ${formatBytes(cssRawBytes)} over hard limit ${formatBytes(budgets.cssRawHardBytes)}.`);
+} else if (cssRawBytes > budgets.cssRawTargetBytes) {
+  warnings.push(`total CSS raw is ${formatBytes(cssRawBytes)}; target is ${formatBytes(budgets.cssRawTargetBytes)}.`);
+}
+
+if (contentContext) {
+  failures.push("content-context.json must be emitted to dist/meta, not dist/public.");
+}
+
+if (!ogDefault) {
+  failures.push("og-default.png was not found in dist/public.");
+} else if (ogDefault.size > budgets.ogDefaultBytes) {
+  failures.push(`og-default.png is ${formatBytes(ogDefault.size)} over ${formatBytes(budgets.ogDefaultBytes)}.`);
+}
+
+if (!itrFilingChunk) {
+  failures.push("ITR filing route chunk was not found in dist/public/assets.");
+} else if (itrFilingChunk.gzipSize > budgets.itrFilingChunkGzipBytes) {
+  failures.push(`ITR filing route chunk is ${formatBytes(itrFilingChunk.gzipSize)} over ${formatBytes(budgets.itrFilingChunkGzipBytes)}.`);
+}
+
 if (pdfFiles.length > 0) {
   failures.push(`dist/public still contains ${pdfFiles.length} PDF file(s). Move tax PDFs to Blob before deploying.`);
 }
@@ -106,9 +140,21 @@ console.log("Size budget report");
 console.log(`dist/public: ${formatBytes(totalBytes)} across ${files.length} files`);
 console.log(`JS gzip: ${formatBytes(jsGzipBytes)} across ${jsFiles.length} files`);
 console.log(`CSS gzip: ${formatBytes(cssGzipBytes)} across ${cssFiles.length} files`);
+console.log(`CSS raw: ${formatBytes(cssRawBytes)} across ${cssFiles.length} files`);
+console.log(`HTML raw: ${formatBytes(htmlRawBytes)} across ${htmlFiles.length} files`);
 console.log(`PDF files in dist/public: ${pdfFiles.length}`);
 if (largestJs) {
   console.log(`Largest JS: ${largestJs.path} (${formatBytes(largestJs.size)}, gzip ${formatBytes(largestJs.gzipSize)})`);
+}
+if (largestCss) {
+  console.log(`Largest CSS: ${largestCss.path} (${formatBytes(largestCss.size)})`);
+}
+console.log("Top public artifacts:");
+for (const artifact of largestArtifacts) {
+  console.log(`- ${artifact.path}: ${formatBytes(artifact.size)}`);
+}
+if (itrFilingChunk) {
+  console.log(`ITR filing route chunk: ${formatBytes(itrFilingChunk.gzipSize)} gzip (budget ${formatBytes(budgets.itrFilingChunkGzipBytes)})`);
 }
 if (apiIndexFunctionBytes != null) {
   console.log(`api/index function: ${formatBytes(apiIndexFunctionBytes)}`);

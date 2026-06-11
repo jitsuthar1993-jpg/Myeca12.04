@@ -1,15 +1,17 @@
-import { FileText, Loader2, RotateCcw, Upload } from "lucide-react";
+import { ArrowRight, FileText, Loader2, RotateCcw, Upload } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/platform/compliance-ui";
 import type { ItrDocumentChecklistItem } from "@shared/itr-filing";
 
-export type DocumentCaptureStatus = "idle" | "uploading" | "uploaded" | "error";
+export type DocumentCaptureStatus = "idle" | "uploading" | "uploaded" | "error" | "deferred";
 
 function documentStatus(status: DocumentCaptureStatus, required: boolean) {
   if (status === "uploaded") return { status: "filed" as const, label: "Linked" };
   if (status === "uploading") return { status: "in_progress" as const, label: "Uploading" };
   if (status === "error") return { status: "failed" as const, label: "Upload failed" };
+  if (status === "deferred") return { status: "not_started" as const, label: "Provide later" };
   return required
     ? { status: "action_required" as const, label: "Required" }
     : { status: "not_started" as const, label: "Optional" };
@@ -26,6 +28,8 @@ export function DocumentCaptureCard({
   onDefer,
   onVaultPick,
   onManualReferenceChange,
+  helperHref,
+  helperLabel,
 }: {
   item: ItrDocumentChecklistItem;
   status: DocumentCaptureStatus;
@@ -37,6 +41,8 @@ export function DocumentCaptureCard({
   onDefer?: () => void;
   onVaultPick?: () => void;
   onManualReferenceChange?: (value: string) => void;
+  helperHref?: string;
+  helperLabel?: string;
 }) {
   const presentation = documentStatus(status, item.required);
   const uploading = status === "uploading";
@@ -87,6 +93,13 @@ export function DocumentCaptureCard({
           aria-label={`${item.title} manual reference`}
           className="mt-3 h-11 rounded-lg bg-white"
         />
+      ) : null}
+
+      {helperHref && helperLabel ? (
+        <Link href={helperHref} className="mt-3 inline-flex items-center gap-1 text-sm font-black text-blue-700 hover:underline">
+          {helperLabel}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       ) : null}
 
       <div className="mt-3 flex flex-wrap gap-2">

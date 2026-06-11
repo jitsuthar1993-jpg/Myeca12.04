@@ -300,6 +300,7 @@ describe("tax return routes", () => {
       formData: JSON.stringify({
         taxpayer: { type: "individual", residentialStatus: "resident" },
         income: { salary: 900000 },
+        documentDeferrals: { form16: true },
       }),
     });
     seed("documents", "doc_1", {
@@ -316,7 +317,36 @@ describe("tax return routes", () => {
 
     expect(response.status).toBe(200);
     expect(json.taxReturn.formData.documents.form16).toBe("doc_1");
+    expect(json.taxReturn.formData.documentDeferrals.form16).toBeUndefined();
     expect(collectionStore("documents").get("doc_1")?.taxReturnId).toBe("return_1");
+  });
+
+  it("rejects document links for unknown checklist item identifiers", async () => {
+    seed("tax_returns", "return_1", {
+      id: "return_1",
+      userId: "user_1",
+      assessmentYear: "2026-27",
+      status: "draft",
+      formData: JSON.stringify({
+        taxpayer: { type: "individual", residentialStatus: "resident" },
+        income: { salary: 900000 },
+      }),
+    });
+    seed("documents", "doc_1", {
+      id: "doc_1",
+      userId: "user_1",
+      name: "Evidence",
+      status: "active",
+    });
+
+    const { response, json } = await request("/api/tax-returns/return_1/documents", {
+      method: "POST",
+      body: JSON.stringify({ documentId: "doc_1", checklistItemId: "arbitrary-private-field" }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(json.error).toContain("checklist item");
+    expect(collectionStore("documents").get("doc_1")?.taxReturnId).toBeUndefined();
   });
 
   it("allows missing-document warnings and stores the submitted review packet", async () => {

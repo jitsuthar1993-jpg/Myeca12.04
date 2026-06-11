@@ -19,7 +19,7 @@ function getLiabilityPresentation(liability: ItrTaxLiabilitySummary) {
     return { label: `Payable ${formatInr(liability.taxPayable)}`, tone: "border-amber-200 bg-amber-50 text-amber-900" };
   }
   if (liability.status === "review_required") {
-    return { label: "Tax estimate needs review", tone: "border-slate-200 bg-slate-50 text-slate-700" };
+    return { label: "Tax estimate \u2014", tone: "border-slate-200 bg-slate-50 text-slate-700" };
   }
   return { label: "No payable tax", tone: "border-emerald-200 bg-emerald-50 text-emerald-800" };
 }

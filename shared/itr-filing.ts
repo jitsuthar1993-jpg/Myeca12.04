@@ -62,6 +62,7 @@ export const itrFilingSchema = z.object({
 
 export const itrIncomeSchema = z.object({
   selectedTypes: z.array(z.enum(ITR_INCOME_TYPES)).default([]),
+  noIncomeConfirmed: z.boolean().default(false),
   salary: z.number().default(0),
   pension: z.number().default(0),
   houseProperties: z.number().int().min(0).default(0),
@@ -108,6 +109,7 @@ export const itrFlagsSchema = z.object({
 });
 
 export const itrDocumentStateSchema = z.record(z.string(), z.string()).default({});
+export const itrDocumentDeferralSchema = z.record(z.string(), z.boolean()).default({});
 
 export const itrFilingDraftSchema = z.object({
   assessmentYear: z.string().trim().default("2026-27"),
@@ -119,6 +121,7 @@ export const itrFilingDraftSchema = z.object({
   taxPaid: itrTaxPaidSchema.default({}),
   flags: itrFlagsSchema.default({}),
   documents: itrDocumentStateSchema,
+  documentDeferrals: itrDocumentDeferralSchema,
   notes: z.string().trim().optional().default(""),
 });
 
@@ -133,6 +136,7 @@ export type ItrVerificationIssue = {
   severity: ItrVerificationSeverity;
   area: "owner" | "identity" | "income" | "documents" | "computation" | "review";
   paneId?: string;
+  fieldId?: string;
   title: string;
   detail: string;
   action: string;
@@ -657,6 +661,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       severity: "critical",
       area: "identity",
       paneId: "identity-pan-aadhaar",
+      fieldId: "pan",
       title: "PAN format needs correction",
       detail: "PAN must follow the ten-character format such as ABCDE1234F. This is a format check only.",
       action: "Enter the taxpayer PAN in valid format.",
@@ -669,6 +674,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       severity: "critical",
       area: "identity",
       paneId: "identity-pan-aadhaar",
+      fieldId: "aadhaar",
       title: "Aadhaar format needs correction",
       detail: "Aadhaar must contain exactly 12 digits before the draft can move to review.",
       action: "Enter the full 12 digit Aadhaar number.",
@@ -681,6 +687,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       severity: "critical",
       area: "identity",
       paneId: "identity-bank",
+      fieldId: "ifsc",
       title: "IFSC format needs correction",
       detail: "IFSC must use the standard 11-character bank branch format.",
       action: "Enter the refund bank IFSC in valid format.",
@@ -693,6 +700,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       severity: "critical",
       area: "identity",
       paneId: "identity-account",
+      fieldId: "bankAccountConfirm",
       title: "Refund bank account confirmation mismatch",
       detail: "The account number and confirmation field must match before review.",
       action: "Re-enter the refund bank account number in both fields.",
@@ -705,6 +713,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       severity: "critical",
       area: "identity",
       paneId: paneIdForRequiredIdentityField(field),
+      fieldId: field,
       title: "Required identity field missing",
       detail: `${field} is required for the filing draft.`,
       action: "Complete the identity step before continuing.",
@@ -858,9 +867,22 @@ export function buildItrVerificationReport(draftInput: ItrFilingDraft): ItrVerif
       severity: "warning",
       area: "owner",
       paneId: "owner-person",
+      fieldId: "displayName",
       title: "Other-person filing needs a taxpayer reference",
       detail: "A saved person or display name helps keep the draft separate from your own ITR.",
       action: "Select a saved taxpayer or add the person's name.",
+    });
+  }
+
+  if (draft.income.selectedTypes.length === 0 && !draft.income.noIncomeConfirmed) {
+    addIssue(issues, {
+      id: "income-none-unconfirmed",
+      severity: "critical",
+      area: "income",
+      paneId: "income-types",
+      title: "Confirm that no income type applies",
+      detail: "Choose every income type that applies, or explicitly confirm that there is no income to report.",
+      action: "Select an income type or confirm no income.",
     });
   }
 

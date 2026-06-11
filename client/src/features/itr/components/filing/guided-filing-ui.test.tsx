@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { ItrVerificationIssue } from "@shared/itr-filing";
-import { IssueList, TextInput } from "./guided-filing-ui";
+import { IssueList, TextInput, ToggleRow } from "./guided-filing-ui";
 
 describe("TextInput", () => {
   it("passes mobile input ergonomics through and stacks helper with error text", () => {
@@ -25,6 +25,7 @@ describe("TextInput", () => {
     expect(input).toHaveAttribute("inputmode", "tel");
     expect(input).toHaveAttribute("autocomplete", "tel-national");
     expect(input).toHaveAttribute("enterkeyhint", "next");
+    expect(input).toHaveAttribute("data-filing-field");
     expect(input).toHaveAttribute("maxlength", "10");
     expect(input).toHaveAttribute("aria-invalid", "true");
     expect(input).toHaveClass("scroll-mb-24");
@@ -53,5 +54,20 @@ describe("IssueList", () => {
     await user.click(screen.getByRole("button", { name: "Add PAN" }));
 
     expect(onIssueNavigate).toHaveBeenCalledWith(issue);
+  });
+});
+
+describe("ToggleRow", () => {
+  it("labels its switch with the visible title", () => {
+    render(
+      <ToggleRow
+        title="Show account numbers"
+        description="Reveal sensitive values briefly."
+        checked={false}
+        onCheckedChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: "Show account numbers" })).toBeInTheDocument();
   });
 });

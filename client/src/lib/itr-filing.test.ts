@@ -240,15 +240,45 @@ describe("ITR filing review helpers", () => {
 
     expect(report.status).toBe("blocked");
     expect(report.issues).toEqual(expect.arrayContaining([
-      expect.objectContaining({ id: "pan-format", severity: "critical", paneId: "identity-pan-aadhaar" }),
-      expect.objectContaining({ id: "aadhaar-format", severity: "critical", paneId: "identity-pan-aadhaar" }),
-      expect.objectContaining({ id: "bank-account-confirm", severity: "critical", paneId: "identity-account" }),
-      expect.objectContaining({ id: "ifsc-format", severity: "critical", paneId: "identity-bank" }),
+      expect.objectContaining({ id: "pan-format", severity: "critical", paneId: "identity-pan-aadhaar", fieldId: "pan" }),
+      expect.objectContaining({ id: "aadhaar-format", severity: "critical", paneId: "identity-pan-aadhaar", fieldId: "aadhaar" }),
+      expect.objectContaining({ id: "bank-account-confirm", severity: "critical", paneId: "identity-account", fieldId: "bankAccountConfirm" }),
+      expect.objectContaining({ id: "ifsc-format", severity: "critical", paneId: "identity-bank", fieldId: "ifsc" }),
     ]));
     expect(validateItrPane(invalidDraft, "identity-pan-aadhaar").map((issue) => issue.id)).toEqual([
       "pan-format",
       "aadhaar-format",
     ]);
+  });
+
+  it("persists document deferrals without treating them as linked evidence", () => {
+    const deferredDraft = normalizeItrDraft({
+      ...baseDraft,
+      documentDeferrals: { form16: true },
+    });
+    const report = buildItrVerificationReport(deferredDraft);
+
+    expect(deferredDraft.documentDeferrals).toEqual({ form16: true });
+    expect(deferredDraft.documents.form16).toBeUndefined();
+    expect(report.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "document-form16", paneId: "document-form16" }),
+    ]));
+  });
+
+  it("requires explicit confirmation when no income type is selected", () => {
+    const unconfirmed = normalizeItrDraft({
+      ...baseDraft,
+      income: { selectedTypes: [], noIncomeConfirmed: false },
+    });
+    const confirmed = normalizeItrDraft({
+      ...baseDraft,
+      income: { selectedTypes: [], noIncomeConfirmed: true },
+    });
+
+    expect(validateItrPane(unconfirmed, "income-types")).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "income-none-unconfirmed", severity: "critical", paneId: "income-types" }),
+    ]));
+    expect(validateItrPane(confirmed, "income-types")).toEqual([]);
   });
 
   it("maps verification warnings to their source panes", () => {

@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Link } from "wouter";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -40,22 +39,25 @@ import {
 import { CollapsibleFlags } from "@/features/itr/components/filing/CollapsibleFlags";
 import { CurrencyInput } from "@/features/itr/components/filing/CurrencyInput";
 import { DocumentCaptureCard, type DocumentCaptureStatus } from "@/features/itr/components/filing/DocumentCaptureCard";
-import { FilingProgressHeader, type FilingSaveState } from "@/features/itr/components/filing/FilingProgressHeader";
+import { FilingProgressHeader } from "@/features/itr/components/filing/FilingProgressHeader";
 import { AadhaarInput, IfscInput, PanInput } from "@/features/itr/components/filing/identity-inputs";
 import { LiabilityChip, LiabilitySheet } from "@/features/itr/components/filing/LiabilityChip";
+import { PaneRenderer } from "@/features/itr/components/filing/PaneRenderer";
 import { getPanesForStep, type FilingStepId } from "@/features/itr/components/filing/panes";
 import { RegimeComparator } from "@/features/itr/components/filing/RegimeComparator";
+import { useFilingAutosave } from "@/features/itr/hooks/use-filing-autosave";
+import { useMobileKeyboard } from "@/features/itr/hooks/use-mobile-keyboard";
 import {
   clearItrStartHandoff,
   readItrStartHandoff,
   type ItrStartHandoffPayload,
 } from "@/features/itr/lib/start-selector";
+import { captureItrFilingEvent } from "@/features/itr/lib/filing-telemetry";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getAuthToken } from "@/lib/authToken";
 import { prepareDocumentForUpload } from "@/lib/file_utils";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
-import { captureTelemetryEvent } from "@/telemetry/browser";
 import type { CampaignAttribution } from "@shared/campaign-attribution";
 import {
   ITR_REVIEW_STATUSES,
@@ -69,6 +71,7 @@ import {
   normalizeItrDraft,
   recommendItrForm,
   validateItrIdentity,
+  validateItrPane,
   type ItrFilingDraft,
   type ItrFormRecommendation,
   type ItrIncomeType,
@@ -261,6 +264,31 @@ function incomeToggleSelected(draft: ItrFilingDraft, key: (typeof INCOME_TOGGLES
   return draft.income.selectedTypes.includes(key);
 }
 
+function maskPan(value: string) {
+  const pan = String(value ?? "").trim().toUpperCase();
+  if (pan.length !== 10) return "Not entered";
+  return `${pan.slice(0, 5)}\u2022\u2022\u2022\u2022${pan.slice(-1)}`;
+}
+
+function maskAadhaar(value: string) {
+  const digits = String(value ?? "").replace(/\D/g, "");
+  if (digits.length !== 12) return "Not entered";
+  return `\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 ${digits.slice(-4)}`;
+}
+
+function maskAccount(value: string) {
+  const digits = String(value ?? "").replace(/\D/g, "");
+  if (!digits) return "Not entered";
+  return `${"\u2022".repeat(Math.max(0, digits.length - 4))}${digits.slice(-4)}`;
+}
+
+function currentLocalDate() {
+  const date = new Date();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 function incomeTypeHasValues(draft: ItrFilingDraft, key: ItrIncomeType) {
   const hasValue = (...values: number[]) => values.some((value) => value !== 0);
   if (key === "salary") return hasValue(draft.income.salary, draft.income.pension);
@@ -292,21 +320,15 @@ export default function ITRFilingPage() {
   const [draft, setDraft] = useState<ItrFilingDraft>(STARTER_DRAFT);
   const [selectorHandoff, setSelectorHandoff] = useState<ItrStartHandoffPayload | null>(null);
   const [handoffChecked, setHandoffChecked] = useState(false);
-  const [pendingSave, setPendingSave] = useState(false);
-  const [saveError, setSaveError] = useState<unknown>(null);
-  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [showSensitive, setShowSensitive] = useState(false);
-  const [online, setOnline] = useState(() => typeof navigator === "undefined" || navigator.onLine);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [liabilityOpen, setLiabilityOpen] = useState(false);
   const [documentUploadStates, setDocumentUploadStates] = useState<Record<string, DocumentUploadState>>({});
+  const [displayedPaneIssues, setDisplayedPaneIssues] = useState<ItrVerificationIssue[]>([]);
   const autoCreateHandoffRef = useRef<string | null>(null);
-  const latestDraftRef = useRef(draft);
-  const activeReturnIdRef = useRef(activeReturnId);
-  const draftRevisionRef = useRef(0);
-  const savedRevisionRef = useRef(0);
-  const savePromiseRef = useRef<Promise<boolean> | null>(null);
-  const saveTimerRef = useRef<number | null>(null);
+  const restoringPaneBackRef = useRef<number | null>(null);
+  const filingStartedAtRef = useRef(typeof performance === "undefined" ? Date.now() : performance.now());
+  const paneStartedAtRef = useRef(filingStartedAtRef.current);
+  const keyboardOpen = useMobileKeyboard(isMobile);
 
   const taxReturnsQuery = useQuery<TaxReturnsResponse>({
     queryKey: ["/api/tax-returns"],
@@ -319,6 +341,34 @@ export default function ITRFilingPage() {
   const taxReturns = taxReturnsQuery.data?.taxReturns ?? [];
   const activeReturn = taxReturns.find((item) => item.id === activeReturnId) ?? taxReturns[0] ?? null;
   const reviewSubmitted = activeReturn?.status === "ready_for_review";
+  const saveDraft = useCallback(async (draftToSave: ItrFilingDraft, { keepalive }: { keepalive: boolean }) => {
+    if (!activeReturnId) throw new Error("Save a draft before updating it.");
+    try {
+      await apiRequest(`/api/tax-returns/${activeReturnId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ draft: draftToSave }),
+        keepalive,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
+    } catch (error) {
+      throw error;
+    }
+  }, [activeReturnId, currentStep]);
+  const {
+    pendingSave,
+    saveState,
+    saveError,
+    lastSavedAt,
+    online,
+    resetDraft: resetAutosaveDraft,
+    markChanged: markAutosaveChanged,
+    persistLatestDraft,
+    flushLatestDraft,
+  } = useFilingAutosave({
+    returnId: activeReturnId,
+    initialDraft: draft,
+    saveDraft,
+  });
 
   const documentsQuery = useQuery<DocumentsResponse>({
     queryKey: ["/api/documents"],
@@ -345,9 +395,16 @@ export default function ITRFilingPage() {
     [currentStepId, documentChecklist, draft],
   );
   const activePane = currentPanes[Math.min(currentPane, Math.max(currentPanes.length - 1, 0))];
+  const activePaneIssues = activePane ? validateItrPane(draft, activePane.id) : [];
+  const visiblePaneIssues = activePane
+    ? displayedPaneIssues.filter((issue) => issue.paneId === activePane.id)
+    : [];
+  const fieldErrors = visiblePaneIssues.reduce<Record<string, string>>((errors, issue) => {
+    if (!issue.fieldId || errors[issue.fieldId]) return errors;
+    return { ...errors, [issue.fieldId]: issue.title };
+  }, {});
   const requiredDocumentCount = documentChecklist.filter((item) => item.required).length;
   const openIssueCount = verificationReport.summary.critical + verificationReport.summary.warning;
-  const saveState: FilingSaveState = !online ? "offline" : saveError ? "error" : pendingSave ? "saving" : "saved";
   const paneVisible = (paneId: string) => !isMobile || activePane?.id === paneId;
 
   useEffect(() => {
@@ -366,32 +423,26 @@ export default function ITRFilingPage() {
     if (!activeReturn) return;
     const normalized = normalizeItrDraft(activeReturn.formData);
     setDraft(normalized);
-    latestDraftRef.current = normalized;
-    draftRevisionRef.current = 0;
-    savedRevisionRef.current = 0;
-    setPendingSave(false);
-    setSaveError(null);
-  }, [activeReturn?.id]);
-
-  useEffect(() => {
-    latestDraftRef.current = draft;
-  }, [draft]);
-
-  useEffect(() => {
-    activeReturnIdRef.current = activeReturnId;
-  }, [activeReturnId]);
+    resetAutosaveDraft(normalized);
+  }, [activeReturn?.id, resetAutosaveDraft]);
 
   useEffect(() => {
     setCurrentPane((pane) => Math.min(pane, Math.max(currentPanes.length - 1, 0)));
   }, [currentPanes.length]);
 
   useEffect(() => {
+    setShowSensitive(false);
+  }, [activePane?.id]);
+
+  useEffect(() => {
     setVisitedSteps((steps) => steps.includes(currentStep) ? steps : [...steps, currentStep]);
-    captureTelemetryEvent("itr_filing_step_viewed", {
-      step_id: currentStepId,
-      pane_id: activePane?.id ?? currentStepId,
+    paneStartedAtRef.current = typeof performance === "undefined" ? Date.now() : performance.now();
+    captureItrFilingEvent("itr_filing_pane_viewed", {
+      step: currentStepId,
+      pane: activePane?.id ?? currentStepId,
+      viewport: isMobile ? "mobile" : "desktop",
     });
-  }, [activePane?.id, currentStep, currentStepId]);
+  }, [activePane?.id, currentStep, currentStepId, isMobile]);
 
   useEffect(() => {
     if (!isMobile || typeof window === "undefined") return;
@@ -401,109 +452,29 @@ export default function ITRFilingPage() {
     const onPopState = (event: PopStateEvent) => {
       const marker = event.state?.[FILING_HISTORY_KEY] as { step?: number; pane?: number } | undefined;
       if (!marker || typeof marker.step !== "number" || typeof marker.pane !== "number") return;
+      if (restoringPaneBackRef.current != null) {
+        const pane = restoringPaneBackRef.current;
+        restoringPaneBackRef.current = null;
+        setCurrentPane(pane);
+        window.History.prototype.replaceState.call(
+          window.history,
+          { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: currentStep, pane } },
+          "",
+          window.location.href,
+        );
+        return;
+      }
+      if (marker.step !== currentStep && currentPane > 0) {
+        restoringPaneBackRef.current = currentPane - 1;
+        window.history.forward();
+        return;
+      }
       setCurrentStep(Math.max(0, Math.min(marker.step, ITR_FILING_STEPS.length - 1)));
       setCurrentPane(Math.max(0, marker.pane));
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [isMobile]);
-
-  useEffect(() => {
-    if (!isMobile || typeof window === "undefined" || !window.visualViewport) return;
-    const viewport = window.visualViewport;
-    const updateKeyboardState = () => setKeyboardOpen(window.innerHeight - viewport.height > 180);
-    viewport.addEventListener("resize", updateKeyboardState);
-    updateKeyboardState();
-    return () => viewport.removeEventListener("resize", updateKeyboardState);
-  }, [isMobile]);
-
-  async function persistLatestDraft(keepalive = false): Promise<boolean> {
-    const returnId = activeReturnIdRef.current;
-    if (!returnId) return false;
-    if (draftRevisionRef.current <= savedRevisionRef.current) return true;
-    if (savePromiseRef.current) return savePromiseRef.current;
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      setOnline(false);
-      setPendingSave(true);
-      return false;
-    }
-
-    const revision = draftRevisionRef.current;
-    const draftToSave = latestDraftRef.current;
-    let saveSucceeded = false;
-    const savePromise = (async () => {
-      try {
-        await apiRequest(`/api/tax-returns/${returnId}`, {
-          method: "PATCH",
-          body: JSON.stringify({ draft: draftToSave }),
-          keepalive,
-        });
-        savedRevisionRef.current = Math.max(savedRevisionRef.current, revision);
-        saveSucceeded = true;
-        setLastSavedAt(new Date());
-        setSaveError(null);
-        queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
-        return true;
-      } catch (error) {
-        setSaveError(error);
-        captureTelemetryEvent("itr_filing_save_failed", { step_id: currentStepId });
-        return false;
-      } finally {
-        savePromiseRef.current = null;
-        const hasNewerChanges = draftRevisionRef.current > savedRevisionRef.current;
-        setPendingSave(hasNewerChanges);
-        if (saveSucceeded && hasNewerChanges && (typeof navigator === "undefined" || navigator.onLine)) {
-          window.setTimeout(() => void persistLatestDraft(), 0);
-        }
-      }
-    })();
-    savePromiseRef.current = savePromise;
-    return savePromise;
-  }
-
-  async function flushLatestDraft() {
-    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
-    while (draftRevisionRef.current > savedRevisionRef.current) {
-      const saved = await persistLatestDraft();
-      if (!saved) return false;
-    }
-    return true;
-  }
-
-  useEffect(() => {
-    if (!activeReturnId || !pendingSave) return;
-    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = window.setTimeout(() => void persistLatestDraft(), 700);
-
-    return () => {
-      if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
-    };
-  }, [activeReturnId, draft, pendingSave, online]);
-
-  useEffect(() => {
-    const flush = () => {
-      if (draftRevisionRef.current > savedRevisionRef.current) void persistLatestDraft(true);
-    };
-    const onVisibilityChange = () => {
-      if (document.visibilityState === "hidden") flush();
-    };
-    const onOnline = () => {
-      setOnline(true);
-      flush();
-    };
-    const onOffline = () => setOnline(false);
-
-    window.addEventListener("pagehide", flush);
-    window.addEventListener("online", onOnline);
-    window.addEventListener("offline", onOffline);
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    return () => {
-      window.removeEventListener("pagehide", flush);
-      window.removeEventListener("online", onOnline);
-      window.removeEventListener("offline", onOffline);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, []);
+  }, [currentPane, currentStep, isMobile]);
 
   const createDraftMutation = useMutation({
     mutationFn: async (input?: CreateDraftInput) => {
@@ -521,7 +492,6 @@ export default function ITRFilingPage() {
     onSuccess: (data, input) => {
       setActiveReturnId(data.taxReturn.id);
       setDraft(normalizeItrDraft(data.taxReturn.formData));
-      setSaveError(null);
       if (input?.clearHandoff) {
         clearItrStartHandoff();
         setSelectorHandoff(null);
@@ -579,9 +549,11 @@ export default function ITRFilingPage() {
       return response.json();
     },
     onSuccess: () => {
-      captureTelemetryEvent("itr_filing_review_submitted", {
-        recommended_form: recommendation.form,
-        warning_count: verificationReport.summary.warning,
+      const now = typeof performance === "undefined" ? Date.now() : performance.now();
+      captureItrFilingEvent("itr_filing_review_submitted", {
+        stepsVisited: visitedSteps.length,
+        totalMs: Math.max(0, Math.round(now - filingStartedAtRef.current)),
+        viewport: isMobile ? "mobile" : "desktop",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
     },
@@ -683,14 +655,11 @@ export default function ITRFilingPage() {
   };
 
   const updateDraft = (updater: (current: ItrFilingDraft) => ItrFilingDraft) => {
-    setSaveError(null);
     setDraft((current) => {
       const next = normalizeItrDraft(updater(current));
-      latestDraftRef.current = next;
-      draftRevisionRef.current += 1;
+      markAutosaveChanged(next);
       return next;
     });
-    setPendingSave(Boolean(activeReturnId));
   };
 
   const updateOwner = (patch: Partial<ItrFilingDraft["filingOwner"]>) => {
@@ -728,7 +697,23 @@ export default function ITRFilingPage() {
         ...current.documents,
         [id]: value,
       },
+      documentDeferrals: value.trim()
+        ? Object.fromEntries(
+            Object.entries(current.documentDeferrals).filter(([documentId]) => documentId !== id),
+          )
+        : current.documentDeferrals,
     }));
+  };
+
+  const deferDocument = (id: string) => {
+    updateDraft((current) => ({
+      ...current,
+      documentDeferrals: {
+        ...current.documentDeferrals,
+        [id]: true,
+      },
+    }));
+    nextStep();
   };
 
   const toggleIncomeType = (key: (typeof INCOME_TOGGLES)[number]["key"], selected: boolean) => {
@@ -741,7 +726,7 @@ export default function ITRFilingPage() {
       const selectedTypes = selected
         ? Array.from(new Set([...current.income.selectedTypes, key]))
         : current.income.selectedTypes.filter((item) => item !== key);
-      const income = { ...current.income, selectedTypes };
+      const income = { ...current.income, selectedTypes, noIncomeConfirmed: selected ? false : current.income.noIncomeConfirmed };
       const flags = { ...current.flags };
 
       if (!selected && key === "salary") Object.assign(income, { salary: 0, pension: 0 });
@@ -778,20 +763,21 @@ export default function ITRFilingPage() {
     const nextPane = Math.max(0, pane);
     setCurrentStep(nextStep);
     setCurrentPane(nextPane);
+    setDisplayedPaneIssues([]);
     setVisitedSteps((steps) => steps.includes(nextStep) ? steps : [...steps, nextStep]);
     if (isMobile && pushHistory && typeof window !== "undefined") {
-      window.History.prototype.replaceState.call(
-        window.history,
-        { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: currentStep, pane: currentPane } },
-        "",
-        window.location.href,
-      );
-      window.History.prototype.pushState.call(
-        window.history,
-        { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: nextStep, pane: nextPane } },
-        "",
-        window.location.href,
-      );
+      const nextState = { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: nextStep, pane: nextPane } };
+      if (nextStep !== currentStep) {
+        window.History.prototype.replaceState.call(
+          window.history,
+          { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: currentStep, pane: currentPane } },
+          "",
+          window.location.href,
+        );
+        window.History.prototype.pushState.call(window.history, nextState, "", window.location.href);
+      } else {
+        window.History.prototype.replaceState.call(window.history, nextState, "", window.location.href);
+      }
     }
   };
 
@@ -810,10 +796,21 @@ export default function ITRFilingPage() {
   };
 
   const nextStep = () => {
-    captureTelemetryEvent("itr_filing_step_completed", {
-      step_id: currentStepId,
-      pane_id: activePane?.id ?? currentStepId,
-      critical_count: verificationReport.summary.critical,
+    const criticalIssues = activePaneIssues.filter((issue) => issue.severity === "critical");
+    if (isMobile && activePane && criticalIssues.length > 0) {
+      setDisplayedPaneIssues(criticalIssues);
+      captureItrFilingEvent("itr_filing_validation_blocked", {
+        step: currentStepId,
+        pane: activePane.id,
+        rule: criticalIssues[0].id,
+      });
+      return;
+    }
+    const now = typeof performance === "undefined" ? Date.now() : performance.now();
+    captureItrFilingEvent("itr_filing_pane_completed", {
+      step: currentStepId,
+      pane: activePane?.id ?? currentStepId,
+      msOnPane: Math.max(0, Math.round(now - paneStartedAtRef.current)),
     });
     if (isMobile && currentPane < currentPanes.length - 1) {
       navigateTo(currentStep, currentPane + 1);
@@ -963,6 +960,15 @@ export default function ITRFilingPage() {
           </MyeCard>
         ) : null}
 
+        {!online ? (
+          <MyeCard className="border-amber-200 bg-amber-50 p-4 shadow-none">
+            <div className="flex items-start gap-3 text-sm font-semibold text-amber-900" role="status">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <p>Offline. Keep this page open; changes will save after reconnecting.</p>
+            </div>
+          </MyeCard>
+        ) : null}
+
         {selectorHandoff && activeReturn ? (
           <MyeCard className="border-blue-200 bg-blue-50 p-5 shadow-none">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -1024,7 +1030,20 @@ export default function ITRFilingPage() {
             />
           </div>
 
+          <PaneRenderer
+            panes={currentPanes}
+            activePaneId={activePane?.id}
+            isMobile={isMobile}
+            onPaneDone={nextStep}
+          >
           <div className="mt-5">
+            {visiblePaneIssues.some((issue) => !issue.fieldId) ? (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-800" role="alert">
+                {visiblePaneIssues.filter((issue) => !issue.fieldId).map((issue) => (
+                  <p key={issue.id}>{issue.title}</p>
+                ))}
+              </div>
+            ) : null}
             {currentStepId === "owner" && (
               <div className="space-y-5">
                 <PaneSection visible={paneVisible("owner-choice")} className="grid gap-3 md:grid-cols-2">
@@ -1096,17 +1115,17 @@ export default function ITRFilingPage() {
             {currentStepId === "identity" && (
               <div className="space-y-6">
                 <PaneSection visible={paneVisible("identity-name")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <TextInput label="First name" value={draft.taxpayer.firstName} autoComplete="given-name" autoCapitalize="words" maxLength={80} onChange={(value) => updateTaxpayer({ firstName: value })} />
-                  <TextInput label="Last name" value={draft.taxpayer.lastName} autoComplete="family-name" autoCapitalize="words" maxLength={80} onChange={(value) => updateTaxpayer({ lastName: value })} />
-                  <TextInput label="Date of birth" type="date" value={draft.taxpayer.dateOfBirth} autoComplete="bday" onChange={(value) => updateTaxpayer({ dateOfBirth: value })} />
+                  <TextInput label="First name" value={draft.taxpayer.firstName} autoComplete="given-name" autoCapitalize="words" enterKeyHint="next" maxLength={80} onChange={(value) => updateTaxpayer({ firstName: value })} />
+                  <TextInput label="Last name" value={draft.taxpayer.lastName} autoComplete="family-name" autoCapitalize="words" enterKeyHint="next" maxLength={80} onChange={(value) => updateTaxpayer({ lastName: value })} />
+                  <TextInput label="Date of birth" type="date" value={draft.taxpayer.dateOfBirth} autoComplete="bday" enterKeyHint="done" max={currentLocalDate()} onChange={(value) => updateTaxpayer({ dateOfBirth: value })} />
                 </PaneSection>
                 <PaneSection visible={paneVisible("identity-pan-aadhaar")} className="grid gap-4 md:grid-cols-2">
-                  <PanInput value={draft.taxpayer.pan} onChange={(value) => updateTaxpayer({ pan: value })} />
-                  <AadhaarInput value={draft.taxpayer.aadhaar} onChange={(value) => updateTaxpayer({ aadhaar: value })} helper={`Stored securely. Preview: ${maskDigits(draft.taxpayer.aadhaar)}`} />
+                  <PanInput value={draft.taxpayer.pan} enterKeyHint="next" onChange={(value) => updateTaxpayer({ pan: value })} error={fieldErrors.pan} />
+                  <AadhaarInput value={draft.taxpayer.aadhaar} enterKeyHint="done" onChange={(value) => updateTaxpayer({ aadhaar: value })} helper={`Stored securely. Preview: ${maskDigits(draft.taxpayer.aadhaar)}`} error={fieldErrors.aadhaar} />
                 </PaneSection>
                 <PaneSection visible={paneVisible("identity-contact")} className="grid gap-4 md:grid-cols-2">
-                  <TextInput label="Mobile" value={draft.taxpayer.mobile} type="tel" inputMode="numeric" autoComplete="tel" maxLength={10} onChange={(value) => updateTaxpayer({ mobile: value.replace(/\D/g, "").slice(0, 10) })} helper="Enter the 10-digit mobile number used for filing updates." />
-                  <TextInput label="Email" value={draft.taxpayer.email} type="email" inputMode="email" autoComplete="email" maxLength={254} onChange={(value) => updateTaxpayer({ email: value })} />
+                  <TextInput label="Mobile" value={draft.taxpayer.mobile} type="tel" inputMode="tel" autoComplete="tel-national" enterKeyHint="next" maxLength={10} onChange={(value) => updateTaxpayer({ mobile: value.replace(/\D/g, "").slice(0, 10) })} helper="Enter the 10-digit mobile number used for filing updates." />
+                  <TextInput label="Email" value={draft.taxpayer.email} type="email" inputMode="email" autoComplete="email" enterKeyHint="done" maxLength={254} onChange={(value) => updateTaxpayer({ email: value })} />
                 </PaneSection>
 
                 <PaneSection visible={paneVisible("identity-bank")} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -1117,13 +1136,13 @@ export default function ITRFilingPage() {
                   <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <TextInput label="Account holder" value={draft.taxpayer.bankAccountHolder} autoComplete="name" autoCapitalize="words" maxLength={120} onChange={(value) => updateTaxpayer({ bankAccountHolder: value })} />
                     <TextInput label="Bank name" value={draft.taxpayer.bankName} autoCapitalize="words" maxLength={120} onChange={(value) => updateTaxpayer({ bankName: value })} />
-                    <IfscInput value={draft.taxpayer.ifsc} onChange={(value) => updateTaxpayer({ ifsc: value })} />
+                    <IfscInput value={draft.taxpayer.ifsc} enterKeyHint="done" onChange={(value) => updateTaxpayer({ ifsc: value })} error={fieldErrors.ifsc} />
                   </div>
                 </PaneSection>
                 <PaneSection visible={paneVisible("identity-account")} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <TextInput label="Account number" type={showSensitive ? "text" : "password"} inputMode="numeric" autoComplete="off" maxLength={18} value={draft.taxpayer.bankAccount} onChange={(value) => updateTaxpayer({ bankAccount: value.replace(/\D/g, "").slice(0, 18) })} helper={`Preview: ${maskDigits(draft.taxpayer.bankAccount)}`} />
-                    <TextInput label="Confirm account number" type={showSensitive ? "text" : "password"} inputMode="numeric" autoComplete="off" maxLength={18} value={draft.taxpayer.bankAccountConfirm} onChange={(value) => updateTaxpayer({ bankAccountConfirm: value.replace(/\D/g, "").slice(0, 18) })} helper={identityValidation.bankAccountConfirmed ? "Account numbers match" : "Enter the same account number again"} />
+                    <TextInput label="Confirm account number" type={showSensitive ? "text" : "password"} inputMode="numeric" autoComplete="off" enterKeyHint="done" maxLength={18} value={draft.taxpayer.bankAccountConfirm} onChange={(value) => updateTaxpayer({ bankAccountConfirm: value.replace(/\D/g, "").slice(0, 18) })} helper={identityValidation.bankAccountConfirmed ? "Account numbers match" : "Enter the same account number again"} error={fieldErrors.bankAccountConfirm} />
                     <div>
                       <Label>Account type</Label>
                       <Select value={draft.taxpayer.bankAccountType} onValueChange={(value) => updateTaxpayer({ bankAccountType: value as any })}>
@@ -1161,6 +1180,14 @@ export default function ITRFilingPage() {
                       />
                     );
                   })}
+                  {draft.income.selectedTypes.length === 0 ? (
+                    <ChoiceButton
+                      selected={draft.income.noIncomeConfirmed}
+                      title="No income to report"
+                      description="Explicitly confirm this only when none of the income types apply."
+                      onClick={() => updateIncome({ noIncomeConfirmed: !draft.income.noIncomeConfirmed })}
+                    />
+                  ) : null}
                 </PaneSection>
                 <PaneSection visible={draft.income.selectedTypes.includes("salary") && paneVisible("income-salary")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <CurrencyInput label="Salary" value={draft.income.salary} onChange={(value) => updateIncome({ salary: value })} />
@@ -1171,11 +1198,12 @@ export default function ITRFilingPage() {
                 </PaneSection>
                 <PaneSection visible={draft.income.selectedTypes.includes("houseProperty") && paneVisible("income-house-property")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <TextInput label="House properties" value={String(draft.income.houseProperties || "")} inputMode="numeric" maxLength={2} onChange={(value) => updateIncome({ houseProperties: Math.max(0, Number.parseInt(value.replace(/\D/g, ""), 10) || 0) })} />
-                  <CurrencyInput label="House property income" value={draft.income.housePropertyIncome} onChange={(value) => updateIncome({ housePropertyIncome: value })} />
+                  <CurrencyInput label="House property income" value={draft.income.housePropertyIncome} allowNegative onChange={(value) => updateIncome({ housePropertyIncome: value })} />
                 </PaneSection>
                 <PaneSection visible={draft.income.selectedTypes.includes("capitalGains") && paneVisible("income-capital-gains")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <CurrencyInput label="Section 112A LTCG" value={draft.income.section112aLtcg} onChange={(value) => updateIncome({ section112aLtcg: value })} />
-                  <CurrencyInput label="Short-term capital gains" value={draft.income.shortTermCapitalGains} onChange={(value) => updateIncome({ shortTermCapitalGains: value })} />
+                  <CurrencyInput label="Short-term capital gains" value={draft.income.shortTermCapitalGains} allowNegative onChange={(value) => updateIncome({ shortTermCapitalGains: value })} />
+                  <CurrencyInput label="Other capital gains" value={draft.income.otherCapitalGains} allowNegative onChange={(value) => updateIncome({ otherCapitalGains: value })} />
                 </PaneSection>
                 <PaneSection visible={draft.income.selectedTypes.includes("business") && paneVisible("income-business")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <CurrencyInput label="Business income" value={draft.income.businessIncome} onChange={(value) => updateIncome({ businessIncome: value })} />
@@ -1226,27 +1254,26 @@ export default function ITRFilingPage() {
 
             {currentStepId === "documents" && (
               <div className="space-y-5">
-                <PaneSection visible={paneVisible("documents-overview")} className="grid gap-3 md:grid-cols-4">
-                  {[
-                    { label: "Form 16 parser", href: "/form16-parser" },
-                    { label: "AIS viewer", href: "/ais-viewer" },
-                    { label: "Capital gains import", href: "/capital-gains-import" },
-                    { label: "Document vault", href: "/documents" },
-                  ].map((helper) => (
-                    <Link key={helper.href} href={helper.href}>
-                      <Button variant="outline" className="h-11 w-full border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
-                        {helper.label}
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  ))}
+                <PaneSection visible={paneVisible("documents-overview")} className="grid gap-3 sm:grid-cols-3">
+                  <Metric label="Required" value={String(requiredDocumentCount)} />
+                  <Metric label="Linked" value={String(documentChecklist.filter((document) => Boolean(draft.documents[document.id])).length)} />
+                  <Metric label="Provide later" value={String(documentChecklist.filter((document) => draft.documentDeferrals[document.id]).length)} />
                 </PaneSection>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {documentChecklist.map((document) => {
                     const linkedDocument = linkedVaultDocument(document.id);
                     const complete = Boolean(draft.documents[document.id]);
                     const uploadState = documentUploadStates[document.id];
-                    const status: DocumentCaptureStatus = complete ? "uploaded" : uploadState?.status ?? "idle";
+                    const status: DocumentCaptureStatus = complete
+                      ? "uploaded"
+                      : uploadState?.status ?? (draft.documentDeferrals[document.id] ? "deferred" : "idle");
+                    const helper = document.id === "form16"
+                      ? { href: "/form16-parser", label: "Open Form 16 parser" }
+                      : document.id === "ais"
+                        ? { href: "/ais-viewer", label: "Open AIS viewer" }
+                        : document.id === "capital-gains"
+                          ? { href: "/capital-gains-import", label: "Open capital gains import" }
+                          : { href: "/documents", label: "Open document vault" };
                     if (!paneVisible(`document-${document.id}`)) return null;
 
                     return (
@@ -1263,8 +1290,10 @@ export default function ITRFilingPage() {
                             : uploadState?.file
                               ? () => void uploadDocument(document.id, uploadState.file!)
                               : undefined}
-                          onDefer={isMobile ? nextStep : undefined}
+                          onDefer={isMobile ? () => deferDocument(document.id) : undefined}
                           onManualReferenceChange={(value) => updateDocument(document.id, value)}
+                          helperHref={helper.href}
+                          helperLabel={helper.label}
                         />
                         <Select
                           value={linkedDocument?.id ?? "manual"}
@@ -1361,6 +1390,9 @@ export default function ITRFilingPage() {
                     <SummaryLine label="Deductions" value={formatInr(calculateItrTotalDeductions(draft))} />
                     <SummaryLine label="Tax paid" value={formatInr(calculateItrTotalTaxPaid(draft))} />
                     <SummaryLine label="Recommended form" value={recommendation.form.replace(/_/g, " ")} />
+                    <SummaryLine label="PAN" value={maskPan(draft.taxpayer.pan)} />
+                    <SummaryLine label="Aadhaar" value={maskAadhaar(draft.taxpayer.aadhaar)} />
+                    <SummaryLine label="Refund account" value={maskAccount(draft.taxpayer.bankAccount)} />
                   </div>
                     <Button
                       type="button"
@@ -1385,6 +1417,7 @@ export default function ITRFilingPage() {
               </div>
             )}
           </div>
+          </PaneRenderer>
 
           <div className="mt-6 hidden md:block">
             <FilingSummaryStrip
@@ -1417,29 +1450,32 @@ export default function ITRFilingPage() {
           <Button
             type="button"
             variant="outline"
+            aria-label="Previous pane"
             onClick={previousStep}
             disabled={currentStep === 0 && currentPane === 0}
-            className="h-10 w-10 shrink-0 border-slate-200 bg-white px-0 font-black text-slate-700 sm:w-auto sm:px-4"
+            className="h-11 w-11 shrink-0 border-slate-200 bg-white px-0 font-black text-slate-700 md:w-auto md:px-4"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="sr-only sm:not-sr-only">Previous</span>
+            <span className="sr-only md:not-sr-only">Previous</span>
           </Button>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => void persistLatestDraft()}
-              disabled={!activeReturnId || !online}
-              className="h-10 border-blue-100 bg-blue-50 font-black text-blue-700 hover:bg-blue-100"
-            >
-              <Save className="h-4 w-4" />
-              Save draft
-            </Button>
+          <div className="flex flex-1 gap-2 md:flex-none">
+            {!isMobile ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void persistLatestDraft()}
+                disabled={!activeReturnId || !online}
+                className="h-10 border-blue-100 bg-blue-50 font-black text-blue-700 hover:bg-blue-100"
+              >
+                <Save className="h-4 w-4" />
+                Save draft
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={nextStep}
               disabled={currentStep === ITR_FILING_STEPS.length - 1 && (!isMobile || currentPane === currentPanes.length - 1)}
-              className="h-10 bg-blue-600 font-black text-white hover:bg-blue-700"
+              className="h-11 flex-1 bg-blue-600 font-black text-white hover:bg-blue-700 md:flex-none"
             >
               Continue
               <ArrowRight className="h-4 w-4" />

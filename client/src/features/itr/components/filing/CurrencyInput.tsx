@@ -52,6 +52,7 @@ export function CurrencyInput({
         </span>
         <Input
           {...inputProps}
+          data-filing-field
           id={inputId}
           type="text"
           inputMode={allowNegative ? "decimal" : "numeric"}

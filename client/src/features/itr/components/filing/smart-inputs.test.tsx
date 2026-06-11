@@ -14,6 +14,7 @@ describe("CurrencyInput", () => {
     const input = screen.getByLabelText("Gross salary");
     expect(input).toHaveAttribute("inputmode", "numeric");
     expect(input).toHaveAttribute("type", "text");
+    expect(input).toHaveAttribute("data-filing-field");
     expect(input).toHaveValue("9,00,000");
 
     await user.clear(input);
@@ -69,6 +70,7 @@ describe("identity inputs", () => {
 
     expect(input).toHaveAttribute("maxlength", "10");
     expect(input).toHaveAttribute("autocapitalize", "characters");
+    expect(input).toHaveAttribute("data-filing-field");
 
     await user.type(input, "abcde1234f");
     expect(onChange).toHaveBeenLastCalledWith("ABCDE1234F");
@@ -80,6 +82,7 @@ describe("identity inputs", () => {
 
     const { rerender } = render(<AadhaarInput value="" onChange={onChange} />);
     expect(screen.getByLabelText("Aadhaar")).toHaveAttribute("inputmode", "numeric");
+    expect(screen.getByLabelText("Aadhaar")).toHaveAttribute("data-filing-field");
 
     await user.type(screen.getByLabelText("Aadhaar"), "1234 5678 9012");
     expect(onChange).toHaveBeenLastCalledWith("123456789012");
@@ -98,6 +101,7 @@ describe("identity inputs", () => {
     const input = screen.getByLabelText("IFSC");
 
     expect(input).toHaveAttribute("maxlength", "11");
+    expect(input).toHaveAttribute("data-filing-field");
     await user.type(input, "hdfc0ab12$cd");
 
     expect(onChange).toHaveBeenLastCalledWith("HDFC0AB12CD");

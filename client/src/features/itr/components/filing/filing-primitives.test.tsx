@@ -118,6 +118,17 @@ describe("liability primitives", () => {
     expect(screen.getByRole("button", { name: /Payable/i })).toHaveClass("text-amber-900");
   });
 
+  it("uses a neutral placeholder before liability is computable", () => {
+    render(
+      <LiabilityChip
+        liability={{ ...liability, status: "review_required", refundDue: 0, taxPayable: 0 }}
+        onClick={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /Tax estimate —/i })).toHaveClass("text-slate-700");
+  });
+
   it("renders liability detail in a bottom sheet", () => {
     render(
       <LiabilitySheet
@@ -190,5 +201,21 @@ describe("DocumentCaptureCard", () => {
 
     await user.click(screen.getByRole("button", { name: "Retry upload" }));
     expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a durable deferred state and contextual helper link", () => {
+    render(
+      <DocumentCaptureCard
+        item={{ id: "form16", title: "Form 16", required: true, reason: "Salary evidence" }}
+        status="deferred"
+        helperHref="/form16-parser"
+        helperLabel="Open Form 16 parser"
+        onUpload={vi.fn()}
+        onDefer={vi.fn()}
+      />,
+    );
+
+    expect(screen.getAllByText("Provide later")).toHaveLength(2);
+    expect(screen.getByRole("link", { name: "Open Form 16 parser" })).toHaveAttribute("href", "/form16-parser");
   });
 });

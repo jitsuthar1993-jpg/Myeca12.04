@@ -322,12 +322,19 @@ router.post("/:id/documents", authenticateToken, async (req: AuthRequest, res: R
     }
 
     const existingDraft = parseStoredDraft(taxReturn);
+    const allowedChecklistItemIds = new Set(getItrDocumentChecklist(existingDraft).map((item) => item.id));
+    if (!allowedChecklistItemIds.has(checklistItemId)) {
+      return errorResponse(res, 400, "Unknown tax-return checklist item");
+    }
     const draft = normalizeItrDraft({
       ...existingDraft,
       documents: {
         ...existingDraft.documents,
         [checklistItemId]: documentId,
       },
+      documentDeferrals: Object.fromEntries(
+        Object.entries(existingDraft.documentDeferrals).filter(([id]) => id !== checklistItemId),
+      ),
     });
     const recommendation = recommendItrForm(draft);
     const taxSummary = buildTaxSummary(draft);
