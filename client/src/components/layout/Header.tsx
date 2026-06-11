@@ -988,7 +988,7 @@ export default function Header() {
                       >
                         <Logo size="sm" className="transition-transform group-hover:scale-105" />
                         <div className="flex flex-col justify-center gap-0.5">
-                          <span className="m-0 block text-lg font-bold leading-none text-[#315efb]">
+                          <span className="m-0 block text-lg font-bold leading-none text-brand-600">
                             MyeCA.in
                           </span>
                           <span className="m-0 block type-meta font-normal uppercase leading-none tracking-widest text-slate-400">SMART TAX SOLUTIONS</span>

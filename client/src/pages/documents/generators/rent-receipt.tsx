@@ -128,12 +128,12 @@ const numberToWords = (num: number) => {
 const generateHTML = (data: any) => {
   return `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px;">
-      
+
       <!-- Print two identical receipts on one A4 page to save paper -->
-      
+
       ${[1, 2].map((i) => `
         <div style="border: 2px solid #1e3a8a; padding: 30px; margin-bottom: 40px; border-radius: 8px; position: relative;">
-          
+
           <div style="text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 20px;">
             <h1 style="margin: 0; color: #1e3a8a; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">RENT RECEIPT</h1>
             <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">(Under Section 10(13A) of Income Tax Act)</p>
@@ -145,8 +145,8 @@ const generateHTML = (data: any) => {
           </div>
 
           <p style="font-size: 16px; text-align: justify; line-height: 2;">
-            Received with thanks from Mr./Ms. <strong style="border-bottom: 1px dotted #000; padding: 0 10px;">${data.tenantName || '__________________'}</strong>, 
-            a sum of <strong>₹${Number(data.rentAmount || 0).toLocaleString('en-IN')}</strong> 
+            Received with thanks from Mr./Ms. <strong style="border-bottom: 1px dotted #000; padding: 0 10px;">${data.tenantName || '__________________'}</strong>,
+            a sum of <strong>₹${Number(data.rentAmount || 0).toLocaleString('en-IN')}</strong>
             ( <span style="font-style: italic; border-bottom: 1px dotted #000; padding: 0 10px;">${numberToWords(data.rentAmount || 0)}</span> )<br/>
             towards the rent for the period from <strong>${data.rentPeriodStart}</strong> to <strong>${data.rentPeriodEnd}</strong><br/>
             for the residential property situated at:
@@ -171,7 +171,7 @@ const generateHTML = (data: any) => {
             <div style="width: 120px; height: 60px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; transform: rotate(-5deg);">
               <span style="font-size: 12px; font-weight: bold; text-align: center;">REVENUE<br/>STAMP<br/><small>(Sign Across)</small></span>
             </div>
-            
+
             <div style="text-align: center; border-top: 1px solid #000; padding-top: 10px; min-width: 250px;">
               <strong style="display: block; margin-bottom: 5px;">${data.landlordName || 'Landlord Signature'}</strong>
               <span style="font-size: 13px; color: #666;">(Signature & Name of Landlord)</span>

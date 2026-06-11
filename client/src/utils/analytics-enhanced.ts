@@ -108,7 +108,7 @@ export function trackScrollDepth(percentage: number): void {
   // Track at 25%, 50%, 75%, and 100%
   const milestones = [25, 50, 75, 100];
   const milestone = milestones.find(m => percentage >= m && percentage < m + 25);
-  
+
   if (milestone) {
     trackEvent('scroll_depth', 'User Engagement', `${milestone}%`, milestone);
   }
@@ -118,7 +118,7 @@ export function trackTimeOnPage(seconds: number, pageName: string): void {
   // Track at 30s, 60s, 120s, 300s intervals
   const milestones = [30, 60, 120, 300];
   const milestone = milestones.find(m => seconds >= m && seconds < m * 2);
-  
+
   if (milestone) {
     trackEvent('time_on_page', 'User Engagement', pageName, milestone);
   }
@@ -189,7 +189,7 @@ export function initializeEnhancedAnalytics(): void {
 
   // Track time on page on unload instead of intervals
   const startTime = Date.now();
-  
+
   window.addEventListener('beforeunload', () => {
     const timeOnPage = Math.floor((Date.now() - startTime) / 1000);
     trackTimeOnPage(timeOnPage, window.location.pathname);

@@ -56,7 +56,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
                 <p className="text-sm text-red-600 mt-1">{errors.personalInfo.fullName.message}</p>
               )}
             </div>
-            
+
             <div>
               <Label htmlFor="personalInfo.email">Email *</Label>
               <Input
@@ -85,7 +85,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
                 <p className="text-sm text-red-600 mt-1">{errors.personalInfo.phone.message}</p>
               )}
             </div>
-            
+
             <div>
               <Label htmlFor="personalInfo.linkedin">LinkedIn (Optional)</Label>
               <Input
@@ -145,7 +145,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
           {errors.summary && (
             <p className="text-sm text-red-600 mt-1">{errors.summary.message}</p>
           )}
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-slate-600 mt-2">
             Minimum 50 characters. This should be a brief overview of your professional background.
           </p>
         </CardContent>
@@ -178,7 +178,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
           {experienceFields.map((field, index) => (
             <div key={field.id} className="border rounded-lg p-4 space-y-4">
               <div className="flex justify-between items-start">
-                <h4 className="font-medium text-gray-900">Experience {index + 1}</h4>
+                <h4 className="font-medium text-slate-900">Experience {index + 1}</h4>
                 <Button
                   type="button"
                   variant="ghost"
@@ -238,7 +238,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
                     <select
                       id={`experience.${index}.current`}
                       {...register(`experience.${index}.current`)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2"
+                      className="w-full border border-slate-300 rounded-md px-3 py-2"
                     >
                       <option value="false">No</option>
                       <option value="true">Yes</option>
@@ -289,7 +289,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
                 {errors.experience?.[index]?.description && (
                   <p className="text-sm text-red-600 mt-1">{errors.experience[index].description.message}</p>
                 )}
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-slate-600 mt-1">
                   Minimum 20 characters. Focus on achievements and quantifiable results.
                 </p>
               </div>
@@ -327,7 +327,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
           {educationFields.map((field, index) => (
             <div key={field.id} className="border rounded-lg p-4 space-y-4">
               <div className="flex justify-between items-start">
-                <h4 className="font-medium text-gray-900">Education {index + 1}</h4>
+                <h4 className="font-medium text-slate-900">Education {index + 1}</h4>
                 <Button
                   type="button"
                   variant="ghost"
@@ -460,7 +460,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
             <p className="text-sm text-red-600">{errors.skills.message}</p>
           )}
 
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-slate-600">
             Add at least 3 skills that showcase your professional abilities.
           </p>
         </CardContent>
@@ -490,7 +490,7 @@ export function ResumeForm({ register, errors, control, watch }: ResumeFormProps
           {certificationFields.map((field, index) => (
             <div key={field.id} className="border rounded-lg p-4 space-y-4">
               <div className="flex justify-between items-start">
-                <h4 className="font-medium text-gray-900">Certification {index + 1}</h4>
+                <h4 className="font-medium text-slate-900">Certification {index + 1}</h4>
                 <Button
                   type="button"
                   variant="ghost"

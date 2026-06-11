@@ -46,7 +46,7 @@ export const servicesData: ServiceCategory[] = [
         ],
         documents: [
           "PAN Card",
-          "Aadhaar Card", 
+          "Aadhaar Card",
           "Form 16/16A",
           "Bank Statements",
           "Investment Proofs",
@@ -71,7 +71,7 @@ export const servicesData: ServiceCategory[] = [
         documents: [
           "Books of Accounts",
           "Balance Sheet",
-          "P&L Statement", 
+          "P&L Statement",
           "Bank Statements",
           "Purchase/Sale Bills",
           "TDS Certificates"
@@ -102,7 +102,7 @@ export const servicesData: ServiceCategory[] = [
     ]
   },
   {
-    id: "gst-services", 
+    id: "gst-services",
     name: "GST Services",
     description: "Complete GST registration, filing and compliance solutions",
     icon: "FileText",
@@ -143,7 +143,7 @@ export const servicesData: ServiceCategory[] = [
         features: [
           "GSTR-1 & GSTR-3B",
           "Input Tax Credit",
-          "Tax Liability Calculation", 
+          "Tax Liability Calculation",
           "Late Fee Minimization",
           "Compliance Reports"
         ],
@@ -160,7 +160,7 @@ export const servicesData: ServiceCategory[] = [
         id: "gst-annual-return",
         name: "GST Annual Return (GSTR-9)",
         price: "₹2,499 excluding GST",
-        duration: "5-7 business days", 
+        duration: "5-7 business days",
         description: "Annual GST return filing with reconciliation and compliance check",
         category: "gst-services",
         features: [
@@ -182,7 +182,7 @@ export const servicesData: ServiceCategory[] = [
   },
   {
     id: "company-services",
-    name: "Company Services", 
+    name: "Company Services",
     description: "Company incorporation, compliance and legal services",
     icon: "Building2",
     color: "purple",
@@ -198,7 +198,7 @@ export const servicesData: ServiceCategory[] = [
         popular: true,
         features: [
           "Name Reservation",
-          "Digital Signature Certificate", 
+          "Digital Signature Certificate",
           "Director Identification Number",
           "Certificate of Incorporation",
           "PAN & TAN Application",
@@ -215,7 +215,7 @@ export const servicesData: ServiceCategory[] = [
       },
       {
         id: "llp-incorporation",
-        name: "LLP Incorporation", 
+        name: "LLP Incorporation",
         price: "₹4,999 excluding GST",
         originalPrice: "₹8,999 excluding GST",
         duration: "12-15 business days",
@@ -230,7 +230,7 @@ export const servicesData: ServiceCategory[] = [
           "Bank Account Assistance"
         ],
         documents: [
-          "Partners' PAN & Aadhaar", 
+          "Partners' PAN & Aadhaar",
           "Address Proof of Partners",
           "Registered Office Documents",
           "LLP Agreement",
@@ -244,7 +244,7 @@ export const servicesData: ServiceCategory[] = [
         price: "₹2,499 excluding GST",
         duration: "5-7 business days",
         description: "Complete proprietorship registration with trade license",
-        category: "company-services", 
+        category: "company-services",
         features: [
           "Trade License",
           "Shop & Establishment License",
@@ -255,7 +255,7 @@ export const servicesData: ServiceCategory[] = [
         documents: [
           "Proprietor's PAN & Aadhaar",
           "Address Proof",
-          "Business Address Proof", 
+          "Business Address Proof",
           "Identity Proof",
           "No Objection Certificate"
         ]
@@ -265,7 +265,7 @@ export const servicesData: ServiceCategory[] = [
   {
     id: "trademark-services",
     name: "Trademark & Legal",
-    description: "Trademark registration and intellectual property services", 
+    description: "Trademark registration and intellectual property services",
     icon: "Shield",
     color: "red",
     services: [
@@ -303,7 +303,7 @@ export const servicesData: ServiceCategory[] = [
         category: "trademark-services",
         features: [
           "Copyright Search",
-          "Application Filing", 
+          "Application Filing",
           "Government Processing",
           "Registration Certificate",
           "Legal Protection",
@@ -323,7 +323,7 @@ export const servicesData: ServiceCategory[] = [
     id: "compliance-services",
     name: "Compliance Services",
     description: "Annual compliance and regulatory filing services",
-    icon: "Settings", 
+    icon: "Settings",
     color: "orange",
     services: [
       {
@@ -335,7 +335,7 @@ export const servicesData: ServiceCategory[] = [
         category: "compliance-services",
         features: [
           "AOC-4 Filing",
-          "MGT-7 Filing", 
+          "MGT-7 Filing",
           "Board Resolution",
           "Compliance Certificate",
           "Penalty Waiver Support"
@@ -352,7 +352,7 @@ export const servicesData: ServiceCategory[] = [
         id: "pf-esi-registration",
         name: "PF & ESI Registration",
         price: "₹2,999 excluding GST",
-        duration: "10-15 business days", 
+        duration: "10-15 business days",
         description: "Employee Provident Fund and ESI registration for companies",
         category: "compliance-services",
         features: [
@@ -366,7 +366,7 @@ export const servicesData: ServiceCategory[] = [
           "Company Incorporation Certificate",
           "PAN & TAN",
           "Employee Details & Salary",
-          "Bank Account Details", 
+          "Bank Account Details",
           "Registered Office Proof"
         ]
       }
@@ -412,7 +412,7 @@ export const servicesData: ServiceCategory[] = [
         category: "accounting-services",
         features: [
           "Complete Financial Audit",
-          "Audit Report", 
+          "Audit Report",
           "Management Letter",
           "Compliance Check",
           "Board Presentation",
@@ -420,7 +420,7 @@ export const servicesData: ServiceCategory[] = [
         ],
         documents: [
           "Trial Balance",
-          "Books of Accounts", 
+          "Books of Accounts",
           "Bank Statements",
           "Fixed Asset Register",
           "Loan Documents",
@@ -443,7 +443,7 @@ export const getServicesByCategory = (categoryId: string): Service[] => {
 
 export const searchServices = (query: string): Service[] => {
   const lowercaseQuery = query.toLowerCase();
-  return getAllServices().filter(service => 
+  return getAllServices().filter(service =>
     service.name.toLowerCase().includes(lowercaseQuery) ||
     service.description.toLowerCase().includes(lowercaseQuery) ||
     service.features.some(feature => feature.toLowerCase().includes(lowercaseQuery))
@@ -457,13 +457,13 @@ export const getPopularServices = (): Service[] => {
 export const getCategoryByColor = (color: string) => {
   const colorMap: { [key: string]: string } = {
     blue: "bg-blue-50 border-blue-200 text-blue-800",
-    green: "bg-green-50 border-green-200 text-green-800", 
+    green: "bg-green-50 border-green-200 text-green-800",
     purple: "bg-purple-50 border-purple-200 text-purple-800",
     red: "bg-red-50 border-red-200 text-red-800",
     orange: "bg-orange-50 border-orange-200 text-orange-800",
     teal: "bg-teal-50 border-teal-200 text-teal-800"
   };
-  return colorMap[color] || "bg-gray-50 border-gray-200 text-gray-800";
+  return colorMap[color] || "bg-slate-50 border-slate-200 text-slate-800";
 };
 
 // Service Category Testimonials
@@ -481,12 +481,12 @@ export const serviceTestimonials: ServiceTestimonial[] = [
   {
     id: "1",
     name: "Anonymized taxpayer",
-    location: "Mumbai, Maharashtra", 
+    location: "Mumbai, Maharashtra",
     comment: "The ITR workflow made form selection and document review easier to follow.",
     serviceType: "income-tax"
   },
   {
-    id: "2", 
+    id: "2",
     name: "Anonymized taxpayer",
     location: "Delhi, NCR",
     comment: "The individual filing workflow helped me move from form selection to e-filing with clearer next steps.",
@@ -499,7 +499,7 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     comment: "The capital gains review helped organize the calculation inputs before filing.",
     serviceType: "income-tax"
   },
-  
+
   // Labour Law Services Testimonials
   {
     id: "4",
@@ -511,7 +511,7 @@ export const serviceTestimonials: ServiceTestimonial[] = [
   {
     id: "5",
     name: "Anonymized business",
-    location: "Chennai, Tamil Nadu", 
+    location: "Chennai, Tamil Nadu",
     comment: "The labour compliance workflow helped us track PF registration and monthly return tasks.",
     serviceType: "labour-law"
   },
@@ -523,7 +523,7 @@ export const serviceTestimonials: ServiceTestimonial[] = [
     serviceType: "labour-law"
   },
 
-  // Company Services Testimonials  
+  // Company Services Testimonials
   {
     id: "7",
     name: "Anonymized startup",
@@ -534,7 +534,7 @@ export const serviceTestimonials: ServiceTestimonial[] = [
   {
     id: "8",
     name: "Anonymized company",
-    location: "Kolkata, West Bengal", 
+    location: "Kolkata, West Bengal",
     comment: "The company registration and GST setup workflow made document needs and status updates easier to follow.",
     serviceType: "company-services"
   },
@@ -555,7 +555,7 @@ export const getTestimonialsByType = (serviceType: string): ServiceTestimonial[]
 // Testimonials organized by category for the services page
 export const testimonialsByCategory = {
   "income-tax": getTestimonialsByType("income-tax"),
-  "labour-law": getTestimonialsByType("labour-law"), 
+  "labour-law": getTestimonialsByType("labour-law"),
   "company-services": getTestimonialsByType("company-services")
 };
 
@@ -568,7 +568,7 @@ export const groupedServices = {
   },
   "labour-law": {
     title: "Labour Law & Compliance",
-    description: "Complete employee compliance solutions including PF, ESI registration and ongoing support", 
+    description: "Complete employee compliance solutions including PF, ESI registration and ongoing support",
     services: getServicesByCategory("compliance-services")
   },
   "company-services": {
@@ -576,7 +576,7 @@ export const groupedServices = {
     description: "Company registration, accounting setup, and GST compliance workflows with defined records and next steps",
     services: [
       ...getServicesByCategory("company-services"),
-      ...getServicesByCategory("gst-services"), 
+      ...getServicesByCategory("gst-services"),
       ...getServicesByCategory("accounting-services")
     ]
   }

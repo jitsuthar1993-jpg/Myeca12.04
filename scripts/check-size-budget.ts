@@ -21,7 +21,7 @@ const budgets = {
   jsGzipHardBytes: 1.5 * mb,
   largestJsRawBytes: 350 * kb,
   cssRawTargetBytes: 250 * kb,
-  cssRawHardBytes: 280 * kb,
+  cssRawHardBytes: 275 * kb,
   ogDefaultBytes: 100 * kb,
   itrFilingChunkGzipBytes: 90 * kb,
   apiIndexFunctionBytes: 4 * mb,

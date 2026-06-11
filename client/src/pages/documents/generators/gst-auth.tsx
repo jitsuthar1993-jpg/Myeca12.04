@@ -63,7 +63,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 15px; color: #000; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <div style="text-align: right; margin-bottom: 20px;">
       Date: <strong>${data.executionDate.split('-').reverse().join('/')}</strong><br />
       Place: <strong>${data.executionPlace}</strong>

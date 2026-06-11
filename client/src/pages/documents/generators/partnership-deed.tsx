@@ -68,7 +68,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 15px; color: #000; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <div style="text-align: center; margin-bottom: 30px;">
       <h1 style="margin: 0; font-size: 22px; text-decoration: underline; text-transform: uppercase;">DEED OF PARTNERSHIP</h1>
     </div>
@@ -95,7 +95,7 @@ const generateHTML = (data: any) => `
 
     <ol style="margin-left: 20px; margin-top: 15px;">
       <li style="margin-bottom: 15px;">
-        <strong>Firm Name:</strong> The business of the partnership shall go on under the name and style of <strong>${data.firmName}</strong>. 
+        <strong>Firm Name:</strong> The business of the partnership shall go on under the name and style of <strong>${data.firmName}</strong>.
       </li>
       <li style="margin-bottom: 15px;">
         <strong>Registered Office:</strong> The principal place of business shall be at <strong>${data.firmAddress}</strong>. However, from time to time, the partners may open branches elsewhere upon mutual consent.

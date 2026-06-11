@@ -17,7 +17,7 @@ interface ShareButtonsProps {
   showCopy?: boolean;
 }
 
-export default function ShareButtons({ 
+export default function ShareButtons({
   url = typeof window !== 'undefined' ? window.location.href : '',
   title = "MyeCA.in - Expert Tax Filing & Compliance Services",
   description = "Share this MyeCA tax filing and compliance resource.",
@@ -70,7 +70,7 @@ export default function ShareButtons({
     <div className={`flex items-center gap-2 ${className}`}>
       {/* Desktop Share Buttons */}
       <div className="hidden md:flex items-center gap-2">
-        <span className="text-sm text-gray-600 mr-2">Share:</span>
+        <span className="text-sm text-slate-600 mr-2">Share:</span>
         <a
           href={shareLinks.facebook}
           target="_blank"
@@ -101,7 +101,7 @@ export default function ShareButtons({
         {showCopy && (
           <button
             onClick={handleCopyLink}
-            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-300 hover:scale-110"
+            className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-all duration-300 hover:scale-110"
             aria-label="Copy link"
           >
             {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}

@@ -5,13 +5,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { 
-  AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, 
+import {
+  AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie,
   Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "@/components/charts/lightweight-recharts";
-import { 
-  TrendingUp, TrendingDown, Users, FileText, IndianRupee, 
-  Calendar, Award, Target, Activity, Download, RefreshCw, Eye, Zap, 
+import {
+  TrendingUp, TrendingDown, Users, FileText, IndianRupee,
+  Calendar, Award, Target, Activity, Download, RefreshCw, Eye, Zap,
   ChevronRight, ArrowRight, BarChart3, Clock, MapPin
 } from "lucide-react";
 import { useAccessibility } from "@/components/accessibility/AccessibilityProvider";
@@ -109,7 +109,7 @@ export default function AnalyticsDashboardPage() {
   const PerformanceMetric = ({ metric, value, target, unit }: any) => {
     const percentage = (value / target) * 100;
     const isExceeding = value >= target;
-    
+
     return (
       <div className="space-y-3">
         <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400">
@@ -125,7 +125,7 @@ export default function AnalyticsDashboardPage() {
 
   return (
     <Layout>
-      <SEO 
+      <SEO
         title="Performance Analytics | MyeCA.in"
         description="Comprehensive analytics and insights for platform performance, user metrics, and tax filing statistics."
       />
@@ -143,7 +143,7 @@ export default function AnalyticsDashboardPage() {
                    <h2 className="text-white font-black tracking-tight">System Intel</h2>
                 </div>
              </div>
-             
+
              <CardContent className="px-6 pb-8 relative">
                 <div className="space-y-8 -mt-8">
                    <div className="p-6 rounded-[32px] bg-white shadow-2xl border border-slate-100 space-y-4">
@@ -232,9 +232,9 @@ export default function AnalyticsDashboardPage() {
                   { id: "performance", label: "Core Web Vitals", icon: Activity },
                   { id: "geographic", label: "Markets", icon: MapPin }
                 ].map((t) => (
-                  <TabsTrigger 
-                    key={t.id} 
-                    value={t.id} 
+                  <TabsTrigger
+                    key={t.id}
+                    value={t.id}
                     className="rounded-2xl px-6 py-3 font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all"
                   >
                     <t.icon className="h-4 w-4 mr-2" />
@@ -325,7 +325,7 @@ export default function AnalyticsDashboardPage() {
                   </ResponsiveContainer>
                </Card>
             </TabsContent>
-            
+
             <TabsContent value="performance" className="space-y-10 m-0">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="border-none shadow-sm rounded-[48px] bg-white p-12">
@@ -346,7 +346,7 @@ export default function AnalyticsDashboardPage() {
                         </LineChart>
                      </ResponsiveContainer>
                   </Card>
-                  
+
                   <Card className="border-none shadow-sm rounded-[48px] bg-white p-12">
                      <h3 className="text-xl font-black text-slate-900 tracking-tight mb-8">Node Reliability</h3>
                      <div className="space-y-10 mt-10">

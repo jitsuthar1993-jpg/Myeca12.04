@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  FileText, 
-  Clock, 
-  Activity, 
-  Plus, 
-  MessageSquare, 
+import {
+  FileText,
+  Clock,
+  Activity,
+  Plus,
+  MessageSquare,
   Layers,
   Search,
   Filter,
@@ -169,8 +169,8 @@ export default function TeamDashboard() {
               <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                  <div className="relative group w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
-                    <Input 
-                      placeholder="Search tasks..." 
+                    <Input
+                      placeholder="Search tasks..."
                       className="h-9 w-full rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium sm:w-60"
                       value={searchTerm}
                       onChange={(event) => setSearchTerm(event.target.value)}
@@ -361,7 +361,7 @@ export default function TeamDashboard() {
                    </div>
                  ))}
                </div>
-               
+
                <div className="flex flex-col gap-3 bg-slate-50/50 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Queue Volume: {activeTasks.length}</p>
                   <div className="flex items-center gap-2">

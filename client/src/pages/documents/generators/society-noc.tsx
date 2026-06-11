@@ -52,7 +52,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Arial', sans-serif; font-size: 14px; color: #000; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 40px;">
-    
+
     <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 40px;">
       <h1 style="margin: 0; font-size: 22px; text-transform: uppercase;">${data.societyName}</h1>
       <p style="margin: 5px 0 0 0;">${data.societyAddress}</p>

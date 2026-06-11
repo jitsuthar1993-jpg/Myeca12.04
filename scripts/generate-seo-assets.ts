@@ -46,6 +46,12 @@ import {
   type PublicContentContext,
   type PublicPageType,
 } from "../shared/public-content-quality.js";
+import {
+  contentContextPath,
+  distMetaDir,
+  distPublicDir,
+  rootDir,
+} from "./lib/build-artifact-paths.js";
 
 type RouteMeta = {
   path: string;
@@ -64,9 +70,7 @@ type RouteMeta = {
   contentContext?: PublicContentContext;
 };
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rootDir = path.resolve(__dirname, "..");
-const distDir = path.join(rootDir, "dist", "public");
+const distDir = distPublicDir;
 const clientPublicDir = path.join(rootDir, "client", "public");
 const distIndexPath = path.join(distDir, "index.html");
 const now = new Date().toISOString().split("T")[0];
@@ -2114,11 +2118,8 @@ async function main() {
   for (const route of PRIVATE_NOINDEX_ROUTES) {
     await writeRouteHtml(template, privateMeta(route));
   }
-  fs.writeFileSync(
-    path.join(distDir, "content-context.json"),
-    `${JSON.stringify(contentContexts, null, 2)}\n`,
-    "utf8",
-  );
+  fs.mkdirSync(distMetaDir, { recursive: true });
+  fs.writeFileSync(contentContextPath, `${JSON.stringify(contentContexts, null, 2)}\n`, "utf8");
   writeTextAssets(blogPosts);
   pruneUnusedPublicAssets();
 

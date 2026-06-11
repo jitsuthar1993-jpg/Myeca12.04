@@ -65,7 +65,7 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
       setIsUploading((prev) => ({ ...prev, [docId]: true }));
       const preparedFile = await prepareDocumentForUpload(file);
       setUploadedDocs((prev) => ({ ...prev, [docId]: preparedFile }));
-      
+
       const preview = getFilePreview(preparedFile);
       setPreviews((prev) => ({ ...prev, [docId]: preview }));
     } catch (err) {
@@ -117,7 +117,7 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
     try {
       for (const [docId, file] of filesToUpload) {
         if (!file) continue;
-        
+
         const docName = expectedDocs.find(d => d.id === docId)?.name || docId;
         const token = await getAuthToken();
         const formData = new FormData();
@@ -161,7 +161,7 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
   };
 
   return (
-    <Card className="border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-blue-800/40 backdrop-blur-sm">
+    <Card className="border-slate-200  bg-white/50  backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Upload className="h-5 w-5 text-blue-600" />
@@ -173,21 +173,21 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
         {expectedDocs.map((doc) => (
           <div key={doc.id} className="relative">
             <div className={`p-4 rounded-xl border-2 border-dashed transition-all ${
-              uploadedDocs[doc.id] 
-                ? "border-green-500 bg-green-50/50 dark:bg-green-900/10" 
-                : "border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
+              uploadedDocs[doc.id]
+                ? "border-green-500 bg-green-50/50 "
+                : "border-slate-200  hover:border-blue-400 "
             }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${uploadedDocs[doc.id] ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500 dark:bg-gray-700"}`}>
+                  <div className={`p-2 rounded-lg ${uploadedDocs[doc.id] ? "bg-green-100 text-green-600" : "bg-slate-100 text-slate-500 "}`}>
                     <File className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm text-gray-900 dark:text-white">
+                    <p className="font-medium text-sm text-slate-900 ">
                       {doc.name}
                       {doc.required && <span className="text-red-500 ml-1">*</span>}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-slate-500 ">
                       {uploadedDocs[doc.id] ? (uploadedDocs[doc.id] as File).name : "PDF, JPG, PNG, WebP, Word or Excel"}
                     </p>
                   </div>
@@ -196,7 +196,7 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
                 {uploadedDocs[doc.id] ? (
                   <div className="flex items-center gap-2">
                     {previews[doc.id] && (
-                      <div className="h-10 w-10 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                      <div className="h-10 w-10 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
                         {uploadedDocs[doc.id]?.type.startsWith('image/') ? (
                           <img src={previews[doc.id]} alt="Preview" className="h-full w-full object-cover" />
                         ) : (
@@ -204,7 +204,7 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
                         )}
                       </div>
                     )}
-                    <Button variant="ghost" size="icon" onClick={() => removeFile(doc.id)} className="h-8 w-8 text-gray-500 hover:text-red-500">
+                    <Button variant="ghost" size="icon" onClick={() => removeFile(doc.id)} className="h-8 w-8 text-slate-500 hover:text-red-500">
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -228,9 +228,9 @@ export function ServiceUploader({ serviceId, serviceType, expectedDocs }: Servic
             </div>
           </div>
         ))}
-        
+
         <div className="pt-2">
-          <Button 
+          <Button
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25"
             onClick={handleSubmit}
             disabled={isUploading["global"]}

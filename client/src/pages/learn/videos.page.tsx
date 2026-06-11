@@ -57,15 +57,15 @@ export default function VideoTutorialsPage() {
   // Filter videos
   const filteredVideos = useMemo(() => {
     let videos = VIDEO_TUTORIALS;
-    
+
     if (searchQuery) {
       videos = searchVideos(searchQuery);
     }
-    
+
     if (selectedCategory !== 'all') {
       videos = videos.filter(v => v.category === selectedCategory);
     }
-    
+
     return videos;
   }, [searchQuery, selectedCategory]);
 
@@ -75,9 +75,9 @@ export default function VideoTutorialsPage() {
   // Video card component
   const VideoCard = ({ video, size = 'normal' }: { video: VideoTutorial; size?: 'normal' | 'small' }) => {
     const category = VIDEO_CATEGORIES.find(c => c.id === video.category);
-    
+
     return (
-      <Card 
+      <Card
         className="group cursor-pointer hover:shadow-lg transition-all duration-300"
         onClick={() => setSelectedVideo(video)}
       >
@@ -106,9 +106,9 @@ export default function VideoTutorialsPage() {
             {video.title}
           </h3>
           {size !== 'small' && (
-            <p className="text-sm text-gray-500 line-clamp-2 mt-1">{video.description}</p>
+            <p className="text-sm text-slate-500 line-clamp-2 mt-1">{video.description}</p>
           )}
-          <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+          <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               {video.duration}
@@ -121,7 +121,7 @@ export default function VideoTutorialsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -160,7 +160,7 @@ export default function VideoTutorialsPage() {
           {/* Search */}
           <div className="max-w-xl">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 placeholder="Search lesson topics..."
                 value={searchQuery}
@@ -225,9 +225,9 @@ export default function VideoTutorialsPage() {
             </div>
             {filteredVideos.length === 0 && (
               <div className="text-center py-12">
-                <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                <BookOpen className="h-16 w-16 mx-auto text-slate-300 mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No lessons found</h3>
-                <p className="text-gray-500">Try a different search term or category</p>
+                <p className="text-slate-500">Try a different search term or category</p>
               </div>
             )}
           </div>
@@ -271,7 +271,7 @@ export default function VideoTutorialsPage() {
             {VIDEO_CATEGORIES.map((category) => {
               const categoryVideos = getVideosByCategory(category.id);
               if (categoryVideos.length === 0) return null;
-              
+
               return (
                 <section key={category.id}>
                   <div className="flex items-center justify-between mb-4">
@@ -279,8 +279,8 @@ export default function VideoTutorialsPage() {
                       {CATEGORY_ICONS[category.id]}
                       {category.name}
                     </h2>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => setSelectedCategory(category.id)}
                     >
@@ -325,9 +325,9 @@ export default function VideoTutorialsPage() {
                   </Badge>
                 </div>
                 <h2 className="text-xl font-bold mb-2">{selectedVideo.title}</h2>
-                <p className="text-gray-600 mb-4">{selectedVideo.description}</p>
-                
-                <div className="flex flex-col gap-4 text-sm text-gray-500 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-slate-600 mb-4">{selectedVideo.description}</p>
+
+                <div className="flex flex-col gap-4 text-sm text-slate-500 mb-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1">
                       <BookOpen className="h-4 w-4" />
@@ -354,9 +354,9 @@ export default function VideoTutorialsPage() {
                     <h3 className="font-semibold mb-3">Related Lessons</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {getRelatedVideos(selectedVideo.id).slice(0, 2).map((video) => (
-                        <Card 
+                        <Card
                           key={video.id}
-                          className="cursor-pointer hover:bg-gray-50"
+                          className="cursor-pointer hover:bg-slate-50"
                           onClick={() => setSelectedVideo(video)}
                         >
                           <CardContent className="p-3 flex items-center gap-3">
@@ -365,7 +365,7 @@ export default function VideoTutorialsPage() {
                             </div>
                             <div className="min-w-0">
                               <p className="font-medium text-sm line-clamp-2">{video.title}</p>
-                              <p className="text-xs text-gray-500">{video.duration}</p>
+                              <p className="text-xs text-slate-500">{video.duration}</p>
                             </div>
                           </CardContent>
                         </Card>

@@ -127,7 +127,7 @@ class PerformanceMonitor {
           this.metrics.TTFB = navigation.responseStart - navigation.requestStart;
           this.metrics.domContentLoaded = navigation.domContentLoadedEventEnd;
           this.metrics.loadComplete = navigation.loadEventEnd;
-          
+
           this.analyzeMetric('TTFB', this.metrics.TTFB);
           this.analyzeMetric('domContentLoaded', this.metrics.domContentLoaded!);
           this.analyzeMetric('loadComplete', this.metrics.loadComplete!);
@@ -161,7 +161,7 @@ class PerformanceMonitor {
           }
         }
       });
-      
+
       try {
         this.performanceObserver.observe({ entryTypes: ['longtask'] });
       } catch (e) {
@@ -175,13 +175,13 @@ class PerformanceMonitor {
     setTimeout(() => {
       const resources = performance.getEntriesByType('resource');
       let totalSize = 0;
-      
+
       resources.forEach((resource: any) => {
         if (resource.transferSize) {
           totalSize += resource.transferSize;
         }
       });
-      
+
       this.metrics.bundleSize = totalSize;
       this.analyzeBundleSize(totalSize);
     }, 3000);
@@ -212,7 +212,7 @@ class PerformanceMonitor {
   private analyzeBundleSize(size: number): void {
     const sizeInMB = size / (1024 * 1024);
     let rating: 'good' | 'needs-improvement' | 'poor';
-    
+
     if (sizeInMB < 1) {
       rating = 'good';
     } else if (sizeInMB < 2) {
@@ -243,16 +243,16 @@ class PerformanceMonitor {
       `Load Complete: ${metrics.loadComplete}ms`,
       '========================='
     ];
-    
+
     return report.join('\n');
   }
 
   private getRating(metric: string, value: number | null): string {
     if (value === null) return 'N/A';
-    
+
     const threshold = THRESHOLDS[metric as keyof PerformanceThresholds];
     if (!threshold) return 'N/A';
-    
+
     if (value <= threshold.good) return 'Good ✅';
     if (value <= threshold.needsImprovement) return 'Needs Improvement ⚠️';
     return 'Poor ❌';
@@ -262,16 +262,14 @@ class PerformanceMonitor {
   optimizeCriticalPath(): void {
     // Preload critical resources
     const criticalResources = [
-      '/fonts/inter.woff2',
-      '/css/critical.css',
-      '/js/critical.js',
+      '/fonts/inter-latin-variable.woff2',
     ];
 
     criticalResources.forEach(resource => {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.href = resource;
-      
+
       if (resource.includes('.woff2')) {
         link.as = 'font';
         link.type = 'font/woff2';
@@ -281,7 +279,7 @@ class PerformanceMonitor {
       } else if (resource.includes('.js')) {
         link.as = 'script';
       }
-      
+
       document.head.appendChild(link);
     });
   }
@@ -289,14 +287,14 @@ class PerformanceMonitor {
   // Lazy load non-critical resources
   lazyLoadResources(): void {
     const lazyResources = document.querySelectorAll('[data-lazy]');
-    
+
     if ('IntersectionObserver' in window) {
       const lazyObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const element = entry.target as HTMLElement;
             const src = element.dataset.src;
-            
+
             if (src) {
               if (element.tagName === 'IMG') {
                 (element as HTMLImageElement).src = src;
@@ -305,14 +303,14 @@ class PerformanceMonitor {
                 script.src = src;
                 document.body.appendChild(script);
               }
-              
+
               element.removeAttribute('data-lazy');
               lazyObserver.unobserve(element);
             }
           }
         });
       });
-      
+
       lazyResources.forEach((resource) => {
         lazyObserver.observe(resource);
       });
@@ -332,9 +330,9 @@ export const measureFunction = <T extends (...args: any[]) => any>(
     const start = performance.now();
     const result = fn(...args);
     const end = performance.now();
-    
+
     trackEvent('performance', 'function_timing', `${name}: ${(end - start).toFixed(2)}ms`);
-    
+
     return result;
   }) as T;
 };
@@ -347,9 +345,9 @@ export const measureAsyncFunction = <T extends (...args: any[]) => Promise<any>>
     const start = performance.now();
     const result = await fn(...args);
     const end = performance.now();
-    
+
     trackEvent('performance', 'async_function_timing', `${name}: ${(end - start).toFixed(2)}ms`);
-    
+
     return result;
   }) as T;
 };
@@ -361,9 +359,9 @@ export const monitorMemoryUsage = (): void => {
     const usedMB = memoryInfo.usedJSHeapSize / (1024 * 1024);
     const totalMB = memoryInfo.totalJSHeapSize / (1024 * 1024);
     const limitMB = memoryInfo.jsHeapSizeLimit / (1024 * 1024);
-    
+
     trackEvent('performance', 'memory_usage', `Used: ${usedMB.toFixed(1)}MB, Total: ${totalMB.toFixed(1)}MB`, (usedMB / totalMB) * 100);
-    
+
     // Alert if memory usage is high
     if ((usedMB / totalMB) > 0.9) {
       console.warn('High memory usage detected:', {
@@ -378,10 +376,10 @@ export const monitorMemoryUsage = (): void => {
 // Initialize monitoring on client side - only in production to avoid HMR issues
 if (typeof window !== 'undefined' && import.meta.env.PROD) {
   performanceMonitor.startMonitoring();
-  
+
   // Monitor memory usage periodically
   setInterval(monitorMemoryUsage, 30000); // Every 30 seconds
-  
+
   // Log performance report after page load
   window.addEventListener('load', () => {
     setTimeout(() => {

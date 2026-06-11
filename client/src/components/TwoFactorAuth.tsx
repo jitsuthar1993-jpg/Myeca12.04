@@ -151,13 +151,13 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
             <div className="p-4 bg-white rounded-lg border">
               <img src={setupData.qrCode} alt="2FA QR Code" className="w-48 h-48" />
             </div>
-            
+
             <Alert>
               <Key className="w-4 h-4" />
               <AlertDescription>
                 <strong>Secret Key:</strong> {setupData.secret}
                 <br />
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-slate-600">
                   Save this key if you need to manually add this account to your authenticator app
                 </span>
               </AlertDescription>
@@ -185,7 +185,7 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
                 <strong>Backup Codes:</strong>
                 <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-sm">
                   {setupData.backupCodes.map((code, i) => (
-                    <div key={i} className="bg-gray-100 p-2 rounded">
+                    <div key={i} className="bg-slate-100 p-2 rounded">
                       {code}
                     </div>
                   ))}
@@ -231,26 +231,26 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
             <div className="flex items-center gap-3">
               {isEnabled ? (
                 <CheckCircle className="w-8 h-8 text-green-600" />
               ) : (
-                <Shield className="w-8 h-8 text-gray-400" />
+                <Shield className="w-8 h-8 text-slate-400" />
               )}
               <div>
                 <h3 className="font-semibold">
                   {isEnabled ? "2FA is Enabled" : "2FA is Disabled"}
                 </h3>
-                <p className="text-sm text-gray-600">
-                  {isEnabled 
+                <p className="text-sm text-slate-600">
+                  {isEnabled
                     ? "Your account is protected with two-factor authentication"
                     : "Enable 2FA to secure your account with an additional verification step"
                   }
                 </p>
               </div>
             </div>
-            
+
             {isEnabled ? (
               <Button
                 variant="outline"
@@ -273,21 +273,21 @@ export default function TwoFactorAuth({ isEnabled: initialEnabled = false }: Two
             <div className="text-center p-4 border rounded-lg">
               <Smartphone className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <h4 className="font-medium">Download App</h4>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-slate-600 mt-1">
                 Use Google Authenticator or Authy
               </p>
             </div>
             <div className="text-center p-4 border rounded-lg">
               <Key className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <h4 className="font-medium">Scan QR Code</h4>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-slate-600 mt-1">
                 Link your account to the app
               </p>
             </div>
             <div className="text-center p-4 border rounded-lg">
               <CheckCircle className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <h4 className="font-medium">Verify Code</h4>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-slate-600 mt-1">
                 Enter the 6-digit code to confirm
               </p>
             </div>

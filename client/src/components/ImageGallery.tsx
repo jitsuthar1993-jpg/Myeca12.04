@@ -53,7 +53,7 @@ export default function ImageGallery({
     <>
       <div className={cn('space-y-4', className)}>
         {/* Main Image Display */}
-        <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative aspect-video bg-slate-100 rounded-lg overflow-hidden">
           <OptimizedImage
             src={images[selectedIndex].src}
             alt={images[selectedIndex].alt}
@@ -61,7 +61,7 @@ export default function ImageGallery({
             priority
             onClick={() => lightbox && setIsLightboxOpen(true)}
           />
-          
+
           {/* Navigation Arrows */}
           {images.length > 1 && (
             <>
@@ -99,7 +99,7 @@ export default function ImageGallery({
                   'relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all',
                   selectedIndex === index
                     ? 'border-blue-500 ring-2 ring-blue-500 ring-offset-2'
-                    : 'border-transparent hover:border-gray-300',
+                    : 'border-transparent hover:border-slate-300',
                   thumbnailClassName
                 )}
               >
@@ -116,7 +116,7 @@ export default function ImageGallery({
 
         {/* Caption */}
         {images[selectedIndex].caption && (
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-slate-600">
             {images[selectedIndex].caption}
           </p>
         )}

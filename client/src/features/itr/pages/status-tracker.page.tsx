@@ -141,7 +141,7 @@ export default function ITRStatusTrackerPage() {
         keywords={["itr status", "income tax return status", "check itr status", "itr processing status", "tax refund status", "e-verification status"]}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full mb-4">
@@ -150,10 +150,10 @@ export default function ITRStatusTrackerPage() {
                 Guide, not live portal data
               </span>
             </div>
-            <h1 className="type-page-title mb-3 text-gray-900">
+            <h1 className="type-page-title mb-3 text-slate-900">
               ITR Status Guide
             </h1>
-            <p className="type-body text-gray-600 max-w-2xl mx-auto">
+            <p className="type-body text-slate-600 max-w-2xl mx-auto">
               Prepare your details and follow the official steps to check filing, e-verification, and refund status on the Income Tax portal.
             </p>
           </div>
@@ -234,11 +234,11 @@ export default function ITRStatusTrackerPage() {
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <p className="type-meta text-gray-500">PAN</p>
+                      <p className="type-meta text-slate-500">PAN</p>
                       <p className="font-semibold">{validatedLookup.pan}</p>
                     </div>
                     <div>
-                      <p className="type-meta text-gray-500">Acknowledgement Number</p>
+                      <p className="type-meta text-slate-500">Acknowledgement Number</p>
                       <p className="font-semibold">
                         {validatedLookup.acknowledgementNo || "Use portal login if unavailable"}
                       </p>
@@ -265,7 +265,7 @@ export default function ITRStatusTrackerPage() {
                       return (
                         <div key={step.id} className="flex items-start mb-8 last:mb-0">
                           {index < STATUS_STEPS.length - 1 && (
-                            <div className="absolute left-5 mt-10 w-0.5 h-16 bg-gray-200" style={{ marginLeft: "-1px" }} />
+                            <div className="absolute left-5 mt-10 w-0.5 h-16 bg-slate-200" style={{ marginLeft: "-1px" }} />
                           )}
 
                           <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-700">
@@ -273,8 +273,8 @@ export default function ITRStatusTrackerPage() {
                           </div>
 
                           <div className="ml-4 flex-1">
-                            <h4 className="font-semibold text-gray-900">{step.label}</h4>
-                            <p className="type-support text-gray-500">{step.description}</p>
+                            <h4 className="font-semibold text-slate-900">{step.label}</h4>
+                            <p className="type-support text-slate-500">{step.description}</p>
                           </div>
                         </div>
                       );
@@ -297,12 +297,12 @@ export default function ITRStatusTrackerPage() {
                       <div
                         key={method.title}
                         className={`p-4 border rounded-lg ${
-                          method.recommended ? "border-green-300 bg-green-50" : "border-gray-200"
+                          method.recommended ? "border-green-300 bg-green-50" : "border-slate-200"
                         }`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`p-2 rounded-lg ${method.recommended ? "bg-green-100" : "bg-gray-100"}`}>
-                            <method.icon className={`h-5 w-5 ${method.recommended ? "text-green-600" : "text-gray-600"}`} />
+                          <div className={`p-2 rounded-lg ${method.recommended ? "bg-green-100" : "bg-slate-100"}`}>
+                            <method.icon className={`h-5 w-5 ${method.recommended ? "text-green-600" : "text-slate-600"}`} />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function ITRStatusTrackerPage() {
                                 <Badge className="bg-green-500 type-meta">Recommended</Badge>
                               )}
                             </div>
-                            <p className="type-support text-gray-600">{method.desc}</p>
+                            <p className="type-support text-slate-600">{method.desc}</p>
                           </div>
                         </div>
                       </div>
@@ -334,11 +334,11 @@ export default function ITRStatusTrackerPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4 type-support text-gray-700">
+                  <div className="grid md:grid-cols-2 gap-4 type-support text-slate-700">
                     {OFFICIAL_DOCUMENTS.map((document) => (
-                      <div key={document.title} className="rounded-lg border border-gray-200 p-4">
-                        <p className="font-medium text-gray-900">{document.title}</p>
-                        <p className="mt-1 text-gray-600">{document.description}</p>
+                      <div key={document.title} className="rounded-lg border border-slate-200 p-4">
+                        <p className="font-medium text-slate-900">{document.title}</p>
+                        <p className="mt-1 text-slate-600">{document.description}</p>
                       </div>
                     ))}
                   </div>
@@ -375,7 +375,7 @@ export default function ITRStatusTrackerPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="font-semibold mb-2">Where to find Acknowledgement Number?</h4>
-                    <ul className="space-y-2 type-support text-gray-600">
+                    <ul className="space-y-2 type-support text-slate-600">
                       <li className="flex items-start gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                         Downloaded ITR-V PDF after filing
@@ -392,7 +392,7 @@ export default function ITRStatusTrackerPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2">Need Help?</h4>
-                    <ul className="space-y-2 type-support text-gray-600">
+                    <ul className="space-y-2 type-support text-slate-600">
                       <li className="flex items-start gap-2">
                         <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                         <span>Call Income Tax Helpline: <strong>1800-103-0025</strong></span>

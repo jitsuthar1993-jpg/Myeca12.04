@@ -22,11 +22,11 @@ export default function ConversionTracker({ conversionType, conversionValue, met
           trackPurchase(metadata.transaction);
         }
         break;
-      
+
       case 'itr_filing':
         trackEvent('complete_registration', 'Conversion', 'ITR Filing Started', conversionValue);
         break;
-      
+
       case 'calculator_use':
         trackEvent('generate_lead', 'Conversion', 'Calculator Used', 1);
         break;

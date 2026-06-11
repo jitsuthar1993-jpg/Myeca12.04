@@ -11,8 +11,8 @@ interface CalcGlassSidebarProps {
   bodyClassName?: string;
 }
 
-export default function CalcGlassSidebar({ 
-  children, 
+export default function CalcGlassSidebar({
+  children,
   title = "Result Summary",
   description,
   variant,
@@ -28,7 +28,7 @@ export default function CalcGlassSidebar({
       <div className="relative group">
         {/* Glass Container */}
         <div className="absolute inset-0 bg-white/40 backdrop-blur-2xl rounded-[2.5rem] -z-10 border border-white/50 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] transition-all group-hover:bg-white/60" />
-        
+
         <div className={cn("p-8 lg:p-10 space-y-8", contentClassName)}>
           {(title || description) && (
             <div className="space-y-1">
@@ -45,7 +45,7 @@ export default function CalcGlassSidebar({
               <div className="w-12 h-1 bg-primary/20 rounded-full mt-4" />
             </div>
           )}
-          
+
           <div className={cn("space-y-6", bodyClassName)}>
             {children}
           </div>
@@ -55,15 +55,15 @@ export default function CalcGlassSidebar({
   );
 }
 
-export function CalcResultRow({ 
-  label, 
-  value, 
+export function CalcResultRow({
+  label,
+  value,
   subValue,
   variant = "default",
   className
-}: { 
-  label: string; 
-  value: string | React.ReactNode; 
+}: {
+  label: string;
+  value: string | React.ReactNode;
   subValue?: string;
   variant?: "default" | "highlight" | "success" | "warning";
   className?: string;

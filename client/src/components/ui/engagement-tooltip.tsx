@@ -47,7 +47,7 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
 
   const handleNext = () => {
     setIsVisible(false);
-    
+
     setTimeout(() => {
       if (currentTooltip < tooltips.length - 1) {
         setCurrentTooltip(currentTooltip + 1);
@@ -88,7 +88,7 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
             className="fixed inset-0 bg-blue-900/20 z-50 backdrop-blur-sm"
             onClick={handleSkip}
           />
-          
+
           {/* Tooltip */}
           <m.div
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -110,7 +110,7 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
                     <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-white/20"></div>
                     <div className="absolute -bottom-2 -left-2 w-16 h-16 rounded-full bg-white/10"></div>
                   </div>
-                  
+
                   <div className="relative flex items-start justify-between">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
@@ -123,7 +123,7 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
                         </span>
                       </div>
                     </div>
-                    
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -137,17 +137,17 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
 
                 {/* Content */}
                 <div className="px-6 py-5">
-                  <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                  <p className="text-slate-700 text-sm leading-relaxed mb-4">
                     {tooltip.message}
                   </p>
-                  
+
                   {/* Progress bar */}
                   <div className="mb-4">
-                    <div className="flex justify-between text-xs text-gray-500 mb-2">
+                    <div className="flex justify-between text-xs text-slate-500 mb-2">
                       <span>Progress</span>
                       <span>{Math.round(((currentTooltip + 1) / tooltips.length) * 100)}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-slate-200 rounded-full h-2">
                       <m.div
                         className={`h-2 rounded-full bg-gradient-to-r ${tooltip.color}`}
                         initial={{ width: 0 }}
@@ -166,7 +166,7 @@ export function EngagementTooltip({ tooltips, onComplete }: EngagementTooltipPro
                       {tooltip.actionText}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
-                    
+
                     {currentTooltip < tooltips.length - 1 && (
                       <Button
                         variant="outline"

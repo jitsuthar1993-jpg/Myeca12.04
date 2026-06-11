@@ -8,10 +8,10 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
-  
+
   return function debounced(...args: Parameters<T>) {
     if (timeout) clearTimeout(timeout);
-    
+
     timeout = setTimeout(() => {
       func(...args);
     }, wait);
@@ -26,12 +26,12 @@ export function throttle<T extends (...args: any[]) => any>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
-  
+
   return function throttled(...args: Parameters<T>) {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      
+
       setTimeout(() => {
         inThrottle = false;
       }, limit);
@@ -46,17 +46,17 @@ export function memoize<T extends (...args: any[]) => any>(
   func: T
 ): T {
   const cache = new Map<string, ReturnType<T>>();
-  
+
   return ((...args: Parameters<T>) => {
     const key = JSON.stringify(args);
-    
+
     if (cache.has(key)) {
       return cache.get(key)!;
     }
-    
+
     const result = func(...args);
     cache.set(key, result);
-    
+
     return result;
   }) as T;
 }
@@ -71,7 +71,7 @@ export function requestIdleCallback(
   if ('requestIdleCallback' in window) {
     return window.requestIdleCallback(callback, options);
   }
-  
+
   // Fallback for browsers that don't support requestIdleCallback
   const start = Date.now();
   return setTimeout(() => {
@@ -118,12 +118,12 @@ export function prefetchResource(url: string): void {
  * Check if the user has a slow connection
  */
 export function isSlowConnection(): boolean {
-  const connection = (navigator as any).connection || 
-                    (navigator as any).mozConnection || 
+  const connection = (navigator as any).connection ||
+                    (navigator as any).mozConnection ||
                     (navigator as any).webkitConnection;
-  
+
   if (!connection) return false;
-  
+
   // Check for slow connection types
   const slowConnections = ['slow-2g', '2g', '3g'];
   return slowConnections.includes(connection.effectiveType);

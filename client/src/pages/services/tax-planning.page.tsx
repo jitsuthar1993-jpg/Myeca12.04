@@ -94,7 +94,7 @@ const TaxPlanningPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <RouteSeo path="/services/tax-planning" />
       <SEO
         title="Startup Tax Planning & Benefits | MyeCA.in"
@@ -103,7 +103,7 @@ const TaxPlanningPage = () => {
       />
 
       {/* Header */}
-      <section className="bg-white border-b border-gray-200 py-10">
+      <section className="bg-white border-b border-slate-200 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -111,11 +111,11 @@ const TaxPlanningPage = () => {
                 <div className="p-2 bg-blue-50 rounded-lg border border-blue-100">
                   <Calculator className="w-6 h-6 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Startup Tax Planning
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Understand eligible startup tax benefits with document-led CA guidance.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -128,16 +128,16 @@ const TaxPlanningPage = () => {
                 </Button>
               </div>
             </div>
-            <Card className="shadow-sm border-gray-200">
+            <Card className="shadow-sm border-slate-200">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Maximize startup benefits</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2.5 text-sm text-gray-700">
+                <ul className="space-y-2.5 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Shield className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Check DPIIT recognition and the separate conditions that apply before relying on Section 80-IAC.
@@ -166,10 +166,10 @@ const TaxPlanningPage = () => {
         {/* Tax Benefits Section */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Exclusive Startup Tax Benefits
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
               Startup incentives with separate eligibility, approval, and evidence requirements
             </p>
           </div>
@@ -183,7 +183,7 @@ const TaxPlanningPage = () => {
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="h-full hover:shadow-xl transition-shadow duration-300 border-gray-200">
+                <Card className="h-full hover:shadow-xl transition-shadow duration-300 border-slate-200">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className={`w-12 h-12 bg-${benefit.color}-100 rounded-lg flex items-center justify-center`}>
@@ -199,7 +199,7 @@ const TaxPlanningPage = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-slate-600">
                       <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                       <span>Eligibility: {benefit.eligibility}</span>
                     </div>
@@ -213,10 +213,10 @@ const TaxPlanningPage = () => {
         {/* Tax Planning Strategies */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Advanced Tax Planning Strategies
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
               Compare regime, deduction, timing, and cash-flow decisions using the available records
             </p>
           </div>
@@ -242,7 +242,7 @@ const TaxPlanningPage = () => {
                       {category.strategies.map((strategy, idx) => (
                         <li key={idx} className="flex items-start">
                           <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{strategy}</span>
+                          <span className="text-slate-700">{strategy}</span>
                         </li>
                       ))}
                     </ul>
@@ -271,7 +271,7 @@ const TaxPlanningPage = () => {
                   <div
                     key={index}
                     className={`p-4 rounded-lg ${
-                      month.critical ? 'bg-red-50 border border-red-200' : 'bg-white border border-gray-200'
+                      month.critical ? 'bg-red-50 border border-red-200' : 'bg-white border border-slate-200'
                     }`}
                   >
                     <div className="font-semibold text-lg mb-2 flex items-center">
@@ -282,7 +282,7 @@ const TaxPlanningPage = () => {
                     </div>
                     <ul className="space-y-1">
                       {month.tasks.map((task, idx) => (
-                        <li key={idx} className="text-sm text-gray-600">
+                        <li key={idx} className="text-sm text-slate-600">
                           • {task}
                         </li>
                       ))}
@@ -305,16 +305,16 @@ const TaxPlanningPage = () => {
                 Compare startup tax positions using current eligibility rules, actual transactions, and supporting records
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-blue-600 text-white hover:bg-blue-700 font-semibold"
                 >
                   Request Consultation
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50"
                 >
                   Calculate Tax Savings

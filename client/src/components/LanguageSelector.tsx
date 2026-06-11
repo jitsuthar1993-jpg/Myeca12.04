@@ -26,9 +26,9 @@ export default function LanguageSelector() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           className="flex items-center gap-2 min-w-[120px]"
         >
           <Globe className="w-4 h-4" />
@@ -47,7 +47,7 @@ export default function LanguageSelector() {
           >
             <div className="flex flex-col">
               <span className="font-medium">{lang.name}</span>
-              <span className="text-sm text-gray-500">{lang.nativeName}</span>
+              <span className="text-sm text-slate-500">{lang.nativeName}</span>
             </div>
             {language === lang.code && (
               <Check className="w-4 h-4 text-green-600" />

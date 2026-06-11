@@ -52,7 +52,7 @@ class AdminApi {
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());
     if (params?.search) query.append('search', params.search);
-    
+
     return this.request<{ users: User[]; pagination: { total: number; page: number; limit: number; totalPages?: number; pages?: number }; sync?: SupabaseUserDirectorySync }>(
       `/users${query.toString() ? `?${query}` : ''}`
     );

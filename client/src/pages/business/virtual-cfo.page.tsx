@@ -147,7 +147,7 @@ export default function VirtualCFOPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl mx-auto"
             >
-              Get high-level CFO expertise without the full-time salary. We handle your P&L, 
+              Get high-level CFO expertise without the full-time salary. We handle your P&L,
               strategic planning, and compliance, so you can focus on building your vision.
             </m.p>
 
@@ -214,7 +214,7 @@ export default function VirtualCFOPage() {
       {/* Platform Preview Section - Light Theme */}
       <section className="py-24 bg-blue-50/50 border-y border-blue-100 overflow-hidden relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.05),transparent_50%)]" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -272,7 +272,7 @@ export default function VirtualCFOPage() {
                   </div>
                   <Badge className="bg-blue-50 text-blue-600 border-blue-100">Illustrative Data</Badge>
                 </div>
-                
+
                 <div className="h-[240px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={monthlyRevenueData}>
@@ -285,7 +285,7 @@ export default function VirtualCFOPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                       <XAxis dataKey="month" stroke="#94a3b8" fontSize={FONT_SIZES.xs} axisLine={false} tickLine={false} />
                       <YAxis hide />
-                      <Tooltip 
+                      <Tooltip
                         contentStyle={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }}
                         itemStyle={{ color: "#0f172a" }}
                       />
@@ -475,13 +475,13 @@ export default function VirtualCFOPage() {
           <div className="max-w-5xl mx-auto p-12 md:p-20 rounded-[48px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-2xl shadow-blue-600/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -ml-32 -mb-32 pointer-events-none" />
-            
+
             <div className="relative z-10">
               <h2 className="type-section-title mb-8">
                 Ready to Accelerate Your <span className="text-blue-200">Growth?</span>
               </h2>
               <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto leading-relaxed">
-                Join 500+ high-growth companies that trust MyeCA for their financial strategic leadership. 
+                Join 500+ high-growth companies that trust MyeCA for their financial strategic leadership.
                 Get started with a free financial audit today.
               </p>
               <div className="flex flex-wrap justify-center gap-6">

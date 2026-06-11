@@ -24,11 +24,11 @@ const variantStyles = {
   amber: "from-amber-500/10 via-transparent to-transparent text-amber-600",
 };
 
-export default function CalcHero({ 
-  title, 
-  description, 
-  category, 
-  icon, 
+export default function CalcHero({
+  title,
+  description,
+  category,
+  icon,
   variant = "blue",
   breadcrumbItems = [],
   hideBreadcrumbs = false,

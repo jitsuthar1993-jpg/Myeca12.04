@@ -79,7 +79,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 15px; color: #000; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <div style="text-align: center; margin-bottom: 30px;">
       <h1 style="margin: 0; font-size: 22px; text-decoration: underline; text-transform: uppercase;">COMMERCIAL LEASE AGREEMENT</h1>
     </div>

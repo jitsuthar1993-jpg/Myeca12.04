@@ -2,11 +2,11 @@ import { m } from "framer-motion";
 import { RouteSeo } from "@/components/seo/RouteSeo";
 import {
   ShieldCheck,
-  Lock, 
-  Search, 
-  Clock, 
-  ArrowRight, 
-  FileText, 
+  Lock,
+  Search,
+  Clock,
+  ArrowRight,
+  FileText,
   Zap,
   CheckCircle2,
   Shield,
@@ -75,8 +75,8 @@ export default function DocumentVaultServicePage() {
   return (
     <div className="bg-white min-h-screen">
       <RouteSeo path="/services/document-vault" />
-      <SEO 
-        title="Secure Document Vault | MyEca" 
+      <SEO
+        title="Secure Document Vault | MyEca"
         description="Store and manage your sensitive tax and identity documents with secure account-based access."
         keywords="document vault, private document access, tax documents, identity proof"
       />
@@ -97,7 +97,7 @@ export default function DocumentVaultServicePage() {
               <span className="text-[var(--color-success-600)] font-semibold">Controlled Access</span>
             </m.div>
 
-            <m.h1 
+            <m.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -108,23 +108,23 @@ export default function DocumentVaultServicePage() {
               for Tax & Legal Documents
             </m.h1>
 
-            <m.p 
+            <m.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
+              className="text-lg text-slate-600 max-w-2xl mx-auto"
             >
               Store, organize, and share your critical tax and legal documents with clear access controls and guided document workflows.
             </m.p>
 
-            <m.div 
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
             >
               <VaultButton className="h-12 w-full rounded-xl bg-[var(--color-accent-600)] px-8 text-sm font-semibold shadow-sm shadow-[var(--color-accent-600)]/20 transition-all hover:bg-[var(--color-accent-700)] sm:w-auto" />
-              
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="lg" className="h-12 w-full rounded-xl border-slate-200 px-8 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 sm:w-auto">
@@ -206,7 +206,7 @@ export default function DocumentVaultServicePage() {
                 Safety isn't a feature.<br className="hidden sm:block" />
                 It's our <span className="text-blue-600">foundation</span>.
               </h2>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
                 {[
                   "Authenticated vault access",
@@ -240,7 +240,7 @@ export default function DocumentVaultServicePage() {
                           How document access, case links, and storage controls work together.
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="prose prose-slate mt-4 max-w-none border-t pt-6 space-y-6">
+                      <div className="type-article-prose mt-4 border-t pt-6 space-y-6">
                          <section>
                             <h3 className="font-bold text-lg text-slate-900">1. Access Model</h3>
                             <p className="text-slate-600 text-sm leading-relaxed">
@@ -294,8 +294,8 @@ export default function DocumentVaultServicePage() {
                   <div className="p-10 space-y-8">
                     <div className="grid grid-cols-2 gap-5">
                       {[1,2,3,4].map(i => (
-                        <div 
-                          key={i} 
+                        <div
+                          key={i}
                           className="p-5 bg-white rounded-2xl border border-slate-200/60 shadow-sm flex items-center gap-4"
                         >
                           <div className="p-2.5 bg-blue-50 rounded-xl">
@@ -308,7 +308,7 @@ export default function DocumentVaultServicePage() {
                         </div>
                       ))}
                     </div>
-                    <div 
+                    <div
                       className="p-8 bg-emerald-50/50 rounded-[24px] border border-emerald-100 flex items-center justify-between relative overflow-hidden"
                     >
                        <div className="space-y-3 flex-1">
@@ -335,7 +335,7 @@ export default function DocumentVaultServicePage() {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto p-12 md:p-16 rounded-[32px] bg-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] border border-slate-200/60 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-            
+
             <div className="relative z-10">
               <h2 className="type-section-title mb-6 font-extrabold text-slate-900">
                 Secure your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Compliance Files</span> today
@@ -347,7 +347,7 @@ export default function DocumentVaultServicePage() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <VaultButton className="h-14 w-full rounded-[14px] bg-[#2563eb] px-8 text-base font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5 hover:bg-blue-700 sm:w-auto" />
-                
+
                 <Dialog onOpenChange={(open) => !open && setPreviewStep(0)}>
                   <DialogTrigger asChild>
                     <Button size="lg" variant="outline" className="h-14 w-full rounded-[14px] border-slate-200 px-8 text-base font-semibold text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-slate-50 sm:w-auto">
@@ -382,7 +382,7 @@ export default function DocumentVaultServicePage() {
                                </span>
                             </div>
                             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                               <m.div 
+                               <m.div
                                  initial={{ width: 0 }}
                                  animate={{ width: `${(previewStep / 5) * 100}%` }}
                                  className="h-full bg-gradient-to-r from-blue-600 to-indigo-600"
@@ -395,7 +395,7 @@ export default function DocumentVaultServicePage() {
                                  "Access Policy Check",
                                  "Integrity Check"
                                ].map((text, i) => (
-                                 <m.div 
+                                 <m.div
                                    key={i}
                                    initial={{ opacity: 0, x: -10 }}
                                    animate={{ opacity: previewStep > i + 1 ? 1 : 0.3, x: 0 }}

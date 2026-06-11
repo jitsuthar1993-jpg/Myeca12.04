@@ -112,10 +112,10 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       if (fmt === 'avif' && !supportsAVIF) return;
       if (fmt === 'webp' && !supportsWebP) return;
 
-      const srcSet = widths.map(w => 
+      const srcSet = widths.map(w =>
         `${getOptimizedUrl(src, { width: w, quality, format: fmt })} ${w}w`
       ).join(', ');
-      
+
       if (srcSet) {
         srcSets.push(fmt === 'jpg' ? srcSet : `${srcSet} ${fmt}`);
       }
@@ -134,7 +134,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       if (sizes) link.setAttribute('imagesrcset', generateSrcSet);
       if (sizes) link.setAttribute('imagesizes', sizes);
       document.head.appendChild(link);
-      
+
       return () => {
         if (link.parentNode) {
           link.remove();
@@ -151,7 +151,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const handleImageError = () => {
     setHasError(true);
     setIsLoading(false);
-    
+
     if (fallbackSrc && imageSrc !== fallbackSrc) {
       setImageSrc(fallbackSrc);
       setHasError(false);
@@ -175,54 +175,54 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
             />
           )}
           {placeholder === 'dominantColor' && (
-            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse" />
+            <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 animate-pulse" />
           )}
           {!blurDataURL && placeholder === 'blur' && (
-            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
+            <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 animate-pulse" />
           )}
         </div>
       )}
-      
+
       {/* Loading skeleton with shimmer effect */}
       {isLoading && (
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gray-100" />
+          <div className="absolute inset-0 bg-slate-100" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
         </div>
       )}
-      
+
       {/* Error fallback with retry button */}
       {hasError && (
-        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-slate-50 flex items-center justify-center">
           <div className="text-center p-4">
-            <svg 
-              className="w-12 h-12 text-gray-400 mx-auto mb-2" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-12 h-12 text-slate-400 mx-auto mb-2"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <p className="text-sm text-gray-500 mb-2">Image failed to load</p>
+            <p className="text-sm text-slate-500 mb-2">Image failed to load</p>
             <button
               onClick={() => {
                 setHasError(false);
                 setIsLoading(true);
                 setImageSrc(src);
               }}
-              className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors"
+              className="px-3 py-1 text-xs bg-slate-200 hover:bg-slate-300 rounded transition-colors"
             >
               Retry
             </button>
           </div>
         </div>
       )}
-      
+
       {/* Actual image with advanced attributes */}
       <img
         ref={imgRef}
@@ -247,11 +247,11 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         fetchPriority={priority ? 'high' : 'auto'}
         crossOrigin="anonymous"
       />
-      
+
       {/* Advanced blur-up effect */}
       {!priority && isLoading && (
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 transition-opacity duration-700"
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 transition-opacity duration-700"
           style={{
             opacity: isLoading ? 1 : 0,
             pointerEvents: 'none',
@@ -305,9 +305,9 @@ export const ProgressiveImage: React.FC<OptimizedImageProps> = (props) => {
 // Avatar image component with specific optimizations
 export const AvatarImage: React.FC<Omit<OptimizedImageProps, 'objectFit' | 'sizes'>> = (props) => {
   return (
-    <OptimizedImage 
-      {...props} 
-      objectFit="cover" 
+    <OptimizedImage
+      {...props}
+      objectFit="cover"
       sizes="80px"
       className={cn("rounded-full", props.className)}
     />

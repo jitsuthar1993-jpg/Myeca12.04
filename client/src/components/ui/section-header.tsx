@@ -35,18 +35,18 @@ export function SectionHeader({
         </div>
       ) : null}
 
-      <h1 className={cn("type-page-title text-gray-900")}
+      <h1 className={cn("type-page-title text-slate-900")}
       >
         {title}
         {highlight ? (
-          <span className="text-[#315efb]"> {highlight}</span>
+          <span className="text-brand-600"> {highlight}</span>
         ) : null}
       </h1>
 
       {subtitle ? (
         <p
           className={cn(
-            "type-body mt-3 text-gray-600",
+            "type-body mt-3 text-slate-600",
             isCenter ? "max-w-4xl mx-auto" : "max-w-3xl"
           )}
         >

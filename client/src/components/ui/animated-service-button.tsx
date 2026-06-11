@@ -13,10 +13,10 @@ interface AnimatedServiceButtonProps {
   color?: "green" | "blue" | "purple" | "orange" | "red";
 }
 
-export default function AnimatedServiceButton({ 
-  children, 
-  icon: Icon, 
-  onClick, 
+export default function AnimatedServiceButton({
+  children,
+  icon: Icon,
+  onClick,
   href,
   variant = "primary",
   className = "",
@@ -49,36 +49,36 @@ export default function AnimatedServiceButton({
 
   return (
     <m.div
-      whileHover={{ 
+      whileHover={{
         scale: 1.05,
         y: -2,
       }}
-      whileTap={{ 
+      whileTap={{
         scale: 0.98,
         y: 0
       }}
-      transition={{ 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 17 
+      transition={{
+        type: "spring",
+        stiffness: 400,
+        damping: 17
       }}
     >
-      <Button 
-        size="lg" 
+      <Button
+        size="lg"
         className={buttonClasses}
         onClick={onClick}
       >
-        <m.div 
+        <m.div
           className="flex items-center"
           initial={{ opacity: 1 }}
-          whileHover={{ 
+          whileHover={{
             x: variant === "primary" ? 2 : 0
           }}
           transition={{ duration: 0.2 }}
         >
           {Icon && (
             <m.div
-              whileHover={{ 
+              whileHover={{
                 rotate: variant === "primary" ? 5 : -5,
                 scale: 1.1
               }}
@@ -89,7 +89,7 @@ export default function AnimatedServiceButton({
           )}
           <span>{children}</span>
         </m.div>
-        
+
         {/* Booking animation - subtle pulse for booking-related buttons */}
         {variant === "primary" && (
           <m.div

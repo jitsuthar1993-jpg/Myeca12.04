@@ -81,10 +81,10 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
     const purchaseValue = parseFloat(gain.purchaseValue || "0");
     const improvementCost = parseFloat(gain.improvementCost || "0");
     const exemption = parseFloat(gain.exemptionClaimed || "0");
-    
+
     const grossGain = saleValue - purchaseValue - improvementCost;
     const netGain = Math.max(0, grossGain - exemption);
-    
+
     return { grossGain, netGain };
   };
 
@@ -96,7 +96,7 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
     const gains = form.watch('gains');
     let totalSTCG = 0;
     let totalLTCG = 0;
-    
+
     gains.forEach(gain => {
       const { netGain } = calculateGain(gain);
       if (gain.gainType === 'STCG') {
@@ -105,7 +105,7 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
         totalLTCG += netGain;
       }
     });
-    
+
     return { totalSTCG, totalLTCG };
   };
 
@@ -129,7 +129,7 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
           {/* Capital Gains Entries */}
           {form.watch('gains').map((gain, index) => {
             const { grossGain, netGain } = calculateGain(gain);
-            
+
             return (
               <Card key={index}>
                 <CardHeader>
@@ -216,9 +216,9 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                         <FormItem>
                           <FormLabel>Purchase Date *</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="date" 
-                              {...field} 
+                            <Input
+                              type="date"
+                              {...field}
                               onChange={(e) => {
                                 field.onChange(e);
                                 const gains = form.getValues('gains');
@@ -239,9 +239,9 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                         <FormItem>
                           <FormLabel>Sale Date *</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="date" 
-                              {...field} 
+                            <Input
+                              type="date"
+                              {...field}
                               onChange={(e) => {
                                 field.onChange(e);
                                 const gains = form.getValues('gains');
@@ -264,9 +264,9 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                         <FormItem>
                           <FormLabel>Purchase Value *</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="100000" 
-                              {...field} 
+                            <Input
+                              placeholder="100000"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -289,9 +289,9 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                         <FormItem>
                           <FormLabel>Sale Value *</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="150000" 
-                              {...field} 
+                            <Input
+                              placeholder="150000"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -316,9 +316,9 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                         <FormItem>
                           <FormLabel>Improvement Cost</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -341,9 +341,9 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                         <FormItem>
                           <FormLabel>Exemption Claimed</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -361,18 +361,18 @@ export default function CapitalGainsForm({ data, onChange }: CapitalGainsFormPro
                   </div>
 
                   {/* Calculated Gain Display */}
-                  <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="p-4 bg-slate-50 rounded-lg">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
                       <div>
-                        <p className="text-sm text-gray-600">Gross Gain</p>
-                        <p className="font-semibold text-gray-900">₹{formatCurrency(grossGain)}</p>
+                        <p className="text-sm text-slate-600">Gross Gain</p>
+                        <p className="font-semibold text-slate-900">₹{formatCurrency(grossGain)}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Net Gain</p>
+                        <p className="text-sm text-slate-600">Net Gain</p>
                         <p className="font-semibold text-green-600">₹{formatCurrency(netGain)}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Tax Rate</p>
+                        <p className="text-sm text-slate-600">Tax Rate</p>
                         <p className="font-semibold text-blue-600">
                           {gain.gainType === 'STCG' ? '15-30%' : '10-20%'}
                         </p>

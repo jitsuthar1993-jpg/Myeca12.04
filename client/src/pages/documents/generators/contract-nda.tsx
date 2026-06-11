@@ -144,9 +144,9 @@ const generateHTML = (data: any) => {
 
   return `
     <div style="font-family: 'Times New Roman', serif; color: #000; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-      
+
       <h1 style="text-align: center; text-decoration: underline; text-transform: uppercase;">NON-DISCLOSURE AGREEMENT</h1>
-      
+
       <p style="text-indent: 50px;">
         This ${data.ndaType} Non-Disclosure Agreement (the "Agreement") is made and entered into at <strong>${data.executionPlace}</strong> on this date <strong>${data.executionDate}</strong>.
       </p>
@@ -176,7 +176,7 @@ const generateHTML = (data: any) => {
       </p>
 
       <h3 style="margin-top: 30px; text-decoration: underline;">NOW, THEREFORE, IT IS AGREED AS FOLLOWS:</h3>
-      
+
       <ol style="margin-left: 20px;">
         <li style="margin-bottom: 15px;">
           <strong>Definition of Confidential Information:</strong> "Confidential Information" shall mean all information ${isMutual ? 'disclosed by one Party (the "Disclosing Party") to the other Party (the "Receiving Party")' : 'disclosed by the Disclosing Party to the Receiving Party'}, whether oral, written, or electronic, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information. This includes, but is not limited to, business plans, financial data, technical specifications, software code, customer lists, and trade secrets.

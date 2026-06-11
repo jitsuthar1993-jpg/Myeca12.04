@@ -60,8 +60,8 @@ dist/                # Production build output
 |----------|-------------|
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production deployment instructions |
 | [Site Audit](docs/SITE_AUDIT.md) | Visual, backend, flow, link, and performance audit |
-| [Theming Guide](docs/THEMING_GUIDE.md) | Light mode design system |
-| [Design System](docs/DESIGN_SYSTEM.md) | Canonical design system |
+| [Design System](docs/DESIGN_SYSTEM.md) | Canonical light-only visual contract |
+| [Theming Guide](docs/THEMING_GUIDE.md) | Compatibility pointer to the canonical design system |
 | [Database Guide](docs/DatabaseManagement.md) | Database operations |
 | [Product Blueprint](docs/MYECA_PRODUCT_BLUEPRINT.md) | Product and workflow blueprint |
 

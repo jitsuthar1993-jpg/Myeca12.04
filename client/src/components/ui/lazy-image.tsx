@@ -33,19 +33,19 @@ export function LazyImage({
 
     // Create a new image to preload
     const img = new Image();
-    
+
     img.onload = () => {
       setImgSrc(src);
       setIsLoading(false);
       onLoad?.();
     };
-    
+
     img.onerror = () => {
       setIsError(true);
       setIsLoading(false);
       onError?.();
     };
-    
+
     img.src = src;
   }, [isIntersecting, src, onLoad, onError]);
 
@@ -64,11 +64,11 @@ export function LazyImage({
         {...props}
       />
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+        <div className="absolute inset-0 bg-slate-100 animate-pulse" />
       )}
       {isError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <span className="text-gray-400 text-sm">Failed to load image</span>
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
+          <span className="text-slate-400 text-sm">Failed to load image</span>
         </div>
       )}
     </div>

@@ -10,7 +10,7 @@ interface SecureFormProps extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onS
 
 export function SecureForm({ children, onSecureSubmit, onSubmit, ...props }: SecureFormProps) {
   const [csrfToken, setCsrfToken] = useState<string>('');
-  
+
   // Fetch CSRF token
   const { data: tokenData } = useQuery<{ token: string }>({
     queryKey: ['/api/auth/csrf-token'],
@@ -26,7 +26,7 @@ export function SecureForm({ children, onSecureSubmit, onSubmit, ...props }: Sec
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (onSecureSubmit) {
       const formData = new FormData(e.currentTarget);
       const data = Object.fromEntries(formData.entries());

@@ -26,12 +26,12 @@ function StatCard({
   return (
     <Card className="rounded-xl border border-indigo-100 bg-white/90 shadow-md backdrop-blur-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-slate-600">{title}</CardTitle>
         <Icon className="h-4 w-4 text-blue-600" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-gray-900">{formatNumber(value)}</div>
-        <p className="mt-2 text-xs font-medium text-gray-500">{detail}</p>
+        <div className="text-2xl font-bold text-slate-900">{formatNumber(value)}</div>
+        <p className="mt-2 text-xs font-medium text-slate-500">{detail}</p>
       </CardContent>
     </Card>
   );

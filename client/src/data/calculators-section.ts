@@ -134,7 +134,7 @@ export const calculatorCategories = [
   },
   {
     id: "investment",
-    title: "Investment Calculators", 
+    title: "Investment Calculators",
     description: "Plan your investments and calculate returns"
   },
   {

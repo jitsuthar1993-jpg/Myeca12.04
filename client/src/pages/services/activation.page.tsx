@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { useRoute, useLocation } from "wouter";
-import { 
-  ArrowLeft, 
-  CheckCircle2, 
-  ChevronRight, 
-  FileText, 
-  ShieldCheck, 
-  Zap, 
-  Clock, 
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronRight,
+  FileText,
+  ShieldCheck,
+  Zap,
+  Clock,
   AlertCircle,
   HelpCircle,
   Download,
@@ -32,7 +32,7 @@ export default function ActivationPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const attribution = useMemo(() => captureCampaignAttribution(), []);
-  
+
   const service = useMemo(() => {
     if (!params?.serviceId) return null;
     return getServiceById(params.serviceId);
@@ -45,7 +45,7 @@ export default function ActivationPage() {
 
   if (!service) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Service not found</h1>
           <Button onClick={() => setLocation("/services/selection")}>Back to selection</Button>
@@ -134,10 +134,10 @@ export default function ActivationPage() {
   const progress = (currentStep / (totalSteps - 1)) * 100;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#020617] transition-colors duration-500 pb-20">
+    <div className="min-h-screen bg-[#F8FAFC]  transition-colors duration-500 pb-20">
       {/* Premium Header */}
       <div className="fixed top-0 left-0 w-full h-1 z-50">
-        <m.div 
+        <m.div
           className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
@@ -171,10 +171,10 @@ export default function ActivationPage() {
                 <Badge className="type-meta border-blue-500/20 bg-blue-500/10 px-3 py-1 font-black text-blue-600">
                   Service Activation Phase
                 </Badge>
-                <h1 className="type-page-title font-black text-slate-900 dark:text-white">
+                <h1 className="type-page-title font-black text-slate-900 ">
                   Activate {service.title}
                 </h1>
-                <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
+                <p className="text-lg text-slate-500  font-medium leading-relaxed max-w-xl">
                   {service.description}
                 </p>
               </div>
@@ -240,7 +240,7 @@ export default function ActivationPage() {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleNext}
                 className="w-full h-16 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-xl shadow-blue-500/20 gap-3 group"
               >
@@ -260,18 +260,18 @@ export default function ActivationPage() {
               className="space-y-8"
             >
               <div className="text-center space-y-4 mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest border border-blue-100 dark:border-blue-900/30">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50  text-blue-600  text-xs font-black uppercase tracking-widest border border-blue-100 ">
                   Step {currentStep} of {documents.length}
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900  tracking-tight">
                   Prepare {documents[currentStep - 1]}
                 </h2>
-                <p className="text-slate-500 dark:text-slate-400 font-medium">
+                <p className="text-slate-500  font-medium">
                   Confirm this document is ready. You will upload the actual file inside the service workspace after the case is created.
                 </p>
               </div>
 
-              <div 
+              <div
                 className={cn(
                   "relative p-12 md:p-20 rounded-[48px] border-4 border-dashed transition-all duration-500 flex flex-col items-center justify-center text-center bg-white group",
                   uploadedDocs.includes(documents[currentStep - 1])
@@ -341,7 +341,7 @@ export default function ActivationPage() {
               className="text-center py-10 space-y-8"
             >
               <div className="relative mx-auto w-32 h-32 mb-12">
-                <m.div 
+                <m.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
@@ -349,10 +349,10 @@ export default function ActivationPage() {
                 >
                   <CheckCircle2 className="h-16 w-16 text-white" />
                 </m.div>
-                <m.div 
+                <m.div
                    animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
                    transition={{ repeat: Infinity, duration: 2 }}
-                   className="absolute inset-0 bg-emerald-500 rounded-full -z-10" 
+                   className="absolute inset-0 bg-emerald-500 rounded-full -z-10"
                 />
               </div>
 
@@ -382,14 +382,14 @@ export default function ActivationPage() {
               </div>
 
               <div className="flex flex-col gap-4 max-w-md mx-auto">
-                <Button 
+                <Button
                    onClick={() => setLocation(createdServiceId ? `/dashboard/services/${createdServiceId}` : "/dashboard")}
                    className="h-16 rounded-[22px] bg-blue-700 hover:bg-blue-700 text-white font-black text-lg gap-3"
                 >
                   Open Service Workspace
                   <ArrowRight className="h-5 w-5" />
                 </Button>
-                <Button 
+                <Button
                    variant="outline"
                    className="h-16 rounded-[22px] border-2 font-black text-slate-600"
                    onClick={() => window.print()}

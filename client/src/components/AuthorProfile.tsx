@@ -33,7 +33,7 @@ const AuthorProfile: React.FC<AuthorProfileProps> = ({
               {name.charAt(0)}
             </AvatarFallback>
           </Avatar>
-          
+
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-xl font-bold text-slate-900">{name}</h3>
@@ -44,9 +44,9 @@ const AuthorProfile: React.FC<AuthorProfileProps> = ({
                 </Badge>
               )}
             </div>
-            
+
             <p className="text-blue-600 font-medium text-sm mb-3">{role}</p>
-            
+
             <div className="flex flex-wrap gap-2 mb-4">
               {credentials.map((cert) => (
                 <Badge key={cert} variant="outline" className="bg-white text-slate-600 border-slate-200">
@@ -54,23 +54,23 @@ const AuthorProfile: React.FC<AuthorProfileProps> = ({
                 </Badge>
               ))}
             </div>
-            
+
             <p className="text-slate-600 text-sm leading-relaxed mb-4">
               {bio}
             </p>
-            
+
             <div className="flex items-center gap-4">
               {linkedinUrl && (
-                <a 
-                  href={linkedinUrl} 
-                  target="_blank" 
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-slate-400 hover:text-blue-600 transition-colors"
                 >
                   <Linkedin className="w-5 h-5" />
                 </a>
               )}
-              <a 
+              <a
                 href="/experts"
                 className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1"
               >

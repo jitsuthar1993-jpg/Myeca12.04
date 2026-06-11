@@ -147,7 +147,7 @@ class AccessibilityAuditService {
   // Image accessibility checks
   private checkImages(container: HTMLElement): void {
     const images = container.querySelectorAll('img');
-    
+
     images.forEach((img, index) => {
       // Check for alt text
       if (!img.hasAttribute('alt')) {
@@ -213,15 +213,15 @@ class AccessibilityAuditService {
     // Check form labels
     inputs.forEach((input, index) => {
       const inputId = input.id || `input-${index}`;
-      
+
       if (!input.id) {
         input.id = inputId;
       }
 
       // Check for associated label
-      const label = container.querySelector(`label[for="${inputId}"]`) || 
+      const label = container.querySelector(`label[for="${inputId}"]`) ||
                    input.closest('label');
-      
+
       if (!label && !input.hasAttribute('aria-label') && !input.hasAttribute('aria-labelledby')) {
         this.addIssue({
           id: `input-label-${index}`,
@@ -309,7 +309,7 @@ class AccessibilityAuditService {
   // Link accessibility checks
   private checkLinks(container: HTMLElement): void {
     const links = container.querySelectorAll('a[href]');
-    
+
     links.forEach((link, index) => {
       const text = link.textContent?.trim() || '';
       const href = link.getAttribute('href') || '';
@@ -450,15 +450,15 @@ class AccessibilityAuditService {
   // Color contrast checks
   private checkColorContrast(container: HTMLElement): void {
     const textElements = container.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, td, th, span, a, button, input, select, textarea');
-    
+
     textElements.forEach((element, index) => {
       const computedStyle = window.getComputedStyle(element);
       const color = computedStyle.color;
       const backgroundColor = computedStyle.backgroundColor;
-      
+
       if (color && backgroundColor && color !== backgroundColor) {
         const contrastRatio = this.calculateContrastRatio(color, backgroundColor);
-        
+
         if (contrastRatio < 4.5) {
           this.addIssue({
             id: `contrast-${index}`,
@@ -482,8 +482,8 @@ class AccessibilityAuditService {
     const interactiveElements = container.querySelectorAll('a, button, input, select, textarea, [tabindex]');
     const focusableElements = Array.from(interactiveElements).filter(el => {
       const tabindex = el.getAttribute('tabindex');
-      return !el.hasAttribute('disabled') && (el.tagName === 'A' || el.tagName === 'BUTTON' || 
-             el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA' || 
+      return !el.hasAttribute('disabled') && (el.tagName === 'A' || el.tagName === 'BUTTON' ||
+             el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA' ||
              (tabindex && parseInt(tabindex) >= 0));
     });
 
@@ -491,7 +491,7 @@ class AccessibilityAuditService {
     focusableElements.forEach((element, index) => {
       const computedStyle = window.getComputedStyle(element, ':focus');
       const outline = computedStyle.outline;
-      
+
       if (outline === 'none' || outline === '0px') {
         this.addIssue({
           id: `focus-indicator-${index}`,
@@ -534,7 +534,7 @@ class AccessibilityAuditService {
   // ARIA checks
   private checkARIA(container: HTMLElement): void {
     const ariaElements = container.querySelectorAll('[role], [aria-label], [aria-labelledby], [aria-describedby]');
-    
+
     ariaElements.forEach((element, index) => {
       const role = element.getAttribute('role');
       const ariaLabel = element.getAttribute('aria-label');
@@ -597,7 +597,7 @@ class AccessibilityAuditService {
   // Landmarks checks
   private checkLandmarks(container: HTMLElement): void {
     const landmarks = container.querySelectorAll('main, nav, aside, header, footer, [role="main"], [role="navigation"], [role="complementary"], [role="banner"], [role="contentinfo"]');
-    
+
     if (landmarks.length === 0) {
       this.addIssue({
         id: 'landmarks-missing',
@@ -675,10 +675,10 @@ class AccessibilityAuditService {
   // Focus management checks
   private checkFocus(container: HTMLElement): void {
     const focusableElements = container.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
-    
+
     focusableElements.forEach((element, index) => {
       const tabindex = element.getAttribute('tabindex');
-      
+
       if (tabindex && parseInt(tabindex) < 0) {
         this.addIssue({
           id: `focus-negative-${index}`,
@@ -756,7 +756,7 @@ class AccessibilityAuditService {
   // Table accessibility checks
   private checkTables(container: HTMLElement): void {
     const tables = container.querySelectorAll('table');
-    
+
     tables.forEach((table, index) => {
       if (!table.querySelector('caption')) {
         this.addIssue({
@@ -814,7 +814,7 @@ class AccessibilityAuditService {
   private checkTiming(container: HTMLElement): void {
     const autoRefreshElements = container.querySelectorAll('[http-equiv="refresh"]');
     const autoRedirectElements = container.querySelectorAll('meta[http-equiv="refresh"]');
-    
+
     autoRefreshElements.forEach((element, index) => {
       this.addIssue({
         id: `timing-refresh-${index}`,
@@ -835,7 +835,7 @@ class AccessibilityAuditService {
   private checkSemantics(container: HTMLElement): void {
     // Check for presentational elements
     const presentationalElements = container.querySelectorAll('b, i, u, font, center');
-    
+
     presentationalElements.forEach((element, index) => {
       this.addIssue({
         id: `semantics-presentational-${index}`,
@@ -854,7 +854,7 @@ class AccessibilityAuditService {
     // Check for div/span soup
     const divs = container.querySelectorAll('div');
     const spans = container.querySelectorAll('span');
-    
+
     if (divs.length > 50 || spans.length > 100) {
       this.addIssue({
         id: 'semantics-div-span-soup',
@@ -926,15 +926,15 @@ class AccessibilityAuditService {
     // In production, use proper color parsing and luminance calculation
     const rgb1 = this.parseColor(color1);
     const rgb2 = this.parseColor(color2);
-    
+
     if (!rgb1 || !rgb2) return 1;
-    
+
     const l1 = this.getLuminance(rgb1);
     const l2 = this.getLuminance(rgb2);
-    
+
     const lighter = Math.max(l1, l2);
     const darker = Math.min(l1, l2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
@@ -959,7 +959,7 @@ class AccessibilityAuditService {
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    
+
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
   }
 
@@ -1041,33 +1041,33 @@ class AccessibilityAuditService {
 
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
-    
+
     const criticalIssues = this.issues.filter(issue => issue.severity === 'critical');
     const seriousIssues = this.issues.filter(issue => issue.severity === 'serious');
-    
+
     if (criticalIssues.length > 0) {
       recommendations.push(`Address ${criticalIssues.length} critical accessibility issues immediately`);
     }
-    
+
     if (seriousIssues.length > 0) {
       recommendations.push(`Fix ${seriousIssues.length} serious accessibility issues as soon as possible`);
     }
-    
+
     const ariaIssues = this.issues.filter(issue => issue.category === 'aria');
     if (ariaIssues.length > 5) {
       recommendations.push('Review and fix ARIA implementation issues');
     }
-    
+
     const colorContrastIssues = this.issues.filter(issue => issue.category === 'color-contrast');
     if (colorContrastIssues.length > 0) {
       recommendations.push('Improve color contrast ratios to meet WCAG standards');
     }
-    
+
     const keyboardIssues = this.issues.filter(issue => issue.category === 'keyboard');
     if (keyboardIssues.length > 0) {
       recommendations.push('Enhance keyboard navigation and focus management');
     }
-    
+
     return recommendations;
   }
 }
@@ -1089,7 +1089,7 @@ class AccessibilityFixerService {
     await this.auditService.performFullAudit(container);
     const fixesApplied = this.auditService.applyAutomatedFixes();
     const report = this.auditService.generateReport();
-    
+
     return {
       fixesApplied,
       issuesRemaining: report.totalIssues - fixesApplied,
@@ -1102,7 +1102,7 @@ class AccessibilityFixerService {
     await this.auditService.performFullAudit(container);
     const categoryIssues = this.auditService.getIssuesByCategory(category);
     const fixableIssues = categoryIssues.filter(issue => issue.automatedFix && !issue.manualFixRequired);
-    
+
     let fixesApplied = 0;
     fixableIssues.forEach(issue => {
       if (issue.automatedFix) {
@@ -1114,33 +1114,33 @@ class AccessibilityFixerService {
         }
       }
     });
-    
+
     return fixesApplied;
   }
 
   // Generate accessibility statement
   generateAccessibilityStatement(): string {
     const report = this.auditService.generateReport();
-    
+
     return `
       Accessibility Statement
-      
+
       This website is committed to ensuring digital accessibility for people with disabilities.
       We are continually improving the user experience for everyone and applying the relevant
       accessibility standards.
-      
+
       Current Status:
       - Total Issues Found: ${report.totalIssues}
       - Critical Issues: ${report.issuesBySeverity.critical || 0}
       - Serious Issues: ${report.issuesBySeverity.serious || 0}
       - Moderate Issues: ${report.issuesBySeverity.moderate || 0}
       - Minor Issues: ${report.issuesBySeverity.minor || 0}
-      
+
       WCAG Compliance:
       - Level A Issues: ${report.wcagCompliance.levelA}
       - Level AA Issues: ${report.wcagCompliance.levelAA}
       - Level AAA Issues: ${report.wcagCompliance.levelAAA}
-      
+
       Feedback:
       We welcome your feedback on the accessibility of this website. Please let us know if you
       encounter accessibility barriers.
@@ -1169,12 +1169,12 @@ export const useAccessibility = (options: {
       const auditIssues = await auditService.performFullAudit(container);
       setIssues(auditIssues);
       setLastAudit(new Date());
-      
+
       if (options.autoFix) {
         const applied = auditService.applyAutomatedFixes();
         setFixesApplied(applied);
       }
-      
+
       return auditIssues;
     } catch (error) {
       console.error('Accessibility audit failed:', error);
@@ -1236,7 +1236,7 @@ export const accessibilityUtils = {
   // Check if element is focusable
   isFocusable: (element: HTMLElement): boolean => {
     if (element.hasAttribute('disabled')) return false;
-    
+
     const focusableSelectors = [
       'a[href]',
       'button:not([disabled])',
@@ -1246,7 +1246,7 @@ export const accessibilityUtils = {
       '[tabindex]:not([tabindex="-1"])',
       '[contenteditable="true"]'
     ];
-    
+
     return focusableSelectors.some(selector => element.matches(selector));
   },
 
@@ -1261,7 +1261,7 @@ export const accessibilityUtils = {
       '[tabindex]:not([tabindex="-1"]):not([disabled])',
       '[contenteditable="true"]:not([disabled])'
     ].join(', ');
-    
+
     return Array.from(container.querySelectorAll(focusableSelector));
   },
 
@@ -1270,7 +1270,7 @@ export const accessibilityUtils = {
     const focusableElements = accessibilityUtils.getFocusableElements(element);
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Tab') {
         if (event.shiftKey) {
@@ -1286,10 +1286,10 @@ export const accessibilityUtils = {
         }
       }
     };
-    
+
     element.addEventListener('keydown', handleKeyDown);
     firstElement?.focus();
-    
+
     return () => {
       element.removeEventListener('keydown', handleKeyDown);
     };
@@ -1305,10 +1305,10 @@ export const accessibilityUtils = {
     announcement.style.width = '1px';
     announcement.style.height = '1px';
     announcement.style.overflow = 'hidden';
-    
+
     document.body.appendChild(announcement);
     announcement.textContent = message;
-    
+
     setTimeout(() => {
       if (announcement.parentNode) {
         announcement.remove();
@@ -1334,15 +1334,15 @@ export const accessibilityUtils = {
       z-index: 1000;
       transition: top 0.3s;
     `;
-    
+
     skipLink.addEventListener('focus', () => {
       skipLink.style.top = '6px';
     });
-    
+
     skipLink.addEventListener('blur', () => {
       skipLink.style.top = '-40px';
     });
-    
+
     return skipLink;
   }
 };

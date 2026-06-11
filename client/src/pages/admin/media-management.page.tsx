@@ -8,11 +8,11 @@ import { Layout } from "@/components/admin/Layout";
 import { Image as ImageIcon, Trash2, Copy, Search, ExternalLink, CheckSquare, Square, Download, MoreVertical, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -64,9 +64,9 @@ export default function MediaManagementPage() {
       setSelectedFiles([]);
       const deletedCount = data.results?.deleted?.length || 0;
       const failedCount = data.results?.failed?.length || 0;
-      toast({ 
-        title: "Bulk Actions Complete", 
-        description: `Deleted ${deletedCount} files.${failedCount > 0 ? ` Failed to delete ${failedCount} files.` : ''}` 
+      toast({
+        title: "Bulk Actions Complete",
+        description: `Deleted ${deletedCount} files.${failedCount > 0 ? ` Failed to delete ${failedCount} files.` : ''}`
       });
     },
     onError: (error: any) => {
@@ -80,9 +80,9 @@ export default function MediaManagementPage() {
   };
 
   const toggleSelect = (filename: string) => {
-    setSelectedFiles(prev => 
-      prev.includes(filename) 
-        ? prev.filter(f => f !== filename) 
+    setSelectedFiles(prev =>
+      prev.includes(filename)
+        ? prev.filter(f => f !== filename)
         : [...prev, filename]
     );
   };
@@ -156,8 +156,8 @@ export default function MediaManagementPage() {
       <div className="mb-8 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Media Library</h1>
-            <p className="text-gray-600">Browse and manage all uploaded blog images</p>
+            <h1 className="text-3xl font-bold text-slate-900">Media Library</h1>
+            <p className="text-slate-600">Browse and manage all uploaded blog images</p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -168,10 +168,10 @@ export default function MediaManagementPage() {
                   <span>{uploadMutation.isPending ? 'Uploading...' : 'Upload New'}</span>
                 </div>
               </Button>
-              <input 
-                type="file" 
-                className="hidden" 
-                accept="image/*" 
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
                 onChange={handleUpload}
                 disabled={uploadMutation.isPending}
               />
@@ -204,9 +204,9 @@ export default function MediaManagementPage() {
             </Select>
 
             <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input 
-                placeholder="Search files..." 
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                placeholder="Search files..."
                 className="pl-9 bg-white"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -216,24 +216,24 @@ export default function MediaManagementPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Checkbox 
-                checked={selectedFiles.length > 0 && selectedFiles.length === filteredFiles.length} 
+              <Checkbox
+                checked={selectedFiles.length > 0 && selectedFiles.length === filteredFiles.length}
                 onCheckedChange={selectAll}
                 disabled={filteredFiles.length === 0}
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-slate-700">
                 {selectedFiles.length > 0 ? `${selectedFiles.length} selected` : 'Select All'}
               </span>
             </div>
 
             {selectedFiles.length > 0 && (
               <div className="flex items-center gap-2 border-l pl-4">
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
+                <Button
+                  variant="destructive"
+                  size="sm"
                   onClick={handleBulkDelete}
                   disabled={bulkDeleteMutation.isPending}
                 >
@@ -245,7 +245,7 @@ export default function MediaManagementPage() {
             )}
           </div>
 
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-slate-500">
             Showing {filteredFiles.length} items
           </div>
         </div>
@@ -254,56 +254,56 @@ export default function MediaManagementPage() {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-           <p className="mt-4 text-gray-500 font-medium">Loading media assets...</p>
+           <p className="mt-4 text-slate-500 font-medium">Loading media assets...</p>
         </div>
       ) : filteredFiles.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
-          <ImageIcon className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">No media files found</h3>
-          <p className="text-gray-500">Upload images from the Blog Post editor to see them here.</p>
+        <div className="text-center py-20 bg-white rounded-xl border border-dashed border-slate-300">
+          <ImageIcon className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-slate-900">No media files found</h3>
+          <p className="text-slate-500">Upload images from the Blog Post editor to see them here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-6">
           {filteredFiles.map((file: any) => (
             <div key={file.name} className="relative group">
-              <Card 
+              <Card
                 className={`overflow-hidden transition-all duration-200 ${
-                  selectedFiles.includes(file.name) 
-                    ? "ring-2 ring-primary border-primary shadow-lg" 
-                    : "border-gray-200 hover:border-blue-300 hover:shadow-md"
+                  selectedFiles.includes(file.name)
+                    ? "ring-2 ring-primary border-primary shadow-lg"
+                    : "border-slate-200 hover:border-blue-300 hover:shadow-md"
                 }`}
                 onClick={(e) => {
                   if (e.ctrlKey || e.metaKey) toggleSelect(file.name);
                 }}
               >
-                <div className="aspect-square relative overflow-hidden bg-gray-50 flex items-center justify-center">
-                  <img 
-                    src={file.thumbnailUrl || file.url} 
-                    alt={file.name} 
+                <div className="aspect-square relative overflow-hidden bg-slate-50 flex items-center justify-center">
+                  <img
+                    src={file.thumbnailUrl || file.url}
+                    alt={file.name}
                     className={`w-full h-full object-cover transition-transform duration-500 ${
                        selectedFiles.includes(file.name) ? "scale-105" : "group-hover:scale-110"
                     }`}
                   />
-                  
+
                   {/* Overlay Controls */}
                   <div className={`absolute inset-0 bg-blue-900/40 transition-opacity duration-200 flex items-center justify-center gap-2 ${
                     selectedFiles.includes(file.name) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   }`}>
-                    <Button 
-                      size="icon" 
-                      variant="secondary" 
+                    <Button
+                      size="icon"
+                      variant="secondary"
                       className="h-8 w-8"
-                      onClick={(e) => { e.stopPropagation(); copyToClipboard(file.url); }} 
+                      onClick={(e) => { e.stopPropagation(); copyToClipboard(file.url); }}
                       title="Copy URL"
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </Button>
                     <a href={file.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
-                      <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/20 hover:bg-white text-white hover:text-gray-900 border-none" title="View Full Image">
+                      <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/20 hover:bg-white text-white hover:text-slate-900 border-none" title="View Full Image">
                         <ExternalLink className="w-3.5 h-3.5" />
                       </Button>
                     </a>
-                    
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
                         <Button size="icon" variant="secondary" className="h-8 w-8" title="More Options">
@@ -319,7 +319,7 @@ export default function MediaManagementPage() {
                                <Download className="w-4 h-4 mr-2" /> Download
                             </a>
                          </DropdownMenuItem>
-                         <DropdownMenuItem 
+                         <DropdownMenuItem
                             className="text-red-600 focus:text-red-600 focus:bg-red-50"
                             onClick={() => {
                                if(confirm("Delete this image forever?")) deleteMediaMutation.mutate(file.name);
@@ -335,18 +335,18 @@ export default function MediaManagementPage() {
                   <div className={`absolute top-2 left-2 transition-opacity duration-200 ${
                     selectedFiles.includes(file.name) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   }`}>
-                     <Checkbox 
-                        checked={selectedFiles.includes(file.name)} 
+                     <Checkbox
+                        checked={selectedFiles.includes(file.name)}
                         onCheckedChange={() => toggleSelect(file.name)}
                         className="bg-white"
                      />
                   </div>
                 </div>
                 <CardContent className="p-3">
-                  <p className="text-[12px] font-semibold text-gray-800 truncate leading-tight" title={file.name}>{file.name}</p>
-                  <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-gray-50">
-                    <span className="text-[10px] text-gray-400 font-medium">{formatSize(file.size || 0)}</span>
-                    <span className="text-[10px] text-gray-400">{new Date(file.mtime || file.atime).toLocaleDateString()}</span>
+                  <p className="text-[12px] font-semibold text-slate-800 truncate leading-tight" title={file.name}>{file.name}</p>
+                  <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-slate-50">
+                    <span className="text-[10px] text-slate-400 font-medium">{formatSize(file.size || 0)}</span>
+                    <span className="text-[10px] text-slate-400">{new Date(file.mtime || file.atime).toLocaleDateString()}</span>
                   </div>
                 </CardContent>
               </Card>

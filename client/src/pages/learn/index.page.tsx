@@ -43,7 +43,7 @@ export default function LearnPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700 font-sans">
+    <div className="min-h-screen bg-slate-50  font-sans">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white overflow-hidden">
         {/* Abstract Background Shapes */}
@@ -110,8 +110,8 @@ export default function LearnPage() {
         {/* Learning Paths - Bento Grid */}
         <section className="mb-24">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Learning Path</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Select the learning style that suits you best. From visual tutorials to detailed reading materials.</p>
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Choose Your Learning Path</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">Select the learning style that suits you best. From visual tutorials to detailed reading materials.</p>
           </div>
 
           <m.div
@@ -131,10 +131,10 @@ export default function LearnPage() {
                     <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner">
                       <Play className="h-8 w-8 text-red-600 fill-red-600" />
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-red-600 transition-colors">
+                    <h3 className="text-xl font-bold mb-3 text-slate-900 group-hover:text-red-600 transition-colors">
                       Lesson Outlines
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-slate-600 mb-6 leading-relaxed">
                       Review structured lesson outlines for tax filing, savings, and investments.
                     </p>
                     <div className="flex items-center text-sm font-medium text-red-600 bg-red-50 w-fit px-3 py-1 rounded-full">
@@ -156,10 +156,10 @@ export default function LearnPage() {
                     <div className="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner">
                       <BookOpen className="h-8 w-8 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-emerald-600 transition-colors">
+                    <h3 className="text-xl font-bold mb-3 text-slate-900 group-hover:text-emerald-600 transition-colors">
                       Interactive Guides
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-slate-600 mb-6 leading-relaxed">
                       Step-by-step guides with checklists to master tax concepts.
                     </p>
                     <div className="flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 w-fit px-3 py-1 rounded-full">
@@ -181,10 +181,10 @@ export default function LearnPage() {
                     <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner">
                       <Video className="h-8 w-8 text-purple-600" />
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-xl font-bold mb-3 text-slate-900 group-hover:text-purple-600 transition-colors">
                       Expert Consultation
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-slate-600 mb-6 leading-relaxed">
                       Book 1-on-1 video calls with credential-checked tax professionals where available.
                     </p>
                     <div className="flex items-center text-sm font-medium text-purple-600 bg-purple-50 w-fit px-3 py-1 rounded-full">
@@ -206,10 +206,10 @@ export default function LearnPage() {
                     <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner">
                       <Newspaper className="h-8 w-8 text-blue-600" />
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-bold mb-3 text-slate-900 group-hover:text-blue-600 transition-colors">
                       Tax Blog & News
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-slate-600 mb-6 leading-relaxed">
                       Latest tax updates, budget news, and expert articles.
                     </p>
                     <div className="flex items-center text-sm font-medium text-blue-600 bg-blue-50 w-fit px-3 py-1 rounded-full">
@@ -227,13 +227,13 @@ export default function LearnPage() {
         <section className="mb-24">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-900">
+              <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-900">
                 <div className="p-2 bg-red-100 rounded-lg">
                   <Play className="h-5 w-5 text-red-600 fill-red-600" />
                 </div>
                 Featured Lessons
               </h2>
-              <p className="text-gray-500 mt-1 ml-11">Curated tax topics to start with</p>
+              <p className="text-slate-500 mt-1 ml-11">Curated tax topics to start with</p>
             </div>
             <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" asChild>
               <Link href="/learn/videos">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
@@ -256,8 +256,8 @@ export default function LearnPage() {
                     {video.title}
                   </h3>
                   <div className="flex items-center justify-between mt-4">
-                    <p className="text-sm text-gray-500 font-medium">{video.instructor}</p>
-                    <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">Beginner</span>
+                    <p className="text-sm text-slate-500 font-medium">{video.instructor}</p>
+                    <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Beginner</span>
                   </div>
                 </CardContent>
               </Card>
@@ -269,13 +269,13 @@ export default function LearnPage() {
         <section className="mb-24">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-900">
+              <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-900">
                 <div className="p-2 bg-emerald-100 rounded-lg">
                   <BookOpen className="h-5 w-5 text-emerald-600" />
                 </div>
                 Step-by-Step Guides
               </h2>
-              <p className="text-gray-500 mt-1 ml-11">Reading materials grouped by tax and compliance topic</p>
+              <p className="text-slate-500 mt-1 ml-11">Reading materials grouped by tax and compliance topic</p>
             </div>
             <Button variant="ghost" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" asChild>
               <Link href="/learn/guides">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
@@ -284,12 +284,12 @@ export default function LearnPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {popularGuides.map((guide) => (
               <Link key={guide.id} href={`/learn/guide/${guide.slug}`}>
-                <Card className="h-full group cursor-pointer hover:shadow-xl transition-all duration-300 border border-gray-100 shadow-sm hover:border-emerald-200">
+                <Card className="h-full group cursor-pointer hover:shadow-xl transition-all duration-300 border border-slate-100 shadow-sm hover:border-emerald-200">
                   <CardHeader className="pb-4">
                     <div className="flex justify-between items-start mb-2">
                       <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">{guide.category}</Badge>
-                      <div className="p-2 bg-gray-50 rounded-full group-hover:bg-emerald-50 transition-colors">
-                        <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600" />
+                      <div className="p-2 bg-slate-50 rounded-full group-hover:bg-emerald-50 transition-colors">
+                        <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-emerald-600" />
                       </div>
                     </div>
                     <CardTitle className="text-xl group-hover:text-emerald-700 transition-colors leading-tight">
@@ -298,13 +298,13 @@ export default function LearnPage() {
                     <CardDescription className="line-clamp-2 text-base mt-2">{guide.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 pt-4 border-t border-gray-50">
+                    <div className="flex items-center gap-4 text-sm text-slate-500 pt-4 border-t border-slate-50">
                       <span className="flex items-center gap-1.5">
-                        <Clock className="h-4 w-4 text-gray-400" />
+                        <Clock className="h-4 w-4 text-slate-400" />
                         {guide.estimatedTime}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-4 w-4 text-gray-400" />
+                        <CheckCircle2 className="h-4 w-4 text-slate-400" />
                         {guide.steps.length} steps
                       </span>
                     </div>
@@ -319,13 +319,13 @@ export default function LearnPage() {
         <section className="mb-24">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-900">
+              <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-900">
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <Award className="h-5 w-5 text-purple-600" />
                 </div>
                 Our Tax Experts
               </h2>
-              <p className="text-gray-500 mt-1 ml-11">Discuss a defined question and document set</p>
+              <p className="text-slate-500 mt-1 ml-11">Discuss a defined question and document set</p>
             </div>
             <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50" asChild>
               <Link href="/learn/consultations">View All <ChevronRight className="h-4 w-4 ml-1" /></Link>
@@ -339,21 +339,21 @@ export default function LearnPage() {
                     <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-3xl font-bold mb-4 shadow-lg ring-4 ring-white">
                       {expert.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <h3 className="font-bold text-lg text-gray-900">{expert.name}</h3>
+                    <h3 className="font-bold text-lg text-slate-900">{expert.name}</h3>
                     <p className="text-sm text-purple-600 font-medium">{expert.title}</p>
                     <div className="flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded-full shadow-sm">
                       <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      <span className="text-sm font-bold text-gray-700">Verified profile</span>
+                      <span className="text-sm font-bold text-slate-700">Verified profile</span>
                     </div>
                   </div>
                   <div className="p-6">
                     <div className="flex flex-wrap gap-2 mb-6 justify-center">
                       {expert.specializations.slice(0, 3).map((spec, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs bg-gray-100 text-gray-600 hover:bg-gray-200">{spec}</Badge>
+                        <Badge key={i} variant="secondary" className="text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">{spec}</Badge>
                       ))}
                     </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <span className="text-sm font-medium text-gray-500">{expert.experience} years exp</span>
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                      <span className="text-sm font-medium text-slate-500">{expert.experience} years exp</span>
                       <Button size="sm" className="bg-purple-600 hover:bg-purple-700" asChild>
                         <Link href="/learn/consultations">Book Call</Link>
                       </Button>

@@ -50,7 +50,7 @@ export default function DocumentScannerPage() {
             Assisted document extraction
           </div>
           <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
-            Upload Your Documents. <span className="text-[#315efb]">We Read Them.</span>
+            Upload Your Documents. <span className="text-brand-600">We Read Them.</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
             Form 16, AIS, bank statements, CAS — supported extraction helps organize details before you review and confirm them.
@@ -78,7 +78,7 @@ export default function DocumentScannerPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((step) => (
               <div key={step.num} className="text-center p-8 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 mx-auto mb-5 rounded-xl bg-[#315efb] flex items-center justify-center text-white font-black text-lg">
+                <div className="w-12 h-12 mx-auto mb-5 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-lg">
                   {step.num}
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-3">{step.title}</h3>
@@ -145,7 +145,7 @@ export default function DocumentScannerPage() {
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="w-9 h-9 shrink-0 rounded-lg bg-white border border-slate-100 flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-[#315efb]" />
+                    <Icon className="w-4 h-4 text-brand-600" />
                   </div>
                   <div>
                     <div className="font-bold text-slate-900 text-sm">{label}</div>
@@ -159,13 +159,13 @@ export default function DocumentScannerPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-[#315efb] text-white text-center">
+      <section className="py-16 bg-brand-600 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <ScanLine className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Stop entering numbers manually.</h2>
           <p className="text-blue-100 mb-8">Upload supported documents, review the extracted values, and choose CA assistance where the selected plan includes it.</p>
           <Link href="/which-itr-form-to-file?source=document_scanner_feature_cta">
-            <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
+            <Button size="lg" className="bg-white text-brand-600 hover:bg-blue-50 gap-2">
               Start with Document Upload <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { 
-  ChevronRight, 
-  ChevronLeft, 
-  Calendar, 
-  Briefcase, 
-  Home, 
-  TrendingUp, 
+import {
+  ChevronRight,
+  ChevronLeft,
+  Calendar,
+  Briefcase,
+  Home,
+  TrendingUp,
   Calculator,
   FileText,
   CheckCircle,
@@ -187,22 +187,22 @@ export default function ITRStepByStepGuide() {
 
   const calculateTax = () => {
     // Calculate total income (excluding tax paid fields)
-    const totalIncome = (parseFloat(incomeDetails.salary) || 0) + 
-      (parseFloat(incomeDetails.houseProperty) || 0) + 
-      (parseFloat(incomeDetails.business) || 0) + 
-      (parseFloat(incomeDetails.capitalGains) || 0) + 
+    const totalIncome = (parseFloat(incomeDetails.salary) || 0) +
+      (parseFloat(incomeDetails.houseProperty) || 0) +
+      (parseFloat(incomeDetails.business) || 0) +
+      (parseFloat(incomeDetails.capitalGains) || 0) +
       (parseFloat(incomeDetails.otherSources) || 0);
-    
+
     // Calculate total deductions
-    const totalDeductions = (parseFloat(deductions.section80C) || 0) + 
-      (parseFloat(deductions.section80CCD) || 0) + 
-      (parseFloat(deductions.section80D) || 0) + 
-      (parseFloat(deductions.section80G) || 0) + 
-      (parseFloat(deductions.section80DD) || 0) + 
+    const totalDeductions = (parseFloat(deductions.section80C) || 0) +
+      (parseFloat(deductions.section80CCD) || 0) +
+      (parseFloat(deductions.section80D) || 0) +
+      (parseFloat(deductions.section80G) || 0) +
+      (parseFloat(deductions.section80DD) || 0) +
       (parseFloat(deductions.homeLoanInterest) || 0);
-    
+
     const taxableIncome = Math.max(0, totalIncome - totalDeductions);
-    
+
     let tax = 0;
     if (taxableIncome > 250000) {
       if (taxableIncome <= 500000) {
@@ -213,19 +213,19 @@ export default function ITRStepByStepGuide() {
         tax = 112500 + (taxableIncome - 1000000) * 0.3;
       }
     }
-    
+
     const cess = tax * 0.04;
     const totalTax = tax + cess;
-    
+
     // Calculate taxes already paid
-    const taxesPaid = (parseFloat(incomeDetails.tdsOnSalary) || 0) + 
-      (parseFloat(incomeDetails.tdsOther) || 0) + 
-      (parseFloat(incomeDetails.advanceTax) || 0) + 
-      (parseFloat(incomeDetails.selfAssessmentTax) || 0) + 
+    const taxesPaid = (parseFloat(incomeDetails.tdsOnSalary) || 0) +
+      (parseFloat(incomeDetails.tdsOther) || 0) +
+      (parseFloat(incomeDetails.advanceTax) || 0) +
+      (parseFloat(incomeDetails.selfAssessmentTax) || 0) +
       (parseFloat(incomeDetails.tcs) || 0);
-    
+
     const refundDue = taxesPaid - totalTax;
-    
+
     return { totalIncome, totalDeductions, taxableIncome, tax, cess, totalTax, taxesPaid, refundDue };
   };
 
@@ -244,18 +244,18 @@ export default function ITRStepByStepGuide() {
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="type-page-title mb-4 text-gray-900">
+          <h1 className="type-page-title mb-4 text-slate-900">
             ITR Filing Step-by-Step Guide
           </h1>
-          <p className="type-body text-gray-600">
+          <p className="type-body text-slate-600">
             Complete your Income Tax Return filing in simple steps
           </p>
           {lastSaved && (
-            <p className="type-support text-gray-500 mt-2">
+            <p className="type-support text-slate-500 mt-2">
               <Save className="inline w-4 h-4 mr-1" />
               Auto-saved at {lastSaved.toLocaleTimeString()}
             </p>
@@ -267,15 +267,15 @@ export default function ITRStepByStepGuide() {
           <Progress value={progressPercentage} className="h-2" />
           <div className="grid grid-cols-6 gap-1 mt-4 md:flex md:justify-between">
             {steps.map((step) => (
-              <div 
-                key={step.id} 
+              <div
+                key={step.id}
                 className={`flex min-w-0 flex-col items-center cursor-pointer ${
-                  currentStep >= step.id ? 'text-blue-600' : 'text-gray-400'
+                  currentStep >= step.id ? 'text-blue-600' : 'text-slate-400'
                 }`}
                 onClick={() => setCurrentStep(step.id)}
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
-                  currentStep >= step.id ? 'bg-blue-600 text-white' : 'bg-gray-200'
+                  currentStep >= step.id ? 'bg-blue-600 text-white' : 'bg-slate-200'
                 }`}>
                   <step.icon className="w-5 h-5" />
                 </div>
@@ -318,48 +318,48 @@ export default function ITRStepByStepGuide() {
                           className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                             filingType === "original"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <h4 className="type-card-title font-medium mb-2">Original Return</h4>
-                          <p className="type-support text-gray-600">Filing for the first time for this assessment year</p>
+                          <p className="type-support text-slate-600">Filing for the first time for this assessment year</p>
                           {filingType === "original" && (
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
                           )}
                         </div>
-                        
+
                         <div
                           onClick={() => setFilingType("revised")}
                           className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                             filingType === "revised"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <h4 className="type-card-title font-medium mb-2">Revised Return</h4>
-                          <p className="type-support text-gray-600">Correct a previously filed return</p>
+                          <p className="type-support text-slate-600">Correct a previously filed return</p>
                           {filingType === "revised" && (
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
                           )}
                         </div>
-                        
+
                         <div
                           onClick={() => setFilingType("belated")}
                           className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                             filingType === "belated"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <h4 className="type-card-title font-medium mb-2">Belated Return</h4>
-                          <p className="type-support text-gray-600">Filing after the due date</p>
+                          <p className="type-support text-slate-600">Filing after the due date</p>
                           {filingType === "belated" && (
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
                           )}
                         </div>
                       </div>
                     </div>
-                    
+
                     {filingType === "revised" && (
                       <Alert>
                         <AlertCircle className="h-4 w-4" />
@@ -368,7 +368,7 @@ export default function ITRStepByStepGuide() {
                         </AlertDescription>
                       </Alert>
                     )}
-                    
+
                     {filingType === "belated" && (
                       <Alert className="border-yellow-200 bg-yellow-50">
                         <AlertCircle className="h-4 w-4 text-yellow-600" />
@@ -393,14 +393,14 @@ export default function ITRStepByStepGuide() {
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                             itrForm === "ITR-1"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
                               <h4 className="type-card-title font-medium">ITR-1 (Sahaj)</h4>
-                              <p className="type-support text-gray-600 mt-1">For salaried individuals with income up to ₹50 lakh</p>
-                              <ul className="type-support text-gray-500 mt-2 space-y-1">
+                              <p className="type-support text-slate-600 mt-1">For salaried individuals with income up to ₹50 lakh</p>
+                              <ul className="type-support text-slate-500 mt-2 space-y-1">
                                 <li>• Salary income</li>
                                 <li>• One house property</li>
                                 <li>• Interest income</li>
@@ -409,20 +409,20 @@ export default function ITRStepByStepGuide() {
                             {itrForm === "ITR-1" && <CheckCircle className="w-5 h-5 text-blue-600" />}
                           </div>
                         </div>
-                        
+
                         <div
                           onClick={() => setItrForm("ITR-2")}
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                             itrForm === "ITR-2"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
                               <h4 className="type-card-title font-medium">ITR-2</h4>
-                              <p className="type-support text-gray-600 mt-1">For individuals with capital gains or foreign income</p>
-                              <ul className="type-support text-gray-500 mt-2 space-y-1">
+                              <p className="type-support text-slate-600 mt-1">For individuals with capital gains or foreign income</p>
+                              <ul className="type-support text-slate-500 mt-2 space-y-1">
                                 <li>• Capital gains</li>
                                 <li>• Multiple properties</li>
                                 <li>• Foreign assets/income</li>
@@ -431,20 +431,20 @@ export default function ITRStepByStepGuide() {
                             {itrForm === "ITR-2" && <CheckCircle className="w-5 h-5 text-blue-600" />}
                           </div>
                         </div>
-                        
+
                         <div
                           onClick={() => setItrForm("ITR-3")}
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                             itrForm === "ITR-3"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
                               <h4 className="type-card-title font-medium">ITR-3</h4>
-                              <p className="type-support text-gray-600 mt-1">For individuals with business/professional income</p>
-                              <ul className="type-support text-gray-500 mt-2 space-y-1">
+                              <p className="type-support text-slate-600 mt-1">For individuals with business/professional income</p>
+                              <ul className="type-support text-slate-500 mt-2 space-y-1">
                                 <li>• Business income</li>
                                 <li>• Professional income</li>
                                 <li>• Presumptive taxation</li>
@@ -453,20 +453,20 @@ export default function ITRStepByStepGuide() {
                             {itrForm === "ITR-3" && <CheckCircle className="w-5 h-5 text-blue-600" />}
                           </div>
                         </div>
-                        
+
                         <div
                           onClick={() => setItrForm("ITR-4")}
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                             itrForm === "ITR-4"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
                               <h4 className="type-card-title font-medium">ITR-4 (Sugam)</h4>
-                              <p className="type-support text-gray-600 mt-1">For presumptive income from business/profession</p>
-                              <ul className="type-support text-gray-500 mt-2 space-y-1">
+                              <p className="type-support text-slate-600 mt-1">For presumptive income from business/profession</p>
+                              <ul className="type-support text-slate-500 mt-2 space-y-1">
                                 <li>• Presumptive income only</li>
                                 <li>• Turnover up to ₹2 crore</li>
                                 <li>• Simplified filing</li>
@@ -477,7 +477,7 @@ export default function ITRStepByStepGuide() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <Alert>
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>
@@ -500,7 +500,7 @@ export default function ITRStepByStepGuide() {
                           className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                             taxRegime === "new"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex justify-between items-start mb-4">
@@ -510,7 +510,7 @@ export default function ITRStepByStepGuide() {
                           <Badge className="mb-3 bg-green-100 text-green-800">Default & Recommended</Badge>
                           <div className="space-y-2 text-sm">
                             <p className="font-medium">Tax Slabs (AY 2024-25):</p>
-                            <ul className="space-y-1 text-gray-600">
+                            <ul className="space-y-1 text-slate-600">
                               <li>• Up to ₹3 lakh: Nil</li>
                               <li>• ₹3-6 lakh: 5%</li>
                               <li>• ₹6-9 lakh: 10%</li>
@@ -522,23 +522,23 @@ export default function ITRStepByStepGuide() {
                             <p className="text-red-600">✗ No Section 80C/80D deductions</p>
                           </div>
                         </div>
-                        
+
                         <div
                           onClick={() => setTaxRegime("old")}
                           className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                             taxRegime === "old"
                               ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex justify-between items-start mb-4">
                             <h4 className="font-medium text-lg">Old Tax Regime</h4>
                             {taxRegime === "old" && <CheckCircle className="w-5 h-5 text-blue-600" />}
                           </div>
-                          <Badge className="mb-3 bg-gray-100 text-gray-800">Optional</Badge>
+                          <Badge className="mb-3 bg-slate-100 text-slate-800">Optional</Badge>
                           <div className="space-y-2 text-sm">
                             <p className="font-medium">Tax Slabs:</p>
-                            <ul className="space-y-1 text-gray-600">
+                            <ul className="space-y-1 text-slate-600">
                               <li>• Up to ₹2.5 lakh: Nil</li>
                               <li>• ₹2.5-5 lakh: 5%</li>
                               <li>• ₹5-10 lakh: 20%</li>
@@ -546,16 +546,16 @@ export default function ITRStepByStepGuide() {
                             </ul>
                             <p className="text-green-600 font-medium mt-3">✓ All deductions available</p>
                             <p className="text-green-600">✓ Section 80C, 80D, HRA, etc.</p>
-                            <p className="text-gray-500 mt-2">Better if deductions exceed ₹1.5 lakh</p>
+                            <p className="text-slate-500 mt-2">Better if deductions exceed ₹1.5 lakh</p>
                           </div>
                         </div>
                       </div>
                     </div>
-                    
+
                     <Alert className="bg-blue-50 border-blue-200">
                       <Calculator className="h-4 w-4 text-blue-600" />
                       <AlertDescription className="text-blue-800">
-                        Based on initial calculation, the {taxRegime === "new" ? "New" : "Old"} Tax Regime appears more beneficial for you. 
+                        Based on initial calculation, the {taxRegime === "new" ? "New" : "Old"} Tax Regime appears more beneficial for you.
                         Final calculation will be shown after entering all details.
                       </AlertDescription>
                     </Alert>
@@ -566,11 +566,11 @@ export default function ITRStepByStepGuide() {
                 {currentStep === 3 && (
                   <div className="space-y-6">
                     <div>
-                      <div className="text-sm font-medium text-gray-700 mb-3">Personal & Bank Information</div>
-                      
+                      <div className="text-sm font-medium text-slate-700 mb-3">Personal & Bank Information</div>
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
-                          <Label htmlFor="pan" className="text-xs text-gray-600">PAN *</Label>
+                          <Label htmlFor="pan" className="text-xs text-slate-600">PAN *</Label>
                           <Input
                             id="pan"
                             type="text"
@@ -582,9 +582,9 @@ export default function ITRStepByStepGuide() {
                             className="h-9 text-sm"
                           />
                         </div>
-                        
+
                         <div>
-                          <Label htmlFor="aadhaar" className="text-xs text-gray-600">Aadhaar *</Label>
+                          <Label htmlFor="aadhaar" className="text-xs text-slate-600">Aadhaar *</Label>
                           <Input
                             id="aadhaar"
                             type="text"
@@ -596,9 +596,9 @@ export default function ITRStepByStepGuide() {
                             className="h-9 text-sm"
                           />
                         </div>
-                        
+
                         <div>
-                          <Label htmlFor="name" className="text-xs text-gray-600">Full Name *</Label>
+                          <Label htmlFor="name" className="text-xs text-slate-600">Full Name *</Label>
                           <Input
                             id="name"
                             type="text"
@@ -609,9 +609,9 @@ export default function ITRStepByStepGuide() {
                             className="h-9 text-sm"
                           />
                         </div>
-                        
+
                         <div>
-                          <Label htmlFor="dob" className="text-xs text-gray-600">DOB *</Label>
+                          <Label htmlFor="dob" className="text-xs text-slate-600">DOB *</Label>
                           <Input
                             id="dob"
                             type="date"
@@ -621,9 +621,9 @@ export default function ITRStepByStepGuide() {
                             className="h-9 text-sm"
                           />
                         </div>
-                        
+
                         <div>
-                          <Label htmlFor="mobile" className="text-xs text-gray-600">Mobile *</Label>
+                          <Label htmlFor="mobile" className="text-xs text-slate-600">Mobile *</Label>
                           <Input
                             id="mobile"
                             type="tel"
@@ -635,9 +635,9 @@ export default function ITRStepByStepGuide() {
                             className="h-9 text-sm"
                           />
                         </div>
-                        
+
                         <div>
-                          <Label htmlFor="email" className="text-xs text-gray-600">Email *</Label>
+                          <Label htmlFor="email" className="text-xs text-slate-600">Email *</Label>
                           <Input
                             id="email"
                             type="email"
@@ -649,12 +649,12 @@ export default function ITRStepByStepGuide() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="mt-4 pt-3 border-t">
-                        <div className="text-xs font-medium text-gray-600 mb-2">Bank Details for Refund</div>
+                        <div className="text-xs font-medium text-slate-600 mb-2">Bank Details for Refund</div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                           <div>
-                            <Label htmlFor="bankName" className="text-xs text-gray-600">Bank Name *</Label>
+                            <Label htmlFor="bankName" className="text-xs text-slate-600">Bank Name *</Label>
                             <Input
                               id="bankName"
                               type="text"
@@ -665,9 +665,9 @@ export default function ITRStepByStepGuide() {
                               className="h-9 text-sm"
                             />
                           </div>
-                          
+
                           <div>
-                            <Label htmlFor="accountNumber" className="text-xs text-gray-600">Account No *</Label>
+                            <Label htmlFor="accountNumber" className="text-xs text-slate-600">Account No *</Label>
                             <Input
                               id="accountNumber"
                               type="text"
@@ -678,9 +678,9 @@ export default function ITRStepByStepGuide() {
                               className="h-9 text-sm"
                             />
                           </div>
-                          
+
                           <div>
-                            <Label htmlFor="ifscCode" className="text-xs text-gray-600">IFSC *</Label>
+                            <Label htmlFor="ifscCode" className="text-xs text-slate-600">IFSC *</Label>
                             <Input
                               id="ifscCode"
                               type="text"
@@ -691,9 +691,9 @@ export default function ITRStepByStepGuide() {
                               className="h-9 text-sm"
                             />
                           </div>
-                          
+
                           <div>
-                            <Label htmlFor="pincode" className="text-xs text-gray-600">Pincode *</Label>
+                            <Label htmlFor="pincode" className="text-xs text-slate-600">Pincode *</Label>
                             <Input
                               id="pincode"
                               type="text"
@@ -706,9 +706,9 @@ export default function ITRStepByStepGuide() {
                             />
                           </div>
                         </div>
-                        
+
                         <div className="mt-3">
-                          <Label htmlFor="address" className="text-xs text-gray-600">Address *</Label>
+                          <Label htmlFor="address" className="text-xs text-slate-600">Address *</Label>
                           <Input
                             id="address"
                             type="text"
@@ -721,7 +721,7 @@ export default function ITRStepByStepGuide() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <Alert>
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>
@@ -734,7 +734,7 @@ export default function ITRStepByStepGuide() {
                 {/* Step 4: Income Details */}
                 {currentStep === 4 && (
                   <div className="space-y-4">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Select Income Sources</div>
+                    <div className="text-sm font-medium text-slate-700 mb-3">Select Income Sources</div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {incomeTypes.map((type) => (
                         <div
@@ -749,16 +749,16 @@ export default function ITRStepByStepGuide() {
                           className={`p-3 border rounded-lg cursor-pointer transition-all ${
                             selectedIncomeTypes.includes(type.id)
                               ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              : 'border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <div className="flex items-center space-x-2">
                             <type.icon className={`w-4 h-4 ${
-                              selectedIncomeTypes.includes(type.id) ? 'text-blue-600' : 'text-gray-500'
+                              selectedIncomeTypes.includes(type.id) ? 'text-blue-600' : 'text-slate-500'
                             }`} />
                             <div className="flex-1">
                               <h4 className="text-sm font-medium">{type.label}</h4>
-                              <p className="text-xs text-gray-500 mt-0.5">{type.description}</p>
+                              <p className="text-xs text-slate-500 mt-0.5">{type.description}</p>
                             </div>
                             {selectedIncomeTypes.includes(type.id) && (
                               <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
@@ -839,9 +839,9 @@ export default function ITRStepByStepGuide() {
                           </div>
                         )}
                       </div>
-                      
+
                       <Separator className="my-6" />
-                      
+
                       <h3 className="font-semibold text-lg mb-4">Tax Details (Mandatory)</h3>
                       <div className="space-y-4">
                         <div>
@@ -854,7 +854,7 @@ export default function ITRStepByStepGuide() {
                             onChange={(e) => setIncomeDetails({...incomeDetails, tdsOnSalary: e.target.value})}
                           />
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="tdsOther">TDS on Other Income *</Label>
                           <Input
@@ -865,7 +865,7 @@ export default function ITRStepByStepGuide() {
                             onChange={(e) => setIncomeDetails({...incomeDetails, tdsOther: e.target.value})}
                           />
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="advanceTax">Advance Tax Paid</Label>
                           <Input
@@ -876,7 +876,7 @@ export default function ITRStepByStepGuide() {
                             onChange={(e) => setIncomeDetails({...incomeDetails, advanceTax: e.target.value})}
                           />
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="selfAssessmentTax">Self Assessment Tax</Label>
                           <Input
@@ -887,7 +887,7 @@ export default function ITRStepByStepGuide() {
                             onChange={(e) => setIncomeDetails({...incomeDetails, selfAssessmentTax: e.target.value})}
                           />
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="tcs">TCS (Tax Collected at Source)</Label>
                           <Input
@@ -901,25 +901,25 @@ export default function ITRStepByStepGuide() {
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-slate-50 p-4 rounded-lg">
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="font-medium">Total Gross Income:</span>
                           <span className="text-xl font-bold text-blue-600">
-                            ₹{(parseFloat(incomeDetails.salary) || 0) + 
-                              (parseFloat(incomeDetails.houseProperty) || 0) + 
-                              (parseFloat(incomeDetails.business) || 0) + 
-                              (parseFloat(incomeDetails.capitalGains) || 0) + 
+                            ₹{(parseFloat(incomeDetails.salary) || 0) +
+                              (parseFloat(incomeDetails.houseProperty) || 0) +
+                              (parseFloat(incomeDetails.business) || 0) +
+                              (parseFloat(incomeDetails.capitalGains) || 0) +
                               (parseFloat(incomeDetails.otherSources) || 0).toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-medium">Total Tax Paid:</span>
                           <span className="text-xl font-bold text-green-600">
-                            ₹{(parseFloat(incomeDetails.tdsOnSalary) || 0) + 
-                              (parseFloat(incomeDetails.tdsOther) || 0) + 
-                              (parseFloat(incomeDetails.advanceTax) || 0) + 
-                              (parseFloat(incomeDetails.selfAssessmentTax) || 0) + 
+                            ₹{(parseFloat(incomeDetails.tdsOnSalary) || 0) +
+                              (parseFloat(incomeDetails.tdsOther) || 0) +
+                              (parseFloat(incomeDetails.advanceTax) || 0) +
+                              (parseFloat(incomeDetails.selfAssessmentTax) || 0) +
                               (parseFloat(incomeDetails.tcs) || 0).toLocaleString()}
                           </span>
                         </div>
@@ -931,10 +931,10 @@ export default function ITRStepByStepGuide() {
                 {/* Step 5: Deductions */}
                 {currentStep === 5 && (
                   <div className="space-y-4">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Claim Your Deductions</div>
+                    <div className="text-sm font-medium text-slate-700 mb-3">Claim Your Deductions</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <Label htmlFor="80C" className="text-xs text-gray-600">Section 80C (Max ₹1.5L)</Label>
+                        <Label htmlFor="80C" className="text-xs text-slate-600">Section 80C (Max ₹1.5L)</Label>
                         <Input
                           id="80C"
                           type="number"
@@ -946,7 +946,7 @@ export default function ITRStepByStepGuide() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="80CCD" className="text-xs text-gray-600">Section 80CCD-NPS (Max ₹50K)</Label>
+                        <Label htmlFor="80CCD" className="text-xs text-slate-600">Section 80CCD-NPS (Max ₹50K)</Label>
                         <Input
                           id="80CCD"
                           type="number"
@@ -958,7 +958,7 @@ export default function ITRStepByStepGuide() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="80D" className="text-xs text-gray-600">Section 80D (Medical)</Label>
+                        <Label htmlFor="80D" className="text-xs text-slate-600">Section 80D (Medical)</Label>
                         <Input
                           id="80D"
                           type="number"
@@ -969,7 +969,7 @@ export default function ITRStepByStepGuide() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="80G" className="text-xs text-gray-600">Section 80G (Donations)</Label>
+                        <Label htmlFor="80G" className="text-xs text-slate-600">Section 80G (Donations)</Label>
                         <Input
                           id="80G"
                           type="number"
@@ -980,7 +980,7 @@ export default function ITRStepByStepGuide() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="homeLoan" className="text-xs text-gray-600">Home Loan (Max ₹2L)</Label>
+                        <Label htmlFor="homeLoan" className="text-xs text-slate-600">Home Loan (Max ₹2L)</Label>
                         <Input
                           id="homeLoan"
                           type="number"
@@ -991,7 +991,7 @@ export default function ITRStepByStepGuide() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="80DD" className="text-xs text-gray-600">Section 80DD</Label>
+                        <Label htmlFor="80DD" className="text-xs text-slate-600">Section 80DD</Label>
                         <Input
                           id="80DD"
                           type="number"
@@ -1007,11 +1007,11 @@ export default function ITRStepByStepGuide() {
                       <div className="flex justify-between items-center">
                         <span className="font-medium">Total Deductions Claimed:</span>
                         <span className="text-2xl font-bold text-green-600">
-                          ₹{((parseFloat(deductions.section80C) || 0) + 
-                            (parseFloat(deductions.section80CCD) || 0) + 
-                            (parseFloat(deductions.section80D) || 0) + 
-                            (parseFloat(deductions.section80G) || 0) + 
-                            (parseFloat(deductions.section80DD) || 0) + 
+                          ₹{((parseFloat(deductions.section80C) || 0) +
+                            (parseFloat(deductions.section80CCD) || 0) +
+                            (parseFloat(deductions.section80D) || 0) +
+                            (parseFloat(deductions.section80G) || 0) +
+                            (parseFloat(deductions.section80DD) || 0) +
                             (parseFloat(deductions.homeLoanInterest) || 0)).toLocaleString()}
                         </span>
                       </div>
@@ -1022,12 +1022,12 @@ export default function ITRStepByStepGuide() {
                 {/* Step 6: Tax Computation */}
                 {currentStep === 6 && (
                   <div className="space-y-4">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Tax Computation Summary</div>
-                    
+                    <div className="text-sm font-medium text-slate-700 mb-3">Tax Computation Summary</div>
+
                     {!taxComputed ? (
                       <div className="text-center py-4">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           onClick={() => setTaxComputed(true)}
                           className="bg-blue-600 hover:bg-blue-700"
                         >
@@ -1045,7 +1045,7 @@ export default function ITRStepByStepGuide() {
                             const taxData = calculateTax();
                             return (
                               <>
-                                <div className="bg-gray-50 p-6 rounded-lg space-y-3">
+                                <div className="bg-slate-50 p-6 rounded-lg space-y-3">
                                   <div className="flex justify-between">
                                     <span>Gross Total Income:</span>
                                     <span className="font-medium">₹{taxData.totalIncome.toLocaleString()}</span>
@@ -1098,7 +1098,7 @@ export default function ITRStepByStepGuide() {
                                 <Alert className={taxData.refundDue >= 0 ? "bg-green-50 border-green-200" : "bg-yellow-50 border-yellow-200"}>
                                   <CheckCircle className={`h-4 w-4 ${taxData.refundDue >= 0 ? 'text-green-600' : 'text-yellow-600'}`} />
                                   <AlertDescription className={taxData.refundDue >= 0 ? 'text-green-800' : 'text-yellow-800'}>
-                                    {taxData.refundDue >= 0 
+                                    {taxData.refundDue >= 0
                                       ? `Good news! You are eligible for a refund of ₹${taxData.refundDue.toLocaleString()}. Ensure your bank details are correct.`
                                       : `You need to pay additional tax of ₹${Math.abs(taxData.refundDue).toLocaleString()} before filing.`
                                     }
@@ -1119,7 +1119,7 @@ export default function ITRStepByStepGuide() {
                       <Label className="text-lg font-semibold mb-4 block">
                         Tax Payment Details
                       </Label>
-                      
+
                       {(() => {
                         const taxData = calculateTax();
                         return (
@@ -1129,11 +1129,11 @@ export default function ITRStepByStepGuide() {
                                 <Alert className="bg-red-50 border-red-200">
                                   <AlertCircle className="h-4 w-4 text-red-600" />
                                   <AlertDescription className="text-red-800">
-                                    You have tax payable of ₹{Math.abs(taxData.refundDue).toLocaleString()}. 
+                                    You have tax payable of ₹{Math.abs(taxData.refundDue).toLocaleString()}.
                                     Please pay before filing your return.
                                   </AlertDescription>
                                 </Alert>
-                                
+
                                 <Card>
                                   <CardHeader>
                                     <CardTitle>Payment Options</CardTitle>
@@ -1143,20 +1143,20 @@ export default function ITRStepByStepGuide() {
                                       <Button variant="outline" className="h-auto p-4 justify-start">
                                         <div className="text-left">
                                           <div className="font-medium">Pay Online</div>
-                                          <div className="text-sm text-gray-500">Using Net Banking/UPI/Cards</div>
+                                          <div className="text-sm text-slate-500">Using Net Banking/UPI/Cards</div>
                                         </div>
                                       </Button>
                                       <Button variant="outline" className="h-auto p-4 justify-start">
                                         <div className="text-left">
                                           <div className="font-medium">Generate Challan</div>
-                                          <div className="text-sm text-gray-500">Pay at bank branch</div>
+                                          <div className="text-sm text-slate-500">Pay at bank branch</div>
                                         </div>
                                       </Button>
                                     </div>
-                                    
+
                                     <div className="space-y-2">
                                       <Label htmlFor="challan">Challan Number (After Payment)</Label>
-                                      <Input 
+                                      <Input
                                         id="challan"
                                         placeholder="Enter challan number"
                                       />
@@ -1169,20 +1169,20 @@ export default function ITRStepByStepGuide() {
                                 <Alert className="bg-green-50 border-green-200">
                                   <CheckCircle className="h-4 w-4 text-green-600" />
                                   <AlertDescription className="text-green-800">
-                                    Great! You have a refund of ₹{taxData.refundDue.toLocaleString()} due. 
+                                    Great! You have a refund of ₹{taxData.refundDue.toLocaleString()} due.
                                     No payment required.
                                   </AlertDescription>
                                 </Alert>
-                                
+
                                 <Card>
                                   <CardHeader>
                                     <CardTitle>Refund Details</CardTitle>
                                   </CardHeader>
                                   <CardContent>
-                                    <p className="text-sm text-gray-600 mb-4">
+                                    <p className="text-sm text-slate-600 mb-4">
                                       Your refund will be processed to your bank account after verification.
                                     </p>
-                                    <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                                    <div className="bg-slate-50 p-4 rounded-lg space-y-2">
                                       <div className="flex justify-between text-sm">
                                         <span>Bank Account:</span>
                                         <span className="font-medium">{personalInfo.accountNumber}</span>
@@ -1210,14 +1210,14 @@ export default function ITRStepByStepGuide() {
                       <Label className="text-lg font-semibold mb-4 block">
                         Preview & Validate Your Return
                       </Label>
-                      
+
                       <Tabs defaultValue="review" className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
                           <TabsTrigger value="review">Review</TabsTrigger>
                           <TabsTrigger value="documents">Documents</TabsTrigger>
                           <TabsTrigger value="file">File ITR</TabsTrigger>
                         </TabsList>
-                        
+
                         <TabsContent value="review" className="space-y-4">
                           <Card>
                             <CardHeader>
@@ -1250,7 +1250,7 @@ export default function ITRStepByStepGuide() {
                             </CardContent>
                           </Card>
                         </TabsContent>
-                        
+
                         <TabsContent value="documents" className="space-y-4">
                           <Card>
                             <CardHeader>
@@ -1260,7 +1260,7 @@ export default function ITRStepByStepGuide() {
                             <CardContent className="space-y-3">
                               <div className="flex items-center justify-between p-3 border rounded-lg">
                                 <div className="flex items-center gap-3">
-                                  <FileText className="h-5 w-5 text-gray-500" />
+                                  <FileText className="h-5 w-5 text-slate-500" />
                                   <span>Form 16 (If salaried)</span>
                                 </div>
                                 <Button size="sm" variant="outline">
@@ -1270,7 +1270,7 @@ export default function ITRStepByStepGuide() {
                               </div>
                               <div className="flex items-center justify-between p-3 border rounded-lg">
                                 <div className="flex items-center gap-3">
-                                  <FileText className="h-5 w-5 text-gray-500" />
+                                  <FileText className="h-5 w-5 text-slate-500" />
                                   <span>Bank Statements</span>
                                 </div>
                                 <Button size="sm" variant="outline">
@@ -1280,7 +1280,7 @@ export default function ITRStepByStepGuide() {
                               </div>
                               <div className="flex items-center justify-between p-3 border rounded-lg">
                                 <div className="flex items-center gap-3">
-                                  <FileText className="h-5 w-5 text-gray-500" />
+                                  <FileText className="h-5 w-5 text-slate-500" />
                                   <span>Investment Proofs</span>
                                 </div>
                                 <Button size="sm" variant="outline">
@@ -1291,7 +1291,7 @@ export default function ITRStepByStepGuide() {
                             </CardContent>
                           </Card>
                         </TabsContent>
-                        
+
                         <TabsContent value="file" className="space-y-4">
                           <Card>
                             <CardHeader>
@@ -1303,18 +1303,18 @@ export default function ITRStepByStepGuide() {
                                 <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                                 <div>
                                   <p className="font-medium">All details verified</p>
-                                  <p className="text-sm text-gray-600">Your tax computation is complete and accurate</p>
+                                  <p className="text-sm text-slate-600">Your tax computation is complete and accurate</p>
                                 </div>
                               </div>
-                              
+
                               <div className="flex items-start space-x-3">
                                 <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                                 <div>
                                   <p className="font-medium">Documents ready</p>
-                                  <p className="text-sm text-gray-600">All required documents are available</p>
+                                  <p className="text-sm text-slate-600">All required documents are available</p>
                                 </div>
                               </div>
-                              
+
                               <div className="bg-blue-50 p-4 rounded-lg">
                                 <p className="text-sm text-blue-800 mb-3">
                                   By filing your return, you confirm that all information provided is true and correct.
@@ -1349,7 +1349,7 @@ export default function ITRStepByStepGuide() {
                       <Label className="text-lg font-semibold mb-4 block">
                         Submit & E-Verify Your Return
                       </Label>
-                      
+
                       <div className="space-y-6">
                         {/* Submission Status */}
                         <Card>
@@ -1362,7 +1362,7 @@ export default function ITRStepByStepGuide() {
                                 <CheckCircle className="h-6 w-6 text-green-600" />
                                 <div>
                                   <p className="font-medium">ITR Successfully Submitted!</p>
-                                  <p className="text-sm text-gray-600">Acknowledgment Number: <span className="font-mono">ITR-{Date.now()}</span></p>
+                                  <p className="text-sm text-slate-600">Acknowledgment Number: <span className="font-mono">ITR-{Date.now()}</span></p>
                                 </div>
                               </div>
                               <Button size="sm" variant="outline">
@@ -1370,7 +1370,7 @@ export default function ITRStepByStepGuide() {
                                 Download
                               </Button>
                             </div>
-                            
+
                             <Alert>
                               <AlertCircle className="h-4 w-4" />
                               <AlertDescription>
@@ -1391,36 +1391,36 @@ export default function ITRStepByStepGuide() {
                               <Button variant="outline" className="h-auto p-4 justify-start text-left">
                                 <div className="flex-1">
                                   <div className="font-medium mb-1">Aadhaar OTP</div>
-                                  <div className="text-sm text-gray-500">Aadhaar OTP verification where available</div>
+                                  <div className="text-sm text-slate-500">Aadhaar OTP verification where available</div>
                                 </div>
                                 <Badge className="bg-green-100 text-green-800">Recommended</Badge>
                               </Button>
-                              
+
                               <Button variant="outline" className="h-auto p-4 justify-start text-left">
                                 <div className="flex-1">
                                   <div className="font-medium mb-1">Net Banking</div>
-                                  <div className="text-sm text-gray-500">Login to your bank account for verification</div>
+                                  <div className="text-sm text-slate-500">Login to your bank account for verification</div>
                                 </div>
                               </Button>
-                              
+
                               <Button variant="outline" className="h-auto p-4 justify-start text-left">
                                 <div className="flex-1">
                                   <div className="font-medium mb-1">Bank ATM</div>
-                                  <div className="text-sm text-gray-500">Generate EVC at ATM using debit card</div>
+                                  <div className="text-sm text-slate-500">Generate EVC at ATM using debit card</div>
                                 </div>
                               </Button>
-                              
+
                               <Button variant="outline" className="h-auto p-4 justify-start text-left">
                                 <div className="flex-1">
                                   <div className="font-medium mb-1">DSC (Digital Signature)</div>
-                                  <div className="text-sm text-gray-500">Use your digital signature certificate</div>
+                                  <div className="text-sm text-slate-500">Use your digital signature certificate</div>
                                 </div>
                               </Button>
-                              
+
                               <Button variant="outline" className="h-auto p-4 justify-start text-left">
                                 <div className="flex-1">
                                   <div className="font-medium mb-1">EVC through Bank Account</div>
-                                  <div className="text-sm text-gray-500">Pre-validate bank account and generate EVC</div>
+                                  <div className="text-sm text-slate-500">Pre-validate bank account and generate EVC</div>
                                 </div>
                               </Button>
                             </div>
@@ -1476,7 +1476,7 @@ export default function ITRStepByStepGuide() {
             <ChevronLeft className="h-4 w-4" />
             Previous
           </Button>
-          
+
           <Button
             onClick={handleNext}
             disabled={currentStep === steps.length - 1}

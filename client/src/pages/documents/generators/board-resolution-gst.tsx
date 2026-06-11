@@ -58,7 +58,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 15px; color: #000; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 40px;">
-    
+
     <div style="text-align: center; margin-bottom: 40px;">
       <h1 style="margin: 0; font-size: 18px; text-decoration: underline; text-transform: uppercase;">
         EXTRACT OF THE RESOLUTION PASSED IN THE MEETING OF THE BOARD OF DIRECTORS OF ${data.companyName.toUpperCase()} HELD ON ${data.meetingDate.split('-').reverse().join('/')} AT ${data.meetingLocation.toUpperCase()}
@@ -74,7 +74,7 @@ const generateHTML = (data: any) => `
     <p style="text-align: justify; margin-top: 15px;">
       "<strong>RESOLVED FURTHER THAT</strong> the above-named Authorized Signatory is hereby conferred with the authority to digitally sign, upload, submit, and physical present all required documents, applications, returns, and communications related to the Goods and Services Tax (GST) Act on behalf of the Company."
     </p>
-    
+
     <p style="text-align: justify; margin-top: 15px;">
       "<strong>RESOLVED FURTHER THAT</strong> the said Authorized Signatory is empowered to represent the Company before the GST Department and proper officers, and take all necessary actions including amendments, cancellations, or correspondences pertaining to GST compliance."
     </p>

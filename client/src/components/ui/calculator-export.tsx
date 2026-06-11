@@ -27,7 +27,7 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
       `Date: ${new Date().toLocaleDateString('en-IN')}`,
       ``,
       ...Object.entries(data).map(([key, value]) => {
-        const formattedValue = typeof value === 'number' 
+        const formattedValue = typeof value === 'number'
           ? `₹${value.toLocaleString('en-IN')}`
           : value;
         return `${key}: ${formattedValue}`;
@@ -106,50 +106,50 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
               --leading-normal: 1.5;
             }
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-              padding: 40px; 
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              padding: 40px;
               color: #1f2937;
               line-height: var(--leading-normal);
             }
-            .header { 
-              text-align: center; 
-              margin-bottom: 30px; 
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
               padding-bottom: 20px;
               border-bottom: 2px solid #e5e7eb;
             }
-            .logo { 
-              font-size: var(--text-2xl); 
-              font-weight: bold; 
+            .logo {
+              font-size: var(--text-2xl);
+              font-weight: bold;
               color: #1e40af;
               margin-bottom: 5px;
             }
-            .title { 
-              font-size: var(--text-3xl); 
-              font-weight: bold; 
+            .title {
+              font-size: var(--text-3xl);
+              font-weight: bold;
               color: #111827;
               margin-bottom: 10px;
             }
-            .date { 
-              color: #6b7280; 
-              font-size: var(--text-sm); 
+            .date {
+              color: #6b7280;
+              font-size: var(--text-sm);
             }
-            .results { 
+            .results {
               background: #f9fafb;
               border-radius: 12px;
               padding: 24px;
               margin: 20px 0;
             }
-            .result-row { 
-              display: flex; 
-              justify-content: space-between; 
+            .result-row {
+              display: flex;
+              justify-content: space-between;
               padding: 12px 0;
               border-bottom: 1px solid #e5e7eb;
             }
             .result-row:last-child { border-bottom: none; }
             .result-label { color: #4b5563; }
-            .result-value { 
-              font-weight: 600; 
+            .result-value {
+              font-weight: 600;
               color: #111827;
             }
             .highlight {
@@ -161,9 +161,9 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
             }
             .highlight .result-label { color: #bfdbfe; }
             .highlight .result-value { color: white; font-size: var(--text-2xl); }
-            .footer { 
-              text-align: center; 
-              margin-top: 40px; 
+            .footer {
+              text-align: center;
+              margin-top: 40px;
               padding-top: 20px;
               border-top: 1px solid #e5e7eb;
               color: #6b7280;
@@ -188,30 +188,30 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
           <div class="header">
             <div class="logo">MyeCA.in</div>
             <div class="title">${title}</div>
-            <div class="date">Generated on ${new Date().toLocaleDateString('en-IN', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            <div class="date">Generated on ${new Date().toLocaleDateString('en-IN', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             })}</div>
           </div>
-          
+
           <div class="results">
             ${Object.entries(data).map(([key, value], index, arr) => {
-              const formattedValue = typeof value === 'number' 
+              const formattedValue = typeof value === 'number'
                 ? `₹${value.toLocaleString('en-IN')}`
                 : value;
               const isLast = index === arr.length - 1;
-              return isLast 
+              return isLast
                 ? `</div><div class="highlight"><div class="result-row"><span class="result-label">${key}</span><span class="result-value">${formattedValue}</span></div></div>`
                 : `<div class="result-row"><span class="result-label">${key}</span><span class="result-value">${formattedValue}</span></div>`;
             }).join('')}
-          
+
           <div class="disclaimer">
-            <strong>Disclaimer:</strong> This calculation is for informational purposes only. 
+            <strong>Disclaimer:</strong> This calculation is for informational purposes only.
             Actual tax liability may vary. Please consult a tax professional for accurate tax advice.
           </div>
-          
+
           <div class="footer">
             <p>Calculate your taxes at <strong>myeca.in</strong></p>
             <p>MyeCA tax filing and calculator platform</p>
@@ -228,7 +228,7 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
         printWindow.print();
       };
     }
-    
+
     toast({
       title: "PDF Ready",
       description: "Use your browser's print dialog to save as PDF",
@@ -247,7 +247,7 @@ export function CalculatorExport({ title, data, resultRef }: CalculatorExportPro
     a.click();
     if (a.parentNode) a.remove();
     URL.revokeObjectURL(url);
-    
+
     toast({
       title: "Downloaded!",
       description: "Results saved as text file",

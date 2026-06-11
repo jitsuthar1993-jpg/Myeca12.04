@@ -52,7 +52,7 @@ export default function ConsultationsPage() {
   });
 
   // Get available slots for selected expert and date
-  const availableSlots = selectedExpert && selectedDate 
+  const availableSlots = selectedExpert && selectedDate
     ? getAvailableSlots(selectedExpert.id, selectedDate)
     : [];
 
@@ -75,20 +75,20 @@ export default function ConsultationsPage() {
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
             {expert.name.split(' ').map(n => n[0]).join('')}
           </div>
-          
+
           <div className="flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-bold text-lg">{expert.name}</h3>
-                <p className="text-sm text-gray-500">{expert.title}</p>
+                <p className="text-sm text-slate-500">{expert.title}</p>
               </div>
               {expert.featured && (
                 <Badge className="bg-yellow-100 text-yellow-700">Featured</Badge>
               )}
             </div>
-            
-            <p className="mt-2 text-sm text-gray-500">Credential and scope checked before booking</p>
-            
+
+            <p className="mt-2 text-sm text-slate-500">Credential and scope checked before booking</p>
+
             <div className="flex flex-wrap gap-1 mt-3">
               {expert.specializations.slice(0, 4).map((spec, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
@@ -96,8 +96,8 @@ export default function ConsultationsPage() {
                 </Badge>
               ))}
             </div>
-            
-            <div className="flex items-center gap-4 mt-3 text-sm text-gray-600">
+
+            <div className="flex items-center gap-4 mt-3 text-sm text-slate-600">
               <span className="flex items-center gap-1">
                 <Award className="h-4 w-4" />
                 {expert.experience} years exp
@@ -107,12 +107,12 @@ export default function ConsultationsPage() {
                 {expert.languages.join(', ')}
               </span>
             </div>
-            
-            <p className="text-sm text-gray-600 mt-3 line-clamp-2">{expert.bio}</p>
-            
+
+            <p className="text-sm text-slate-600 mt-3 line-clamp-2">{expert.bio}</p>
+
             <div className="flex items-center justify-between mt-4">
               <div>
-                <span className="text-sm text-gray-500">Starting from</span>
+                <span className="text-sm text-slate-500">Starting from</span>
                 <p className="text-xl font-bold text-green-600">{formatPrice(expert.consultationFee)}</p>
               </div>
               <Button onClick={() => startBooking(expert)}>
@@ -126,7 +126,7 @@ export default function ConsultationsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -190,7 +190,7 @@ export default function ConsultationsPage() {
           <h2 className="text-xl font-semibold mb-4">Choose Consultation Type</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {CONSULTATION_TYPES.map((type) => (
-              <Card 
+              <Card
                 key={type.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   selectedType?.id === type.id ? 'ring-2 ring-purple-500' : ''
@@ -202,7 +202,7 @@ export default function ConsultationsPage() {
                     {CONSULTATION_ICONS[type.icon]}
                   </div>
                   <h3 className="font-semibold text-sm">{type.name}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{type.duration} mins</p>
+                  <p className="text-xs text-slate-500 mt-1">{type.duration} mins</p>
                   <p className="text-lg font-bold text-purple-600 mt-2">{formatPrice(type.price)}</p>
                 </CardContent>
               </Card>
@@ -231,28 +231,28 @@ export default function ConsultationsPage() {
                     <Award className="h-6 w-6 text-purple-600" />
                   </div>
                   <h3 className="font-semibold">Verified CAs</h3>
-                  <p className="text-sm text-gray-600 mt-1">Expert credentials are checked for scoped engagements where applicable.</p>
+                  <p className="text-sm text-slate-600 mt-1">Expert credentials are checked for scoped engagements where applicable.</p>
                 </div>
                 <div className="text-center">
                   <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
                     <Video className="h-6 w-6 text-purple-600" />
                   </div>
                   <h3 className="font-semibold">Video Calls</h3>
-                  <p className="text-sm text-gray-600 mt-1">Face-to-face consultation from anywhere</p>
+                  <p className="text-sm text-slate-600 mt-1">Face-to-face consultation from anywhere</p>
                 </div>
                 <div className="text-center">
                   <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
                     <Clock className="h-6 w-6 text-purple-600" />
                   </div>
                   <h3 className="font-semibold">Flexible Timing</h3>
-                  <p className="text-sm text-gray-600 mt-1">Book slots that suit your schedule</p>
+                  <p className="text-sm text-slate-600 mt-1">Book slots that suit your schedule</p>
                 </div>
                 <div className="text-center">
                   <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
                     <CheckCircle className="h-6 w-6 text-purple-600" />
                   </div>
                   <h3 className="font-semibold">Clear Scope</h3>
-                  <p className="text-sm text-gray-600 mt-1">Refund eligibility shown before payment</p>
+                  <p className="text-sm text-slate-600 mt-1">Refund eligibility shown before payment</p>
                 </div>
               </div>
             </CardContent>
@@ -278,22 +278,22 @@ export default function ConsultationsPage() {
           {/* Step 1: Consultation Type */}
           {bookingStep === 1 && (
             <div className="space-y-4">
-              <RadioGroup 
-                value={selectedType?.id || ''} 
+              <RadioGroup
+                value={selectedType?.id || ''}
                 onValueChange={(v) => setSelectedType(CONSULTATION_TYPES.find(t => t.id === v) || null)}
               >
                 {CONSULTATION_TYPES.map((type) => (
-                  <div 
+                  <div
                     key={type.id}
-                    className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50"
+                    className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-slate-50"
                   >
                     <RadioGroupItem value={type.id} id={type.id} />
                     <Label htmlFor={type.id} className="flex-1 cursor-pointer">
                       <div className="flex justify-between items-center">
                         <div>
                           <p className="font-medium">{type.name}</p>
-                          <p className="text-sm text-gray-500">{type.description}</p>
-                          <p className="text-xs text-gray-400 mt-1">{type.duration} minutes</p>
+                          <p className="text-sm text-slate-500">{type.description}</p>
+                          <p className="text-xs text-slate-400 mt-1">{type.duration} minutes</p>
                         </div>
                         <p className="text-lg font-bold text-purple-600">{formatPrice(type.price)}</p>
                       </div>
@@ -334,10 +334,10 @@ export default function ConsultationsPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm">No slots available for this date</p>
+                    <p className="text-slate-500 text-sm">No slots available for this date</p>
                   )
                 ) : (
-                  <p className="text-gray-500 text-sm">Please select a date first</p>
+                  <p className="text-slate-500 text-sm">Please select a date first</p>
                 )}
               </div>
             </div>
@@ -348,8 +348,8 @@ export default function ConsultationsPage() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name">Full Name</Label>
-                <Input 
-                  id="name" 
+                <Input
+                  id="name"
                   value={userDetails.name}
                   onChange={(e) => setUserDetails({...userDetails, name: e.target.value})}
                   placeholder="Enter your full name"
@@ -357,8 +357,8 @@ export default function ConsultationsPage() {
               </div>
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" 
+                <Input
+                  id="email"
                   type="email"
                   value={userDetails.email}
                   onChange={(e) => setUserDetails({...userDetails, email: e.target.value})}
@@ -367,8 +367,8 @@ export default function ConsultationsPage() {
               </div>
               <div>
                 <Label htmlFor="phone">Phone</Label>
-                <Input 
-                  id="phone" 
+                <Input
+                  id="phone"
                   value={userDetails.phone}
                   onChange={(e) => setUserDetails({...userDetails, phone: e.target.value})}
                   placeholder="Enter your phone number"
@@ -376,7 +376,7 @@ export default function ConsultationsPage() {
               </div>
               <div>
                 <Label htmlFor="description">Brief Description of Your Query</Label>
-                <Textarea 
+                <Textarea
                   id="description"
                   value={userDetails.description}
                   onChange={(e) => setUserDetails({...userDetails, description: e.target.value})}
@@ -390,28 +390,28 @@ export default function ConsultationsPage() {
           {/* Step 4: Confirmation */}
           {bookingStep === 4 && (
             <div className="space-y-4">
-              <Card className="bg-gray-50">
+              <Card className="bg-slate-50">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-3">Booking Summary</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Expert</span>
+                      <span className="text-slate-600">Expert</span>
                       <span className="font-medium">{selectedExpert?.name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Consultation</span>
+                      <span className="text-slate-600">Consultation</span>
                       <span className="font-medium">{selectedType?.name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Date</span>
+                      <span className="text-slate-600">Date</span>
                       <span className="font-medium">{selectedDate?.toLocaleDateString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Time</span>
+                      <span className="text-slate-600">Time</span>
                       <span className="font-medium">{selectedSlot}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Duration</span>
+                      <span className="text-slate-600">Duration</span>
                       <span className="font-medium">{selectedType?.duration} minutes</span>
                     </div>
                     <div className="flex justify-between pt-2 border-t">
@@ -421,8 +421,8 @@ export default function ConsultationsPage() {
                   </div>
                 </CardContent>
               </Card>
-              <p className="text-sm text-gray-500">
-                By clicking "Confirm Booking", you agree to our terms and conditions. 
+              <p className="text-sm text-slate-500">
+                By clicking "Confirm Booking", you agree to our terms and conditions.
                 You will receive a confirmation email with the meeting link.
               </p>
             </div>
@@ -436,7 +436,7 @@ export default function ConsultationsPage() {
             )}
             <div className="flex-1" />
             {bookingStep < 4 ? (
-              <Button 
+              <Button
                 onClick={() => setBookingStep(bookingStep + 1)}
                 disabled={
                   (bookingStep === 1 && !selectedType) ||

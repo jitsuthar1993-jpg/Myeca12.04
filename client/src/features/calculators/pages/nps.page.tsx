@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { 
+import {
   PiggyBank, TrendingUp, Target, Calendar, IndianRupee,
   ShieldCheck, Sparkles, Zap, Shield, BadgeCent,
   CheckCircle2, Clock, Calculator, ArrowRight,
@@ -103,7 +103,7 @@ export default function NPSCalculatorPage() {
               <div className="absolute top-0 right-0 p-6 opacity-5 text-[#444CE7]">
                 <Shield className="w-24 h-24" />
               </div>
-              
+
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-[#EEF2FF] flex items-center justify-center text-[#444CE7] border border-[#C7D2FE]">
                   <Calendar className="w-5 h-5" />
@@ -121,7 +121,7 @@ export default function NPSCalculatorPage() {
                     <div className="flex items-center justify-between px-1">
                       <span className="text-sm font-normal text-[#344054]">Current Age</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
-                        <input 
+                        <input
                           type="number"
                           value={age}
                           onChange={(e) => setAge(Number(e.target.value))}
@@ -130,7 +130,7 @@ export default function NPSCalculatorPage() {
                         <span className="text-xs font-normal text-[#667085]">Yrs</span>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="18"
                       max="55"
@@ -146,7 +146,7 @@ export default function NPSCalculatorPage() {
                       <span className="text-sm font-normal text-[#344054]">Monthly Invest</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={monthly}
                           onChange={(e) => setMonthly(Number(e.target.value))}
@@ -154,7 +154,7 @@ export default function NPSCalculatorPage() {
                         />
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="500"
                       max="150000"
@@ -170,7 +170,7 @@ export default function NPSCalculatorPage() {
                     <div className="flex items-center justify-between px-1">
                       <span className="text-sm font-normal text-[#344054]">Expected Return</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
-                        <input 
+                        <input
                           type="number"
                           value={rate}
                           onChange={(e) => setRate(Number(e.target.value))}
@@ -179,7 +179,7 @@ export default function NPSCalculatorPage() {
                         <span className="text-xs font-normal text-[#667085]">%</span>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="6"
                       max="15"
@@ -195,7 +195,7 @@ export default function NPSCalculatorPage() {
                     <div className="flex items-center justify-between px-1">
                       <span className="text-sm font-normal text-[#344054]">Annuity Choice</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
-                        <input 
+                        <input
                           type="number"
                           value={annuity}
                           onChange={(e) => setAnnuity(Number(e.target.value))}
@@ -204,7 +204,7 @@ export default function NPSCalculatorPage() {
                         <span className="text-xs font-normal text-[#667085]">%</span>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="40"
                       max="100"
@@ -366,7 +366,7 @@ export default function NPSCalculatorPage() {
 
         {/* Informational Content */}
         <div className="mt-12">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <ShieldCheck className="w-5 h-5" />,

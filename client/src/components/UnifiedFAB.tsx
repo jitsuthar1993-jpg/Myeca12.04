@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { 
-  MessageCircle, 
-  X, 
+import {
+  MessageCircle,
+  X,
   HelpCircle,
   Mail,
   ShieldCheck
@@ -36,7 +36,7 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
   return (
     <>
       {/* Backdrop when expanded */}
-      <div 
+      <div
         className={cn(
           "fixed inset-0 z-40 hidden bg-blue-900/20 transition-opacity duration-200 md:block",
           isExpanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -49,8 +49,8 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
         {/* Action Buttons - shown when expanded */}
         <div className={cn(
           "flex flex-col gap-2 transition-all duration-200",
-          isExpanded 
-            ? "opacity-100 translate-y-0 pointer-events-auto" 
+          isExpanded
+            ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none"
         )}>
           {/* Feedback Button */}
@@ -58,17 +58,17 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
             onClick={handleFeedbackClick}
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl",
-              "bg-white text-gray-700 border border-gray-200",
-              "shadow-lg hover:shadow-xl hover:scale-105 hover:border-gray-300",
+              "bg-white text-slate-700 border border-slate-200",
+              "shadow-lg hover:shadow-xl hover:scale-105 hover:border-slate-300",
               "transition-all duration-200"
             )}
           >
-            <div className="p-1.5 bg-gray-100 rounded-lg">
-              <MessageCircle className="w-4 h-4 text-gray-600" />
+            <div className="p-1.5 bg-slate-100 rounded-lg">
+              <MessageCircle className="w-4 h-4 text-slate-600" />
             </div>
             <div className="text-left">
               <span className="font-medium text-sm">Feedback</span>
-              <span className="text-gray-500 text-xs block">Share your thoughts</span>
+              <span className="text-slate-500 text-xs block">Share your thoughts</span>
             </div>
           </button>
 
@@ -95,7 +95,7 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
             href="/trust"
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl",
-              "bg-white text-gray-700 border border-gray-200",
+              "bg-white text-slate-700 border border-slate-200",
               "shadow-lg hover:shadow-xl hover:scale-105 hover:border-blue-100",
               "transition-all duration-200"
             )}
@@ -105,7 +105,7 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
             </div>
             <div className="text-left">
               <span className="font-medium text-sm">Trust & security</span>
-              <span className="text-gray-500 text-xs block">Document handling</span>
+              <span className="text-slate-500 text-xs block">Document handling</span>
             </div>
           </a>
         </div>
@@ -133,8 +133,8 @@ export function UnifiedFAB({ isChatbotOpen = false }: UnifiedFABProps) {
       </div>
 
       {/* Feedback Dialog */}
-      <FeedbackDialog 
-        open={isFeedbackOpen} 
+      <FeedbackDialog
+        open={isFeedbackOpen}
         onOpenChange={setIsFeedbackOpen}
       />
     </>

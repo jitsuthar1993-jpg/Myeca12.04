@@ -46,9 +46,9 @@ export interface ButtonProps
 const AnimatedButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading = false, success = false, children, ...props }, ref) => {
     const [isPressed, setIsPressed] = React.useState(false)
-    
+
     const Comp = asChild ? Slot : "button"
-    
+
     const handleMouseDown = () => setIsPressed(true)
     const handleMouseUp = () => setIsPressed(false)
     const handleMouseLeave = () => setIsPressed(false)

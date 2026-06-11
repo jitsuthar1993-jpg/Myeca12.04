@@ -33,7 +33,7 @@ class AccessibilityMonitor {
 
   startMonitoring(): void {
     if (this.isMonitoring) return;
-    
+
     this.isMonitoring = true;
     this.runAccessibilityAudit();
     this.setupKeyboardNavigation();
@@ -105,7 +105,7 @@ class AccessibilityMonitor {
   private setupKeyboardNavigation(): void {
     // Skip links
     this.createSkipLinks();
-    
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       // Alt + 1 = Main content
@@ -150,15 +150,15 @@ class AccessibilityMonitor {
         z-index: 10000;
         transition: top 0.3s;
       `;
-      
+
       skipLink.addEventListener('focus', () => {
         skipLink.style.top = '6px';
       });
-      
+
       skipLink.addEventListener('blur', () => {
         skipLink.style.top = '-40px';
       });
-      
+
       document.body.insertBefore(skipLink, document.body.firstChild);
     });
   }
@@ -204,9 +204,9 @@ class AccessibilityMonitor {
     const role = element.getAttribute('role');
     const ariaLabel = element.getAttribute('aria-label');
     const textContent = element.textContent?.trim();
-    
+
     let announcement = '';
-    
+
     if (ariaLabel) {
       announcement = ariaLabel;
     } else if (role) {
@@ -216,35 +216,35 @@ class AccessibilityMonitor {
     } else {
       announcement = `${element.tagName.toLowerCase()} focused`;
     }
-    
+
     this.announceToScreenReader(announcement);
   }
 
   private setupScreenReaderSupport(): void {
     // Ensure all images have alt text
     this.checkImageAltText();
-    
+
     // Ensure form inputs have labels
     this.checkFormLabels();
-    
+
     // Check ARIA attributes
     this.checkARIAAttributes();
-    
+
     // Check heading structure
     this.checkHeadingStructure();
   }
 
   private announceToScreenReader(message: string): void {
     if (!this.announcements) return;
-    
+
     // Clear previous announcement
     this.announcements.textContent = '';
-    
+
     // Add new announcement
     setTimeout(() => {
       this.announcements!.textContent = message;
     }, 100);
-    
+
     // Clear after announcement
     setTimeout(() => {
       this.announcements!.textContent = '';
@@ -253,41 +253,41 @@ class AccessibilityMonitor {
 
   private runAccessibilityAudit(): void {
     this.issues = [];
-    
+
     // Check color contrast
     this.checkColorContrast();
-    
+
     // Check keyboard navigation
     this.checkKeyboardNavigation();
-    
+
     // Check semantic HTML
     this.checkSemanticHTML();
-    
+
     // Check ARIA implementation
     this.checkARIAImplementation();
-    
+
     // Check form accessibility
     this.checkFormAccessibility();
-    
+
     // Check media accessibility
     this.checkMediaAccessibility();
-    
+
     // Generate report
     this.generateReport();
   }
 
   private checkColorContrast(): void {
     const elements = document.querySelectorAll('*');
-    
+
     elements.forEach(element => {
       const style = window.getComputedStyle(element);
       const backgroundColor = style.backgroundColor;
       const color = style.color;
-      
-      if (backgroundColor && backgroundColor !== 'rgba(0, 0, 0, 0)' && 
+
+      if (backgroundColor && backgroundColor !== 'rgba(0, 0, 0, 0)' &&
           color && color !== 'rgba(0, 0, 0, 0)') {
         const contrastRatio = this.getContrastRatio(color, backgroundColor);
-        
+
         if (contrastRatio < 4.5) {
           this.issues.push({
             type: 'contrast',
@@ -305,15 +305,15 @@ class AccessibilityMonitor {
   private getContrastRatio(color1: string, color2: string): number {
     const rgb1 = this.parseColor(color1);
     const rgb2 = this.parseColor(color2);
-    
+
     if (!rgb1 || !rgb2) return 1;
-    
+
     const l1 = this.getRelativeLuminance(rgb1);
     const l2 = this.getRelativeLuminance(rgb2);
-    
+
     const lighter = Math.max(l1, l2);
     const darker = Math.min(l1, l2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
@@ -321,10 +321,10 @@ class AccessibilityMonitor {
     const div = document.createElement('div');
     div.style.color = color;
     document.body.appendChild(div);
-    
+
     const computedColor = window.getComputedStyle(div).color;
     if (div.parentNode) div.remove();
-    
+
     const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
     if (match) {
       return {
@@ -333,7 +333,7 @@ class AccessibilityMonitor {
         b: parseInt(match[3])
       };
     }
-    
+
     return null;
   }
 
@@ -343,14 +343,14 @@ class AccessibilityMonitor {
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    
+
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
   }
 
   private checkKeyboardNavigation(): void {
     // Check for elements that should be focusable
     const clickableElements = document.querySelectorAll('div[onclick], span[onclick], a:not([href])');
-    
+
     clickableElements.forEach(element => {
       if (!element.hasAttribute('tabindex') || element.getAttribute('tabindex') === '-1') {
         this.issues.push({
@@ -363,7 +363,7 @@ class AccessibilityMonitor {
         });
       }
     });
-    
+
     // Check for keyboard traps
     this.checkKeyboardTraps();
   }
@@ -371,12 +371,12 @@ class AccessibilityMonitor {
   private checkKeyboardTraps(): void {
     // Simple check for potential keyboard traps
     const modals = document.querySelectorAll('[role="dialog"], .modal, .popup');
-    
+
     modals.forEach(modal => {
       const focusableElements = modal.querySelectorAll(
         'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
-      
+
       if (focusableElements.length > 0 && !modal.querySelector('[data-focus-trap]')) {
         this.issues.push({
           type: 'keyboard',
@@ -394,10 +394,10 @@ class AccessibilityMonitor {
     // Check for proper heading structure
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     let previousLevel = 0;
-    
+
     headings.forEach((heading, index) => {
       const level = parseInt(heading.tagName.charAt(1));
-      
+
       if (index === 0 && level !== 1) {
         this.issues.push({
           type: 'semantic',
@@ -408,7 +408,7 @@ class AccessibilityMonitor {
           wcagGuideline: 'WCAG 2.1 AA 1.3.1'
         });
       }
-      
+
       if (level - previousLevel > 1 && previousLevel > 0) {
         this.issues.push({
           type: 'semantic',
@@ -419,17 +419,17 @@ class AccessibilityMonitor {
           wcagGuideline: 'WCAG 2.1 AA 1.3.1'
         });
       }
-      
+
       previousLevel = level;
     });
-    
+
     // Check for lists without proper structure
     const lists = document.querySelectorAll('ul, ol');
     lists.forEach(list => {
-      const directChildren = Array.from(list.children).filter(child => 
+      const directChildren = Array.from(list.children).filter(child =>
         child.tagName !== 'LI' && child.tagName !== 'SCRIPT'
       );
-      
+
       if (directChildren.length > 0) {
         this.issues.push({
           type: 'semantic',
@@ -448,12 +448,12 @@ class AccessibilityMonitor {
     const interactiveElements = document.querySelectorAll(
       'button, a[href], input, select, textarea'
     );
-    
+
     interactiveElements.forEach(element => {
-      const hasLabel = element.hasAttribute('aria-label') || 
+      const hasLabel = element.hasAttribute('aria-label') ||
                       element.hasAttribute('aria-labelledby') ||
                       element.closest('label') !== null;
-      
+
       if (!hasLabel && !element.textContent?.trim()) {
         this.issues.push({
           type: 'aria',
@@ -465,18 +465,18 @@ class AccessibilityMonitor {
         });
       }
     });
-    
+
     // Check for duplicate ARIA IDs
     const ariaIds = document.querySelectorAll('[id]');
     const idCounts = new Map<string, number>();
-    
+
     ariaIds.forEach(element => {
       const id = element.id;
       if (id) {
         idCounts.set(id, (idCounts.get(id) || 0) + 1);
       }
     });
-    
+
     idCounts.forEach((count, id) => {
       if (count > 1) {
         const elements = document.querySelectorAll(`#${id}`);
@@ -497,13 +497,13 @@ class AccessibilityMonitor {
   private checkFormAccessibility(): void {
     // Check for form labels
     const inputs = document.querySelectorAll('input, select, textarea');
-    
+
     inputs.forEach(input => {
       const id = input.id;
       const hasLabel = id ? document.querySelector(`label[for="${id}"]`) : false;
       const isWrappedInLabel = input.closest('label') !== null;
       const hasAriaLabel = input.hasAttribute('aria-label') || input.hasAttribute('aria-labelledby');
-      
+
       if (!hasLabel && !isWrappedInLabel && !hasAriaLabel) {
         this.issues.push({
           type: 'aria',
@@ -515,14 +515,14 @@ class AccessibilityMonitor {
         });
       }
     });
-    
+
     // Check for required field indicators
     const requiredFields = document.querySelectorAll('[required]');
     requiredFields.forEach(field => {
       const hasIndicator = field.hasAttribute('aria-required') ||
                           field.closest('label')?.textContent?.includes('*') ||
                           document.querySelector('.required-indicator');
-      
+
       if (!hasIndicator) {
         this.issues.push({
           type: 'semantic',
@@ -538,11 +538,11 @@ class AccessibilityMonitor {
 
   private checkImageAltText(): void {
     const images = document.querySelectorAll('img');
-    
+
     images.forEach(img => {
       const alt = img.getAttribute('alt');
       const role = img.getAttribute('role');
-      
+
       if (role !== 'presentation' && !alt) {
         this.issues.push({
           type: 'screen-reader',
@@ -553,7 +553,7 @@ class AccessibilityMonitor {
           wcagGuideline: 'WCAG 2.1 AA 1.1.1'
         });
       }
-      
+
       if (alt === '') {
         this.issues.push({
           type: 'screen-reader',
@@ -569,13 +569,13 @@ class AccessibilityMonitor {
 
   private checkFormLabels(): void {
     const inputs = document.querySelectorAll('input, select, textarea');
-    
+
     inputs.forEach(input => {
       const id = input.id;
       const hasLabel = id ? document.querySelector(`label[for="${id}"]`) !== null : false;
       const isInLabel = input.closest('label') !== null;
       const hasAriaLabel = input.hasAttribute('aria-label') || input.hasAttribute('aria-labelledby');
-      
+
       if (!hasLabel && !isInLabel && !hasAriaLabel) {
         this.issues.push({
           type: 'screen-reader',
@@ -592,12 +592,12 @@ class AccessibilityMonitor {
   private checkARIAAttributes(): void {
     // Check for proper ARIA usage
     const elementsWithAria = document.querySelectorAll('[aria-label], [aria-labelledby], [aria-describedby]');
-    
+
     elementsWithAria.forEach(element => {
       const ariaLabel = element.getAttribute('aria-label');
       const ariaLabelledBy = element.getAttribute('aria-labelledby');
       const ariaDescribedBy = element.getAttribute('aria-describedby');
-      
+
       if (ariaLabelledBy) {
         const labelElement = document.getElementById(ariaLabelledBy);
         if (!labelElement) {
@@ -611,7 +611,7 @@ class AccessibilityMonitor {
           });
         }
       }
-      
+
       if (ariaDescribedBy) {
         const descriptionElement = document.getElementById(ariaDescribedBy);
         if (!descriptionElement) {
@@ -631,10 +631,10 @@ class AccessibilityMonitor {
   private checkHeadingStructure(): void {
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     let previousLevel = 0;
-    
+
     headings.forEach((heading, index) => {
       const level = parseInt(heading.tagName.charAt(1));
-      
+
       if (index === 0 && level !== 1) {
         this.issues.push({
           type: 'semantic',
@@ -645,7 +645,7 @@ class AccessibilityMonitor {
           wcagGuideline: 'WCAG 2.1 AA 1.3.1'
         });
       }
-      
+
       if (level - previousLevel > 1 && previousLevel > 0) {
         this.issues.push({
           type: 'semantic',
@@ -656,7 +656,7 @@ class AccessibilityMonitor {
           wcagGuideline: 'WCAG 2.1 AA 1.3.1'
         });
       }
-      
+
       previousLevel = level;
     });
   }
@@ -664,10 +664,10 @@ class AccessibilityMonitor {
   private checkMediaAccessibility(): void {
     // Check for video captions
     const videos = document.querySelectorAll('video');
-    
+
     videos.forEach(video => {
       const hasCaptions = video.querySelector('track[kind="captions"]') !== null;
-      
+
       if (!hasCaptions) {
         this.issues.push({
           type: 'screen-reader',
@@ -685,7 +685,7 @@ class AccessibilityMonitor {
     // Track keyboard usage
     let tabCount = 0;
     let mouseCount = 0;
-    
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Tab') {
         tabCount++;
@@ -694,14 +694,14 @@ class AccessibilityMonitor {
         }
       }
     });
-    
+
     document.addEventListener('click', () => {
       mouseCount++;
       if (mouseCount === 1) {
         trackEvent('accessibility', 'mouse_navigation_started');
       }
     });
-    
+
     // Track screen reader usage
     if ('speechSynthesis' in window) {
       trackEvent('accessibility', 'screen_reader_available');
@@ -737,10 +737,10 @@ class AccessibilityMonitor {
     const highIssues = this.issues.filter(i => i.severity === 'high').length;
     const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
-    
+
     const totalIssues = this.issues.length;
     const score = Math.max(0, 100 - (criticalIssues * 20 + highIssues * 10 + mediumIssues * 5 + lowIssues * 2));
-    
+
     const report: AccessibilityReport = {
       score,
       issues: this.issues,
@@ -749,7 +749,7 @@ class AccessibilityMonitor {
       timestamp: new Date().toISOString(),
       url: window.location.href,
     };
-    
+
     // Track accessibility score
     trackEvent('accessibility', 'audit_completed', {
       score,
@@ -759,49 +759,49 @@ class AccessibilityMonitor {
       mediumIssues,
       lowIssues,
     });
-    
+
     return report;
   }
 
   private generateWarnings(): string[] {
     const warnings: string[] = [];
-    
+
     if (this.issues.some(i => i.severity === 'critical')) {
       warnings.push('Critical accessibility issues found that may prevent users from accessing content');
     }
-    
+
     if (this.issues.some(i => i.severity === 'high')) {
       warnings.push('High-severity issues found that significantly impact user experience');
     }
-    
+
     if (this.issues.filter(i => i.type === 'contrast').length > 5) {
       warnings.push('Multiple color contrast issues detected across the page');
     }
-    
+
     return warnings;
   }
 
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
-    
+
     if (this.issues.some(i => i.type === 'contrast')) {
       recommendations.push('Review and improve color contrast ratios throughout the site');
     }
-    
+
     if (this.issues.some(i => i.type === 'keyboard')) {
       recommendations.push('Ensure all interactive elements are keyboard accessible');
     }
-    
+
     if (this.issues.some(i => i.type === 'aria')) {
       recommendations.push('Review ARIA implementation for proper usage');
     }
-    
+
     if (this.issues.some(i => i.type === 'screen-reader')) {
       recommendations.push('Improve screen reader support with proper labels and descriptions');
     }
-    
+
     recommendations.push('Conduct regular accessibility audits and user testing');
-    
+
     return recommendations;
   }
 

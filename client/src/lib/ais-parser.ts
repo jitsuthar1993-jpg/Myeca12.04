@@ -1,7 +1,7 @@
 // AIS (Annual Information Statement) and Form 26AS Parser
 // Parses CSV/JSON data from IT portal downloads
 
-export type IncomeSourceType = 
+export type IncomeSourceType =
   | 'salary'
   | 'interest'
   | 'dividend'
@@ -46,7 +46,7 @@ export interface ParsedAIS {
   pan: string;
   financialYear: string;
   assessmentYear: string;
-  
+
   // Income Summary
   incomeSummary: {
     salary: number;
@@ -58,7 +58,7 @@ export interface ParsedAIS {
     otherIncome: number;
     totalReportedIncome: number;
   };
-  
+
   // TDS Summary
   tdsSummary: {
     tdsOnSalary: number;
@@ -66,18 +66,18 @@ export interface ParsedAIS {
     tcsCollected: number;
     totalTDSCredit: number;
   };
-  
+
   // Detailed entries
   aisEntries: AISEntry[];
   tdsEntries: TDSEntry[];
-  
+
   // Discrepancies
   discrepancies: {
     count: number;
     entries: AISEntry[];
     potentialTaxImpact: number;
   };
-  
+
   // Metadata
   downloadDate?: Date;
   lastUpdated?: Date;
@@ -118,12 +118,12 @@ const CATEGORY_MAP: Record<string, IncomeSourceType> = {
 function detectCategory(code: string, description: string): IncomeSourceType {
   const upperCode = code.toUpperCase();
   const upperDesc = description.toUpperCase();
-  
+
   // Direct match
   if (CATEGORY_MAP[upperCode]) {
     return CATEGORY_MAP[upperCode];
   }
-  
+
   // Pattern matching
   if (upperDesc.includes('SALARY') || upperDesc.includes('FORM 16')) {
     return 'salary';
@@ -143,7 +143,7 @@ function detectCategory(code: string, description: string): IncomeSourceType {
   if (upperDesc.includes('PROFESSIONAL') || upperDesc.includes('194J')) {
     return 'professional_receipts';
   }
-  
+
   return 'other_receipts';
 }
 
@@ -151,21 +151,21 @@ function detectCategory(code: string, description: string): IncomeSourceType {
 function parseCSV(content: string): any[] {
   const lines = content.split('\n').filter(line => line.trim());
   if (lines.length < 2) return [];
-  
+
   const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
   const records: any[] = [];
-  
+
   for (let i = 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i]);
     if (values.length === 0) continue;
-    
+
     const record: any = {};
     headers.forEach((header, index) => {
       record[header] = values[index]?.trim().replace(/"/g, '') || '';
     });
     records.push(record);
   }
-  
+
   return records;
 }
 
@@ -174,7 +174,7 @@ function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = '';
   let inQuotes = false;
-  
+
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
     if (char === '"') {
@@ -193,7 +193,7 @@ function parseCSVLine(line: string): string[] {
 // Main parse function for AIS
 export function parseAIS(content: string): ParsedAIS {
   let records: any[] = [];
-  
+
   // Try JSON first
   try {
     const jsonData = JSON.parse(content);
@@ -208,7 +208,7 @@ export function parseAIS(content: string): ParsedAIS {
     // Fall back to CSV
     records = parseCSV(content);
   }
-  
+
   // Initialize result
   const result: ParsedAIS = {
     pan: '',
@@ -238,7 +238,7 @@ export function parseAIS(content: string): ParsedAIS {
       potentialTaxImpact: 0,
     },
   };
-  
+
   // Extract PAN and year from first record if available
   if (records.length > 0) {
     const firstRecord = records[0];
@@ -246,7 +246,7 @@ export function parseAIS(content: string): ParsedAIS {
     result.financialYear = firstRecord.financial_year || firstRecord.fy || firstRecord.FY || '';
     result.assessmentYear = firstRecord.assessment_year || firstRecord.ay || firstRecord.AY || '';
   }
-  
+
   // Process each record
   let entryId = 0;
   records.forEach((record) => {
@@ -254,15 +254,15 @@ export function parseAIS(content: string): ParsedAIS {
     const code = record.code || record.info_code || record.category || record.type || '';
     const description = record.description || record.info_description || record.particulars || '';
     const category = detectCategory(code, description);
-    
+
     // Get values
     const reportedValue = parseAmount(record.reported_value || record.amount || record.value || record.reported || 0);
     const modifiedValue = parseAmount(record.modified_value || record.modified || 0);
     const derivedValue = parseAmount(record.derived_value || record.derived || 0);
-    
+
     // Check for discrepancy
     const hasDiscrepancy = modifiedValue > 0 && modifiedValue !== reportedValue;
-    
+
     const entry: AISEntry = {
       id: `ais-${entryId++}`,
       category,
@@ -277,9 +277,9 @@ export function parseAIS(content: string): ParsedAIS {
       status: hasDiscrepancy ? 'discrepancy' : 'reported',
       feedback: record.feedback || '',
     };
-    
+
     result.aisEntries.push(entry);
-    
+
     // Update summaries
     switch (category) {
       case 'salary':
@@ -312,7 +312,7 @@ export function parseAIS(content: string): ParsedAIS {
       default:
         result.incomeSummary.otherIncome += reportedValue;
     }
-    
+
     // Track discrepancies
     if (hasDiscrepancy) {
       result.discrepancies.count++;
@@ -320,9 +320,9 @@ export function parseAIS(content: string): ParsedAIS {
       result.discrepancies.potentialTaxImpact += Math.abs(reportedValue - (modifiedValue || 0)) * 0.3; // Rough tax impact
     }
   });
-  
+
   // Calculate totals
-  result.incomeSummary.totalReportedIncome = 
+  result.incomeSummary.totalReportedIncome =
     result.incomeSummary.salary +
     result.incomeSummary.interestIncome +
     result.incomeSummary.dividendIncome +
@@ -330,12 +330,12 @@ export function parseAIS(content: string): ParsedAIS {
     result.incomeSummary.rentIncome +
     result.incomeSummary.professionalIncome +
     result.incomeSummary.otherIncome;
-  
-  result.tdsSummary.totalTDSCredit = 
+
+  result.tdsSummary.totalTDSCredit =
     result.tdsSummary.tdsOnSalary +
     result.tdsSummary.tdsOnOtherIncome +
     result.tdsSummary.tcsCollected;
-  
+
   return result;
 }
 
@@ -345,7 +345,7 @@ export function exportAISForITR(data: ParsedAIS): string {
   output += `# PAN: ${data.pan}\n`;
   output += `# Financial Year: ${data.financialYear}\n`;
   output += `# Generated on: ${new Date().toLocaleDateString()}\n\n`;
-  
+
   output += `## Income Summary (as per AIS)\n`;
   output += `- Salary Income: ₹${data.incomeSummary.salary.toLocaleString('en-IN')}\n`;
   output += `- Interest Income: ₹${data.incomeSummary.interestIncome.toLocaleString('en-IN')}\n`;
@@ -355,13 +355,13 @@ export function exportAISForITR(data: ParsedAIS): string {
   output += `- Professional Income: ₹${data.incomeSummary.professionalIncome.toLocaleString('en-IN')}\n`;
   output += `- Other Income: ₹${data.incomeSummary.otherIncome.toLocaleString('en-IN')}\n`;
   output += `- **Total Reported Income: ₹${data.incomeSummary.totalReportedIncome.toLocaleString('en-IN')}**\n\n`;
-  
+
   output += `## TDS/TCS Credits\n`;
   output += `- TDS on Salary: ₹${data.tdsSummary.tdsOnSalary.toLocaleString('en-IN')}\n`;
   output += `- TDS on Other Income: ₹${data.tdsSummary.tdsOnOtherIncome.toLocaleString('en-IN')}\n`;
   output += `- TCS Collected: ₹${data.tdsSummary.tcsCollected.toLocaleString('en-IN')}\n`;
   output += `- **Total TDS Credit: ₹${data.tdsSummary.totalTDSCredit.toLocaleString('en-IN')}**\n\n`;
-  
+
   if (data.discrepancies.count > 0) {
     output += `## ⚠️ Discrepancies Found (${data.discrepancies.count})\n`;
     data.discrepancies.entries.forEach((entry, i) => {
@@ -371,14 +371,14 @@ export function exportAISForITR(data: ParsedAIS): string {
     });
     output += `Potential Tax Impact: ₹${data.discrepancies.potentialTaxImpact.toLocaleString('en-IN')}\n\n`;
   }
-  
+
   output += `## Detailed Entries\n\n`;
   data.aisEntries.forEach((entry, i) => {
     output += `${i + 1}. [${entry.category.toUpperCase()}] ${entry.informationDescription}\n`;
     output += `   Amount: ₹${entry.reportedValue.toLocaleString('en-IN')}\n`;
     output += `   Source: ${entry.reportingEntity}\n\n`;
   });
-  
+
   return output;
 }
 
@@ -390,7 +390,7 @@ export const CATEGORY_INFO: Record<IncomeSourceType, { label: string; icon: stri
   sale_of_securities: { label: 'Securities Sale', icon: '📈', color: 'bg-indigo-500' },
   rent: { label: 'Rent', icon: '🏠', color: 'bg-orange-500' },
   professional_receipts: { label: 'Professional Income', icon: '💼', color: 'bg-teal-500' },
-  other_receipts: { label: 'Other Income', icon: '📋', color: 'bg-gray-500' },
+  other_receipts: { label: 'Other Income', icon: '📋', color: 'bg-slate-500' },
   tds_salary: { label: 'TDS on Salary', icon: '🧾', color: 'bg-blue-600' },
   tds_other: { label: 'TDS on Other', icon: '🧾', color: 'bg-green-600' },
   tcs: { label: 'TCS', icon: '🏪', color: 'bg-amber-500' },

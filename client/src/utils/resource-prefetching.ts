@@ -37,7 +37,7 @@ class ResourcePrefetcher {
         if (entry.isIntersecting) {
           const url = entry.target.getAttribute('data-prefetch-url');
           const priority = entry.target.getAttribute('data-prefetch-priority') as 'high' | 'medium' | 'low' || 'medium';
-          
+
           if (url) {
             this.prefetchResource({ urls: [url], priority });
             this.observer?.unobserve(entry.target);
@@ -74,7 +74,7 @@ class ResourcePrefetcher {
 
   private async processPrefetch(config: PrefetchConfig) {
     const startTime = performance.now();
-    
+
     for (const url of config.urls) {
       try {
         // Skip if already cached
@@ -115,19 +115,19 @@ class ResourcePrefetcher {
   private async prefetchImage(url: string, priority: 'high' | 'medium' | 'low') {
     return new Promise<void>((resolve, reject) => {
       const img = new Image();
-      
+
       img.onload = () => {
         trackBundleLoad(`image-${url}`, performance.now());
         resolve();
       };
-      
+
       img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
-      
+
       // Set fetch priority
       if ('fetchPriority' in img) {
         (img as any).fetchPriority = priority === 'high' ? 'high' : 'low';
       }
-      
+
       img.src = url;
     });
   }
@@ -148,7 +148,7 @@ class ResourcePrefetcher {
       link.as = 'font';
       link.href = url;
       link.crossOrigin = 'anonymous';
-      
+
       return new Promise<void>((resolve, reject) => {
         link.onload = () => resolve();
         link.onerror = () => reject(new Error(`Failed to preload font: ${url}`));
@@ -162,23 +162,23 @@ class ResourcePrefetcher {
       const link = document.createElement('link');
       link.rel = 'prefetch';
       link.href = url;
-      
+
       if (as) {
         link.as = as;
       }
-      
+
       // Set fetch priority for supported browsers
       if ('fetchPriority' in link) {
         (link as any).fetchPriority = priority;
       }
-      
+
       link.onload = () => {
         trackBundleLoad(`resource-${url}`, performance.now());
         resolve();
       };
-      
+
       link.onerror = () => reject(new Error(`Failed to prefetch: ${url}`));
-      
+
       document.head.appendChild(link);
     });
   }
@@ -193,14 +193,14 @@ class ResourcePrefetcher {
 
   public prefetchOnHover(element: HTMLElement, urls: string[], priority: 'high' | 'medium' | 'low' = 'high') {
     let prefetchTimeout: NodeJS.Timeout;
-    
+
     element.addEventListener('mouseenter', () => {
       // Start prefetching after 100ms hover
       prefetchTimeout = setTimeout(() => {
         this.prefetchResource({ urls, priority });
       }, 100);
     });
-    
+
     element.addEventListener('mouseleave', () => {
       clearTimeout(prefetchTimeout);
     });
@@ -208,7 +208,7 @@ class ResourcePrefetcher {
 
   public prefetchOnVisible(element: HTMLElement, url: string, priority: 'high' | 'medium' | 'low' = 'medium') {
     if (!this.observer) return;
-    
+
     element.setAttribute('data-prefetch-url', url);
     element.setAttribute('data-prefetch-priority', priority);
     this.observer.observe(element);
@@ -277,7 +277,7 @@ export const prefetchRouteResources = (routeName: string) => {
 export const initializePredictivePrefetching = () => {
   // Analyze navigation patterns
   const navigationHistory = JSON.parse(localStorage.getItem('navigation_history') || '[]');
-  
+
   if (navigationHistory.length > 0) {
     // Predict next likely route
     const lastRoute = navigationHistory[navigationHistory.length - 1];
@@ -302,12 +302,12 @@ export const initializePredictivePrefetching = () => {
     if (url) {
       const navigationHistory = JSON.parse(localStorage.getItem('navigation_history') || '[]');
       navigationHistory.push(url);
-      
+
       // Keep only last 10 entries
       if (navigationHistory.length > 10) {
         navigationHistory.shift();
       }
-      
+
       localStorage.setItem('navigation_history', JSON.stringify(navigationHistory));
     }
     return originalPushState.apply(this, args);

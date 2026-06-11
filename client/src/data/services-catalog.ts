@@ -22,7 +22,7 @@ export interface Service {
   icon: string;
 }
 
-export type ServiceCategory = 
+export type ServiceCategory =
   | 'individual'
   | 'business-registration'
   | 'tax-compliance'

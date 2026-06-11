@@ -315,11 +315,11 @@ export default function TdsFilingPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <PiggyBank className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   TDS & TCS Return Filing
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Prepare quarterly TDS returns, reconcile challans and deductee records, and generate certificates from the filed data.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -345,14 +345,14 @@ export default function TdsFilingPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Helpful notes for faster filing</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Deposit TDS by the 7th of next month (30th Apr for March).
@@ -389,10 +389,10 @@ export default function TdsFilingPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Who Must File TDS & TCS Returns?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Understanding mandatory deductor obligations and filing requirements under Income Tax Act
             </p>
           </div>
@@ -415,42 +415,42 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">All Employers</div>
-                      <div className="text-sm text-gray-600">Must deduct TDS on salary payments (Section 192)</div>
+                      <div className="text-sm text-slate-600">Must deduct TDS on salary payments (Section 192)</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Companies & Businesses</div>
-                      <div className="text-sm text-gray-600">On professional fees, rent, commission above thresholds</div>
+                      <div className="text-sm text-slate-600">On professional fees, rent, commission above thresholds</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Banks & Financial Institutions</div>
-                      <div className="text-sm text-gray-600">On interest payments exceeding applicable thresholds, generally Rs 50,000 and Rs 1,00,000 for senior citizens</div>
+                      <div className="text-sm text-slate-600">On interest payments exceeding applicable thresholds, generally Rs 50,000 and Rs 1,00,000 for senior citizens</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Property Buyers</div>
-                      <div className="text-sm text-gray-600">1% TDS on property purchases above Rs 50 lakhs</div>
+                      <div className="text-sm text-slate-600">1% TDS on property purchases above Rs 50 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">E-commerce Operators</div>
-                      <div className="text-sm text-gray-600">0.1% TDS on seller payments (Section 194O)</div>
+                      <div className="text-sm text-slate-600">0.1% TDS on seller payments (Section 194O)</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-red-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">High-Value Individual/HUF</div>
-                      <div className="text-sm text-gray-600">Business turnover &gt; Rs 1 crore or profession &gt; Rs 50 lakhs</div>
+                      <div className="text-sm text-slate-600">Business turnover &gt; Rs 1 crore or profession &gt; Rs 50 lakhs</div>
                     </div>
                   </li>
                 </ul>
@@ -474,35 +474,35 @@ export default function TdsFilingPage() {
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Overseas Remittance Services</div>
-                      <div className="text-sm text-gray-600">5% TCS on foreign remittances via LRS above Rs 7 lakhs</div>
+                      <div className="text-sm text-slate-600">5% TCS on foreign remittances via LRS above Rs 7 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Motor Vehicle Dealers</div>
-                      <div className="text-sm text-gray-600">1% TCS on vehicle sales above Rs 10 lakhs</div>
+                      <div className="text-sm text-slate-600">1% TCS on vehicle sales above Rs 10 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Goods/Services Sellers</div>
-                      <div className="text-sm text-gray-600">0.1% TCS on receipts above Rs 50 lakhs (Section 206C(1H))</div>
+                      <div className="text-sm text-slate-600">0.1% TCS on receipts above Rs 50 lakhs (Section 206C(1H))</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Overseas Tour Packages</div>
-                      <div className="text-sm text-gray-600">5% TCS on tour packages above Rs 2 lakhs</div>
+                      <div className="text-sm text-slate-600">5% TCS on tour packages above Rs 2 lakhs</div>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-medium">Luxury/High-Value Items</div>
-                      <div className="text-sm text-gray-600">Various rates on jewelry, cash transactions</div>
+                      <div className="text-sm text-slate-600">Various rates on jewelry, cash transactions</div>
                     </div>
                   </li>
                 </ul>
@@ -527,22 +527,22 @@ export default function TdsFilingPage() {
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CreditCard className="w-8 h-8 text-blue-600" />
                   </div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Obtain TAN</h4>
-                  <p className="text-sm text-gray-600">Tax Deduction Account Number mandatory for most deductors</p>
+                  <h4 className="font-semibold text-slate-900 mb-2">Obtain TAN</h4>
+                  <p className="text-sm text-slate-600">Tax Deduction Account Number mandatory for most deductors</p>
                 </div>
                 <div className="text-center p-4">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Globe className="w-8 h-8 text-green-600" />
                   </div>
-                  <h4 className="font-semibold text-gray-900 mb-2">TRACES Registration</h4>
-                  <p className="text-sm text-gray-600">Register on official TDS portal (www.tdscpc.gov.in)</p>
+                  <h4 className="font-semibold text-slate-900 mb-2">TRACES Registration</h4>
+                  <p className="text-sm text-slate-600">Register on official TDS portal (www.tdscpc.gov.in)</p>
                 </div>
                 <div className="text-center p-4">
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BookOpen className="w-8 h-8 text-purple-600" />
                   </div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Maintain Records</h4>
-                  <p className="text-sm text-gray-600">Keep detailed books of accounts and deduction records</p>
+                  <h4 className="font-semibold text-slate-900 mb-2">Maintain Records</h4>
+                  <p className="text-sm text-slate-600">Keep detailed books of accounts and deduction records</p>
                 </div>
               </div>
             </CardContent>
@@ -562,7 +562,7 @@ export default function TdsFilingPage() {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                  <h4 className="font-semibold text-slate-900 mb-4 flex items-center">
                     <Clock className="w-5 h-5 mr-2 text-blue-600" />
                     Monthly Obligations
                   </h4>
@@ -573,7 +573,7 @@ export default function TdsFilingPage() {
                       </div>
                       <div>
                         <div className="font-medium">Deduct TDS/TCS</div>
-                        <div className="text-sm text-gray-600">At prescribed rates during payments</div>
+                        <div className="text-sm text-slate-600">At prescribed rates during payments</div>
                       </div>
                     </li>
                     <li className="flex items-start">
@@ -582,13 +582,13 @@ export default function TdsFilingPage() {
                       </div>
                       <div>
                         <div className="font-medium">Deposit to Government</div>
-                        <div className="text-sm text-gray-600">By 7th of following month (30th April for March)</div>
+                        <div className="text-sm text-slate-600">By 7th of following month (30th April for March)</div>
                       </div>
                     </li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                  <h4 className="font-semibold text-slate-900 mb-4 flex items-center">
                     <Calendar className="w-5 h-5 mr-2 text-green-600" />
                     Quarterly Obligations
                   </h4>
@@ -599,7 +599,7 @@ export default function TdsFilingPage() {
                       </div>
                       <div>
                         <div className="font-medium">File TDS/TCS Returns</div>
-                        <div className="text-sm text-gray-600">24Q/26Q/27Q/27EQ by quarter end + 1 month</div>
+                        <div className="text-sm text-slate-600">24Q/26Q/27Q/27EQ by quarter end + 1 month</div>
                       </div>
                     </li>
                     <li className="flex items-start">
@@ -608,7 +608,7 @@ export default function TdsFilingPage() {
                       </div>
                       <div>
                         <div className="font-medium">Issue TDS Certificates</div>
-                        <div className="text-sm text-gray-600">Form 16/16A within 15 days of filing</div>
+                        <div className="text-sm text-slate-600">Form 16/16A within 15 days of filing</div>
                       </div>
                     </li>
                   </ul>
@@ -626,10 +626,10 @@ export default function TdsFilingPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Old and New TDS Sections
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Date-based section mapping for the Income Tax Act, 1961 and Income-tax Act, 2025 transition
             </p>
           </div>
@@ -660,7 +660,7 @@ export default function TdsFilingPage() {
                         <CheckCircle className={`w-4 h-4 mr-3 flex-shrink-0 mt-1 ${
                           item.color === "blue" ? "text-blue-500" : "text-indigo-500"
                         }`} />
-                        <span className="text-sm text-gray-700">{point}</span>
+                        <span className="text-sm text-slate-700">{point}</span>
                       </li>
                     ))}
                   </ul>
@@ -683,7 +683,7 @@ export default function TdsFilingPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
+                    <tr className="border-b border-slate-200">
                       <th className="text-left py-3 font-semibold">Area</th>
                       <th className="text-left py-3 font-semibold">Old Act Section</th>
                       <th className="text-left py-3 font-semibold">New Act Reference</th>
@@ -692,7 +692,7 @@ export default function TdsFilingPage() {
                   </thead>
                   <tbody>
                     {sectionTransitionData.map((item) => (
-                      <tr key={item.area} className="border-b border-gray-100 hover:bg-gray-50">
+                      <tr key={item.area} className="border-b border-slate-100 hover:bg-slate-50">
                         <td className="py-3 font-medium">{item.area}</td>
                         <td className="py-3">
                           <Badge variant="outline" className="font-mono">
@@ -704,7 +704,7 @@ export default function TdsFilingPage() {
                             {item.newSection}
                           </Badge>
                         </td>
-                        <td className="py-3 text-sm text-gray-600">{item.filingNote}</td>
+                        <td className="py-3 text-sm text-slate-600">{item.filingNote}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -728,10 +728,10 @@ export default function TdsFilingPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               TDS/TCS Forms We Handle
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Expert filing services for quarterly TDS and TCS returns, with document-based review before submission
             </p>
           </div>
@@ -757,12 +757,12 @@ export default function TdsFilingPage() {
                     <FileText className="w-8 h-8" />
                   </div>
                   <CardTitle className="text-xl font-bold">{form.title}</CardTitle>
-                  <CardDescription className="text-sm font-medium text-gray-700">
+                  <CardDescription className="text-sm font-medium text-slate-700">
                     {form.subtitle}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">{form.description}</p>
+                  <p className="text-sm text-slate-600 mb-4">{form.description}</p>
 
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
@@ -813,7 +813,7 @@ export default function TdsFilingPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
+                    <tr className="border-b border-slate-200">
                       <th className="text-left py-3 font-semibold">Old Section</th>
                       <th className="text-left py-3 font-semibold">New Reference</th>
                       <th className="text-left py-3 font-semibold">Payment Type</th>
@@ -823,7 +823,7 @@ export default function TdsFilingPage() {
                   </thead>
                   <tbody>
                     {tdsRatesData.map((rate, index) => (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                      <tr key={index} className="border-b border-slate-100 hover:bg-slate-50">
                         <td className="py-3">
                           <Badge variant="outline" className="font-mono font-bold">
                             {rate.section}
@@ -837,7 +837,7 @@ export default function TdsFilingPage() {
                         <td className="py-3">
                           <div>
                             <div className="font-medium">{rate.type}</div>
-                            <div className="text-sm text-gray-600">{rate.description}</div>
+                            <div className="text-sm text-slate-600">{rate.description}</div>
                           </div>
                         </td>
                         <td className="py-3 font-semibold text-blue-600">{rate.rate}</td>
@@ -914,10 +914,10 @@ export default function TdsFilingPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Our 4-Step TDS Filing Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Streamlined process to reduce compliance misses and support timely filing
             </p>
           </div>
@@ -938,8 +938,8 @@ export default function TdsFilingPage() {
                 <div className="absolute -top-3 -right-3 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                   {step.step}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">{step.title}</h3>
+                <p className="text-slate-600">{step.description}</p>
               </Card>
             ))}
           </div>
@@ -953,10 +953,10 @@ export default function TdsFilingPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Why Choose Our TDS Filing Services?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               TDS return preparation with checks for deductee type, section, threshold, challan, and PAN assumptions
             </p>
           </div>
@@ -970,8 +970,8 @@ export default function TdsFilingPage() {
                       <feature.icon className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                      <p className="text-gray-600 text-sm">{feature.description}</p>
+                      <h3 className="font-semibold text-slate-900 mb-2">{feature.title}</h3>
+                      <p className="text-slate-600 text-sm">{feature.description}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -1097,13 +1097,13 @@ export default function TdsFilingPage() {
         >
           <Card className="max-w-2xl mx-auto p-8 bg-gradient-to-br from-blue-50 to-indigo-50">
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">TDS Filing Service Pricing</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">TDS Filing Service Pricing</h3>
               <div className="flex justify-center items-baseline gap-2 mb-2">
                 <span className="text-4xl font-bold text-indigo-600">Rs 799</span>
-                <span className="text-lg text-gray-600">per quarter</span>
+                <span className="text-lg text-slate-600">per quarter</span>
                 <Badge className="bg-green-100 text-green-800">Starting Price</Badge>
               </div>
-              <p className="text-gray-600">Quarterly TDS return preparation with documented review scope</p>
+              <p className="text-slate-600">Quarterly TDS return preparation with documented review scope</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
@@ -1140,7 +1140,7 @@ export default function TdsFilingPage() {
               </Button>
             </div>
 
-            <p className="text-sm text-gray-600 mt-4">
+            <p className="text-sm text-slate-600 mt-4">
               Deductee reconciliation - TRACES workflow guidance - Query-response support
             </p>
           </Card>

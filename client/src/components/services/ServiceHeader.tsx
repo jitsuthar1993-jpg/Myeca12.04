@@ -80,11 +80,11 @@ export default function ServiceHeader(props: ServiceHeaderProps) {
               <div className={cn("w-14 h-14 rounded-full flex items-center justify-center soft-shadow", accentBgClass)}>
                 <Icon className={cn("w-8 h-8", accentIconClass)} />
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
                 {title}
               </h1>
             </div>
-            <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+            <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
               {description}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -95,7 +95,7 @@ export default function ServiceHeader(props: ServiceHeaderProps) {
 
           <Card className="soft-shadow">
             <CardHeader>
-              <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+              <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                 {TipsIcon ? <TipsIcon className={cn("w-4 h-4", tipsAccentClass)} /> : null}
                 {tipsTitle}
               </CardTitle>

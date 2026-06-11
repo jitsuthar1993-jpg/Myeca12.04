@@ -135,7 +135,7 @@ export function DashboardCharts({ stats, isLoading = false }: DashboardChartsPro
         {[...Array(2)].map((_, i) => (
           <Card key={i} className="h-full animate-pulse">
             <CardContent className="p-6">
-              <div className="h-64 bg-gray-200 rounded"></div>
+              <div className="h-64 bg-slate-200 rounded"></div>
             </CardContent>
           </Card>
         ))}

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Shield, 
-  FileText, 
-  Clock, 
-  Star, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Shield,
+  FileText,
+  Clock,
+  Star,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Award,
   TrendingUp,
@@ -118,7 +118,7 @@ export default function TrademarkRegistrationPage() {
     {
       applicantType: "Individual/Startup/Small Enterprise",
       filingFee: "₹4,500",
-      searchFee: "₹1,500", 
+      searchFee: "₹1,500",
       totalGovtFee: "₹6,000",
       professionalFee: "₹6,999",
       totalCost: "₹12,999",
@@ -129,7 +129,7 @@ export default function TrademarkRegistrationPage() {
       applicantType: "Other than Small Enterprise",
       filingFee: "₹9,000",
       searchFee: "₹2,500",
-      totalGovtFee: "₹11,500", 
+      totalGovtFee: "₹11,500",
       professionalFee: "₹8,999",
       totalCost: "₹20,499",
       savings: "Standard Rate",
@@ -140,7 +140,7 @@ export default function TrademarkRegistrationPage() {
       filingFee: "₹18,000",
       searchFee: "₹5,000",
       totalGovtFee: "₹23,000",
-      professionalFee: "₹12,999", 
+      professionalFee: "₹12,999",
       totalCost: "₹35,999",
       savings: "Includes priority claim",
       color: "purple"
@@ -155,7 +155,7 @@ export default function TrademarkRegistrationPage() {
       popular: true
     },
     {
-      classNumber: "Class 25", 
+      classNumber: "Class 25",
       description: "Clothing, footwear, headgear",
       examples: "Shirts, shoes, hats, uniforms, sportswear",
       popular: true
@@ -201,7 +201,7 @@ export default function TrademarkRegistrationPage() {
       ]
     },
     {
-      category: "Business Documents", 
+      category: "Business Documents",
       icon: Building2,
       color: "green",
       documents: [
@@ -335,7 +335,7 @@ export default function TrademarkRegistrationPage() {
         title="Trademark Registration Online India | Brand Protection Services"
         description="Protect your brand with trademark registration in India. Expert TM search, application filing, and objection handling. Registration in 12-18 months. Start from ₹12,999."
         keywords={[
-          "trademark registration India", "apply for trademark online", "TM search India", 
+          "trademark registration India", "apply for trademark online", "TM search India",
           "brand registration", "IP India filing", "trademark classes"
         ]}
         type="service"
@@ -374,16 +374,16 @@ export default function TrademarkRegistrationPage() {
                 <div className="w-14 h-14 bg-purple-50 rounded-full flex items-center justify-center soft-shadow">
                   <Shield className="w-8 h-8 text-purple-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Trademark Registration Services
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Complete registration from search to certificate with 10-year protection. Updated 2025 fee structure.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
@@ -400,14 +400,14 @@ export default function TrademarkRegistrationPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-purple-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Strengthen your application</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Search className="w-4 h-4 mr-2 text-purple-600 mt-0.5" />
                     Search similar marks and relevant classes before filing.
@@ -440,10 +440,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Complete 6-Step Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Trademark search, class selection, filing preparation, and objection-response scope
             </p>
           </div>
@@ -458,31 +458,31 @@ export default function TrademarkRegistrationPage() {
                 red: "border-l-red-500 bg-red-100 text-red-600 text-red-700 text-red-500",
                 indigo: "border-l-indigo-500 bg-indigo-100 text-indigo-600 text-indigo-700 text-indigo-500"
               };
-              
+
               return (
                 <Card key={index} className={`border-l-4 ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[0] || 'border-l-gray-500'} hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-4">
-                      <div className={`w-16 h-16 rounded-full flex items-center justify-center ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[1] || 'bg-gray-100'} ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[2] || 'text-gray-600'}`}>
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[1] || 'bg-slate-100'} ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[2] || 'text-slate-600'}`}>
                         <step.icon className="w-8 h-8" />
                       </div>
                       <div>
                         <CardTitle className="text-lg font-bold">Step {step.step}: {step.title}</CardTitle>
-                        <Badge className={`mt-1 ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[1] || 'bg-gray-100'} ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[3] || 'text-gray-700'}`}>
+                        <Badge className={`mt-1 ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[1] || 'bg-slate-100'} ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[3] || 'text-slate-700'}`}>
                           {step.duration}
                         </Badge>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-4">{step.description}</p>
-                    
+                    <p className="text-sm text-slate-600 mb-4">{step.description}</p>
+
                     <div>
                       <h4 className="font-semibold text-sm mb-2">Key Activities:</h4>
                       <ul className="space-y-1">
                         {step.activities.map((activity, actIndex) => (
                           <li key={actIndex} className="flex items-start text-xs">
-                            <CheckCircle className={`w-3 h-3 mr-2 ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[4] || 'text-gray-500'} flex-shrink-0 mt-0.5`} />
+                            <CheckCircle className={`w-3 h-3 mr-2 ${colorClasses[step.color as keyof typeof colorClasses]?.split(' ')[4] || 'text-slate-500'} flex-shrink-0 mt-0.5`} />
                             {activity}
                           </li>
                         ))}
@@ -503,10 +503,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Government Fee Structure 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Updated trademark registration fees with startup and small enterprise benefits
             </p>
           </div>
@@ -543,7 +543,7 @@ export default function TrademarkRegistrationPage() {
                       <span className="font-bold text-2xl text-blue-600">{fee.totalCost}</span>
                     </div>
                   </div>
-                  
+
                   <Badge className={`w-full justify-center bg-${fee.color}-100 text-${fee.color}-700`}>
                     {fee.savings}
                   </Badge>
@@ -576,10 +576,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Popular Trademark Classes
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Choose the right class for your trademark registration
             </p>
           </div>
@@ -597,7 +597,7 @@ export default function TrademarkRegistrationPage() {
                   <CardDescription className="font-semibold">{tmClass.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     <span className="font-medium">Examples: </span>
                     {tmClass.examples}
                   </p>
@@ -615,10 +615,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Required Documents Checklist
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete documentation requirements for trademark registration
             </p>
           </div>
@@ -637,7 +637,7 @@ export default function TrademarkRegistrationPage() {
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -655,10 +655,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Key Benefits of Trademark Registration
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Rights and business uses associated with a registered trademark
             </p>
           </div>
@@ -670,10 +670,10 @@ export default function TrademarkRegistrationPage() {
                   <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 bg-${benefit.color}-100 text-${benefit.color}-600`}>
                     <benefit.icon className="w-6 h-6" />
                   </div>
-                  <CardTitle className="text-lg font-bold text-gray-900">{benefit.benefit}</CardTitle>
+                  <CardTitle className="text-lg font-bold text-slate-900">{benefit.benefit}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-sm text-gray-600">{benefit.description}</p>
+                  <p className="text-sm text-slate-600">{benefit.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -688,10 +688,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               10-Year Renewal Timeline
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Trademark protection lifecycle and renewal requirements
             </p>
           </div>
@@ -703,11 +703,11 @@ export default function TrademarkRegistrationPage() {
                   <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 bg-${renewal.color}-100 text-${renewal.color}-600`}>
                     <renewal.icon className="w-6 h-6" />
                   </div>
-                  <CardTitle className="text-lg font-bold text-gray-900">{renewal.period}</CardTitle>
+                  <CardTitle className="text-lg font-bold text-slate-900">{renewal.period}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <h4 className="font-semibold text-sm mb-2">{renewal.requirement}</h4>
-                  <p className="text-xs text-gray-600">{renewal.description}</p>
+                  <p className="text-xs text-slate-600">{renewal.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -722,10 +722,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Common Rejection Reasons & Solutions
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Learn from common mistakes and ensure successful trademark registration
             </p>
           </div>
@@ -738,16 +738,16 @@ export default function TrademarkRegistrationPage() {
                 yellow: "border-l-yellow-500 text-yellow-900 bg-yellow-100 text-yellow-700",
                 blue: "border-l-blue-500 text-blue-900 bg-blue-100 text-blue-700"
               };
-              
+
               return (
                 <Card key={index} className={`border-l-4 ${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[0] || 'border-l-gray-500'} hover:shadow-lg transition-shadow`}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className={`flex items-center gap-2 ${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[1] || 'text-gray-900'}`}>
+                      <CardTitle className={`flex items-center gap-2 ${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[1] || 'text-slate-900'}`}>
                         <rejection.icon className="w-6 h-6" />
                         {rejection.reason}
                       </CardTitle>
-                      <Badge className={`${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[2] || 'bg-gray-100'} ${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[3] || 'text-gray-700'}`}>
+                      <Badge className={`${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[2] || 'bg-slate-100'} ${colorClasses[rejection.color as keyof typeof colorClasses]?.split(' ')[3] || 'text-slate-700'}`}>
                         {rejection.frequency}
                       </Badge>
                     </div>
@@ -755,7 +755,7 @@ export default function TrademarkRegistrationPage() {
                   <CardContent>
                     <div>
                       <h4 className="font-semibold text-sm text-green-600 mb-1">Solution:</h4>
-                      <p className="text-sm text-gray-700">{rejection.solution}</p>
+                      <p className="text-sm text-slate-700">{rejection.solution}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -772,10 +772,10 @@ export default function TrademarkRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Common queries about trademark registration process and protection
             </p>
           </div>
@@ -853,13 +853,13 @@ export default function TrademarkRegistrationPage() {
                 Ready to Protect Your Brand?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Our trademark experts handle the complete registration process from search to certificate. 
+                Our trademark experts handle the complete registration process from search to certificate.
                 Secure your brand with 10-year protection starting from {"₹"}12,999.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-purple-600 text-white hover:bg-purple-700 px-8"
                   onClick={() => setIsCheckoutOpen(true)}
                 >

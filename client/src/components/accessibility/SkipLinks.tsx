@@ -45,7 +45,7 @@ export default function SkipLinks() {
           onClick={skipToNav}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          className="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
         >
           Skip to navigation
         </button>
@@ -53,7 +53,7 @@ export default function SkipLinks() {
           onClick={skipToFooter}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          className="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
         >
           Skip to footer
         </button>

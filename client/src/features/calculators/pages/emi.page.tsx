@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
-import { 
+import {
   Calculator, IndianRupee, TrendingUp, Calendar,
-  Zap, Sparkles, CreditCard, ShieldCheck, ArrowRight, 
+  Zap, Sparkles, CreditCard, ShieldCheck, ArrowRight,
   Wallet, Info, CheckCircle, Lock, Headphones,
   Award, BarChart3, PieChart, Percent, ArrowUpRight,
   Briefcase, Activity
@@ -87,7 +87,7 @@ export default function EMICalculator() {
               <div className="absolute top-0 right-0 p-6 opacity-5 text-[#175CD3]">
                 <Wallet className="w-24 h-24" />
               </div>
-              
+
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-[#EFF8FF] flex items-center justify-center text-[#175CD3] border border-[#B2DDFF]">
                   <Calculator className="w-5 h-5" />
@@ -130,7 +130,7 @@ export default function EMICalculator() {
                       <span className="text-sm font-normal text-[#344054]">Loan Amount</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={principal}
                           onChange={(e) => setPrincipal(Number(e.target.value))}
@@ -138,7 +138,7 @@ export default function EMICalculator() {
                         />
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="100000"
                       max="100000000"
@@ -154,7 +154,7 @@ export default function EMICalculator() {
                     <div className="flex items-center justify-between px-1">
                       <span className="text-sm font-normal text-[#344054]">Interest Rate</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
-                        <input 
+                        <input
                           type="number"
                           value={rate}
                           onChange={(e) => setRate(Number(e.target.value))}
@@ -163,7 +163,7 @@ export default function EMICalculator() {
                         <span className="text-xs font-normal text-[#667085]">%</span>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="5"
                       max="20"
@@ -179,7 +179,7 @@ export default function EMICalculator() {
                     <div className="flex items-center justify-between px-1">
                       <span className="text-sm font-normal text-[#344054]">Tenure (Years)</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
-                        <input 
+                        <input
                           type="number"
                           value={tenure}
                           onChange={(e) => setTenure(Number(e.target.value))}
@@ -188,7 +188,7 @@ export default function EMICalculator() {
                         <span className="text-xs font-normal text-[#667085]">Yrs</span>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="1"
                       max="30"
@@ -330,7 +330,7 @@ export default function EMICalculator() {
 
         {/* Informational Content */}
         <div className="mt-12">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <CheckCircle className="w-5 h-5" />,

@@ -179,19 +179,19 @@ export default function FAQPage() {
   const { trackContentSearch, trackContentEngagement } = useContentTracking();
 
   const filteredQuestions = faqCategories[selectedCategory].questions.filter(
-    (q: { question: string; answer: string }) => 
+    (q: { question: string; answer: string }) =>
       q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       q.answer.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Frequently Asked Questions - MyeCA.in"
         description="Find answers to common questions about tax filing, ITR forms, calculators, payments, security, and business services at MyeCA.in"
       />
-      
-      <div className="min-h-screen bg-gray-50">
+
+      <div className="min-h-screen bg-slate-50">
         {/* Hero Section */}
         <section className="border-b border-slate-200 bg-white py-12 text-slate-950 shadow-sm">
           <div className="container mx-auto px-4">
@@ -201,10 +201,10 @@ export default function FAQPage() {
               <p className="text-xl text-slate-600 mb-8">
                 Get answers to common questions about our tax filing services
               </p>
-              
+
               {/* Search Bar */}
               <div className="relative max-w-2xl mx-auto">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <Input
                   type="text"
                   placeholder="Search questions..."
@@ -215,7 +215,7 @@ export default function FAQPage() {
                       trackContentSearch({ query: e.target.value });
                     }
                   }}
-                  className="pl-12 pr-4 py-4 text-lg bg-white text-gray-900 placeholder-gray-500 rounded-lg border-slate-200 shadow-sm"
+                  className="pl-12 pr-4 py-4 text-lg bg-white text-slate-900 placeholder-gray-500 rounded-lg border-slate-200 shadow-sm"
                 />
               </div>
             </div>
@@ -229,18 +229,18 @@ export default function FAQPage() {
             <Tabs value={selectedCategory} onValueChange={(value) => {
               const categoryKey = value as keyof typeof faqCategories;
               setSelectedCategory(categoryKey);
-              trackContentEngagement({ 
+              trackContentEngagement({
                 content_type: 'faq_category',
                 content_id: categoryKey,
                 content_title: faqCategories[categoryKey].title
               });
             }} className="w-full">
-              <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 h-auto p-1 bg-gray-100">
+              <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 h-auto p-1 bg-slate-100">
                 {Object.entries(faqCategories).map(([key, category]) => {
                   const Icon = category.icon;
                   return (
-                    <TabsTrigger 
-                      key={key} 
+                    <TabsTrigger
+                      key={key}
                       value={key}
                       className="flex items-center gap-2 px-3 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
                     >
@@ -267,8 +267,8 @@ export default function FAQPage() {
                     </CardHeader>
                     <CardContent>
                       {searchQuery && filteredQuestions.length === 0 ? (
-                        <div className="text-center py-8 text-gray-500">
-                          <HelpCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                        <div className="text-center py-8 text-slate-500">
+                          <HelpCircle className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                           <p className="text-lg">No questions found matching "{searchQuery}"</p>
                           <p className="text-sm mt-2">Try searching with different keywords</p>
                         </div>
@@ -297,7 +297,7 @@ export default function FAQPage() {
               <CardContent className="text-center py-8">
                 <HelpCircle className="w-12 h-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="text-2xl font-semibold mb-3">Still have questions?</h3>
-                <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                   Can't find the answer you're looking for? Our support team is here to help you.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">

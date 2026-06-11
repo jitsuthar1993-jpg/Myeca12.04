@@ -126,7 +126,7 @@ export class MobileTouchFeedback {
 
   private provideFeedback(element: Element, phase: 'start' | 'end'): void {
     const feedbackType = this.determineFeedbackType(element);
-    
+
     if (phase === 'start') {
       this.provideStartFeedback(element, feedbackType);
     } else {
@@ -138,19 +138,19 @@ export class MobileTouchFeedback {
     if (element.tagName === 'BUTTON' || element.getAttribute('role') === 'button') {
       return 'button';
     }
-    
+
     if (element.tagName === 'A' || element.getAttribute('role') === 'link') {
       return 'link';
     }
-    
+
     if (['INPUT', 'SELECT', 'TEXTAREA'].includes(element.tagName)) {
       return 'input';
     }
-    
+
     if (element.closest('.card') || element.classList.contains('card')) {
       return 'card';
     }
-    
+
     return 'generic';
   }
 
@@ -262,18 +262,18 @@ export class MobileTouchFeedback {
   private addRippleEffect(element: Element): void {
     const ripple = document.createElement('span');
     ripple.className = 'touch-ripple';
-    
+
     const rect = element.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
     const x = event.clientX - rect.left - size / 2;
     const y = event.clientY - rect.top - size / 2;
-    
+
     ripple.style.width = ripple.style.height = size + 'px';
     ripple.style.left = x + 'px';
     ripple.style.top = y + 'px';
-    
+
     element.appendChild(ripple);
-    
+
     // Animate the ripple
     requestAnimationFrame(() => {
       ripple.classList.add('touch-ripple-active');
@@ -293,7 +293,7 @@ export class MobileTouchFeedback {
 
     const frequency = frequencies[type]?.[phase] || frequencies.generic[phase];
     const duration = phase === 'start' ? 0.05 : 0.1;
-    
+
     this.playTone(frequency, duration);
   }
 
@@ -302,16 +302,16 @@ export class MobileTouchFeedback {
 
     const oscillator = this.audioContext.createOscillator();
     const gainNode = this.audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(this.audioContext.destination);
-    
+
     oscillator.frequency.value = frequency;
     oscillator.type = 'sine';
-    
+
     gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
-    
+
     oscillator.start(this.audioContext.currentTime);
     oscillator.stop(this.audioContext.currentTime + duration);
   }
@@ -376,7 +376,7 @@ export class MobileTouchFeedback {
         this.playTone(500, 0.15);
         break;
     }
-    
+
     // Add visual feedback
     if (this.config.visualEnabled) {
       element.classList.add(`touch-${type}`);
@@ -514,7 +514,7 @@ const touchFeedbackStyles = `
   .touch-active {
     transition: none;
   }
-  
+
   .touch-ripple {
     animation: none;
   }

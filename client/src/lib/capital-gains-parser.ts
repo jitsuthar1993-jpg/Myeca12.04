@@ -72,7 +72,7 @@ const GRANDFATHERING_DATE = new Date('2018-01-31');
 // Detect broker from file content
 export function detectBroker(content: string): 'zerodha' | 'groww' | 'icici' | 'hdfc' | 'generic' {
   const lowerContent = content.toLowerCase();
-  
+
   if (lowerContent.includes('zerodha') || lowerContent.includes('kite')) {
     return 'zerodha';
   }
@@ -85,26 +85,26 @@ export function detectBroker(content: string): 'zerodha' | 'groww' | 'icici' | '
   if (lowerContent.includes('hdfc securities')) {
     return 'hdfc';
   }
-  
+
   return 'generic';
 }
 
 // Parse date from various formats
 function parseDate(dateStr: string): Date {
   if (!dateStr || dateStr.trim() === '') return new Date();
-  
+
   // Try various formats
   const formats = [
     /(\d{2})[-\/](\d{2})[-\/](\d{4})/, // DD-MM-YYYY
     /(\d{4})[-\/](\d{2})[-\/](\d{2})/, // YYYY-MM-DD
     /(\d{2})[-\/](\w{3})[-\/](\d{4})/, // DD-MMM-YYYY
   ];
-  
+
   const monthMap: Record<string, number> = {
     jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
     jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
   };
-  
+
   for (const format of formats) {
     const match = dateStr.match(format);
     if (match) {
@@ -120,7 +120,7 @@ function parseDate(dateStr: string): Date {
       }
     }
   }
-  
+
   return new Date(dateStr);
 }
 
@@ -154,7 +154,7 @@ function determineGainType(holdingPeriod: number, assetType: CapitalGainTransact
 // Detect asset type from symbol/name
 function detectAssetType(symbol: string, description: string): CapitalGainTransaction['assetType'] {
   const combined = `${symbol} ${description}`.toLowerCase();
-  
+
   if (combined.includes('fut') || combined.includes('opt') || combined.includes('ce') || combined.includes('pe')) {
     return 'f&o';
   }
@@ -164,7 +164,7 @@ function detectAssetType(symbol: string, description: string): CapitalGainTransa
   if (combined.includes('debt') || combined.includes('bond') || combined.includes('gsec') || combined.includes('liquid')) {
     return 'debt';
   }
-  
+
   return 'equity';
 }
 
@@ -173,7 +173,7 @@ function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = '';
   let inQuotes = false;
-  
+
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
     if (char === '"') {
@@ -193,11 +193,11 @@ function parseCSVLine(line: string): string[] {
 function parseZerodha(content: string): CapitalGainTransaction[] {
   const lines = content.split('\n').filter(line => line.trim());
   const transactions: CapitalGainTransaction[] = [];
-  
+
   // Find header row
   let headerIndex = -1;
   let headers: string[] = [];
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].toLowerCase();
     if (line.includes('symbol') && (line.includes('buy') || line.includes('sell'))) {
@@ -206,9 +206,9 @@ function parseZerodha(content: string): CapitalGainTransaction[] {
       break;
     }
   }
-  
+
   if (headerIndex === -1) return [];
-  
+
   // Find column indices
   const symbolCol = headers.findIndex(h => h.includes('symbol') || h.includes('scrip'));
   const buyDateCol = headers.findIndex(h => h.includes('buy') && h.includes('date'));
@@ -220,14 +220,14 @@ function parseZerodha(content: string): CapitalGainTransaction[] {
   const buyValueCol = headers.findIndex(h => h.includes('buy') && h.includes('value'));
   const sellValueCol = headers.findIndex(h => h.includes('sell') && h.includes('value'));
   const gainCol = headers.findIndex(h => h.includes('gain') || h.includes('p&l') || h.includes('profit'));
-  
+
   for (let i = headerIndex + 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i]);
     if (values.length < 5) continue;
-    
+
     const symbol = symbolCol >= 0 ? values[symbolCol] : '';
     if (!symbol) continue;
-    
+
     const buyDate = buyDateCol >= 0 ? parseDate(values[buyDateCol]) : new Date();
     const sellDate = sellDateCol >= 0 ? parseDate(values[sellDateCol]) : new Date();
     const buyQty = buyQtyCol >= 0 ? parseInt(values[buyQtyCol]) || 0 : 0;
@@ -237,14 +237,14 @@ function parseZerodha(content: string): CapitalGainTransaction[] {
     const buyValue = buyValueCol >= 0 ? parseAmount(values[buyValueCol]) : buyQty * buyPrice;
     const sellValue = sellValueCol >= 0 ? parseAmount(values[sellValueCol]) : sellQty * sellPrice;
     const gain = gainCol >= 0 ? parseAmount(values[gainCol]) : sellValue - buyValue;
-    
+
     const holdingPeriod = calculateHoldingPeriod(buyDate, sellDate);
     const assetType = detectAssetType(symbol, '');
     const gainType = determineGainType(holdingPeriod, assetType);
-    
+
     // Check for grandfathering
     const isGrandFathered = assetType === 'equity' && buyDate < GRANDFATHERING_DATE && gainType === 'LTCG';
-    
+
     transactions.push({
       id: `txn-${i}`,
       symbol,
@@ -265,7 +265,7 @@ function parseZerodha(content: string): CapitalGainTransaction[] {
       netGain: gain,
     });
   }
-  
+
   return transactions;
 }
 
@@ -273,11 +273,11 @@ function parseZerodha(content: string): CapitalGainTransaction[] {
 function parseGeneric(content: string): CapitalGainTransaction[] {
   const lines = content.split('\n').filter(line => line.trim());
   const transactions: CapitalGainTransaction[] = [];
-  
+
   // Try to find header
   let headerIndex = -1;
   let headers: string[] = [];
-  
+
   for (let i = 0; i < Math.min(10, lines.length); i++) {
     const line = lines[i].toLowerCase();
     if (
@@ -289,47 +289,47 @@ function parseGeneric(content: string): CapitalGainTransaction[] {
       break;
     }
   }
-  
+
   if (headerIndex === -1) {
     // Try first row as header
     headerIndex = 0;
     headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
   }
-  
+
   // Map columns flexibly
   const findCol = (keywords: string[]) => {
     return headers.findIndex(h => keywords.some(k => h.includes(k)));
   };
-  
+
   const symbolCol = findCol(['symbol', 'scrip', 'security', 'stock']);
   const dateCol = findCol(['date', 'trade']);
   const typeCol = findCol(['type', 'buy/sell', 'transaction']);
   const qtyCol = findCol(['qty', 'quantity', 'units']);
   const priceCol = findCol(['price', 'rate', 'nav']);
   const valueCol = findCol(['value', 'amount', 'total']);
-  
+
   // Simple parsing for buy/sell pairs
   const holdings: Map<string, any[]> = new Map();
-  
+
   for (let i = headerIndex + 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i]);
     if (values.length < 3) continue;
-    
+
     const symbol = symbolCol >= 0 ? values[symbolCol] : values[0];
     if (!symbol || symbol.toLowerCase().includes('total')) continue;
-    
+
     const date = dateCol >= 0 ? parseDate(values[dateCol]) : new Date();
     const type = typeCol >= 0 ? values[typeCol].toLowerCase() : '';
     const qty = qtyCol >= 0 ? parseInt(values[qtyCol]) || 0 : 1;
     const price = priceCol >= 0 ? parseAmount(values[priceCol]) : 0;
     const value = valueCol >= 0 ? parseAmount(values[valueCol]) : qty * price;
-    
+
     const isBuy = type.includes('buy') || type.includes('b') || type === '';
-    
+
     if (!holdings.has(symbol)) {
       holdings.set(symbol, []);
     }
-    
+
     holdings.get(symbol)!.push({
       date,
       isBuy,
@@ -338,13 +338,13 @@ function parseGeneric(content: string): CapitalGainTransaction[] {
       value,
     });
   }
-  
+
   // Match buy/sell for each symbol
   let txnId = 0;
   holdings.forEach((trades, symbol) => {
     const buys = trades.filter(t => t.isBuy);
     const sells = trades.filter(t => !t.isBuy);
-    
+
     sells.forEach(sell => {
       // Find matching buy (FIFO)
       const matchingBuy = buys.find(b => b.qty > 0);
@@ -353,11 +353,11 @@ function parseGeneric(content: string): CapitalGainTransaction[] {
         const buyValue = matchingBuy.price * matchQty;
         const sellValue = sell.price * matchQty;
         const gain = sellValue - buyValue;
-        
+
         const holdingPeriod = calculateHoldingPeriod(matchingBuy.date, sell.date);
         const assetType = detectAssetType(symbol, '');
         const gainType = determineGainType(holdingPeriod, assetType);
-        
+
         transactions.push({
           id: `txn-${txnId++}`,
           symbol,
@@ -376,13 +376,13 @@ function parseGeneric(content: string): CapitalGainTransaction[] {
           holdingPeriod,
           netGain: gain,
         });
-        
+
         matchingBuy.qty -= matchQty;
         sell.qty -= matchQty;
       }
     });
   });
-  
+
   return transactions;
 }
 
@@ -390,7 +390,7 @@ function parseGeneric(content: string): CapitalGainTransaction[] {
 export function parseCapitalGainsStatement(content: string): ParsedCapitalGains {
   const broker = detectBroker(content);
   let transactions: CapitalGainTransaction[];
-  
+
   switch (broker) {
     case 'zerodha':
       transactions = parseZerodha(content);
@@ -398,7 +398,7 @@ export function parseCapitalGainsStatement(content: string): ParsedCapitalGains 
     default:
       transactions = parseGeneric(content);
   }
-  
+
   // Calculate summary
   const summary = {
     totalSTCG: 0,
@@ -413,14 +413,14 @@ export function parseCapitalGainsStatement(content: string): ParsedCapitalGains 
     ltcgExemption: LTCG_EXEMPTION,
     carryForwardLoss: 0,
   };
-  
+
   const byAssetType = {
     equity: { stcg: 0, ltcg: 0, count: 0 },
     debt: { stcg: 0, ltcg: 0, count: 0 },
     fno: { stcg: 0, ltcg: 0, count: 0 },
     intraday: { gain: 0, count: 0 },
   };
-  
+
   // Process transactions
   transactions.forEach(txn => {
     if (txn.gainType === 'STCG') {
@@ -428,13 +428,13 @@ export function parseCapitalGainsStatement(content: string): ParsedCapitalGains 
     } else {
       summary.totalLTCG += txn.netGain;
     }
-    
+
     if (txn.netGain >= 0) {
       summary.totalGains += txn.netGain;
     } else {
       summary.totalLosses += Math.abs(txn.netGain);
     }
-    
+
     // By asset type
     if (txn.assetType === 'equity') {
       byAssetType.equity.count++;
@@ -458,34 +458,34 @@ export function parseCapitalGainsStatement(content: string): ParsedCapitalGains 
       byAssetType.intraday.gain += txn.netGain;
     }
   });
-  
+
   summary.netGain = summary.totalGains - summary.totalLosses;
-  
+
   // Calculate LTCG above exemption (for equity only)
   const equityLTCG = byAssetType.equity.ltcg;
   summary.totalLTCGAboveExemption = Math.max(0, equityLTCG - LTCG_EXEMPTION);
-  
+
   // Calculate taxes
   // STCG
   const equitySTCGTax = Math.max(0, byAssetType.equity.stcg) * TAX_RATES.equitySTCG;
   const debtSTCGTax = Math.max(0, byAssetType.debt.stcg) * TAX_RATES.debtSTCG;
   const fnoSTCGTax = Math.max(0, byAssetType.fno.stcg) * TAX_RATES.fnoSTCG;
   const intradayTax = Math.max(0, byAssetType.intraday.gain) * TAX_RATES.intradaySTCG;
-  
+
   summary.stcgTax = equitySTCGTax + debtSTCGTax + fnoSTCGTax + intradayTax;
-  
+
   // LTCG
   const equityLTCGTax = summary.totalLTCGAboveExemption * TAX_RATES.equityLTCG;
   const debtLTCGTax = Math.max(0, byAssetType.debt.ltcg) * TAX_RATES.debtLTCG;
-  
+
   summary.ltcgTax = equityLTCGTax + debtLTCGTax;
   summary.totalTax = summary.stcgTax + summary.ltcgTax;
-  
+
   // Carry forward loss
   if (summary.netGain < 0) {
     summary.carryForwardLoss = Math.abs(summary.netGain);
   }
-  
+
   return {
     transactions,
     summary,
@@ -501,32 +501,32 @@ export function exportForITR(data: ParsedCapitalGains): string {
   let output = `# Capital Gains Statement for ITR Filing\n`;
   output += `# Broker: ${data.brokerInfo?.name || 'Unknown'}\n`;
   output += `# Generated on: ${new Date().toLocaleDateString()}\n\n`;
-  
+
   output += `## Summary\n`;
   output += `- Total STCG: ₹${data.summary.totalSTCG.toLocaleString('en-IN')}\n`;
   output += `- Total LTCG: ₹${data.summary.totalLTCG.toLocaleString('en-IN')}\n`;
   output += `- LTCG Exemption (Equity): ₹${data.summary.ltcgExemption.toLocaleString('en-IN')}\n`;
   output += `- LTCG Above Exemption: ₹${data.summary.totalLTCGAboveExemption.toLocaleString('en-IN')}\n`;
   output += `- Net Gain/Loss: ₹${data.summary.netGain.toLocaleString('en-IN')}\n\n`;
-  
+
   output += `## Tax Liability\n`;
   output += `- STCG Tax (20%): ₹${data.summary.stcgTax.toLocaleString('en-IN')}\n`;
   output += `- LTCG Tax (12.5%): ₹${data.summary.ltcgTax.toLocaleString('en-IN')}\n`;
   output += `- Total Tax: ₹${data.summary.totalTax.toLocaleString('en-IN')}\n\n`;
-  
+
   if (data.summary.carryForwardLoss > 0) {
     output += `## Carry Forward Loss\n`;
     output += `- Amount: ₹${data.summary.carryForwardLoss.toLocaleString('en-IN')}\n`;
     output += `- Can be set off against future capital gains for up to 8 years\n\n`;
   }
-  
+
   output += `## Transaction Details\n\n`;
-  
+
   data.transactions.forEach((t, i) => {
     output += `${i + 1}. ${t.symbol}\n`;
     output += `   Buy: ${t.buyDate.toLocaleDateString()} | Sell: ${t.sellDate.toLocaleDateString()}\n`;
     output += `   Qty: ${t.sellQuantity} | Gain: ₹${t.netGain.toLocaleString('en-IN')} (${t.gainType})\n\n`;
   });
-  
+
   return output;
 }

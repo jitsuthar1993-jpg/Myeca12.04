@@ -101,7 +101,7 @@ function BottomNav({ active }: { active: string }) {
               className={cn(
                 "flex flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 type-meta font-normal transition",
                 "min-h-[56px] touch-manipulation active:scale-95",
-                isActive ? "bg-blue-50 text-[#315efb]" : "text-slate-500",
+                isActive ? "bg-blue-50 text-brand-600" : "text-slate-500",
               )}
             >
               <Icon className={cn("h-4 w-4", isActive && "scale-110")} />
@@ -126,7 +126,7 @@ function PhoneHeader({
   accent?: "blue" | "indigo" | "emerald" | "amber";
 }) {
   const tone = {
-    blue: "bg-blue-50 text-[#315efb]",
+    blue: "bg-blue-50 text-brand-600",
     indigo: "bg-indigo-50 text-indigo-600",
     emerald: "bg-emerald-50 text-emerald-700",
     amber: "bg-amber-50 text-amber-700",
@@ -165,7 +165,7 @@ function StatPill({
 }) {
   const classes = {
     slate: "bg-slate-50 text-slate-900",
-    blue: "bg-blue-50 text-[#315efb]",
+    blue: "bg-blue-50 text-brand-600",
     emerald: "bg-emerald-50 text-emerald-700",
     amber: "bg-amber-50 text-amber-700",
   }[tone];
@@ -179,21 +179,21 @@ function StatPill({
 }
 
 const quickActions = [
-  { label: "File ITR", icon: FileText, href: "/which-itr-form-to-file?source=mobile_app_preview_action", tone: "bg-blue-50 text-[#315efb]" },
+  { label: "File ITR", icon: FileText, href: "/which-itr-form-to-file?source=mobile_app_preview_action", tone: "bg-blue-50 text-brand-600" },
   { label: "Tax Calc", icon: Calculator, href: "/calculators/income-tax", tone: "bg-emerald-50 text-emerald-700" },
   { label: "Upload Docs", icon: Upload, href: "/documents", tone: "bg-indigo-50 text-indigo-600" },
   { label: "Ask CA", icon: Bot, href: "/tax-assistant", tone: "bg-amber-50 text-amber-700" },
 ] as const;
 
 const calculatorCards = [
-  { title: "Income Tax", desc: "Old vs new regime", icon: CircleDollarSign, tone: "bg-blue-50 text-[#315efb]" },
+  { title: "Income Tax", desc: "Old vs new regime", icon: CircleDollarSign, tone: "bg-blue-50 text-brand-600" },
   { title: "HRA", desc: "Rent savings", icon: Building2, tone: "bg-emerald-50 text-emerald-700" },
   { title: "SIP", desc: "Future corpus", icon: TrendingUp, tone: "bg-indigo-50 text-indigo-600" },
   { title: "EMI", desc: "Loan planning", icon: LockKeyhole, tone: "bg-amber-50 text-amber-700" },
 ] as const;
 
 const serviceRows = [
-  { title: "ITR Filing", desc: "Assisted return workflow in 4 steps", price: "From ₹999 excluding GST", tone: "bg-blue-50 text-[#315efb]" },
+  { title: "ITR Filing", desc: "Assisted return workflow in 4 steps", price: "From ₹999 excluding GST", tone: "bg-blue-50 text-brand-600" },
   { title: "GST Registration", desc: "Documents, filing, activation", price: "₹2,999", tone: "bg-emerald-50 text-emerald-700" },
   { title: "Company Setup", desc: "Pvt Ltd, LLP, OPC", price: "₹7,999", tone: "bg-indigo-50 text-indigo-600" },
   { title: "Notice Help", desc: "Draft the response with a CA", price: "₹2,999", tone: "bg-amber-50 text-amber-700" },
@@ -220,7 +220,7 @@ export default function MobileAppScreensPage() {
               <div className="space-y-4">
                 <h1 className="max-w-3xl type-page-title text-slate-950">
                   MyeCA, redesigned for
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#315efb] via-[#0646b2] to-[#0f766e]">
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-brand-800 to-[#0f766e]">
                     a mobile-first tax cockpit
                   </span>
                 </h1>
@@ -230,7 +230,7 @@ export default function MobileAppScreensPage() {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Badge className="rounded-full bg-blue-50 px-4 py-2 text-[#315efb] hover:bg-blue-50">
+                <Badge className="rounded-full bg-blue-50 px-4 py-2 text-brand-600 hover:bg-blue-50">
                   Assisted filing
                 </Badge>
                 <Badge className="rounded-full bg-emerald-50 px-4 py-2 text-emerald-700 hover:bg-emerald-50">
@@ -242,7 +242,7 @@ export default function MobileAppScreensPage() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Button asChild className="h-12 w-full rounded-2xl bg-[#315efb] px-6 font-normal text-white shadow-lg shadow-blue-500/20 hover:bg-[#2040d8] sm:w-auto">
+                <Button asChild className="h-12 w-full rounded-2xl bg-brand-600 px-6 font-normal text-white shadow-lg shadow-blue-500/20 hover:bg-brand-700 sm:w-auto">
                   <Link href="/which-itr-form-to-file?source=mobile_app_preview_cta">
                     Preview filing flow
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -265,7 +265,7 @@ export default function MobileAppScreensPage() {
               <div className="relative grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
                 <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_24px_70px_-48px_rgba(0,48,135,0.45)]">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-2xl bg-blue-50 p-3 text-[#315efb]">
+                    <div className="rounded-2xl bg-blue-50 p-3 text-brand-600">
                       <ShieldCheck className="h-6 w-6" />
                     </div>
                     <div>
@@ -278,7 +278,7 @@ export default function MobileAppScreensPage() {
                   </p>
                 </div>
 
-                <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-br from-[#315efb] to-[#082a5c] p-6 text-white shadow-[0_24px_70px_-48px_rgba(8,42,92,0.65)]">
+                <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-br from-brand-600 to-[#082a5c] p-6 text-white shadow-[0_24px_70px_-48px_rgba(8,42,92,0.65)]">
                   <div className="flex items-center gap-3">
                     <div className="rounded-2xl bg-white/10 p-3 backdrop-blur">
                       <Sparkles className="h-6 w-6 text-white" />
@@ -303,7 +303,7 @@ export default function MobileAppScreensPage() {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-normal uppercase tracking-[0.28em] text-[#315efb]">Screen set</p>
+            <p className="text-xs font-normal uppercase tracking-[0.28em] text-brand-600">Screen set</p>
             <h2 className="mt-2 text-2xl font-normal tracking-tight text-slate-950 md:text-3xl">
               Screens mapped from the website’s core journeys
             </h2>
@@ -326,7 +326,7 @@ export default function MobileAppScreensPage() {
               <ScreenTag label="Onboarding" />
             </div>
             <PhoneFrame>
-              <div className="flex h-full flex-col bg-gradient-to-b from-[#315efb] via-[#0a46b3] to-[#082a5c] text-white">
+              <div className="flex h-full flex-col bg-gradient-to-b from-brand-600 via-[#0a46b3] to-[#082a5c] text-white">
                 <StatusBar inverted />
                 <div className="flex-1 px-6 pb-6 pt-4">
                   <div className="mt-4 flex items-center gap-3">
@@ -350,7 +350,7 @@ export default function MobileAppScreensPage() {
                   </div>
 
                   <div className="mt-6 grid grid-cols-2 gap-3">
-                    <Button asChild className="h-12 w-full rounded-2xl bg-white text-[#315efb] hover:bg-white/95">
+                    <Button asChild className="h-12 w-full rounded-2xl bg-white text-brand-600 hover:bg-white/95">
                       <Link href="/auth/login">Sign in</Link>
                     </Button>
                     <Button asChild className="h-12 w-full rounded-2xl bg-white/10 text-white hover:bg-white/15">
@@ -392,7 +392,7 @@ export default function MobileAppScreensPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-[2rem] bg-gradient-to-br from-[#315efb] to-[#0646b2] p-5 text-white shadow-[0_18px_45px_-28px_rgba(49,94,251,0.75)]">
+                  <div className="rounded-[2rem] bg-gradient-to-br from-brand-600 to-brand-800 p-5 text-white shadow-[0_18px_45px_-28px_rgba(49,94,251,0.75)]">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Refund estimate</p>
@@ -465,10 +465,10 @@ export default function MobileAppScreensPage() {
                   <div className="rounded-[1.7rem] bg-slate-50 p-4">
                     <div className="flex items-center justify-between type-meta font-normal uppercase tracking-[0.24em] text-slate-400">
                       <span>Step 2 of 4</span>
-                      <span className="text-[#315efb]">CA review</span>
+                      <span className="text-brand-600">CA review</span>
                     </div>
                     <div className="mt-3 h-2 rounded-full bg-slate-200">
-                      <div className="h-2 w-2/3 rounded-full bg-gradient-to-r from-[#315efb] to-[#0646b2]" />
+                      <div className="h-2 w-2/3 rounded-full bg-gradient-to-r from-brand-600 to-brand-800" />
                     </div>
                   </div>
 
@@ -483,7 +483,7 @@ export default function MobileAppScreensPage() {
                         <div
                           className={cn(
                             "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl font-normal",
-                            index < 2 ? "bg-blue-50 text-[#315efb]" : "bg-slate-50 text-slate-400",
+                            index < 2 ? "bg-blue-50 text-brand-600" : "bg-slate-50 text-slate-400",
                           )}
                         >
                           {num}
@@ -498,13 +498,13 @@ export default function MobileAppScreensPage() {
 
                   <div className="rounded-[1.7rem] border border-blue-100 bg-blue-50 p-4">
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-[#315efb]" />
+                      <CheckCircle2 className="h-5 w-5 text-brand-600" />
                       <p className="text-sm font-normal text-slate-950">Document checks completed</p>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
                       The app can keep the filing flow concise while still showing CA review status and missing items.
                     </p>
-                    <Button asChild className="mt-4 h-11 w-full rounded-2xl bg-[#315efb] font-normal text-white hover:bg-[#2040d8]">
+                    <Button asChild className="mt-4 h-11 w-full rounded-2xl bg-brand-600 font-normal text-white hover:bg-brand-700">
                       <Link href="/which-itr-form-to-file?source=mobile_app_preview_continue">Continue filing</Link>
                     </Button>
                   </div>
@@ -556,7 +556,7 @@ export default function MobileAppScreensPage() {
                     })}
                   </div>
 
-                  <div className="rounded-[1.7rem] bg-gradient-to-br from-[#315efb] to-[#082a5c] p-4 text-white shadow-[0_18px_50px_-35px_rgba(8,42,92,0.8)]">
+                  <div className="rounded-[1.7rem] bg-gradient-to-br from-brand-600 to-[#082a5c] p-4 text-white shadow-[0_18px_50px_-35px_rgba(8,42,92,0.8)]">
                     <div className="flex items-end justify-between gap-4">
                       <div>
                         <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Savings snapshot</p>
@@ -613,7 +613,7 @@ export default function MobileAppScreensPage() {
                     ].map(([label, status, tone]) => (
                       <div key={label} className="flex items-center justify-between rounded-[1.5rem] border border-slate-200 bg-slate-50/60 p-4">
                         <div className="flex items-center gap-3">
-                          <div className={cn("rounded-2xl bg-white p-2 shadow-sm", tone === "blue" && "text-[#315efb]", tone === "amber" && "text-amber-700", tone === "emerald" && "text-emerald-700", tone === "slate" && "text-slate-500")}>
+                          <div className={cn("rounded-2xl bg-white p-2 shadow-sm", tone === "blue" && "text-brand-600", tone === "amber" && "text-amber-700", tone === "emerald" && "text-emerald-700", tone === "slate" && "text-slate-500")}>
                             <FileText className="h-4 w-4" />
                           </div>
                           <div>
@@ -627,7 +627,7 @@ export default function MobileAppScreensPage() {
                   </div>
 
                   <div className="rounded-[1.7rem] border border-dashed border-blue-200 bg-blue-50/60 p-5 text-center">
-                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#315efb] shadow-sm">
+                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-brand-600 shadow-sm">
                       <Upload className="h-5 w-5" />
                     </div>
                     <p className="mt-4 text-sm font-normal text-slate-950">Upload a new document</p>
@@ -687,7 +687,7 @@ export default function MobileAppScreensPage() {
                   <div className="rounded-[1.7rem] bg-white p-4 text-slate-950 shadow-lg shadow-blue-900/20">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-normal">Quick reply</p>
-                      <Sparkles className="h-4 w-4 text-[#315efb]" />
+                      <Sparkles className="h-4 w-4 text-brand-600" />
                     </div>
                     <p className="mt-2 text-sm leading-6 text-slate-500">
                       The app can keep the same “ask, analyze, and action” pattern from the website’s assistant page.
@@ -729,7 +729,7 @@ export default function MobileAppScreensPage() {
                       ["Notice", "Urgent help", "amber"],
                     ].map(([label, desc, tone]) => (
                       <div key={label} className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm">
-                        <div className={cn("inline-flex rounded-2xl px-3 py-2 text-xs font-normal uppercase tracking-[0.22em]", tone === "blue" && "bg-blue-50 text-[#315efb]", tone === "emerald" && "bg-emerald-50 text-emerald-700", tone === "indigo" && "bg-indigo-50 text-indigo-600", tone === "amber" && "bg-amber-50 text-amber-700")}>
+                        <div className={cn("inline-flex rounded-2xl px-3 py-2 text-xs font-normal uppercase tracking-[0.22em]", tone === "blue" && "bg-blue-50 text-brand-600", tone === "emerald" && "bg-emerald-50 text-emerald-700", tone === "indigo" && "bg-indigo-50 text-indigo-600", tone === "amber" && "bg-amber-50 text-amber-700")}>
                           {label}
                         </div>
                         <p className="mt-4 text-sm font-normal text-slate-950">{desc}</p>
@@ -753,12 +753,12 @@ export default function MobileAppScreensPage() {
                     ))}
                   </div>
 
-                  <div className="rounded-[1.7rem] bg-gradient-to-br from-[#315efb] to-[#082a5c] p-4 text-white shadow-[0_18px_50px_-35px_rgba(8,42,92,0.75)]">
+                  <div className="rounded-[1.7rem] bg-gradient-to-br from-brand-600 to-[#082a5c] p-4 text-white shadow-[0_18px_50px_-35px_rgba(8,42,92,0.75)]">
                     <p className="type-meta font-normal uppercase tracking-[0.24em] text-blue-100">Need expert help?</p>
                     <p className="mt-2 text-sm leading-6 text-blue-100/90">
                       Push people toward the same high-trust service flow used on the website.
                     </p>
-                    <Button asChild className="mt-4 h-11 w-full rounded-2xl bg-white text-[#315efb] hover:bg-white/95">
+                    <Button asChild className="mt-4 h-11 w-full rounded-2xl bg-white text-brand-600 hover:bg-white/95">
                       <Link href="/expert-consultation">Book a consultation</Link>
                     </Button>
                   </div>
@@ -790,7 +790,7 @@ export default function MobileAppScreensPage() {
 
                   <div className="rounded-[1.7rem] bg-slate-50 p-4">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-[1.7rem] bg-gradient-to-br from-[#315efb] to-[#082a5c] text-2xl font-normal text-white shadow-lg shadow-blue-500/20">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-[1.7rem] bg-gradient-to-br from-brand-600 to-[#082a5c] text-2xl font-normal text-white shadow-lg shadow-blue-500/20">
                         A
                       </div>
                       <div className="min-w-0">
@@ -821,7 +821,7 @@ export default function MobileAppScreensPage() {
                       return (
                         <div key={String(label)} className="flex items-center justify-between rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm">
                           <div className="flex items-center gap-3">
-                            <div className="rounded-2xl bg-slate-50 p-2 text-[#315efb]">
+                            <div className="rounded-2xl bg-slate-50 p-2 text-brand-600">
                               <TypedIcon className="h-4 w-4" />
                             </div>
                             <p className="text-sm font-normal text-slate-950">{String(label)}</p>
@@ -834,13 +834,13 @@ export default function MobileAppScreensPage() {
 
                   <div className="rounded-[1.7rem] border border-slate-200 bg-slate-50 p-4">
                     <div className="flex items-center gap-3">
-                      <LockKeyhole className="h-5 w-5 text-[#315efb]" />
+                      <LockKeyhole className="h-5 w-5 text-brand-600" />
                       <div>
                         <p className="text-sm font-normal text-slate-950">Security and help</p>
                         <p className="text-xs text-slate-500">Change password, sign out, and reach support quickly.</p>
                       </div>
                     </div>
-                    <Button className="mt-4 h-11 w-full rounded-2xl bg-blue-700 font-normal text-white hover:bg-[#315efb]">
+                    <Button className="mt-4 h-11 w-full rounded-2xl bg-blue-700 font-normal text-white hover:bg-brand-600">
                       Sign out
                     </Button>
                   </div>

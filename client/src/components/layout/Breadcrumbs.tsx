@@ -10,7 +10,7 @@ interface BreadcrumbItem {
 
 export function Breadcrumbs() {
   const [location] = useLocation();
-  
+
   // Disabled globally per user request
   return null;
 
@@ -25,7 +25,7 @@ export function Breadcrumbs() {
     paths.forEach((path, index) => {
       currentPath += `/${path}`;
       const isLast = index === paths.length - 1;
-      
+
       // Format label: "investment-dashboard" -> "Investment Dashboard"
       const label = path
         .split('-')

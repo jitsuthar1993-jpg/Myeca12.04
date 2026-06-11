@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -120,7 +120,7 @@ export default function CreateAdminPage() {
         <Card className="rounded-lg border-slate-200 shadow-none">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#315efb] text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600 text-white">
                 <MailPlus className="h-5 w-5" />
               </div>
               <div>
@@ -195,7 +195,7 @@ export default function CreateAdminPage() {
               <Button
                 type="submit"
                 disabled={inviteMutation.isPending}
-                className="w-full bg-[#315efb] font-bold hover:bg-[#082a5c]"
+                className="w-full bg-brand-600 font-bold hover:bg-[#082a5c]"
               >
                 {inviteMutation.isPending ? (
                   "Provisioning Access..."
@@ -212,7 +212,7 @@ export default function CreateAdminPage() {
 
         <Card className="rounded-lg border-slate-200 bg-slate-50 shadow-none">
           <CardHeader>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#315efb]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-brand-600">
               <Shield className="h-6 w-6" />
             </div>
             <CardTitle>What changed?</CardTitle>

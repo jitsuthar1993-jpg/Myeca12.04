@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { calculateCapitalGains } from "@/lib/tax-calculations";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { 
-  TrendingUp, Coins, Calendar, Target, 
-  IndianRupee, Receipt, 
+import {
+  TrendingUp, Coins, Calendar, Target,
+  IndianRupee, Receipt,
   Building2, LineChart, Sparkles, AlertTriangle, Zap,
   Clock, ArrowRight, ShieldCheck, Calculator, FileSpreadsheet,
   Info, Lock, Headphones, Award, BarChart3,
@@ -109,7 +109,7 @@ export default function CapitalGainsCalculatorPage() {
               <div className="absolute top-0 right-0 p-6 opacity-5 text-[#027A48]">
                 <Coins className="w-24 h-24" />
               </div>
-              
+
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-[#ECFDF3] flex items-center justify-center text-[#027A48] border border-[#D1FADF]">
                   <Receipt className="w-5 h-5" />
@@ -159,7 +159,7 @@ export default function CapitalGainsCalculatorPage() {
                   <div className="space-y-1.5">
                     <label className="type-meta font-normal text-[#667085] uppercase tracking-widest px-1">Purchase Date</label>
                     <div className="relative group">
-                      <input 
+                      <input
                         type="date"
                         value={purchaseDate}
                         onChange={(e) => setPurchaseDate(e.target.value)}
@@ -173,7 +173,7 @@ export default function CapitalGainsCalculatorPage() {
                   <div className="space-y-1.5">
                     <label className="type-meta font-normal text-[#667085] uppercase tracking-widest px-1">Sale Date</label>
                     <div className="relative group">
-                      <input 
+                      <input
                         type="date"
                         value={saleDate}
                         onChange={(e) => setSaleDate(e.target.value)}
@@ -194,7 +194,7 @@ export default function CapitalGainsCalculatorPage() {
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm focus-within:border-[#027A48] focus-within:ring-1 focus-within:ring-[#027A48]/10 transition-all">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={purchasePrice}
                           onChange={(e) => setPurchasePrice(Number(e.target.value))}
@@ -213,7 +213,7 @@ export default function CapitalGainsCalculatorPage() {
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm focus-within:border-[#027A48] focus-within:ring-1 focus-within:ring-[#027A48]/10 transition-all">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={salePrice}
                           onChange={(e) => setSalePrice(Number(e.target.value))}
@@ -384,7 +384,7 @@ export default function CapitalGainsCalculatorPage() {
 
         {/* Informational Content */}
         <div className="mt-12">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <ShieldCheck className="w-5 h-5" />,

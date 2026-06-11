@@ -44,20 +44,20 @@ export const CACHE_EXPIRATION = {
 // Check if request is cacheable
 export function isCacheableRequest(request: Request): boolean {
   const url = new URL(request.url);
-  
+
   // Don't cache non-GET requests
   if (request.method !== 'GET') return false;
-  
+
   // Don't cache authenticated requests
   if (url.pathname.includes('/auth/') || url.pathname.includes('/admin/')) {
     return false;
   }
-  
+
   // Don't cache requests with query parameters (except specific ones)
   if (url.search && !url.pathname.includes('/api/')) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -65,27 +65,27 @@ export function isCacheableRequest(request: Request): boolean {
 export function getCacheStrategy(request: Request): string {
   const url = new URL(request.url);
   const pathname = url.pathname;
-  
+
   // Images - cache first
   if (IMAGE_EXTENSIONS.some(ext => pathname.endsWith(ext))) {
     return CACHE_STRATEGIES.CACHE_FIRST;
   }
-  
+
   // API calls - stale while revalidate
   if (pathname.startsWith('/api/')) {
     return CACHE_STRATEGIES.STALE_WHILE_REVALIDATE;
   }
-  
+
   // Static assets - cache first
   if (STATIC_ASSETS.includes(pathname)) {
     return CACHE_STRATEGIES.CACHE_FIRST;
   }
-  
+
   // Fonts - cache first
   if (pathname.includes('/fonts/') || pathname.endsWith('.woff2') || pathname.endsWith('.woff')) {
     return CACHE_STRATEGIES.CACHE_FIRST;
   }
-  
+
   // Default - network first
   return CACHE_STRATEGIES.NETWORK_FIRST;
 }
@@ -94,7 +94,7 @@ export function getCacheStrategy(request: Request): string {
 export async function cleanOldCaches(): Promise<void> {
   const cacheWhitelist = Object.values(CACHE_NAMES);
   const cacheNames = await caches.keys();
-  
+
   await Promise.all(
     cacheNames.map(async (cacheName) => {
       if (!cacheWhitelist.includes(cacheName as any)) {
@@ -114,17 +114,17 @@ export async function cacheWithExpiration(
 ): Promise<void> {
   const cache = await caches.open(cacheName);
   const clonedResponse = response.clone();
-  
+
   // Add expiration header
   const headers = new Headers(clonedResponse.headers);
   headers.set('sw-cache-expires', new Date(Date.now() + maxAge * 1000).toISOString());
-  
+
   const responseWithExpiration = new Response(clonedResponse.body, {
     status: clonedResponse.status,
     statusText: clonedResponse.statusText,
     headers
   });
-  
+
   await cache.put(request, responseWithExpiration);
 }
 
@@ -132,7 +132,7 @@ export async function cacheWithExpiration(
 export function isCacheExpired(response: Response): boolean {
   const expires = response.headers.get('sw-cache-expires');
   if (!expires) return false;
-  
+
   return new Date(expires) < new Date();
 }
 
@@ -144,7 +144,7 @@ export function prefetchCriticalResources(): void {
         '/assets/images/hero-tax-filing.webp',
         '/assets/logos/myeca-logo.png'
       ];
-      
+
       criticalImages.forEach(url => {
         const link = document.createElement('link');
         link.rel = 'prefetch';
@@ -175,23 +175,23 @@ export async function getStorageQuota(): Promise<{
     const usage = estimate.usage || 0;
     const quota = estimate.quota || 0;
     const percentage = quota > 0 ? (usage / quota) * 100 : 0;
-    
+
     return { usage, quota, percentage };
   }
-  
+
   return { usage: 0, quota: 0, percentage: 0 };
 }
 
 // Clear cache if storage is running low
 export async function clearCacheIfNeeded(): Promise<void> {
   const { percentage } = await getStorageQuota();
-  
+
   if (percentage > 80) {
     console.log('Storage quota above 80%, clearing old caches');
-    
+
     // Clear image cache first (least critical)
     await caches.delete(CACHE_NAMES.IMAGES);
-    
+
     if (percentage > 90) {
       // Clear API cache if still needed
       await caches.delete(CACHE_NAMES.API);

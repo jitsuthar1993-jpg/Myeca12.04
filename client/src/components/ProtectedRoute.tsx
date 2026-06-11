@@ -10,10 +10,10 @@ interface ProtectedRouteProps {
   redirectTo?: string;
 }
 
-export const ProtectedRoute = ({ 
-  children, 
+export const ProtectedRoute = ({
+  children,
   requiredRole,
-  redirectTo = '/auth/login' 
+  redirectTo = '/auth/login'
 }: ProtectedRouteProps) => {
   const { user, isLoading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
@@ -38,7 +38,7 @@ export const ProtectedRoute = ({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-slate-600">Loading...</p>
         </div>
       </div>
     );
@@ -49,7 +49,7 @@ export const ProtectedRoute = ({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center" aria-live="polite">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Opening sign in...</p>
+          <p className="text-slate-600">Opening sign in...</p>
         </div>
       </div>
     );
@@ -60,7 +60,7 @@ export const ProtectedRoute = ({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center" aria-live="polite">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Opening your workspace...</p>
+          <p className="text-slate-600">Opening your workspace...</p>
         </div>
       </div>
     );

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Receipt, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Receipt,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -88,7 +88,7 @@ export default function GstRegistrationPage() {
       suitableFor: "Manufacturers, traders, service providers",
       features: [
         "Input tax credit available",
-        "Can issue tax invoices", 
+        "Can issue tax invoices",
         "Monthly/quarterly returns",
         "Inter-state supply allowed"
       ],
@@ -220,7 +220,7 @@ export default function GstRegistrationPage() {
       color: "blue"
     },
     {
-      step: 2, 
+      step: 2,
       title: "Application Preparation",
       description: "Prepare GST REG-01 application with accurate business details and document upload",
       icon: Calculator,
@@ -235,7 +235,7 @@ export default function GstRegistrationPage() {
     },
     {
       step: 4,
-      title: "Verification & Approval", 
+      title: "Verification & Approval",
       description: "Department verification, possible queries resolution, and GST certificate issuance",
       icon: CheckCircle,
       color: "orange"
@@ -257,7 +257,7 @@ export default function GstRegistrationPage() {
     },
     {
       type: "Premium GST Package",
-      price: "₹4,999", 
+      price: "₹4,999",
       originalPrice: "₹7,999",
       features: [
         "Everything in Basic",
@@ -311,7 +311,7 @@ export default function GstRegistrationPage() {
         ]}
       />
       {/* Header */}
-      <section className="bg-white border-b border-gray-200 py-10">
+      <section className="bg-white border-b border-slate-200 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -319,16 +319,16 @@ export default function GstRegistrationPage() {
                 <div className="p-2 bg-green-50 rounded-lg border border-green-100">
                   <Receipt className="w-6 h-6 text-green-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   GST Registration Services
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Registration support with document checks, application preparation, and portal filing support. Timelines depend on document readiness and department processing.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 font-semibold"
                   onClick={() => {
                     setCheckoutTitle("GST Registration - Standard");
@@ -347,16 +347,16 @@ export default function GstRegistrationPage() {
                 </Link>
               </div>
             </div>
-            <Card className="shadow-sm border-gray-200">
+            <Card className="shadow-sm border-slate-200">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-green-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Before you start</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2.5 text-sm text-gray-700">
+                <ul className="space-y-2.5 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-green-600 mt-0.5" />
                     Check the applicable turnover reference and activity-based triggers.
@@ -401,17 +401,17 @@ export default function GstRegistrationPage() {
             <CardContent>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {gstThresholds.map((threshold, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="p-4 rounded-lg border border-green-200 bg-green-50"
                   >
                     <h4 className="font-semibold text-green-900 mb-2">{threshold.state}</h4>
                     <div className="text-2xl font-bold text-green-600 mb-2">{threshold.threshold}</div>
-                    <p className="text-sm text-gray-600 mb-3">{threshold.description}</p>
-                    <Badge 
+                    <p className="text-sm text-slate-600 mb-3">{threshold.description}</p>
+                    <Badge
                       className={`w-full justify-center ${
-                        threshold.mandatory === 'Compulsory' 
-                          ? 'bg-red-100 text-red-800' 
+                        threshold.mandatory === 'Compulsory'
+                          ? 'bg-red-100 text-red-800'
                           : 'bg-green-100 text-green-800'
                       }`}
                     >
@@ -432,17 +432,17 @@ export default function GstRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Types of GST Registration
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
                Compare eligibility, tax collection, input-credit, supply, and return obligations before choosing
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {gstRegistrationTypes.map((type) => (
-              <Card 
+              <Card
                 key={type.id}
                 className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 ${
                   type.color === 'blue' ? 'border-l-blue-500' :
@@ -462,29 +462,29 @@ export default function GstRegistrationPage() {
                       <Receipt className="w-6 h-6" />
                     </div>
                     <div className="text-right text-sm">
-                      <div className="flex items-center text-gray-600">
+                      <div className="flex items-center text-slate-600">
                         <Clock className="w-4 h-4 mr-1" />
                         {type.timeline}
                       </div>
-                      <div className="flex items-center text-gray-600 mt-1">
+                      <div className="flex items-center text-slate-600 mt-1">
                         <FileText className="w-4 h-4 mr-1" />
                         {type.documents} documents
                       </div>
                     </div>
                   </div>
                   <CardTitle className="text-xl font-bold">{type.title}</CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-slate-600">
                     {type.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-4">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Suitable For:</div>
-                    <div className="text-sm text-gray-600">{type.suitableFor}</div>
+                    <div className="text-sm font-medium text-slate-700 mb-2">Suitable For:</div>
+                    <div className="text-sm text-slate-600">{type.suitableFor}</div>
                   </div>
-                  
+
                   <div className="mb-6">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Key Features:</div>
+                    <div className="text-sm font-medium text-slate-700 mb-3">Key Features:</div>
                     <ul className="space-y-2">
                       {type.features.map((feature, index) => (
                         <li key={index} className="flex items-center text-sm">
@@ -526,7 +526,7 @@ export default function GstRegistrationPage() {
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {requiredDocuments.map((category, index) => (
                   <div key={index} className="space-y-3">
-                    <h4 className="font-semibold text-gray-900 flex items-center">
+                    <h4 className="font-semibold text-slate-900 flex items-center">
                       <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mr-2">
                         <FileText className="w-4 h-4 text-emerald-600" />
                       </div>
@@ -555,10 +555,10 @@ export default function GstRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               4-Step GST Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Simple and streamlined process to get your GST registration completed
             </p>
           </div>
@@ -579,8 +579,8 @@ export default function GstRegistrationPage() {
                 <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                   {step.step}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">{step.title}</h3>
+                <p className="text-slate-600">{step.description}</p>
               </Card>
             ))}
           </div>
@@ -594,10 +594,10 @@ export default function GstRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Benefits of GST Registration
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Know when GST registration applies and what to prepare before filing
             </p>
           </div>
@@ -611,8 +611,8 @@ export default function GstRegistrationPage() {
                       <benefit.icon className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                      <p className="text-gray-600 text-sm">{benefit.description}</p>
+                      <h3 className="font-semibold text-slate-900 mb-2">{benefit.title}</h3>
+                      <p className="text-slate-600 text-sm">{benefit.description}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -702,8 +702,8 @@ export default function GstRegistrationPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="business-address">Business Address</Label>
-                <Textarea 
-                  id="business-address" 
+                <Textarea
+                  id="business-address"
                   placeholder="Enter complete business address"
                   rows={3}
                 />
@@ -711,15 +711,15 @@ export default function GstRegistrationPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="business-activity">Nature of Business Activity</Label>
-                <Textarea 
-                  id="business-activity" 
+                <Textarea
+                  id="business-activity"
                   placeholder="Describe your business activities, products/services offered"
                   rows={3}
                 />
               </div>
 
               <div className="flex gap-4">
-                <Button 
+                <Button
                   className="flex-1 bg-green-600 hover:bg-green-700"
                   onClick={(e) => {
                     e.preventDefault();
@@ -763,17 +763,17 @@ export default function GstRegistrationPage() {
           className="text-center"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               GST Registration Pricing
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Choose a package after reviewing scope, exclusions, and document needs.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
-              <Card 
+              <Card
                 key={index}
                 className={`relative ${plan.popular ? 'border-2 border-green-500 shadow-lg' : ''}`}
               >
@@ -788,7 +788,7 @@ export default function GstRegistrationPage() {
                   <CardTitle className="text-xl font-bold">{plan.type}</CardTitle>
                   <div className="flex items-center justify-center gap-2 mt-2">
                     <span className="text-3xl font-bold text-green-600">{plan.price}</span>
-                    <span className="text-lg text-gray-500 line-through">{plan.originalPrice}</span>
+                    <span className="text-lg text-slate-500 line-through">{plan.originalPrice}</span>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -800,11 +800,11 @@ export default function GstRegistrationPage() {
                       </li>
                     ))}
                   </ul>
-                  <Button 
+                  <Button
                     className={`w-full ${
-                      plan.popular 
-                        ? 'bg-green-600 hover:bg-green-700' 
-                        : 'bg-gray-600 hover:bg-gray-700'
+                      plan.popular
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-slate-600 hover:bg-slate-700'
                     }`}
                     onClick={() => {
                       setCheckoutTitle(plan.type);
@@ -819,7 +819,7 @@ export default function GstRegistrationPage() {
             ))}
           </div>
 
-          <p className="text-sm text-gray-600 mt-8">
+          <p className="text-sm text-slate-600 mt-8">
             Document review · Portal-aligned workflow · Query-response support
           </p>
         </m.div>

@@ -1,11 +1,11 @@
 import React from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Award, 
-  CheckCircle2, 
-  Linkedin, 
-  MessageSquare, 
+import {
+  Award,
+  CheckCircle2,
+  Linkedin,
+  MessageSquare,
   ShieldCheck,
   Briefcase,
   GraduationCap,
@@ -99,8 +99,8 @@ export default function ExpertsIndexPage() {
               >
                 <Card className="group border-slate-200 hover:border-blue-300 hover:shadow-2xl transition-all duration-500 overflow-hidden bg-white">
                   <div className="relative h-64 overflow-hidden">
-                    <LazyImage 
-                      src={expert.image} 
+                    <LazyImage
+                      src={expert.image}
                       alt={expert.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
@@ -133,7 +133,7 @@ export default function ExpertsIndexPage() {
                         </div>
                         <span className="text-xs font-bold text-slate-700">{expert.exp}</span>
                       </div>
-                      
+
                       <Link href={`/experts/${expert.id}`}>
                         <Button variant="ghost" className="text-blue-600 font-bold hover:bg-blue-50 flex items-center gap-2">
                           View profile

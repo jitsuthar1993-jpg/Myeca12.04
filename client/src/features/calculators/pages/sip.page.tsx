@@ -60,7 +60,7 @@ export default function SIPCalculator() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      <CalcHero 
+      <CalcHero
         title={isEnhancedRoute ? "Enhanced SIP Calculator" : "SIP Calculator"}
         description={
           isEnhancedRoute
@@ -87,7 +87,7 @@ export default function SIPCalculator() {
               <CalcResultRow label="Total Invested" value={fmt(result.totalInvestment)} />
               <CalcResultRow label="Estimated Gains" value={fmt(result.wealthGain)} variant="success" />
               <CalcResultRow label="Maturity Value" value={fmt(result.maturityValue)} variant="highlight" className="pt-4 border-t border-white/20" />
-              
+
               <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
                 <p className="type-meta mb-2 font-normal uppercase tracking-widest text-slate-500">Growth Analysis</p>
                 <div className="space-y-2">
@@ -96,8 +96,8 @@ export default function SIPCalculator() {
                     <span className="text-xs font-normal text-blue-600">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
                   </div>
                   <div className="w-full bg-slate-200/50 h-1.5 rounded-full overflow-hidden">
-                    <div 
-                      className="bg-blue-600 h-full rounded-full" 
+                    <div
+                      className="bg-blue-600 h-full rounded-full"
                       style={{ width: `${Math.min(100, (result.wealthGain / result.maturityValue) * 100)}%` }}
                     />
                   </div>
@@ -117,43 +117,43 @@ export default function SIPCalculator() {
       >
         <div className="space-y-8">
           <CalcInputCard title="SIP Parameters" icon={<PieChartIcon className="w-5 h-5" />}>
-            <CalcInputGroup 
-              label="Monthly Investment" 
+            <CalcInputGroup
+              label="Monthly Investment"
               badgeValue={fmt(monthlyAmount)}
             >
-              <Slider 
-                value={[monthlyAmount]} 
-                onValueChange={(v) => setMonthlyAmount(v[0])} 
-                max={100000} 
-                min={500} 
-                step={500} 
+              <Slider
+                value={[monthlyAmount]}
+                onValueChange={(v) => setMonthlyAmount(v[0])}
+                max={100000}
+                min={500}
+                step={500}
               />
             </CalcInputGroup>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <CalcInputGroup 
-                label="Investment Period" 
+              <CalcInputGroup
+                label="Investment Period"
                 badgeValue={`${years} Years`}
               >
-                <Slider 
-                  value={[years]} 
-                  onValueChange={(v) => setYears(v[0])} 
-                  max={40} 
-                  min={1} 
-                  step={1} 
+                <Slider
+                  value={[years]}
+                  onValueChange={(v) => setYears(v[0])}
+                  max={40}
+                  min={1}
+                  step={1}
                 />
               </CalcInputGroup>
 
-              <CalcInputGroup 
-                label="Expected Return Rate" 
+              <CalcInputGroup
+                label="Expected Return Rate"
                 badgeValue={`${expectedReturn}% p.a.`}
               >
-                <Slider 
-                  value={[expectedReturn]} 
-                  onValueChange={(v) => setExpectedReturn(v[0])} 
-                  max={30} 
-                  min={1} 
-                  step={0.5} 
+                <Slider
+                  value={[expectedReturn]}
+                  onValueChange={(v) => setExpectedReturn(v[0])}
+                  max={30}
+                  min={1}
+                  step={0.5}
                 />
               </CalcInputGroup>
             </div>
@@ -215,7 +215,7 @@ export default function SIPCalculator() {
           </CalcInputCard>
         </div>
 
-        <CalculatorMiniBlog 
+        <CalculatorMiniBlog
           features={[
             {
               icon: <Sparkles className="w-5 h-5" />,

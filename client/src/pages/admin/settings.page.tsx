@@ -16,16 +16,16 @@ import { useToast } from "@/hooks/use-toast";
 import { CONTACT } from "@/config/contact";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { 
-  Settings, 
-  Globe, 
-  Mail, 
-  Shield, 
-  Database, 
-  Users, 
-  CreditCard, 
-  Bell, 
-  FileText, 
+import {
+  Settings,
+  Globe,
+  Mail,
+  Shield,
+  Database,
+  Users,
+  CreditCard,
+  Bell,
+  FileText,
   Palette,
   Key,
   Server,
@@ -43,43 +43,43 @@ function AdminSettingsContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // General Settings
   const [siteName, setSiteName] = useState("MyeCA.in");
   const [siteDescription, setSiteDescription] = useState("Expert Income Tax Filing & ITR e-Filing in India");
   const [supportEmail, setSupportEmail] = useState("support@myeca.in");
   const [contactPhone, setContactPhone] = useState("");
   const [maintenanceMode, setMaintenanceMode] = useState(false);
-  
+
   // Email Settings
   const [smtpHost, setSmtpHost] = useState("");
   const [smtpPort, setSmtpPort] = useState("587");
   const [smtpUser, setSmtpUser] = useState("");
   const [emailEnabled, setEmailEnabled] = useState(true);
-  
+
   // Payment Settings
   const [razorpayKeyId, setRazorpayKeyId] = useState("");
   const [paymentMode, setPaymentMode] = useState("test");
   const [paymentsEnabled, setPaymentsEnabled] = useState(true);
-  
+
   // Security Settings
   const [jwtExpiry, setJwtExpiry] = useState("7d");
   const [passwordMinLength, setPasswordMinLength] = useState("8");
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [sessionTimeout, setSessionTimeout] = useState("24");
-  
+
   // Notification Settings
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [adminAlerts, setAdminAlerts] = useState(true);
-  
+
   // Tax Filing Settings
   const [currentAssessmentYear, setCurrentAssessmentYear] = useState("2025-26");
   const [itrFilingEnabled, setItrFilingEnabled] = useState(true);
   const [maxFileSize, setMaxFileSize] = useState("10");
   const [autoSaveDrafts, setAutoSaveDrafts] = useState(true);
-  
+
   // API Settings
   const [rateLimit, setRateLimit] = useState("100");
   const [apiTimeout, setApiTimeout] = useState("30");
@@ -268,7 +268,7 @@ function AdminSettingsContent() {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="siteDescription">Site Description</Label>
                 <Textarea
@@ -279,7 +279,7 @@ function AdminSettingsContent() {
                   rows={3}
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="contactPhone">Contact Phone</Label>
@@ -302,7 +302,7 @@ function AdminSettingsContent() {
                   )}
                 </div>
               </div>
-              
+
               <Button onClick={() => handleSaveSettings("General")} className="w-full" disabled={saveSettings.isPending}>
                 <Save className="h-4 w-4 mr-2" />
                 Save General Settings
@@ -337,7 +337,7 @@ function AdminSettingsContent() {
                   <Badge variant="secondary">Disabled</Badge>
                 )}
               </div>
-              
+
               {emailEnabled && (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -360,7 +360,7 @@ function AdminSettingsContent() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="smtpUser">SMTP Username</Label>
@@ -386,7 +386,7 @@ function AdminSettingsContent() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <Button onClick={() => handleTestConnection("Email")} variant="outline">
                       <Activity className="h-4 w-4 mr-2" />
@@ -429,7 +429,7 @@ function AdminSettingsContent() {
                   <Badge variant="secondary">Disabled</Badge>
                 )}
               </div>
-              
+
               {paymentsEnabled && (
                 <>
                   <div className="space-y-2">
@@ -447,7 +447,7 @@ function AdminSettingsContent() {
                       <Badge variant="secondary">Test Mode Active</Badge>
                     )}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="razorpayKeyId">Razorpay Key ID</Label>
@@ -473,7 +473,7 @@ function AdminSettingsContent() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <Button onClick={() => handleTestConnection("Payment")} variant="outline">
                       <Activity className="h-4 w-4 mr-2" />
@@ -537,7 +537,7 @@ function AdminSettingsContent() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -563,7 +563,7 @@ function AdminSettingsContent() {
                   </p>
                 </div>
               </div>
-              
+
               <Button onClick={() => handleSaveSettings("Security")} className="w-full" disabled={saveSettings.isPending}>
                 <Save className="h-4 w-4 mr-2" />
                 Save Security Settings
@@ -611,7 +611,7 @@ function AdminSettingsContent() {
                   />
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -630,7 +630,7 @@ function AdminSettingsContent() {
                   <Label htmlFor="autoSaveDrafts">Auto-save Drafts</Label>
                 </div>
               </div>
-              
+
               <Button onClick={() => handleSaveSettings("Tax Filing")} className="w-full" disabled={saveSettings.isPending}>
                 <Save className="h-4 w-4 mr-2" />
                 Save Tax Settings
@@ -676,7 +676,7 @@ function AdminSettingsContent() {
                   />
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -698,9 +698,9 @@ function AdminSettingsContent() {
                   )}
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -719,7 +719,7 @@ function AdminSettingsContent() {
                   <Label htmlFor="smsNotifications">SMS Notifications</Label>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -738,7 +738,7 @@ function AdminSettingsContent() {
                   <Label htmlFor="adminAlerts">Admin Alerts</Label>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button onClick={() => handleSaveSettings("System")} className="flex-1" disabled={saveSettings.isPending}>
                   <Save className="h-4 w-4 mr-2" />

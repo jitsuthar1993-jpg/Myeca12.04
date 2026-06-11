@@ -221,7 +221,7 @@ function SelectedServiceDetails({
             },
           ].map((item) => (
             <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 p-3.5">
-              <dt className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.1em] text-slate-500">
+              <dt className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.1em] text-slate-500">
                 <item.icon className="h-4 w-4 text-blue-600" />
                 {item.label}
               </dt>
@@ -277,7 +277,7 @@ function SelectedServiceDetails({
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {service!.documents.map((document) => (
-                  <Badge key={document} variant="outline" className="rounded-md border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] text-slate-700">
+                  <Badge key={document} variant="outline" className="rounded-md border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700">
                     {document}
                   </Badge>
                 ))}
@@ -304,7 +304,7 @@ function SelectedServiceDetails({
                         <tool.icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                         <span className="min-w-0">
                           <span className="block text-xs font-black text-slate-900">{tool.title}</span>
-                          <span className="mt-0.5 block whitespace-normal text-[11px] font-semibold leading-4 text-slate-500">
+                          <span className="mt-0.5 block whitespace-normal text-xs font-semibold leading-4 text-slate-500">
                             {tool.description}
                           </span>
                         </span>

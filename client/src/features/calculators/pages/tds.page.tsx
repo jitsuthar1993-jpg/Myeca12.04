@@ -132,7 +132,7 @@ export default function TDSCalculatorPage() {
               <div className="absolute top-0 right-0 p-6 opacity-5 text-[#444CE7]">
                 <FileText className="w-24 h-24" />
               </div>
-              
+
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-[#F5F8FF] flex items-center justify-center text-[#444CE7] border border-[#D1E0FF]">
                   <Receipt className="w-5 h-5" />
@@ -190,7 +190,7 @@ export default function TDSCalculatorPage() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[140px] flex items-center gap-1.5 shadow-sm focus-within:border-[#444CE7] focus-within:ring-1 focus-within:ring-[#444CE7]/10 transition-all">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={income}
                         onChange={(e) => setIncome(Number(e.target.value))}
@@ -251,7 +251,7 @@ export default function TDSCalculatorPage() {
               <div className="p-5 rounded-[24px] border-2 mb-6 transition-all bg-[#F9FAFB] border-[#EAECF0]">
                 <span className="text-xs font-normal text-[#667085] block mb-1 uppercase tracking-widest">TDS Amount to Deduct</span>
                 <AnimatePresence mode="wait">
-                  <motion.span 
+                  <motion.span
                     key={result?.tdsAmount}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -347,7 +347,7 @@ export default function TDSCalculatorPage() {
 
         {/* Informational Content */}
         <div className="mt-12">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <Shield className="w-5 h-5" />,

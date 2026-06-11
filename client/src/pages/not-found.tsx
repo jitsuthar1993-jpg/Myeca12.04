@@ -7,7 +7,7 @@ import { MetaSEO } from "@/components/seo/MetaSEO";
 export default function NotFound() {
   return (
     <>
-      <MetaSEO 
+      <MetaSEO
         title="Page Not Found | MyeCA.in"
         description="The page you are looking for does not exist. Explore our tax calculators and services to get started."
       />
@@ -24,11 +24,11 @@ export default function NotFound() {
             We couldn't find the page you're looking for. Let's get you back on track.
           </p>
         </CardHeader>
-        
+
         <CardContent className="px-8 pb-8 bg-white">
           <div className="grid grid-cols-1 gap-3">
             <h3 className="text-xs font-bold text-[var(--color-primary-400)] uppercase tracking-widest mb-2">Popular Destinations</h3>
-            
+
             <Link href="/">
               <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-primary-100)] hover:bg-[var(--color-primary-50)] hover:border-[var(--color-primary-200)] transition-all cursor-pointer group">
                 <div className="flex items-center gap-4">

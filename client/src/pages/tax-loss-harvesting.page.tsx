@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
+import {
   TrendingDown,
   TrendingUp,
   IndianRupee,
@@ -144,7 +144,7 @@ export default function TaxLossHarvestingPage() {
       const gainLoss = currentValue - totalCost;
       const gainLossPercent = (gainLoss / totalCost) * 100;
       const isLT = isLongTerm(inv.type, holdingDays);
-      
+
       // Calculate potential tax impact
       let taxRate = 0;
       if (inv.type === 'equity' || inv.type === 'equity_mf') {
@@ -152,7 +152,7 @@ export default function TaxLossHarvestingPage() {
       } else {
         taxRate = isLT ? TAX_RATES.debt_ltcg : TAX_RATES.debt_stcg;
       }
-      
+
       const potentialTax = gainLoss > 0 ? (gainLoss * taxRate) / 100 : 0;
       const taxSavings = gainLoss < 0 ? Math.abs(gainLoss * taxRate) / 100 : 0;
 
@@ -175,7 +175,7 @@ export default function TaxLossHarvestingPage() {
     const totalUnrealizedGain = analyzed.filter(a => a.gainLoss > 0).reduce((sum, a) => sum + a.gainLoss, 0);
     const totalUnrealizedLoss = analyzed.filter(a => a.gainLoss < 0).reduce((sum, a) => sum + Math.abs(a.gainLoss), 0);
     const netGainLoss = totalUnrealizedGain - totalUnrealizedLoss;
-    
+
     // Potential tax savings from harvesting losses
     const harvestableInvestments = analyzed.filter(a => a.gainLoss < 0);
     const totalPotentialSavings = harvestableInvestments.reduce((sum, a) => sum + a.taxSavings, 0);
@@ -222,7 +222,7 @@ export default function TaxLossHarvestingPage() {
         ]}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-8">
@@ -230,10 +230,10 @@ export default function TaxLossHarvestingPage() {
               <Target className="h-4 w-4 text-purple-600" />
               <span className="text-sm font-medium text-purple-700">Tax Optimization</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
               Tax Loss Harvesting Advisor
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-slate-600 max-w-2xl mx-auto">
               Analyze your portfolio to identify opportunities to offset capital gains with losses and reduce your tax liability
             </p>
           </div>
@@ -299,8 +299,8 @@ export default function TaxLossHarvestingPage() {
               <Lightbulb className="h-4 w-4 text-purple-600" />
               <AlertTitle className="text-purple-800">Harvesting Opportunity Found!</AlertTitle>
               <AlertDescription className="text-purple-700">
-                You have {analysis.harvestableCount} investment(s) with unrealized losses. 
-                Selling them could save you up to <strong>{formatCurrency(analysis.totalPotentialSavings)}</strong> in taxes 
+                You have {analysis.harvestableCount} investment(s) with unrealized losses.
+                Selling them could save you up to <strong>{formatCurrency(analysis.totalPotentialSavings)}</strong> in taxes
                 by offsetting capital gains.
               </AlertDescription>
             </Alert>
@@ -321,8 +321,8 @@ export default function TaxLossHarvestingPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Add Investment Form */}
-                  <div className="p-4 bg-gray-50 rounded-lg space-y-4">
-                    <h4 className="font-medium text-sm text-gray-700">Add Investment</h4>
+                  <div className="p-4 bg-slate-50 rounded-lg space-y-4">
+                    <h4 className="font-medium text-sm text-slate-700">Add Investment</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       <div className="col-span-2 md:col-span-1">
                         <Label className="text-xs">Name</Label>
@@ -415,9 +415,9 @@ export default function TaxLossHarvestingPage() {
                         exit={{ opacity: 0, x: -100 }}
                         transition={{ delay: index * 0.05 }}
                         className={`p-4 border rounded-xl ${
-                          inv.recommendation === 'harvest' 
-                            ? 'border-purple-300 bg-purple-50' 
-                            : 'border-gray-200'
+                          inv.recommendation === 'harvest'
+                            ? 'border-purple-300 bg-purple-50'
+                            : 'border-slate-200'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -439,16 +439,16 @@ export default function TaxLossHarvestingPage() {
                             </div>
                             <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                               <div>
-                                <span className="text-gray-500">Qty:</span> {inv.quantity}
+                                <span className="text-slate-500">Qty:</span> {inv.quantity}
                               </div>
                               <div>
-                                <span className="text-gray-500">Buy:</span> {formatCurrency(inv.purchasePrice)}
+                                <span className="text-slate-500">Buy:</span> {formatCurrency(inv.purchasePrice)}
                               </div>
                               <div>
-                                <span className="text-gray-500">Now:</span> {formatCurrency(inv.currentPrice)}
+                                <span className="text-slate-500">Now:</span> {formatCurrency(inv.currentPrice)}
                               </div>
                               <div>
-                                <span className="text-gray-500">Holding:</span> {inv.holdingDays} days
+                                <span className="text-slate-500">Holding:</span> {inv.holdingDays} days
                               </div>
                             </div>
                           </div>
@@ -469,7 +469,7 @@ export default function TaxLossHarvestingPage() {
                             variant="ghost"
                             size="icon"
                             onClick={() => removeInvestment(inv.id)}
-                            className="text-gray-400 hover:text-red-600"
+                            className="text-slate-400 hover:text-red-600"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -479,8 +479,8 @@ export default function TaxLossHarvestingPage() {
                   </AnimatePresence>
 
                   {investments.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <PieChart className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                    <div className="text-center py-8 text-slate-500">
+                      <PieChart className="h-12 w-12 mx-auto mb-3 text-slate-300" />
                       <p>No investments added yet</p>
                       <p className="text-sm">Add your holdings above to analyze tax loss harvesting opportunities</p>
                     </div>
@@ -533,24 +533,24 @@ export default function TaxLossHarvestingPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Equity STCG</span>
+                    <span className="text-slate-600">Equity STCG</span>
                     <span className="font-medium">{TAX_RATES.equity_stcg}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Equity LTCG</span>
+                    <span className="text-slate-600">Equity LTCG</span>
                     <span className="font-medium">{TAX_RATES.equity_ltcg}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">LTCG Exemption</span>
+                    <span className="text-slate-600">LTCG Exemption</span>
                     <span className="font-medium">{formatCurrency(TAX_RATES.equity_ltcg_exemption)}</span>
                   </div>
                   <hr />
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Debt STCG</span>
+                    <span className="text-slate-600">Debt STCG</span>
                     <span className="font-medium">As per slab</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Debt LTCG</span>
+                    <span className="text-slate-600">Debt LTCG</span>
                     <span className="font-medium">{TAX_RATES.debt_ltcg}%</span>
                   </div>
                 </CardContent>
@@ -561,7 +561,7 @@ export default function TaxLossHarvestingPage() {
                 <AlertTriangle className="h-4 w-4 text-orange-600" />
                 <AlertTitle className="text-orange-800">Wash Sale Rule</AlertTitle>
                 <AlertDescription className="text-orange-700 text-sm">
-                  If you plan to repurchase the same security, wait at least 30 days to avoid wash sale concerns 
+                  If you plan to repurchase the same security, wait at least 30 days to avoid wash sale concerns
                   and ensure the loss is allowed for tax purposes.
                 </AlertDescription>
               </Alert>
@@ -600,7 +600,7 @@ export default function TaxLossHarvestingPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Identify Losses</h4>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-slate-600 mt-1">
                       Find investments that are currently trading below your purchase price
                     </p>
                   </div>
@@ -611,7 +611,7 @@ export default function TaxLossHarvestingPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Sell to Book Losses</h4>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-slate-600 mt-1">
                       Sell these investments to realize the loss for tax purposes
                     </p>
                   </div>
@@ -622,16 +622,16 @@ export default function TaxLossHarvestingPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Offset Gains</h4>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-slate-600 mt-1">
                       Use booked losses to offset capital gains and reduce your tax liability
                     </p>
                   </div>
                 </div>
               </div>
-              
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+
+              <div className="mt-6 p-4 bg-slate-50 rounded-lg">
                 <h4 className="font-semibold mb-2">Key Rules:</h4>
-                <ul className="space-y-1 text-sm text-gray-600">
+                <ul className="space-y-1 text-sm text-slate-600">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                     STCG can be offset against both STCG and LTCG

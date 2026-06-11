@@ -35,7 +35,7 @@ export default function GuidePage() {
   const params = useParams() as { slug?: string };
   const slug = params.slug as string;
   const guide = getGuideBySlug(slug);
-  
+
   const [currentStep, setCurrentStep] = useState(0);
   const [completedItems, setCompletedItems] = useState<Record<string, string[]>>(() => {
     const saved = localStorage.getItem('guideProgress');
@@ -56,9 +56,9 @@ export default function GuidePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+          <BookOpen className="h-16 w-16 mx-auto text-slate-300 mb-4" />
           <h1 className="type-section-title mb-2 font-bold">Guide Not Found</h1>
-          <p className="text-gray-500 mb-4">The guide you're looking for doesn't exist.</p>
+          <p className="text-slate-500 mb-4">The guide you're looking for doesn't exist.</p>
           <Button asChild>
             <Link href="/learn/guides">Back to Guides</Link>
           </Button>
@@ -70,13 +70,13 @@ export default function GuidePage() {
   const category = GUIDE_CATEGORIES.find(c => c.id === guide.category);
   const currentStepData = guide.steps[currentStep];
   const officialSources = getGuideOfficialSources(guide.slug);
-  
+
   // Toggle checklist item
   const toggleItem = (stepId: string, item: string) => {
     setCompletedItems(prev => {
       const guideItems = prev[guide.id] || [];
       const itemKey = `${stepId}:${item}`;
-      
+
       if (guideItems.includes(itemKey)) {
         return { ...prev, [guide.id]: guideItems.filter(i => i !== itemKey) };
       } else {
@@ -103,7 +103,7 @@ export default function GuidePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       <MetaSEO
         title={`${guide.title} | MyeCA.in Tax Guides`}
         description={guide.description}
@@ -210,17 +210,17 @@ export default function GuidePage() {
                         key={step.id}
                         onClick={() => setCurrentStep(index)}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-                          currentStep === index 
-                            ? 'bg-emerald-100 text-emerald-800' 
-                            : 'hover:bg-gray-100'
+                          currentStep === index
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : 'hover:bg-slate-100'
                         }`}
                       >
                         <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                          stepComplete 
-                            ? 'bg-green-500 text-white' 
+                          stepComplete
+                            ? 'bg-green-500 text-white'
                             : currentStep === index
                             ? 'bg-emerald-600 text-white'
-                            : 'bg-gray-200 text-gray-600'
+                            : 'bg-slate-200 text-slate-600'
                         }`}>
                           {stepComplete ? <CheckCircle className="h-4 w-4" /> : index + 1}
                         </span>
@@ -240,7 +240,7 @@ export default function GuidePage() {
             {/* Current Step */}
             <Card>
               <CardHeader>
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
                   <span>Step {currentStep + 1} of {guide.steps.length}</span>
                 </div>
                 <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
@@ -256,16 +256,16 @@ export default function GuidePage() {
                     </h3>
                     <div className="space-y-2">
                       {currentStepData.checklist.map((item, index) => (
-                        <div 
+                        <div
                           key={index}
-                          className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                          className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer"
                           onClick={() => toggleItem(currentStepData.id, item)}
                         >
-                          <Checkbox 
+                          <Checkbox
                             checked={isItemCompleted(currentStepData.id, item)}
                             className="mt-0.5"
                           />
-                          <span className={isItemCompleted(currentStepData.id, item) ? 'line-through text-gray-500' : ''}>
+                          <span className={isItemCompleted(currentStepData.id, item) ? 'line-through text-slate-500' : ''}>
                             {item}
                           </span>
                         </div>
@@ -321,7 +321,7 @@ export default function GuidePage() {
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 Previous
               </Button>
-              
+
               {currentStep < guide.steps.length - 1 ? (
                 <Button
                   onClick={() => setCurrentStep(currentStep + 1)}

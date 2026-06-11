@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Mobile Button Text Overflow Fix Utility
- * 
+ *
  * Provides functions to fix button text overflow issues on mobile devices
  * where text goes outside button boundaries due to conflicting CSS classes.
  */
@@ -29,7 +29,7 @@ export const MOBILE_BUTTON_FIXES = {
     'py-4',                   // Excessive vertical padding on mobile
     'text-lg',                // Too large for mobile buttons
   ],
-  
+
   // Add mobile-optimized classes
   add: [
     'h-auto',                 // Auto height based on content
@@ -50,20 +50,20 @@ export const MOBILE_BUTTON_FIXES = {
  */
 export function fixMobileButtonClasses(className: string): string {
   if (!className) return '';
-  
+
   // Remove problematic classes
   let cleanedClasses = className;
   MOBILE_BUTTON_FIXES.remove.forEach(badClass => {
     const regex = new RegExp(`\\b${badClass}\\b`, 'g');
     cleanedClasses = cleanedClasses.replace(regex, '');
   });
-  
+
   // Add mobile-optimized classes
   const optimizedClasses = cn(
     cleanedClasses,
     ...MOBILE_BUTTON_FIXES.add
   );
-  
+
   return optimizedClasses.trim();
 }
 
@@ -72,7 +72,7 @@ export function fixMobileButtonClasses(className: string): string {
  */
 export function needsMobileButtonFix(className: string): boolean {
   if (!className) return false;
-  
+
   return PROBLEMATIC_BUTTON_COMBINATIONS.some(combination => {
     const classes = combination.split(' ');
     return classes.every(cls => className.includes(cls));
@@ -87,12 +87,12 @@ export function applyMobileButtonFix(
   forceFix: boolean = false
 ): string {
   if (!className) return '';
-  
+
   // Always apply fix if force is true, otherwise check if needed
   if (forceFix || needsMobileButtonFix(className)) {
     return fixMobileButtonClasses(className);
   }
-  
+
   return className;
 }
 
@@ -114,13 +114,13 @@ export const mobileButtonStyles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   // Tablet and up styles
   tablet: {
     fontSize: '1rem', // text-base
     padding: '0.5rem 1rem', // py-2 px-4
   },
-  
+
   // Touch feedback
   touch: {
     transition: 'transform 0.1s ease-out',
@@ -196,7 +196,7 @@ export function createMobileButtonClasses(options: {
   const variantClasses = {
     default: ['bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'],
     outline: ['border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100'],
-    ghost: ['hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200'],
+    ghost: ['hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200'],
     destructive: ['bg-red-600 text-white hover:bg-red-700 active:bg-red-800'],
   }[variant];
 
@@ -216,11 +216,11 @@ export function debugButtonOverflow(): void {
     const className = button.className;
     if (needsMobileButtonFix(className)) {
       problematicButtons.push(button);
-      
+
       // Add debug styling
       (button as HTMLElement).style.outline = '2px solid red';
       (button as HTMLElement).style.outlineOffset = '2px';
-      
+
       console.warn('Button with potential text overflow:', {
         element: button,
         className: className,
@@ -249,7 +249,7 @@ export function autoFixAllButtons(): void {
       const fixedClassName = fixMobileButtonClasses(originalClassName);
       button.className = fixedClassName;
       fixedCount++;
-      
+
       console.log('Fixed button text overflow:', {
         original: originalClassName,
         fixed: fixedClassName,

@@ -220,27 +220,27 @@ export const useCTATracking = () => {
 export const useEngagementTracking = (pageName: string) => {
   useEffect(() => {
     const startTime = Date.now();
-    
+
     // Track page engagement start
     trackUserBehavior('page_engagement_start', { page: pageName });
-    
+
     // Track exit intent
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0) {
-        trackUserBehavior('exit_intent', { 
+        trackUserBehavior('exit_intent', {
           page: pageName,
           time_spent: Math.round((Date.now() - startTime) / 1000)
         });
       }
     };
-    
+
     document.addEventListener('mouseleave', handleMouseLeave);
-    
+
     return () => {
       const timeSpent = Math.round((Date.now() - startTime) / 1000);
-      trackUserBehavior('page_engagement_end', { 
-        page: pageName, 
-        time_spent: timeSpent 
+      trackUserBehavior('page_engagement_end', {
+        page: pageName,
+        time_spent: timeSpent
       });
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
@@ -254,7 +254,7 @@ export const useAnalyticsInitialization = () => {
     if (typeof window !== 'undefined') {
       const userAgent = window.navigator.userAgent;
       const screenSize = `${window.screen.width}x${window.screen.height}`;
-      
+
       // Initialize analytics
       console.log('Analytics initialized', { userAgent, screenSize });
     }

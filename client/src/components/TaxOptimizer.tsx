@@ -7,13 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calculator, 
-  TrendingDown, 
-  PiggyBank, 
-  Shield, 
-  Heart, 
-  Home, 
+import {
+  Calculator,
+  TrendingDown,
+  PiggyBank,
+  Shield,
+  Heart,
+  Home,
   GraduationCap,
   Wallet,
   IndianRupee,
@@ -56,7 +56,7 @@ export function TaxOptimizer() {
   const [income, setIncome] = useState<number>(1200000);
   const [age, setAge] = useState<string>("below60");
   const [regime, setRegime] = useState<"old" | "new">("old");
-  
+
   // Current deductions
   const [deductions, setDeductions] = useState({
     section80C: 0,
@@ -168,7 +168,7 @@ export function TaxOptimizer() {
 
   const calculateTaxSavings = (): TaxSavingResult => {
     const totalCurrentDeductions = Object.values(deductions).reduce((a, b) => a + b, 0);
-    
+
     // Calculate potential deductions (maxed out)
     const maxPotentialDeductions = deductionCategories.reduce((total, cat) => {
       const remaining = Math.max(0, cat.limit === Infinity ? 0 : cat.limit - cat.currentAmount);
@@ -200,7 +200,7 @@ export function TaxOptimizer() {
       taxableIncome: currentTaxableIncome,
       estimatedTax: currentTax,
       potentialSavings: currentTax - optimizedTax,
-      recommendations: deductionCategories.filter(cat => 
+      recommendations: deductionCategories.filter(cat =>
         cat.limit !== Infinity && cat.currentAmount < cat.limit
       ).sort((a, b) => {
         const priorityOrder = { high: 0, medium: 1, low: 2 };
@@ -219,17 +219,17 @@ export function TaxOptimizer() {
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50   rounded-full">
           <Sparkles className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Assistive Tax Optimizer</span>
+          <span className="text-sm font-medium text-blue-700 ">Assistive Tax Optimizer</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-slate-900 ">
           Estimate Eligible Tax Savings
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
+        <p className="text-slate-600  max-w-lg mx-auto">
           Get AY 2026-27 deduction ideas based on your inputs under the Old Regime
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+        <p className="text-xs text-slate-500  max-w-2xl mx-auto">
           {TAX_TRANSITION_NOTE}
         </p>
       </div>
@@ -266,7 +266,7 @@ export function TaxOptimizer() {
               <div className="space-y-2">
                 <Label>Annual Gross Income</Label>
                 <div className="relative">
-                  <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                   <Input
                     type="number"
                     value={income}
@@ -283,7 +283,7 @@ export function TaxOptimizer() {
                   step={50000}
                   className="mt-4"
                 />
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-slate-500">
                   <span>₹3L</span>
                   <span>₹50L</span>
                 </div>
@@ -310,8 +310,8 @@ export function TaxOptimizer() {
                 </div>
               </div>
 
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 size="lg"
                 onClick={() => setStep("analysis")}
               >
@@ -347,7 +347,7 @@ export function TaxOptimizer() {
                     </Badge>
                   </div>
                   <div className="relative">
-                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                     <Input
                       type="number"
                       value={category.currentAmount}
@@ -365,8 +365,8 @@ export function TaxOptimizer() {
                     />
                   </div>
                   {category.limit !== Infinity && (
-                    <Progress 
-                      value={(category.currentAmount / category.limit) * 100} 
+                    <Progress
+                      value={(category.currentAmount / category.limit) * 100}
                       className="h-2"
                     />
                   )}
@@ -374,14 +374,14 @@ export function TaxOptimizer() {
               ))}
 
               <div className="flex gap-3 pt-4">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setStep("input")}
                 >
                   Back
                 </Button>
-                <Button 
-                  className="flex-1" 
+                <Button
+                  className="flex-1"
                   onClick={() => setStep("recommendations")}
                 >
                   Get Recommendations
@@ -421,7 +421,7 @@ export function TaxOptimizer() {
 
             {/* Recommendations List */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-slate-900  flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-yellow-500" />
                 Recommended Actions
               </h3>
@@ -430,7 +430,7 @@ export function TaxOptimizer() {
                 {result.recommendations.map((rec, index) => {
                   const remaining = rec.limit - rec.currentAmount;
                   const percentUsed = (rec.currentAmount / rec.limit) * 100;
-                  
+
                   return (
                     <m.div
                       key={rec.id}
@@ -439,29 +439,29 @@ export function TaxOptimizer() {
                       transition={{ delay: index * 0.1 }}
                     >
                       <Card className={`border-l-4 ${
-                        rec.priority === "high" 
-                          ? "border-l-red-500" 
-                          : rec.priority === "medium" 
-                            ? "border-l-yellow-500" 
+                        rec.priority === "high"
+                          ? "border-l-red-500"
+                          : rec.priority === "medium"
+                            ? "border-l-yellow-500"
                             : "border-l-gray-300"
                       }`}>
                         <CardContent className="pt-6">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
                               <div className={`p-2 rounded-lg ${
-                                rec.priority === "high" 
-                                  ? "bg-red-100 text-red-600" 
+                                rec.priority === "high"
+                                  ? "bg-red-100 text-red-600"
                                   : rec.priority === "medium"
                                     ? "bg-yellow-100 text-yellow-600"
-                                    : "bg-gray-100 text-gray-600"
+                                    : "bg-slate-100 text-slate-600"
                               }`}>
                                 {rec.icon}
                               </div>
                               <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white">
+                                <h4 className="font-semibold text-slate-900 ">
                                   {rec.name}
                                 </h4>
-                                <p className="text-sm text-gray-500">{rec.description}</p>
+                                <p className="text-sm text-slate-500">{rec.description}</p>
                               </div>
                             </div>
                             <Badge variant={rec.priority === "high" ? "destructive" : "secondary"}>
@@ -479,13 +479,13 @@ export function TaxOptimizer() {
                             <Progress value={percentUsed} className="h-2" />
                           </div>
 
-                          <div className="bg-gray-50 dark:bg-blue-800 rounded-lg p-4">
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <div className="bg-slate-50  rounded-lg p-4">
+                            <p className="text-sm font-medium text-slate-700  mb-2">
                               💡 Suggestions:
                             </p>
                             <ul className="space-y-1">
                               {rec.suggestions.slice(0, 2).map((suggestion, i) => (
-                                <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
+                                <li key={i} className="text-sm text-slate-600  flex items-start gap-2">
                                   <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                                   {suggestion}
                                 </li>
@@ -512,9 +512,9 @@ export function TaxOptimizer() {
             </div>
 
             {/* Disclaimer */}
-            <div className="flex items-start gap-2 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-2 p-4 bg-amber-50  rounded-lg border border-amber-200 ">
               <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800 dark:text-amber-200">
+              <p className="text-sm text-amber-800 ">
                 {TAX_TRANSITION_NOTE} These recommendations are for the Old Tax Regime. The New Regime does not allow most deductions but may still be beneficial. Compare both regimes before deciding.
               </p>
             </div>

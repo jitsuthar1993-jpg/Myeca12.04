@@ -20,22 +20,22 @@ export default function ITRSuccessPage() {
       const suffix = Array.from(bytes, (byte) => byte.toString(36).padStart(2, "0")).join("").slice(0, 6).toUpperCase();
       return `ITR${timestamp.slice(-6)}${suffix}`;
     };
-    
+
     setAcknowledgmentNumber(generateAckNumber());
   }, [isDemoMode]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Success Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="type-page-title text-gray-900 mb-2">
+          <h1 className="type-page-title text-slate-900 mb-2">
             {isDemoMode ? "ITR Review Request Prepared" : "ITR Review Request Received"}
           </h1>
-          <p className="type-body text-gray-600">
+          <p className="type-body text-slate-600">
             {isDemoMode
               ? "Your local development flow has prepared a review reference. It is not an Income Tax portal filing acknowledgment."
               : "Your details are ready for CA review. A valid filing acknowledgment is issued only after portal filing is completed."}
@@ -101,42 +101,42 @@ export default function ITRSuccessPage() {
                   <span className="type-meta font-semibold text-blue-600">1</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">
+                  <h4 className="font-semibold text-slate-900">
                     CA Review
                   </h4>
-                  <p className="type-support text-gray-600">
+                  <p className="type-support text-slate-600">
                     {isDemoMode
                       ? "Use this local reference to test the post-submit journey. A tax expert review is still required before any real filing."
                       : "A tax expert will verify your income, AIS/26AS, deductions, and filing eligibility before submission."}
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="type-meta font-semibold text-blue-600">2</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">
+                  <h4 className="font-semibold text-slate-900">
                     Confirm Filing
                   </h4>
-                  <p className="type-support text-gray-600">
+                  <p className="type-support text-slate-600">
                     {isDemoMode
                       ? "In production, the reviewed return should be confirmed before submission through the official workflow."
                       : "You will be asked to confirm the reviewed return before it is filed through the official workflow."}
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="type-meta font-semibold text-blue-600">3</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">
+                  <h4 className="font-semibold text-slate-900">
                     Receive Valid Acknowledgment
                   </h4>
-                  <p className="type-support text-gray-600">
+                  <p className="type-support text-slate-600">
                     {isDemoMode
                       ? "The official acknowledgment is available only after a real Income Tax portal filing succeeds."
                       : "After successful filing, the official acknowledgment details will be attached to your account."}
@@ -175,12 +175,12 @@ export default function ITRSuccessPage() {
             <Download className="h-4 w-4 mr-2" />
             Official Acknowledgment After Filing
           </Button>
-          
+
           <Button variant="outline" size="lg" className="w-full sm:w-auto" disabled>
             <FileText className="h-4 w-4 mr-2" />
             ITR Copy After Filing
           </Button>
-          
+
           <Link href="/dashboard">
             <Button size="lg" className="w-full sm:w-auto">
               <Home className="h-4 w-4 mr-2" />
@@ -200,42 +200,42 @@ export default function ITRSuccessPage() {
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-slate-900">
                       {isDemoMode ? "Review Reference Prepared" : "Review Request Received"}
                     </span>
                     <Badge variant="default">Completed</Badge>
                   </div>
-                  <p className="type-support text-gray-600">
+                  <p className="type-support text-slate-600">
                     {new Date().toLocaleString('en-IN')}
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-slate-900">
                       CA Review
                     </span>
                     <Badge variant="secondary">Pending</Badge>
                   </div>
-                  <p className="type-support text-gray-600">
+                  <p className="type-support text-slate-600">
                     Pending expert verification
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+                <div className="w-3 h-3 bg-slate-300 rounded-full"></div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-slate-900">
                       Official Filing Complete
                     </span>
                     <Badge variant="outline">Awaiting</Badge>
                   </div>
-                  <p className="type-support text-gray-600">
+                  <p className="type-support text-slate-600">
                     After e-verification
                   </p>
                 </div>

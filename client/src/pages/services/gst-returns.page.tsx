@@ -4,12 +4,12 @@ import { Link } from "wouter";
 import { RouteSeo } from "@/components/seo/RouteSeo";
 import {
   Receipt,
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Award,
   TrendingUp,
@@ -129,7 +129,7 @@ export default function GSTReturnsPage() {
       icon: CreditCard
     },
     {
-      date: "11th", 
+      date: "11th",
       activity: "GSTR-1 Due",
       description: "Monthly/Quarterly outward supplies",
       icon: Receipt
@@ -142,7 +142,7 @@ export default function GSTReturnsPage() {
     },
     {
       date: "20th",
-      activity: "GSTR-3B Due", 
+      activity: "GSTR-3B Due",
       description: "Summary return with tax payment",
       icon: FileText
     }
@@ -196,7 +196,7 @@ export default function GSTReturnsPage() {
     {
       category: "Purchase Documents",
       icon: Upload,
-      color: "green", 
+      color: "green",
       documents: [
         "Purchase invoices from suppliers",
         "Import invoices and custom documents",
@@ -287,11 +287,11 @@ export default function GSTReturnsPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Receipt className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   GST Returns Filing Services
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Reconcile books, identify the returns due for the period, and review portal validations before filing.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -309,14 +309,14 @@ export default function GSTReturnsPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Meet deadlines, avoid penalties</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Confirm each return's due date and filing frequency on the GST portal.
@@ -349,10 +349,10 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               GST Returns Filing Guidance
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Return-by-return scope, record requirements, and portal checks
             </p>
           </div>
@@ -385,20 +385,20 @@ export default function GSTReturnsPage() {
                     </div>
                     <div>
                       <span className="font-medium">Description:</span>
-                      <p className="text-gray-600 text-xs mt-1">{returnType.description}</p>
+                      <p className="text-slate-600 text-xs mt-1">{returnType.description}</p>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <h4 className="font-semibold text-sm mb-2">What to verify:</h4>
-                    <p className="text-xs text-gray-700 bg-yellow-50 p-2 rounded border-l-2 border-yellow-400">
+                    <p className="text-xs text-slate-700 bg-yellow-50 p-2 rounded border-l-2 border-yellow-400">
                       {returnType.updateCheck}
                     </p>
                   </div>
 
                   <div>
                     <span className="font-semibold text-sm">Applicability:</span>
-                    <p className="text-xs text-gray-600 mt-1">{returnType.applicability}</p>
+                    <p className="text-xs text-slate-600 mt-1">{returnType.applicability}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -414,35 +414,35 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               GST Rate Slabs for Classification Review
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               These are broad examples, not a rate determination. Verify the HSN or SAC, notification, supply facts, and conditions before invoicing.
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 rounded-lg">
-              <thead className="bg-gray-50">
+            <table className="w-full border border-slate-200 rounded-lg">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">GST Rate</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categories</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Examples</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">GST Rate</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Categories</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Examples</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {gstRateExamples.map((rate, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-slate-50">
                     <td className="px-6 py-4 font-bold text-lg text-blue-600">{rate.rate}</td>
                     <td className="px-6 py-4">
-                      <ul className="text-sm text-gray-700 space-y-1">
+                      <ul className="text-sm text-slate-700 space-y-1">
                         {rate.items.map((item, itemIndex) => (
                           <li key={itemIndex}>• {item}</li>
                         ))}
                       </ul>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{rate.examples}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{rate.examples}</td>
                   </tr>
                 ))}
               </tbody>
@@ -458,10 +458,10 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Monthly GST Compliance Calendar
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Important dates and deadlines for GST compliance
             </p>
           </div>
@@ -477,7 +477,7 @@ export default function GSTReturnsPage() {
                 </CardHeader>
                 <CardContent className="text-center">
                   <h4 className="font-semibold text-sm mb-2">{calendar.activity}</h4>
-                  <p className="text-xs text-gray-600">{calendar.description}</p>
+                  <p className="text-xs text-slate-600">{calendar.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -492,10 +492,10 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Required Documents for GST Filing
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete documentation checklist for accurate GST return filing
             </p>
           </div>
@@ -514,7 +514,7 @@ export default function GSTReturnsPage() {
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -532,10 +532,10 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               GST Portal Checks Before Filing
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               The portal can validate, restrict, or change available actions based on the filing period and linked returns.
             </p>
           </div>
@@ -550,7 +550,7 @@ export default function GSTReturnsPage() {
                   <CardTitle className="text-lg font-bold text-blue-900">{feature.feature}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-sm text-gray-600 mb-3">{feature.description}</p>
+                  <p className="text-sm text-slate-600 mb-3">{feature.description}</p>
                   <Badge className="bg-blue-100 text-blue-700 text-xs">{feature.impact}</Badge>
                 </CardContent>
               </Card>
@@ -566,10 +566,10 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Common GST Filing Mistakes to Avoid
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Learn from common errors and ensure accurate GST compliance
             </p>
           </div>
@@ -582,11 +582,11 @@ export default function GSTReturnsPage() {
                 yellow: "border-l-yellow-500 text-yellow-900",
                 blue: "border-l-blue-500 text-blue-900"
               };
-              
+
               return (
                 <Card key={index} className={`border-l-4 ${colorClasses[mistake.color as keyof typeof colorClasses]?.split(' ')[0] || 'border-l-gray-500'} hover:shadow-lg transition-shadow`}>
                   <CardHeader>
-                    <CardTitle className={`flex items-center gap-2 ${colorClasses[mistake.color as keyof typeof colorClasses]?.split(' ')[1] || 'text-gray-900'}`}>
+                    <CardTitle className={`flex items-center gap-2 ${colorClasses[mistake.color as keyof typeof colorClasses]?.split(' ')[1] || 'text-slate-900'}`}>
                       <mistake.icon className="w-6 h-6" />
                       {mistake.mistake}
                     </CardTitle>
@@ -595,11 +595,11 @@ export default function GSTReturnsPage() {
                     <div className="space-y-3">
                       <div>
                         <h4 className="font-semibold text-sm text-red-600">Impact:</h4>
-                        <p className="text-sm text-gray-700">{mistake.impact}</p>
+                        <p className="text-sm text-slate-700">{mistake.impact}</p>
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm text-green-600">Solution:</h4>
-                        <p className="text-sm text-gray-700">{mistake.solution}</p>
+                        <p className="text-sm text-slate-700">{mistake.solution}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -617,31 +617,31 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Late-Filing and Correction Risks
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Exact late fees, interest, relief, and consequences depend on the return, period, facts, and current notifications.
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 rounded-lg">
-              <thead className="bg-gray-50">
+            <table className="w-full border border-slate-200 rounded-lg">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Violation</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time Limit</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Penalty</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Additional Consequences</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Violation</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Time Limit</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Penalty</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Additional Consequences</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {penaltyStructure.map((penalty, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-slate-50">
                     <td className="px-6 py-4 font-semibold text-blue-600">{penalty.violation}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{penalty.timeLimit}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{penalty.timeLimit}</td>
                     <td className="px-6 py-4 text-sm text-red-600 font-bold">{penalty.penalty}</td>
-                    <td className="px-6 py-4 text-xs text-gray-600">{penalty.additionalConsequences}</td>
+                    <td className="px-6 py-4 text-xs text-slate-600">{penalty.additionalConsequences}</td>
                   </tr>
                 ))}
               </tbody>
@@ -657,10 +657,10 @@ export default function GSTReturnsPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Common queries about GST returns filing and compliance
             </p>
           </div>

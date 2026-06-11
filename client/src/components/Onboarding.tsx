@@ -105,7 +105,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 export function OnboardingModal() {
   const { onboarding, completeOnboardingStep, skipOnboarding, completeOnboarding } = useUIStore();
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   // Don't show if already completed or skipped
   if (onboarding.completed || onboarding.skippedAt) {
     return null;
@@ -154,7 +154,7 @@ export function OnboardingModal() {
               >
                 <X className="h-5 w-5" />
               </button>
-              
+
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                   {step.icon}
@@ -166,23 +166,23 @@ export function OnboardingModal() {
                   <h2 className="text-2xl font-bold">{step.title}</h2>
                 </div>
               </div>
-              
-              <Progress 
-                value={progress} 
+
+              <Progress
+                value={progress}
                 className="mt-4 h-1 bg-white/20"
               />
             </div>
 
             {/* Content */}
             <CardContent className="p-6">
-              <p className="text-gray-600 mb-6">{step.description}</p>
+              <p className="text-slate-600 mb-6">{step.description}</p>
 
               {step.tips && (
                 <div className="space-y-3 mb-6">
                   {step.tips.map((tip, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">{tip}</span>
+                      <span className="text-sm text-slate-700">{tip}</span>
                     </div>
                   ))}
                 </div>
@@ -211,7 +211,7 @@ export function OnboardingModal() {
                       </Button>
                     </Link>
                   )}
-                  
+
                   <Button onClick={handleNext}>
                     {isLastStep ? 'Get Started' : 'Next'}
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -262,7 +262,7 @@ export function OnboardingTrigger() {
         >
           <HelpCircle className="h-6 w-6 text-blue-600" />
         </Button>
-        
+
         {showTooltip && (
           <m.div
             initial={{ opacity: 0, x: 10 }}

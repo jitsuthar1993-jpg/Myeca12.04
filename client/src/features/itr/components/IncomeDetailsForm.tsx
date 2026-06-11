@@ -52,7 +52,7 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
 
   const calculateTotalIncome = () => {
     const values = form.getValues();
-    const total = 
+    const total =
       parseFloat(values.salaryIncome || "0") +
       parseFloat(values.bonusIncome || "0") +
       parseFloat(values.interestIncome || "0") +
@@ -83,9 +83,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Employer Name</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Company Name" 
-                          {...field} 
+                        <Input
+                          placeholder="Company Name"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), employerName: e.target.value });
@@ -104,9 +104,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Employer TAN</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="ABCD12345E" 
-                          {...field} 
+                        <Input
+                          placeholder="ABCD12345E"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e.target.value.toUpperCase());
                             handleFormChange({ ...form.getValues(), employerTAN: e.target.value.toUpperCase() });
@@ -127,9 +127,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Annual Salary *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="500000" 
-                          {...field} 
+                        <Input
+                          placeholder="500000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -152,9 +152,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Bonus & Incentives</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="50000" 
-                          {...field} 
+                        <Input
+                          placeholder="50000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -191,9 +191,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Interest Income</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="25000" 
-                          {...field} 
+                        <Input
+                          placeholder="25000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -216,9 +216,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Dividend Income</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="10000" 
-                          {...field} 
+                        <Input
+                          placeholder="10000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -243,9 +243,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Other Income</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="0" 
-                          {...field} 
+                        <Input
+                          placeholder="0"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -268,9 +268,9 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                     <FormItem>
                       <FormLabel>Exempt Income</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="0" 
-                          {...field} 
+                        <Input
+                          placeholder="0"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -309,8 +309,8 @@ export default function IncomeDetailsForm({ data, onChange }: IncomeDetailsFormP
                   <p className="text-sm text-blue-600">Other Income</p>
                   <p className="text-lg font-semibold text-blue-900">
                     ₹{formatCurrency(
-                      (parseFloat(form.watch("interestIncome") || "0") + 
-                       parseFloat(form.watch("dividendIncome") || "0") + 
+                      (parseFloat(form.watch("interestIncome") || "0") +
+                       parseFloat(form.watch("dividendIncome") || "0") +
                        parseFloat(form.watch("otherIncome") || "0")).toString()
                     )}
                   </p>

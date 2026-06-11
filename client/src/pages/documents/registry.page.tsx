@@ -163,12 +163,12 @@ export default function DocumentGeneratorRegistry() {
                     <article key={doc.id} className="flex min-h-[290px] flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md">
                       <div className="flex items-start justify-between gap-3">
                         <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${category.style}`}><Icon className="h-5 w-5" /></div>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-600">{complianceLabels[doc.complianceClass]}</span>
+                        <span className="rounded-md bg-slate-100 px-2 py-1 type-meta font-black uppercase tracking-wide text-slate-600">{complianceLabels[doc.complianceClass]}</span>
                       </div>
                       <h3 className="mt-4 type-card-title font-black text-slate-950">{doc.title}</h3>
                       <p className="mt-2 line-clamp-3 type-support leading-5 text-slate-600">{doc.description}</p>
                       <div className="mt-4 flex flex-wrap gap-1.5">
-                        {doc.features.slice(0, 3).map((feature) => <span key={feature} className="rounded-md bg-slate-50 px-2 py-1 text-[10px] font-bold text-slate-600">{feature}</span>)}
+                        {doc.features.slice(0, 3).map((feature) => <span key={feature} className="rounded-md bg-slate-50 px-2 py-1 type-meta font-bold text-slate-600">{feature}</span>)}
                       </div>
                       <div className="mt-auto border-t border-slate-100 pt-4">
                         <Link href={`/documents/generator/${doc.id}`} className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-blue-700 px-4 text-sm font-black text-white hover:bg-blue-800">Create document</Link>

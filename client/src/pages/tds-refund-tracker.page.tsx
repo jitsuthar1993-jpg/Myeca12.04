@@ -113,17 +113,17 @@ export default function TDSRefundTrackerPage() {
         keywords={["tds refund status", "income tax refund", "check refund status", "refund tracker", "tds refund not received", "refund failure"]}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full mb-4">
               <Banknote className="h-4 w-4 text-green-600" />
               <span className="text-sm font-medium text-green-700">Refund guidance</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
               TDS Refund Status Guide
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-slate-600 max-w-2xl mx-auto">
               Check refund readiness, common failure reasons, and the official steps to verify your income tax refund status.
             </p>
           </div>
@@ -190,8 +190,8 @@ export default function TDSRefundTrackerPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500">Validated PAN</p>
-                  <p className="font-semibold text-gray-900">{validatedPan}</p>
+                  <p className="text-sm text-slate-500">Validated PAN</p>
+                  <p className="font-semibold text-slate-900">{validatedPan}</p>
                   <Alert className="mt-4 border-blue-200 bg-blue-50">
                     <Info className="h-4 w-4 text-blue-600" />
                     <AlertDescription className="text-blue-800">
@@ -206,8 +206,8 @@ export default function TDSRefundTrackerPage() {
                   <Card key={step.title}>
                     <CardContent className="pt-6">
                       <step.icon className="h-7 w-7 text-blue-600" />
-                      <h3 className="mt-3 font-semibold text-gray-900">{step.title}</h3>
-                      <p className="mt-2 text-sm text-gray-600">{step.description}</p>
+                      <h3 className="mt-3 font-semibold text-slate-900">{step.title}</h3>
+                      <p className="mt-2 text-sm text-slate-600">{step.description}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -243,15 +243,15 @@ export default function TDSRefundTrackerPage() {
                 {COMMON_ISSUES.map((issue) => (
                   <div
                     key={issue.title}
-                    className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="p-4 border rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-orange-100 rounded-lg">
                         <issue.icon className="h-5 w-5 text-orange-600" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">{issue.title}</h4>
-                        <p className="text-sm text-gray-600 mt-1">{issue.description}</p>
+                        <h4 className="font-semibold text-slate-900">{issue.title}</h4>
+                        <p className="text-sm text-slate-600 mt-1">{issue.description}</p>
                         <div className="mt-2 flex items-start gap-2">
                           <ArrowRight className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                           <p className="text-sm text-green-700">{issue.solution}</p>
@@ -277,7 +277,7 @@ export default function TDSRefundTrackerPage() {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-3">
                 {REFUND_DOCUMENTS.map((document) => (
-                  <div key={document} className="flex items-center gap-2 rounded-lg border border-gray-200 p-3 text-sm text-gray-700">
+                  <div key={document} className="flex items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm text-slate-700">
                     <CheckCircle className="h-4 w-4 text-green-600" />
                     <span>{document}</span>
                   </div>
@@ -297,7 +297,7 @@ export default function TDSRefundTrackerPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ol className="space-y-3 text-sm text-gray-600">
+              <ol className="space-y-3 text-sm text-slate-600">
                 <li className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex-shrink-0">1</span>
                   <span>Login to the e-Filing portal.</span>

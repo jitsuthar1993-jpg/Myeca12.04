@@ -94,7 +94,7 @@ export function DataFilters({
     <div className="flex flex-wrap items-center gap-3 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-indigo-100 shadow-md">
       <div className="flex items-center gap-2">
         <Filter className="h-4 w-4 text-indigo-600" />
-        <span className="text-sm font-semibold text-gray-900">Filters</span>
+        <span className="text-sm font-semibold text-slate-900">Filters</span>
       </div>
 
       {/* Search */}

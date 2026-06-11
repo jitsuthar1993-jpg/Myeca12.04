@@ -5,20 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  Search, 
-  Sparkles, 
-  ArrowLeft, 
-  CheckCircle2, 
-  ChevronRight, 
-  Zap, 
-  ShieldCheck, 
-  Clock, 
-  Building2, 
-  User, 
-  Rocket, 
-  Scale, 
-  FileText, 
+import {
+  Search,
+  Sparkles,
+  ArrowLeft,
+  CheckCircle2,
+  ChevronRight,
+  Zap,
+  ShieldCheck,
+  Clock,
+  Building2,
+  User,
+  Rocket,
+  Scale,
+  FileText,
   Receipt,
   Star as StarIcon
 } from "lucide-react";
@@ -99,14 +99,14 @@ export default function ServiceSelectionPage() {
   const filteredServices = useMemo(() => {
     return SERVICES_DATA.filter(service => {
       const matchesCategory = activeTab === 'all' || service.category === activeTab;
-      const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             service.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [activeTab, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#020617] transition-colors duration-500">
+    <div className="min-h-screen bg-[#F8FAFC]  transition-colors duration-500">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full" />
@@ -136,25 +136,25 @@ export default function ServiceSelectionPage() {
                 <Sparkles className="h-3 w-3" />
                 Expert Marketplace
               </m.div>
-              <m.h1 
+              <m.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="type-page-title mb-4 font-black text-slate-900 dark:text-white"
+                className="type-page-title mb-4 font-black text-slate-900 "
               >
                 Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Premium Service</span>
               </m.h1>
-              <m.p 
+              <m.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed"
+                className="text-lg text-slate-500  font-medium max-w-2xl leading-relaxed"
               >
                 Launch your business or plan your next financial workflow with professional tax and compliance services.
               </m.p>
             </div>
 
-            <m.div 
+            <m.div
                initial={{ opacity: 0, scale: 0.9 }}
                animate={{ opacity: 1, scale: 1 }}
                transition={{ delay: 0.3 }}
@@ -179,8 +179,8 @@ export default function ServiceSelectionPage() {
               onClick={() => setActiveTab(tab.id)}
               className={cn(
                 "relative flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-black transition-all duration-500",
-                activeTab === tab.id 
-                  ? "text-white" 
+                activeTab === tab.id
+                  ? "text-white"
                   : "text-slate-500 hover:text-slate-900"
               )}
             >
@@ -244,10 +244,10 @@ export default function ServiceSelectionPage() {
                         </Badge>
                       )}
                     </div>
-                    <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-1 group-hover:text-blue-600 transition-colors">
+                    <CardTitle className="text-xl font-black text-slate-900  tracking-tight mb-1 group-hover:text-blue-600 transition-colors">
                       {service.title}
                     </CardTitle>
-                    <CardDescription className="type-support h-8 line-clamp-2 font-medium text-slate-500 dark:text-slate-400">
+                    <CardDescription className="type-support h-8 line-clamp-2 font-medium text-slate-500 ">
                       {service.description}
                     </CardDescription>
                   </CardHeader>
@@ -257,7 +257,7 @@ export default function ServiceSelectionPage() {
                       {service.features.map((feature, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <CheckCircle2 className="h-3 w-3 text-blue-600 shrink-0" />
-                          <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{feature}</span>
+                          <span className="text-xs font-bold text-slate-600 ">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -278,7 +278,7 @@ export default function ServiceSelectionPage() {
                       </div>
 
                       <Link href={`/services/activate/${service.id}`}>
-                        <Button className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600/90 dark:hover:bg-blue-500 text-white font-black text-xs transition-all duration-300 gap-2 shadow-lg shadow-blue-500/20 group/btn">
+                        <Button className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700   text-white font-black text-xs transition-all duration-300 gap-2 shadow-lg shadow-blue-500/20 group/btn">
                           Select Service
                           <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                         </Button>
@@ -292,7 +292,7 @@ export default function ServiceSelectionPage() {
         </div>
 
         {/* Dynamic Footer section - Redesigned for Visibility */}
-        <m.div 
+        <m.div
            initial={{ opacity: 0, y: 30 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.6 }}
@@ -301,7 +301,7 @@ export default function ServiceSelectionPage() {
           {/* Decorative Background for banner */}
           <div className="absolute top-0 right-0 w-[50%] h-full bg-blue-600/5 blur-[120px] rounded-full transform translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-[30%] h-full bg-indigo-600/5 blur-[100px] rounded-full transform -translate-x-1/2" />
-          
+
           <div className="relative z-10 grid md:grid-cols-3 gap-8">
             <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 transition-all duration-300 hover:bg-blue-50 hover:border-blue-200 group">
               <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">

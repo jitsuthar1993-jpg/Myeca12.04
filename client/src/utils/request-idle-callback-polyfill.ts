@@ -30,7 +30,7 @@ if (!window.requestIdleCallback) {
   ): number {
     const timeout = options?.timeout || 1;
     const start = Date.now();
-    
+
     return window.setTimeout(() => {
       callback({
         didTimeout: false,
@@ -135,6 +135,6 @@ export function deferInitialization(
   priority: 'high' | 'normal' | 'low' = 'normal'
 ): void {
   const timeout = priority === 'high' ? 100 : priority === 'normal' ? 1000 : 5000;
-  
+
   globalIdleQueue.add(init);
 }

@@ -67,7 +67,7 @@ export default function ServicesMarketplacePage() {
   const ServiceCard = ({ service, index }: { service: Service; index: number }) => {
     const standardPricing = getPricingByServiceId(service.id);
     const hasDiscount = service.pricing.originalAmount && service.pricing.originalAmount > service.pricing.amount;
-    const discount = hasDiscount 
+    const discount = hasDiscount
       ? Math.round((1 - service.pricing.amount / service.pricing.originalAmount!) * 100)
       : 0;
 
@@ -151,7 +151,7 @@ export default function ServicesMarketplacePage() {
             )}
 
             <div className="grid grid-cols-2 gap-3">
-              <Button 
+              <Button
                 className="rounded-2xl h-11 bg-blue-700 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-200"
                 onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
@@ -161,7 +161,7 @@ export default function ServicesMarketplacePage() {
               >
                 Get Started
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 className="rounded-2xl h-11 border-slate-100 hover:bg-slate-50 font-bold text-xs uppercase tracking-widest text-slate-500"
                 onClick={(e: React.MouseEvent) => {
@@ -337,15 +337,15 @@ export default function ServicesMarketplacePage() {
         <section>
           <div className="flex items-center gap-4 mb-10">
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-              {searchQuery || selectedCategory !== 'all' 
+              {searchQuery || selectedCategory !== 'all'
                 ? `${filteredServices.length} Services Found`
                 : 'All Services'}
             </h2>
             <div className="flex-1 h-px bg-slate-200/60" />
             {isFiltering && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => {setSearchQuery(""); setSelectedCategory("all");}}
                 className="type-meta font-black text-blue-600 hover:bg-blue-50"
               >
@@ -353,7 +353,7 @@ export default function ServicesMarketplacePage() {
               </Button>
             )}
           </div>
-          
+
           {filteredServices.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredServices.map((service, idx) => (
@@ -374,7 +374,7 @@ export default function ServicesMarketplacePage() {
             {SERVICE_CATEGORIES.map((category) => {
               const categoryServices = getServicesByCategory(category.id);
               if (categoryServices.length === 0) return null;
-              
+
               return (
                 <section key={category.id}>
                   <div className="flex items-center justify-between mb-8">
@@ -387,7 +387,7 @@ export default function ServicesMarketplacePage() {
                         <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{category.description}</p>
                       </div>
                     </div>
-                    <Button 
+                    <Button
                       variant="ghost"
                       className="type-meta font-black text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                       onClick={() => setSelectedCategory(category.id)}
@@ -450,7 +450,7 @@ export default function ServicesMarketplacePage() {
                   {selectedService.description}
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="space-y-8 py-6">
                 <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                   <div>
@@ -498,14 +498,14 @@ export default function ServicesMarketplacePage() {
               </div>
 
               <DialogFooter className="gap-3 sm:gap-0">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="rounded-2xl h-14 border-slate-200 text-slate-500 font-bold px-8 shadow-sm"
                   onClick={() => setSelectedService(null)}
                 >
                   Close
                 </Button>
-                <Button 
+                <Button
                   className="rounded-2xl h-14 bg-blue-600 hover:bg-blue-700 text-white font-black px-10 shadow-xl shadow-blue-200"
                   onClick={() => setIsInquiryOpen(true)}
                 >
@@ -528,11 +528,11 @@ export default function ServicesMarketplacePage() {
                 : formatPrice(selectedService?.pricing || { type: 'custom', amount: 0 })}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-5 py-6">
             <div className="grid gap-2">
               <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</Label>
-              <Input 
+              <Input
                 id="name"
                 value={inquiryData.name}
                 onChange={(e) => setInquiryData({...inquiryData, name: e.target.value})}
@@ -542,7 +542,7 @@ export default function ServicesMarketplacePage() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</Label>
-              <Input 
+              <Input
                 id="email"
                 type="email"
                 value={inquiryData.email}
@@ -553,7 +553,7 @@ export default function ServicesMarketplacePage() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="phone" className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Phone Number</Label>
-              <Input 
+              <Input
                 id="phone"
                 value={inquiryData.phone}
                 onChange={(e) => setInquiryData({...inquiryData, phone: e.target.value})}
@@ -563,7 +563,7 @@ export default function ServicesMarketplacePage() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="message" className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Message (Optional)</Label>
-              <Textarea 
+              <Textarea
                 id="message"
                 value={inquiryData.message}
                 onChange={(e) => setInquiryData({...inquiryData, message: e.target.value})}
@@ -574,8 +574,8 @@ export default function ServicesMarketplacePage() {
           </div>
 
           <DialogFooter className="flex-col sm:flex-row gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="rounded-2xl h-12 border-slate-200 text-slate-500 font-bold px-6 order-2 sm:order-1"
               onClick={() => setIsInquiryOpen(false)}
             >

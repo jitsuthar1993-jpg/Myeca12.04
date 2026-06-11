@@ -48,7 +48,7 @@ const FUNDS: FundData[] = [
 ];
 
 const PERIOD_KEYS = ["1Y", "3Y", "5Y", "10Y"] as const;
-const CHART_COLORS = ["#315efb", "#10b981", "#f59e0b", "#ef4444"];
+const CHART_COLORS = ["hsl(226.63 96.19% 58.82%)", "#10b981", "#f59e0b", "#ef4444"];
 
 export default function ELSSCalculatorPage() {
   const seo = getSEOConfig("/elss-comparator");

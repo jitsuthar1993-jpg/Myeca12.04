@@ -12,7 +12,7 @@ interface SessionTimeoutOptions {
 export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutOptions) {
   const [showWarning, setShowWarning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(WARNING_THRESHOLD / 1000);
-  
+
   const logoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const warningTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -39,7 +39,7 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
     warningTimerRef.current = setTimeout(() => {
       setShowWarning(true);
       setTimeLeft(WARNING_THRESHOLD / 1000);
-      
+
       // Start countdown interval
       countdownIntervalRef.current = setInterval(() => {
         setTimeLeft((prev) => {
@@ -62,7 +62,7 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
     lastActivityRef.current = Date.now();
     setShowWarning(false);
     startTimers();
-    
+
     if (broadcast) {
       channelRef.current?.postMessage('RESET');
     }

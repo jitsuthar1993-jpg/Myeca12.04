@@ -13,11 +13,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProfileSchema } from "@shared/schema";
 import { z } from "zod";
-import { 
-  User, 
-  PlusCircle, 
-  Edit, 
-  Trash2, 
+import {
+  User,
+  PlusCircle,
+  Edit,
+  Trash2,
   UserCheck,
   Users,
   Settings,
@@ -199,10 +199,10 @@ export default function ProfilesPage() {
     return (
       <div className="max-w-6xl mx-auto p-6">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-8 bg-slate-200 rounded w-1/3"></div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-48 bg-gray-200 rounded-lg"></div>
+              <div key={i} className="h-48 bg-slate-200 rounded-lg"></div>
             ))}
           </div>
         </div>
@@ -214,8 +214,8 @@ export default function ProfilesPage() {
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Manage Profiles</h1>
-          <p className="text-gray-600">Create and manage tax profiles for family members</p>
+          <h1 className="text-3xl font-bold text-slate-900">Manage Profiles</h1>
+          <p className="text-slate-600">Create and manage tax profiles for family members</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -230,7 +230,7 @@ export default function ProfilesPage() {
                 {editingProfile ? "Edit Profile" : "Create New Profile"}
               </DialogTitle>
               <DialogDescription>
-                {editingProfile 
+                {editingProfile
                   ? "Update the profile information below."
                   : "Add a new family member profile for tax filing."
                 }
@@ -251,7 +251,7 @@ export default function ProfilesPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="relation"
@@ -284,9 +284,9 @@ export default function ProfilesPage() {
                     <FormItem>
                       <FormLabel>PAN Number (Optional)</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="ABCDE1234F" 
-                          {...field} 
+                        <Input
+                          placeholder="ABCDE1234F"
+                          {...field}
                           style={{ textTransform: 'uppercase' }}
                           onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                         />
@@ -353,14 +353,14 @@ export default function ProfilesPage() {
             <CardContent className="space-y-3">
               {profile.pan && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700">PAN</p>
-                  <p className="text-sm text-gray-600">{profile.pan}</p>
+                  <p className="text-sm font-medium text-slate-700">PAN</p>
+                  <p className="text-sm text-slate-600">{profile.pan}</p>
                 </div>
               )}
               {profile.dateOfBirth && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Date of Birth</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm font-medium text-slate-700">Date of Birth</p>
+                  <p className="text-sm text-slate-600">
                     {new Date(profile.dateOfBirth).toLocaleDateString()}
                   </p>
                 </div>
@@ -374,7 +374,7 @@ export default function ProfilesPage() {
                   <Edit className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
-                
+
                 <div className="relative">
                   <input
                     type="file"
@@ -420,9 +420,9 @@ export default function ProfilesPage() {
 
         {profiles.length === 0 && (
           <div className="col-span-full text-center py-12">
-            <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No profiles yet</h3>
-            <p className="text-gray-600 mb-4">
+            <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No profiles yet</h3>
+            <p className="text-slate-600 mb-4">
               Create your first profile to start filing tax returns
             </p>
             <Button onClick={handleNewProfile} className="bg-primary hover:bg-primary/90">

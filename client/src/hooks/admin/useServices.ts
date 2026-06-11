@@ -37,7 +37,7 @@ export function useServices(params?: FilterParams) {
 
 export function useCreateService() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (serviceData: Partial<Service>) => {
       if (!isDevelopment) {
@@ -55,7 +55,7 @@ export function useCreateService() {
 
 export function useUpdateService() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<Service> }) => {
       if (!isDevelopment) {
@@ -74,7 +74,7 @@ export function useUpdateService() {
 
 export function useDeleteService() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: number) => {
       if (!isDevelopment) {

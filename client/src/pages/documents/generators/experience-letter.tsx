@@ -97,19 +97,19 @@ const FormComponent = ({ register, errors }: any) => {
 const generateHTML = (data: any) => {
   return `
     <div style="font-family: Arial, sans-serif; color: #000; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px;">
-      
+
       <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 40px;">
         <h1 style="margin: 0; color: #1e3a8a; font-size: 28px; text-transform: uppercase;">${data.companyName}</h1>
         <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">${data.companyAddress}</p>
       </div>
-      
+
       <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
         <p style="margin: 0; font-weight: bold;">Date: ${data.issueDate}</p>
         <p style="margin: 0; font-weight: bold;">Ref: HR/REL/${new Date(data.issueDate).getFullYear()}/${data.employeeId || '000'}</p>
       </div>
 
       <h2 style="text-align: center; text-decoration: underline; text-transform: uppercase; margin-bottom: 40px;">EXPERIENCE & RELIEVING CERTIFICATE</h2>
-      
+
       <p style="text-align: justify; margin-bottom: 20px;">
         **TO WHOMSOEVER IT MAY CONCERN**
       </p>
@@ -133,7 +133,7 @@ const generateHTML = (data: any) => {
       <div style="margin-top: 80px;">
         <p style="margin: 0;">Sincerely,</p>
         <p style="margin: 5px 0 60px 0; font-weight: bold;">For ${data.companyName}</p>
-        
+
         <p style="margin: 0; font-weight: bold; border-top: 1px solid #333; display: inline-block; padding-top: 5px; min-width: 200px;">
           ${data.signatoryName}
         </p>

@@ -4,12 +4,12 @@ import { Link } from "wouter";
 import { RouteSeo } from "@/components/seo/RouteSeo";
 import {
   Rocket,
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -217,16 +217,16 @@ export default function StartupIndiaRegistrationPage() {
                 <div className="w-14 h-14 bg-purple-50 rounded-full flex items-center justify-center soft-shadow">
                   <Rocket className="w-8 h-8 text-purple-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Startup India Registration
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Get DPIIT recognition support and review eligible tax, funding, and compliance benefits.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
@@ -239,15 +239,15 @@ export default function StartupIndiaRegistrationPage() {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-6 mt-6 text-sm">
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Free DPIIT Registration Workflow
                 </div>
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Expert Startup CA Support
                 </div>
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   5,000+ Startups Registered
                 </div>
@@ -255,14 +255,14 @@ export default function StartupIndiaRegistrationPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-purple-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Prepare the recognition application and supporting records</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Building2 className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Ensure entity type is Pvt Ltd, LLP, or Partnership.
@@ -295,17 +295,17 @@ export default function StartupIndiaRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Startup India Eligibility Criteria 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Ensure your startup meets all requirements before applying for DPIIT recognition
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {eligibilityCriteria.map((criteria, index) => (
-              <Card 
+              <Card
                 key={index}
                 className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${
                   criteria.status === 'restriction' ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'
@@ -320,9 +320,9 @@ export default function StartupIndiaRegistrationPage() {
                   <CardTitle className="text-lg font-bold">{criteria.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-sm text-gray-700">{criteria.requirement}</p>
-                  <Badge 
-                    variant={criteria.status === 'restriction' ? 'destructive' : 'default'} 
+                  <p className="text-sm text-slate-700">{criteria.requirement}</p>
+                  <Badge
+                    variant={criteria.status === 'restriction' ? 'destructive' : 'default'}
                     className="mt-2"
                   >
                     {criteria.status === 'restriction' ? 'Restriction' : 'Mandatory'}
@@ -341,10 +341,10 @@ export default function StartupIndiaRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Documents Required for Registration
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete document checklist for smooth DPIIT startup registration process
             </p>
           </div>
@@ -363,7 +363,7 @@ export default function StartupIndiaRegistrationPage() {
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -381,10 +381,10 @@ export default function StartupIndiaRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               6-Step Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete step-by-step guide to get your Startup India certificate
             </p>
           </div>
@@ -404,7 +404,7 @@ export default function StartupIndiaRegistrationPage() {
                   <CardTitle className="text-lg font-bold">{step.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+                  <p className="text-sm text-slate-600 mb-3">{step.description}</p>
                   <div className="flex items-center text-xs text-purple-600">
                     <Clock className="w-3 h-3 mr-1" />
                     <span>{step.duration}</span>
@@ -423,10 +423,10 @@ export default function StartupIndiaRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Startup India Benefits 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Benefit review covering tax exemptions, funding access, and regulatory support subject to eligibility
             </p>
           </div>
@@ -445,7 +445,7 @@ export default function StartupIndiaRegistrationPage() {
                     {benefit.benefits.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${benefit.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{item}</span>
+                        <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -464,7 +464,7 @@ export default function StartupIndiaRegistrationPage() {
         >
           <Card className="bg-gradient-to-r from-green-50 to-blue-50">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+              <CardTitle className="text-2xl font-bold text-slate-900 mb-2">
                 💰 Cost Structure - Completely FREE!
               </CardTitle>
               <CardDescription className="text-lg">
@@ -475,22 +475,22 @@ export default function StartupIndiaRegistrationPage() {
               <div className="grid md:grid-cols-3 gap-6 text-center">
                 <div className="p-4">
                   <div className="text-3xl font-bold text-green-600 mb-2">{"₹"}0</div>
-                  <div className="text-sm text-gray-600">DPIIT Registration Fee</div>
+                  <div className="text-sm text-slate-600">DPIIT Registration Fee</div>
                 </div>
                 <div className="p-4">
                   <div className="text-3xl font-bold text-green-600 mb-2">{"₹"}0</div>
-                  <div className="text-sm text-gray-600">Processing Fee</div>
+                  <div className="text-sm text-slate-600">Processing Fee</div>
                 </div>
                 <div className="p-4">
                   <div className="text-3xl font-bold text-green-600 mb-2">{"₹"}0</div>
-                  <div className="text-sm text-gray-600">Certificate Fee</div>
+                  <div className="text-sm text-slate-600">Certificate Fee</div>
                 </div>
               </div>
               <div className="text-center mt-6">
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Note:</strong> Only company incorporation charges apply ({"₹"}2,000-{"₹"}30,000). 
+                    <strong>Note:</strong> Only company incorporation charges apply ({"₹"}2,000-{"₹"}30,000).
                     DPIIT registration through official portal is completely free.
                   </AlertDescription>
                 </Alert>
@@ -516,8 +516,8 @@ export default function StartupIndiaRegistrationPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-purple-600 text-white hover:bg-purple-700 px-8 shadow-sm"
                   onClick={() => setIsCheckoutOpen(true)}
                 >

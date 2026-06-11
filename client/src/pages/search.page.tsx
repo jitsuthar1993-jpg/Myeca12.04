@@ -31,7 +31,7 @@ export default function SearchPage() {
   // Filter posts based on search term
   const filteredPosts = blogPosts.filter((post: any) => {
     if (!searchTerm) return true;
-    
+
     const query = searchTerm.toLowerCase();
     return (
       post.title?.toLowerCase().includes(query) ||
@@ -56,12 +56,12 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
-          <p className="text-gray-600">Search through our tax guides, articles, and resources</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Search</h1>
+          <p className="text-slate-600">Search through our tax guides, articles, and resources</p>
         </div>
 
         {/* Search Bar */}
@@ -88,10 +88,10 @@ export default function SearchPage() {
         {/* Search Results */}
         {searchTerm && (
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">
               Search Results for "{searchTerm}"
             </h2>
-            <p className="text-gray-600">
+            <p className="text-slate-600">
               Found {filteredPosts.length} result{filteredPosts.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -103,10 +103,10 @@ export default function SearchPage() {
             {[1, 2, 3].map((i) => (
               <Card key={i} className="animate-pulse">
                 <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-slate-200 rounded w-1/2 mb-4"></div>
+                  <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
+                  <div className="h-3 bg-slate-200 rounded w-2/3"></div>
                 </CardContent>
               </Card>
             ))}
@@ -132,7 +132,7 @@ export default function SearchPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-slate-500">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1" />
@@ -154,9 +154,9 @@ export default function SearchPage() {
         ) : searchTerm ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
-              <p className="text-gray-600">
+              <Search className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No results found</h3>
+              <p className="text-slate-600">
                 Try adjusting your search terms or browse our available resources below.
               </p>
             </CardContent>
@@ -209,8 +209,8 @@ export default function SearchPage() {
                 {blogPosts.slice(0, 5).map((post: any) => (
                   <div key={post.id} className="flex items-center justify-between py-3 border-b last:border-b-0">
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900">{post.title}</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 className="font-medium text-slate-900">{post.title}</h4>
+                      <p className="text-sm text-slate-600">
                         {new Date(post.createdAt).toLocaleDateString()}
                       </p>
                     </div>

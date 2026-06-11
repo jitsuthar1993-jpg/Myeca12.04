@@ -34,9 +34,9 @@ export default function TaxStickySidebar({ result, inputs, assessmentYear }: Tax
         className="bg-blue-700 rounded-3xl p-6 text-white shadow-2xl shadow-slate-200 overflow-hidden relative"
       >
         {/* Decorative Grid */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none" 
+        <div className="absolute inset-0 opacity-10 pointer-events-none"
              style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-        
+
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-6 opacity-60">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />

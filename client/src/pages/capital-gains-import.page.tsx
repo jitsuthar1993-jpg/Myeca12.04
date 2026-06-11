@@ -133,7 +133,7 @@ export default function CapitalGainsImportPage() {
   ] : [];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       {seoConfig && (
         <MetaSEO
           title={seoConfig.title}
@@ -199,7 +199,7 @@ export default function CapitalGainsImportPage() {
               <CardContent>
                 <div
                   className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
-                    isLoading ? 'border-indigo-400 bg-indigo-50' : 'border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/50'
+                    isLoading ? 'border-indigo-400 bg-indigo-50' : 'border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50'
                   }`}
                   onDrop={handleDrop}
                   onDragOver={(e) => e.preventDefault()}
@@ -207,17 +207,17 @@ export default function CapitalGainsImportPage() {
                   {isLoading ? (
                     <div className="space-y-4">
                       <RefreshCcw className="h-12 w-12 mx-auto text-indigo-500 animate-spin" />
-                      <p className="text-gray-600">Analyzing your statement...</p>
+                      <p className="text-slate-600">Analyzing your statement...</p>
                       <Progress value={66} className="w-48 mx-auto" />
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <Upload className="h-12 w-12 mx-auto text-gray-400" />
+                      <Upload className="h-12 w-12 mx-auto text-slate-400" />
                       <div>
-                        <p className="text-lg font-medium text-gray-700">
+                        <p className="text-lg font-medium text-slate-700">
                           Drag and drop your file here
                         </p>
-                        <p className="text-gray-500 mt-1">CSV or Excel format</p>
+                        <p className="text-slate-500 mt-1">CSV or Excel format</p>
                       </div>
                       <Label htmlFor="cg-file-upload">
                         <Input
@@ -255,21 +255,21 @@ export default function CapitalGainsImportPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="p-3 bg-slate-50 rounded-lg">
                     <p className="font-medium text-sm">Zerodha</p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-slate-600 mt-1">
                       Console → Tax P&L → Download CSV
                     </p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="p-3 bg-slate-50 rounded-lg">
                     <p className="font-medium text-sm">Groww</p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-slate-600 mt-1">
                       Reports → Capital Gains → Export
                     </p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="p-3 bg-slate-50 rounded-lg">
                     <p className="font-medium text-sm">ICICI Direct</p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-slate-600 mt-1">
                       Reports → Tax Reports → Capital Gains
                     </p>
                   </div>

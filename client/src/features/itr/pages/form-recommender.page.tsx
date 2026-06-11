@@ -74,19 +74,19 @@ export default function ITRFormRecommenderPage() {
 
   const getRecommendation = () => {
     const { sources, details } = selections;
-    
+
     // ITR-3: Business/Profession (Non-presumptive)
     if (sources.includes('business') && details.presumptive === 'no') return 'ITR-3';
-    
+
     // ITR-4: Business/Profession (Presumptive)
     if (sources.includes('business') && details.presumptive === 'yes') return 'ITR-4';
-    
+
     // ITR-2: Capital Gains, Foreign Income, Multiple Houses, or Income > 50L
-    if (sources.includes('capital-gains') || 
-        sources.includes('foreign-income') || 
-        details.multiple_houses === 'yes' || 
+    if (sources.includes('capital-gains') ||
+        sources.includes('foreign-income') ||
+        details.multiple_houses === 'yes' ||
         details.total_income === 'yes') return 'ITR-2';
-    
+
     // ITR-1: Simple cases
     return 'ITR-1';
   };
@@ -96,7 +96,7 @@ export default function ITRFormRecommenderPage() {
   const isNextDisabled = () => {
     if (currentStep === 0) return selections.sources.length === 0;
     if (currentStep === 1) {
-      return !selections.details['total-income'] || 
+      return !selections.details['total-income'] ||
              (selections.sources.includes('house-property') && !selections.details['multiple-houses']) ||
              (selections.sources.includes('business') && !selections.details['presumptive']);
     }
@@ -106,7 +106,7 @@ export default function ITRFormRecommenderPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
@@ -153,8 +153,8 @@ export default function ITRFormRecommenderPage() {
                             key={option.id}
                             onClick={() => handleSourceToggle(option.id)}
                             className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all cursor-pointer group ${
-                              isSelected 
-                                ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600/10' 
+                              isSelected
+                                ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600/10'
                                 : 'border-slate-100 bg-slate-50 hover:border-slate-200 hover:bg-white'
                             }`}
                           >
@@ -181,18 +181,18 @@ export default function ITRFormRecommenderPage() {
                         .map((q) => (
                         <div key={q.id} className="space-y-4">
                           <Label className="type-body font-bold text-slate-900">{q.label}</Label>
-                          <RadioGroup 
-                            value={selections.details[q.id]} 
+                          <RadioGroup
+                            value={selections.details[q.id]}
                             onValueChange={(val) => handleDetailChange(q.id, val)}
                             className="flex flex-col gap-3"
                           >
                             {q.options?.map((opt) => (
-                              <div 
+                              <div
                                 key={opt.value}
                                 onClick={() => handleDetailChange(q.id, opt.value)}
                                 className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                                  selections.details[q.id] === opt.value 
-                                    ? 'border-indigo-600 bg-indigo-50/30' 
+                                  selections.details[q.id] === opt.value
+                                    ? 'border-indigo-600 bg-indigo-50/30'
                                     : 'border-slate-100 bg-white hover:border-slate-200'
                                 }`}
                               >
@@ -281,8 +281,8 @@ export default function ITRFormRecommenderPage() {
                      </div>
                   </div>
                   <div className="pt-6 border-t border-slate-100 text-center">
-                    <button 
-                      onClick={() => setCurrentStep(0)} 
+                    <button
+                      onClick={() => setCurrentStep(0)}
                       className="type-support text-indigo-600 font-bold hover:underline"
                     >
                       Restart Assistant

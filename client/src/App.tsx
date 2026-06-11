@@ -8,7 +8,6 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider';
 import { Suspense } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { useRoutePreload } from '@/hooks/use-route-preload';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import { SafeAuthProvider, useAuth } from '@/components/AuthProvider';
 import Routes from './Routes';
@@ -89,7 +88,7 @@ function Router() {
   const [currentPath] = useLocation();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   useRouteScrollManager(currentPath);
-  
+
   // Define paths that should NOT show the global site header and footer
   // These are typically dashboard, admin, and account-related pages
   const dashboardPaths = [
@@ -124,8 +123,6 @@ function Router() {
   const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome;
   const hideFooter = currentPath === '/tax-assistant';
   const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/which-itr-form-to-file');
-
-  useRoutePreload({ preloadRelated: true });
 
   return (
     <div className="min-h-screen flex flex-col bg-white">

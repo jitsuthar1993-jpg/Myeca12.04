@@ -13,7 +13,7 @@ export async function encryptData(data: string, password: string): Promise<{
   const encoder = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  
+
   // Derive key from password
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
@@ -22,7 +22,7 @@ export async function encryptData(data: string, password: string): Promise<{
     false,
     ['deriveKey']
   );
-  
+
   const key = await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
@@ -35,14 +35,14 @@ export async function encryptData(data: string, password: string): Promise<{
     false,
     ['encrypt']
   );
-  
+
   // Encrypt the data
   const encrypted = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv },
     key,
     encoder.encode(data)
   );
-  
+
   // Convert to base64 for storage
   return {
     encrypted: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(encrypted)))),
@@ -62,12 +62,12 @@ export async function decryptData(
 ): Promise<string> {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
-  
+
   // Convert from base64
   const encryptedArray = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0));
   const saltArray = Uint8Array.from(atob(salt), c => c.charCodeAt(0));
   const ivArray = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
-  
+
   // Derive key from password
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
@@ -76,7 +76,7 @@ export async function decryptData(
     false,
     ['deriveKey']
   );
-  
+
   const key = await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
@@ -89,14 +89,14 @@ export async function decryptData(
     false,
     ['decrypt']
   );
-  
+
   // Decrypt the data
   const decrypted = await crypto.subtle.decrypt(
     { name: 'AES-GCM', iv: ivArray },
     key,
     encryptedArray
   );
-  
+
   return decoder.decode(decrypted);
 }
 
@@ -105,7 +105,7 @@ export async function decryptData(
  */
 export class SecureStorage {
   private static masterKey: string | null = null;
-  
+
   /**
    * Initialize secure storage with a master key
    */
@@ -117,7 +117,7 @@ export class SecureStorage {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     this.masterKey = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
-  
+
   /**
    * Store encrypted data
    */
@@ -125,13 +125,13 @@ export class SecureStorage {
     if (!this.masterKey) {
       throw new Error('SecureStorage not initialized');
     }
-    
+
     const data = JSON.stringify(value);
     const { encrypted, salt, iv } = await encryptData(data, this.masterKey);
-    
+
     localStorage.setItem(key, JSON.stringify({ encrypted, salt, iv }));
   }
-  
+
   /**
    * Retrieve and decrypt data
    */
@@ -139,10 +139,10 @@ export class SecureStorage {
     if (!this.masterKey) {
       throw new Error('SecureStorage not initialized');
     }
-    
+
     const stored = localStorage.getItem(key);
     if (!stored) return null;
-    
+
     try {
       const { encrypted, salt, iv } = JSON.parse(stored);
       const decrypted = await decryptData(encrypted, this.masterKey, salt, iv);
@@ -151,14 +151,14 @@ export class SecureStorage {
       return null;
     }
   }
-  
+
   /**
    * Remove item
    */
   static removeItem(key: string): void {
     localStorage.removeItem(key);
   }
-  
+
   /**
    * Clear all secure storage
    */
@@ -179,7 +179,7 @@ export class SecureStorage {
       }
     });
   }
-  
+
   /**
    * Lock the storage (clear master key)
    */

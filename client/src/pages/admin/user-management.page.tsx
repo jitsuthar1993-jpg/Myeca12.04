@@ -135,10 +135,10 @@ function UserManagementContent() {
   });
 
   const filteredUsers = users.filter((user: User) => {
-    const matchesSearch = 
+    const matchesSearch =
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
@@ -183,8 +183,8 @@ function UserManagementContent() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-64 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-8 bg-slate-200 rounded animate-pulse"></div>
+        <div className="h-64 bg-slate-200 rounded animate-pulse"></div>
       </div>
     );
   }
@@ -193,7 +193,7 @@ function UserManagementContent() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">User Management</h1>
-        <p className="text-gray-600 mt-2">Manage user registrations, approvals, and access control</p>
+        <p className="text-slate-600 mt-2">Manage user registrations, approvals, and access control</p>
       </div>
 
       {/* Statistics Cards */}
@@ -248,7 +248,7 @@ function UserManagementContent() {
             <div className="flex-1">
               <Label htmlFor="search">Search Users</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by name or email..."
@@ -318,12 +318,12 @@ function UserManagementContent() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{user.firstName} {user.lastName}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="text-sm text-slate-500">{user.email}</div>
                     </div>
                   </TableCell>
                   <TableCell>{getRoleBadge(user.role)}</TableCell>
                   <TableCell>{getStatusBadge(user.status)}</TableCell>
-                  <TableCell className="text-sm text-gray-600">
+                  <TableCell className="text-sm text-slate-600">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -379,7 +379,7 @@ function UserManagementContent() {
           <DialogHeader>
             <DialogTitle>Approve User</DialogTitle>
             <DialogDescription>
-              Are you sure you want to approve {selectedUser?.firstName} {selectedUser?.lastName} ({selectedUser?.email})? 
+              Are you sure you want to approve {selectedUser?.firstName} {selectedUser?.lastName} ({selectedUser?.email})?
               This will grant them {selectedUser?.role === "ca" ? "tax professional" : "user"} access to the system.
             </DialogDescription>
           </DialogHeader>
@@ -387,7 +387,7 @@ function UserManagementContent() {
             <Button variant="outline" onClick={() => setShowApprovalDialog(false)}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={() => selectedUser && approveMutation.mutate(selectedUser.id)}
               disabled={approveMutation.isPending}
               className="bg-green-600 hover:bg-green-700"
@@ -423,7 +423,7 @@ function UserManagementContent() {
             <Button variant="outline" onClick={() => setShowRejectionDialog(false)}>
               Cancel
             </Button>
-            <Button 
+            <Button
               variant="destructive"
               onClick={() => {
                 if (selectedUser && rejectionReason.trim()) {
@@ -444,7 +444,7 @@ function UserManagementContent() {
 // Admin layout without sidebar
 export default function UserManagementPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <UserManagementContent />
       </div>

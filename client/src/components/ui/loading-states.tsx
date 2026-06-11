@@ -11,16 +11,16 @@ interface SkeletonProps {
   lines?: number;
 }
 
-export const Skeleton: React.FC<SkeletonProps> = ({ 
-  className, 
-  width, 
-  height, 
+export const Skeleton: React.FC<SkeletonProps> = ({
+  className,
+  width,
+  height,
   variant = 'text',
   animation = 'pulse',
-  lines = 1 
+  lines = 1
 }) => {
   const baseClasses = cn(
-    'bg-gray-200 dark:bg-gray-700',
+    'bg-slate-200 ',
     {
       'animate-pulse': animation === 'pulse',
       'animate-shimmer': animation === 'wave',
@@ -102,7 +102,7 @@ export const CardSkeleton: React.FC<{ count?: number }> = ({ count = 1 }) => {
   return (
     <div className="space-y-4">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-white dark:bg-blue-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div key={i} className="bg-white  rounded-lg p-6 shadow-sm border border-slate-200 ">
           <div className="flex items-start space-x-4">
             <Skeleton variant="avatar" />
             <div className="flex-1 space-y-3">
@@ -119,15 +119,15 @@ export const CardSkeleton: React.FC<{ count?: number }> = ({ count = 1 }) => {
 
 export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows = 5, cols = 4 }) => {
   return (
-    <div className="bg-white dark:bg-blue-800 rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+    <div className="bg-white  rounded-lg overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-200 ">
         <div className="flex space-x-4">
           {Array.from({ length: cols }).map((_, i) => (
             <Skeleton key={i} variant="text" width="20%" />
           ))}
         </div>
       </div>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="divide-y divide-slate-200 ">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="px-6 py-4">
             <div className="flex space-x-4">
@@ -144,7 +144,7 @@ export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows
 
 export const ChartSkeleton: React.FC = () => {
   return (
-    <div className="bg-white dark:bg-blue-800 rounded-lg p-6">
+    <div className="bg-white  rounded-lg p-6">
       <div className="space-y-4">
         <Skeleton variant="text" width="40%" />
         <Skeleton variant="rect" height="200px" />
@@ -160,7 +160,7 @@ export const ChartSkeleton: React.FC = () => {
 
 export const FormSkeleton: React.FC = () => {
   return (
-    <div className="bg-white dark:bg-blue-800 rounded-lg p-6 space-y-6">
+    <div className="bg-white  rounded-lg p-6 space-y-6">
       <div className="space-y-2">
         <Skeleton variant="text" width="20%" />
         <Skeleton variant="text" />
@@ -209,7 +209,7 @@ export const LoadingWrapper: React.FC<LoadingWrapperProps> = ({
     if (isLoading) {
       setShowLoading(true);
       setShowContent(false);
-      
+
       if (minLoadingTime > 0) {
         const timer = setTimeout(() => {
           if (!isLoading) {
@@ -217,7 +217,7 @@ export const LoadingWrapper: React.FC<LoadingWrapperProps> = ({
             setShowContent(true);
           }
         }, minLoadingTime);
-        
+
         return () => clearTimeout(timer);
       }
     } else {
@@ -329,20 +329,20 @@ export const StaggeredLoading: React.FC<StaggeredLoadingProps> = ({
 export const LoadingStates = {
   // Full page loading
   Page: ({ message = 'Loading...' }: { message?: string }) => (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 ">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600 dark:text-gray-400">{message}</p>
+        <p className="text-slate-600 ">{message}</p>
       </div>
     </div>
   ),
 
   // Section loading
   Section: ({ title = 'Loading section...' }: { title?: string }) => (
-    <div className="bg-white dark:bg-blue-800 rounded-lg p-6">
+    <div className="bg-white  rounded-lg p-6">
       <div className="flex items-center space-x-3 mb-4">
         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+        <h3 className="text-lg font-medium text-slate-900 ">{title}</h3>
       </div>
       <CardSkeleton count={2} />
     </div>
@@ -389,11 +389,11 @@ const loadingStyles = `
       transform: translateY(0);
     }
   }
-  
+
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
   }
-  
+
   @keyframes shimmer {
     0% {
       background-position: -1000px 0;
@@ -402,7 +402,7 @@ const loadingStyles = `
       background-position: 1000px 0;
     }
   }
-  
+
   .animate-shimmer {
     background: linear-gradient(
       90deg,

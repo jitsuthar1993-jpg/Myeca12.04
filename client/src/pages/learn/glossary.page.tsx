@@ -92,14 +92,14 @@ const glossaryTerms = [
 export default function GlossaryPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredTerms = glossaryTerms.filter(item => 
-    item.term.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredTerms = glossaryTerms.filter(item =>
+    item.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.definition.toLowerCase().includes(searchQuery.toLowerCase())
   ).sort((a, b) => a.term.localeCompare(b.term));
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <SEO 
+      <SEO
         title="Financial Glossary - MyeCA"
         description="Look up investment, tax, and filing terms with short definitions and related guides."
       />
@@ -107,11 +107,11 @@ export default function GlossaryPage() {
       <div className="text-center mb-10">
         <h1 className="type-page-title mb-3 font-bold text-slate-900">Financial Glossary</h1>
         <p className="text-slate-600 mb-6">Master the language of money</p>
-        
+
         <div className="relative max-w-lg mx-auto">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-          <Input 
-            placeholder="Search for a term (e.g., SIP, Inflation)..." 
+          <Input
+            placeholder="Search for a term (e.g., SIP, Inflation)..."
             className="pl-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

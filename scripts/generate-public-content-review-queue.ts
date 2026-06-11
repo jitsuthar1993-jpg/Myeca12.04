@@ -1,9 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { PublicContentContext } from "../shared/public-content-quality.js";
+import { contentContextPath, rootDir } from "./lib/build-artifact-paths.js";
 
-const rootDir = process.cwd();
-const contextPath = path.join(rootDir, "dist", "public", "content-context.json");
 const outputPath = path.join(rootDir, "docs", "marketing", "public-content-editorial-review-queue.csv");
 const checkOnly = process.argv.includes("--check");
 
@@ -85,12 +84,12 @@ function buildCsv(contexts: PublicContentContext[]) {
   return `${headers.map(csvCell).join(",")}\n${rows.join("\n")}\n`;
 }
 
-if (!fs.existsSync(contextPath)) {
-  console.error(`Missing ${path.relative(rootDir, contextPath)}. Run npm.cmd run build first.`);
+if (!fs.existsSync(contentContextPath)) {
+  console.error(`Missing ${path.relative(rootDir, contentContextPath)}. Run npm.cmd run build first.`);
   process.exit(1);
 }
 
-const contexts = JSON.parse(fs.readFileSync(contextPath, "utf8")) as PublicContentContext[];
+const contexts = JSON.parse(fs.readFileSync(contentContextPath, "utf8")) as PublicContentContext[];
 const duplicateRoutes = contexts
   .map((context) => context.route)
   .filter((route, index, routes) => routes.indexOf(route) !== index);

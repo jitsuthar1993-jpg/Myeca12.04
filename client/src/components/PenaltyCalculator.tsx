@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { 
-  Calculator, 
-  AlertTriangle, 
+import {
+  Calculator,
+  AlertTriangle,
   Calendar,
   IndianRupee,
   TrendingUp,
@@ -137,7 +137,7 @@ export default function PenaltyCalculator() {
   const calculation = useMemo(() => {
     const section = penaltySections[activeTab as keyof typeof penaltySections] as any;
     const config = section.items[selectedItem as keyof typeof section.items] as any;
-    
+
     let penalty = 0;
     let label = "";
 
@@ -186,8 +186,8 @@ export default function PenaltyCalculator() {
                 <div className="bg-slate-50/50 p-2 border-b border-slate-100">
                   <TabsList className="w-full bg-white/50 border border-slate-200 p-1 rounded-xl h-12">
                     {Object.entries(penaltySections).map(([key, section]) => (
-                      <TabsTrigger 
-                        key={key} 
+                      <TabsTrigger
+                        key={key}
                         value={key}
                         className="flex-1 rounded-lg font-black type-meta uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
                       >
@@ -207,8 +207,8 @@ export default function PenaltyCalculator() {
                           key={key}
                           onClick={() => setSelectedItem(key)}
                           className={`p-4 rounded-2xl text-left transition-all border-2 ${
-                            selectedItem === key 
-                              ? 'border-blue-600 bg-blue-50/30' 
+                            selectedItem === key
+                              ? 'border-blue-600 bg-blue-50/30'
                               : 'border-slate-100 bg-white hover:border-slate-200 hover:bg-slate-50'
                           }`}
                         >
@@ -228,11 +228,11 @@ export default function PenaltyCalculator() {
                         <Label className="text-slate-900 font-black text-sm uppercase tracking-widest">Delay Period (Days)</Label>
                         <div className="text-2xl font-black text-blue-600">{delay} <span className="text-sm font-medium text-slate-400">Days</span></div>
                       </div>
-                      <Slider 
-                        value={[delay]} 
-                        onValueChange={(val) => setDelay(val[0])} 
-                        max={180} 
-                        step={1} 
+                      <Slider
+                        value={[delay]}
+                        onValueChange={(val) => setDelay(val[0])}
+                        max={180}
+                        step={1}
                         className="py-4"
                       />
                       <div className="flex justify-between type-meta font-black text-slate-300 uppercase">
@@ -248,8 +248,8 @@ export default function PenaltyCalculator() {
                       <Label className="text-slate-900 font-black text-sm uppercase tracking-widest">Base Tax Amount (₹)</Label>
                       <div className="relative">
                         <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input 
-                          type="number" 
+                        <Input
+                          type="number"
                           value={amount}
                           onChange={(e) => setAmount(Number(e.target.value))}
                           className="pl-12 h-14 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white text-lg font-bold"
@@ -312,7 +312,7 @@ export default function PenaltyCalculator() {
                <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Impact Analysis</h4>
                <TrendingUp className="w-4 h-4 text-emerald-500" />
             </div>
-            
+
             <div className="space-y-4">
                <div>
                   <div className="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">
@@ -323,23 +323,23 @@ export default function PenaltyCalculator() {
                     {[...Array(20)].map((_, i) => {
                       const isActive = i <= (delay / 180) * 20;
                       return (
-                        <div 
-                           key={i} 
+                        <div
+                           key={i}
                            className={`flex-1 rounded-full transition-all duration-1000 ${
                              isActive ? 'bg-blue-600/20 h-full' : 'bg-slate-200 h-1/4'
-                           }`} 
+                           }`}
                         />
                       );
                     })}
                   </div>
                </div>
-               
+
                <div className="flex items-start gap-4 p-4 bg-orange-50/50 rounded-2xl border border-orange-100/50">
                   <div className="p-2 bg-white rounded-xl shadow-sm">
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
                   </div>
                   <p className="type-meta text-orange-800 font-medium leading-relaxed">
-                    Note: Actual penalties may involve interest on late payment AND late filing fees. 
+                    Note: Actual penalties may involve interest on late payment AND late filing fees.
                     This is an indicative estimation for informational purposes.
                   </p>
                </div>

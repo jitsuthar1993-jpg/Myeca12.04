@@ -1,44 +1,15 @@
-import { useEffect, useCallback } from 'react';
-import { useLocation } from 'wouter';
+import { useCallback } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { preloadRouteModule } from '@/routes/route-preload';
 
-const ROUTE_RELATIONSHIPS: Record<string, string[]> = {
-  '/': ['/which-itr-form-to-file', '/calculators', '/services', '/experts'],
-  '/calculators': ['/calculators/income-tax', '/calculators/sip', '/calculators/hra', '/calculators/emi', '/calculators/hsn-finder'],
-  '/services': ['/services/gst-registration', '/services/company-registration', '/which-itr-form-to-file', '/experts'],
-  '/blog': ['/blog/:slug'],
-  '/auth/login': ['/auth/register'],
-  '/auth/register': ['/auth/login'],
-  '/dashboard': ['/profiles', '/documents', '/payments', '/settings', '/itr/filing', '/which-itr-form-to-file'],
-  '/itr': ['/which-itr-form-to-file', '/itr/form-selector', '/itr/status-tracker'],
-  '/which-itr-form-to-file': ['/itr/form-selector', '/expert-consultation'],
-  '/itr/form-selector': ['/itr/form-recommender', '/itr/filing'],
-  '/experts': ['/experts/ca-rahul-sharma', '/experts/ca-priya-nair'],
-};
-
-type UseRoutePreloadOptions = {
-  preloadRelated?: boolean;
-};
-
-export function useRoutePreload({ preloadRelated = false }: UseRoutePreloadOptions = {}) {
-  const [location] = useLocation();
+export function useRoutePreload() {
   const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (!preloadRelated) return;
-
-    const relatedRoutes = ROUTE_RELATIONSHIPS[location] || [];
-    
-    const timer = setTimeout(() => {
-      relatedRoutes.forEach(route => preloadRouteModule(route, isAuthenticated));
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [isAuthenticated, location, preloadRelated]);
-
   const preloadOnHover = useCallback((path: string) => {
-    preloadRouteModule(path, isAuthenticated);
+    void import("@/routes/route-preload")
+      .then(({ preloadRouteModule }) => preloadRouteModule(path, isAuthenticated))
+      .catch(() => {
+        // Speculative preloading may fail; normal route navigation remains available.
+      });
   }, [isAuthenticated]);
 
   return { preloadOnHover };

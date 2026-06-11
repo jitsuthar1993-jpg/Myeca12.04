@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * Mobile-Optimized Button Component
- * 
+ *
  * Fixes text overflow issues on mobile devices by:
  * - Preventing text from going outside button boundaries
  * - Maintaining 48x48px touch target compliance
@@ -69,11 +69,11 @@ const MobileOptimizedButton = React.forwardRef<
         'whitespace-nowrap': !allowTextWrap,
         'overflow-wrap-break-word': allowTextWrap,
         'break-words': allowTextWrap,
-        
+
         // Ensure proper text alignment
         'text-center': true,
         'text-left': !isMobile,
-        
+
         // Prevent text clipping
         'overflow-hidden': !allowTextWrap,
         'text-ellipsis': !allowTextWrap,
@@ -85,15 +85,15 @@ const MobileOptimizedButton = React.forwardRef<
       // Default size - mobile optimized
       'h-auto min-h-[48px] px-4 py-3 text-base': size === 'default' && isMobile,
       'h-10 px-4 py-2 text-sm': size === 'default' && !isMobile,
-      
+
       // Small size - still meets touch targets
       'h-auto min-h-[48px] px-3 py-2 text-sm': size === 'sm' && isMobile,
       'h-9 px-3 py-1.5 text-sm': size === 'sm' && !isMobile,
-      
+
       // Large size - mobile optimized
       'h-auto min-h-[56px] px-6 py-4 text-lg': size === 'lg' && isMobile,
       'h-11 px-8 py-3 text-lg': size === 'lg' && !isMobile,
-      
+
       // Icon size - maintains touch target
       'h-auto min-h-[48px] w-auto min-w-[48px] p-2': size === 'icon' && isMobile,
       'h-10 w-10 p-2': size === 'icon' && !isMobile,
@@ -115,9 +115,9 @@ const MobileOptimizedButton = React.forwardRef<
         variant === 'destructive',
       'border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100':
         variant === 'outline',
-      'bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300':
+      'bg-slate-100 text-slate-900 hover:bg-slate-200 active:bg-slate-300':
         variant === 'secondary',
-      'hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200':
+      'hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200':
         variant === 'ghost',
       'text-blue-600 underline-offset-4 hover:underline active:text-blue-700':
         variant === 'link',
@@ -180,7 +180,7 @@ const MobileOptimizedButton = React.forwardRef<
             </svg>
           </span>
         )}
-        
+
         <span className={cn('flex-1', { 'opacity-0': loading })}>
           {loading ? loadingText : children}
         </span>
@@ -225,16 +225,16 @@ export const useMobileButtonOptimization = () => {
 export const mobileButtonFixClasses = {
   // Fix text overflow
   textOverflowFix: 'whitespace-normal break-words text-center',
-  
+
   // Ensure touch target compliance
   touchTargetFix: 'h-auto min-h-[48px] min-w-[48px]',
-  
+
   // Mobile-optimized padding
   mobilePadding: 'px-4 py-3',
-  
+
   // Mobile-optimized text size
   mobileText: 'text-sm sm:text-base',
-  
+
   // Complete mobile button fix
   completeFix: cn(
     'whitespace-normal break-words text-center',

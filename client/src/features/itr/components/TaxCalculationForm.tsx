@@ -20,10 +20,10 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
 
   const calculateTax = () => {
     const { incomeDetails, deductions } = formData;
-    
+
     if (!incomeDetails) return;
 
-    const totalIncome = 
+    const totalIncome =
       parseFloat(incomeDetails.salaryIncome || "0") +
       parseFloat(incomeDetails.bonusIncome || "0") +
       parseFloat(incomeDetails.interestIncome || "0") +
@@ -63,14 +63,14 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
 
   const oldRegimeCalculation = () => {
     const { incomeDetails, deductions } = formData;
-    const totalIncome = 
+    const totalIncome =
       parseFloat(incomeDetails?.salaryIncome || "0") +
       parseFloat(incomeDetails?.bonusIncome || "0") +
       parseFloat(incomeDetails?.interestIncome || "0") +
       parseFloat(incomeDetails?.dividendIncome || "0") +
       parseFloat(incomeDetails?.otherIncome || "0");
-    
-    const totalDeductions = 
+
+    const totalDeductions =
       parseFloat(deductions?.section80C || "0") +
       parseFloat(deductions?.section80D || "0") +
       parseFloat(deductions?.section80G || "0") +
@@ -90,7 +90,7 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
 
   const newRegimeCalculation = () => {
     const { incomeDetails } = formData;
-    const totalIncome = 
+    const totalIncome =
       parseFloat(incomeDetails?.salaryIncome || "0") +
       parseFloat(incomeDetails?.bonusIncome || "0") +
       parseFloat(incomeDetails?.interestIncome || "0") +
@@ -124,7 +124,7 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Old Regime */}
-            <Card 
+            <Card
               className={`cursor-pointer transition-all ${selectedRegime === 'old' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'}`}
               onClick={() => setSelectedRegime('old')}
             >
@@ -137,17 +137,17 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Gross Income</span>
+                  <span className="text-sm text-slate-600">Gross Income</span>
                   <span className="font-medium">₹{formatCurrency(oldRegime.grossIncome)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Total Deductions</span>
+                  <span className="text-sm text-slate-600">Total Deductions</span>
                   <span className="font-medium text-green-600">
                     -₹{formatCurrency(oldRegime.grossIncome - oldRegime.taxableIncome)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Taxable Income</span>
+                  <span className="text-sm text-slate-600">Taxable Income</span>
                   <span className="font-medium">₹{formatCurrency(oldRegime.taxableIncome)}</span>
                 </div>
                 <Separator />
@@ -167,7 +167,7 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
             </Card>
 
             {/* New Regime */}
-            <Card 
+            <Card
               className={`cursor-pointer transition-all ${selectedRegime === 'new' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'}`}
               onClick={() => setSelectedRegime('new')}
             >
@@ -180,17 +180,17 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Gross Income</span>
+                  <span className="text-sm text-slate-600">Gross Income</span>
                   <span className="font-medium">₹{formatCurrency(newRegime.grossIncome)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Standard Deduction</span>
+                  <span className="text-sm text-slate-600">Standard Deduction</span>
                   <span className="font-medium text-green-600">
                     -₹{formatCurrency(50000)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Taxable Income</span>
+                  <span className="text-sm text-slate-600">Taxable Income</span>
                   <span className="font-medium">₹{formatCurrency(newRegime.taxableIncome)}</span>
                 </div>
                 <Separator />
@@ -211,7 +211,7 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
           </div>
 
           {/* Savings Indicator */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="mt-6 p-4 bg-slate-50 rounded-lg">
             <div className="flex items-center justify-center space-x-2">
               {savings > 0 ? (
                 <>
@@ -281,42 +281,42 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
 
               {/* Tax Slab Breakdown */}
               <div className="space-y-2">
-                <h4 className="font-semibold text-gray-900">Tax Slab Breakdown:</h4>
+                <h4 className="font-semibold text-slate-900">Tax Slab Breakdown:</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedRegime === 'old' ? (
                     <>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>Up to ₹2,50,000 (0%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab1)}</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>₹2,50,001 - ₹5,00,000 (5%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab2)}</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>₹5,00,001 - ₹10,00,000 (20%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab3)}</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>Above ₹10,00,000 (30%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab4)}</span>
                       </div>
                     </>
                   ) : (
                     <>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>Up to ₹3,00,000 (0%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab1)}</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>₹3,00,001 - ₹6,00,000 (5%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab2)}</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>₹6,00,001 - ₹9,00,000 (10%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab3)}</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex justify-between p-2 bg-slate-50 rounded">
                         <span>Above ₹9,00,000 (15%/20%/30%)</span>
                         <span>₹{formatCurrency(calculation.breakdown.slab4)}</span>
                       </div>
@@ -329,14 +329,14 @@ export default function TaxCalculationForm({ formData, onChange }: TaxCalculatio
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-semibold text-gray-900">Final Tax Liability</p>
-                    <p className="text-sm text-gray-600">After all calculations and deductions</p>
+                    <p className="font-semibold text-slate-900">Final Tax Liability</p>
+                    <p className="text-sm text-slate-600">After all calculations and deductions</p>
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-red-600">
                       ₹{formatCurrency(calculation.taxPayable)}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-slate-600">
                       Net Income: ₹{formatCurrency(calculation.netIncome)}
                     </p>
                   </div>

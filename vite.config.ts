@@ -26,6 +26,13 @@ const publicDocumentPathSource = `(?:${PUBLIC_STATIC_ROUTES
 const publicDocumentRoutePattern = new RegExp(`^${publicDocumentPathSource}$`);
 const publicDocumentUrlPattern = new RegExp(`^https?:\\/\\/[^/?#]+${publicDocumentPathSource}$`);
 
+// esbuild >= 0.27.7 (pinned via package.json overrides) marks destructuring as broken in Safari 14.0
+// (its compat table now requires 14.1) and cannot lower it, so Vite's default dev pre-bundling target
+// of safari14 makes every optimized dep error. Dev dependency optimization must therefore share the
+// production browser floor below.
+const browserTargets = ["chrome87", "edge88", "firefox78", "safari14.1"];
+const modulePreloadMode = process.env.MYECA_MODULE_PRELOAD_MODE ?? "none";
+
 export default defineConfig({
   envPrefix: ["VITE_", "NEXT_PUBLIC_"],
   plugins: [
@@ -199,11 +206,20 @@ export default defineConfig({
   build: {
     outDir: path.resolve(process.cwd(), "dist/public"),
     emptyOutDir: true,
-    target: ["chrome87", "edge88", "firefox78", "safari14.1"],
+    target: browserTargets,
     modulePreload: {
       // This app has hundreds of lazy routes; carrying every route preload edge in the entry
-      // bundle costs more than it helps anonymous first-page speed.
-      resolveDependencies: () => [],
+      // bundle costs more than it helps anonymous first-page speed. The entry-vendors mode is
+      // retained for repeatable cold-load benchmarking, while production defaults to none.
+      resolveDependencies: (filename, dependencies) => {
+        if (modulePreloadMode !== "entry-vendors" || !/(?:^|\/)index-[^/]+\.js$/.test(filename)) {
+          return [];
+        }
+
+        return dependencies.filter((dependency) =>
+          /(?:^|\/)(?:react-vendor|app-vendor|icons)-[^/]+\.js$/.test(dependency),
+        );
+      },
     },
     cssCodeSplit: true,
     sourcemap: shouldUploadSentrySourcemaps ? true : false,
@@ -261,5 +277,8 @@ export default defineConfig({
       "lucide-react",
       "react-helmet-async",
     ],
+    esbuildOptions: {
+      target: browserTargets,
+    },
   },
 });

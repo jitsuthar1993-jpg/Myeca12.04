@@ -81,7 +81,7 @@ export function formatFileSize(bytes: number): string {
 export function sanitizeFilename(filename: string): string {
   // Remove path information
   const basename = filename.split(/[\\/]/).pop() || 'file';
-  
+
   // Replace anything that isn't a letter, number, dot, or hyphen with a hyphen
   return basename
     .replace(/[^a-zA-Z0-9.-]/g, '-')
@@ -114,11 +114,11 @@ export async function prepareDocumentForUpload(file: File): Promise<File> {
 }
 
 export const ALLOWED_FILE_TYPES = [
-  'application/pdf', 
-  'image/jpeg', 
-  'image/png', 
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
   'image/webp',
-  'application/msword', 
+  'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

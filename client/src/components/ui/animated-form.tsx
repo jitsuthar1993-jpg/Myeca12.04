@@ -37,7 +37,7 @@ const AnimatedFormField = React.forwardRef<HTMLDivElement, AnimatedFormFieldProp
           <m.label
             className={cn(
               "block text-sm font-medium transition-colors duration-200",
-              isFocused ? "text-blue-600" : "text-gray-700",
+              isFocused ? "text-blue-600" : "text-slate-700",
               error && "text-red-600",
               success && "text-green-600"
             )}
@@ -68,7 +68,7 @@ const AnimatedFormField = React.forwardRef<HTMLDivElement, AnimatedFormFieldProp
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
         >
           {children}
-          
+
           {/* Loading Indicator */}
           <AnimatePresence>
             {isLoading && (
@@ -130,7 +130,7 @@ const AnimatedFormField = React.forwardRef<HTMLDivElement, AnimatedFormFieldProp
               <span>{error}</span>
             </m.div>
           )}
-          
+
           {success && !error && (
             <m.div
               key="success"

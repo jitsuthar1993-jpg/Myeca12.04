@@ -104,7 +104,7 @@ export const SensitiveDataInput = forwardRef<HTMLInputElement, SensitiveDataInpu
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const formattedValue = formatInput(e.target.value);
       e.target.value = formattedValue;
-      
+
       if (props.onChange) {
         props.onChange(e);
       }
@@ -128,7 +128,7 @@ export const SensitiveDataInput = forwardRef<HTMLInputElement, SensitiveDataInpu
         {showToggle && props.value && (
           <button
             type="button"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700"
             onClick={() => setShowData(!showData)}
             aria-label={showData ? 'Hide data' : 'Show data'}
           >

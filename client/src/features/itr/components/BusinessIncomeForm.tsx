@@ -72,7 +72,7 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
 
   const calculateTotalExpenses = () => {
     const expenses = form.watch('expenses');
-    return Object.values(expenses).reduce((total, expense) => 
+    return Object.values(expenses).reduce((total, expense) =>
       total + parseFloat(expense || "0"), 0
     );
   };
@@ -142,9 +142,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                     <FormItem>
                       <FormLabel>Annual Turnover *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="5000000" 
-                          {...field} 
+                        <Input
+                          placeholder="5000000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -265,9 +265,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                       <FormItem>
                         <FormLabel>Gross Receipts *</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="5000000" 
-                            {...field} 
+                          <Input
+                            placeholder="5000000"
+                            {...field}
                             onChange={(e) => {
                               const value = e.target.value.replace(/[^0-9]/g, '');
                               field.onChange(value);
@@ -303,9 +303,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Raw Materials</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -327,9 +327,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Direct Labor</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -351,9 +351,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Power & Fuel</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -375,9 +375,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Factory Expenses</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -399,9 +399,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Administrative Expenses</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -423,9 +423,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Selling & Distribution</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -447,9 +447,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Financial Expenses</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);
@@ -471,9 +471,9 @@ export default function BusinessIncomeForm({ data, onChange }: BusinessIncomeFor
                         <FormItem>
                           <FormLabel>Depreciation</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field} 
+                            <Input
+                              placeholder="0"
+                              {...field}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/[^0-9]/g, '');
                                 field.onChange(value);

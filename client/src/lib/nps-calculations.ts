@@ -79,28 +79,28 @@ export function calculateNPSTaxBenefits(
   existing80CDeductions: number = 0
 ): NPSTaxBenefit {
   const { employeeContribution, employerContribution, additionalContribution } = contribution;
-  
+
   // Section 80CCD(1) - Employee contribution (within 80C limit)
   const available80CLimit = Math.max(0, NPS_LIMITS.section80CCD1_limit - existing80CDeductions);
   const section80CCD1 = Math.min(employeeContribution, available80CLimit, annualIncome * 0.10);
-  
+
   // Section 80CCD(1B) - Additional ₹50,000
   const section80CCD1B = Math.min(additionalContribution, NPS_LIMITS.section80CCD1B_limit);
-  
+
   // Section 80CCD(2) - Employer contribution
   const maxEmployerDeduction = annualIncome * (isGovernmentEmployee ? NPS_LIMITS.section80CCD2_limit_govt : NPS_LIMITS.section80CCD2_limit_private);
   const section80CCD2 = Math.min(employerContribution, maxEmployerDeduction);
-  
+
   const totalDeduction = section80CCD1 + section80CCD1B + section80CCD2;
-  
+
   // Calculate tax saved based on marginal rate
   const marginalRate = getMarginalTaxRate(annualIncome);
   const taxSaved = totalDeduction * marginalRate * 1.04; // Include 4% cess
-  
+
   // Calculate effective return (tax benefit as % of contribution)
   const totalContribution = employeeContribution + additionalContribution;
   const effectiveReturn = totalContribution > 0 ? (taxSaved / totalContribution) * 100 : 0;
-  
+
   return {
     section80CCD1,
     section80CCD1B,
@@ -114,22 +114,22 @@ export function calculateNPSTaxBenefits(
 // Project NPS corpus at retirement
 export function projectNPSCorpus(input: NPSProjectionInput): NPSProjection {
   const { currentAge, retirementAge, currentCorpus, monthlyContribution, expectedReturn, annuityPercentage, annuityReturn } = input;
-  
+
   const yearsToRetirement = retirementAge - currentAge;
   const monthlyRate = expectedReturn / 100 / 12;
   const yearlyContribution = monthlyContribution * 12;
-  
+
   let corpus = currentCorpus;
   const yearWiseProjection: NPSProjection['yearWiseProjection'] = [];
   let totalContribution = currentCorpus;
-  
+
   for (let year = 1; year <= yearsToRetirement; year++) {
     // Add contributions and calculate growth
     for (let month = 0; month < 12; month++) {
       corpus = corpus * (1 + monthlyRate) + monthlyContribution;
     }
     totalContribution += yearlyContribution;
-    
+
     yearWiseProjection.push({
       year,
       age: currentAge + year,
@@ -137,17 +137,17 @@ export function projectNPSCorpus(input: NPSProjectionInput): NPSProjection {
       contribution: totalContribution,
     });
   }
-  
+
   const corpusAtRetirement = Math.round(corpus);
   const actualAnnuityPercentage = Math.max(annuityPercentage / 100, NPS_LIMITS.minAnnuityPercentage);
-  
+
   // Calculate withdrawal and pension
   const lumpSumWithdrawal = Math.round(corpusAtRetirement * (1 - actualAnnuityPercentage));
   const annuityCorpus = Math.round(corpusAtRetirement * actualAnnuityPercentage);
-  
+
   // Estimate monthly pension (simple annuity calculation)
   const monthlyPension = Math.round((annuityCorpus * (annuityReturn / 100)) / 12);
-  
+
   return {
     corpusAtRetirement,
     lumpSumWithdrawal,
@@ -166,24 +166,24 @@ export function compareInvestments(
   annualIncome: number
 ): NPSComparison {
   const yearlyInvestment = monthlyInvestment * 12;
-  
+
   // NPS: Expected return 10%, tax benefit under 80CCD(1B)
   const npsReturn = 0.10;
   const npsCorpus = calculateFutureValue(monthlyInvestment, npsReturn / 12, years * 12);
   const npsTaxBenefit = Math.min(yearlyInvestment, 50000) * getMarginalTaxRate(annualIncome) * years;
-  
+
   // PPF: 7.1% return, tax-free, under 80C
   const ppfReturn = 0.071;
   const ppfCorpus = calculateFutureValue(monthlyInvestment, ppfReturn / 12, years * 12);
   const ppfTaxBenefit = Math.min(yearlyInvestment, 150000) * getMarginalTaxRate(annualIncome) * years;
-  
+
   // ELSS: Expected return 12%, LTCG tax on gains
   const elssReturn = 0.12;
   const elssCorpus = calculateFutureValue(monthlyInvestment, elssReturn / 12, years * 12);
   const elssGains = elssCorpus - (yearlyInvestment * years);
   const elssLTCG = Math.max(0, elssGains - 125000) * 0.125; // 12.5% LTCG above ₹1.25L
   const elssTaxBenefit = Math.min(yearlyInvestment, 150000) * getMarginalTaxRate(annualIncome) * years;
-  
+
   return {
     nps: {
       corpus: Math.round(npsCorpus),

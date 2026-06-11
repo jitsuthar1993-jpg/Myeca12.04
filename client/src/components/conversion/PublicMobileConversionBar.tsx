@@ -101,7 +101,7 @@ export default function PublicMobileConversionBar({ currentPath = "/" }: { curre
   return (
     <nav
       aria-label="Public conversion actions"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-10px_30px_-18px_rgba(15,23,42,0.45)] backdrop-blur md:hidden"
+      className="m-bar-enter fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-10px_30px_-18px_rgba(15,23,42,0.45)] backdrop-blur md:hidden"
     >
       <div className="mx-auto grid max-w-md grid-cols-[1fr_1fr] gap-2">
         <Link

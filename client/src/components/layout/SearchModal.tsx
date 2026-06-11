@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
-import { 
-  CommandDialog, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandInput, 
-  CommandItem, 
-  CommandList, 
-  CommandSeparator 
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator
 } from "@/components/ui/command";
 import { Calculator, FileText, Search, ArrowRight, Building2, Landmark, Clock, Home, TrendingUp, Rocket, Receipt, Scale, Gem } from "lucide-react";
 import { SearchHistory } from "@/lib/search-utils";
@@ -39,7 +39,7 @@ const STATIC_LINKS = [
   { title: "SWP Calculator", href: "/calculators/swp", icon: TrendingUp, category: "Calculators" },
   { title: "Inflation Calculator", href: "/calculators/inflation", icon: TrendingUp, category: "Calculators" },
   { title: "Loan Eligibility Calculator", href: "/calculators/loan-eligibility", icon: Calculator, category: "Calculators" },
-  
+
   // Services
   { title: "TDS Filing", href: "/services/tds-filing", icon: Receipt, category: "Services" },
   { title: "GST Returns", href: "/services/gst-returns", icon: Calculator, category: "Services" },
@@ -47,7 +47,7 @@ const STATIC_LINKS = [
   { title: "Company Registration", href: "/services/company-registration", icon: Building2, category: "Services" },
   { title: "Trademark Registration", href: "/services/trademark-registration", icon: Scale, category: "Services" },
   { title: "Virtual CFO", href: "/business/virtual-cfo", icon: TrendingUp, category: "Services" },
-  
+
   // Startup
   { title: "Startup Hub", href: "/startup-services", icon: Rocket, category: "Startup" },
   { title: "Startup India Registration", href: "/services/startup-india-registration", icon: Rocket, category: "Startup" },
@@ -107,8 +107,8 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput 
-        placeholder="Type a command or search tools, services, guides..." 
+      <CommandInput
+        placeholder="Type a command or search tools, services, guides..."
         value={searchQuery}
         onValueChange={setSearchQuery}
       />
@@ -117,7 +117,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
           <div className="py-8 text-center text-sm text-slate-500">
             <Search className="w-8 h-8 text-slate-200 mx-auto mb-3" />
             <p className="mb-2">No direct results found for "{searchQuery}".</p>
-            <button 
+            <button
               onClick={() => handleSearchSubmit(searchQuery)}
               className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors"
             >
@@ -125,12 +125,12 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
             </button>
           </div>
         </CommandEmpty>
-        
+
         {!searchQuery && history.length > 0 && (
           <CommandGroup heading="Recent Searches">
             {history.map((term) => (
-              <CommandItem 
-                key={`hist-${term}`} 
+              <CommandItem
+                key={`hist-${term}`}
                 onSelect={() => handleSearchSubmit(term)}
                 className="flex items-center gap-3 cursor-pointer"
               >
@@ -144,8 +144,8 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
         {!searchQuery && (
           <CommandGroup heading="Popular Tools">
             {STATIC_LINKS.slice(0, 5).map((link) => (
-              <CommandItem 
-                key={link.href} 
+              <CommandItem
+                key={link.href}
                 onSelect={() => handleSelect(link.href, link.title)}
                 className="flex items-center gap-3 cursor-pointer group"
               >
@@ -163,8 +163,8 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
             {filteredLinks.length > 0 && (
               <CommandGroup heading="Tools & Services">
                 {filteredLinks.map((link) => (
-                  <CommandItem 
-                    key={link.href} 
+                  <CommandItem
+                    key={link.href}
                     onSelect={() => handleSelect(link.href, link.title)}
                     className="flex items-center gap-3 cursor-pointer group"
                   >
@@ -177,12 +177,12 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 ))}
               </CommandGroup>
             )}
-            
+
             {filteredBlogs.length > 0 && (
               <CommandGroup heading="Knowledge Hub">
                 {filteredBlogs.map((post: any) => (
-                  <CommandItem 
-                    key={`blog-${post.id}`} 
+                  <CommandItem
+                    key={`blog-${post.id}`}
                     onSelect={() => handleSelect(`/blog/${post.id}`, post.title)}
                     className="flex items-center gap-3 cursor-pointer group"
                   >
@@ -194,13 +194,13 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 ))}
               </CommandGroup>
             )}
-            
+
             {(filteredLinks.length > 0 || filteredBlogs.length > 0) && (
               <>
                 <CommandSeparator />
                 <CommandGroup>
-                  <CommandItem 
-                    onSelect={() => handleSearchSubmit(searchQuery)} 
+                  <CommandItem
+                    onSelect={() => handleSearchSubmit(searchQuery)}
                     className="flex items-center gap-2 justify-center text-blue-600 font-bold py-3 cursor-pointer hover:bg-blue-50"
                   >
                     <Search className="w-4 h-4" />

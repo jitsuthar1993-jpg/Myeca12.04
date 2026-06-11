@@ -443,7 +443,7 @@ export const ScreenReaderNavigation: React.FC<ScreenReaderNavigationProps> = ({
           ))}
         </ul>
       </nav>
-      
+
       <ScreenReaderAnnouncement
         message={announcement}
         priority="polite"
@@ -489,7 +489,7 @@ export const ScreenReaderFormHelper: React.FC<ScreenReaderFormHelperProps> = ({
       <div id={`${formId}-instructions`} className="sr-only">
         {instructions}
       </div>
-      
+
       {Object.entries(errors).map(([field, error]) => (
         <div
           key={field}
@@ -501,7 +501,7 @@ export const ScreenReaderFormHelper: React.FC<ScreenReaderFormHelperProps> = ({
           {error}
         </div>
       ))}
-      
+
       <ScreenReaderAnnouncement
         message={announcement}
         priority={errorCount > 0 ? 'assertive' : 'polite'}
@@ -638,10 +638,10 @@ export const screenReaderUtils = {
       white-space: nowrap;
       border: 0;
     `;
-    
+
     document.body.appendChild(announcement);
     announcement.textContent = message;
-    
+
     setTimeout(() => {
       if (announcement.parentNode) {
         announcement.remove();
@@ -665,7 +665,7 @@ export const screenReaderUtils = {
       white-space: nowrap;
       border: 0;
     `;
-    
+
     document.body.appendChild(region);
     return region;
   },

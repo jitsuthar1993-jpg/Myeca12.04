@@ -22,12 +22,12 @@ interface AdminBreadcrumbProps {
 
 export function AdminBreadcrumb({ items }: AdminBreadcrumbProps) {
   const [location] = useLocation();
-  
+
   // Generate breadcrumb items from route if not provided
   const breadcrumbItems: BreadcrumbItemType[] = items || (() => {
     const paths = location.split('/').filter(Boolean);
     const result: BreadcrumbItemType[] = [{ label: 'Dashboard', href: '/admin' }];
-    
+
     if (paths.length > 1 && paths[0] === 'admin') {
       paths.slice(1).forEach((path, index) => {
         const href = '/' + paths.slice(0, index + 2).join('/');
@@ -35,7 +35,7 @@ export function AdminBreadcrumb({ items }: AdminBreadcrumbProps) {
         result.push({ label, href });
       });
     }
-    
+
     return result;
   })();
 

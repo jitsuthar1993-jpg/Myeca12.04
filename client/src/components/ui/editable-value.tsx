@@ -11,13 +11,13 @@ interface EditableValueProps {
   format?: "currency" | "percent" | "years";
 }
 
-export function EditableValue({ 
-  value, 
-  onChange, 
-  min, 
-  max, 
-  colorClass, 
-  bgClass, 
+export function EditableValue({
+  value,
+  onChange,
+  min,
+  max,
+  colorClass,
+  bgClass,
   borderClass,
   format = "currency"
 }: EditableValueProps) {
@@ -46,7 +46,7 @@ export function EditableValue({
     // If percent, allow floats. Otherwise ints.
     const rawVal = format === "percent" ? draft.replace(/[^0-9.]/g, "") : draft.replace(/[^0-9]/g, "");
     const parsed = format === "percent" ? parseFloat(rawVal) : parseInt(rawVal, 10);
-    
+
     if (!isNaN(parsed)) {
       onChange(Math.max(min, Math.min(max, parsed)));
     }
@@ -61,9 +61,9 @@ export function EditableValue({
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
-        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { 
-          if (e.key === "Enter") commit(); 
-          if (e.key === "Escape") setEditing(false); 
+        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") setEditing(false);
         }}
         className={`w-28 text-xs font-bold tabular-nums ${colorClass} ${bgClass} px-2.5 py-0.5 rounded-md border ${borderClass} outline-none ring-2 ring-blue-400/40 text-right`}
         autoFocus

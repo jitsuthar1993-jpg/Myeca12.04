@@ -1,11 +1,11 @@
 // Admin Dashboard TypeScript Types - Simple and Clean
 
-import type { 
-  User as SharedUser, 
-  ChatSession, 
-  ChatMessage, 
-  BlogPost, 
-  BlogCategory, 
+import type {
+  User as SharedUser,
+  ChatSession,
+  ChatMessage,
+  BlogPost,
+  BlogCategory,
   BlogTag,
   TaxReturn,
   Document

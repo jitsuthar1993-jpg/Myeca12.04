@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  FileText, 
-  Calculator, 
-  Upload, 
-  PlusCircle, 
+import {
+  User,
+  FileText,
+  Calculator,
+  Upload,
+  PlusCircle,
   TrendingUp,
   Calendar,
   CheckCircle,
@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const seo = getSEOConfig('/dashboard');
   const { user } = useAuth();
   const userId = user?.id;
-  
+
   const { data: userServices = [], isLoading: servicesLoading } = useQuery<any[]>({
     queryKey: ['/api/user-services'],
     enabled: !!userId
@@ -71,17 +71,17 @@ export default function DashboardPage() {
     },
     enabled: !!userId
   });
-  
+
   const profiles = [
     { id: 1, name: "Primary Profile", isActive: true, relation: "Self", pan: "" }
   ];
   const activeProfile = profiles[0];
-  
+
   const taxReturns = [
     { id: 1, assessmentYear: "2024-25", status: "draft", filingDate: null },
     { id: 2, assessmentYear: "2023-24", status: "filed", filingDate: "2024-07-30" }
   ];
-  
+
   const documents = [
     { id: 1, name: "Form 16", category: "Salary", uploadDate: "2024-01-15" },
     { id: 2, name: "Bank Statement", category: "Banking", uploadDate: "2024-01-20" }

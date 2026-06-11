@@ -157,9 +157,9 @@ export function ServiceCheckoutModal({
               </div>
 
               <div className="pt-2">
-                <Button 
-                  type="submit" 
-                  disabled={loading} 
+                <Button
+                  type="submit"
+                  disabled={loading}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-11"
                 >
                   {loading ? (

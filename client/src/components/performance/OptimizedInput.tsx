@@ -10,13 +10,13 @@ interface OptimizedInputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const OptimizedInput = forwardRef<HTMLInputElement, OptimizedInputProps>(
-  ({ 
-    onChange, 
-    onDebouncedChange, 
-    debounceDelay = 300, 
+  ({
+    onChange,
+    onDebouncedChange,
+    debounceDelay = 300,
     instantValidation = false,
     className,
-    ...props 
+    ...props
   }, ref) => {
     const debouncedValue = useDebounce(props.value as string || '', debounceDelay);
 

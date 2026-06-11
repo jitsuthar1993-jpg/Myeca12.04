@@ -136,7 +136,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white text-gray-900 border-gray-200">
+      <DialogContent className="sm:max-w-[500px] bg-white text-slate-900 border-slate-200">
         <AnimatePresence mode="wait">
           {!submitted ? (
             <m.div
@@ -146,8 +146,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
               exit={{ opacity: 0, y: -10 }}
             >
               <DialogHeader>
-                <DialogTitle className="text-gray-900">Send Us Your Feedback</DialogTitle>
-                <DialogDescription className="text-gray-600">
+                <DialogTitle className="text-slate-900">Send Us Your Feedback</DialogTitle>
+                <DialogDescription className="text-slate-600">
                   Help us improve MyeCA.in by sharing your thoughts.
                 </DialogDescription>
               </DialogHeader>
@@ -279,7 +279,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
                   />
 
                   <div className="space-y-2">
-                    <FormLabel className="text-gray-700">Rate Your Experience (Optional)</FormLabel>
+                    <FormLabel className="text-slate-700">Rate Your Experience (Optional)</FormLabel>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -292,7 +292,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
                             className={`h-5 w-5 ${
                               star <= rating
                                 ? "fill-blue-500 text-blue-500"
-                                : "text-gray-300 hover:text-gray-400"
+                                : "text-slate-300 hover:text-slate-400"
                             }`}
                           />
                         </button>
@@ -341,8 +341,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
               >
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               </m.div>
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">Thank You!</h3>
-              <p className="text-gray-600">
+              <h3 className="text-lg font-semibold mb-2 text-slate-900">Thank You!</h3>
+              <p className="text-slate-600">
                 Your feedback has been received. We appreciate you taking the time to help us improve.
               </p>
             </m.div>

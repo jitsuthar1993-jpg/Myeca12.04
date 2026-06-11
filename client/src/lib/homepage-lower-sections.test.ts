@@ -7,14 +7,22 @@ function readSource(path: string) {
 }
 
 describe("homepage lower-section redesign", () => {
-  it("keeps the upper homepage stable while adding compact mobile summaries", () => {
+  it("keeps the mobile homepage compact with a single conversion path", () => {
     const home = readSource("client/src/pages/home.page.tsx");
 
-    expect(home).toContain("<LowerHomepageMobileSummary />");
-    expect(home).toContain("md:hidden");
-    expect(home).toContain("For salaried professionals");
-    expect(home).toContain("Business / GST");
+    // Mobile pricing renders as compact rows; full cards stay desktop-only.
+    expect(home).toContain("sm:hidden");
+    expect(home).toContain("hidden gap-3 sm:grid sm:grid-cols-3");
     expect(home).toContain("Start ITR Filing");
+
+    // Removed duplicated mobile sections must not return.
+    expect(home).not.toContain("LowerHomepageMobileSummary");
+    expect(home).not.toContain("Compact mobile summaries");
+    expect(home).not.toContain("Know your number? Check the ITR path.");
+
+    // Hero typewriter stays out of the accessibility tree and respects reduced motion.
+    expect(home).toContain("prefers-reduced-motion");
+    expect(home).toContain('aria-label="File your Income Tax Returns, GST Returns, TDS Returns, and Compliances"');
   });
 
   it("frames desktop lower sections around trust, personas, and scope-first action", () => {

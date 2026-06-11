@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Building2, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Building2,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -205,7 +205,7 @@ export default function CompanyRegistrationPage() {
       description: "File corporate income tax return"
     },
     {
-      frequency: "Annual", 
+      frequency: "Annual",
       requirement: "Director KYC (DIR-3 KYC)",
       dueDate: "30th September",
       penalty: "₹5,000 per director",
@@ -291,16 +291,16 @@ export default function CompanyRegistrationPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Building2 className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Company Registration Services
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Prepare incorporation records for a Pvt Ltd company, OPC, Public Ltd company, or LLP. Timeline depends on document readiness and MCA approvals.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold"
                   onClick={() => {
                     setCheckoutPrice(6999);
@@ -321,14 +321,14 @@ export default function CompanyRegistrationPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Plan incorporation efficiently</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <FileText className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Reserve unique company name via RUN (MCA).
@@ -361,17 +361,17 @@ export default function CompanyRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Choose Your Company Structure
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Select the right business structure based on your needs and goals
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {companyTypes.map((company) => (
-              <Card 
+              <Card
                 key={company.id}
                 className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 ${
                   company.color === 'blue' ? 'border-l-blue-500' :
@@ -395,33 +395,33 @@ export default function CompanyRegistrationPage() {
                     </Badge>
                   </div>
                   <CardTitle className="text-xl font-bold">{company.title}</CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-slate-600">
                     {company.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
                     <div>
-                      <div className="font-medium text-gray-700">Members</div>
-                      <div className="text-gray-600">{company.minMembers}</div>
+                      <div className="font-medium text-slate-700">Members</div>
+                      <div className="text-slate-600">{company.minMembers}</div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-700">Liability</div>
-                      <div className="text-gray-600">{company.liability}</div>
+                      <div className="font-medium text-slate-700">Liability</div>
+                      <div className="text-slate-600">{company.liability}</div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-700">Compliance</div>
-                      <div className="text-gray-600">{company.compliance}</div>
+                      <div className="font-medium text-slate-700">Compliance</div>
+                      <div className="text-slate-600">{company.compliance}</div>
                     </div>
                   </div>
 
                   <div className="mb-4">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Suitable For:</div>
-                    <div className="text-sm text-gray-600">{company.suitableFor}</div>
+                    <div className="text-sm font-medium text-slate-700 mb-2">Suitable For:</div>
+                    <div className="text-sm text-slate-600">{company.suitableFor}</div>
                   </div>
-                  
+
                   <div className="mb-6">
-                    <div className="text-sm font-medium text-gray-700 mb-3">Key Features:</div>
+                    <div className="text-sm font-medium text-slate-700 mb-3">Key Features:</div>
                     <ul className="space-y-2">
                       {company.features.map((feature, index) => (
                         <li key={index} className="flex items-center text-sm">
@@ -432,7 +432,7 @@ export default function CompanyRegistrationPage() {
                     </ul>
                   </div>
 
-                  <Button 
+                  <Button
                     className="w-full bg-blue-600 hover:bg-blue-700"
                     onClick={() => {
                       setCheckoutPrice(parseInt(company.registrationFee.replace(/[^0-9]/g, '')));
@@ -457,10 +457,10 @@ export default function CompanyRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Company Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Simple 4-step process to get your company registered and operational
             </p>
           </div>
@@ -481,8 +481,8 @@ export default function CompanyRegistrationPage() {
                 <div className="absolute -top-3 -right-3 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                   {step.step}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-600 mb-3">{step.description}</p>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">{step.title}</h3>
+                <p className="text-slate-600 mb-3">{step.description}</p>
                 <Badge className="bg-blue-100 text-blue-800">
                   {step.timeline}
                 </Badge>
@@ -512,7 +512,7 @@ export default function CompanyRegistrationPage() {
               <div className="grid md:grid-cols-3 gap-6">
                 {requiredDocuments.map((category, index) => (
                   <div key={index} className="space-y-3">
-                    <h4 className="font-semibold text-gray-900 flex items-center">
+                    <h4 className="font-semibold text-slate-900 flex items-center">
                       <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-2">
                         <FileText className="w-4 h-4 text-indigo-600" />
                       </div>
@@ -541,10 +541,10 @@ export default function CompanyRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Benefits of Company Registration
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Why incorporate your business and enjoy legal and financial advantages
             </p>
           </div>
@@ -558,8 +558,8 @@ export default function CompanyRegistrationPage() {
                       <benefit.icon className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                      <p className="text-gray-600 text-sm">{benefit.description}</p>
+                      <h3 className="font-semibold text-slate-900 mb-2">{benefit.title}</h3>
+                      <p className="text-slate-600 text-sm">{benefit.description}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -589,7 +589,7 @@ export default function CompanyRegistrationPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
+                    <tr className="border-b border-slate-200">
                       <th className="text-left py-3 font-semibold">Requirement</th>
                       <th className="text-left py-3 font-semibold">Frequency</th>
                       <th className="text-left py-3 font-semibold">Due Date</th>
@@ -598,11 +598,11 @@ export default function CompanyRegistrationPage() {
                   </thead>
                   <tbody>
                     {complianceRequirements.map((req, index) => (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                      <tr key={index} className="border-b border-slate-100 hover:bg-slate-50">
                         <td className="py-3">
                           <div>
                             <div className="font-medium">{req.requirement}</div>
-                            <div className="text-sm text-gray-600">{req.description}</div>
+                            <div className="text-sm text-slate-600">{req.description}</div>
                           </div>
                         </td>
                       <td className="py-3">
@@ -647,7 +647,7 @@ export default function CompanyRegistrationPage() {
               <div className="space-y-2">
                 <Label htmlFor="company-name">Proposed Company Name</Label>
                 <Input id="company-name" placeholder="Enter desired company name" />
-                <p className="text-sm text-gray-600">We'll check availability and suggest alternatives</p>
+                <p className="text-sm text-slate-600">We'll check availability and suggest alternatives</p>
               </div>
 
               <div className="space-y-2">
@@ -701,8 +701,8 @@ export default function CompanyRegistrationPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="business-activity">Nature of Business</Label>
-                <Textarea 
-                  id="business-activity" 
+                <Textarea
+                  id="business-activity"
                   placeholder="Describe your business activities and industry"
                   rows={3}
                 />
@@ -710,15 +710,15 @@ export default function CompanyRegistrationPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="registered-office">Proposed Registered Office</Label>
-                <Textarea 
-                  id="registered-office" 
+                <Textarea
+                  id="registered-office"
                   placeholder="Enter complete address for registered office"
                   rows={3}
                 />
               </div>
 
               <div className="flex gap-4">
-                <Button 
+                <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                   onClick={() => {
                     setCheckoutPrice(6999);
@@ -762,15 +762,15 @@ export default function CompanyRegistrationPage() {
         >
           <Card className="max-w-2xl mx-auto p-8 bg-gradient-to-br from-blue-50 to-indigo-50">
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Company Registration Pricing</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">Company Registration Pricing</h3>
               <div className="flex justify-center items-baseline gap-2 mb-2">
                 <span className="text-4xl font-bold text-blue-600">₹6,999</span>
-                <span className="text-lg text-gray-600">starting package</span>
+                <span className="text-lg text-slate-600">starting package</span>
                 <Badge className="bg-green-100 text-green-800">Scope first</Badge>
               </div>
-              <p className="text-gray-600">Complete Private Limited Company registration</p>
+              <p className="text-slate-600">Complete Private Limited Company registration</p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
@@ -799,8 +799,8 @@ export default function CompanyRegistrationPage() {
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-blue-600 hover:bg-blue-700 px-8"
                 onClick={() => {
                   setCheckoutPrice(6999);
@@ -817,7 +817,7 @@ export default function CompanyRegistrationPage() {
               </Button>
             </div>
 
-            <p className="text-sm text-gray-600 mt-4">
+            <p className="text-sm text-slate-600 mt-4">
               MCA filing workflow support - Timeline depends on document readiness and MCA approvals
             </p>
           </Card>
@@ -828,7 +828,7 @@ export default function CompanyRegistrationPage() {
           <div className="max-w-4xl mx-auto text-left">
             <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">The Founder's Guide to Company Registration 2025</h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-8">
-              Registering a <span className="text-indigo-600 font-bold">Private Limited Company</span> is the first step toward building a scalable, fundable venture. 
+              Registering a <span className="text-indigo-600 font-bold">Private Limited Company</span> is the first step toward building a scalable, fundable venture.
               Under the Ministry of Corporate Affairs (MCA) 2024 guidelines, the process has been streamlined via the <span className="font-bold">SPICe+ system</span>, integrating PAN, TAN, and EPFO into a single application.
             </p>
 
@@ -836,14 +836,14 @@ export default function CompanyRegistrationPage() {
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Startup India & DPIIT Benefits</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Once registered as a Private Limited Company, you can apply for <span className="font-bold">DPIIT Recognition</span>. 
+                    Once registered as a Private Limited Company, you can apply for <span className="font-bold">DPIIT Recognition</span>.
                     Eligible entities may later apply for specific tax incentives, funding programmes, or procurement opportunities. Incorporation alone does not establish scheme eligibility; verify each programme's current conditions separately.
                   </p>
                </div>
                <div className="space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">Fundraising & Investor Readiness</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    Angel investors and VCs exclusively invest in Private Limited structures. 
+                    Angel investors and VCs exclusively invest in Private Limited structures.
                     This is because it allows for <span className="font-bold">equity dilution</span>, issuance of ESOPs for employees, and clear governance through a Board of Directors.
                   </p>
                </div>
@@ -899,8 +899,8 @@ export default function CompanyRegistrationPage() {
                 <div>
                    <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">CA Expert Tip for Founders</h3>
                    <p className="text-slate-600 leading-relaxed mb-6 font-medium">
-                      "When choosing your <span className="font-bold underline decoration-indigo-300 underline-offset-4">Authorized Capital</span>, 
-                      start with ₹1 Lakh or ₹10 Lakhs. While you can increase it later, higher initial capital requires more government fee. 
+                      "When choosing your <span className="font-bold underline decoration-indigo-300 underline-offset-4">Authorized Capital</span>,
+                      start with ₹1 Lakh or ₹10 Lakhs. While you can increase it later, higher initial capital requires more government fee.
                       However, if you're raising immediate funding, keep it at a level that avoids repeated stamp duty filings."
                    </p>
                    <div className="flex flex-wrap gap-4">

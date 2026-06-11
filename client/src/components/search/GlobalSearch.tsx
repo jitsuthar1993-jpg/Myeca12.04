@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { 
-  Search, FileText, Calculator, HelpCircle, 
+import {
+  Search, FileText, Calculator, HelpCircle,
   Building2, TrendingUp, Clock, ArrowRight,
   X, Loader2, Filter, History, Sparkles
 } from "lucide-react";
@@ -24,7 +24,7 @@ const searchableContent = [
   { id: 4, title: "GST Returns", type: "service", url: "/services/gst-returns", description: "File monthly and quarterly GST returns on time", keywords: ["gst", "returns", "filing", "compliance"] },
   { id: 5, title: "TDS Filing", type: "service", url: "/services/tds-filing", description: "File TDS returns for all quarters accurately", keywords: ["tds", "filing", "tax", "deduction"] },
   { id: 6, title: "Notice Compliance", type: "service", url: "/services/notice-compliance", description: "Expert help for income tax notices", keywords: ["notice", "compliance", "tax", "scrutiny"] },
-  
+
   // Calculators
   { id: 7, title: "Income Tax Calculator", type: "calculator", url: "/calculators/income-tax", description: "Estimate your income tax for AY 2026-27", keywords: ["income", "tax", "calculator", "salary"] },
   { id: 8, title: "HRA Calculator", type: "calculator", url: "/calculators/hra", description: "Calculate HRA exemption and tax savings", keywords: ["hra", "calculator", "rent", "exemption"] },
@@ -40,13 +40,13 @@ const searchableContent = [
   { id: 26, title: "SWP Calculator", type: "calculator", url: "/calculators/swp", description: "Plan systematic withdrawals from a corpus", keywords: ["swp", "withdrawal", "retirement", "mutual fund"] },
   { id: 27, title: "Inflation Calculator", type: "calculator", url: "/calculators/inflation", description: "Estimate future cost and purchasing power", keywords: ["inflation", "future cost", "purchasing power"] },
   { id: 28, title: "Loan Eligibility Calculator", type: "calculator", url: "/calculators/loan-eligibility", description: "Estimate eligible loan amount from income and EMI capacity", keywords: ["loan eligibility", "foir", "emi", "income"] },
-  
+
   // Help & Resources
   { id: 12, title: "How to File ITR", type: "help", url: "/help/user-guide", description: "Step-by-step guide to file income tax return", keywords: ["how to", "file", "itr", "guide"] },
   { id: 13, title: "Tax Saving Tips", type: "help", url: "/help/knowledge-base", description: "Practical tips to review eligible deductions", keywords: ["tax", "saving", "tips", "deduction"] },
   { id: 14, title: "GST Compliance Guide", type: "help", url: "/help/knowledge-base", description: "GST registration, return, and record-keeping guidance", keywords: ["gst", "compliance", "guide", "business"] },
   { id: 15, title: "Document Checklist", type: "help", url: "/help/faq", description: "Required documents for tax filing", keywords: ["documents", "checklist", "required", "filing"] },
-  
+
   // Pages
   { id: 16, title: "Pricing Plans", type: "page", url: "/pricing", description: "View our affordable pricing plans", keywords: ["pricing", "plans", "cost", "fees"] },
   { id: 17, title: "About MyeCA", type: "page", url: "/about", description: "Learn about our mission and team", keywords: ["about", "company", "team", "mission"] },
@@ -95,7 +95,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
 
     setShowHistory(false);
     setIsSearching(true);
-    
+
     // Simulate API delay for smoother UX
     const timer = setTimeout(() => {
       // Filter by type if selected
@@ -103,10 +103,10 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
       if (selectedType !== "all") {
         itemsToSearch = searchableContent.filter(item => item.type === selectedType);
       }
-      
+
       // Perform fuzzy search
       const results = searchItems(searchQuery, itemsToSearch, ['title', 'description', 'keywords']);
-      
+
       setSearchResults(results);
       setIsSearching(false);
       setSelectedIndex(0);
@@ -172,9 +172,9 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
       case "help":
         return "bg-purple-100 text-purple-700";
       case "page":
-        return "bg-gray-100 text-gray-700";
+        return "bg-slate-100 text-slate-700";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-slate-100 text-slate-700";
     }
   };
 
@@ -217,17 +217,20 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
         onClick={onClose}
       >
         <m.div
+          aria-label="Global search"
+          aria-modal="true"
           initial={{ opacity: 0, scale: 0.95, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
           transition={{ duration: 0.2 }}
           className="w-full max-w-3xl bg-white rounded-lg shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
+          role="dialog"
         >
           {/* Search Header */}
-          <div className="p-4 border-b bg-gray-50">
+          <div className="p-4 border-b bg-slate-50">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 ref={searchInputRef}
                 type="text"
@@ -243,13 +246,13 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-gray-200"
+                className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-slate-200"
                 onClick={onClose}
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            
+
             {/* Type Filters */}
             <div className="mt-3">
               <Tabs defaultValue="all" value={selectedType} onValueChange={setSelectedType}>
@@ -262,7 +265,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                 </TabsList>
               </Tabs>
             </div>
-            
+
             {/* Quick Actions */}
             <div className="flex gap-2 mt-3 flex-wrap">
               <Badge variant="secondary" className="cursor-pointer hover:bg-blue-100" onClick={() => setSearchQuery("tax calculator")}>
@@ -287,8 +290,8 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
           {/* Search Results */}
           <ScrollArea className="h-[450px]">
             {searchQuery && !isSearching && searchResults.length === 0 && (
-              <div className="p-8 text-center text-gray-500">
-                <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <div className="p-8 text-center text-slate-500">
+                <Search className="h-12 w-12 mx-auto mb-3 text-slate-300" />
                 <p className="text-lg">No results found for "{searchQuery}"</p>
                 <p className="text-sm mt-2">Try different keywords or browse popular items below</p>
               </div>
@@ -297,7 +300,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
             {searchResults.length > 0 && (
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{searchQuery}"
                   </p>
                   <Badge variant="outline" className="text-xs">
@@ -305,11 +308,11 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                     Sorted by relevance
                   </Badge>
                 </div>
-                
+
                 {Object.entries(groupedResults).map(([type, results]) => (
                   <div key={type} className="mb-6">
-                    <h3 
-                      className="text-sm font-semibold text-gray-500 uppercase mb-3 flex items-center cursor-pointer hover:text-blue-600 transition-colors group"
+                    <h3
+                      className="text-sm font-semibold text-slate-500 uppercase mb-3 flex items-center cursor-pointer hover:text-blue-600 transition-colors group"
                       onClick={() => {
                         const typeRoutes: Record<string, string> = {
                           'service': '/services',
@@ -331,7 +334,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                       {results.map((result, index) => {
                         const globalIndex = searchResults.findIndex(r => r === result);
                         const isSelected = globalIndex === selectedIndex;
-                        
+
                         return (
                           <m.div
                             key={result.item.id}
@@ -351,17 +354,17 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                                   {getTypeIcon(result.item.type)}
                                 </div>
                                 <div className="flex-1">
-                                  <h4 className="font-medium text-gray-900">
-                                    {result.matches.find(m => m.field === 'title') 
+                                  <h4 className="font-medium text-slate-900">
+                                    {result.matches.find(m => m.field === 'title')
                                       ? highlightText(result.item.title, result.matches.find(m => m.field === 'title')!.indices)
                                       : result.item.title}
                                   </h4>
-                                  <p className="text-sm text-gray-600 mt-1">
+                                  <p className="text-sm text-slate-600 mt-1">
                                     {result.matches.find(m => m.field === 'description')
                                       ? highlightText(result.item.description, result.matches.find(m => m.field === 'description')!.indices)
                                       : result.item.description}
                                   </p>
-                                  <div className="flex items-center mt-2 text-xs text-gray-500">
+                                  <div className="flex items-center mt-2 text-xs text-slate-500">
                                     <Badge variant="outline" className="text-xs mr-2">
                                       Score: {result.score}
                                     </Badge>
@@ -370,7 +373,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                                     ))}
                                   </div>
                                 </div>
-                                <ArrowRight className="h-4 w-4 text-gray-400 mt-1 flex-shrink-0" />
+                                <ArrowRight className="h-4 w-4 text-slate-400 mt-1 flex-shrink-0" />
                               </div>
                             </Card>
                           </m.div>
@@ -388,7 +391,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                 {searchHistory.length > 0 && (
                   <>
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-500 uppercase flex items-center">
+                      <h3 className="text-sm font-semibold text-slate-500 uppercase flex items-center">
                         <History className="h-4 w-4 mr-2" />
                         Recent Searches
                       </h3>
@@ -396,7 +399,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                         variant="ghost"
                         size="sm"
                         onClick={handleClearHistory}
-                        className="text-xs text-gray-500 hover:text-gray-700"
+                        className="text-xs text-slate-500 hover:text-slate-700"
                       >
                         Clear
                       </Button>
@@ -405,12 +408,12 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                       {searchHistory.slice(0, 5).map((search, index) => (
                         <div
                           key={index}
-                          className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer group"
+                          className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-100 cursor-pointer group"
                           onClick={() => handleHistoryClick(search)}
                         >
-                          <Clock className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-700 flex-1">{search}</span>
-                          <ArrowRight className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Clock className="h-4 w-4 text-slate-400" />
+                          <span className="text-slate-700 flex-1">{search}</span>
+                          <ArrowRight className="h-3 w-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       ))}
                     </div>
@@ -418,16 +421,16 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                 )}
 
                 {/* Popular Searches */}
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3 flex items-center">
+                <h3 className="text-sm font-semibold text-slate-500 uppercase mb-3 flex items-center">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Popular Searches
                 </h3>
                 <div className="grid grid-cols-2 gap-2 mb-6">
                   {popularSearches.map((search, index) => (
-                    <Badge 
+                    <Badge
                       key={index}
-                      variant="outline" 
-                      className="cursor-pointer hover:bg-gray-100 justify-start py-2"
+                      variant="outline"
+                      className="cursor-pointer hover:bg-slate-100 justify-start py-2"
                       onClick={() => setSearchQuery(search)}
                     >
                       <Search className="h-3 w-3 mr-2" />
@@ -437,7 +440,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                 </div>
 
                 {/* Popular Services */}
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3 flex items-center">
+                <h3 className="text-sm font-semibold text-slate-500 uppercase mb-3 flex items-center">
                   <Sparkles className="h-4 w-4 mr-2" />
                   Popular Services
                 </h3>
@@ -462,11 +465,11 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
           </ScrollArea>
 
           {/* Footer */}
-          <div className="p-3 border-t bg-gray-50 text-center">
-            <p className="text-xs text-gray-500">
-              Press <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-xs">↑</kbd> <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-xs">↓</kbd> to navigate, 
-              <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-xs ml-1">Enter</kbd> to select, 
-              <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-xs ml-1">Esc</kbd> to close
+          <div className="p-3 border-t bg-slate-50 text-center">
+            <p className="text-xs text-slate-500">
+              Press <kbd className="px-1.5 py-0.5 bg-slate-200 rounded text-xs">↑</kbd> <kbd className="px-1.5 py-0.5 bg-slate-200 rounded text-xs">↓</kbd> to navigate,
+              <kbd className="px-1.5 py-0.5 bg-slate-200 rounded text-xs ml-1">Enter</kbd> to select,
+              <kbd className="px-1.5 py-0.5 bg-slate-200 rounded text-xs ml-1">Esc</kbd> to close
             </p>
           </div>
         </m.div>

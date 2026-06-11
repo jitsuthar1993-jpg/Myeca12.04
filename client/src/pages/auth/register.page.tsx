@@ -135,7 +135,7 @@ export default function RegisterPage() {
           variant="outline"
           onClick={handleGoogle}
           disabled={loading || googleLoading || resendLoading}
-          className="h-10 w-full rounded-lg border-slate-300 bg-white font-bold text-slate-900 hover:border-[#315efb] hover:bg-slate-50"
+          className="h-10 w-full rounded-lg border-slate-300 bg-white font-bold text-slate-900 hover:border-brand-600 hover:bg-slate-50"
         >
           {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Chrome className="mr-2 h-4 w-4" />}
           Continue with Google
@@ -195,7 +195,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <Button type="submit" disabled={loading || googleLoading || resendLoading} className="h-10 w-full rounded-lg bg-[#315efb] text-sm font-black text-white hover:bg-[#06439f]">
+        <Button type="submit" disabled={loading || googleLoading || resendLoading} className="h-10 w-full rounded-lg bg-brand-600 text-sm font-black text-white hover:bg-[#06439f]">
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Create account
         </Button>

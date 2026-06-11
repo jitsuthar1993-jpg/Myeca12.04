@@ -13,8 +13,8 @@ interface CalcLayoutProps {
   faqs?: { q: string; a: string }[];
 }
 
-export default function CalcLayout({ 
-  children, 
+export default function CalcLayout({
+  children,
   sidebar,
   variant = "blue",
   blogTitle,

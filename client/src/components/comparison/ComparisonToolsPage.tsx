@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { m } from "framer-motion";
-import { 
-  GitCompare, Calculator, TrendingUp, PiggyBank, 
+import {
+  GitCompare, Calculator, TrendingUp, PiggyBank,
   Home, Car, GraduationCap, CreditCard, Check, X
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -163,13 +163,13 @@ export default function ComparisonToolsPage() {
   const calculateEMI = (principal: number, rate: number, tenure: number) => {
     const monthlyRate = rate / 12 / 100;
     const months = tenure * 12;
-    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
                 (Math.pow(1 + monthlyRate, months) - 1);
     return Math.round(emi);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6 pb-12">
+    <div className="min-h-screen bg-slate-50 pt-6 pb-12">
       <SEO
         title="Comparison Tools - Tax Regimes, Investments & Loans | MyeCA.in"
         description="Compare tax regimes, investment options, and loan types using side-by-side assumptions, outputs, and limitations."
@@ -188,8 +188,8 @@ export default function ComparisonToolsPage() {
               <GitCompare className="h-8 w-8 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Comparison Tools</h1>
-              <p className="text-gray-600">Compare and make informed financial decisions</p>
+              <h1 className="text-3xl font-bold text-slate-900">Comparison Tools</h1>
+              <p className="text-slate-600">Compare and make informed financial decisions</p>
             </div>
           </div>
         </m.div>
@@ -246,23 +246,23 @@ export default function ComparisonToolsPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-sm text-gray-600">Tax Amount</p>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-sm text-slate-600">Tax Amount</p>
+                        <p className="text-2xl font-bold text-slate-900">
                           {formatCurrency(oldRegimeTax)}
                         </p>
                       </div>
-                      
+
                       <Separator />
-                      
+
                       <div>
                         <p className="font-medium mb-2">Available Deductions</p>
                         <div className="space-y-2">
                           {taxRegimeData.oldRegime.deductions.map((deduction) => (
                             <div key={deduction.name} className="flex justify-between text-sm">
-                              <span className="text-gray-600">{deduction.name}</span>
+                              <span className="text-slate-600">{deduction.name}</span>
                               <span className="font-medium">
-                                {typeof deduction.limit === "number" 
-                                  ? formatCurrency(deduction.limit) 
+                                {typeof deduction.limit === "number"
+                                  ? formatCurrency(deduction.limit)
                                   : deduction.limit}
                               </span>
                             </div>
@@ -282,14 +282,14 @@ export default function ComparisonToolsPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-sm text-gray-600">Tax Amount</p>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-sm text-slate-600">Tax Amount</p>
+                        <p className="text-2xl font-bold text-slate-900">
                           {formatCurrency(newRegimeTax)}
                         </p>
                       </div>
-                      
+
                       <Separator />
-                      
+
                       <div>
                         <p className="font-medium mb-2">Key Features</p>
                         <div className="space-y-2">
@@ -359,21 +359,21 @@ export default function ComparisonToolsPage() {
                       <CardContent className="space-y-3">
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <p className="text-gray-600">Tax Benefit</p>
+                            <p className="text-slate-600">Tax Benefit</p>
                             <p className="font-medium">{option.taxBenefit}</p>
                           </div>
                           <div>
-                            <p className="text-gray-600">Lock-in</p>
+                            <p className="text-slate-600">Lock-in</p>
                             <p className="font-medium">{option.liquidity}</p>
                           </div>
                           <div>
-                            <p className="text-gray-600">Risk Level</p>
+                            <p className="text-slate-600">Risk Level</p>
                             <p className="font-medium">{option.risk}</p>
                           </div>
                         </div>
-                        
+
                         <Separator />
-                        
+
                         <div>
                           <p className="font-medium text-green-700 mb-1">Pros</p>
                           <ul className="space-y-1">
@@ -385,7 +385,7 @@ export default function ComparisonToolsPage() {
                             ))}
                           </ul>
                         </div>
-                        
+
                         <div>
                           <p className="font-medium text-red-700 mb-1">Cons</p>
                           <ul className="space-y-1">
@@ -446,7 +446,7 @@ export default function ComparisonToolsPage() {
                     const emi = calculateEMI(Number(loanAmount), loan.avgRate, Number(loanTenure));
                     const totalAmount = emi * Number(loanTenure) * 12;
                     const totalInterest = totalAmount - Number(loanAmount);
-                    
+
                     return (
                       <Card key={key} className="hover:shadow-lg transition-shadow">
                         <CardHeader>
@@ -465,17 +465,17 @@ export default function ComparisonToolsPage() {
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <p className="text-sm text-gray-600">EMI Amount</p>
+                              <p className="text-sm text-slate-600">EMI Amount</p>
                               <p className="text-lg font-bold">{formatCurrency(emi)}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-600">Total Interest</p>
+                              <p className="text-sm text-slate-600">Total Interest</p>
                               <p className="text-lg font-bold">{formatCurrency(totalInterest)}</p>
                             </div>
                           </div>
-                          
+
                           <Separator />
-                          
+
                           <div>
                             <p className="font-medium mb-2">Key Features</p>
                             <ul className="space-y-1">
@@ -487,8 +487,8 @@ export default function ComparisonToolsPage() {
                               ))}
                             </ul>
                           </div>
-                          
-                          <div className="text-sm text-gray-600">
+
+                          <div className="text-sm text-slate-600">
                             Max Tenure: {loan.maxTenure} years
                           </div>
                         </CardContent>
@@ -503,15 +503,15 @@ export default function ComparisonToolsPage() {
 
         <Card className="mt-8">
           <CardHeader>
-            <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900">How this comparison works</h2>
+            <h2 className="text-xl font-bold leading-tight tracking-tight text-slate-900">How this comparison works</h2>
             <CardDescription>
               Read the assumptions before treating any displayed amount or option as suitable for your return.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-8 md:grid-cols-2">
             <section>
-              <h3 className="font-semibold text-gray-900">Tax-regime methodology</h3>
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700">
+              <h3 className="font-semibold text-slate-900">Tax-regime methodology</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-700">
                 <li>The input is treated as gross salary or pension income for a resident individual below age 60.</li>
                 <li>The old-regime estimate applies only the ₹50,000 standard deduction. Add eligible HRA, Chapter VI-A, home-loan, and other deductions in a full computation.</li>
                 <li>The new-regime estimate applies the ₹75,000 standard deduction, AY 2026-27 slabs, the resident-individual rebate up to taxable income of ₹12 lakh, and 4% cess.</li>
@@ -519,8 +519,8 @@ export default function ComparisonToolsPage() {
               </ul>
             </section>
             <section>
-              <h3 className="font-semibold text-gray-900">What to verify before deciding</h3>
-              <p className="mt-3 text-sm text-gray-700">
+              <h3 className="font-semibold text-slate-900">What to verify before deciding</h3>
+              <p className="mt-3 text-sm text-slate-700">
                 Reconcile the estimate with Form 16, salary slips, AIS, Form 26AS, investment proofs, rent and home-loan records, and income outside payroll. Investment returns and loan rates shown in the other tabs are illustrative, not recommendations or lender quotes.
               </p>
               <div className="mt-4 flex flex-wrap gap-3 text-sm font-medium">

@@ -48,7 +48,7 @@ const DIFFICULTY_COLORS = {
 export default function GuidesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<GuideCategory | 'all'>('all');
-  
+
   // Get progress from localStorage
   const [guideProgress, setGuideProgress] = useState<Record<string, string[]>>(() => {
     const saved = localStorage.getItem('guideProgress');
@@ -58,15 +58,15 @@ export default function GuidesPage() {
   // Filter guides
   const filteredGuides = useMemo(() => {
     let guides = TAX_GUIDES;
-    
+
     if (searchQuery) {
       guides = searchGuides(searchQuery);
     }
-    
+
     if (selectedCategory !== 'all') {
       guides = guides.filter(g => g.category === selectedCategory);
     }
-    
+
     return guides;
   }, [searchQuery, selectedCategory]);
 
@@ -80,7 +80,7 @@ export default function GuidesPage() {
   const GuideCard = ({ guide }: { guide: TaxGuide }) => {
     const progress = getGuideProgressPercent(guide);
     const category = GUIDE_CATEGORIES.find(c => c.id === guide.category);
-    
+
     return (
       <Link href={`/learn/guide/${guide.slug}`}>
         <Card className="h-full group cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-blue-300">
@@ -106,7 +106,7 @@ export default function GuidesPage() {
               {progress > 0 && (
                 <Progress value={progress} className="h-1.5" />
               )}
-              
+
               {/* Meta info */}
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline">{category?.name}</Badge>
@@ -114,8 +114,8 @@ export default function GuidesPage() {
                   {guide.difficulty}
                 </Badge>
               </div>
-              
-              <div className="flex items-center justify-between text-sm text-gray-500">
+
+              <div className="flex items-center justify-between text-sm text-slate-500">
                 <span className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
                   {guide.estimatedTime}
@@ -125,7 +125,7 @@ export default function GuidesPage() {
                   {guide.steps.length} steps
                 </span>
               </div>
-              
+
               <Button variant="ghost" className="w-full group-hover:bg-blue-50 group-hover:text-blue-600">
                 Start Guide <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
@@ -137,7 +137,7 @@ export default function GuidesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -176,7 +176,7 @@ export default function GuidesPage() {
           {/* Search */}
           <div className="max-w-xl">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 placeholder="Search guides..."
                 value={searchQuery}
@@ -248,11 +248,11 @@ export default function GuidesPage() {
         {/* All Guides or Filtered Results */}
         <section>
           <h2 className="text-xl font-semibold mb-4">
-            {searchQuery || selectedCategory !== 'all' 
+            {searchQuery || selectedCategory !== 'all'
               ? `${filteredGuides.length} guides found`
               : 'All Guides'}
           </h2>
-          
+
           {filteredGuides.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredGuides.map((guide) => (
@@ -261,9 +261,9 @@ export default function GuidesPage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+              <BookOpen className="h-16 w-16 mx-auto text-slate-300 mb-4" />
               <h3 className="text-xl font-semibold mb-2">No guides found</h3>
-              <p className="text-gray-500">Try a different search term or category</p>
+              <p className="text-slate-500">Try a different search term or category</p>
             </div>
           )}
         </section>
@@ -274,7 +274,7 @@ export default function GuidesPage() {
             {GUIDE_CATEGORIES.map((category) => {
               const categoryGuides = getGuidesByCategory(category.id);
               if (categoryGuides.length <= 3) return null; // Already shown in "all"
-              
+
               return (
                 <section key={category.id}>
                   <div className="flex items-center justify-between mb-4">

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Award, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Award,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   TrendingUp,
@@ -53,7 +53,7 @@ export default function ISOCertificationPage() {
       standard: "ISO 9001:2015",
       name: "Quality Management System",
       smallBusinessCost: "₹2,00,000 - ₹6,00,000",
-      mediumBusinessCost: "₹6,00,000 - ₹15,00,000", 
+      mediumBusinessCost: "₹6,00,000 - ₹15,00,000",
       timeline: "3-6 months",
       color: "blue",
       icon: Award,
@@ -105,7 +105,7 @@ export default function ISOCertificationPage() {
     },
     {
       phase: "Documentation",
-      duration: "4-8 weeks", 
+      duration: "4-8 weeks",
       activities: "Policy creation, procedure development, manual preparation",
       costComponent: "₹1,00,000 - ₹4,00,000",
       icon: FileText
@@ -148,7 +148,7 @@ export default function ISOCertificationPage() {
       documents: [
         "Quality Manual (system overview and scope)",
         "Quality Policy & Objectives (management commitment)",
-        "Organizational Chart (roles and responsibilities)", 
+        "Organizational Chart (roles and responsibilities)",
         "Process Maps & Procedures (detailed workflows)",
         "Risk Assessment (hazard identification and mitigation)",
         "Document Control Register (version control tracking)"
@@ -296,11 +296,11 @@ export default function ISOCertificationPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Award className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   ISO Certification Services
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Prepare scope, process records, and evidence for ISO 9001, 14001, 27001, or 45001 certification assessment.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -316,15 +316,15 @@ export default function ISOCertificationPage() {
                 </Link>
               </div>
               <div className="flex flex-wrap gap-6 mt-6 text-sm">
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Documentation-led ISO guidance
                 </div>
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Certification-body coordination
                 </div>
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Scope-based readiness review
                 </div>
@@ -332,14 +332,14 @@ export default function ISOCertificationPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Plan certification effectively</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Calculator className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Budget for documentation, audit, and surveillance costs.
@@ -372,10 +372,10 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               ISO Certification Cost & Timeline 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Cost factors by business size and ISO standard
             </p>
           </div>
@@ -408,14 +408,14 @@ export default function ISOCertificationPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="font-medium">Timeline:</span>
-                      <span className="text-gray-600">{iso.timeline}</span>
+                      <span className="text-slate-600">{iso.timeline}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="font-medium">Primary Use:</span>
-                      <span className="text-xs text-gray-600">{iso.primaryUse}</span>
+                      <span className="text-xs text-slate-600">{iso.primaryUse}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Key Benefits:</h4>
                     <ul className="space-y-1">
@@ -441,10 +441,10 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               6-Phase ISO Certification Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Readiness steps before an independent certification assessment
             </p>
           </div>
@@ -464,7 +464,7 @@ export default function ISOCertificationPage() {
                   <CardTitle className="text-lg font-bold">{phase.phase}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-3">{phase.activities}</p>
+                  <p className="text-sm text-slate-600 mb-3">{phase.activities}</p>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center text-xs text-blue-600">
                       <Clock className="w-3 h-3 mr-1" />
@@ -486,10 +486,10 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Required Documentation for ISO Certification
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete documentation framework for management system implementation
             </p>
           </div>
@@ -508,7 +508,7 @@ export default function ISOCertificationPage() {
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(docCategory.color).text} flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -526,10 +526,10 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Cost Factors & Variables
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Key factors affecting ISO certification costs and timeline
             </p>
           </div>
@@ -546,7 +546,7 @@ export default function ISOCertificationPage() {
                 <CardContent>
                   <ul className="space-y-2">
                     {factor.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="text-sm text-gray-600">
+                      <li key={detailIndex} className="text-sm text-slate-600">
                         • {detail}
                       </li>
                     ))}
@@ -565,10 +565,10 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Business Benefits & ROI
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Operational and tender-related uses of ISO certification
             </p>
           </div>
@@ -587,7 +587,7 @@ export default function ISOCertificationPage() {
                     {benefit.benefits.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(benefit.color).text} flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{item}</span>
+                        <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -605,10 +605,10 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Certification Body Selection
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Choose between Indian and international certification bodies
             </p>
           </div>
@@ -633,7 +633,7 @@ export default function ISOCertificationPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Suitable For:</h4>
-                    <p className="text-sm text-gray-600">{body.suitability}</p>
+                    <p className="text-sm text-slate-600">{body.suitability}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -649,31 +649,31 @@ export default function ISOCertificationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Ongoing Maintenance Costs
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Annual and recurring costs for maintaining ISO certification
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 rounded-lg">
-              <thead className="bg-gray-50">
+            <table className="w-full border border-slate-200 rounded-lg">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Frequency</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Activity</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Frequency</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Cost</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {maintenanceCosts.map((cost, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-slate-50">
                     <td className="px-6 py-4 font-semibold text-blue-600">{cost.activity}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{cost.frequency}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{cost.frequency}</td>
                     <td className="px-6 py-4 text-sm font-bold text-purple-600">{cost.cost}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{cost.description}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{cost.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -693,7 +693,7 @@ export default function ISOCertificationPage() {
                 Ready to Get ISO Certified?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Our ISO experts provide complete certification support from gap analysis to certificate 
+                Our ISO experts provide complete certification support from gap analysis to certificate
                 issuance. Certification outcome and timing depend on readiness, audit findings, and the selected certification body.
               </p>
 

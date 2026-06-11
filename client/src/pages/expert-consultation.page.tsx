@@ -529,7 +529,7 @@ export default function ExpertConsultationPage() {
                 <div className="space-y-1.5">
                   <Label>Call time</Label>
                   <Select value={formData.preferredTime} onValueChange={(value) => handleInputChange("preferredTime", value)}>
-                    <SelectTrigger className="h-11 rounded-lg border-gray-300 bg-white text-gray-900">
+                    <SelectTrigger className="h-11 rounded-lg border-slate-300 bg-white text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -543,7 +543,7 @@ export default function ExpertConsultationPage() {
                 <div className="space-y-1.5">
                   <Label>{turnoverLabel}</Label>
                   <Select value={formData.turnover} onValueChange={(value) => handleInputChange("turnover", value)}>
-                    <SelectTrigger className="h-11 rounded-lg border-gray-300 bg-white text-gray-900">
+                    <SelectTrigger className="h-11 rounded-lg border-slate-300 bg-white text-slate-900">
                       <SelectValue placeholder="Select range" />
                     </SelectTrigger>
                     <SelectContent>
@@ -555,7 +555,7 @@ export default function ExpertConsultationPage() {
                 <div className="space-y-1.5">
                   <Label>Service</Label>
                   <Select value={formData.service} onValueChange={handleServiceChange}>
-                    <SelectTrigger className="h-11 rounded-lg border-gray-300 bg-white text-gray-900">
+                    <SelectTrigger className="h-11 rounded-lg border-slate-300 bg-white text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

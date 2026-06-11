@@ -26,7 +26,7 @@ import { CalculatorMiniBlog } from "@/features/calculators/components/Calculator
 
 type LoanType = 'home' | 'personal' | 'car' | 'education';
 
-const CHART_COLORS = ["#3b82f6", "#ef4444"]; 
+const CHART_COLORS = ["#3b82f6", "#ef4444"];
 
 function LoanBreakdownDonut({ principal, interest }: { principal: number; interest: number }) {
   const total = Math.max(1, principal + interest);
@@ -73,7 +73,7 @@ function LoanBreakdownDonut({ principal, interest }: { principal: number; intere
 
 export default function UnifiedLoanCalculatorPage() {
   const [location] = useLocation();
-  
+
   const getInitialTab = (): LoanType => {
     if (location.includes('car-loan')) return 'car';
     if (location.includes('personal-loan')) return 'personal';
@@ -116,7 +116,7 @@ export default function UnifiedLoanCalculatorPage() {
   const calculateLoan = () => {
     const monthlyRate = rate / 12 / 100;
     const months = tenureType === "years" ? tenure * 12 : tenure;
-    
+
     if (principal <= 0 || monthlyRate <= 0 || months <= 0) {
       return { emi: 0, totalPayment: 0, totalInterest: 0, moratoriumInterest: 0, emiToIncomeRatio: 0, schedule: [] };
     }
@@ -130,9 +130,9 @@ export default function UnifiedLoanCalculatorPage() {
       moratoriumInterest = principalForEMI - principal;
     }
 
-    const emi = (principalForEMI * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+    const emi = (principalForEMI * monthlyRate * Math.pow(1 + monthlyRate, months)) /
                 (Math.pow(1 + monthlyRate, months) - 1);
-    
+
     const totalPayment = emi * months;
     const totalInterest = (totalPayment - principalForEMI) + moratoriumInterest;
 
@@ -164,7 +164,7 @@ export default function UnifiedLoanCalculatorPage() {
 
   return (
     <>
-      <MetaSEO 
+      <MetaSEO
         title={seo?.title || "Loan EMI Calculator 2026 | MyeCA.in"}
         description={seo?.description || "Professional EMI planning with affordability estimates and tax benefit insights."}
         keywords={seo?.keywords}
@@ -173,7 +173,7 @@ export default function UnifiedLoanCalculatorPage() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      <CalcHero 
+      <CalcHero
         title={`${loanConfig[activeTab].title} Calculator`}
         description="Professional EMI planning with affordability estimates and tax benefit insights."
         category="Planning Tools"
@@ -200,10 +200,10 @@ export default function UnifiedLoanCalculatorPage() {
               <div className="space-y-1">
                 <p className="type-meta font-normal text-slate-400 uppercase tracking-widest">Monthly EMI</p>
                 <AnimatePresence mode="wait">
-                  <motion.p 
-                    key={result.emi} 
-                    initial={{ opacity: 0, y: 10 }} 
-                    animate={{ opacity: 1, y: 0 }} 
+                  <motion.p
+                    key={result.emi}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className="text-3xl font-normal text-slate-900 tracking-tight tabular-nums"
                   >
                     {fmt(result.emi)}
@@ -216,7 +216,7 @@ export default function UnifiedLoanCalculatorPage() {
               <CalcResultRow label="Total Principal" value={fmt(principal)} />
               <CalcResultRow label="Total Interest" value={fmt(result.totalInterest)} variant="warning" />
               <CalcResultRow label="Total Payment" value={fmt(result.totalPayment)} variant="highlight" className="pt-3 border-t border-white/20" />
-              
+
               {activeTab === 'personal' && (
                 <div className="mt-4 pt-4 border-t border-white/20">
                    <CalcResultRow label="EMI/Income Ratio" value={`${result.emiToIncomeRatio}%`} variant={result.emiToIncomeRatio > 40 ? "warning" : "success"} />
@@ -246,8 +246,8 @@ export default function UnifiedLoanCalculatorPage() {
                     onClick={() => setActiveTab(type)}
                     className={cn(
                       "flex-1 py-2.5 px-1 flex flex-col items-center gap-1.5 transition-all rounded-xl",
-                      isSelected 
-                        ? "bg-white shadow-sm text-slate-900" 
+                      isSelected
+                        ? "bg-white shadow-sm text-slate-900"
                         : "text-slate-400 hover:text-slate-600"
                     )}
                   >
@@ -258,61 +258,61 @@ export default function UnifiedLoanCalculatorPage() {
               })}
             </div>
 
-            <CalcInputGroup 
-              label="Loan Amount" 
+            <CalcInputGroup
+              label="Loan Amount"
               badgeValue={fmt(principal)}
               className="space-y-2"
             >
-              <Slider 
-                value={[principal]} 
-                onValueChange={(v) => setPrincipal(v[0])} 
-                max={loanConfig[activeTab].maxPrincipal} 
-                min={10000} 
-                step={10000} 
+              <Slider
+                value={[principal]}
+                onValueChange={(v) => setPrincipal(v[0])}
+                max={loanConfig[activeTab].maxPrincipal}
+                min={10000}
+                step={10000}
               />
             </CalcInputGroup>
 
-            <CalcInputGroup 
-              label="Annual Interest Rate" 
+            <CalcInputGroup
+              label="Annual Interest Rate"
               badgeValue={`${rate}%`}
               className="space-y-2"
             >
-              <Slider 
-                value={[rate]} 
-                onValueChange={(v) => setRate(v[0])} 
-                max={30} 
-                min={1} 
-                step={0.1} 
+              <Slider
+                value={[rate]}
+                onValueChange={(v) => setRate(v[0])}
+                max={30}
+                min={1}
+                step={0.1}
               />
             </CalcInputGroup>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
-              <CalcInputGroup 
-                label={`Tenure (${tenureType})`} 
+              <CalcInputGroup
+                label={`Tenure (${tenureType})`}
                 badgeValue={`${tenure} ${tenureType === 'years' ? 'Yrs' : 'Mos'}`}
                 className="space-y-2"
               >
-                <Slider 
-                  value={[tenure]} 
-                  onValueChange={(v) => setTenure(v[0])} 
-                  max={tenureType === "years" ? loanConfig[activeTab].maxTenure : loanConfig[activeTab].maxTenure * 12} 
-                  min={1} 
-                  step={1} 
+                <Slider
+                  value={[tenure]}
+                  onValueChange={(v) => setTenure(v[0])}
+                  max={tenureType === "years" ? loanConfig[activeTab].maxTenure : loanConfig[activeTab].maxTenure * 12}
+                  min={1}
+                  step={1}
                 />
               </CalcInputGroup>
 
               {activeTab === 'personal' && (
-                <CalcInputGroup 
-                  label="Monthly Income" 
+                <CalcInputGroup
+                  label="Monthly Income"
                   badgeValue={fmt(monthlyIncome)}
                   className="space-y-2"
                 >
-                  <Slider 
-                    value={[monthlyIncome]} 
-                    onValueChange={(v) => setMonthlyIncome(v[0])} 
-                    max={500000} 
-                    min={10000} 
-                    step={5000} 
+                  <Slider
+                    value={[monthlyIncome]}
+                    onValueChange={(v) => setMonthlyIncome(v[0])}
+                    max={500000}
+                    min={10000}
+                    step={5000}
                   />
                 </CalcInputGroup>
               )}
@@ -325,7 +325,7 @@ export default function UnifiedLoanCalculatorPage() {
                     <p className="text-sm font-normal text-slate-800">Moratorium Period</p>
                     <p className="type-support text-slate-400 font-normal">Interest calculation during study period</p>
                   </div>
-                  <div 
+                  <div
                     onClick={() => setHasMoratorium(!hasMoratorium)}
                     className={cn(
                       "w-10 h-5 rounded-full cursor-pointer transition-colors relative",
@@ -338,19 +338,19 @@ export default function UnifiedLoanCalculatorPage() {
                     )} />
                   </div>
                 </div>
-                
+
                 {hasMoratorium && (
-                  <CalcInputGroup 
-                    label="Moratorium Duration (Years)" 
+                  <CalcInputGroup
+                    label="Moratorium Duration (Years)"
                     badgeValue={`${moratoriumPeriod} Yrs`}
                     className="space-y-2"
                   >
-                    <Slider 
-                      value={[moratoriumPeriod]} 
-                      onValueChange={(v) => setMoratoriumPeriod(v[0])} 
-                      max={7} 
-                      min={1} 
-                      step={0.5} 
+                    <Slider
+                      value={[moratoriumPeriod]}
+                      onValueChange={(v) => setMoratoriumPeriod(v[0])}
+                      max={7}
+                      min={1}
+                      step={0.5}
                     />
                   </CalcInputGroup>
                 )}
@@ -359,7 +359,7 @@ export default function UnifiedLoanCalculatorPage() {
           </CalcInputCard>
         </div>
 
-        <CalculatorMiniBlog 
+        <CalculatorMiniBlog
           features={[
             {
               icon: <CheckCircle2 className="w-5 h-5" />,

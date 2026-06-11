@@ -81,12 +81,12 @@ export default function PenaltyCalculatorPage() {
 
   return (
     <>
-      <MetaSEO 
-        title="Statutory Penalty Calculator 2025-26 | GST, IT, MCA | MyeCA.in" 
-        description="Estimate late fees and interest penalties for delayed statutory filings." 
+      <MetaSEO
+        title="Statutory Penalty Calculator 2025-26 | GST, IT, MCA | MyeCA.in"
+        description="Estimate late fees and interest penalties for delayed statutory filings."
       />
 
-      <CalcHero 
+      <CalcHero
         title="Penalty Calculator"
         description="Calculate late fees, interest, and penalties for GST, Income Tax, and MCA filings with statutory accuracy."
         category="Compliance Utility"
@@ -99,7 +99,7 @@ export default function PenaltyCalculatorPage() {
       <CalcLayout
         variant="amber"
         sidebar={
-          <CalcGlassSidebar 
+          <CalcGlassSidebar
             title="Estimated Liability"
             description="Statutory non-compliance estimate"
             variant="amber"
@@ -200,11 +200,11 @@ export default function PenaltyCalculatorPage() {
                       </div>
                       <div className="text-3xl font-normal text-amber-600">{delay} <span className="text-xs font-normal text-slate-300 uppercase">Days</span></div>
                     </div>
-                    <Slider 
-                      value={[delay]} 
-                      onValueChange={v => setDelay(v[0])} 
-                      max={180} 
-                      step={1} 
+                    <Slider
+                      value={[delay]}
+                      onValueChange={v => setDelay(v[0])}
+                      max={180}
+                      step={1}
                       className="py-4"
                     />
                     <div className="type-meta flex justify-between font-normal uppercase tracking-widest text-slate-300">
@@ -222,7 +222,7 @@ export default function PenaltyCalculatorPage() {
                     </div>
                     <div className="relative">
                       <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 font-normal">₹</div>
-                      <Input 
+                      <Input
                         type="number"
                         value={amount}
                         onChange={e => setAmount(Number(e.target.value))}

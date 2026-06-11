@@ -164,7 +164,7 @@ export function getFeaturedExperts(): Expert[] {
 }
 
 export function getExpertsBySpecialization(specialization: string): Expert[] {
-  return EXPERTS.filter(e => 
+  return EXPERTS.filter(e =>
     e.specializations.some(s => s.toLowerCase().includes(specialization.toLowerCase()))
   );
 }
@@ -176,9 +176,9 @@ export function getExpertById(id: string): Expert | undefined {
 export function getAvailableSlots(expertId: string, date: Date): string[] {
   const expert = getExpertById(expertId);
   if (!expert) return [];
-  
+
   const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
   if (!expert.availability.days.includes(dayName)) return [];
-  
+
   return expert.availability.slots;
 }

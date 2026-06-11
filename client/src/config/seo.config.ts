@@ -1,4 +1,5 @@
 import { FINANCIAL_GENERATOR_CATALOGUE } from "@/data/generator-catalog";
+import { HOME_SEO_CONFIG } from "./home-seo";
 
 export interface SEOConfigItem {
   title: string;
@@ -24,13 +25,7 @@ export interface SEOConfigItem {
 
 export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   // Core Pages
-  '/': {
-    title: 'ITR Filing Services India AY 2026-27 | MyeCA.in',
-    description: 'File ITR for FY 2025-26 and AY 2026-27 with document-based professional review, secure uploads, AIS and Form 26AS checks, and refund guidance.',
-    keywords: ['ITR filing India', 'income tax return online', 'CA assisted tax filing', 'e-filing 2026', 'tax consultant near me'],
-    type: 'website',
-    breadcrumbs: [{ name: 'Home', url: '/' }]
-  },
+  '/': HOME_SEO_CONFIG,
   '/services': {
     title: 'Professional Tax & Business Services | MyeCA.in',
     description: 'Explore our range of professional services including GST registration, company incorporation, trademark filing, and tax notice compliance.',

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { 
-  Search, Info, Tag, Box, Briefcase, 
+import {
+  Search, Info, Tag, Box, Briefcase,
   ChevronRight, Sparkles, AlertCircle, FileText,
   Zap, IndianRupee, ShieldCheck, CheckCircle
 } from "lucide-react";
@@ -38,8 +38,8 @@ export default function HSNFinderPage() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"hsn" | "sac">("hsn");
 
-  const filteredItems = (activeTab === "hsn" ? HSN_DATA : SAC_DATA).filter(item => 
-    item.name.toLowerCase().includes(query.toLowerCase()) || 
+  const filteredItems = (activeTab === "hsn" ? HSN_DATA : SAC_DATA).filter(item =>
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
     item.code.includes(query)
   );
 
@@ -56,7 +56,7 @@ export default function HSNFinderPage() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      <CalcHero 
+      <CalcHero
         title="HSN & SAC Finder"
         description="Search for product and service codes to ensure correct GST billing and tax compliance."
         category="GST Compliance"
@@ -128,7 +128,7 @@ export default function HSNFinderPage() {
 
              <div className="relative group">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-600" />
-                <Input 
+                <Input
                   placeholder={activeTab === 'hsn' ? "Search Product (e.g. Laptop)" : "Search Service (e.g. Audit)"}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -167,8 +167,8 @@ export default function HSNFinderPage() {
                   </m.div>
                 ))
               ) : (
-                <m.div 
-                  initial={{ opacity: 0 }} 
+                <m.div
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="p-12 text-center bg-white rounded-3xl border border-slate-100 border-dashed"
                 >
@@ -183,7 +183,7 @@ export default function HSNFinderPage() {
           </div>
         </div>
 
-        <CalculatorMiniBlog 
+        <CalculatorMiniBlog
           features={[
             {
               icon: <CheckCircle className="w-5 h-5" />,

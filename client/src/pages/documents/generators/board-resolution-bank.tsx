@@ -75,7 +75,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 15px; color: #000; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <div style="text-align: center; border-bottom: 1px solid #000; padding-bottom: 20px; margin-bottom: 30px;">
       <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;">${data.companyName}</h1>
       <p style="margin: 5px 0 0 0; font-size: 13px;">CIN: ${data.cin || '______________'}</p>
@@ -110,7 +110,7 @@ const generateHTML = (data: any) => `
     <div style="margin-top: 60px;">
       <p style="margin-bottom: 40px; font-weight: bold;">CERTIFIED TRUE COPY</p>
       <p style="margin: 0; font-weight: bold;">For ${data.companyName}</p>
-      
+
       <div style="margin-top: 50px;">
         <p style="margin: 0;">_______________________</p>
         <p style="margin: 5px 0 0 0; font-weight: bold;">${data.chairmanName}</p>

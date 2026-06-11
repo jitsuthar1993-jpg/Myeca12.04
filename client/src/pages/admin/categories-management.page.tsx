@@ -45,7 +45,7 @@ export default function CategoriesManagementPage() {
       return res.json() as Promise<{ categories: any[] }>;
     },
   });
-  
+
   const categories = response?.categories || [];
 
   const createCategoryMutation = useMutation({
@@ -100,8 +100,8 @@ export default function CategoriesManagementPage() {
     return (
       <Layout>
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600">You don't have permission to manage categories.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-4">Access Denied</h1>
+          <p className="text-slate-600">You don't have permission to manage categories.</p>
         </div>
       </Layout>
     );
@@ -111,10 +111,10 @@ export default function CategoriesManagementPage() {
     <Layout title="Categories Management">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-          <p className="text-gray-600">Manage blog categories and taxonomies</p>
+          <h1 className="text-3xl font-bold text-slate-900">Categories</h1>
+          <p className="text-slate-600">Manage blog categories and taxonomies</p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-primary">
@@ -165,18 +165,18 @@ export default function CategoriesManagementPage() {
         </Dialog>
       </div>
 
-      <div className="bg-white rounded-lg shadow border border-gray-100 p-1">
+      <div className="bg-white rounded-lg shadow border border-slate-100 p-1">
         {isLoading ? (
-          <div className="p-8 text-center text-gray-500">Loading categories...</div>
+          <div className="p-8 text-center text-slate-500">Loading categories...</div>
         ) : categories.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">No categories found. Create one to get started.</div>
+          <div className="p-8 text-center text-slate-500">No categories found. Create one to get started.</div>
         ) : (
           <div className="divide-y">
             {categories.map((cat: any) => (
-              <div key={cat.id} className="flex items-center justify-between p-4 hover:bg-gray-50">
+              <div key={cat.id} className="flex items-center justify-between p-4 hover:bg-slate-50">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{cat.name}</h3>
-                  <p className="text-sm text-gray-500 font-mono hidden md:block">{cat.slug}</p>
+                  <h3 className="font-semibold text-slate-900">{cat.name}</h3>
+                  <p className="text-sm text-slate-500 font-mono hidden md:block">{cat.slug}</p>
                 </div>
                 <div>
                   <Button variant="ghost" size="sm" onClick={() => handleDelete(cat.id)} className="text-red-600 hover:text-red-700 hover:bg-red-50">

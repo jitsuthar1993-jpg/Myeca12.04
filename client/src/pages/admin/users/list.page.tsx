@@ -64,8 +64,8 @@ export default function UserListPage() {
             {(row.username || row.email || 'U').charAt(0).toUpperCase()}
           </div>
           <div>
-            <div className="font-medium text-gray-900">{row.username || 'System User'}</div>
-            <div className="text-xs text-gray-500">{row.email}</div>
+            <div className="font-medium text-slate-900">{row.username || 'System User'}</div>
+            <div className="text-xs text-slate-500">{row.email}</div>
           </div>
         </div>
       ),
@@ -88,7 +88,7 @@ export default function UserListPage() {
       sortable: true,
       cell: (row) => (
         <div className="flex items-center gap-2">
-          <Mail className="h-4 w-4 text-gray-400" />
+          <Mail className="h-4 w-4 text-slate-400" />
           <span>{row.email}</span>
         </div>
       ),
@@ -121,7 +121,7 @@ export default function UserListPage() {
       accessorKey: 'created_at',
       sortable: true,
       cell: (row) => (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-slate-500">
           {formatTimeAgo(row.createdAt || row.created_at)}
         </div>
       ),
@@ -145,8 +145,8 @@ export default function UserListPage() {
         {/* Header Actions */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Users</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h2 className="text-2xl font-bold text-slate-900">Users</h2>
+            <p className="text-sm text-slate-500 mt-1">
               Manage and monitor all platform users
             </p>
           </div>
@@ -204,8 +204,8 @@ export default function UserListPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-slate-600">Total Users</p>
+                  <p className="text-2xl font-bold text-slate-900">
                     {pagination?.total || users.length}
                   </p>
                 </div>
@@ -217,8 +217,8 @@ export default function UserListPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Active Users</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-slate-600">Active Users</p>
+                  <p className="text-2xl font-bold text-slate-900">
                     {users.filter((u) => u.is_active ?? u.status === 'active').length}
                   </p>
                 </div>
@@ -230,8 +230,8 @@ export default function UserListPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Admins</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-slate-600">Admins</p>
+                  <p className="text-2xl font-bold text-slate-900">
                     {users.filter((u) => u.is_admin).length}
                   </p>
                 </div>
@@ -243,8 +243,8 @@ export default function UserListPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">New This Month</p>
-                  <p className="text-2xl font-bold text-gray-900">12</p>
+                  <p className="text-sm text-slate-600">New This Month</p>
+                  <p className="text-2xl font-bold text-slate-900">12</p>
                 </div>
                 <Badge className="bg-blue-100 text-blue-700">New</Badge>
               </div>

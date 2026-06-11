@@ -108,7 +108,7 @@ export class ARIASemanticFixer {
   // Check for invalid ARIA roles
   private checkInvalidARIARoles(container: HTMLElement): void {
     const elementsWithRole = container.querySelectorAll('[role]');
-    
+
     elementsWithRole.forEach((element) => {
       const role = element.getAttribute('role');
       if (role && !VALID_ARIA_ROLES.includes(role)) {
@@ -127,7 +127,7 @@ export class ARIASemanticFixer {
   // Check for orphaned ARIA references
   private checkOrphanedARIAReferences(container: HTMLElement): void {
     const elementsWithRefs = container.querySelectorAll('[aria-describedby], [aria-labelledby], [aria-controls], [aria-owns]');
-    
+
     elementsWithRefs.forEach((element) => {
       const describedBy = element.getAttribute('aria-describedby');
       const labelledBy = element.getAttribute('aria-labelledby');
@@ -183,11 +183,11 @@ export class ARIASemanticFixer {
   // Check for redundant ARIA
   private checkRedundantARIA(container: HTMLElement): void {
     const semanticElements = container.querySelectorAll('nav, main, header, footer, aside, section, article');
-    
+
     semanticElements.forEach((element) => {
       const role = element.getAttribute('role');
       const tagName = element.tagName.toLowerCase();
-      
+
       if (role && this.isRedundantRole(tagName, role)) {
         this.addARIAFix({
           element,
@@ -204,7 +204,7 @@ export class ARIASemanticFixer {
   // Check for missing ARIA states
   private checkMissingARIAStates(container: HTMLElement): void {
     const elementsWithStates = container.querySelectorAll('[aria-expanded], [aria-selected], [aria-checked], [aria-pressed]');
-    
+
     elementsWithStates.forEach((element) => {
       const expanded = element.getAttribute('aria-expanded');
       const selected = element.getAttribute('aria-selected');
@@ -306,11 +306,11 @@ export class ARIASemanticFixer {
   // Check for ARIA live regions
   private checkARIALiveRegions(container: HTMLElement): void {
     const liveRegions = container.querySelectorAll('[aria-live]');
-    
+
     liveRegions.forEach((element) => {
       const live = element.getAttribute('aria-live');
       const atomic = element.getAttribute('aria-atomic');
-      
+
       if (!['polite', 'assertive', 'off'].includes(live || '')) {
         this.addARIAFix({
           element,
@@ -338,11 +338,11 @@ export class ARIASemanticFixer {
   // Check for ARIA landmarks
   private checkARIALandmarks(container: HTMLElement): void {
     const landmarks = container.querySelectorAll('[role="banner"], [role="navigation"], [role="main"], [role="complementary"], [role="contentinfo"]');
-    
+
     if (landmarks.length === 0) {
       // Check for semantic HTML landmarks
       const semanticLandmarks = container.querySelectorAll('header, nav, main, aside, footer');
-      
+
       if (semanticLandmarks.length === 0) {
         this.addARIAFix({
           element: container,
@@ -464,7 +464,7 @@ export class ARIASemanticFixer {
     // Check for main content without main element
     const mainContentSelectors = ['#main', '#content', '.main', '.content'];
     const hasMainElement = container.querySelector('main');
-    
+
     if (!hasMainElement) {
       const hasMainContent = mainContentSelectors.some(selector => container.querySelector(selector));
       if (hasMainContent) {
@@ -482,7 +482,7 @@ export class ARIASemanticFixer {
   // Check for presentational elements
   private checkPresentationalElements(container: HTMLElement): void {
     const presentationalElements = container.querySelectorAll('b, i, u, font, center, big, small');
-    
+
     presentationalElements.forEach((element) => {
       this.addSemanticIssue({
         element,
@@ -497,11 +497,11 @@ export class ARIASemanticFixer {
   // Check definition lists
   private checkDefinitionLists(container: HTMLElement): void {
     const definitionLists = container.querySelectorAll('dl');
-    
+
     definitionLists.forEach((dl) => {
       const hasDt = dl.querySelector('dt');
       const hasDd = dl.querySelector('dd');
-      
+
       if (!hasDt || !hasDd) {
         this.addSemanticIssue({
           element: dl,
@@ -517,11 +517,11 @@ export class ARIASemanticFixer {
   // Check figure elements
   private checkFigureElements(container: HTMLElement): void {
     const figures = container.querySelectorAll('figure');
-    
+
     figures.forEach((figure) => {
       const hasImage = figure.querySelector('img, svg, canvas, video, audio');
       const hasFigcaption = figure.querySelector('figcaption');
-      
+
       if (hasImage && !hasFigcaption) {
         this.addSemanticIssue({
           element: figure,
@@ -537,7 +537,7 @@ export class ARIASemanticFixer {
   // Check time elements
   private checkTimeElements(container: HTMLElement): void {
     const timeElements = container.querySelectorAll('time:not([datetime])');
-    
+
     timeElements.forEach((element) => {
       this.addSemanticIssue({
         element,
@@ -552,7 +552,7 @@ export class ARIASemanticFixer {
   // Check quote elements
   private checkQuoteElements(container: HTMLElement): void {
     const blockquotes = container.querySelectorAll('blockquote:not([cite])');
-    
+
     blockquotes.forEach((element) => {
       this.addSemanticIssue({
         element,
@@ -568,7 +568,7 @@ export class ARIASemanticFixer {
   private checkEmphasisElements(container: HTMLElement): void {
     const strongElements = container.querySelectorAll('strong');
     const emElements = container.querySelectorAll('em');
-    
+
     strongElements.forEach((element) => {
       if (!element.textContent?.trim()) {
         this.addSemanticIssue({
@@ -642,10 +642,10 @@ export class ARIASemanticFixer {
   // Apply automated ARIA fixes
   applyAutomatedARIAFixes(): number {
     let fixesApplied = 0;
-    
+
     this.fixes.forEach((fix) => {
       if (fix.applied) return;
-      
+
       try {
         this.applyARIAFix(fix);
         fix.applied = true;
@@ -654,30 +654,30 @@ export class ARIASemanticFixer {
         console.error(`Failed to apply ARIA fix: ${fix.issue}`, error);
       }
     });
-    
+
     return fixesApplied;
   }
 
   private applyARIAFix(fix: ARIAFixResult): void {
     const element = fix.element as HTMLElement;
-    
+
     switch (fix.issue) {
       case 'Interactive element missing accessible label':
         // Generate appropriate label based on element type
         const label = this.generateAppropriateLabel(element);
         element.setAttribute('aria-label', label);
         break;
-        
+
       case 'Invalid ARIA role':
         // Remove invalid role
         element.removeAttribute('role');
         break;
-        
+
       case 'Focusable element with aria-hidden="true"':
         // Remove aria-hidden or make element non-focusable
         element.removeAttribute('aria-hidden');
         break;
-        
+
       case 'Invalid aria-expanded value':
       case 'Invalid aria-selected value':
       case 'Invalid aria-checked value':
@@ -689,16 +689,16 @@ export class ARIASemanticFixer {
           element.setAttribute(attrName, 'false');
         }
         break;
-        
+
       case 'Missing required ARIA attributes for role':
         // Add missing required attributes
         this.addRequiredARIAAttributes(element);
         break;
-        
+
       case 'Invalid aria-live value':
         element.setAttribute('aria-live', 'polite');
         break;
-        
+
       case 'Invalid aria-atomic value':
         element.setAttribute('aria-atomic', 'false');
         break;
@@ -709,15 +709,15 @@ export class ARIASemanticFixer {
     const tagName = element.tagName.toLowerCase();
     const textContent = element.textContent?.trim() || '';
     const title = element.getAttribute('title') || '';
-    
+
     if (textContent) {
       return textContent;
     }
-    
+
     if (title) {
       return title;
     }
-    
+
     switch (tagName) {
       case 'button':
         return 'Button';
@@ -741,7 +741,7 @@ export class ARIASemanticFixer {
 
   private addRequiredARIAAttributes(element: Element): void {
     const role = element.getAttribute('role');
-    
+
     switch (role) {
       case 'slider':
         element.setAttribute('aria-valuemin', '0');
@@ -784,11 +784,11 @@ export class ARIASemanticFixer {
     // Generate recommendations
     const criticalIssues = this.fixes.filter(f => f.wcagLevel === 'A');
     const seriousIssues = this.fixes.filter(f => f.wcagLevel === 'AA');
-    
+
     if (criticalIssues.length > 0) {
       report.recommendations.push(`Address ${criticalIssues.length} critical (Level A) ARIA issues immediately`);
     }
-    
+
     if (seriousIssues.length > 0) {
       report.recommendations.push(`Fix ${seriousIssues.length} serious (Level AA) ARIA issues`);
     }
@@ -826,10 +826,10 @@ export const useARIAFixer = (container?: HTMLElement) => {
       const target = targetContainer || container || document.body;
       const ariaResults = fixer.performARIAAudit(target);
       const semanticResults = fixer.performSemanticHTMLAudit(target);
-      
+
       setARIAIssues(ariaResults);
       setSemanticIssues(semanticResults);
-      
+
       return { ariaIssues: ariaResults, semanticIssues: semanticResults };
     } catch (error) {
       console.error('ARIA analysis failed:', error);
@@ -877,11 +877,11 @@ export const ariaUtils = {
     const tagName = element.tagName.toLowerCase();
     const textContent = element.textContent?.trim() || '';
     const title = element.getAttribute('title') || '';
-    
+
     if (context) {
       return `${context}: ${textContent || title || tagName}`;
     }
-    
+
     return textContent || title || `${tagName} element`;
   },
 
@@ -907,7 +907,7 @@ export const ariaUtils = {
       'columnheader': [],
       'rowheader': []
     };
-    
+
     return requiredAttributes[role] || [];
   },
 
@@ -915,15 +915,15 @@ export const ariaUtils = {
   needsARIALabel: (element: Element): boolean => {
     const tagName = element.tagName.toLowerCase();
     const hasLabel = element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby');
-    
+
     if (hasLabel) return false;
-    
+
     const interactiveElements = ['button', 'a', 'input', 'select', 'textarea'];
     const rolesNeedingLabels = ['button', 'link', 'textbox', 'checkbox', 'radio', 'switch'];
-    
+
     const role = element.getAttribute('role');
-    
-    return interactiveElements.includes(tagName) || 
+
+    return interactiveElements.includes(tagName) ||
            (role && rolesNeedingLabels.includes(role));
   },
 
@@ -944,7 +944,7 @@ export const ariaUtils = {
       white-space: nowrap;
       border: 0;
     `;
-    
+
     document.body.appendChild(region);
     return region;
   }

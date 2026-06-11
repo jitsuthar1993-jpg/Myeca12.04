@@ -115,7 +115,7 @@ export default function TaxRegimeComparison() {
     oldRegime: TaxCalculation | null;
     newRegime: TaxCalculation | null;
   }>({ oldRegime: null, newRegime: null });
-  
+
   const { toast } = useToast();
 
   const searchTaxRates = async () => {
@@ -125,14 +125,14 @@ export default function TaxRegimeComparison() {
       const response = await fetch('/api/search-tax-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           assessmentYear: selectedYear
         })
       });
 
       if (response.ok) {
         const searchData = await response.json();
-        
+
         // Update tax rates with known values
         if (searchData.knownRates) {
           setTaxRates(prev => ({
@@ -173,8 +173,8 @@ export default function TaxRegimeComparison() {
   };
 
   const calculateTax = (
-    grossIncome: number, 
-    deductions: number, 
+    grossIncome: number,
+    deductions: number,
     regime: 'old' | 'new'
   ): TaxCalculation => {
     const currentRates = taxRates[selectedYear];
@@ -190,9 +190,9 @@ export default function TaxRegimeComparison() {
     const slabs = regime === 'old' ? currentRates.oldRegime : currentRates.newRegime;
     const standardDeduction = regime === 'new' ? currentRates.standardDeduction : 0;
     const maxDeductions = regime === 'old' ? deductions : 0;
-    
+
     const taxableIncome = Math.max(0, grossIncome - standardDeduction - maxDeductions);
-    
+
     let taxPayable = 0;
     const slabWiseBreakdown: Array<{
       slab: string;
@@ -202,17 +202,17 @@ export default function TaxRegimeComparison() {
 
     for (const slab of slabs) {
       if (taxableIncome <= slab.min) break;
-      
+
       const maxForSlab = slab.max || taxableIncome;
       const taxableInThisSlab = Math.min(taxableIncome, maxForSlab) - slab.min;
-      
+
       if (taxableInThisSlab > 0) {
         const taxForSlab = (taxableInThisSlab * slab.rate) / 100;
         taxPayable += taxForSlab;
-        
+
         slabWiseBreakdown.push({
-          slab: slab.max 
-            ? `₹${slab.min.toLocaleString()} - ₹${slab.max.toLocaleString()}` 
+          slab: slab.max
+            ? `₹${slab.min.toLocaleString()} - ₹${slab.max.toLocaleString()}`
             : `₹${slab.min.toLocaleString()}+`,
           taxableAmount: taxableInThisSlab,
           tax: taxForSlab
@@ -267,12 +267,12 @@ export default function TaxRegimeComparison() {
         message: 'Both regimes result in similar tax liability. Choose based on convenience.'
       };
     }
-    
+
     return {
       regime: savings > 0 ? 'new' : 'old',
       savings: Math.abs(savings),
-      message: savings > 0 
-        ? `New regime saves you ₹${Math.abs(savings).toLocaleString()}` 
+      message: savings > 0
+        ? `New regime saves you ₹${Math.abs(savings).toLocaleString()}`
         : `Old regime saves you ₹${Math.abs(savings).toLocaleString()}`
     };
   };
@@ -288,10 +288,10 @@ export default function TaxRegimeComparison() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="type-section-title text-gray-900 mb-6">
+          <h2 className="type-section-title text-slate-900 mb-6">
             Tax Regime Comparison
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             Compare old vs new tax regimes with assessment-year rules. Select your year and get a personalized estimate.
           </p>
         </m.div>
@@ -331,7 +331,7 @@ export default function TaxRegimeComparison() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button 
+                  <Button
                     onClick={searchTaxRates}
                     disabled={isSearching}
                     className="w-full"
@@ -340,7 +340,7 @@ export default function TaxRegimeComparison() {
                     <Search className="h-4 w-4 mr-2" />
                     {isSearching ? 'Opening Search Tabs...' : 'Search Google for Latest Rates'}
                   </Button>
-                  <p className="text-xs text-gray-500 text-center">
+                  <p className="text-xs text-slate-500 text-center">
                     This will open Google search tabs for you to verify current tax rates from official sources
                   </p>
                 </div>
@@ -365,7 +365,7 @@ export default function TaxRegimeComparison() {
                     value={deductions}
                     onChange={(e) => setDeductions(e.target.value)}
                   />
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-slate-500 mt-1">
                     Only applicable for old tax regime
                   </p>
                 </div>
@@ -394,12 +394,12 @@ export default function TaxRegimeComparison() {
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 mb-3">Old Tax Regime</h4>
+                    <h4 className="font-semibold text-sm text-slate-900 mb-3">Old Tax Regime</h4>
                     <div className="space-y-2">
                       {taxRates[selectedYear]?.oldRegime.map((slab, index) => (
                         <div key={index} className="flex justify-between text-sm">
-                          <span className="text-gray-600">
-                            {slab.max 
+                          <span className="text-slate-600">
+                            {slab.max
                               ? `₹${slab.min.toLocaleString()} - ₹${slab.max.toLocaleString()}`
                               : `₹${slab.min.toLocaleString()}+`}
                           </span>
@@ -408,14 +408,14 @@ export default function TaxRegimeComparison() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 mb-3">New Tax Regime</h4>
+                    <h4 className="font-semibold text-sm text-slate-900 mb-3">New Tax Regime</h4>
                     <div className="space-y-2">
                       {taxRates[selectedYear]?.newRegime.map((slab, index) => (
                         <div key={index} className="flex justify-between text-sm">
-                          <span className="text-gray-600">
-                            {slab.max 
+                          <span className="text-slate-600">
+                            {slab.max
                               ? `₹${slab.min.toLocaleString()} - ₹${slab.max.toLocaleString()}`
                               : `₹${slab.min.toLocaleString()}+`}
                           </span>
@@ -427,8 +427,8 @@ export default function TaxRegimeComparison() {
                 </div>
 
                 <Separator className="my-4" />
-                
-                <div className="text-sm text-gray-600">
+
+                <div className="text-sm text-slate-600">
                   <p>• Standard Deduction (New Regime): {"₹"}{taxRates[selectedYear]?.standardDeduction.toLocaleString()}</p>
                   <p>• Section 80C Limit (Old Regime): ₹1,50,000</p>
                   <p>• Health & Education Cess: 4% on income tax</p>
@@ -456,12 +456,12 @@ export default function TaxRegimeComparison() {
                     <h3 className="text-xl font-bold text-blue-900">Recommendation</h3>
                   </div>
                   <div className="text-center">
-                    <Badge 
+                    <Badge
                       variant={recommendation.regime === 'new' ? 'default' : recommendation.regime === 'old' ? 'secondary' : 'outline'}
                       className="text-lg px-4 py-2 mb-2"
                     >
-                      {recommendation.regime === 'new' ? 'Choose New Regime' : 
-                       recommendation.regime === 'old' ? 'Choose Old Regime' : 
+                      {recommendation.regime === 'new' ? 'Choose New Regime' :
+                       recommendation.regime === 'old' ? 'Choose Old Regime' :
                        'Either Regime'}
                     </Badge>
                     <p className="text-blue-800 font-medium">{recommendation.message}</p>
@@ -480,32 +480,32 @@ export default function TaxRegimeComparison() {
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Gross Income:</span>
+                      <span className="text-slate-600">Gross Income:</span>
                       <span className="font-semibold">₹{calculations.oldRegime.grossIncome.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Taxable Income:</span>
+                      <span className="text-slate-600">Taxable Income:</span>
                       <span className="font-semibold">₹{calculations.oldRegime.taxableIncome.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-lg">
-                      <span className="text-gray-900 font-medium">Total Tax:</span>
+                      <span className="text-slate-900 font-medium">Total Tax:</span>
                       <span className="font-bold text-orange-600">₹{calculations.oldRegime.taxPayable.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Net Income:</span>
+                      <span className="text-slate-600">Net Income:</span>
                       <span className="font-semibold text-green-600">₹{calculations.oldRegime.netIncome.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Effective Rate:</span>
+                      <span className="text-slate-600">Effective Rate:</span>
                       <span className="font-semibold">{calculations.oldRegime.effectiveRate.toFixed(2)}%</span>
                     </div>
-                    
+
                     {calculations.oldRegime.slabWiseBreakdown.length > 0 && (
                       <div className="mt-4 pt-4 border-t">
-                        <h4 className="font-medium text-sm text-gray-900 mb-2">Slab-wise Breakdown:</h4>
+                        <h4 className="font-medium text-sm text-slate-900 mb-2">Slab-wise Breakdown:</h4>
                         {calculations.oldRegime.slabWiseBreakdown.map((slab, index) => (
                           <div key={index} className="flex justify-between text-sm">
-                            <span className="text-gray-600">{slab.slab}:</span>
+                            <span className="text-slate-600">{slab.slab}:</span>
                             <span>₹{slab.tax.toLocaleString()}</span>
                           </div>
                         ))}
@@ -523,32 +523,32 @@ export default function TaxRegimeComparison() {
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Gross Income:</span>
+                      <span className="text-slate-600">Gross Income:</span>
                       <span className="font-semibold">₹{calculations.newRegime.grossIncome.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Taxable Income:</span>
+                      <span className="text-slate-600">Taxable Income:</span>
                       <span className="font-semibold">₹{calculations.newRegime.taxableIncome.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-lg">
-                      <span className="text-gray-900 font-medium">Total Tax:</span>
+                      <span className="text-slate-900 font-medium">Total Tax:</span>
                       <span className="font-bold text-green-600">₹{calculations.newRegime.taxPayable.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Net Income:</span>
+                      <span className="text-slate-600">Net Income:</span>
                       <span className="font-semibold text-green-600">₹{calculations.newRegime.netIncome.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Effective Rate:</span>
+                      <span className="text-slate-600">Effective Rate:</span>
                       <span className="font-semibold">{calculations.newRegime.effectiveRate.toFixed(2)}%</span>
                     </div>
-                    
+
                     {calculations.newRegime.slabWiseBreakdown.length > 0 && (
                       <div className="mt-4 pt-4 border-t">
-                        <h4 className="font-medium text-sm text-gray-900 mb-2">Slab-wise Breakdown:</h4>
+                        <h4 className="font-medium text-sm text-slate-900 mb-2">Slab-wise Breakdown:</h4>
                         {calculations.newRegime.slabWiseBreakdown.map((slab, index) => (
                           <div key={index} className="flex justify-between text-sm">
-                            <span className="text-gray-600">{slab.slab}:</span>
+                            <span className="text-slate-600">{slab.slab}:</span>
                             <span>₹{slab.tax.toLocaleString()}</span>
                           </div>
                         ))}

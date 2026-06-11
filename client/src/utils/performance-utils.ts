@@ -18,7 +18,7 @@ export class PerformanceTimer {
     if (typeof performance !== 'undefined') {
       const start = this.marks.get(startMark);
       const end = endMark ? this.marks.get(endMark) : performance.now();
-      
+
       if (start && end) {
         const duration = end - start;
         this.measures.set(name, duration);
@@ -109,7 +109,7 @@ export function throttle<T extends (...args: any[]) => void>(
 // Request animation frame optimization
 export const raf = {
   id: 0,
-  
+
   throttle<T extends (...args: any[]) => void>(func: T): T & { cancel: () => void } {
     let ticking = false;
     let lastArgs: Parameters<T> | null = null;
@@ -118,7 +118,7 @@ export const raf = {
     const throttled = function (this: any, ...args: Parameters<T>) {
       lastArgs = args;
       lastThis = this;
-      
+
       if (!ticking) {
         requestAnimationFrame(() => {
           ticking = false;
@@ -177,7 +177,7 @@ export function calculateVisibleRange(
     totalItems,
     Math.ceil((scrollTop + containerHeight) / itemHeight) + buffer
   );
-  
+
   return { start, end };
 }
 
@@ -275,37 +275,21 @@ export const optimizationStrategies = {
     }
   },
 
-  // Optimize font loading
-  optimizeFonts: () => {
-    // Add font-display: swap to critical fonts
-    const style = document.createElement('style');
-    style.textContent = `
-      @font-face {
-        font-family: 'CriticalFont';
-        font-display: swap;
-        src: url('/fonts/critical.woff2') format('woff2');
-      }
-    `;
-    document.head.appendChild(style);
-  },
-
   // Preload critical resources
   preloadCriticalResources: () => {
     const criticalResources = [
-      '/css/critical.css',
-      '/js/vendor.js',
-      '/fonts/main.woff2'
+      '/fonts/inter-latin-variable.woff2'
     ];
 
     criticalResources.forEach(resource => {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.href = resource;
-      
+
       if (resource.endsWith('.css')) link.as = 'style';
       if (resource.endsWith('.js')) link.as = 'script';
       if (resource.endsWith('.woff2')) link.as = 'font';
-      
+
       document.head.appendChild(link);
     });
   },
@@ -326,30 +310,29 @@ export const optimizationStrategies = {
 export const initializePerformanceOptimizations = () => {
   // Initialize bundle optimization
   initializeBundleOptimization();
-  
+
   // Initialize resource prefetching
   prefetchCriticalResources();
   initializePredictivePrefetching();
-  
+
   // Apply optimization strategies
   if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
       optimizationStrategies.lazyLoadImages();
-      optimizationStrategies.optimizeFonts();
       optimizationStrategies.preloadCriticalResources();
       optimizationStrategies.optimizeThirdPartyScripts();
     });
   }
-  
+
   // Start memory monitoring in development
   if (process.env.NODE_ENV === 'development') {
     const memoryMonitor = new MemoryMonitor();
     memoryMonitor.start();
-    
+
     // Expose for debugging
     (window as any).memoryMonitor = memoryMonitor;
   }
-  
+
   console.log('Performance optimizations initialized');
 };
 
@@ -368,7 +351,7 @@ export const reportPerformanceMetrics = () => {
       now: performance.now()
     } : null
   };
-  
+
   return metrics;
 };
 

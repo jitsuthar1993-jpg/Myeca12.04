@@ -34,7 +34,7 @@ export function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
   };
 
   const files = response?.files || [];
-  const filteredFiles = files.filter((f: any) => 
+  const filteredFiles = files.filter((f: any) =>
     f.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -57,12 +57,12 @@ export function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
         <DialogHeader>
           <DialogTitle>Media Library</DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex gap-2 my-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input 
-              placeholder="Search images..." 
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Search images..."
               className="pl-9"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -75,24 +75,24 @@ export function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
 
         <ScrollArea className="flex-1 -mx-2 px-2">
           {isLoading ? (
-            <div className="text-center py-12 text-gray-500">Loading media...</div>
+            <div className="text-center py-12 text-slate-500">Loading media...</div>
           ) : filteredFiles.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <ImageIcon className="w-12 h-12 text-gray-200 mx-auto mb-2" />
+            <div className="text-center py-12 text-slate-500">
+              <ImageIcon className="w-12 h-12 text-slate-200 mx-auto mb-2" />
               <p>No media found</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pb-4">
               {filteredFiles.map((file: any) => (
-                <div 
-                  key={file.name} 
+                <div
+                  key={file.name}
                   className="group relative aspect-square rounded-lg border overflow-hidden cursor-pointer hover:border-primary transition-colors"
                   onClick={() => handleSelect(file.url)}
                 >
-                  <img 
-                    src={file.thumbnailUrl || file.url} 
-                    alt={file.name} 
-                    className="w-full h-full object-cover" 
+                  <img
+                    src={file.thumbnailUrl || file.url}
+                    alt={file.name}
+                    className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Button size="sm" variant="secondary" className="h-8">
@@ -101,14 +101,14 @@ export function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-blue-900/60 p-1 flex justify-between items-center px-2">
                      <p className="text-[9px] text-white truncate max-w-[60%]">{file.name}</p>
-                     <span className="text-[8px] text-gray-300">{formatSize(file.size)}</span>
+                     <span className="text-[8px] text-slate-300">{formatSize(file.size)}</span>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </ScrollArea>
-        
+
         <div className="mt-4 flex justify-end">
            <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
         </div>

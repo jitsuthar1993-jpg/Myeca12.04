@@ -35,7 +35,7 @@ export function useKeyboardNavigation(options: UseKeyboardNavigationOptions | Ke
       const altReq = shortcut.altKey || shortcut.modifiers?.includes("alt");
       const metaReq = shortcut.metaKey || shortcut.modifiers?.includes("meta");
 
-      const matches = 
+      const matches =
         event.key.toLowerCase() === shortcut.key.toLowerCase() &&
         (ctrlReq === undefined || event.ctrlKey === !!ctrlReq) &&
         (shiftReq === undefined || event.shiftKey === !!shiftReq) &&

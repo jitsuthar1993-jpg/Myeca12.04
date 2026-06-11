@@ -29,7 +29,7 @@ export default function Footer() {
                  <span>Secure document workflow</span>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-medium">
               <Link href="/legal/privacy-policy" className="hover:text-blue-600 transition-colors">Privacy</Link>
               <Link href="/trust" className="hover:text-blue-600 transition-colors">Trust</Link>
@@ -45,7 +45,7 @@ export default function Footer() {
 
   // Full marketing footer for public pages
   return (
-    <footer className="w-full bg-white text-slate-800 border-t border-gray-200 mt-auto">
+    <footer className="w-full bg-white text-slate-800 border-t border-slate-200 mt-auto">
       <div className="md:hidden px-4 py-5">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="min-w-0 hover:opacity-80 transition-opacity">
@@ -128,7 +128,7 @@ export default function Footer() {
       <div className="bg-white py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
+
             {/* Company Info */}
             <div className="lg:col-span-1">
               <Link href="/" className="mb-4 inline-block hover:opacity-80 transition-opacity cursor-pointer">
@@ -141,7 +141,7 @@ export default function Footer() {
               <p className="text-slate-600 text-sm leading-relaxed mb-4">
                 Practical tax filing and business compliance workflows for Indian taxpayers.
               </p>
-              
+
               {/* Key Features */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-xs">
@@ -163,7 +163,7 @@ export default function Footer() {
                   <span className="text-slate-600 font-medium">Scope & Timeline Clarity</span>
                 </div>
               </div>
-              
+
               {/* Trust shortcuts */}
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <h4 className="text-xs font-semibold text-slate-800 mb-2">Before sharing documents</h4>
@@ -230,7 +230,7 @@ export default function Footer() {
                 <li><Link href="/legal/privacy-policy" onMouseEnter={() => preloadOnHover("/legal/privacy-policy")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Privacy Policy</Link></li>
                 <li><Link href="/legal/terms-of-service" onMouseEnter={() => preloadOnHover("/legal/terms-of-service")} className="text-slate-600 text-sm hover:text-orange-600 transition-colors flex items-center gap-2 hover:translate-x-1 duration-200"><span className="text-orange-600">→</span>Terms of Service</Link></li>
               </ul>
-              
+
               {/* Contact Info */}
               <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
                 <h4 className="text-xs font-semibold text-slate-800 mb-2">Quick Contact</h4>
@@ -294,7 +294,7 @@ export default function Footer() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 text-sm">
@@ -312,7 +312,7 @@ export default function Footer() {
                 </div>
               </div>
             </div>
-            
+
             {/* Legal Links Row */}
             <div className="mt-4 pt-4 border-t border-slate-100">
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-slate-500">

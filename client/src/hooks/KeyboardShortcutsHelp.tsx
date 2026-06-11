@@ -36,7 +36,7 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm"
+        className="px-3 py-1 rounded bg-slate-100 hover:bg-slate-200 text-sm"
         aria-label="Show keyboard shortcuts"
       >
         ⌨️ Shortcuts
@@ -58,7 +58,7 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
               <h2 id="kbd-help-title" className="text-lg font-semibold">Keyboard Shortcuts</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-slate-500 hover:text-slate-700"
                 aria-label="Close"
               >
                 ×
@@ -68,15 +68,15 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
             <div className="p-4 max-h-[60vh] overflow-y-auto">
               {Object.entries(grouped).map(([cat, items]) => (
                 <div key={cat} className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2 capitalize">{cat}</h3>
+                  <h3 className="text-sm font-medium text-slate-700 mb-2 capitalize">{cat}</h3>
                   <div className="space-y-2">
                     {items.map((s, i) => (
-                      <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded">
                         <div className="flex items-center gap-3">
                           <kbd className="rounded border border-blue-100 bg-blue-50 px-2 py-1 text-xs text-blue-700">
                             {formatShortcut(s)}
                           </kbd>
-                          <span className="text-sm text-gray-800">{s.description}</span>
+                          <span className="text-sm text-slate-800">{s.description}</span>
                         </div>
                       </div>
                     ))}
@@ -85,7 +85,7 @@ export const KeyboardShortcutsHelp: React.FC<{ shortcuts: KeyboardShortcut[] }> 
               ))}
             </div>
 
-            <div className="p-4 border-t bg-gray-50 text-sm text-gray-600">
+            <div className="p-4 border-t bg-slate-50 text-sm text-slate-600">
               Press Esc to close
             </div>
           </div>

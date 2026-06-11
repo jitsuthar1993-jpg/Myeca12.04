@@ -16,11 +16,11 @@ interface SwipeableTabsProps {
   className?: string;
 }
 
-export function SwipeableTabs({ 
-  tabs, 
-  defaultTab, 
+export function SwipeableTabs({
+  tabs,
+  defaultTab,
   onTabChange,
-  className 
+  className
 }: SwipeableTabsProps) {
   const [activeIndex, setActiveIndex] = useState(() => {
     if (defaultTab) {
@@ -43,9 +43,9 @@ export function SwipeableTabs({
   const handleDragEnd = useCallback((event: any, info: PanInfo) => {
     const threshold = containerWidth.current / 4;
     const velocity = info.velocity.x;
-    
+
     let newIndex = activeIndex;
-    
+
     if (Math.abs(info.offset.x) > threshold || Math.abs(velocity) > 500) {
       if (info.offset.x > 0 && activeIndex > 0) {
         newIndex = activeIndex - 1;
@@ -53,10 +53,10 @@ export function SwipeableTabs({
         newIndex = activeIndex + 1;
       }
     }
-    
+
     setActiveIndex(newIndex);
     onTabChange?.(tabs[newIndex].id);
-    
+
     // Animate to new position
     animate(x, -newIndex * containerWidth.current, {
       type: "spring",
@@ -85,7 +85,7 @@ export function SwipeableTabs({
   return (
     <div className={cn("w-full overflow-hidden", className)}>
       {/* Tab Headers */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-blue-700 sticky top-0 z-10">
+      <div className="flex border-b border-slate-200  bg-white  sticky top-0 z-10">
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
@@ -94,8 +94,8 @@ export function SwipeableTabs({
               "flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-all duration-200",
               "touch-manipulation min-h-[48px]", // Larger touch target
               activeIndex === index
-                ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                ? "text-blue-600  border-b-2 border-blue-600 "
+                : "text-slate-600  hover:text-slate-900 "
             )}
           >
             {tab.icon}
@@ -105,12 +105,12 @@ export function SwipeableTabs({
       </div>
 
       {/* Tab indicator */}
-      <div className="relative h-0.5 bg-gray-200 dark:bg-gray-700">
+      <div className="relative h-0.5 bg-slate-200 ">
         <m.div
-          className="absolute h-full bg-blue-600 dark:bg-blue-400"
+          className="absolute h-full bg-blue-600 "
           style={{
             width: `${100 / tabs.length}%`,
-            x: useTransform(x, 
+            x: useTransform(x,
               tabs.map((_, i) => -i * containerWidth.current),
               tabs.map((_, i) => i * (100 / tabs.length))
             )
@@ -119,7 +119,7 @@ export function SwipeableTabs({
       </div>
 
       {/* Swipeable Content */}
-      <div 
+      <div
         ref={containerRef}
         className="overflow-hidden touch-pan-y"
       >
@@ -170,10 +170,10 @@ export function usePullToRefresh({ onRefresh, threshold = 80 }: UsePullToRefresh
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (!isPulling.current || isRefreshing) return;
-    
+
     const currentY = e.touches[0].clientY;
     const distance = currentY - startY.current;
-    
+
     if (distance > 0 && window.scrollY === 0) {
       setPullDistance(Math.min(distance * 0.5, threshold * 1.5));
       e.preventDefault();
@@ -215,30 +215,30 @@ export function usePullToRefresh({ onRefresh, threshold = 80 }: UsePullToRefresh
 }
 
 // Pull to Refresh Indicator Component
-export function PullToRefreshIndicator({ 
-  progress, 
-  isRefreshing 
-}: { 
-  progress: number; 
+export function PullToRefreshIndicator({
+  progress,
+  isRefreshing
+}: {
+  progress: number;
   isRefreshing: boolean;
 }) {
   if (progress === 0 && !isRefreshing) return null;
 
   return (
-    <div 
+    <div
       className="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none"
-      style={{ 
+      style={{
         transform: `translateY(${Math.min(progress * 60, 60)}px)`,
         opacity: Math.min(progress, 1)
       }}
     >
       <div className={cn(
-        "w-10 h-10 rounded-full bg-white dark:bg-blue-800 shadow-lg flex items-center justify-center",
+        "w-10 h-10 rounded-full bg-white  shadow-lg flex items-center justify-center",
         isRefreshing && "animate-spin"
       )}>
-        <svg 
-          className="w-5 h-5 text-blue-600 dark:text-blue-400" 
-          viewBox="0 0 24 24" 
+        <svg
+          className="w-5 h-5 text-blue-600 "
+          viewBox="0 0 24 24"
           fill="none"
           style={{ transform: `rotate(${progress * 360}deg)` }}
         >

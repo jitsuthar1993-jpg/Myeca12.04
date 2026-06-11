@@ -91,11 +91,11 @@ export function CollapsibleFAQ({
     >
       {/* Header */}
       <div className="text-center mb-8 sm:mb-12 px-4">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
           {title}
         </h2>
         {subtitle && (
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
             {subtitle}
           </p>
         )}
@@ -105,7 +105,7 @@ export function CollapsibleFAQ({
       <div className="space-y-4 max-w-4xl mx-auto">
         {items.map((item, index) => {
           const isOpen = openItems.has(item.id);
-          
+
           return (
             <m.div
               key={item.id}
@@ -113,7 +113,7 @@ export function CollapsibleFAQ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <Card 
+              <Card
                 className={cn(
                   "overflow-hidden transition-all duration-200",
                   isOpen ? `${colors.bg} ${colors.border} border-2` : "hover:shadow-md"
@@ -131,16 +131,16 @@ export function CollapsibleFAQ({
                   <div className="flex items-start gap-4 flex-1">
                     <div className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
-                      isOpen ? colors.bg : "bg-gray-100"
+                      isOpen ? colors.bg : "bg-slate-100"
                     )}>
                       <HelpCircle className={cn(
                         "w-4 h-4",
-                        isOpen ? colors.icon : "text-gray-500"
+                        isOpen ? colors.icon : "text-slate-500"
                       )} />
                     </div>
                     <h3 className={cn(
                       "font-semibold text-sm sm:text-base md:text-lg pr-2 sm:pr-4",
-                      isOpen ? colors.text : "text-gray-900"
+                      isOpen ? colors.text : "text-slate-900"
                     )}>
                       {item.question}
                     </h3>
@@ -152,11 +152,11 @@ export function CollapsibleFAQ({
                   >
                     <ChevronDown className={cn(
                       "w-5 h-5",
-                      isOpen ? colors.icon : "text-gray-400"
+                      isOpen ? colors.icon : "text-slate-400"
                     )} />
                   </m.div>
                 </button>
-                
+
                 <AnimatePresence>
                   {isOpen && (
                     <m.div
@@ -167,7 +167,7 @@ export function CollapsibleFAQ({
                       transition={{ duration: 0.3 }}
                     >
                       <CardContent className="px-4 sm:px-6 py-4 pl-12 sm:pl-16">
-                        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                        <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
                           {item.answer}
                         </p>
                         {item.category && (
@@ -192,7 +192,7 @@ export function CollapsibleFAQ({
       {/* Optional: Search or Filter */}
       {items.length > 10 && (
         <div className="mt-8 text-center">
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             Can't find what you're looking for?{" "}
             <a href="/expert-consultation" className={cn(
               "font-medium underline transition-colors",

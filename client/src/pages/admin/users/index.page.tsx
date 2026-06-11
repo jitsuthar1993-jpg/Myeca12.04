@@ -28,8 +28,8 @@ export default function UsersPage() {
             {(user.username || user.email || 'U').charAt(0).toUpperCase()}
           </div>
           <div>
-            <div className="font-medium text-gray-900">{user.username || 'System User'}</div>
-            <div className="text-xs text-gray-500 flex items-center gap-1">
+            <div className="font-medium text-slate-900">{user.username || 'System User'}</div>
+            <div className="text-xs text-slate-500 flex items-center gap-1">
               <Mail className="h-3 w-3" />
               {user.email || 'no-email@myeca.in'}
             </div>
@@ -66,7 +66,7 @@ export default function UsersPage() {
       key: 'created_at',
       header: 'Joined',
       render: (user: User) => (
-        <div className="text-sm text-gray-500">{formatTimeAgo(user.createdAt)}</div>
+        <div className="text-sm text-slate-500">{formatTimeAgo(user.createdAt)}</div>
       ),
     },
   ];
@@ -77,8 +77,8 @@ export default function UsersPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Users</h2>
-            <p className="text-sm text-gray-500 mt-1">Manage platform users</p>
+            <h2 className="text-2xl font-bold text-slate-900">Users</h2>
+            <p className="text-sm text-slate-500 mt-1">Manage platform users</p>
           </div>
         </div>
 
@@ -88,8 +88,8 @@ export default function UsersPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-slate-600">Total Users</p>
+                  <p className="text-2xl font-bold text-slate-900">
                     {pagination?.total || users.length}
                   </p>
                 </div>
@@ -100,8 +100,8 @@ export default function UsersPage() {
           <Card>
             <CardContent className="p-4">
               <div>
-                <p className="text-sm text-gray-600">Active Users</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-slate-600">Active Users</p>
+                <p className="text-2xl font-bold text-slate-900">
                   {users.filter((u) => u.status === 'active').length}
                 </p>
               </div>
@@ -110,8 +110,8 @@ export default function UsersPage() {
           <Card>
             <CardContent className="p-4">
               <div>
-                <p className="text-sm text-gray-600">Admins</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-slate-600">Admins</p>
+                <p className="text-2xl font-bold text-slate-900">
                   {users.filter((u) => u.role === 'admin').length}
                 </p>
               </div>

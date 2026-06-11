@@ -41,35 +41,35 @@ interface UIState {
   // Sidebar
   sidebarOpen: boolean;
   sidebarCollapsed: boolean;
-  
+
   // Modals
   activeModals: Modal[];
-  
+
   // Toasts
   toasts: Toast[];
-  
+
   // Global search
   searchOpen: boolean;
   searchQuery: string;
   recentSearches: string[];
-  
+
   // Navigation
   breadcrumbs: { label: string; href: string }[];
-  
+
   // Loading states
   globalLoading: boolean;
   loadingMessage: string;
-  
+
   // User preferences (persisted)
   preferences: UserPreferences;
-  
+
   // Onboarding
   onboarding: OnboardingState;
-  
+
   // Calculator state
   lastCalculatorUsed: string | null;
   calculatorHistory: { id: string; timestamp: number; inputs: Record<string, any> }[];
-  
+
   // Feature flags
   featureFlags: Record<string, boolean>;
 }
@@ -79,45 +79,45 @@ interface UIActions {
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebarCollapse: () => void;
-  
+
   // Modals
   openModal: (modal: Modal) => void;
   closeModal: (id: string) => void;
   closeAllModals: () => void;
-  
+
   // Toasts
   addToast: (toast: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
   clearToasts: () => void;
-  
+
   // Search
   toggleSearch: () => void;
   setSearchQuery: (query: string) => void;
   addRecentSearch: (query: string) => void;
   clearRecentSearches: () => void;
-  
+
   // Breadcrumbs
   setBreadcrumbs: (breadcrumbs: { label: string; href: string }[]) => void;
-  
+
   // Loading
   setGlobalLoading: (loading: boolean, message?: string) => void;
-  
+
   // Preferences
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
   resetPreferences: () => void;
-  
+
   // Onboarding
   startOnboarding: () => void;
   completeOnboardingStep: (step: string) => void;
   skipOnboarding: () => void;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
-  
+
   // Calculator
   setLastCalculator: (id: string) => void;
   addCalculatorHistory: (id: string, inputs: Record<string, any>) => void;
   clearCalculatorHistory: () => void;
-  
+
   // Feature flags
   setFeatureFlag: (flag: string, enabled: boolean) => void;
 }
@@ -185,9 +185,9 @@ export const useUIStore = create<UIState & UIActions>()(
       addToast: (toast) => {
         const id = `toast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const newToast = { ...toast, id };
-        
+
         set(state => ({ toasts: [...state.toasts, newToast] }));
-        
+
         // Auto-remove after duration
         const duration = toast.duration ?? 5000;
         if (duration > 0) {
@@ -308,15 +308,15 @@ export const useGlobalLoading = () => useUIStore(state => ({
 // Hook for showing toasts easily
 export function useToast() {
   const addToast = useUIStore(state => state.addToast);
-  
+
   return {
-    success: (title: string, description?: string) => 
+    success: (title: string, description?: string) =>
       addToast({ type: 'success', title, description }),
-    error: (title: string, description?: string) => 
+    error: (title: string, description?: string) =>
       addToast({ type: 'error', title, description }),
-    warning: (title: string, description?: string) => 
+    warning: (title: string, description?: string) =>
       addToast({ type: 'warning', title, description }),
-    info: (title: string, description?: string) => 
+    info: (title: string, description?: string) =>
       addToast({ type: 'info', title, description }),
   };
 }

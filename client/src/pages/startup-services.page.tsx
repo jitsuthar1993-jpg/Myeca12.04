@@ -1,13 +1,13 @@
 import React from 'react';
 import { m } from 'framer-motion';
 import { Link } from 'wouter';
-import { 
-  ArrowRight, 
-  CheckCircle, 
-  TrendingUp, 
-  Users, 
-  Lightbulb, 
-  Shield, 
+import {
+  ArrowRight,
+  CheckCircle,
+  TrendingUp,
+  Users,
+  Lightbulb,
+  Shield,
   Coins,
   FileText,
   BarChart,
@@ -54,7 +54,7 @@ const StartupServicesPage = () => {
         "Company Incorporation (Pvt Ltd/LLP)",
         "Basic Bookkeeping & Accounting",
         "GST Registration & Monthly Returns",
-        "PAN/TAN Application & Management", 
+        "PAN/TAN Application & Management",
         "Basic Compliance Calendar",
         "Monthly Financial Reports",
         "Statutory Filing Support",
@@ -64,7 +64,7 @@ const StartupServicesPage = () => {
     {
       title: "Growth Accelerator",
       price: "₹8,999",
-      period: "/month", 
+      period: "/month",
       stage: "Funding Ready & Scaling",
       savings: "Save ₹50,000 annually",
       icon: TrendingUp,
@@ -114,7 +114,7 @@ const StartupServicesPage = () => {
     },
     {
       title: "Funding & Grant Assistance",
-      price: "₹15,999 - ₹45,000", 
+      price: "₹15,999 - ₹45,000",
       schemes: ["SISFS", "BIG", "CGSS", "PMMY", "Stand-Up India"],
       benefits: "Up to ₹50 Lakh funding, collateral-free loans",
       icon: Coins,
@@ -170,7 +170,7 @@ const StartupServicesPage = () => {
     },
     {
       title: "Due Diligence Support",
-      price: "₹25,999 - ₹1,50,000", 
+      price: "₹25,999 - ₹1,50,000",
       duration: "2-4 weeks",
       guarantee: "Investor Ready",
       icon: Shield,
@@ -206,7 +206,7 @@ const StartupServicesPage = () => {
       color: "emerald"
     },
     {
-      title: "Technology First", 
+      title: "Technology First",
       description: "AI-powered compliance and automated reporting",
       stat: "Workflow Platform",
       benefit: "Status updates",
@@ -226,7 +226,7 @@ const StartupServicesPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-blue-50">
       {/* Header (Calculators-style) */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
@@ -234,15 +234,15 @@ const StartupServicesPage = () => {
                 <div className="p-2 bg-blue-50 rounded-lg border border-blue-100">
                   <Rocket className="w-6 h-6 text-blue-600" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
                   Startup Services
                 </h1>
               </div>
-              <p className="text-gray-600 text-lg max-w-2xl">
+              <p className="text-slate-600 text-lg max-w-2xl">
                 Review Startup India, SISFS, CGSS, PMMY and other government schemes for funding, tax benefits and growth with expert-assisted guidance.
               </p>
             </div>
-            
+
             <div className="flex gap-3">
                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
                  <Briefcase className="w-4 h-4 mr-2" />
@@ -274,12 +274,12 @@ const StartupServicesPage = () => {
               className="inline-flex items-center bg-gradient-to-r from-emerald-100 to-blue-100 rounded-full px-6 py-3 mb-8"
             >
               <Award className="w-5 h-5 mr-2 text-emerald-600" />
-              <span className="text-sm font-medium text-gray-700">Government Scheme Specialists</span>
+              <span className="text-sm font-medium text-slate-700">Government Scheme Specialists</span>
             </m.div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Tax, Compliance, and Government-Scheme Readiness Services
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-4xl mx-auto">
               Navigate funding, compliance, and growth with expert support across Startup India, SISFS, CGSS, PMMY, and other key government initiatives
             </p>
           </div>
@@ -300,35 +300,35 @@ const StartupServicesPage = () => {
                         <service.icon className="w-8 h-8" />
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-gray-900">{service.price}</div>
-                        <div className="text-sm text-gray-500">Starting from</div>
+                        <div className="text-2xl font-bold text-slate-900">{service.price}</div>
+                        <div className="text-sm text-slate-500">Starting from</div>
                       </div>
                     </div>
-                    
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors">
+
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-emerald-600 transition-colors">
                       {service.title}
                     </h3>
-                    
-                    <p className="text-gray-600 mb-4">
+
+                    <p className="text-slate-600 mb-4">
                       {service.description}
                     </p>
-                    
+
                     <div className="mb-4">
-                      <div className="text-sm font-semibold text-gray-700 mb-2">Key Schemes:</div>
+                      <div className="text-sm font-semibold text-slate-700 mb-2">Key Schemes:</div>
                       <div className="flex flex-wrap gap-2">
                         {service.schemes.map((scheme, idx) => (
-                          <span key={idx} className="px-2 py-1 bg-gray-100 text-xs font-medium text-gray-600 rounded">
+                          <span key={idx} className="px-2 py-1 bg-slate-100 text-xs font-medium text-slate-600 rounded">
                             {scheme}
                           </span>
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="p-3 bg-emerald-50 rounded-lg border-l-3 border-l-emerald-500">
                       <div className="text-sm font-semibold text-emerald-800 mb-1">Benefits:</div>
                       <div className="text-sm text-emerald-700">{service.benefits}</div>
                     </div>
-                    
+
                     <Button className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700">
                       Get Started
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -349,14 +349,14 @@ const StartupServicesPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="py-16 bg-gray-50"
+        className="py-16 bg-slate-50"
       >
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Choose Your Startup Growth Plan
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Packages grouped by incorporation, compliance, funding-readiness, and operating needs
             </p>
           </div>
@@ -377,18 +377,18 @@ const StartupServicesPage = () => {
                     </span>
                   </div>
                 )}
-                
-                <Card className={`h-full border-2 ${pkg.popular ? 'border-blue-200 shadow-xl' : 'border-gray-200'} hover:shadow-lg transition-shadow`}>
+
+                <Card className={`h-full border-2 ${pkg.popular ? 'border-blue-200 shadow-xl' : 'border-slate-200'} hover:shadow-lg transition-shadow`}>
                   <CardHeader className="text-center pb-8">
                     <div className={`w-16 h-16 bg-gradient-to-r ${getGradientColorClass(pkg.color)} rounded-full flex items-center justify-center mx-auto mb-4`}>
                       <pkg.icon className="w-8 h-8 text-white" />
                     </div>
-                    <CardTitle className="text-2xl font-bold text-gray-900">{pkg.title}</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-slate-900">{pkg.title}</CardTitle>
                     <div className="text-center mt-4">
-                      <span className="text-4xl font-bold text-gray-900">{renderPrice(pkg.price)}</span>
-                      <span className="text-gray-600">{pkg.period}</span>
+                      <span className="text-4xl font-bold text-slate-900">{renderPrice(pkg.price)}</span>
+                      <span className="text-slate-600">{pkg.period}</span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-2">{pkg.stage}</p>
+                    <p className="text-sm text-slate-600 mt-2">{pkg.stage}</p>
                     <p className="text-sm font-medium text-green-600">{renderPrice(pkg.savings)}</p>
                   </CardHeader>
                   <CardContent>
@@ -396,7 +396,7 @@ const StartupServicesPage = () => {
                       {pkg.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-center">
                           <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
+                          <span className="text-slate-700">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -420,10 +420,10 @@ const StartupServicesPage = () => {
       >
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Premium Startup Advisory Services
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Expert solutions for funding, valuation, and strategic growth initiatives
             </p>
           </div>
@@ -443,20 +443,20 @@ const StartupServicesPage = () => {
                         <service.icon className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                        <p className="text-gray-600 mb-4">{service.description}</p>
-                        
+                        <h3 className="text-xl font-bold text-slate-900 mb-2">{service.title}</h3>
+                        <p className="text-slate-600 mb-4">{service.description}</p>
+
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div>
-                            <p className="text-gray-500">Price Range</p>
-                            <p className="font-semibold text-gray-900">{renderPrice(service.price)}</p>
+                            <p className="text-slate-500">Price Range</p>
+                            <p className="font-semibold text-slate-900">{renderPrice(service.price)}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Duration</p>
-                            <p className="font-semibold text-gray-900">{service.duration}</p>
+                            <p className="text-slate-500">Duration</p>
+                            <p className="font-semibold text-slate-900">{service.duration}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Support</p>
+                            <p className="text-slate-500">Support</p>
                             <p className="font-semibold text-green-600">{service.guarantee}</p>
                           </div>
                         </div>
@@ -475,14 +475,14 @@ const StartupServicesPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        className="py-16 bg-white border-y border-gray-100"
+        className="py-16 bg-white border-y border-slate-100"
       >
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
               Why Choose MyeCA for Your Startup?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Startup-focused finance, tax, and compliance support from incorporation through growth
             </p>
           </div>
@@ -495,23 +495,23 @@ const StartupServicesPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 * index }}
               >
-                <Card className="bg-white border-gray-200 h-full hover:shadow-lg transition-shadow">
+                <Card className="bg-white border-slate-200 h-full hover:shadow-lg transition-shadow">
                   <CardContent className="p-8">
                     <div className={`w-12 h-12 bg-${advantage.color}-100 rounded-lg flex items-center justify-center mb-6`}>
                       <advantage.icon className={`w-6 h-6 text-${advantage.color}-600`} />
                     </div>
-                    
-                    <h3 className="text-xl font-bold mb-4 text-gray-900">{advantage.title}</h3>
-                    <p className="text-gray-600 mb-4">{advantage.description}</p>
-                    
+
+                    <h3 className="text-xl font-bold mb-4 text-slate-900">{advantage.title}</h3>
+                    <p className="text-slate-600 mb-4">{advantage.description}</p>
+
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Our Strength:</span>
+                        <span className="text-slate-500">Our Strength:</span>
                         <span className="font-medium text-emerald-600">{advantage.stat}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Your Benefit:</span>
-                        <span className="font-medium text-gray-900">{advantage.benefit}</span>
+                        <span className="text-slate-500">Your Benefit:</span>
+                        <span className="font-medium text-slate-900">{advantage.benefit}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -531,10 +531,10 @@ const StartupServicesPage = () => {
       >
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Why Startups Choose MyeCA
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Startup support covering registrations, filings, records, and funding-readiness tasks
             </p>
           </div>
@@ -577,8 +577,8 @@ const StartupServicesPage = () => {
                     <div className={`w-16 h-16 bg-gradient-to-r from-${factor.color}-500 to-${factor.color}-600 rounded-full flex items-center justify-center mx-auto mb-4`}>
                       <factor.icon className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-3">{factor.title}</h3>
-                    <p className="text-gray-600 text-sm">{factor.description}</p>
+                    <h3 className="text-lg font-bold text-slate-900 mb-3">{factor.title}</h3>
+                    <p className="text-slate-600 text-sm">{factor.description}</p>
                   </CardContent>
                 </Card>
               </m.div>
@@ -593,15 +593,15 @@ const StartupServicesPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="py-16 bg-gray-50"
+        className="py-16 bg-slate-50"
       >
         <div className="container mx-auto px-6">
-          <Card className="bg-white border-gray-200 shadow-sm">
+          <Card className="bg-white border-slate-200 shadow-sm">
             <CardContent className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-slate-900">
                 Ready to Scale Your Startup?
               </h2>
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
                 Get structured finance and compliance support from early setup through funding readiness.
                 From {"₹"}2,999/month essentials to enterprise solutions - we grow with you.
               </p>
@@ -611,13 +611,13 @@ const StartupServicesPage = () => {
                   <Rocket className="w-5 h-5 mr-2" />
                   Start Your Package Today
                 </Button>
-                <Button size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8">
+                <Button size="lg" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 px-8">
                   <Phone className="w-5 h-5 mr-2" />
                   Request Startup Consultation
                 </Button>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
+              <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                   <span>Startup Lifecycle Support</span>

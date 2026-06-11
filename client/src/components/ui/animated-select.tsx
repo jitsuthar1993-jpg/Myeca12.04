@@ -27,12 +27,12 @@ const AnimatedSelectTrigger = React.forwardRef<
       <SelectPrimitive.Trigger
         ref={ref}
         className={cn(
-          "flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm transition-all duration-300 ease-out",
+          "flex h-12 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm transition-all duration-300 ease-out",
           "hover:border-blue-400 hover:shadow-sm",
           "focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100",
-          "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50",
+          "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-50",
           "data-[state=open]:border-blue-500 data-[state=open]:ring-4 data-[state=open]:ring-blue-100",
-          "data-[placeholder]:text-gray-400",
+          "data-[placeholder]:text-slate-400",
           "[&>span]:line-clamp-1",
           className
         )}
@@ -63,7 +63,7 @@ const AnimatedSelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-lg border bg-white text-gray-900 shadow-lg",
+        "relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-lg border bg-white text-slate-900 shadow-lg",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -132,7 +132,7 @@ const AnimatedSelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-gray-200", className)}
+    className={cn("-mx-1 my-1 h-px bg-slate-200", className)}
     {...props}
   />
 ))

@@ -86,7 +86,7 @@ const translations: Translations = {
     te: "సేవ్ చేయి",
     bn: "সংরক্ষণ করুন"
   },
-  
+
   // Tax related
   "tax.income": {
     en: "Income",
@@ -123,7 +123,7 @@ const translations: Translations = {
     te: "పన్ను లెక్కించండి",
     bn: "কর গণনা করুন"
   },
-  
+
   // Features
   "features.twoFactor": {
     en: "Two-Factor Authentication",
@@ -171,13 +171,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (stored && ["en", "hi", "ta", "te", "bn"].includes(stored)) {
       return stored;
     }
-    
+
     // Detect browser language
     const browserLang = navigator.language.split("-")[0];
     if (["hi", "ta", "te", "bn"].includes(browserLang)) {
       return browserLang as Language;
     }
-    
+
     return "en";
   });
 

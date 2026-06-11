@@ -106,7 +106,7 @@ export function ServicePageTemplate({
                   {title}
                 </h1>
                 <p className="text-lg text-muted-foreground mb-6">{description}</p>
-                
+
                 <div className="flex flex-wrap gap-4">
                   <Button size="lg" className="gap-2" data-testid="button-get-started">
                     Get Started
@@ -128,8 +128,8 @@ export function ServicePageTemplate({
 
             {/* Stats */}
             {heroStats.length > 0 && (
-              <m.div 
-                {...fadeInUp} 
+              <m.div
+                {...fadeInUp}
                 transition={{ delay: 0.2 }}
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12"
               >
@@ -153,7 +153,7 @@ export function ServicePageTemplate({
               <m.h2 {...fadeInUp} className="text-2xl md:text-3xl font-bold text-center mb-8">
                 Key Benefits
               </m.h2>
-              <m.div 
+              <m.div
                 variants={staggerContainer}
                 initial="initial"
                 animate="animate"

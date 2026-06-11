@@ -5,30 +5,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:bg-gray-200 disabled:text-gray-500 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 relative overflow-hidden",
+  "relative inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-lg text-sm font-semibold transition-colors duration-200 disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-[#315efb] text-white font-semibold shadow-md hover:bg-[#2040d8] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
+        default: "bg-primary text-primary-foreground shadow-sm hover:bg-brand-700 hover:shadow-md",
         destructive:
-          "bg-red-600 text-white font-semibold shadow-md hover:bg-red-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-red-700 hover:shadow-md",
         outline:
-          "border-2 border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 shadow-sm hover:shadow-md transition-all duration-200",
+          "border border-border bg-background text-foreground shadow-sm hover:border-ring/40 hover:bg-accent hover:text-accent-foreground hover:shadow-md",
         secondary:
-          "bg-gray-100 text-gray-800 border border-gray-200 shadow-sm hover:bg-gray-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200",
-        ghost: "text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-200",
-        link: "text-brand-600 underline-offset-4 hover:underline hover:text-brand-700 shadow-none transition-colors duration-200",
-        success: "bg-green-600 text-white font-semibold shadow-md hover:bg-green-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
-        warning: "bg-orange-600 text-white font-semibold shadow-md hover:bg-orange-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
-        primary: "bg-[#315efb] text-white font-semibold shadow-md hover:bg-[#2040d8] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
-        brand: "bg-brand-600 text-white font-semibold shadow-lg shadow-brand-500/25 hover:bg-brand-700 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-200",
-        glass: "bg-white/90 backdrop-blur-sm text-slate-700 border border-gray-200 shadow-md hover:bg-white hover:-translate-y-0.5 transition-all duration-200",
+          "border border-border bg-secondary text-secondary-foreground shadow-sm hover:bg-accent hover:text-accent-foreground hover:shadow-md",
+        ghost: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        link: "text-brand-600 underline-offset-4 shadow-none hover:text-brand-700 hover:underline",
+        success: "bg-success text-white shadow-sm hover:bg-success/90 hover:shadow-md",
+        warning: "bg-warning text-white shadow-sm hover:bg-warning/90 hover:shadow-md",
+        primary: "bg-primary text-primary-foreground shadow-sm hover:bg-brand-700 hover:shadow-md",
+        brand: "bg-brand-600 text-white shadow-lg shadow-brand-500/25 transition-all hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-brand-500/40",
+        glass: "border border-border bg-background/90 text-foreground shadow-md backdrop-blur-sm hover:bg-background",
       },
       size: {
         default: "h-10 px-6 py-2.5",
-        sm: "h-8 px-4 text-xs rounded-lg",
-        lg: "h-12 px-8 text-base rounded-button",
-        xl: "h-14 px-10 text-lg rounded-button",
+        sm: "h-8 px-4 text-xs",
+        lg: "h-12 px-8 text-base",
+        xl: "h-14 px-10 text-lg",
         icon: "h-10 w-10",
       },
     },

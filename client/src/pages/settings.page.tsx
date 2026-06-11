@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { m } from "framer-motion";
 import {
   User, Bell, Shield, Globe, Palette, Download, Key,
@@ -111,7 +111,7 @@ export default function SettingsPage() {
       services: (dashboardData as any)?.activeServices || [],
       exportDate: new Date().toISOString(),
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -185,11 +185,11 @@ export default function SettingsPage() {
                       <span className="font-bold text-sm">{user?.isVerified ? "Verified" : "Unverified"}</span>
                     </div>
                     {!user?.isVerified && (
-                      <Button 
+                      <Button
                         onClick={() => handleAction("verify-email", sendEmailVerification)}
                         disabled={isPending === "verify-email"}
-                        variant="ghost" 
-                        size="sm" 
+                        variant="ghost"
+                        size="sm"
                         className="text-blue-600 font-bold h-8"
                       >
                         {isPending === "verify-email" ? <Loader2 className="h-3 w-3 animate-spin" /> : "Verify Now"}
@@ -218,8 +218,8 @@ export default function SettingsPage() {
                       <p className="text-xs text-slate-500 font-medium">Sends a secure reset link to your email</p>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="rounded-xl border-slate-200 px-6 font-bold hover:bg-blue-50 hover:text-blue-600"
                     onClick={() => handleAction("password-reset", () => sendPasswordReset(user?.email || ""))}
                     disabled={isPending === "password-reset"}
@@ -238,8 +238,8 @@ export default function SettingsPage() {
                       <p className="text-xs text-slate-500 font-medium">Download a complete copy of your tax records</p>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="rounded-xl border-slate-200 px-6 font-bold hover:bg-emerald-50 hover:text-emerald-600"
                     onClick={handleExportData}
                   >
@@ -257,8 +257,8 @@ export default function SettingsPage() {
                       <p className="text-xs text-red-600/70 font-medium">Permanently removes all data and access</p>
                     </div>
                   </div>
-                  <Button 
-                    variant="destructive" 
+                  <Button
+                    variant="destructive"
                     className="rounded-xl px-6 font-black shadow-lg shadow-red-200"
                     onClick={() => {
                         if (confirm("Are you absolutely sure? This cannot be undone.")) {
@@ -326,7 +326,7 @@ export default function SettingsPage() {
                 </div>
               </div>
             </SettingsSection>
-            
+
             <SettingsSection
               title="Recent Activity"
               description="Monitor your account for unauthorized access"

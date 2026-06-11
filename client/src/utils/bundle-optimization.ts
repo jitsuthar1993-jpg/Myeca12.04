@@ -10,7 +10,7 @@ export const lazyWithRetry = <T extends ComponentType<any>>(
 ) => {
   return lazy(async () => {
     let lastError: Error;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         const module = await importFunc();
@@ -23,7 +23,7 @@ export const lazyWithRetry = <T extends ComponentType<any>>(
         }
       }
     }
-    
+
     throw lastError!;
   });
 };
@@ -48,7 +48,7 @@ export const lazyWithPreload = <T extends ComponentType<any>>(
   componentName: string
 ) => {
   const LazyComponent = lazyWithRetry(factory);
-  
+
   // Manual preload function - only called explicitly, not automatically
   const preload = () => {
     factory().catch((error) => {
@@ -62,12 +62,12 @@ export const lazyWithPreload = <T extends ComponentType<any>>(
 // Priority-based code splitting
 export const createPriorityLoader = () => {
   const loaders = new Map<string, () => Promise<any>>();
-  
+
   return {
     register: (name: string, loader: () => Promise<any>) => {
       loaders.set(name, loader);
     },
-    
+
     load: async (name: string, priority: 'high' | 'medium' | 'low' = 'medium') => {
       const loader = loaders.get(name);
       if (!loader) {
@@ -76,7 +76,7 @@ export const createPriorityLoader = () => {
       }
 
       const startTime = performance.now();
-      
+
       // High priority: load immediately
       if (priority === 'high') {
         const result = await loader().catch(async (error) => {
@@ -86,7 +86,7 @@ export const createPriorityLoader = () => {
         trackBundleLoad(name, startTime);
         return result;
       }
-      
+
       // Medium priority: load on idle
       if (priority === 'medium' && typeof requestIdleCallback !== 'undefined') {
         return new Promise((resolve) => {
@@ -103,7 +103,7 @@ export const createPriorityLoader = () => {
           }, { timeout: 3000 });
         });
       }
-      
+
       // Low priority: load with delay
       if (priority === 'low') {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -114,7 +114,7 @@ export const createPriorityLoader = () => {
         trackBundleLoad(name, startTime);
         return result;
       }
-      
+
       const result = await loader().catch(async (error) => {
         await recoverFromStaleChunk(error);
         throw error;
@@ -131,18 +131,18 @@ export const routeComponents = {
   Login: lazyWithPreload(() => import('@/pages/auth/login.page'), 'LoginPage'),
   Register: lazyWithPreload(() => import('@/pages/auth/register.page'), 'RegisterPage'),
   AdminLogin: lazyWithPreload(() => import('@/pages/auth/admin-login.page'), 'AdminLoginPage'),
-  
+
   // Main app routes
   Dashboard: lazyWithPreload(() => import('@/pages/user-dashboard.page'), 'DashboardPage'),
   TaxCalculator: lazyWithPreload(() => import('@/features/calculators/pages/income-tax.page'), 'TaxCalculatorPage'),
   Reports: lazyWithPreload(() => import('@/pages/reports.page'), 'ReportsPage'),
   Settings: lazyWithPreload(() => import('@/pages/settings.page'), 'SettingsPage'),
-  
+
   // Feature routes
   Profile: lazyWithPreload(() => import('@/pages/profiles.page'), 'ProfilePage'),
   Documents: lazyWithPreload(() => import('@/pages/documents.page'), 'DocumentsPage'),
   Analytics: lazyWithPreload(() => import('@/pages/analytics.page'), 'AnalyticsPage'),
-  
+
   // Admin routes (lower priority)
   AdminDashboard: lazyWithRetry(() => import('@/pages/admin/index.page')),
   AdminUsers: lazyWithRetry(() => import('@/pages/admin/users.page')),
@@ -154,9 +154,9 @@ export const heavyComponents = {};
 
 // Utility functions
 export const preloadComponent = (componentName: keyof typeof routeComponents | keyof typeof heavyComponents) => {
-  const component = routeComponents[componentName as keyof typeof routeComponents] || 
+  const component = routeComponents[componentName as keyof typeof routeComponents] ||
                    heavyComponents[componentName as keyof typeof heavyComponents];
-  
+
   if (component && typeof (component as any).preload === 'function') {
     (component as any).preload();
   }
@@ -165,7 +165,7 @@ export const preloadComponent = (componentName: keyof typeof routeComponents | k
 // Bundle size analyzer
 export const analyzeBundleSize = async () => {
   if (process.env.NODE_ENV !== 'development') return;
-  
+
   try {
     // Check if webpack bundle analyzer is available
     const stats = await fetch('/stats.json');

@@ -286,7 +286,7 @@ export function getFundsByCategory(category: ELSSFund['category']): ELSSFund[] {
 // Fund categories for filtering
 export const FUND_CATEGORIES: ELSSFund['category'][] = [
   'Large Cap',
-  'Large & Mid Cap', 
+  'Large & Mid Cap',
   'Multi Cap',
   'Small & Mid Cap',
   'Flexi Cap'

@@ -73,7 +73,7 @@ export default function AdminFeedbackManagement() {
       const params = new URLSearchParams({ page: "1", limit: "50" });
       if (statusFilter !== "all") params.append("status", statusFilter);
       if (typeFilter !== "all") params.append("type", typeFilter);
-      
+
       const response = await apiRequest(`/api/admin/feedback?${params}`);
       return response.json();
     },
@@ -175,9 +175,9 @@ export default function AdminFeedbackManagement() {
       case "resolved":
         return "bg-green-100 text-green-800";
       case "closed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-100 text-slate-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-100 text-slate-800";
     }
   };
 
@@ -192,7 +192,7 @@ export default function AdminFeedbackManagement() {
       case "complaint":
         return "bg-orange-100 text-orange-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-100 text-slate-800";
     }
   };
 
@@ -207,7 +207,7 @@ export default function AdminFeedbackManagement() {
       case "low":
         return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-100 text-slate-800";
     }
   };
 
@@ -215,7 +215,7 @@ export default function AdminFeedbackManagement() {
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Feedback Management</h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-slate-600 mt-2">
           View and respond to user feedback
         </p>
       </div>
@@ -226,47 +226,47 @@ export default function AdminFeedbackManagement() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Feedback</p>
+                <p className="text-sm text-slate-600">Total Feedback</p>
                 <p className="text-2xl font-bold">{stats?.total || 0}</p>
               </div>
               <MessageSquare className="h-8 w-8 text-blue-500" />
             </div>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Pending</p>
+                <p className="text-sm text-slate-600">Pending</p>
                 <p className="text-2xl font-bold">{stats?.byStatus?.pending || 0}</p>
               </div>
               <Clock className="h-8 w-8 text-yellow-500" />
             </div>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Resolved</p>
+                <p className="text-sm text-slate-600">Resolved</p>
                 <p className="text-2xl font-bold">{stats?.byStatus?.resolved || 0}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Avg Rating</p>
+                <p className="text-sm text-slate-600">Avg Rating</p>
                 <p className="text-2xl font-bold">{stats?.avgRating ? stats.avgRating.toFixed(1) : '0.0'}</p>
               </div>
               <Star className="h-8 w-8 text-yellow-500" />
             </div>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Bug Reports</p>
+                <p className="text-sm text-slate-600">Bug Reports</p>
                 <p className="text-2xl font-bold">{stats?.byType?.bug || 0}</p>
               </div>
               <AlertCircle className="h-8 w-8 text-red-500" />
@@ -289,7 +289,7 @@ export default function AdminFeedbackManagement() {
             <SelectItem value="closed">Closed</SelectItem>
           </SelectContent>
         </Select>
-        
+
         <Select value={typeFilter} onValueChange={setTypeFilter}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Filter by type" />
@@ -341,7 +341,7 @@ export default function AdminFeedbackManagement() {
                   <TableCell>
                     <div>
                       <p className="font-medium">{feedback.name || "Anonymous"}</p>
-                      <p className="text-sm text-gray-500">{feedback.email}</p>
+                      <p className="text-sm text-slate-500">{feedback.email}</p>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -407,21 +407,21 @@ export default function AdminFeedbackManagement() {
               Review and respond to user feedback
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedFeedback && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">From</p>
+                  <p className="text-sm text-slate-600">From</p>
                   <p className="font-medium">{selectedFeedback.name || "Anonymous"}</p>
-                  <p className="text-sm text-gray-500">{selectedFeedback.email}</p>
+                  <p className="text-sm text-slate-500">{selectedFeedback.email}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Date</p>
+                  <p className="text-sm text-slate-600">Date</p>
                   <p>{format(new Date(selectedFeedback.createdAt), "MMM d, yyyy h:mm a")}</p>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Badge className={getTypeColor(selectedFeedback.type)}>
                   {selectedFeedback.type}
@@ -439,29 +439,29 @@ export default function AdminFeedbackManagement() {
                   </Badge>
                 )}
               </div>
-              
+
               <div>
                 <p className="font-medium mb-1">Subject</p>
-                <p className="text-gray-700">{selectedFeedback.subject}</p>
+                <p className="text-slate-700">{selectedFeedback.subject}</p>
               </div>
-              
+
               <div>
                 <p className="font-medium mb-1">Message</p>
-                <p className="text-gray-700 whitespace-pre-wrap">{selectedFeedback.message}</p>
+                <p className="text-slate-700 whitespace-pre-wrap">{selectedFeedback.message}</p>
               </div>
-              
+
               {selectedFeedback.response && (
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-slate-50 p-4 rounded-lg">
                   <p className="font-medium mb-1">Previous Response</p>
-                  <p className="text-gray-700">{selectedFeedback.response}</p>
+                  <p className="text-slate-700">{selectedFeedback.response}</p>
                   {selectedFeedback.respondedAt && (
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-slate-500 mt-2">
                       Responded on {format(new Date(selectedFeedback.respondedAt), "MMM d, yyyy")}
                     </p>
                   )}
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <p className="font-medium">Update Status</p>
                 <div className="flex gap-2">
@@ -484,7 +484,7 @@ export default function AdminFeedbackManagement() {
                       <SelectItem value="closed">Closed</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Select
                     value={selectedFeedback.priority}
                     onValueChange={(value) =>
@@ -506,7 +506,7 @@ export default function AdminFeedbackManagement() {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <p className="font-medium">Send Response</p>
                 <Textarea

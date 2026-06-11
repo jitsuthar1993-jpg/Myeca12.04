@@ -9,13 +9,28 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-card border border-gray-100 bg-white text-gray-900 shadow-lg shadow-gray-500/5 transition-all duration-300 hover:shadow-xl hover:shadow-gray-500/10 hover:-translate-y-1",
+      "rounded-xl border border-slate-200 bg-card text-card-foreground shadow-sm",
       className
     )}
     {...props}
   />
 ))
 Card.displayName = "Card"
+
+const CardInteractive = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "cursor-pointer rounded-xl border border-slate-200 bg-card text-card-foreground shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg",
+      className
+    )}
+    {...props}
+  />
+))
+CardInteractive.displayName = "CardInteractive"
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -36,7 +51,7 @@ const CardTitle = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "text-xl font-bold leading-tight tracking-tight text-gray-900",
+      "text-xl font-bold leading-tight tracking-tight text-card-foreground",
       className
     )}
     {...props}
@@ -50,7 +65,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm text-gray-600", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
@@ -84,7 +99,7 @@ const CardPremium = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-card border border-gray-100 bg-white text-gray-900 shadow-xl shadow-gray-500/10 transition-all duration-300 hover:shadow-2xl hover:shadow-gray-500/15 hover:-translate-y-2 relative overflow-hidden",
+      "relative overflow-hidden rounded-xl border border-brand-200 bg-card text-card-foreground shadow-xl shadow-brand-500/10",
       className
     )}
     {...props}
@@ -99,7 +114,7 @@ const CardGlass = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-card bg-white/70 backdrop-blur-lg border border-white/50 text-gray-900 shadow-xl shadow-gray-500/10 transition-all duration-300 hover:bg-white/80 hover:-translate-y-1",
+      "rounded-xl border border-white/50 bg-white/80 text-card-foreground shadow-xl shadow-slate-500/10 backdrop-blur-lg",
       className
     )}
     {...props}
@@ -114,8 +129,8 @@ const CardPopular = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-card border-2 border-[#315efb]/20 bg-white text-gray-900 shadow-xl shadow-[#315efb]/10 transition-all duration-300 hover:shadow-2xl hover:shadow-[#315efb]/15 hover:-translate-y-2 relative overflow-hidden",
-      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-[#EEF4FF]/40 before:to-white before:pointer-events-none",
+      "relative overflow-hidden rounded-xl border-2 border-brand-600/20 bg-card text-card-foreground shadow-xl shadow-brand-600/10",
+      "before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-br before:from-brand-50/40 before:to-white",
       className
     )}
     {...props}
@@ -123,12 +138,13 @@ const CardPopular = React.forwardRef<
 ))
 CardPopular.displayName = "CardPopular"
 
-export { 
-  Card, 
-  CardHeader, 
-  CardFooter, 
-  CardTitle, 
-  CardDescription, 
+export {
+  Card,
+  CardInteractive,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
   CardContent,
   CardPremium,
   CardGlass,

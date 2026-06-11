@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import { 
-  Shield, TrendingUp, Zap, ShieldCheck, Sparkles, Banknote, 
+import {
+  Shield, TrendingUp, Zap, ShieldCheck, Sparkles, Banknote,
   Receipt, CheckCircle2, Info, ArrowRight, Calculator, IndianRupee,
   Lock, Headphones, Award, BarChart3, Clock, Briefcase,
   Coins, Percent, Target
@@ -83,7 +83,7 @@ export default function PPFCalculatorPage() {
               <div className="absolute top-0 right-0 p-6 opacity-5 text-[#027A48]">
                 <Banknote className="w-24 h-24" />
               </div>
-              
+
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-[#ECFDF3] flex items-center justify-center text-[#027A48] border border-[#D1FADF]">
                   <Target className="w-5 h-5" />
@@ -102,7 +102,7 @@ export default function PPFCalculatorPage() {
                       <span className="text-sm font-normal text-[#344054]">Annual Investment</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={annualInvestment}
                           onChange={(e) => setAnnualInvestment(Number(e.target.value))}
@@ -110,7 +110,7 @@ export default function PPFCalculatorPage() {
                         />
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="500"
                       max="150000"
@@ -126,7 +126,7 @@ export default function PPFCalculatorPage() {
                     <div className="flex items-center justify-between px-1">
                       <span className="text-sm font-normal text-[#344054]">Investment Tenure</span>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
-                        <input 
+                        <input
                           type="number"
                           value={years}
                           onChange={(e) => setYears(Number(e.target.value))}
@@ -135,7 +135,7 @@ export default function PPFCalculatorPage() {
                         <span className="text-xs font-normal text-[#667085]">Yrs</span>
                       </div>
                     </div>
-                    <input 
+                    <input
                       type="range"
                       min="15"
                       max="50"
@@ -289,7 +289,7 @@ export default function PPFCalculatorPage() {
 
         {/* Informational Content */}
         <div className="mt-12">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <ShieldCheck className="w-5 h-5" />,

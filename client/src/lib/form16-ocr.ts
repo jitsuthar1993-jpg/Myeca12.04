@@ -8,7 +8,7 @@ export interface Form16Data {
     tan: string;
     address?: string;
   };
-  
+
   // Employee Details
   employee: {
     name: string;
@@ -16,11 +16,11 @@ export interface Form16Data {
     address?: string;
     employeeId?: string;
   };
-  
+
   // Assessment Year
   assessmentYear: string;
   financialYear: string;
-  
+
   // Part A - TDS Details
   partA: {
     quarterlyTDS: {
@@ -32,7 +32,7 @@ export interface Form16Data {
     totalTDSDeducted: number;
     totalTDSDeposited: number;
   };
-  
+
   // Part B - Salary Details
   partB: {
     grossSalary: number;
@@ -46,14 +46,14 @@ export interface Form16Data {
     entertainmentAllowance: number;
     professionalTax: number;
     incomeChargeableSalaries: number;
-    
+
     // Other Income
     incomeFromHouseProperty: number;
     otherIncome: number;
-    
+
     // Gross Total Income
     grossTotalIncome: number;
-    
+
     // Deductions
     deductions: {
       section80C: number;
@@ -69,10 +69,10 @@ export interface Form16Data {
       otherDeductions: number;
       totalDeductions: number;
     };
-    
+
     // Taxable Income
     totalTaxableIncome: number;
-    
+
     // Tax Calculation
     taxOnTotalIncome: number;
     rebate87A: number;
@@ -82,7 +82,7 @@ export interface Form16Data {
     relief89: number;
     netTaxPayable: number;
   };
-  
+
   // Metadata
   extractionConfidence: number;
   rawText?: string;
@@ -93,31 +93,31 @@ export interface Form16Data {
 const PATTERNS = {
   // TAN Pattern: 4 letters + 5 digits + 1 letter
   tan: /\b([A-Z]{4}[0-9]{5}[A-Z])\b/i,
-  
+
   // PAN Pattern: 5 letters + 4 digits + 1 letter
   pan: /\b([A-Z]{5}[0-9]{4}[A-Z])\b/i,
-  
+
   // Assessment Year
   assessmentYear: /assessment\s*year[:\s]*(\d{4}[-–]\d{2,4})/i,
   financialYear: /financial\s*year[:\s]*(\d{4}[-–]\d{2,4})/i,
-  
+
   // Amount patterns
   amount: /₹?\s*([0-9,]+(?:\.\d{2})?)/,
-  
+
   // Specific fields
   grossSalary: /gross\s*salary[:\s]*₹?\s*([0-9,]+)/i,
   hra: /house\s*rent\s*allowance|hra[:\s]*₹?\s*([0-9,]+)/i,
   lta: /leave\s*travel\s*(?:allowance|concession)|lta[:\s]*₹?\s*([0-9,]+)/i,
   standardDeduction: /standard\s*deduction[:\s]*₹?\s*([0-9,]+)/i,
   professionalTax: /professional\s*tax[:\s]*₹?\s*([0-9,]+)/i,
-  
+
   // Deductions
   section80C: /80c[:\s]*₹?\s*([0-9,]+)/i,
   section80D: /80d[:\s]*₹?\s*([0-9,]+)/i,
   section80E: /80e[:\s]*₹?\s*([0-9,]+)/i,
   section80G: /80g[:\s]*₹?\s*([0-9,]+)/i,
   section80CCD: /80ccd[:\s]*₹?\s*([0-9,]+)/i,
-  
+
   // Tax fields
   totalIncome: /total\s*(?:taxable\s*)?income[:\s]*₹?\s*([0-9,]+)/i,
   taxPayable: /(?:total\s*)?tax\s*(?:payable|liability)[:\s]*₹?\s*([0-9,]+)/i,
@@ -125,7 +125,7 @@ const PATTERNS = {
   rebate87A: /rebate\s*(?:u\/s\s*)?87a[:\s]*₹?\s*([0-9,]+)/i,
   surcharge: /surcharge[:\s]*₹?\s*([0-9,]+)/i,
   cess: /(?:health|education)\s*(?:and\s*education\s*)?cess[:\s]*₹?\s*([0-9,]+)/i,
-  
+
   // Quarterly TDS
   q1TDS: /(?:quarter\s*1|q1|apr.*jun)[:\s]*₹?\s*([0-9,]+)/i,
   q2TDS: /(?:quarter\s*2|q2|jul.*sep)[:\s]*₹?\s*([0-9,]+)/i,
@@ -172,14 +172,14 @@ function findEmployerName(text: string): string {
     /issued\s*by[:\s]*([A-Z][A-Za-z\s&.,]+)/i,
     /^([A-Z][A-Z\s&.,]+(?:LTD|LIMITED|PRIVATE|PVT|INC)\.?)/mi,
   ];
-  
+
   for (const pattern of patterns) {
     const match = text.match(pattern);
     if (match && match[1] && match[1].length > 5) {
       return match[1].trim();
     }
   }
-  
+
   return 'Not Found';
 }
 
@@ -190,14 +190,14 @@ function findEmployeeName(text: string): string {
     /name\s*of\s*employee[:\s]*([A-Z][A-Za-z\s]+)/i,
     /issued\s*to[:\s]*([A-Z][A-Za-z\s]+)/i,
   ];
-  
+
   for (const pattern of patterns) {
     const match = text.match(pattern);
     if (match && match[1] && match[1].length > 3) {
       return match[1].trim();
     }
   }
-  
+
   return 'Not Found';
 }
 
@@ -207,27 +207,27 @@ export function parseForm16Text(text: string): Form16Data {
   let confidence = 0;
   let matchCount = 0;
   const totalFields = 15; // Key fields to track
-  
+
   // Extract TAN and PAN
   const tan = extractValue(text, PATTERNS.tan) || '';
   const pan = extractValue(text, PATTERNS.pan) || '';
-  
+
   if (tan) matchCount++;
   if (pan) matchCount++;
-  
+
   // Extract years
   const assessmentYear = extractValue(text, PATTERNS.assessmentYear) || '';
   const financialYear = extractValue(text, PATTERNS.financialYear) || '';
-  
+
   if (assessmentYear || financialYear) matchCount++;
-  
+
   // Extract employer and employee names
   const employerName = findEmployerName(text);
   const employeeName = findEmployeeName(text);
-  
+
   if (employerName !== 'Not Found') matchCount++;
   if (employeeName !== 'Not Found') matchCount++;
-  
+
   // Extract salary details
   const grossSalary = extractAmountByLabels(text, [
     String.raw`gross\s*salary`,
@@ -252,20 +252,20 @@ export function parseForm16Text(text: string): Form16Data {
     String.raw`tax\s*on\s*employment`,
     String.raw`section\s*16\s*\(?iii\)?`,
   ]) || extractAmount(text, PATTERNS.professionalTax);
-  
+
   if (grossSalary > 0) matchCount++;
   if (standardDeduction > 0) matchCount++;
-  
+
   // Extract deductions
   const section80C = extractAmountByLabels(text, [String.raw`section\s*80c`, String.raw`\b80c\b`]) || extractAmount(text, PATTERNS.section80C);
   const section80D = extractAmountByLabels(text, [String.raw`section\s*80d`, String.raw`\b80d\b`]) || extractAmount(text, PATTERNS.section80D);
   const section80E = extractAmountByLabels(text, [String.raw`section\s*80e`, String.raw`\b80e\b`]) || extractAmount(text, PATTERNS.section80E);
   const section80G = extractAmountByLabels(text, [String.raw`section\s*80g`, String.raw`\b80g\b`]) || extractAmount(text, PATTERNS.section80G);
   const section80CCD = extractAmountByLabels(text, [String.raw`section\s*80ccd`, String.raw`\b80ccd\b`]) || extractAmount(text, PATTERNS.section80CCD);
-  
+
   if (section80C > 0) matchCount++;
   if (section80D > 0) matchCount++;
-  
+
   // Extract tax details
   const totalIncome = extractAmountByLabels(text, [
     String.raw`total\s*taxable\s*income`,
@@ -291,32 +291,32 @@ export function parseForm16Text(text: string): Form16Data {
     String.raw`health\s*(?:and|&)\s*education\s*cess`,
     String.raw`education\s*cess`,
   ]) || extractAmount(text, PATTERNS.cess);
-  
+
   if (totalIncome > 0) matchCount++;
   if (tdsDeducted > 0) matchCount++;
-  
+
   // Extract quarterly TDS
   const q1TDS = extractAmount(text, PATTERNS.q1TDS);
   const q2TDS = extractAmount(text, PATTERNS.q2TDS);
   const q3TDS = extractAmount(text, PATTERNS.q3TDS);
   const q4TDS = extractAmount(text, PATTERNS.q4TDS);
-  
+
   // Calculate confidence
   confidence = (matchCount / totalFields) * 100;
-  
+
   // Add warnings
   if (!tan) warnings.push('TAN not found - verify employer TAN');
   if (!pan) warnings.push('PAN not found - verify employee PAN');
   if (grossSalary === 0) warnings.push('Gross salary not extracted - verify manually');
   if (tdsDeducted === 0) warnings.push('TDS amount not found - check Form 16 Part A');
   if (confidence < 50) warnings.push('Low extraction confidence - manual verification recommended');
-  
+
   // Calculate derived values
   const exemptAllowances = hra + lta;
   const netSalary = grossSalary - exemptAllowances;
   const totalDeductions = section80C + section80D + section80E + section80G + section80CCD;
   const incomeChargeableSalaries = netSalary - standardDeduction - professionalTax;
-  
+
   return {
     employer: {
       name: employerName,
@@ -385,33 +385,33 @@ export function parseForm16Text(text: string): Form16Data {
 // Validate extracted data
 export function validateForm16Data(data: Form16Data): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   // Check required fields
   if (!data.employer.tan || data.employer.tan.length !== 10) {
     errors.push('Invalid or missing employer TAN');
   }
-  
+
   if (!data.employee.pan || data.employee.pan.length !== 10) {
     errors.push('Invalid or missing employee PAN');
   }
-  
+
   if (data.partB.grossSalary === 0) {
     errors.push('Gross salary is zero or not extracted');
   }
-  
+
   // Logical validations
   if (data.partB.netSalary > data.partB.grossSalary) {
     errors.push('Net salary cannot exceed gross salary');
   }
-  
+
   if (data.partB.totalTaxableIncome > data.partB.grossTotalIncome) {
     errors.push('Taxable income cannot exceed gross total income');
   }
-  
+
   if (data.partB.deductions.section80C > 150000) {
     errors.push('Section 80C deduction exceeds limit of ₹1.5 lakh');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -423,16 +423,16 @@ export function exportForm16ForITR(data: Form16Data): string {
   let output = `# Form 16 Data for ITR Filing\n`;
   output += `# Extracted on: ${new Date().toLocaleDateString()}\n`;
   output += `# Confidence: ${data.extractionConfidence}%\n\n`;
-  
+
   output += `## Employer Details\n`;
   output += `- Name: ${data.employer.name}\n`;
   output += `- TAN: ${data.employer.tan}\n\n`;
-  
+
   output += `## Employee Details\n`;
   output += `- Name: ${data.employee.name}\n`;
   output += `- PAN: ${data.employee.pan}\n`;
   output += `- Assessment Year: ${data.assessmentYear}\n\n`;
-  
+
   output += `## Salary Details (Part B)\n`;
   output += `- Gross Salary: ₹${data.partB.grossSalary.toLocaleString('en-IN')}\n`;
   output += `- HRA Exemption: ₹${data.partB.exemptAllowances.hra.toLocaleString('en-IN')}\n`;
@@ -440,13 +440,13 @@ export function exportForm16ForITR(data: Form16Data): string {
   output += `- Standard Deduction: ₹${data.partB.standardDeduction.toLocaleString('en-IN')}\n`;
   output += `- Professional Tax: ₹${data.partB.professionalTax.toLocaleString('en-IN')}\n`;
   output += `- Income Chargeable: ₹${data.partB.incomeChargeableSalaries.toLocaleString('en-IN')}\n\n`;
-  
+
   output += `## Deductions\n`;
   output += `- Section 80C: ₹${data.partB.deductions.section80C.toLocaleString('en-IN')}\n`;
   output += `- Section 80D: ₹${data.partB.deductions.section80D.toLocaleString('en-IN')}\n`;
   output += `- Section 80CCD(1B): ₹${data.partB.deductions.section80CCD1B.toLocaleString('en-IN')}\n`;
   output += `- Total Deductions: ₹${data.partB.deductions.totalDeductions.toLocaleString('en-IN')}\n\n`;
-  
+
   output += `## Tax Details\n`;
   output += `- Total Taxable Income: ₹${data.partB.totalTaxableIncome.toLocaleString('en-IN')}\n`;
   output += `- Tax on Income: ₹${data.partB.taxOnTotalIncome.toLocaleString('en-IN')}\n`;
@@ -454,20 +454,20 @@ export function exportForm16ForITR(data: Form16Data): string {
   output += `- Surcharge: ₹${data.partB.surcharge.toLocaleString('en-IN')}\n`;
   output += `- H&E Cess: ₹${data.partB.healthEducationCess.toLocaleString('en-IN')}\n`;
   output += `- Net Tax Payable: ₹${data.partB.netTaxPayable.toLocaleString('en-IN')}\n\n`;
-  
+
   output += `## TDS Details (Part A)\n`;
   output += `- Total TDS Deducted: ₹${data.partA.totalTDSDeducted.toLocaleString('en-IN')}\n`;
   output += `- Q1: ₹${data.partA.quarterlyTDS.q1.toLocaleString('en-IN')}\n`;
   output += `- Q2: ₹${data.partA.quarterlyTDS.q2.toLocaleString('en-IN')}\n`;
   output += `- Q3: ₹${data.partA.quarterlyTDS.q3.toLocaleString('en-IN')}\n`;
   output += `- Q4: ₹${data.partA.quarterlyTDS.q4.toLocaleString('en-IN')}\n`;
-  
+
   if (data.warnings.length > 0) {
     output += `\n## Warnings\n`;
     data.warnings.forEach(w => {
       output += `- ⚠️ ${w}\n`;
     });
   }
-  
+
   return output;
 }

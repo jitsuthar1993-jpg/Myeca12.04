@@ -139,7 +139,7 @@ function DocumentPreview({ htmlContent }: { htmlContent: string }) {
         >
           <div
             dangerouslySetInnerHTML={{ __html: pageHtml }}
-            className="prose prose-sm max-w-none text-gray-900"
+            className="type-article-prose type-article-prose-sm text-slate-900"
           />
         </div>
       ))}
@@ -258,7 +258,7 @@ export default function DocumentGenerator() {
   useEffect(() => {
     const loadDraft = async () => {
       if (!config) return;
-      
+
       try {
         const convertedData = sessionStorage.getItem(conversionDraftKey);
         if (convertedData && config.applyFinancialDraft) {
@@ -312,7 +312,7 @@ export default function DocumentGenerator() {
     try {
       setSaveStatus('saving');
       const content = getValues();
-      
+
       const draftId = documentId || crypto.randomUUID();
       const draftData = {
         id: draftId,
@@ -396,7 +396,7 @@ export default function DocumentGenerator() {
     try {
       const htmlContent = sanitizeHTML(config.generateHTML(data));
 
-      // exportHistory table is not yet implemented in the backend. 
+      // exportHistory table is not yet implemented in the backend.
       // Proceeding directly to local export formatting.
 
       switch (exportFormat) {
@@ -485,7 +485,7 @@ export default function DocumentGenerator() {
 
   if (isConfigLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 shadow-sm">
           <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
           Loading document generator...
@@ -496,7 +496,7 @@ export default function DocumentGenerator() {
 
   if (!config) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -524,7 +524,7 @@ export default function DocumentGenerator() {
       data-testid="focused-document-editor"
       className={`flex flex-col overflow-hidden bg-slate-50 font-sans text-slate-950 ${user ? 'h-[100dvh]' : 'h-[calc(100dvh-60px)] md:h-[calc(100dvh-74px)]'}`}
     >
-      <MetaSEO 
+      <MetaSEO
         title={currentTitle}
         description={config.description}
         keywords={config.seo?.keywords}
@@ -537,7 +537,7 @@ export default function DocumentGenerator() {
           updates: "Reviewed for current document-generator requirements",
         }}
         breadcrumbs={[
-          { name: "Home", url: "/" }, 
+          { name: "Home", url: "/" },
           { name: "Registry", url: "/documents/generator" },
           { name: config.title, url: `/documents/generator/${documentType}` }
         ]}

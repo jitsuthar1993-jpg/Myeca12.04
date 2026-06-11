@@ -27,7 +27,7 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
           "absolute top-0 left-0 w-full h-1.5 transition-all duration-500 group-hover:h-2",
           isCompleted ? "bg-emerald-500" : "bg-violet-500"
         )} />
-        
+
         <CardHeader className="pt-8 pb-4">
           <div className="flex items-start justify-between">
             <div className="flex gap-4">
@@ -38,21 +38,21 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
                 <TrendingUp className="h-6 w-6" />
               </div>
               <div>
-                <CardTitle className="text-xl font-black tracking-tight text-slate-900 dark:text-white mb-1">
+                <CardTitle className="text-xl font-black tracking-tight text-slate-900  mb-1">
                   Company Incorporation
                 </CardTitle>
-                <CardDescription className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                <CardDescription className="text-sm font-bold uppercase tracking-widest text-slate-400  flex items-center gap-2">
                   Startup Services
                   {isCompleted && <Sparkles className="h-3 w-3 text-emerald-500" />}
                 </CardDescription>
               </div>
             </div>
-            
+
             <Badge className={cn(
               "rounded-full px-3 py-1 h-7 border-0 font-bold type-meta uppercase tracking-wider",
-              isCompleted 
-                ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" 
-                : "bg-violet-500/15 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400"
+              isCompleted
+                ? "bg-emerald-500/15 text-emerald-700  "
+                : "bg-violet-500/15 text-violet-700  "
             )}>
               {isCompleted ? <CheckCircle className="h-3 w-3 mr-1" /> : <Clock className="h-3 w-3 mr-1" />}
               {status}
@@ -61,19 +61,19 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
         </CardHeader>
 
         <CardContent className="pb-8 space-y-6">
-          <div className="p-4 bg-slate-50 dark:bg-blue-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start gap-3">
+          <div className="p-4 bg-slate-50  rounded-2xl border border-slate-100  flex items-start gap-3">
             <Building2 className="h-5 w-5 text-slate-400 mt-1" />
             <div>
               <p className="type-meta text-slate-400 uppercase font-black tracking-widest mb-1">Proposed Name</p>
-              <p className="font-bold text-base text-slate-900 dark:text-white leading-tight">
+              <p className="font-bold text-base text-slate-900  leading-tight">
                 {companyName || "Name Approval Pending"}
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3 p-1">
-            <m.div 
-              animate={{ 
+            <m.div
+              animate={{
                 scale: [1, 1.2, 1],
                 opacity: [1, 0.5, 1]
               }}
@@ -81,9 +81,9 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
               className={cn(
                 "w-2 h-2 rounded-full",
                 isCompleted ? "bg-emerald-500" : "bg-blue-500"
-              )} 
+              )}
             />
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+            <span className="text-sm font-medium text-slate-600 ">
               {isCompleted ? "Company registered successfully" : "Verification of directors in progress"}
             </span>
           </div>
@@ -93,7 +93,7 @@ export function CompanyRegServiceCard({ status, companyName }: CompanyRegService
               <Button className={cn(
                 "w-full h-12 rounded-xl font-bold transition-all duration-300 gap-2",
                 isCompleted
-                  ? "bg-blue-700 text-white hover:bg-blue-800 dark:bg-white dark:text-slate-900"
+                  ? "bg-blue-700 text-white hover:bg-blue-800  "
                   : "bg-white text-slate-900 border-2 border-slate-100 hover:border-violet-200 hover:bg-slate-50 shadow-sm"
               )}>
                 {isCompleted ? "View Documents" : "Manage Application"}

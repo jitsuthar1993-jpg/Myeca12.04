@@ -124,7 +124,7 @@ export function UserForm({ user, open, onOpenChange, onSubmit, isLoading = false
                 required={!user}
                 minLength={8}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-500">
                 Password must be at least 8 characters long
               </p>
             </div>

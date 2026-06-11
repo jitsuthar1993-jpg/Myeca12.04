@@ -55,7 +55,7 @@ export function optimizeImageUrl(
   }
 
   const params = new URLSearchParams();
-  
+
   if (options.width) params.append('w', options.width.toString());
   if (options.height) params.append('h', options.height.toString());
   if (options.quality) params.append('q', options.quality.toString());
@@ -75,18 +75,18 @@ export function preloadImage(url: string, options?: {
   link.rel = 'preload';
   link.as = options?.as || 'image';
   link.href = url;
-  
+
   if (options?.type) {
     link.type = options.type;
   }
-  
+
   if (options?.media) {
     link.media = options.media;
   }
 
   // Set crossorigin for CORS
   link.crossOrigin = 'anonymous';
-  
+
   document.head.appendChild(link);
 }
 
@@ -95,28 +95,28 @@ export async function generateBlurDataURL(imageSrc: string): Promise<string> {
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    
+
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      
+
       // Create tiny version (10x10 or proportional)
       const aspectRatio = img.width / img.height;
       canvas.width = 10;
       canvas.height = Math.round(10 / aspectRatio);
-      
+
       ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
+
       // Convert to data URL
       const dataURL = canvas.toDataURL('image/jpeg', 0.1);
       resolve(dataURL);
     };
-    
+
     img.onerror = () => {
       // Return transparent pixel if error
       resolve('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
     };
-    
+
     img.src = imageSrc;
   });
 }
@@ -124,17 +124,17 @@ export async function generateBlurDataURL(imageSrc: string): Promise<string> {
 // Check if browser supports modern image formats
 export const supportsWebP = (): boolean => {
   if (typeof window === 'undefined') return false;
-  
+
   const canvas = document.createElement('canvas');
   canvas.width = 1;
   canvas.height = 1;
-  
+
   return canvas.toDataURL('image/webp').indexOf('image/webp') === 0;
 };
 
 export const supportsAVIF = (): boolean => {
   if (typeof window === 'undefined') return false;
-  
+
   // Simple feature detection for AVIF
   return CSS.supports('(backdrop-filter: blur(1px))'); // Proxy for modern browser
 };
@@ -143,11 +143,11 @@ export const supportsAVIF = (): boolean => {
 export function getImagePriority(element: HTMLElement): 'high' | 'low' {
   const rect = element.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-  
+
   // High priority if in viewport or just below
   if (rect.top < viewportHeight * 1.5) {
     return 'high';
   }
-  
+
   return 'low';
 }

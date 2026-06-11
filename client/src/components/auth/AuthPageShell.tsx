@@ -60,7 +60,7 @@ export function AuthFormSkeleton() {
         <div className="h-11 rounded-lg border border-slate-200 bg-white" />
       </div>
 
-      <div className="h-11 rounded-lg bg-[#315efb]/15" />
+      <div className="h-11 rounded-lg bg-brand-600/15" />
       <div className="h-10 rounded-lg border border-slate-200 bg-slate-50" />
     </div>
   );
@@ -87,7 +87,7 @@ export function AuthPageShell({
           <header className="mb-3 flex items-center justify-between gap-3">
             <Link
               href="/"
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-[#315efb] hover:text-[#315efb]"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-brand-600 hover:text-brand-600"
               aria-label="Back to home"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function AuthPageShell({
               {primaryLink.text}{' '}
               <Link
                 href={primaryLink.href}
-                className="font-bold text-[#315efb] hover:text-[#06439f]"
+                className="font-bold text-brand-600 hover:text-[#06439f]"
               >
                 {primaryLink.label}
               </Link>
@@ -149,7 +149,7 @@ export function AuthPageShell({
             <header className="mb-8 flex items-center justify-between gap-3">
               <Link
                 href="/"
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-[#315efb] hover:text-[#315efb]"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-brand-600 hover:text-brand-600"
                 aria-label="Back to home"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -159,7 +159,7 @@ export function AuthPageShell({
                 {primaryLink.text}{' '}
                 <Link
                   href={primaryLink.href}
-                  className="font-bold text-[#315efb] hover:text-[#06439f]"
+                  className="font-bold text-brand-600 hover:text-[#06439f]"
                 >
                   {primaryLink.label}
                 </Link>

@@ -12,12 +12,12 @@ type CalculatorHeaderProps = {
 };
 
 const colorMap: Record<NonNullable<CalculatorHeaderProps["color"]>, string> = {
-  blue: "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400",
-  purple: "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400",
-  green: "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400",
-  orange: "bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-400",
-  red: "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400",
-  teal: "bg-teal-100 text-teal-600 dark:bg-teal-900 dark:text-teal-400",
+  blue: "bg-blue-100 text-blue-600  ",
+  purple: "bg-purple-100 text-purple-600  ",
+  green: "bg-green-100 text-green-600  ",
+  orange: "bg-orange-100 text-orange-600  ",
+  red: "bg-red-100 text-red-600  ",
+  teal: "bg-teal-100 text-teal-600  ",
 };
 
 export function CalculatorHeader({
@@ -40,13 +40,13 @@ export function CalculatorHeader({
           <Icon className="h-5 w-5" />
         </div>
       ) : null}
-      <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+      <h1 className="text-2xl md:text-3xl font-semibold text-slate-900 ">
         {title}
       </h1>
       {subtitle ? (
         <p
           className={cn(
-            "mt-1 text-sm md:text-base text-gray-600 dark:text-gray-400",
+            "mt-1 text-sm md:text-base text-slate-600 ",
             align === "center" ? "max-w-2xl mx-auto" : undefined
           )}
         >

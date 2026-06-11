@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
-import { 
-  Users, Search, Filter, MoreVertical, Check, X, Clock, 
+import {
+  Users, Search, Filter, MoreVertical, Check, X, Clock,
   UserCheck, UserX, Shield, Eye, Ban, UserPlus, Edit,
   Mail, Phone, Calendar, MapPin, Trash2, Zap, ArrowUpRight, ArrowRight, RefreshCw
 } from "lucide-react";
@@ -34,7 +34,7 @@ const formatDate = (date: any, includeTime: boolean = false) => {
     } else {
       d = new Date(date);
     }
-    
+
     if (isNaN(d.getTime())) return "N/A";
     return format(d, includeTime ? 'MMM dd, yyyy HH:mm' : 'MMM dd, yyyy');
   } catch (err) {
@@ -80,7 +80,7 @@ export default function UsersManagementPage() {
     lastName: "",
     role: "ca",
   });
-  
+
   const queryClient = useQueryClient();
 
   // Fetch all users
@@ -110,8 +110,8 @@ export default function UsersManagementPage() {
       toast({ title: "Success", description: data.message || "Role updated successfully" });
     },
     onError: (error: any) => {
-      toast({ 
-        title: "Error", 
+      toast({
+        title: "Error",
         description: error.message || "Failed to update role",
         variant: "destructive"
       });
@@ -131,8 +131,8 @@ export default function UsersManagementPage() {
       toast({ title: "Success", description: data.message || "CA assignment updated" });
     },
     onError: (error: any) => {
-      toast({ 
-        title: "Error", 
+      toast({
+        title: "Error",
         description: error.message || "Failed to assign CA",
         variant: "destructive"
       });
@@ -191,14 +191,14 @@ export default function UsersManagementPage() {
   const caUsers = users.filter((u: User) => u.role === 'ca');
 
   const filteredUsers = users.filter((user: User) => {
-    const matchesSearch = 
+    const matchesSearch =
       user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
-    
+
     return matchesSearch && matchesStatus && matchesRole;
   });
 
@@ -317,14 +317,14 @@ export default function UsersManagementPage() {
               <div className="flex flex-wrap items-center gap-2">
                  <div className="relative group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
-                    <Input 
-                      placeholder="Search users..." 
+                    <Input
+                      placeholder="Search users..."
                       className="h-9 w-60 rounded-xl bg-white border-slate-100 pl-9 text-xs font-medium shadow-sm"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                  </div>
-                 
+
                  <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="h-9 w-32 rounded-xl bg-white border-slate-100 text-[10px] font-bold uppercase tracking-widest">
                        <SelectValue placeholder="Status" />
@@ -455,7 +455,7 @@ export default function UsersManagementPage() {
                      ))}
                    </tbody>
                  </table>
-                 
+
                  {filteredUsers.length === 0 && (
                    <div className="py-24 text-center">
                      <Users className="h-12 w-12 text-slate-200 mx-auto mb-4" />
@@ -467,15 +467,15 @@ export default function UsersManagementPage() {
                <div className="p-6 bg-slate-50/50 flex items-center justify-between">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Platform Pool: {userCounts.total}</p>
                   <div className="flex items-center gap-2">
-                     <Button 
-                       variant="ghost" 
+                     <Button
+                       variant="ghost"
                        className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900"
                        onClick={() => setPage(p => Math.max(1, p - 1))}
                        disabled={page === 1}
                      >
                         Previous
                      </Button>
-                     <Button 
+                     <Button
                        className="h-8 px-5 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50"
                        onClick={() => setPage(p => p + 1)}
                        disabled={!response?.data?.pagination || page >= response.data.pagination.pages}

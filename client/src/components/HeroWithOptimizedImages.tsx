@@ -19,12 +19,12 @@ export default function HeroWithOptimizedImages() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Income Tax Filing & ITR e-Filing Services India AY 2026-27"
         description="File ITR online with MyeCA.in. Guided workflows start at ₹499, with optional CA-assisted review for eligible plans."
         keywords="ITR filing, income tax return, tax filing India, e-filing, AY 2026-27, tax consultant, CA services"
       />
-      
+
       <StructuredData
         type="Service"
         data={{
@@ -66,8 +66,8 @@ export default function HeroWithOptimizedImages() {
               className="space-y-6"
             >
               {/* Assessment Year Selector */}
-              <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm border border-gray-100">
-                <span className="text-sm text-gray-600">Assessment Year:</span>
+              <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm border border-slate-100">
+                <span className="text-sm text-slate-600">Assessment Year:</span>
                 <select className="bg-transparent text-sm font-semibold text-blue-600 focus:outline-none cursor-pointer">
                   {assessmentYears.map((year) => (
                     <option key={year} value={year}>
@@ -80,11 +80,11 @@ export default function HeroWithOptimizedImages() {
 
               {/* Main Heading */}
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
                   Expert Income Tax Filing <br />
-                  <span className="text-[#315efb]">with Guided Workflows and Optional CA Review</span>
+                  <span className="text-brand-600">with Guided Workflows and Optional CA Review</span>
                 </h1>
-                <p className="mt-4 text-base lg:text-lg text-gray-600">
+                <p className="mt-4 text-base lg:text-lg text-slate-600">
                   Upload your documents, compare regimes, and choose the right review level before filing.
                 </p>
               </div>
@@ -93,15 +93,15 @@ export default function HeroWithOptimizedImages() {
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-green-600" />
-                  <span className="text-gray-700">Secure Workflow</span>
+                  <span className="text-slate-700">Secure Workflow</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-700">Quick Filing</span>
+                  <span className="text-slate-700">Quick Filing</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-orange-600" />
-                  <span className="text-gray-700">CA Assistance Available</span>
+                  <span className="text-slate-700">CA Assistance Available</span>
                 </div>
               </div>
 
@@ -131,16 +131,16 @@ export default function HeroWithOptimizedImages() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 pt-4">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">ITR</div>
-                  <div className="text-sm text-gray-600">Filing Workflow</div>
+                  <div className="text-2xl font-bold text-slate-900">ITR</div>
+                  <div className="text-sm text-slate-600">Filing Workflow</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">24 hrs</div>
-                  <div className="text-sm text-gray-600">Target Turnaround</div>
+                  <div className="text-2xl font-bold text-slate-900">24 hrs</div>
+                  <div className="text-sm text-slate-600">Target Turnaround</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">CA</div>
-                  <div className="text-sm text-gray-600">Review Add-on</div>
+                  <div className="text-2xl font-bold text-slate-900">CA</div>
+                  <div className="text-sm text-slate-600">Review Add-on</div>
                 </div>
               </div>
             </m.div>
@@ -160,7 +160,7 @@ export default function HeroWithOptimizedImages() {
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
               />
-              
+
               {/* Floating Card */}
               <m.div
                 initial={{ opacity: 0, y: 20 }}
@@ -172,8 +172,8 @@ export default function HeroWithOptimizedImages() {
                   <Shield className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">Website Launch Offer</div>
-                  <div className="text-sm text-gray-600">See any eligible plan discount at checkout</div>
+                  <div className="font-semibold text-slate-900">Website Launch Offer</div>
+                  <div className="text-sm text-slate-600">See any eligible plan discount at checkout</div>
                 </div>
               </m.div>
             </m.div>
@@ -186,7 +186,7 @@ export default function HeroWithOptimizedImages() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mt-12 lg:mt-16"
           >
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
+            <h2 className="text-2xl font-bold text-center text-slate-900 mb-8">
               File ITR in 4 Simple Steps
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -204,12 +204,12 @@ export default function HeroWithOptimizedImages() {
                   <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center">
                     <div className="text-3xl mb-3">{item.icon}</div>
                     <div className="text-sm text-blue-600 font-semibold mb-1">Step {item.step}</div>
-                    <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.desc}</p>
+                    <h3 className="font-semibold text-slate-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-slate-600">{item.desc}</p>
                   </div>
                   {item.step < 4 && (
                     <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2">
-                      <ArrowRight className="w-6 h-6 text-gray-300" />
+                      <ArrowRight className="w-6 h-6 text-slate-300" />
                     </div>
                   )}
                 </m.div>

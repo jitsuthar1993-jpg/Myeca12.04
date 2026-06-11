@@ -2,8 +2,8 @@ import { Layout } from '@/components/admin/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useStats } from '@/hooks/admin/useStats';
-import { 
-  RefreshCw, Users, Coins, Activity, 
+import {
+  RefreshCw, Users, Coins, Activity,
   Search, Filter, LayoutGrid, List,
   ChevronRight, MoreHorizontal, ArrowUpRight,
   ShieldCheck, Briefcase, Sparkles, Zap, ArrowRight
@@ -64,8 +64,8 @@ export default function AdminDashboard() {
              </p>
           </div>
           <div className="flex items-center gap-3">
-             <Button 
-               variant="outline" 
+             <Button
+               variant="outline"
                className="h-10 rounded-lg border-slate-200 px-4 text-sm font-bold"
                onClick={() => refetch()}
              >
@@ -129,8 +129,8 @@ export default function AdminDashboard() {
               <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                  <div className="relative group w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
-                    <Input 
-                      placeholder="Search activity..." 
+                    <Input
+                      placeholder="Search activity..."
                       className="h-9 w-full rounded-lg border-slate-200 bg-white pl-9 text-xs font-medium sm:w-60"
                     />
                  </div>
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
                    </div>
                  )}
                </div>
-               
+
                <div className="flex flex-col gap-3 bg-slate-50/50 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">System Total: {workList.length}</p>
                   <div className="flex items-center gap-2">

@@ -5,11 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { allServices, serviceCounts, categoryBreakdown } from '@/data/all-services';
 import { Link } from 'wouter';
-import { 
-  Building2, 
-  FileText, 
-  Calculator, 
-  Rocket, 
+import {
+  Building2,
+  FileText,
+  Calculator,
+  Rocket,
   TrendingUp,
   Users,
   ArrowRight
@@ -27,13 +27,13 @@ export default function ServicesSummary() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-12"
       >
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-slate-900 mb-4">
           Complete Service Portfolio
         </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+        <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
           Compare scope, records, and next steps across {serviceCounts.total} business and tax services
         </p>
-        
+
         <Link href="/all-services">
           <Button size="lg" className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700">
             View All Services
@@ -54,7 +54,7 @@ export default function ServicesSummary() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">Business Services</p>
+            <p className="text-sm text-slate-600">Business Services</p>
           </CardContent>
         </Card>
 
@@ -68,7 +68,7 @@ export default function ServicesSummary() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">ITR Filing Services</p>
+            <p className="text-sm text-slate-600">ITR Filing Services</p>
           </CardContent>
         </Card>
 
@@ -82,7 +82,7 @@ export default function ServicesSummary() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">Startup Services</p>
+            <p className="text-sm text-slate-600">Startup Services</p>
           </CardContent>
         </Card>
 
@@ -96,14 +96,14 @@ export default function ServicesSummary() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">Calculators & Tools</p>
+            <p className="text-sm text-slate-600">Calculators & Tools</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Popular Services */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+        <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
           <TrendingUp className="h-6 w-6 mr-2 text-emerald-600" />
           Popular Services
         </h2>
@@ -117,7 +117,7 @@ export default function ServicesSummary() {
                     Popular
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-600">{service.description}</p>
+                <p className="text-sm text-slate-600">{service.description}</p>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
@@ -136,7 +136,7 @@ export default function ServicesSummary() {
 
       {/* Categories Overview */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+        <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
           <Users className="h-6 w-6 mr-2 text-blue-600" />
           Service Categories
         </h2>
@@ -144,10 +144,10 @@ export default function ServicesSummary() {
           {Object.entries(categoryBreakdown).map(([category, count]) => (
             <div
               key={category}
-              className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+              className="bg-white border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-900">{category}</span>
+                <span className="font-medium text-slate-900">{category}</span>
                 <Badge variant="secondary">{count} services</Badge>
               </div>
             </div>
@@ -156,22 +156,22 @@ export default function ServicesSummary() {
       </div>
 
       {/* Quick Service List */}
-      <div className="bg-gray-50 rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+      <div className="bg-slate-50 rounded-lg p-8">
+        <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">
           All Services at a Glance
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm">
           {allServices.map(service => (
             <div key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white rounded transition-colors">
               <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-              <span className="text-gray-700">{service.title}</span>
+              <span className="text-slate-700">{service.title}</span>
               {service.price && (
                 <span className="text-emerald-600 font-medium">({service.price})</span>
               )}
             </div>
           ))}
         </div>
-        
+
         <div className="text-center mt-8">
           <Link href="/all-services">
             <Button variant="outline" size="lg">

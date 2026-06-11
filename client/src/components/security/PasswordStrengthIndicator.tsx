@@ -61,7 +61,7 @@ export function PasswordStrengthIndicator({ password, className }: PasswordStren
   return (
     <div className={cn('space-y-2', className)}>
       <div className="flex items-center justify-between text-sm">
-        <span className="text-gray-600">Password strength:</span>
+        <span className="text-slate-600">Password strength:</span>
         <span className={cn('font-medium', {
           'text-red-600': strength.score === 0,
           'text-orange-600': strength.score <= 2,
@@ -72,16 +72,16 @@ export function PasswordStrengthIndicator({ password, className }: PasswordStren
           {label}
         </span>
       </div>
-      
-      <Progress 
-        value={progressValue} 
+
+      <Progress
+        value={progressValue}
         className="h-2"
         indicatorClassName={color}
       />
 
       {strength.feedback.length > 0 && (
         <div className="space-y-1 mt-2">
-          <p className="text-xs text-gray-600 flex items-center gap-1">
+          <p className="text-xs text-slate-600 flex items-center gap-1">
             <AlertCircle className="h-3 w-3" />
             Requirements:
           </p>
@@ -93,7 +93,7 @@ export function PasswordStrengthIndicator({ password, className }: PasswordStren
                   key={req}
                   className={cn('text-xs flex items-center gap-1', {
                     'text-green-600': isMet,
-                    'text-gray-500': !isMet,
+                    'text-slate-500': !isMet,
                   })}
                 >
                   {isMet ? (

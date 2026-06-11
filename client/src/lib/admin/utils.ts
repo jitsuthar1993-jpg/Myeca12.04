@@ -56,7 +56,7 @@ export function formatTimeAgo(date: string | Date): string {
     if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    
+
     return formatDate(dateObj);
   } catch {
     return date.toString();
@@ -69,7 +69,7 @@ export function formatTimeAgo(date: string | Date): string {
 export function getDateRange(range: string): { from: Date; to: Date } | null {
   const now = new Date();
   const today = startOfDay(now);
-  
+
   switch (range) {
     case 'today':
       return { from: today, to: endOfDay(now) };
@@ -120,7 +120,7 @@ export function getStatusColor(status: string): string {
     case 'suspended':
       return 'text-red-600 bg-red-100';
     default:
-      return 'text-gray-600 bg-gray-100';
+      return 'text-slate-600 bg-slate-100';
   }
 }
 
@@ -137,20 +137,20 @@ export function truncate(text: string, maxLength: number): string {
  */
 export function exportToCSV(data: any[], filename: string = 'export.csv'): void {
   if (!data || data.length === 0) return;
-  
+
   const headers = Object.keys(data[0]);
   const csvContent = [
     headers.join(','),
-    ...data.map(row => 
+    ...data.map(row =>
       headers.map(header => {
         const value = row[header];
-        return typeof value === 'string' && value.includes(',') 
-          ? `"${value.replace(/"/g, '""')}"` 
+        return typeof value === 'string' && value.includes(',')
+          ? `"${value.replace(/"/g, '""')}"`
           : value;
       }).join(',')
     )
   ].join('\n');
-  
+
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);

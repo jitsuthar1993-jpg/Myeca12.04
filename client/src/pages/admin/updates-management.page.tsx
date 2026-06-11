@@ -56,10 +56,10 @@ export default function UpdatesManagementPage() {
       return res.json() as Promise<{ updates: any[] }>;
     },
   });
-  
+
   const updates = response?.updates || [];
 
-  const filteredUpdates = updates.filter(u => 
+  const filteredUpdates = updates.filter(u =>
     u.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -155,7 +155,7 @@ export default function UpdatesManagementPage() {
       <div className="max-w-6xl mx-auto py-12 px-8">
         {/* Header Area */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
-          <m.div 
+          <m.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
@@ -167,11 +167,11 @@ export default function UpdatesManagementPage() {
             <p className="text-slate-500 font-medium mt-6 text-lg max-w-xl leading-relaxed">Broadcast high-priority compliance alerts and orbital intelligence directly to all endpoints.</p>
           </m.div>
 
-          <m.div 
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Button 
+            <Button
               onClick={handleNew}
               className="bg-blue-700 hover:bg-blue-800 text-white rounded-2xl px-10 h-16 font-black text-xs uppercase tracking-widest transition-all shadow-2xl shadow-slate-900/20 active:scale-95"
             >
@@ -185,8 +185,8 @@ export default function UpdatesManagementPage() {
         <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm mb-12 flex items-center gap-6">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input 
-              placeholder="Query signal registry..." 
+            <Input
+              placeholder="Query signal registry..."
               className="pl-12 h-14 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:border-blue-500 transition-all font-medium text-lg"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -225,18 +225,18 @@ export default function UpdatesManagementPage() {
                           <div className="flex items-center gap-4 mb-4">
                             <div className={cn(
                               "w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg",
-                              update.priority === "CRITICAL" ? "bg-red-600 shadow-red-500/20" : 
-                              update.priority === "HIGH" ? "bg-orange-500 shadow-orange-500/20" : 
-                              update.priority === "MEDIUM" ? "bg-blue-600 shadow-blue-500/20" : 
+                              update.priority === "CRITICAL" ? "bg-red-600 shadow-red-500/20" :
+                              update.priority === "HIGH" ? "bg-orange-500 shadow-orange-500/20" :
+                              update.priority === "MEDIUM" ? "bg-blue-600 shadow-blue-500/20" :
                               "bg-slate-400 shadow-slate-400/20"
                             )}>
                               {update.priority === "CRITICAL" ? <ShieldAlert className="w-6 h-6 animate-pulse" /> : <Zap className="w-6 h-6" />}
                             </div>
                             <span className={cn(
                               "text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full",
-                              update.priority === "CRITICAL" ? "bg-red-50 text-red-600" : 
-                              update.priority === "HIGH" ? "bg-orange-50 text-orange-600" : 
-                              update.priority === "MEDIUM" ? "bg-blue-50 text-blue-600" : 
+                              update.priority === "CRITICAL" ? "bg-red-50 text-red-600" :
+                              update.priority === "HIGH" ? "bg-orange-50 text-orange-600" :
+                              update.priority === "MEDIUM" ? "bg-blue-50 text-blue-600" :
                               "bg-slate-50 text-slate-600"
                             )}>
                               {update.priority} Frequency
@@ -292,7 +292,7 @@ export default function UpdatesManagementPage() {
                 </Button>
              </div>
           </div>
-          
+
           <div className="p-10">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

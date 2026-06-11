@@ -113,7 +113,7 @@ export default function AISViewerPage() {
   ].filter(d => d.value > 0) : [];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -159,23 +159,23 @@ export default function AISViewerPage() {
               <CardContent>
                 <div
                   className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
-                    isLoading ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50/50'
+                    isLoading ? 'border-blue-400 bg-blue-50' : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50/50'
                   }`}
                 >
                   {isLoading ? (
                     <div className="space-y-4">
                       <RefreshCcw className="h-12 w-12 mx-auto text-blue-500 animate-spin" />
-                      <p className="text-gray-600">Parsing your data...</p>
+                      <p className="text-slate-600">Parsing your data...</p>
                       <Progress value={66} className="w-48 mx-auto" />
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <FileJson className="h-12 w-12 mx-auto text-gray-400" />
+                      <FileJson className="h-12 w-12 mx-auto text-slate-400" />
                       <div>
-                        <p className="text-lg font-medium text-gray-700">
+                        <p className="text-lg font-medium text-slate-700">
                           Drop your AIS/26AS file here
                         </p>
-                        <p className="text-gray-500 mt-1">CSV or JSON format</p>
+                        <p className="text-slate-500 mt-1">CSV or JSON format</p>
                       </div>
                       <Label htmlFor="ais-upload">
                         <Input
@@ -272,7 +272,7 @@ export default function AISViewerPage() {
                   {parsedData.discrepancies.count} Discrepancies Found
                 </AlertTitle>
                 <AlertDescription className="text-amber-700">
-                  There are mismatches between reported and modified values. 
+                  There are mismatches between reported and modified values.
                   Potential tax impact: {formatCurrency(parsedData.discrepancies.potentialTaxImpact)}
                 </AlertDescription>
               </Alert>
@@ -415,7 +415,7 @@ export default function AISViewerPage() {
                       </div>
                       <div className="flex justify-between py-3 border-b">
                         <span className="flex items-center gap-2">
-                          <span className="w-3 h-3 bg-gray-500 rounded-full" />
+                          <span className="w-3 h-3 bg-slate-500 rounded-full" />
                           Other
                         </span>
                         <span className="font-medium">{formatCurrency(parsedData.incomeSummary.otherIncome)}</span>
@@ -528,9 +528,9 @@ export default function AISViewerPage() {
                           {parsedData.aisEntries.map((entry) => (
                             <TableRow key={entry.id}>
                               <TableCell>
-                                <Badge 
-                                  variant="outline" 
-                                  className={`text-xs ${CATEGORY_INFO[entry.category]?.color || 'bg-gray-500'} text-white border-0`}
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${CATEGORY_INFO[entry.category]?.color || 'bg-slate-500'} text-white border-0`}
                                 >
                                   {CATEGORY_INFO[entry.category]?.icon} {CATEGORY_INFO[entry.category]?.label || entry.category}
                                 </Badge>
@@ -583,7 +583,7 @@ export default function AISViewerPage() {
                       <div className="text-center py-12">
                         <CheckCircle className="h-16 w-16 mx-auto text-green-500 mb-4" />
                         <h3 className="text-lg font-medium">No Discrepancies Found</h3>
-                        <p className="text-gray-500">All your AIS entries are consistent</p>
+                        <p className="text-slate-500">All your AIS entries are consistent</p>
                       </div>
                     ) : (
                       <div className="space-y-4">
@@ -598,11 +598,11 @@ export default function AISViewerPage() {
                             </div>
                             <div className="mt-4 grid grid-cols-2 gap-4">
                               <div className="p-3 bg-white rounded-lg">
-                                <p className="text-xs text-gray-500">Reported Value</p>
+                                <p className="text-xs text-slate-500">Reported Value</p>
                                 <p className="font-bold text-lg">{formatCurrency(entry.reportedValue)}</p>
                               </div>
                               <div className="p-3 bg-white rounded-lg">
-                                <p className="text-xs text-gray-500">Modified Value</p>
+                                <p className="text-xs text-slate-500">Modified Value</p>
                                 <p className="font-bold text-lg">{formatCurrency(entry.modifiedValue || 0)}</p>
                               </div>
                             </div>

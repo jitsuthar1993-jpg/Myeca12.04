@@ -75,7 +75,7 @@ const FormComponent = ({ register, errors }: any) => {
 
       <div className="grid grid-cols-2 gap-8">
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700">Landlord Details</h3>
+          <h3 className="font-semibold text-slate-700">Landlord Details</h3>
           <div>
             <Label>Name</Label>
             <Input {...register('landlord.name')} />
@@ -98,7 +98,7 @@ const FormComponent = ({ register, errors }: any) => {
           </div>
         </div>
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700">Tenant Details</h3>
+          <h3 className="font-semibold text-slate-700">Tenant Details</h3>
           <div>
             <Label>Name</Label>
             <Input {...register('tenant.name')} />
@@ -183,17 +183,17 @@ function numToWords(amount: number) {
 const generateHTML = (data: any) => {
   return `
     <div style="font-family: 'Times New Roman', serif; max-width: 800px; margin: 0 auto; color: #000; line-height: 1.6; text-align: justify; padding: 40px;">
-      
+
       <div style="text-align: center; margin-bottom: 30px;">
         <h1 style="text-decoration: underline; text-transform: uppercase;">Rent Agreement</h1>
       </div>
 
       <p style="text-indent: 50px;">This Rent Agreement is made and executed at <strong>${data.executionPlace}</strong> on this <strong>${data.executionDate}</strong>.</p>
-      
+
       <div style="text-align: center; font-weight: bold; margin: 20px 0;">BETWEEN</div>
 
       <p>
-        <strong>${data.landlord?.name || '________________'}</strong>, aged about <strong>${data.landlord?.age || '____'}</strong> years, 
+        <strong>${data.landlord?.name || '________________'}</strong>, aged about <strong>${data.landlord?.age || '____'}</strong> years,
         ${data.landlord?.fatherName ? 'D/S/W of <strong>' + data.landlord.fatherName + '</strong>, ' : ''}
         residing at <strong>${data.landlord?.address || '________________'}</strong>
         ${data.landlord?.pan ? '(PAN: <strong>' + data.landlord.pan + '</strong>)' : ''}
@@ -212,7 +212,7 @@ const generateHTML = (data: any) => {
       <p style="text-indent: 50px; margin-top: 30px;">
         WHEREAS the Landlord is the absolute owner and in possession of the property bearing No: <strong>${data.property?.address}</strong> comprising of <strong>${data.property?.description}</strong> with fittings and fixtures: ${data.property?.fixtures} (hereinafter referred to as the "Demised Premises").
       </p>
-      
+
       <p style="text-indent: 50px;">
         AND WHEREAS the Tenant has approached the Landlord with a request to let out the Demised Premises for residential purposes, and the Landlord has agreed to do so on the following terms and conditions:
       </p>

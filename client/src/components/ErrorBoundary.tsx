@@ -40,7 +40,7 @@ class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
     void recoverFromStaleChunk(error);
-    
+
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error);
@@ -125,7 +125,7 @@ class ErrorBoundary extends Component<Props, State> {
     // Offline errors get a lighter recovery surface, but offline mode alone should not hide cached pages.
     if (hasError && isOffline) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
           <Card className="max-w-md w-full">
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
@@ -137,8 +137,8 @@ class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-sm text-gray-600 mb-4">
-                Don't worry! Your calculator data is saved locally. 
+              <p className="text-sm text-slate-600 mb-4">
+                Don't worry! Your calculator data is saved locally.
                 You can still use basic calculators offline.
               </p>
             </CardContent>
@@ -160,7 +160,7 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
           <Card className="max-w-lg w-full">
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
@@ -173,36 +173,36 @@ class ErrorBoundary extends Component<Props, State> {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <p className="text-sm text-gray-600 text-center">
-                  Try refreshing the page or go back to the home page. 
+                <p className="text-sm text-slate-600 text-center">
+                  Try refreshing the page or go back to the home page.
                   If the problem persists, please contact support.
                 </p>
 
                 {showDetails && error && (
-                  <details className="mt-4 p-4 bg-gray-100 rounded-lg text-sm">
-                    <summary className="cursor-pointer font-medium text-gray-700 flex items-center gap-2">
+                  <details className="mt-4 p-4 bg-slate-100 rounded-lg text-sm">
+                    <summary className="cursor-pointer font-medium text-slate-700 flex items-center gap-2">
                       <Bug className="h-4 w-4" />
                       Technical Details
                     </summary>
                     <div className="mt-3 space-y-2">
                       <div>
-                        <p className="font-medium text-gray-700">Error:</p>
+                        <p className="font-medium text-slate-700">Error:</p>
                         <p className="text-red-600 font-mono text-xs break-all">
                           {error.message}
                         </p>
                       </div>
                       {error.stack && (
                         <div>
-                          <p className="font-medium text-gray-700">Stack trace:</p>
-                          <pre className="text-xs text-gray-600 overflow-auto max-h-40 bg-gray-200 p-2 rounded mt-1">
+                          <p className="font-medium text-slate-700">Stack trace:</p>
+                          <pre className="text-xs text-slate-600 overflow-auto max-h-40 bg-slate-200 p-2 rounded mt-1">
                             {error.stack}
                           </pre>
                         </div>
                       )}
                       {errorInfo?.componentStack && (
                         <div>
-                          <p className="font-medium text-gray-700">Component stack:</p>
-                          <pre className="text-xs text-gray-600 overflow-auto max-h-40 bg-gray-200 p-2 rounded mt-1">
+                          <p className="font-medium text-slate-700">Component stack:</p>
+                          <pre className="text-xs text-slate-600 overflow-auto max-h-40 bg-slate-200 p-2 rounded mt-1">
                             {errorInfo.componentStack}
                           </pre>
                         </div>
@@ -245,7 +245,7 @@ export function CalculatorErrorBoundary({ children }: { children: ReactNode }) {
         <Card className="p-6 text-center">
           <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Calculator Error</h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-slate-600 mb-4">
             There was an error loading this calculator. Please try refreshing.
           </p>
           <Button onClick={() => window.location.reload()} size="sm">

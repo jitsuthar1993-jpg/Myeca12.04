@@ -17,18 +17,18 @@ export function sanitizeHTML(html: string): string {
 export function sanitizeURL(url: string): string {
   try {
     const parsed = new URL(url, window.location.origin);
-    
+
     // Only allow same-origin or explicitly allowed domains
     const allowedDomains = [
       window.location.hostname,
       'myeca.in',
       'www.myeca.in'
     ];
-    
+
     if (allowedDomains.includes(parsed.hostname)) {
       return parsed.toString();
     }
-    
+
     // Return root URL for invalid domains
     return '/';
   } catch {
@@ -50,7 +50,7 @@ export function containsXSS(content: string): boolean {
     /vbscript:/gi,
     /data:text\/html/gi
   ];
-  
+
   return xssPatterns.some(pattern => pattern.test(content));
 }
 
@@ -103,20 +103,20 @@ export function validateGSTIN(gstin: string): boolean {
  */
 export function maskSensitiveData(data: string, type: 'pan' | 'aadhaar' | 'phone' | 'email' | 'account' | 'gstin'): string {
   if (!data) return '';
-  
+
   switch (type) {
     case 'pan':
       // Show first 3 and last 2 characters: ABC**12XY
       return data.slice(0, 3) + '****' + data.slice(-2);
-      
+
     case 'aadhaar':
       // Show last 4 digits: XXXX XXXX 1234
       return 'XXXX XXXX ' + data.slice(-4);
-      
+
     case 'phone':
       // Show first 2 and last 2 digits: 98XXXXXX10
       return data.slice(0, 2) + 'X'.repeat(data.length - 4) + data.slice(-2);
-      
+
     case 'email':
       // Show first 3 chars and domain: abc***@gmail.com
       const [username, domain] = data.split('@');
@@ -124,15 +124,15 @@ export function maskSensitiveData(data: string, type: 'pan' | 'aadhaar' | 'phone
         return username + '***@' + domain;
       }
       return username.slice(0, 3) + '***@' + domain;
-      
+
     case 'account':
       // Show last 4 digits: XXXXXXXX1234
       return 'X'.repeat(Math.max(0, data.length - 4)) + data.slice(-4);
-      
+
     case 'gstin':
       // Show first 2 and last 3 characters: 22XXXXXXXXXZ5
       return data.slice(0, 2) + 'X'.repeat(data.length - 5) + data.slice(-3);
-      
+
     default:
       return data;
   }
@@ -148,39 +148,39 @@ export function checkPasswordStrength(password: string): {
 } {
   let score = 0;
   const feedback: string[] = [];
-  
+
   // Length check
   if (password.length >= 8) score += 1;
   else feedback.push('Password should be at least 8 characters long');
-  
+
   if (password.length >= 12) score += 1;
-  
+
   // Character variety checks
   if (/[a-z]/.test(password)) score += 1;
   else feedback.push('Add lowercase letters');
-  
+
   if (/[A-Z]/.test(password)) score += 1;
   else feedback.push('Add uppercase letters');
-  
+
   if (/[0-9]/.test(password)) score += 1;
   else feedback.push('Add numbers');
-  
+
   if (/[^a-zA-Z0-9]/.test(password)) score += 1;
   else feedback.push('Add special characters');
-  
+
   // Common patterns check
   const commonPatterns = ['123456', 'password', 'qwerty', 'abc123'];
   if (commonPatterns.some(pattern => password.toLowerCase().includes(pattern))) {
     score = Math.max(0, score - 2);
     feedback.push('Avoid common patterns');
   }
-  
+
   let strength: 'weak' | 'fair' | 'good' | 'strong';
   if (score <= 2) strength = 'weak';
   else if (score <= 4) strength = 'fair';
   else if (score <= 5) strength = 'good';
   else strength = 'strong';
-  
+
   return { score, feedback, strength };
 }
 
@@ -194,11 +194,11 @@ export function checkRateLimit(
 ): { allowed: boolean; remainingAttempts: number; resetTime: number } {
   const key = `rate_limit_${action}`;
   const now = Date.now();
-  
+
   // Get existing attempts
   const stored = localStorage.getItem(key);
   let attempts: { timestamp: number }[] = [];
-  
+
   if (stored) {
     try {
       attempts = JSON.parse(stored);
@@ -206,26 +206,26 @@ export function checkRateLimit(
       attempts = [];
     }
   }
-  
+
   // Filter out attempts outside the window
   attempts = attempts.filter(attempt => now - attempt.timestamp < windowMs);
-  
+
   // Check if rate limit exceeded
   if (attempts.length >= maxAttempts) {
     const oldestAttempt = attempts[0];
     const resetTime = oldestAttempt.timestamp + windowMs;
-    
+
     return {
       allowed: false,
       remainingAttempts: 0,
       resetTime
     };
   }
-  
+
   // Add current attempt
   attempts.push({ timestamp: now });
   localStorage.setItem(key, JSON.stringify(attempts));
-  
+
   return {
     allowed: true,
     remainingAttempts: maxAttempts - attempts.length,

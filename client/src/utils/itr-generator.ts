@@ -1,4 +1,4 @@
-import { 
+import {
   ITR1Schema,
   STATE_CODES,
   EMPLOYER_CATEGORIES,
@@ -62,7 +62,7 @@ export class ITRGenerator {
     const stateCode = data.personalInfo.state ? STATE_CODES[data.personalInfo.state] || '10' : '10'; // Default to Delhi
 
     // Get employer category
-    const employerCategory = data.personalInfo.employerCategory ? 
+    const employerCategory = data.personalInfo.employerCategory ?
       EMPLOYER_CATEGORIES[data.personalInfo.employerCategory] || 'OTH' : 'OTH';
 
     // Calculate incomes
@@ -81,11 +81,11 @@ export class ITRGenerator {
     const homeLoanInterest = parseFloat(data.deductions.homeLoanInterest) || 0;
 
     // Total deductions under Chapter VI-A
-    const totalChapterVIADeductions = section80C + section80CCD + section80D + 
+    const totalChapterVIADeductions = section80C + section80CCD + section80D +
       section80G + section80DD;
 
     // Calculate gross total income
-    const grossTotalIncome = salaryIncome + housePropertyIncome + 
+    const grossTotalIncome = salaryIncome + housePropertyIncome +
       otherSourcesIncome + businessIncome + capitalGainsIncome;
 
     // Calculate total income after deductions

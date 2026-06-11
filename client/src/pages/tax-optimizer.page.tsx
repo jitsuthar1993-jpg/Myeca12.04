@@ -6,7 +6,7 @@ import { Layout } from "@/components/admin/Layout";
 
 export default function TaxOptimizerPage() {
   const [location] = useLocation();
-  
+
   return (
     <Layout>
       <EnhancedSEO
@@ -25,7 +25,7 @@ export default function TaxOptimizerPage() {
           "tax saving calculator"
         ]}
       />
-      
+
       <div className="py-8">
         <TaxOptimizer />
       </div>

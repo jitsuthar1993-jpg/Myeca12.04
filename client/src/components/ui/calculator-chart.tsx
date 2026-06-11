@@ -18,38 +18,38 @@ export function CalculatorChart({ data, type, title, height = 300 }: ChartProps)
         return (
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis 
-              dataKey="year" 
+            <XAxis
+              dataKey="year"
               stroke="#6B7280"
               fontSize={FONT_SIZES.xs}
             />
-            <YAxis 
+            <YAxis
               stroke="#6B7280"
               fontSize={FONT_SIZES.xs}
               tickFormatter={(value) => `₹${(value / 100000).toFixed(1)}L`}
             />
-            <Tooltip 
+            <Tooltip
               formatter={(value: number, name: string) => [formatCurrency(value), name]}
               labelStyle={{ color: '#374151' }}
-              contentStyle={{ 
-                backgroundColor: 'white', 
+              contentStyle={{
+                backgroundColor: 'white',
                 border: '1px solid #E5E7EB',
                 borderRadius: '8px'
               }}
             />
             <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="investment" 
-              stroke="#10B981" 
+            <Line
+              type="monotone"
+              dataKey="investment"
+              stroke="#10B981"
               strokeWidth={2}
               name="Total Investment"
               dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
             />
-            <Line 
-              type="monotone" 
-              dataKey="value" 
-              stroke="#3B82F6" 
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#3B82F6"
               strokeWidth={2}
               name="Portfolio Value"
               dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
@@ -61,36 +61,36 @@ export function CalculatorChart({ data, type, title, height = 300 }: ChartProps)
         return (
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis 
-              dataKey="year" 
+            <XAxis
+              dataKey="year"
               stroke="#6B7280"
               fontSize={FONT_SIZES.xs}
             />
-            <YAxis 
+            <YAxis
               stroke="#6B7280"
               fontSize={FONT_SIZES.xs}
               tickFormatter={(value) => `₹${(value / 100000).toFixed(1)}L`}
             />
-            <Tooltip 
+            <Tooltip
               formatter={(value: number, name: string) => [formatCurrency(value), name]}
               labelStyle={{ color: '#374151' }}
-              contentStyle={{ 
-                backgroundColor: 'white', 
+              contentStyle={{
+                backgroundColor: 'white',
                 border: '1px solid #E5E7EB',
                 borderRadius: '8px'
               }}
             />
             <Legend />
-            <Bar 
-              dataKey="investment" 
-              fill="#10B981" 
-              name="Investment" 
+            <Bar
+              dataKey="investment"
+              fill="#10B981"
+              name="Investment"
               radius={[2, 2, 0, 0]}
             />
-            <Bar 
-              dataKey="interestEarned" 
-              fill="#3B82F6" 
-              name="Interest Earned" 
+            <Bar
+              dataKey="interestEarned"
+              fill="#3B82F6"
+              name="Interest Earned"
               radius={[2, 2, 0, 0]}
             />
           </BarChart>
@@ -104,7 +104,7 @@ export function CalculatorChart({ data, type, title, height = 300 }: ChartProps)
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, value, percent }) => 
+              label={({ name, value, percent }) =>
                 `${name}: ${formatCurrency(value)} (${(percent * 100).toFixed(1)}%)`
               }
               outerRadius={80}
@@ -115,7 +115,7 @@ export function CalculatorChart({ data, type, title, height = 300 }: ChartProps)
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip 
+            <Tooltip
               formatter={(value: number) => formatCurrency(value)}
             />
           </PieChart>
@@ -129,7 +129,7 @@ export function CalculatorChart({ data, type, title, height = 300 }: ChartProps)
   return (
     <div className="w-full">
       {title && (
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4 text-center">
           {title}
         </h3>
       )}

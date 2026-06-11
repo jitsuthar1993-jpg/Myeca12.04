@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
-import { 
+import {
   Search,
   BookOpen,
   FileText,
@@ -28,7 +28,7 @@ const knowledgeCategories = [
     icon: FileText,
     color: 'blue',
     articles: [
-      { 
+      {
         title: 'Understanding Income Tax in India',
         description: 'Guide to income-tax concepts, slab calculations, and records used for filing',
         readTime: '15 min',
@@ -292,18 +292,18 @@ export default function KnowledgeBasePage() {
       case 'Beginner': return 'bg-green-100 text-green-700';
       case 'Intermediate': return 'bg-yellow-100 text-yellow-700';
       case 'Advanced': return 'bg-red-100 text-red-700';
-      default: return 'bg-gray-100 text-gray-700';
+      default: return 'bg-slate-100 text-slate-700';
     }
   };
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Knowledge Base - Tax Guides & Articles | MyeCA.in"
         description="Tax knowledge base with guides on income tax, GST, investments, and business taxation."
       />
-      
-      <div className="min-h-screen bg-gray-50">
+
+      <div className="min-h-screen bg-slate-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
           <div className="container mx-auto px-4">
@@ -315,16 +315,16 @@ export default function KnowledgeBasePage() {
               <p className="text-xl mb-8 text-indigo-100">
                 Expert-written guides and articles on all aspects of taxation
               </p>
-              
+
               {/* Search Bar */}
               <div className="relative max-w-2xl mx-auto">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <Input
                   type="text"
                   placeholder="Search articles, guides, tax topics..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-6 text-lg bg-white text-gray-900 placeholder-gray-500 rounded-lg shadow-lg"
+                  className="pl-12 pr-4 py-6 text-lg bg-white text-slate-900 placeholder-gray-500 rounded-lg shadow-lg"
                 />
               </div>
             </div>
@@ -347,14 +347,14 @@ export default function KnowledgeBasePage() {
                   <CardTitle className="text-lg">{article.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-3">{article.description}</p>
+                  <p className="text-slate-600 mb-3">{article.description}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-sm text-gray-500">
+                    <div className="flex items-center gap-3 text-sm text-slate-500">
                       <span>{article.category}</span>
                       <span>•</span>
                       <span>{article.readTime}</span>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <ChevronRight className="w-5 h-5 text-slate-400" />
                   </div>
                 </CardContent>
               </Card>
@@ -411,19 +411,19 @@ export default function KnowledgeBasePage() {
                           key={index}
                           href={article.href}
                         >
-                          <div className="p-4 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                          <div className="p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
                             <div className="flex items-start justify-between mb-2">
-                              <h3 className="font-semibold text-gray-900 flex-1">
+                              <h3 className="font-semibold text-slate-900 flex-1">
                                 {article.title}
                               </h3>
                               <Badge className={getLevelColor(article.level)} variant="secondary">
                                 {article.level}
                               </Badge>
                             </div>
-                            <p className="text-sm text-gray-600 mb-2">
+                            <p className="text-sm text-slate-600 mb-2">
                               {article.description}
                             </p>
-                            <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <div className="flex items-center gap-3 text-sm text-slate-500">
                               <span>{article.readTime}</span>
                               <ChevronRight className="w-4 h-4 ml-auto" />
                             </div>
@@ -442,7 +442,7 @@ export default function KnowledgeBasePage() {
             <CardContent className="text-center py-8">
               <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
               <h3 className="text-2xl font-semibold mb-3">Need Help Choosing the Next Step?</h3>
-              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+              <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                 MyeCA tax experts are available to help you with personalized tax planning and filing questions
               </p>
               <div className="flex gap-4 justify-center">

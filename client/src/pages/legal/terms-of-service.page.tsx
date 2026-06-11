@@ -6,7 +6,7 @@ import MetaSEO from "@/components/seo/MetaSEO";
 export default function TermsOfServicePage() {
   return (
     <>
-      <MetaSEO 
+      <MetaSEO
         title="Terms of Service - MyeCA.in | Platform Rules & Guidelines"
         description="Read the MyeCA.in Terms of Service. By using our platform and services, you agree to comply with our user responsibilities, payment terms, and legal guidelines."
         breadcrumbs={[
@@ -14,7 +14,7 @@ export default function TermsOfServicePage() {
           { name: "Terms of Service", url: "/legal/terms-of-service" }
         ]}
       />
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <section className="bg-white border-b soft-border py-16">
         <div className="container mx-auto px-6">
@@ -29,11 +29,11 @@ export default function TermsOfServicePage() {
                 <Scale className="w-8 h-8 text-blue-600" />
               </div>
             </div>
-            <h1 className="type-page-title mb-4 text-gray-900">Terms of Service</h1>
-            <p className="type-body text-gray-600 max-w-3xl mx-auto">
+            <h1 className="type-page-title mb-4 text-slate-900">Terms of Service</h1>
+            <p className="type-body text-slate-600 max-w-3xl mx-auto">
               Please read these terms carefully before using our platform and services.
             </p>
-            <p className="type-meta text-gray-500 mt-4">Last updated: January 19, 2025</p>
+            <p className="type-meta text-slate-500 mt-4">Last updated: January 19, 2025</p>
           </m.div>
         </div>
       </section>
@@ -49,10 +49,10 @@ export default function TermsOfServicePage() {
           >
             {/* Agreement */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Agreement to Terms</h2>
-              <p className="text-gray-600 mb-4">
-                These Terms of Service ("Terms") constitute a legally binding agreement between you and 
-                MyeCA Technologies Private Limited ("MyeCA", "we", "us", or "our"), governing your use 
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Agreement to Terms</h2>
+              <p className="text-slate-600 mb-4">
+                These Terms of Service ("Terms") constitute a legally binding agreement between you and
+                MyeCA Technologies Private Limited ("MyeCA", "we", "us", or "our"), governing your use
                 of the MyeCA.in platform and all related services.
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -61,7 +61,7 @@ export default function TermsOfServicePage() {
                   <div>
                     <h3 className="font-semibold text-blue-800 mb-2">Important Notice</h3>
                     <p className="text-blue-700 text-sm">
-                      By accessing or using our platform, you agree to be bound by these Terms. 
+                      By accessing or using our platform, you agree to be bound by these Terms.
                       If you do not agree to these Terms, please do not use our services.
                     </p>
                   </div>
@@ -73,20 +73,20 @@ export default function TermsOfServicePage() {
             <div className="mb-12">
               <div className="flex items-center mb-6">
                 <Users className="w-6 h-6 text-blue-600 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">Eligibility</h2>
+                <h2 className="text-2xl font-bold text-slate-900">Eligibility</h2>
               </div>
-              
+
               <div className="space-y-4">
-                <p className="text-gray-600">You may use our services only if:</p>
-                <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
+                <p className="text-slate-600">You may use our services only if:</p>
+                <ul className="list-disc list-inside text-slate-600 space-y-2 ml-4">
                   <li>You are at least 18 years of age</li>
                   <li>You are a resident of India or Non-Resident Indian (NRI)</li>
                   <li>You have the legal capacity to enter into binding contracts</li>
                   <li>You are not prohibited from using our services under applicable laws</li>
                   <li>You have not been previously suspended or banned from our platform</li>
                 </ul>
-                <p className="text-gray-600 mt-4">
-                  If you are using our services on behalf of an organization, you represent that 
+                <p className="text-slate-600 mt-4">
+                  If you are using our services on behalf of an organization, you represent that
                   you have the authority to bind that organization to these Terms.
                 </p>
               </div>
@@ -96,13 +96,13 @@ export default function TermsOfServicePage() {
             <div className="mb-12">
               <div className="flex items-center mb-6">
                 <FileText className="w-6 h-6 text-blue-600 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">Our Services</h2>
+                <h2 className="text-2xl font-bold text-slate-900">Our Services</h2>
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-blue-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Tax Services</h3>
-                  <ul className="text-gray-600 space-y-1 text-sm">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Tax Services</h3>
+                  <ul className="text-slate-600 space-y-1 text-sm">
                     <li>• Income Tax Return (ITR) filing</li>
                     <li>• Tax planning and advisory</li>
                     <li>• Notice compliance and handling</li>
@@ -110,10 +110,10 @@ export default function TermsOfServicePage() {
                     <li>• TDS filing and compliance</li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-green-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Business Services</h3>
-                  <ul className="text-gray-600 space-y-1 text-sm">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Business Services</h3>
+                  <ul className="text-slate-600 space-y-1 text-sm">
                     <li>• Company registration and incorporation</li>
                     <li>• License and permit applications</li>
                     <li>• Trademark and IP services</li>
@@ -121,20 +121,20 @@ export default function TermsOfServicePage() {
                     <li>• Audit and bookkeeping</li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-purple-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Financial Tools</h3>
-                  <ul className="text-gray-600 space-y-1 text-sm">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Financial Tools</h3>
+                  <ul className="text-slate-600 space-y-1 text-sm">
                     <li>• Tax calculators and planners</li>
                     <li>• Investment calculators</li>
                     <li>• Loan EMI calculators</li>
                     <li>• Financial planning tools</li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-orange-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Expert Support</h3>
-                  <ul className="text-gray-600 space-y-1 text-sm">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Expert Support</h3>
+                  <ul className="text-slate-600 space-y-1 text-sm">
                     <li>• CA-assisted filing services</li>
                     <li>• Business-hours customer support</li>
                     <li>• Document review and verification</li>
@@ -146,12 +146,12 @@ export default function TermsOfServicePage() {
 
             {/* User Responsibilities */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Responsibilities</h2>
-              
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Responsibilities</h2>
+
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Account Security</h3>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Account Security</h3>
+                  <ul className="list-disc list-inside text-slate-600 space-y-1">
                     <li>Maintain the confidentiality of your login credentials</li>
                     <li>Notify us immediately of any unauthorized access</li>
                     <li>Use strong passwords and enable two-factor authentication</li>
@@ -160,8 +160,8 @@ export default function TermsOfServicePage() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Information Accuracy</h3>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Information Accuracy</h3>
+                  <ul className="list-disc list-inside text-slate-600 space-y-1">
                     <li>Provide accurate and complete information</li>
                     <li>Update your information when it changes</li>
                     <li>Ensure all tax-related data is correct and verifiable</li>
@@ -170,8 +170,8 @@ export default function TermsOfServicePage() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Prohibited Activities</h3>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Prohibited Activities</h3>
+                  <ul className="list-disc list-inside text-slate-600 space-y-1">
                     <li>Using the platform for illegal or fraudulent activities</li>
                     <li>Attempting to hack, disrupt, or compromise our systems</li>
                     <li>Sharing false, misleading, or harmful content</li>
@@ -183,13 +183,13 @@ export default function TermsOfServicePage() {
 
             {/* Payment Terms */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Payment Terms</h2>
-              
-              <div className="bg-gray-50 p-6 rounded-lg">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Payment Terms</h2>
+
+              <div className="bg-slate-50 p-6 rounded-lg">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Pricing & Billing</h3>
-                    <ul className="text-gray-600 space-y-1 text-sm">
+                    <h3 className="font-semibold text-slate-900 mb-3">Pricing & Billing</h3>
+                    <ul className="text-slate-600 space-y-1 text-sm">
                       <li>• All prices are in Indian Rupees (INR)</li>
                       <li>• Prices include applicable taxes unless stated otherwise</li>
                       <li>• Payment is due at the time of service selection</li>
@@ -197,10 +197,10 @@ export default function TermsOfServicePage() {
                       <li>• Service fees are non-refundable once work begins</li>
                     </ul>
                   </div>
-                  
+
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Government Fees</h3>
-                    <ul className="text-gray-600 space-y-1 text-sm">
+                    <h3 className="font-semibold text-slate-900 mb-3">Government Fees</h3>
+                    <ul className="text-slate-600 space-y-1 text-sm">
                       <li>• Government fees are separate from service charges</li>
                       <li>• These fees are paid directly to government portals</li>
                       <li>• Government fees are non-refundable</li>
@@ -215,9 +215,9 @@ export default function TermsOfServicePage() {
             <div className="mb-12">
               <div className="flex items-center mb-6">
                 <Shield className="w-6 h-6 text-blue-600 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">Service Limitations & Disclaimers</h2>
+                <h2 className="text-2xl font-bold text-slate-900">Service Limitations & Disclaimers</h2>
               </div>
-              
+
               <div className="space-y-6">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                   <div className="flex items-start">
@@ -225,7 +225,7 @@ export default function TermsOfServicePage() {
                     <div>
                       <h3 className="font-semibold text-yellow-800 mb-2">No Guarantee of Outcomes</h3>
                       <p className="text-yellow-700 text-sm">
-                        While we strive for accuracy, we cannot guarantee specific tax savings, 
+                        While we strive for accuracy, we cannot guarantee specific tax savings,
                         refund amounts, or approval of applications by government authorities.
                       </p>
                     </div>
@@ -233,8 +233,8 @@ export default function TermsOfServicePage() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Service Availability</h3>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Service Availability</h3>
+                  <ul className="list-disc list-inside text-slate-600 space-y-1">
                     <li>Services may be temporarily unavailable due to maintenance</li>
                     <li>We may modify or discontinue services with reasonable notice</li>
                     <li>Third-party integrations may affect service availability</li>
@@ -243,12 +243,12 @@ export default function TermsOfServicePage() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Limitation of Liability</h3>
-                  <p className="text-gray-600 mb-3">
-                    Our liability is limited to the fees paid for the specific service. 
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">Limitation of Liability</h3>
+                  <p className="text-slate-600 mb-3">
+                    Our liability is limited to the fees paid for the specific service.
                     We are not liable for:
                   </p>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <ul className="list-disc list-inside text-slate-600 space-y-1">
                     <li>Indirect, consequential, or punitive damages</li>
                     <li>Loss of business, profits, or data</li>
                     <li>Actions or decisions of government authorities</li>
@@ -260,15 +260,15 @@ export default function TermsOfServicePage() {
 
             {/* Intellectual Property */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Intellectual Property</h2>
-              <p className="text-gray-600 mb-4">
-                All content, features, and functionality on our platform, including but not limited to 
-                text, graphics, logos, software, and trademarks, are owned by MyeCA or our licensors 
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Intellectual Property</h2>
+              <p className="text-slate-600 mb-4">
+                All content, features, and functionality on our platform, including but not limited to
+                text, graphics, logos, software, and trademarks, are owned by MyeCA or our licensors
                 and are protected by intellectual property laws.
               </p>
               <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">You may not:</h3>
-                <ul className="text-gray-600 space-y-1 text-sm">
+                <h3 className="font-semibold text-slate-900 mb-2">You may not:</h3>
+                <ul className="text-slate-600 space-y-1 text-sm">
                   <li>• Copy, modify, or distribute our proprietary content</li>
                   <li>• Reverse engineer our software or systems</li>
                   <li>• Use our trademarks without permission</li>
@@ -279,20 +279,20 @@ export default function TermsOfServicePage() {
 
             {/* Termination */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Termination</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Termination</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">By You</h3>
-                  <p className="text-gray-600 text-sm mb-3">
-                    You may terminate your account at any time by contacting customer support. 
+                  <h3 className="font-semibold text-slate-900 mb-3">By You</h3>
+                  <p className="text-slate-600 text-sm mb-3">
+                    You may terminate your account at any time by contacting customer support.
                     Termination does not relieve you of payment obligations for completed services.
                   </p>
                 </div>
-                
+
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">By Us</h3>
-                  <p className="text-gray-600 text-sm mb-3">
-                    We may suspend or terminate your account for violations of these Terms, 
+                  <h3 className="font-semibold text-slate-900 mb-3">By Us</h3>
+                  <p className="text-slate-600 text-sm mb-3">
+                    We may suspend or terminate your account for violations of these Terms,
                     illegal activities, or other reasons deemed necessary for platform security.
                   </p>
                 </div>
@@ -301,15 +301,15 @@ export default function TermsOfServicePage() {
 
             {/* Governing Law */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Governing Law & Dispute Resolution</h2>
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <p className="text-gray-600 mb-4">
-                  These Terms are governed by the laws of India. Any disputes arising from these Terms 
-                  or your use of our services shall be subject to the exclusive jurisdiction of the 
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Governing Law & Dispute Resolution</h2>
+              <div className="bg-slate-50 p-6 rounded-lg">
+                <p className="text-slate-600 mb-4">
+                  These Terms are governed by the laws of India. Any disputes arising from these Terms
+                  or your use of our services shall be subject to the exclusive jurisdiction of the
                   courts in Bangalore, Karnataka, India.
                 </p>
-                <h3 className="font-semibold text-gray-900 mb-2">Dispute Resolution Process:</h3>
-                <ol className="list-decimal list-inside text-gray-600 space-y-1 text-sm">
+                <h3 className="font-semibold text-slate-900 mb-2">Dispute Resolution Process:</h3>
+                <ol className="list-decimal list-inside text-slate-600 space-y-1 text-sm">
                   <li>First attempt resolution through customer support</li>
                   <li>Escalation to management if unresolved within 15 days</li>
                   <li>Arbitration as per Arbitration and Conciliation Act, 1996</li>
@@ -320,44 +320,44 @@ export default function TermsOfServicePage() {
 
             {/* Contact Information */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Us</h2>
-              <p className="text-gray-600 mb-6">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Contact Us</h2>
+              <p className="text-slate-600 mb-6">
                 For questions about these Terms or our services:
               </p>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="flex items-start">
                   <Mail className="w-5 h-5 text-blue-600 mr-3 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">legal@myeca.in</p>
-                    <p className="text-gray-600">support@myeca.in</p>
+                    <h3 className="font-semibold text-slate-900">Email</h3>
+                    <p className="text-slate-600">legal@myeca.in</p>
+                    <p className="text-slate-600">support@myeca.in</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start">
                   <Phone className="w-5 h-5 text-blue-600 mr-3 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-gray-900">Customer Support</h3>
-                    <p className="text-gray-600">Request support by email</p>
-                    <p className="text-gray-600 text-sm">Mon-Sat: 9 AM - 7 PM IST</p>
+                    <h3 className="font-semibold text-slate-900">Customer Support</h3>
+                    <p className="text-slate-600">Request support by email</p>
+                    <p className="text-slate-600 text-sm">Mon-Sat: 9 AM - 7 PM IST</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Updates */}
-            <div className="border-t border-gray-200 pt-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Changes to Terms</h2>
-              <p className="text-gray-600 mb-4">
-                We may update these Terms from time to time to reflect changes in our services, 
-                applicable laws, or business practices. We will notify you of material changes 
+            <div className="border-t border-slate-200 pt-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Changes to Terms</h2>
+              <p className="text-slate-600 mb-4">
+                We may update these Terms from time to time to reflect changes in our services,
+                applicable laws, or business practices. We will notify you of material changes
                 through email or platform notifications.
               </p>
               <div className="flex items-start bg-green-50 border border-green-200 rounded-lg p-4">
                 <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-1" />
                 <p className="text-green-700 text-sm">
-                  Your continued use of our services after changes become effective constitutes 
+                  Your continued use of our services after changes become effective constitutes
                   acceptance of the updated Terms.
                 </p>
               </div>

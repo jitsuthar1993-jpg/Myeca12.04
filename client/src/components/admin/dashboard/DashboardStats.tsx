@@ -20,13 +20,13 @@ interface StatCardProps {
 function StatCard({ title, value, subtitle, change, icon: Icon, iconBg = 'bg-blue-100', trend = 'neutral' }: StatCardProps) {
   const isPositive = change !== undefined && change > 0;
   const ChangeIcon = isPositive ? ArrowUp : ArrowDown;
-  
+
   return (
     <Card className="h-full bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className={cn('p-3 rounded-lg', iconBg)}>
-            <Icon className={cn('h-6 w-6', iconBg.includes('blue') ? 'text-[#315efb]' : iconBg.includes('green') ? 'text-green-600' : 'text-[#315efb]')} />
+            <Icon className={cn('h-6 w-6', iconBg.includes('blue') ? 'text-brand-600' : iconBg.includes('green') ? 'text-green-600' : 'text-brand-600')} />
           </div>
           {change !== undefined && (
             <Badge className={cn(
@@ -39,12 +39,12 @@ function StatCard({ title, value, subtitle, change, icon: Icon, iconBg = 'bg-blu
           )}
         </div>
         <div>
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-[#315efb] mb-1">
+          <p className="text-sm font-medium text-slate-600 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-brand-600 mb-1">
             {value}
           </p>
           {subtitle && (
-            <p className="text-xs text-gray-500">{subtitle}</p>
+            <p className="text-xs text-slate-500">{subtitle}</p>
           )}
         </div>
       </CardContent>
@@ -64,9 +64,9 @@ export function DashboardStats({ stats, isLoading = false }: DashboardStatsProps
         {[...Array(4)].map((_, i) => (
           <Card key={i} className="h-full animate-pulse">
             <CardContent className="p-6">
-              <div className="h-12 bg-gray-200 rounded mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-12 bg-slate-200 rounded mb-4"></div>
+              <div className="h-8 bg-slate-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-slate-200 rounded w-1/2"></div>
             </CardContent>
           </Card>
         ))}
@@ -85,7 +85,7 @@ export function DashboardStats({ stats, isLoading = false }: DashboardStatsProps
         iconBg="bg-gradient-to-br from-blue-100 to-indigo-100"
         trend={stats.revenue.growthPercent >= 0 ? 'up' : 'down'}
       />
-      
+
       <StatCard
         title="Total Users"
         value={formatNumber(stats.users.total)}
@@ -95,7 +95,7 @@ export function DashboardStats({ stats, isLoading = false }: DashboardStatsProps
         iconBg="bg-gradient-to-br from-green-100 to-emerald-100"
         trend={stats.users.growthPercent >= 0 ? 'up' : 'down'}
       />
-      
+
       <StatCard
         title="Active Services"
         value={formatNumber(stats.services.active)}
@@ -103,14 +103,14 @@ export function DashboardStats({ stats, isLoading = false }: DashboardStatsProps
         icon={ShoppingBag}
         iconBg="bg-gradient-to-br from-purple-100 to-pink-100"
       />
-      
+
       <StatCard
         title="System Health"
         value={stats.systemHealth.status === 'healthy' ? `${stats.systemHealth.uptime}%` : 'Warning'}
         subtitle={`Status: ${stats.systemHealth.status}`}
         icon={Activity}
         iconBg={cn(
-          stats.systemHealth.status === 'healthy' 
+          stats.systemHealth.status === 'healthy'
             ? 'bg-gradient-to-br from-green-100 to-emerald-100'
             : 'bg-gradient-to-br from-yellow-100 to-orange-100'
         )}

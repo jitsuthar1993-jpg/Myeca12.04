@@ -43,7 +43,7 @@ export default function ExpertTaxReviewPage() {
             Credential-checked tax professional
           </div>
           <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
-            CA-Assisted Review <span className="text-[#315efb]">Before Filing Where Applicable</span>
+            CA-Assisted Review <span className="text-brand-600">Before Filing Where Applicable</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
             CA-assisted plans include expert review before submission. The review checks source documents, deductions, and common notice-risk areas.
@@ -71,7 +71,7 @@ export default function ExpertTaxReviewPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {caProcess.map((step) => (
               <div key={step.num} className="p-8 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
-                <div className="w-11 h-11 mb-5 rounded-xl bg-[#315efb] flex items-center justify-center text-white font-black text-base">
+                <div className="w-11 h-11 mb-5 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-base">
                   {step.num}
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-3">{step.title}</h3>
@@ -139,8 +139,8 @@ export default function ExpertTaxReviewPage() {
                 { icon: MessageSquare, label: "Post-filing support", desc: "If the department sends a notice after filing, response help can be scoped separately." },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                  <div className="w-9 h-9 shrink-0 rounded-lg bg-[#315efb]/8 flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-[#315efb]" />
+                  <div className="w-9 h-9 shrink-0 rounded-lg bg-brand-600/8 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-brand-600" />
                   </div>
                   <div>
                     <div className="font-bold text-slate-900 text-sm">{label}</div>
@@ -154,13 +154,13 @@ export default function ExpertTaxReviewPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-[#315efb] text-white text-center">
+      <section className="py-16 bg-brand-600 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
           <h2 className="text-3xl font-extrabold mb-4">Choose the filing scope that fits your return.</h2>
           <p className="text-blue-100 mb-8">ITR-1 starts at ₹499 excluding GST. CA-assisted review is included only where the selected plan's written scope says so.</p>
           <Link href="/which-itr-form-to-file?source=expert_review_feature_cta">
-            <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
+            <Button size="lg" className="bg-white text-brand-600 hover:bg-blue-50 gap-2">
               Start Assisted Filing <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>

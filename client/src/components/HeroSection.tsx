@@ -11,32 +11,32 @@ export default function HeroSection() {
           {/* Left Content */}
           <div className="text-center lg:text-left">
             <m.h1
-              className="type-hero-title text-gray-900 mb-6"
+              className="type-hero-title text-slate-900 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              Guided <span className="text-[#315efb]">Tax Filing Assistant</span>
+              Guided <span className="text-brand-600">Tax Filing Assistant</span>
             </m.h1>
-            
+
             <m.p
-              className="text-xl text-gray-700 font-semibold mb-4"
+              className="text-xl text-slate-700 font-semibold mb-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Guided ITR Filing - Starting at <span className="text-[#315efb] font-bold">₹499</span>
+              Guided ITR Filing - Starting at <span className="text-brand-600 font-bold">₹499</span>
             </m.p>
 
             <m.p
-              className="text-lg text-gray-600 mb-6"
+              className="text-lg text-slate-600 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
               Upload your documents, compare regimes, and add CA review where your filing package or facts require it.
             </m.p>
-            
+
             {/* Filing support note */}
             <m.div
               className="flex items-center justify-center lg:justify-start space-x-2 mb-8"
@@ -44,7 +44,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <span className="rounded-full border border-blue-100 bg-white px-3 py-1 text-sm font-semibold text-gray-600">AY 2026-27 filing support</span>
+              <span className="rounded-full border border-blue-100 bg-white px-3 py-1 text-sm font-semibold text-slate-600">AY 2026-27 filing support</span>
             </m.div>
 
             {/* Assessment Year Selector */}
@@ -54,7 +54,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <label className="text-gray-700 font-medium">Assessment Year:</label>
+              <label className="text-slate-700 font-medium">Assessment Year:</label>
               <Select defaultValue="2026-27">
                 <SelectTrigger className="w-40 border-2 border-primary/20 focus:border-primary rounded-sm">
                   <SelectValue />
@@ -100,66 +100,66 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1 }}
           >
-            <h3 className="text-xl font-bold text-center mb-6 text-gray-800">How the ITR Filing Workflow Works</h3>
+            <h3 className="text-xl font-bold text-center mb-6 text-slate-800">How the ITR Filing Workflow Works</h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Step 1 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">1</span>
                   </div>
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2 text-sm">Upload Your Documents</h4>
-                <p className="text-gray-600 text-xs">Form 16, Bank statements, Investment proofs</p>
+                <h4 className="font-semibold text-slate-800 mb-2 text-sm">Upload Your Documents</h4>
+                <p className="text-slate-600 text-xs">Form 16, Bank statements, Investment proofs</p>
               </div>
 
               {/* Step 2 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">2</span>
                   </div>
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2 text-sm">Pre-Filled ITR Form</h4>
-                <p className="text-gray-600 text-xs">Our system auto-fills your ITR form</p>
+                <h4 className="font-semibold text-slate-800 mb-2 text-sm">Pre-Filled ITR Form</h4>
+                <p className="text-slate-600 text-xs">Our system auto-fills your ITR form</p>
               </div>
 
               {/* Step 3 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">3</span>
                   </div>
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2 text-sm">CA Review</h4>
-                <p className="text-gray-600 text-xs">Add expert review before filing</p>
+                <h4 className="font-semibold text-slate-800 mb-2 text-sm">CA Review</h4>
+                <p className="text-slate-600 text-xs">Add expert review before filing</p>
               </div>
 
               {/* Step 4 */}
               <div className="text-center">
                 <div className="w-12 h-12 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-6 h-6 bg-[#315efb] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">4</span>
                   </div>
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2 text-sm">File & Submit</h4>
-                <p className="text-gray-600 text-xs">Review, e-sign and submit to income tax department</p>
+                <h4 className="font-semibold text-slate-800 mb-2 text-sm">File & Submit</h4>
+                <p className="text-slate-600 text-xs">Review, e-sign and submit to income tax department</p>
               </div>
             </div>
 
             {/* Additional Info */}
-            <div className="flex justify-center items-center space-x-6 mt-6 pt-4 border-t border-gray-200">
+            <div className="flex justify-center items-center space-x-6 mt-6 pt-4 border-t border-slate-200">
               <div className="text-center">
-                <div className="text-lg font-bold text-[#315efb]">24 hrs</div>
-                <div className="text-xs text-gray-600">Target Turnaround</div>
+                <div className="text-lg font-bold text-brand-600">24 hrs</div>
+                <div className="text-xs text-slate-600">Target Turnaround</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-[#315efb]">CA</div>
-                <div className="text-xs text-gray-600">Review Add-on</div>
+                <div className="text-lg font-bold text-brand-600">CA</div>
+                <div className="text-xs text-slate-600">Review Add-on</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-[#315efb]">ITR</div>
-                <div className="text-xs text-gray-600">Filing Workflow</div>
+                <div className="text-lg font-bold text-brand-600">ITR</div>
+                <div className="text-xs text-slate-600">Filing Workflow</div>
               </div>
             </div>
           </m.div>

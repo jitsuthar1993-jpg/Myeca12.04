@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Factory, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Factory,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -54,7 +54,7 @@ export default function MSMEUdyamRegistrationPage() {
       icon: Building2
     },
     {
-      category: "Small Enterprise", 
+      category: "Small Enterprise",
       investment: "₹1-10 Crore",
       turnover: "₹5-50 Crore",
       color: "blue",
@@ -62,7 +62,7 @@ export default function MSMEUdyamRegistrationPage() {
     },
     {
       category: "Medium Enterprise",
-      investment: "₹10-50 Crore", 
+      investment: "₹10-50 Crore",
       turnover: "₹50-250 Crore",
       color: "purple",
       icon: TrendingUp
@@ -192,7 +192,7 @@ export default function MSMEUdyamRegistrationPage() {
         title="MSME Udyam Registration Online India | Benefits for Small Businesses"
         description="Register your business as an MSME on the official Udyam portal. Understand bank loan, subsidy, and tender benefits with an online documentation workflow."
         keywords={[
-          "MSME registration India", "Udyam registration online", "SSI registration", 
+          "MSME registration India", "Udyam registration online", "SSI registration",
           "MSME benefits", "Udyam portal registration", "startup benefits India",
           "Aadhaar based business registration", "MSME loan schemes"
         ]}
@@ -232,11 +232,11 @@ export default function MSMEUdyamRegistrationPage() {
                 <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center soft-shadow">
                   <Factory className="w-8 h-8 text-green-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   MSME Udyam Registration
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Free government portal registration. Benefits depend on eligibility, scheme rules, and lender or department review.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -254,14 +254,14 @@ export default function MSMEUdyamRegistrationPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-green-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Aadhaar-based portal workflow; confirm the records needed for your entity</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Globe className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Use only udyamregistration.gov.in portal.
@@ -294,10 +294,10 @@ export default function MSMEUdyamRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               MSME Classification Criteria 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Determine your enterprise category based on investment and annual turnover
             </p>
           </div>
@@ -314,12 +314,12 @@ export default function MSMEUdyamRegistrationPage() {
                 <CardContent className="text-center">
                   <div className="space-y-3">
                     <div>
-                      <div className="font-semibold text-gray-900">Investment Limit</div>
-                      <div className="text-sm text-gray-600">{category.investment}</div>
+                      <div className="font-semibold text-slate-900">Investment Limit</div>
+                      <div className="text-sm text-slate-600">{category.investment}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900">Turnover Limit</div>
-                      <div className="text-sm text-gray-600">{category.turnover}</div>
+                      <div className="font-semibold text-slate-900">Turnover Limit</div>
+                      <div className="text-sm text-slate-600">{category.turnover}</div>
                     </div>
                   </div>
                 </CardContent>
@@ -336,10 +336,10 @@ export default function MSMEUdyamRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               6-Step Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Paperless, document-free self-declaration based registration process
             </p>
           </div>
@@ -359,7 +359,7 @@ export default function MSMEUdyamRegistrationPage() {
                   <CardTitle className="text-lg font-bold">{step.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+                  <p className="text-sm text-slate-600 mb-3">{step.description}</p>
                   <div className="flex items-center text-xs text-green-600">
                     <Clock className="w-3 h-3 mr-1" />
                     <span>{step.duration}</span>
@@ -378,10 +378,10 @@ export default function MSMEUdyamRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Information Required - No Documents!
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete self-declaration based process with automatic verification
             </p>
           </div>
@@ -400,7 +400,7 @@ export default function MSMEUdyamRegistrationPage() {
                     {info.items.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${info.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{item}</span>
+                        <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -417,8 +417,8 @@ export default function MSMEUdyamRegistrationPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">
-                The portal automatically fetches and verifies information from Income Tax database (PAN), 
+              <p className="text-slate-700">
+                The portal automatically fetches and verifies information from Income Tax database (PAN),
                 GST database (GSTIN), and Aadhaar database. No manual document uploads required!
               </p>
             </CardContent>
@@ -433,10 +433,10 @@ export default function MSMEUdyamRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               MSME Registration Benefits 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Review government support, financing, and growth opportunities subject to eligibility
             </p>
           </div>
@@ -455,7 +455,7 @@ export default function MSMEUdyamRegistrationPage() {
                     {benefit.benefits.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${benefit.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{item}</span>
+                        <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -475,14 +475,14 @@ export default function MSMEUdyamRegistrationPage() {
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="bg-gradient-to-r from-green-50 to-blue-50">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+                <CardTitle className="text-2xl font-bold text-slate-900 mb-2">
                   💰 Registration Cost
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <div className="text-6xl font-bold text-green-600 mb-4">{"₹"}0</div>
-                <div className="text-lg text-gray-600 mb-4">Completely FREE</div>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <div className="text-lg text-slate-600 mb-4">Completely FREE</div>
+                <ul className="text-sm text-slate-600 space-y-1">
                   <li>✓ No registration fee</li>
                   <li>✓ No processing fee</li>
                   <li>✓ No renewal fee</li>
@@ -499,7 +499,7 @@ export default function MSMEUdyamRegistrationPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <CheckCircle className="w-4 h-4 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
                     <span><strong>Only use:</strong> udyamregistration.gov.in</span>
@@ -539,9 +539,9 @@ export default function MSMEUdyamRegistrationPage() {
                   <Factory className="w-5 h-5 mr-2" />
                   Register Now - FREE
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="border-green-200 bg-white text-green-700 hover:bg-green-50 px-8"
                   onClick={() => setIsCheckoutOpen(true)}
                 >

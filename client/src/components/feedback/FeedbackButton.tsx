@@ -29,8 +29,8 @@ export function FeedbackButton({ className }: FeedbackButtonProps) {
         <span className="sr-only">Send Feedback</span>
       </Button>
 
-      <FeedbackDialog 
-        open={isOpen} 
+      <FeedbackDialog
+        open={isOpen}
         onOpenChange={setIsOpen}
       />
     </>

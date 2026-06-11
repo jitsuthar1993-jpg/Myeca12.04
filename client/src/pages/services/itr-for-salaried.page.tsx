@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
 import { RouteSeo } from "@/components/seo/RouteSeo";
-import { 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
+import {
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
   Briefcase,
   TrendingUp,
   ArrowRight,
@@ -102,13 +102,13 @@ export default function ITRForSalariedPage() {
     const runSequence = async () => {
       // Positions pulled back significantly to ensure the arrow tip stops before the box edge
       const positions = [-19, 14, 47, 80];
-      
+
       for (let i = 0; i < 4; i++) {
         // Move arrow to "behind" the box
         setArrowPosition(positions[i]);
         // Wait for arrow to arrive (0.8s transition)
         await new Promise(resolve => setTimeout(resolve, 800));
-        
+
         // Continuous highlight once arrow is in position
         setHighlightedStep(i);
         // Pause to show the highlight before moving to next
@@ -117,7 +117,7 @@ export default function ITRForSalariedPage() {
     };
     runSequence();
   }, []);
-  
+
   const grossSalary = (Number(form16.basic) || 0) + (Number(form16.hra) || 0) + (Number(form16.special) || 0) + (Number(form16.lta) || 0);
   const totalDeductions = STANDARD_DEDUCTION_BY_REGIME.old + (Number(form16.sec80c) || 0) + (Number(form16.sec80d) || 0);
   const taxableIncome = Math.max(0, grossSalary - totalDeductions);
@@ -228,16 +228,16 @@ export default function ITRForSalariedPage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <Briefcase className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Income Tax Filing for <span className="text-blue-600">Salaried Employees</span>
                 </h1>
               </div>
-              <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mb-8">
+              <p className="text-lg text-slate-600 max-w-2xl leading-relaxed mb-8">
                 Prepare a salaried return from reconciled records. Review deductions, compare Form 16 with AIS and Form 26AS, and confirm the filing scope before submission.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-8"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
@@ -251,13 +251,13 @@ export default function ITRForSalariedPage() {
                   </Button>
                 </Link>
               </div>
-              <div className="mt-8 flex items-center gap-6 text-sm font-medium text-gray-600">
+              <div className="mt-8 flex items-center gap-6 text-sm font-medium text-slate-600">
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Review-Based Filing</span>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Data Privacy</span>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500"/> Notice Support</span>
               </div>
             </div>
-            
+
             <Card className="soft-shadow border-blue-100 bg-gradient-to-b from-blue-50/80 to-white">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-blue-900">
@@ -270,19 +270,19 @@ export default function ITRForSalariedPage() {
                 <ul className="space-y-4">
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <Clock className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">Due date for filing ITR for FY {DEFAULT_FINANCIAL_YEAR} without penalty is <strong>31st July 2026</strong>.</span>
+                    <span className="text-sm text-slate-700">Due date for filing ITR for FY {DEFAULT_FINANCIAL_YEAR} without penalty is <strong>31st July 2026</strong>.</span>
                   </li>
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <Scale className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700"><strong>New Tax Regime</strong> is the default regime under <strong>Section 115BAC</strong><SectionReferenceBadge section="115BAC" />. The standard deduction under New Regime is <strong>₹75,000</strong>.</span>
+                    <span className="text-sm text-slate-700"><strong>New Tax Regime</strong> is the default regime under <strong>Section 115BAC</strong><SectionReferenceBadge section="115BAC" />. The standard deduction under New Regime is <strong>₹75,000</strong>.</span>
                   </li>
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <TrendingUp className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700"><strong>Rebate under Section 87A</strong><SectionReferenceBadge section="87A" /> is up to {formatCurrency(REBATE_87A_BY_REGIME.new.maxRebate)} where taxable income does not exceed ₹12,00,000 under the New Tax Regime.</span>
+                    <span className="text-sm text-slate-700"><strong>Rebate under Section 87A</strong><SectionReferenceBadge section="87A" /> is up to {formatCurrency(REBATE_87A_BY_REGIME.new.maxRebate)} where taxable income does not exceed ₹12,00,000 under the New Tax Regime.</span>
                   </li>
                   <li className="flex items-start bg-white p-3 rounded-lg border border-blue-100">
                     <FileText className="w-5 h-5 mr-3 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{TAX_TRANSITION_NOTE}</span>
+                    <span className="text-sm text-slate-700">{TAX_TRANSITION_NOTE}</span>
                   </li>
                 </ul>
               </CardContent>
@@ -292,14 +292,14 @@ export default function ITRForSalariedPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
-        
+
         {/* Core Services Section */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-3xl font-semibold text-slate-900 mb-4">
               Salaried ITR Filing Scope
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Our service covers common salaried return complexities, with document-based review where deductions, house property, or capital gains need closer checks.
             </p>
           </div>
@@ -318,8 +318,8 @@ export default function ITRForSalariedPage() {
                   <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
                     <feature.icon className="w-6 h-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.desc}</p>
+                  <h3 className="font-semibold text-slate-900 mb-2">{feature.title}</h3>
+                  <p className="text-sm text-slate-600">{feature.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -329,10 +329,10 @@ export default function ITRForSalariedPage() {
         {/* Tax Regimes Comparison */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-3xl font-semibold text-slate-900 mb-4">
               Understanding Tax Regimes (FY {DEFAULT_FINANCIAL_YEAR})
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Compare the tax slabs to understand how your income is taxed.
             </p>
           </div>
@@ -369,7 +369,7 @@ export default function ITRForSalariedPage() {
                           <tr key={i} className="hover:bg-slate-50">
                             <td className="px-4 py-3 font-medium">{slab.income}</td>
                             <td className="px-4 py-3">{slab.rate}</td>
-                            <td className="px-4 py-3 text-gray-600">{slab.tax}</td>
+                            <td className="px-4 py-3 text-slate-600">{slab.tax}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -399,7 +399,7 @@ export default function ITRForSalariedPage() {
                           <tr key={i} className="hover:bg-slate-50">
                             <td className="px-4 py-3 font-medium">{slab.income}</td>
                             <td className="px-4 py-3">{slab.rate}</td>
-                            <td className="px-4 py-3 text-gray-600">{slab.tax}</td>
+                            <td className="px-4 py-3 text-slate-600">{slab.tax}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -414,10 +414,10 @@ export default function ITRForSalariedPage() {
         {/* Important Deductions */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-3xl font-semibold text-slate-900 mb-4">
               Deductions to Verify Before Filing
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Common deduction categories to verify against your records and old-regime eligibility.
             </p>
           </div>
@@ -430,7 +430,7 @@ export default function ITRForSalariedPage() {
                   <CardTitle className="text-lg">{deduction.section}<SectionReferenceBadge section={deduction.sectionKey} /></CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">{deduction.description}</p>
+                  <p className="text-sm text-slate-600">{deduction.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -440,21 +440,21 @@ export default function ITRForSalariedPage() {
         {/* Redesigned Process Steps */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">How We File Your ITR</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">A four-step process that keeps document checks, open questions, and filing decisions visible.</p>
+            <h2 className="text-3xl font-semibold text-slate-900 mb-4">How We File Your ITR</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">A four-step process that keeps document checks, open questions, and filing decisions visible.</p>
           </div>
 
           <div className="relative max-w-5xl mx-auto px-4">
             {/* Animated moving large arrow line for desktop */}
             <div className="hidden md:block absolute top-[40px] left-[12.5%] w-[75%] h-0.5 bg-slate-100 z-0 overflow-visible">
-              <m.div 
+              <m.div
                 className="absolute top-1/2 -translate-y-1/2"
-                animate={{ 
-                  left: `${arrowPosition}%` 
+                animate={{
+                  left: `${arrowPosition}%`
                 }}
-                transition={{ 
-                  duration: 0.8, 
-                  ease: "easeInOut" 
+                transition={{
+                  duration: 0.8,
+                  ease: "easeInOut"
                 }}
               >
                 <div className="flex items-center">
@@ -463,7 +463,7 @@ export default function ITRForSalariedPage() {
                 </div>
               </m.div>
             </div>
-            
+
             <div className="grid md:grid-cols-4 gap-8 relative z-10">
               {[
                 { no: "01", title: "Share Documents", desc: "Upload Form 16, bank statements & investment proofs securely.", icon: Upload, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" },
@@ -471,19 +471,19 @@ export default function ITRForSalariedPage() {
                 { no: "03", title: "Review Draft", desc: "We prepare the computation and share it with you for approval.", icon: FileText, color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-200" },
                 { no: "04", title: "E-Filing", desc: "We e-file the return and share the ITR-V acknowledgment with you.", icon: CheckCircle, color: "text-green-600", bg: "bg-green-50", border: "border-green-200" }
               ].map((step, i) => (
-                <m.div 
-                  key={i} 
+                <m.div
+                  key={i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.6, delay: i * 0.2 }}
-                  animate={{ 
+                  animate={{
                     scale: highlightedStep === i ? 1.05 : 1,
                   }}
                   className="flex flex-col items-center text-center group z-10"
                 >
-                  <m.div 
-                    animate={{ 
+                  <m.div
+                    animate={{
                       borderColor: highlightedStep === i ? "#2563eb" : "#e2e8f0",
                       backgroundColor: highlightedStep === i ? "#f8faff" : "#ffffff",
                       boxShadow: highlightedStep === i ? "0 10px 25px -5px rgba(37, 99, 235, 0.2)" : "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
@@ -495,15 +495,15 @@ export default function ITRForSalariedPage() {
                     </div>
                     <step.icon className={`w-8 h-8 transition-transform ${highlightedStep === i ? "text-blue-600 scale-110" : step.color}`} />
                   </m.div>
-                  <h3 className={`text-xl font-semibold mb-3 transition-colors ${highlightedStep === i ? "text-blue-600" : "text-gray-900"}`}>{step.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed px-2">{step.desc}</p>
+                  <h3 className={`text-xl font-semibold mb-3 transition-colors ${highlightedStep === i ? "text-blue-600" : "text-slate-900"}`}>{step.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed px-2">{step.desc}</p>
                 </m.div>
               ))}
             </div>
-            
+
             <div className="mt-16 text-center relative z-10">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 py-6 text-lg shadow-xl shadow-slate-200 transition-transform hover:scale-105"
                 onClick={() => setIsCheckoutOpen(true)}
               >
@@ -516,8 +516,8 @@ export default function ITRForSalariedPage() {
         {/* Form 16 Calculator */}
         <section className="scroll-mt-24" id="calculator">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">Quick Form 16 Calculator</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-semibold text-slate-900 mb-4">Quick Form 16 Calculator</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Estimate your taxable salary by entering the key components from your Form 16 (Part B).
             </p>
           </div>
@@ -526,7 +526,7 @@ export default function ITRForSalariedPage() {
             <Card className="border border-blue-100 shadow-xl shadow-blue-900/5 bg-white overflow-hidden rounded-3xl">
               <div className="grid md:grid-cols-5 h-full">
                 <div className="md:col-span-3 p-8 lg:p-10">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                  <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
                     <Calculator className="w-5 h-5 text-blue-600" />
                     Enter Salary Components
                   </h3>
@@ -535,11 +535,11 @@ export default function ITRForSalariedPage() {
                       <div className="space-y-2">
                         <Label htmlFor="basic">Basic Salary (Yearly)</Label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                          <Input 
-                            id="basic" 
-                            type="number" 
-                            placeholder="0" 
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                          <Input
+                            id="basic"
+                            type="number"
+                            placeholder="0"
                             className="pl-8"
                             value={form16.basic}
                             onChange={(e) => setForm16({...form16, basic: e.target.value})}
@@ -549,11 +549,11 @@ export default function ITRForSalariedPage() {
                       <div className="space-y-2">
                         <Label htmlFor="hra">HRA Received</Label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                          <Input 
-                            id="hra" 
-                            type="number" 
-                            placeholder="0" 
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                          <Input
+                            id="hra"
+                            type="number"
+                            placeholder="0"
                             className="pl-8"
                             value={form16.hra}
                             onChange={(e) => setForm16({...form16, hra: e.target.value})}
@@ -565,11 +565,11 @@ export default function ITRForSalariedPage() {
                       <div className="space-y-2">
                         <Label htmlFor="special">Special Allowances</Label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                          <Input 
-                            id="special" 
-                            type="number" 
-                            placeholder="0" 
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                          <Input
+                            id="special"
+                            type="number"
+                            placeholder="0"
                             className="pl-8"
                             value={form16.special}
                             onChange={(e) => setForm16({...form16, special: e.target.value})}
@@ -579,11 +579,11 @@ export default function ITRForSalariedPage() {
                       <div className="space-y-2">
                         <Label htmlFor="lta">LTA / Other Allowances</Label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                          <Input 
-                            id="lta" 
-                            type="number" 
-                            placeholder="0" 
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                          <Input
+                            id="lta"
+                            type="number"
+                            placeholder="0"
                             className="pl-8"
                             value={form16.lta}
                             onChange={(e) => setForm16({...form16, lta: e.target.value})}
@@ -591,17 +591,17 @@ export default function ITRForSalariedPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="pt-6 border-t border-gray-100">
-                      <h4 className="font-semibold text-gray-900 mb-4">Major Deductions (Old Regime)</h4>
+                    <div className="pt-6 border-t border-slate-100">
+                      <h4 className="font-semibold text-slate-900 mb-4">Major Deductions (Old Regime)</h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="sec80c">80C Investments</Label>
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                            <Input 
-                              id="sec80c" 
-                              type="number" 
-                              placeholder="Max 1.5L" 
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                            <Input
+                              id="sec80c"
+                              type="number"
+                              placeholder="Max 1.5L"
                               className="pl-8"
                               value={form16.sec80c}
                               onChange={(e) => setForm16({...form16, sec80c: e.target.value})}
@@ -611,11 +611,11 @@ export default function ITRForSalariedPage() {
                         <div className="space-y-2">
                           <Label htmlFor="sec80d">80D (Health Insurance)</Label>
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                            <Input 
-                              id="sec80d" 
-                              type="number" 
-                              placeholder="0" 
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                            <Input
+                              id="sec80d"
+                              type="number"
+                              placeholder="0"
                               className="pl-8"
                               value={form16.sec80d}
                               onChange={(e) => setForm16({...form16, sec80d: e.target.value})}
@@ -626,23 +626,23 @@ export default function ITRForSalariedPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="md:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 p-8 lg:p-10 text-slate-900 flex flex-col justify-center relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/60 rounded-full blur-2xl" />
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-100/60 rounded-full blur-2xl" />
-                  
+
                   <div className="relative z-10">
                     <h3 className="text-xl font-semibold mb-8 text-slate-900 flex items-center gap-2">
                       <Receipt className="w-5 h-5 text-blue-600" />
                       Computation
                     </h3>
-                    
+
                     <div className="space-y-6 flex-1">
                       <div>
                         <p className="text-slate-500 text-sm mb-1">Gross Salary</p>
                         <p className="text-2xl font-semibold text-slate-900">₹{grossSalary.toLocaleString('en-IN')}</p>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-slate-500">Standard Deduction</span>
@@ -653,7 +653,7 @@ export default function ITRForSalariedPage() {
                           <span className="text-red-600">- ₹{(totalDeductions - STANDARD_DEDUCTION_BY_REGIME.old).toLocaleString('en-IN')}</span>
                         </div>
                       </div>
-                      
+
                       <div className="pt-6 border-t border-blue-100">
                         <p className="text-slate-600 font-medium mb-1">Estimated Taxable Income</p>
                         <p className="text-4xl font-bold text-green-700">₹{taxableIncome.toLocaleString('en-IN')}</p>
@@ -670,8 +670,8 @@ export default function ITRForSalariedPage() {
         {/* Related Calculators */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">Financial Calculators</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-semibold text-slate-900 mb-4">Financial Calculators</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Plan your taxes and investments better with our free, easy-to-use calculators.
             </p>
           </div>
@@ -684,13 +684,13 @@ export default function ITRForSalariedPage() {
               { title: "Regime Comparator", desc: "Compare old vs new tax regimes using your eligible deductions.", icon: Scale, link: "/calculators/tax-regime", color: "text-purple-600", bg: "bg-purple-50" }
             ].map((calc, i) => (
               <Link key={i} href={calc.link}>
-                <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-gray-100 group">
+                <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-slate-100 group">
                   <CardContent className="p-6">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${calc.bg} ${calc.color} group-hover:scale-110 transition-transform`}>
                       <calc.icon className="w-6 h-6" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{calc.title}</h3>
-                    <p className="text-sm text-gray-600">{calc.desc}</p>
+                    <h3 className="font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{calc.title}</h3>
+                    <p className="text-sm text-slate-600">{calc.desc}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -698,7 +698,7 @@ export default function ITRForSalariedPage() {
           </div>
           <div className="text-center mt-8">
             <Link href="/calculators">
-              <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+              <Button variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
                 View All Calculators <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -709,7 +709,7 @@ export default function ITRForSalariedPage() {
         <section className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-3xl p-8 lg:p-12 relative overflow-hidden border border-blue-100 shadow-lg shadow-blue-900/5 max-w-5xl mx-auto">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/70 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-100/60 rounded-full blur-3xl" />
-          
+
           <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-semibold mb-4 text-slate-900">Get a Free Tax Draft</h2>
@@ -728,7 +728,7 @@ export default function ITRForSalariedPage() {
                 </li>
               </ul>
             </div>
-            
+
             <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur">
               <CardContent className="p-8">
                 {leadSubmitted ? (
@@ -736,14 +736,14 @@ export default function ITRForSalariedPage() {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle className="w-8 h-8 text-green-600" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">Request Received!</h3>
-                    <p className="text-gray-600">
+                    <h3 className="text-2xl font-semibold text-slate-900 mb-2">Request Received!</h3>
+                    <p className="text-slate-600">
                       Thank you, {leadForm.name}. One of our tax experts will call you shortly on {leadForm.phone}.
                     </p>
                   </div>
                 ) : (
                   <form onSubmit={handleLeadSubmit} className="space-y-4">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Request a Preliminary Review</h3>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-4">Request a Preliminary Review</h3>
                     {leadError && (
                       <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                         {leadError}
@@ -751,9 +751,9 @@ export default function ITRForSalariedPage() {
                     )}
                     <div className="space-y-2">
                       <Label htmlFor="lead-name">Full Name</Label>
-                      <Input 
-                        id="lead-name" 
-                        placeholder="e.g. John Doe" 
+                      <Input
+                        id="lead-name"
+                        placeholder="e.g. John Doe"
                         required
                         value={leadForm.name}
                         onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
@@ -761,10 +761,10 @@ export default function ITRForSalariedPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lead-email">Email Address</Label>
-                      <Input 
-                        id="lead-email" 
-                        type="email" 
-                        placeholder="john@example.com" 
+                      <Input
+                        id="lead-email"
+                        type="email"
+                        placeholder="john@example.com"
                         required
                         value={leadForm.email}
                         onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
@@ -772,9 +772,9 @@ export default function ITRForSalariedPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lead-phone">Phone Number</Label>
-                      <Input 
-                        id="lead-phone" 
-                        type="tel" 
+                      <Input
+                        id="lead-phone"
+                        type="tel"
                         placeholder={CONTACT.phonePlaceholder}
                         required
                         value={leadForm.phone}
@@ -791,7 +791,7 @@ export default function ITRForSalariedPage() {
                         "Get Free Tax Draft"
                       )}
                     </Button>
-                    <p className="text-xs text-center text-gray-500 mt-4">
+                    <p className="text-xs text-center text-slate-500 mt-4">
                       By submitting this form, you agree to our terms and privacy policy.
                     </p>
                   </form>
@@ -807,29 +807,29 @@ export default function ITRForSalariedPage() {
             <div className="lg:w-1/3">
               <div className="sticky top-24">
                 <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 mb-4 px-4 py-1 text-sm rounded-full">Support Center</Badge>
-                <h2 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                <h2 className="text-4xl font-bold text-slate-900 mb-6 leading-tight">
                   Have any <span className="text-blue-600">questions?</span>
                 </h2>
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  Everything you need to know about salary tax filing and optimization. Can't find what you're looking for? 
+                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                  Everything you need to know about salary tax filing and optimization. Can't find what you're looking for?
                 </p>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                     <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
                       <Phone className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Expert Support</p>
-                      <p className="text-base font-semibold text-gray-900">Request a callback</p>
+                      <p className="text-sm font-medium text-slate-500">Expert Support</p>
+                      <p className="text-base font-semibold text-slate-900">Request a callback</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                     <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
                       <HelpCircle className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Quick Chat</p>
-                      <p className="text-base font-semibold text-gray-900">Expert WhatsApp</p>
+                      <p className="text-sm font-medium text-slate-500">Quick Chat</p>
+                      <p className="text-base font-semibold text-slate-900">Expert WhatsApp</p>
                     </div>
                   </div>
                 </div>
@@ -839,12 +839,12 @@ export default function ITRForSalariedPage() {
             <div className="lg:w-2/3">
               <Accordion type="single" collapsible className="space-y-4 w-full">
                 {faqs.map((faq, i) => (
-                  <AccordionItem 
-                    key={i} 
-                    value={`item-${i}`} 
-                    className="border-none bg-white rounded-2xl px-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-50 overflow-hidden"
+                  <AccordionItem
+                    key={i}
+                    value={`item-${i}`}
+                    className="border-none bg-white rounded-2xl px-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-50 overflow-hidden"
                   >
-                    <AccordionTrigger className="text-left font-semibold text-gray-900 hover:text-blue-600 py-6 hover:no-underline text-lg group">
+                    <AccordionTrigger className="text-left font-semibold text-slate-900 hover:text-blue-600 py-6 hover:no-underline text-lg group">
                       <span className="flex items-center gap-4">
                         <span className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-xs text-slate-400 font-bold group-data-[state=open]:bg-blue-600 group-data-[state=open]:text-white transition-colors">
                           {i + 1}
@@ -852,7 +852,7 @@ export default function ITRForSalariedPage() {
                         {faq.q}
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="text-gray-600 pb-6 leading-relaxed pl-12 pr-4 text-base border-t border-gray-50 pt-4">
+                    <AccordionContent className="text-slate-600 pb-6 leading-relaxed pl-12 pr-4 text-base border-t border-slate-50 pt-4">
                       {faq.a}
                     </AccordionContent>
                   </AccordionItem>
@@ -864,7 +864,7 @@ export default function ITRForSalariedPage() {
 
       </div>
 
-      <ServiceCheckoutModal 
+      <ServiceCheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         serviceId="itr-for-salaried"

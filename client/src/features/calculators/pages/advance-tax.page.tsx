@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { 
+import {
   Calculator, Calendar, IndianRupee, AlertTriangle, CheckCircle,
   Bell, FileText, Wallet, Sparkles, TrendingUp,
   ShieldCheck, Zap, Receipt, Shield, FileSpreadsheet, Info
@@ -75,7 +75,7 @@ export default function AdvanceTaxCalculatorPage() {
     const totalTdsAndTcs = inputs.tdsDeducted + inputs.tcsCollected;
     const netTaxLiability = Math.max(0, totalTax - totalTdsAndTcs);
     const advanceTaxRequired = netTaxLiability > 10000;
-    
+
     const quarterlyAnalysis = schedule.map((installment, index) => {
       const cumulativeAmount = (netTaxLiability * installment.cumulativePercent) / 100;
       const paidTillQuarter = [
@@ -84,9 +84,9 @@ export default function AdvanceTaxCalculatorPage() {
         inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2 + inputs.advanceTaxPaid.q3,
         inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2 + inputs.advanceTaxPaid.q3 + inputs.advanceTaxPaid.q4,
       ][index];
-      
+
       const shortfall = Math.max(0, cumulativeAmount - paidTillQuarter);
-      
+
       return {
         ...installment,
         cumulativeAmount,
@@ -97,7 +97,7 @@ export default function AdvanceTaxCalculatorPage() {
 
     const totalAdvanceTaxPaid = inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2 + inputs.advanceTaxPaid.q3 + inputs.advanceTaxPaid.q4;
     const balanceTax = Math.max(0, netTaxLiability - totalAdvanceTaxPaid - inputs.selfAssessmentPaid);
-    
+
     return {
       totalTax,
       netTaxLiability,
@@ -128,7 +128,7 @@ export default function AdvanceTaxCalculatorPage() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      <CalcHero 
+      <CalcHero
         title="Advance Tax Calculator"
         description="Calculate quarterly tax installments and avoid interest penalties under Section 234B & 234C."
         category="Tax Compliance"
@@ -150,10 +150,10 @@ export default function AdvanceTaxCalculatorPage() {
             <div className="space-y-1 pb-6 border-b border-white/20">
               <p className="type-meta font-normal uppercase tracking-widest text-slate-400">Net Tax Liability</p>
               <AnimatePresence mode="wait">
-                <motion.p 
-                  key={calculations.netTaxLiability} 
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }} 
+                <motion.p
+                  key={calculations.netTaxLiability}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className="text-4xl font-normal text-slate-900 tracking-tight tabular-nums"
                 >
                   {formatCurrency(calculations.netTaxLiability)}
@@ -165,7 +165,7 @@ export default function AdvanceTaxCalculatorPage() {
               <CalcResultRow label="Total Tax (incl. Cess)" value={formatCurrency(calculations.totalTax)} />
               <CalcResultRow label="Paid Till Date" value={formatCurrency(calculations.totalAdvanceTaxPaid)} variant="success" />
               <CalcResultRow label="Balance Payable" value={formatCurrency(calculations.balanceTax)} variant="highlight" />
-              
+
               {!calculations.advanceTaxRequired && (
                 <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-200 mt-4 flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -231,7 +231,7 @@ export default function AdvanceTaxCalculatorPage() {
 
              <CalcInputGroup label="Estimated Annual Income" badgeValue={formatCurrency(inputs.estimatedIncome)}>
                 <div className="relative">
-                  <Input 
+                  <Input
                     type="number"
                     value={inputs.estimatedIncome}
                     onChange={(e) => setInputs({...inputs, estimatedIncome: Number(e.target.value)})}
@@ -243,7 +243,7 @@ export default function AdvanceTaxCalculatorPage() {
 
              <CalcInputGroup label="TDS / TCS Deducted" badgeValue={formatCurrency(inputs.tdsDeducted)}>
                 <div className="relative">
-                  <Input 
+                  <Input
                     type="number"
                     value={inputs.tdsDeducted}
                     onChange={(e) => setInputs({...inputs, tdsDeducted: Number(e.target.value)})}
@@ -261,11 +261,11 @@ export default function AdvanceTaxCalculatorPage() {
                     <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">
                       {calculations.quarterlyAnalysis[i].quarter} Paid (INR)
                     </label>
-                    <Input 
+                    <Input
                       type="number"
                       value={inputs.advanceTaxPaid[q]}
                       onChange={(e) => setInputs({
-                        ...inputs, 
+                        ...inputs,
                         advanceTaxPaid: { ...inputs.advanceTaxPaid, [q]: Number(e.target.value) }
                       })}
                       className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm focus:ring-2 focus:ring-indigo-100"
@@ -295,7 +295,7 @@ export default function AdvanceTaxCalculatorPage() {
           </CalcInputCard>
         </div>
 
-        <CalculatorMiniBlog 
+        <CalculatorMiniBlog
           features={[
             {
               icon: <ShieldCheck className="w-5 h-5" />,

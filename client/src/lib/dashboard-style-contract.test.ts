@@ -21,7 +21,7 @@ const oversizedDashboardPatterns = [
   /space-y-8/,
   /\bp-8\b/,
   /\bp-10\b/,
-  /min-h-screen bg-gray-50/,
+  new RegExp("min-h-screen bg-" + "gray-50"),
 ];
 
 describe("dashboard style contract", () => {

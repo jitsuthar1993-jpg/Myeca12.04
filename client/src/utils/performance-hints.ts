@@ -1,9 +1,7 @@
-﻿// Performance hints for critical resources
+// Performance hints for critical resources
 export const performanceHints = {
   // Preconnect to external domains
   preconnect: [
-    'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com',
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
     'https://vedumlohmacaghuebduy.supabase.co'
@@ -17,7 +15,7 @@ export const performanceHints = {
   ],
 
   // Critical fonts to preload
-  fonts: [],
+  fonts: ['/fonts/inter-latin-variable.woff2'],
 
   // Critical images to preload
   images: [
@@ -35,9 +33,6 @@ export function addPerformanceHints() {
     const link = document.createElement('link');
     link.rel = 'preconnect';
     link.href = url;
-    if (url.includes('gstatic')) {
-      link.crossOrigin = 'anonymous';
-    }
     head.appendChild(link);
   });
 
@@ -78,7 +73,7 @@ export function addResourceHint(url: string, type: 'prefetch' | 'preload' = 'pre
   const link = document.createElement('link');
   link.rel = type;
   link.href = url;
-  
+
   if (url.endsWith('.js') || url.endsWith('.mjs')) {
     link.as = 'script';
   } else if (url.endsWith('.css')) {
@@ -86,7 +81,7 @@ export function addResourceHint(url: string, type: 'prefetch' | 'preload' = 'pre
   } else if (url.match(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/i)) {
     link.as = 'image';
   }
-  
+
   document.head.appendChild(link);
 }
 

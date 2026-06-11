@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Immediate Mobile Button Text Overflow Fix
- * 
+ *
  * Apply this fix immediately to resolve button text overflow issues on mobile devices.
  * This should be imported and executed in your main app component or layout.
  */
@@ -23,15 +23,15 @@ export function applyImmediateMobileButtonFix(): void {
 
     buttons.forEach((button) => {
       const originalClassName = button.className;
-      
+
       // Check if this button needs fixing
       if (originalClassName && originalClassName.includes('h-9') && originalClassName.includes('py-4')) {
         const fixedClassName = fixMobileButtonClasses(originalClassName);
-        
+
         if (fixedClassName !== originalClassName) {
           button.className = fixedClassName;
           fixedCount++;
-          
+
           console.log('Fixed mobile button text overflow:', {
             element: button,
             original: originalClassName,
@@ -81,27 +81,27 @@ export function injectMobileButtonFixCSS(): void {
         /* Remove conflicting constraints */
         height: auto !important;
         min-height: 48px !important; /* Touch target compliance */
-        
+
         /* Allow text wrapping */
         white-space: normal !important;
         overflow-wrap: break-word !important;
         word-break: break-word !important;
-        
+
         /* Adjust padding for mobile */
         padding-top: 0.75rem !important;    /* py-3 */
         padding-bottom: 0.75rem !important; /* py-3 */
-        
+
         /* Mobile-optimized text sizing */
         font-size: 1rem !important; /* text-base */
         line-height: 1.25 !important;
-        
+
         /* Ensure proper alignment */
         text-align: center !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
       }
-      
+
       /* Fix for "Choose CA Expert Assisted" type buttons */
       button[class*="w-full"][class*="text-lg"][class*="font-semibold"][class*="h-9"],
       [role="button"][class*="w-full"][class*="text-lg"][class*="font-semibold"][class*="h-9"] {
@@ -114,7 +114,7 @@ export function injectMobileButtonFixCSS(): void {
         font-size: 1rem !important;
         line-height: 1.3 !important;
       }
-      
+
       /* Ensure touch target compliance */
       button:not([class*="min-h-"]),
       [role="button"]:not([class*="min-h-"]),
@@ -122,7 +122,7 @@ export function injectMobileButtonFixCSS(): void {
         min-height: 48px !important;
         min-width: 48px !important;
       }
-      
+
       /* Fix text overflow on gradient backgrounds */
       section[class*="bg-gradient"] button,
       div[class*="bg-gradient"] button {
@@ -168,7 +168,7 @@ export function debugMobileButtonIssues(): void {
   if (typeof window === 'undefined') return;
 
   console.log('=== Mobile Button Text Overflow Debug ===');
-  
+
   const buttons = document.querySelectorAll('button, [role="button"], .btn');
   const issues: Array<{
     element: Element;
@@ -181,7 +181,7 @@ export function debugMobileButtonIssues(): void {
     const textContent = button.textContent?.trim() || '';
     const rect = button.getBoundingClientRect();
     const computedStyle = window.getComputedStyle(button);
-    
+
     let hasIssue = false;
     let issue = '';
     let suggestion = '';
@@ -192,19 +192,19 @@ export function debugMobileButtonIssues(): void {
       issue = 'Conflicting height (h-9) and padding (py-4) classes';
       suggestion = 'Replace h-9 with h-auto min-h-[48px] and py-4 with py-3';
     }
-    
+
     if (className.includes('whitespace-nowrap') && className.includes('text-lg')) {
       hasIssue = true;
       issue = 'Text wrapping disabled (whitespace-nowrap) with large text (text-lg)';
       suggestion = 'Remove whitespace-nowrap and use text-sm or text-base for mobile';
     }
-    
+
     if (textContent.length > 20 && computedStyle.fontSize === '18px') {
       hasIssue = true;
       issue = 'Long text with large font size on mobile';
       suggestion = 'Use text-sm or allow text wrapping with break-words';
     }
-    
+
     if (rect.height < 44 && computedStyle.fontSize === '18px') {
       hasIssue = true;
       issue = 'Button height too small for text-lg content';
@@ -217,11 +217,11 @@ export function debugMobileButtonIssues(): void {
         issue,
         suggestion,
       });
-      
+
       // Highlight problematic button
       (button as HTMLElement).style.outline = '2px solid red';
       (button as HTMLElement).style.outlineOffset = '2px';
-      
+
       console.warn(`Button ${index + 1}:`, {
         text: textContent,
         className,
@@ -240,7 +240,7 @@ export function debugMobileButtonIssues(): void {
   });
 
   console.log(`Found ${issues.length} buttons with potential text overflow issues`);
-  
+
   if (issues.length > 0) {
     console.log('Apply fixes by calling autoFixMobileButtonIssues()');
   }
@@ -255,28 +255,28 @@ export function autoFixMobileButtonIssues(): void {
   if (typeof window === 'undefined') return;
 
   console.log('Applying automatic fixes to mobile button text overflow issues...');
-  
+
   const buttons = document.querySelectorAll('button, [role="button"], .btn');
   let fixedCount = 0;
 
   buttons.forEach((button) => {
     const originalClassName = button.className;
     const fixedClassName = fixMobileButtonClasses(originalClassName);
-    
+
     if (fixedClassName !== originalClassName) {
       button.className = fixedClassName;
       fixedCount++;
-      
+
       // Remove debug highlighting
       (button as HTMLElement).style.outline = '';
       (button as HTMLElement).style.outlineOffset = '';
-      
+
       console.log(`Fixed button: "${button.textContent?.trim()}"`);
     }
   });
 
   console.log(`Applied fixes to ${fixedCount} buttons`);
-  
+
   if (fixedCount === 0) {
     console.log('No button text overflow issues found to fix');
   }

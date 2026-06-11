@@ -97,7 +97,7 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                   logoSize="sm"
                   wordmarkSize="sm"
                   subtitle="SMART TAX SOLUTIONS"
-                  subtitleClassName="whitespace-nowrap text-[8px] tracking-[0.1em]"
+                  subtitleClassName="truncate whitespace-nowrap tracking-[0.1em]"
                   className="min-w-0 gap-2"
                 />
               </Link>

@@ -22,8 +22,8 @@ export function LazyImage({
   fallback = '/placeholder-image.svg',
   className,
   imgClassName,
-  loadingClassName = 'animate-pulse bg-gray-200',
-  errorClassName = 'bg-gray-100',
+  loadingClassName = 'animate-pulse bg-slate-200',
+  errorClassName = 'bg-slate-100',
   onLoad,
   onError,
   priority = false,
@@ -78,10 +78,10 @@ export function LazyImage({
     >
       {imageStatus === 'loading' && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
         </div>
       )}
-      
+
       {imageSrc && (
         <img
           {...props}

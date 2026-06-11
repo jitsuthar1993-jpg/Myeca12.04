@@ -6,22 +6,22 @@ interface AriaLiveRegionProps {
   clearAfter?: number;
 }
 
-export default function AriaLiveRegion({ 
-  message = "", 
+export default function AriaLiveRegion({
+  message = "",
   priority = "polite",
-  clearAfter = 5000 
+  clearAfter = 5000
 }: AriaLiveRegionProps) {
   const [currentMessage, setCurrentMessage] = useState(message);
 
   useEffect(() => {
     if (message) {
       setCurrentMessage(message);
-      
+
       if (clearAfter > 0) {
         const timeout = setTimeout(() => {
           setCurrentMessage("");
         }, clearAfter);
-        
+
         return () => clearTimeout(timeout);
       }
     }

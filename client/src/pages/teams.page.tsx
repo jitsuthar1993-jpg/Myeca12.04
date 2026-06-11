@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
+import {
   Users, Plus, UserPlus, CheckSquare, FileText, Activity,
   Calendar, AlertCircle, Clock, Star, MoreVertical,
   Send, Shield, Eye, Edit3, Trash2, Loader2, ChevronRight
@@ -214,7 +214,7 @@ export default function TeamsPage() {
                       </div>
                    ) : (
                       teams.map((t: Team) => (
-                        <div 
+                        <div
                            key={t.id}
                            onClick={() => setSelectedTeam(t.id)}
                            className={cn(
@@ -242,7 +242,7 @@ export default function TeamsPage() {
              </CardContent>
           </Card>
 
-          <Button 
+          <Button
              onClick={() => setIsCreateDialogOpen(true)}
              className="w-full h-16 rounded-[32px] bg-white border border-slate-100 text-slate-900 hover:bg-slate-50 font-black text-xs uppercase tracking-widest shadow-sm transition-all hover:-translate-y-1"
           >
@@ -285,14 +285,14 @@ export default function TeamsPage() {
                   <div className="flex gap-4">
                      {team?.userRole === "admin" && (
                         <>
-                           <Button 
+                           <Button
                               onClick={() => setIsInviteDialogOpen(true)}
                               className="h-16 px-10 rounded-3xl bg-slate-50 text-slate-900 hover:bg-slate-100 font-black text-xs uppercase tracking-widest border border-slate-100 transition-all shadow-sm"
                            >
                               <UserPlus className="h-5 w-5 mr-3" />
                               Invite Member
                            </Button>
-                           <Button 
+                           <Button
                               onClick={() => setIsTaskDialogOpen(true)}
                               className="h-16 px-10 rounded-3xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100 transition-all hover:-translate-y-1"
                            >
@@ -419,7 +419,7 @@ export default function TeamsPage() {
                           const RoleIcon = roleIcons[member.role] || Users;
                           const memberName = member.user?.name || `Member ${String(member.userId).slice(0, 8)}`;
                           const memberEmail = member.user?.email || "Profile details pending";
-                          
+
                           return (
                             <Card key={member.userId} className="border-none shadow-sm rounded-[40px] bg-white p-8 group hover:shadow-xl transition-all border border-slate-100/50">
                                <div className="flex items-center justify-between mb-8">
@@ -465,7 +465,7 @@ export default function TeamsPage() {
                                 </div>
                                 <div className="flex-1 pt-1">
                                   <p className="text-lg leading-none mb-2">
-                                    <span className="font-black text-slate-900">{activity.userName}</span> 
+                                    <span className="font-black text-slate-900">{activity.userName}</span>
                                     <span className="text-slate-500 font-medium mx-2">{activity.action}</span>
                                     {activity.target && <span className="font-black text-indigo-600"> "{activity.target}"</span>}
                                   </p>
@@ -528,7 +528,7 @@ export default function TeamsPage() {
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
-              <Button 
+              <Button
                 onClick={() => createTeamMutation.mutate(newTeam)}
                 disabled={!newTeam.name || createTeamMutation.isPending}
               >
@@ -588,7 +588,7 @@ export default function TeamsPage() {
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setIsInviteDialogOpen(false)}>Cancel</Button>
-              <Button 
+              <Button
                 onClick={() => inviteMemberMutation.mutate(inviteData)}
                 disabled={!inviteData.email || inviteMemberMutation.isPending}
               >
@@ -677,7 +677,7 @@ export default function TeamsPage() {
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setIsTaskDialogOpen(false)}>Cancel</Button>
-              <Button 
+              <Button
                 onClick={() => createTaskMutation.mutate(taskData)}
                 disabled={!taskData.title || createTaskMutation.isPending}
               >

@@ -25,11 +25,11 @@ export function DashboardFilters({ dateRange, onDateRangeChange, onRefresh }: Da
           <Filter className="h-4 w-4 text-indigo-600" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
-          <p className="text-xs text-gray-500">Adjust time period and view options</p>
+          <h3 className="text-sm font-semibold text-slate-900">Filters</h3>
+          <p className="text-xs text-slate-500">Adjust time period and view options</p>
         </div>
       </div>
-      
+
       <div className="flex items-center gap-3">
         <Select value={dateRange} onValueChange={onDateRangeChange}>
           <SelectTrigger className="w-[180px]">
@@ -48,7 +48,7 @@ export function DashboardFilters({ dateRange, onDateRangeChange, onRefresh }: Da
             <SelectItem value={DATE_RANGES.CUSTOM}>Custom Range</SelectItem>
           </SelectContent>
         </Select>
-        
+
         {onRefresh && (
           <Button
             variant="outline"

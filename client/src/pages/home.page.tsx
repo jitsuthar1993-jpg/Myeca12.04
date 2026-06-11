@@ -10,18 +10,18 @@ import {
   FileText,
   TrendingUp,
   Users,
-  Building2,
   Bot
 } from "lucide-react";
 import { Link } from "wouter";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useMobileScrollReveal } from "@/hooks/use-mobile-scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
 import { FastITRFilingLogo, AccurateTaxCalculatorLogo, SmartDocumentScannerLogo, ExpertTaxReviewLogo } from "@/components/ui/home-feature-logos";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getSEOConfig } from "@/config/seo.config";
+import { HOME_SEO_CONFIG } from "@/config/home-seo";
 import { trackPublicCtaClick } from "@/lib/public-conversion-events";
 import { lazyWithRetry } from "@/utils/lazy-with-retry";
 
@@ -64,111 +64,84 @@ const heroProofItems = [
   "Expert support",
 ];
 
-const mobileSummaryCards = [
-  {
-    label: "For salaried professionals",
-    title: "Start with the right ITR path.",
-    description: "Check salary, Form 16, deductions, AIS, capital gains, and refund readiness before filing.",
-    href: "/which-itr-form-to-file?source=homepage_mobile_summary",
-    cta: "Start ITR Filing",
-    icon: FileText,
-  },
-  {
-    label: "Business / GST",
-    title: "Keep compliance scoped first.",
-    description: "Review GST, notices, TDS, registration, documents, and advisory needs before payment.",
-    href: "/services",
-    cta: "View Business Services",
-    icon: Building2,
-  },
+const riseDelay = (ms: number) => ({ "--rise-delay": `${ms}ms` }) as CSSProperties;
+const revealDelay = (ms: number) => ({ "--reveal-delay": `${ms}ms` }) as CSSProperties;
+
+const pricingPlans = [
+  { title: "Entry guided", price: "₹499", detail: "Simple salary filing", mobileDetail: "Simple salary filing", note: "Checklist and guided workflow", highlight: false },
+  { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", mobileDetail: "Expert-assisted filing", note: "Review scope shown upfront", highlight: true },
+  { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", mobileDetail: "Capital gains, NRI", note: "Documents reviewed before quote", highlight: false },
 ];
 
-const LowerHomepageMobileSummary = () => (
-  <section className="border-y border-slate-200 bg-[#F8FAFC] py-6 md:hidden">
-    <div className="container mx-auto px-4">
-      <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Guided next steps</p>
-        <h2 className="mt-2 text-xl font-extrabold tracking-tight text-slate-950">
-          Choose the tax path that matches your case.
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
-          Compact mobile summaries keep the homepage fast while showing the trust, scope, and SEO answers people need before filing.
-        </p>
-      </div>
-
-      <div className="grid gap-3">
-        {mobileSummaryCards.map((item) => (
-          <Link key={item.title} href={item.href}>
-            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{item.label}</p>
-                  <h3 className="mt-1 text-base font-extrabold text-slate-950">{item.title}</h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
-                  <div className="mt-3 inline-flex items-center text-sm font-bold text-blue-700">
-                    {item.cta}
-                    <ArrowRight className="ml-1.5 h-4 w-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      <div className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-sm leading-6 text-slate-700">
-        <div className="flex items-start gap-2">
-          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />
-          <span>Scope before payment, secure document handling, and expert review are available when your filing needs more judgment.</span>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-const HomePage = () => {
-  const seo = getSEOConfig('/');
-  const [heroPhraseIndex, setHeroPhraseIndex] = useState(0);
-  const [heroTypedLength, setHeroTypedLength] = useState(HERO_TYPING_PHRASES[0].length);
-  const [isHeroDeleting, setIsHeroDeleting] = useState(false);
-  const currentHeroPhrase = HERO_TYPING_PHRASES[heroPhraseIndex];
-  const typedHeroPhrase = currentHeroPhrase.slice(0, heroTypedLength);
+const HeroTypewriter = ({ phrases }: { phrases: readonly string[] }) => {
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [typedLength, setTypedLength] = useState(phrases[0].length);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const currentPhrase = phrases[phraseIndex];
 
   useEffect(() => {
-    const typingDelay = isHeroDeleting ? 38 : 76;
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(query.matches);
+    const onChange = (event: MediaQueryListEvent) => setReduceMotion(event.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const typingDelay = isDeleting ? 38 : 76;
     const holdDelay = 1250;
     const switchDelay = 220;
-    const delay = !isHeroDeleting && heroTypedLength === currentHeroPhrase.length
+    const delay = !isDeleting && typedLength === currentPhrase.length
       ? holdDelay
-      : isHeroDeleting && heroTypedLength === 0
+      : isDeleting && typedLength === 0
         ? switchDelay
         : typingDelay;
 
     const timeout = window.setTimeout(() => {
-      if (!isHeroDeleting && heroTypedLength < currentHeroPhrase.length) {
-        setHeroTypedLength((length) => length + 1);
+      if (!isDeleting && typedLength < currentPhrase.length) {
+        setTypedLength((length) => length + 1);
         return;
       }
 
-      if (!isHeroDeleting) {
-        setIsHeroDeleting(true);
+      if (!isDeleting) {
+        setIsDeleting(true);
         return;
       }
 
-      if (heroTypedLength > 0) {
-        setHeroTypedLength((length) => length - 1);
+      if (typedLength > 0) {
+        setTypedLength((length) => length - 1);
         return;
       }
 
-      setHeroPhraseIndex((index) => (index + 1) % HERO_TYPING_PHRASES.length);
-      setIsHeroDeleting(false);
+      setPhraseIndex((index) => (index + 1) % phrases.length);
+      setIsDeleting(false);
     }, delay);
 
     return () => window.clearTimeout(timeout);
-  }, [currentHeroPhrase, heroTypedLength, isHeroDeleting]);
+  }, [currentPhrase, typedLength, isDeleting, reduceMotion, phrases.length]);
+
+  const typedPhrase = reduceMotion ? phrases[0] : currentPhrase.slice(0, typedLength);
+
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex min-w-[14ch] items-center justify-center text-center text-blue-600 sm:min-w-[18ch]"
+    >
+      <span>{typedPhrase || "\u00a0"}</span>
+      {!reduceMotion && (
+        <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" />
+      )}
+    </span>
+  );
+};
+
+const HomePage = () => {
+  const seo = HOME_SEO_CONFIG;
+  const pageRef = useRef<HTMLDivElement>(null);
+  useMobileScrollReveal(pageRef);
 
   return (
     <>
@@ -211,12 +184,12 @@ const HomePage = () => {
         ]}
       />
 
-      <div className="bg-white min-h-screen">
+      <div ref={pageRef} className="bg-white min-h-screen">
         {/* Hero Section - Compact & Focused */}
-        <section className="bg-white py-10 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:py-14">
+        <section className="bg-gradient-to-b from-blue-50/70 via-white to-white py-8 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:py-14">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-5xl text-center">
-              <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
+              <div className="m-hero-rise inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
                 <Shield className="h-4 w-4 shrink-0 text-blue-600" />
                 <span>Smart tax filing</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-300" aria-hidden="true" />
@@ -228,14 +201,15 @@ const HomePage = () => {
                   ITR FILING 2026-27 STARTED
                 </span>
 
-                <h1 className="type-hero-title mx-auto max-w-5xl text-center text-slate-950">
+                <h1
+                  aria-label="File your Income Tax Returns, GST Returns, TDS Returns, and Compliances"
+                  className="m-hero-rise type-hero-title mx-auto max-w-5xl text-center text-slate-950"
+                  style={riseDelay(70)}
+                >
                   File your{" "}
-                  <span className="inline-flex min-w-[14ch] items-center justify-center text-center text-blue-600 sm:min-w-[18ch]">
-                    <span aria-live="polite">{typedHeroPhrase || "\u00a0"}</span>
-                    <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" aria-hidden="true" />
-                  </span>
+                  <HeroTypewriter phrases={HERO_TYPING_PHRASES} />
                 </h1>
-                <p className="mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
+                <p className="m-hero-rise mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl" style={riseDelay(140)}>
                   With <span className="font-bold text-slate-700">Expert eCA Assistance</span> and <span className="font-bold text-slate-700">Free Notice Assistance</span>.
                 </p>
                 <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-700/85 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:hidden">
@@ -243,11 +217,11 @@ const HomePage = () => {
                 </span>
               </div>
 
-              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7">
+              <div className="m-hero-rise mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7" style={riseDelay(210)}>
                 <Link
                   href="/which-itr-form-to-file?source=homepage_hero"
                   onClick={() => trackPublicCtaClick("Start Filing Now", "homepage_hero")}
-                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-slate-800 px-8 text-base font-black text-white shadow-lg shadow-slate-300 transition-colors hover:bg-slate-900 sm:w-auto"
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-slate-800 px-8 text-base font-black text-white shadow-lg shadow-slate-300 transition hover:bg-slate-900 active:scale-[0.98] sm:w-auto"
                 >
                   <Rocket className="h-5 w-5" />
                   Start Filing Now
@@ -256,22 +230,28 @@ const HomePage = () => {
                 <Link
                   href="/calculators/income-tax"
                   onClick={() => trackPublicCtaClick("Free Tax Calculator", "homepage_hero")}
-                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-8 text-base font-black text-slate-800 shadow-sm transition-colors hover:border-blue-200 hover:text-blue-700 sm:w-auto"
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-8 text-base font-black text-slate-800 shadow-sm transition hover:border-blue-200 hover:text-blue-700 active:scale-[0.98] sm:w-auto"
                 >
                   <Calculator className="h-5 w-5" />
                   Free Tax Calculator
                 </Link>
               </div>
 
-              <div className="mx-auto mt-7 flex max-w-3xl flex-col items-center justify-center gap-3 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm sm:flex-row sm:flex-wrap">
+              <div className="m-hero-rise mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-2 md:mt-7 md:gap-3" style={riseDelay(280)}>
                 {heroProofItems.map((item) => (
-                  <span key={item} className="inline-flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
+                  <span
+                    key={item}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm md:text-sm"
+                  >
+                    <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
                     {item}
                   </span>
                 ))}
-                <Link href="/trust" className="inline-flex items-center font-bold text-blue-700 hover:text-blue-800">
-                  Document handling <ArrowRight className="ml-1.5 h-4 w-4" />
+                <Link
+                  href="/trust"
+                  className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 transition-colors hover:bg-blue-100 md:text-sm"
+                >
+                  Document handling <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
@@ -281,7 +261,7 @@ const HomePage = () => {
         <section className="border-t border-slate-100 bg-white py-8 md:py-12">
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_1.35fr] lg:items-center">
-              <div>
+              <div data-reveal>
                 <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
                   <Shield className="h-3.5 w-3.5" />
                   Transparent pricing
@@ -302,12 +282,39 @@ const HomePage = () => {
                   Compare Pricing <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {[
-                  { title: "Entry guided", price: "₹499", detail: "Simple salary filing", note: "Checklist and guided workflow" },
-                  { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", note: "Review scope shown upfront" },
-                  { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", note: "Documents reviewed before quote" },
-                ].map((plan) => (
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:hidden">
+                {pricingPlans.map((plan, index) => (
+                  <Link
+                    key={plan.title}
+                    href="/pricing"
+                    data-reveal
+                    style={revealDelay(index * 80)}
+                    className={cn(
+                      "flex min-h-16 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 last:border-b-0 active:bg-slate-50",
+                      plan.highlight && "bg-blue-50/60"
+                    )}
+                  >
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-blue-700">
+                        {plan.title}
+                        {plan.highlight && (
+                          <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-bold normal-case tracking-normal text-white">
+                            Popular
+                          </span>
+                        )}
+                      </p>
+                      <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">{plan.mobileDetail}</p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <span className="text-lg font-extrabold text-slate-950">{plan.price}</span>
+                      <ArrowRight className="h-4 w-4 text-slate-400" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="hidden gap-3 sm:grid sm:grid-cols-3">
+                {pricingPlans.map((plan) => (
                   <div key={plan.title} className="rounded-lg border border-slate-100 bg-slate-50/70 p-5 transition-colors hover:border-blue-100 hover:bg-white md:p-6">
                     <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{plan.title}</p>
                     <p className="mt-3 text-2xl font-extrabold text-slate-950">{plan.price}</p>
@@ -323,21 +330,26 @@ const HomePage = () => {
         {/* Proof Strip */}
         <section className="border-b border-slate-200 bg-[#F8FAFC] py-4 md:py-6">
           <div className="container mx-auto px-4">
-            <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mx-auto grid max-w-6xl grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
               {[
                 { icon: Shield, title: "Portal workflow", text: "Filing steps are aligned to official income-tax portal submission flow." },
                 { icon: Users, title: "CA review scope", text: "Assisted plans explain what an expert reviews before work starts." },
                 { icon: FileText, title: "Document privacy", text: "Upload only required documents and see missing items before filing." },
                 { icon: Award, title: "Price clarity", text: "Plan scope, GST treatment, and exclusions stay visible before checkout." },
-              ].map((item) => (
-                <div key={item.title} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-start gap-3">
+              ].map((item, index) => (
+                <div
+                  key={item.title}
+                  data-reveal="pop"
+                  style={revealDelay(index * 60)}
+                  className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:rounded-lg sm:p-4"
+                >
+                  <div className="flex items-center gap-2.5 sm:items-start sm:gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                       <item.icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                      <p className="mt-1 text-xs leading-5 text-slate-600">{item.text}</p>
+                      <p className="text-sm font-bold leading-tight text-slate-950">{item.title}</p>
+                      <p className="mt-1 hidden text-xs leading-5 text-slate-600 sm:block">{item.text}</p>
                     </div>
                   </div>
                 </div>
@@ -441,7 +453,7 @@ const HomePage = () => {
         {/* How It Works - 3 Simple Steps */}
         <section className="border-y border-slate-100 bg-slate-50 py-6 md:py-24">
           <div className="container mx-auto px-4">
-            <div className="mb-5 text-left md:mb-16 md:text-center">
+            <div data-reveal className="mb-5 text-left md:mb-16 md:text-center">
               <h2 className="text-xl font-extrabold tracking-tight text-slate-900 md:text-3xl lg:text-4xl">
                 File ITR in <span className="text-blue-600">3 Simple Steps</span>
               </h2>
@@ -451,13 +463,20 @@ const HomePage = () => {
             <div className="relative mx-auto grid max-w-5xl gap-3 md:grid-cols-3 md:gap-8">
               {/* Connector Line (Desktop) */}
               <div className="hidden lg:block absolute top-1/2 left-0 w-full h-px bg-slate-200 -translate-y-1/2 z-0"></div>
-              
+              {/* Connector Line (Mobile) */}
+              <div data-reveal="line" className="absolute bottom-8 left-9 top-8 w-px bg-slate-200 md:hidden" aria-hidden="true"></div>
+
               {[
                 { num: "1", title: "Enter Details", desc: "Add your income & deductions", icon: FileText, color: "bg-blue-600 shadow-blue-500/30" },
                 { num: "2", title: "Review", desc: "Check calculations and choose expert help if needed", icon: Users, color: "bg-indigo-600 shadow-indigo-500/30" },
                 { num: "3", title: "File ITR", desc: "Submit to Income Tax Dept", icon: CheckCircle, color: "bg-emerald-600 shadow-emerald-500/30" },
               ].map((step, idx) => (
-                <div key={step.num} className="relative z-10 flex gap-3 rounded-lg border border-slate-100 bg-white p-4 shadow-sm transition-all duration-300 md:block md:rounded-card md:p-8 md:hover:-translate-y-1 md:hover:shadow-xl">
+                <div
+                  key={step.num}
+                  data-reveal
+                  style={revealDelay(idx * 110)}
+                  className="relative z-10 flex gap-3 rounded-lg border border-slate-100 bg-white p-4 shadow-sm md:block md:rounded-card md:p-8"
+                >
                   <div className={cn(
                     "mb-0 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-base font-bold text-white shadow-sm md:mb-6 md:h-12 md:w-12 md:rounded-2xl md:text-xl md:shadow-lg",
                     step.color
@@ -478,7 +497,7 @@ const HomePage = () => {
         <section className="border-b border-slate-200 bg-white py-12 md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-              <div className="flex max-w-2xl flex-col lg:max-w-none">
+              <div data-reveal className="flex max-w-2xl flex-col lg:max-w-none">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Planning tools</p>
                 <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
                   Estimate first. File with fewer surprises.
@@ -516,11 +535,9 @@ const HomePage = () => {
                   {[
                     { title: "Income Tax", desc: "Tax payable", href: "/calculators/income-tax", icon: Calculator, tone: "bg-blue-50 text-blue-700" },
                     { title: "Regime", desc: "Old vs new", href: "/calculators/regime-comparator", icon: TrendingUp, tone: "bg-emerald-50 text-emerald-700" },
-                    { title: "HRA", desc: "Rent benefit", href: "/calculators/hra", icon: Shield, tone: "bg-amber-50 text-amber-700" },
-                    { title: "Form 16", desc: "Parse salary data", href: "/form16-parser", icon: FileText, tone: "bg-indigo-50 text-indigo-700" },
-                  ].map((calc) => (
-                    <Link key={calc.title} href={calc.href}>
-                      <Card className="group h-full cursor-pointer rounded-lg border border-slate-100 bg-slate-50/70 shadow-none transition-colors hover:border-blue-100 hover:bg-white">
+                  ].map((calc, index) => (
+                    <Link key={calc.title} href={calc.href} data-reveal="pop" style={revealDelay(100 + index * 80)}>
+                      <Card className="group h-full cursor-pointer rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-100 active:scale-[0.98]">
                         <CardContent className="p-4">
                           <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg", calc.tone)}>
                             <calc.icon className="h-4 w-4" strokeWidth={2} />
@@ -563,30 +580,10 @@ const HomePage = () => {
                   ))}
                 </div>
 
-                <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 md:hidden">
-                  <p className="type-meta font-bold text-blue-700">Next step</p>
-                  <h3 className="mt-2 text-base font-extrabold text-slate-950">Know your number? Check the ITR path.</h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-600">
-                    Check your likely ITR path before choosing a technical ITR form.
-                  </p>
-                  <div className="mt-3 grid gap-2">
-                    <Link href="/which-itr-form-to-file?source=homepage_mobile_tools">
-                      <Button className="h-11 w-full rounded-lg bg-blue-600 text-sm font-bold text-white hover:bg-blue-700">
-                        Check my ITR plan
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                    <Link href="/itr/form-recommender" className="flex h-11 items-center justify-center rounded-lg border border-blue-100 bg-white text-sm font-bold text-blue-700">
-                      Not sure which form?
-                    </Link>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </section>
-
-        <LowerHomepageMobileSummary />
 
         <section className="hidden md:block" style={{ contentVisibility: 'auto', contain: 'content', containIntrinsicSize: '0 500px' }}>
           <Suspense fallback={<SectionFallback />}>
@@ -636,10 +633,13 @@ const HomePage = () => {
         </div>
 
         {/* Final CTA */}
-        <section className="border-t border-gray-100 bg-white py-8 md:py-16">
+        <section className="border-t border-slate-100 bg-white py-8 md:py-16">
           <div className="container mx-auto px-4 text-center">
-            <div className="relative mx-auto max-w-4xl overflow-hidden rounded-lg border border-slate-200/60 bg-white p-5 text-left shadow-sm md:rounded-card md:p-12 md:text-center md:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] lg:p-16">
-              
+            <div
+              data-reveal
+              className="relative mx-auto max-w-4xl overflow-hidden rounded-lg border border-slate-200/60 bg-white p-5 text-left shadow-sm md:rounded-card md:p-12 md:text-center md:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] lg:p-16"
+            >
+
               <div className="relative z-10">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-blue-100/50 bg-blue-50/50 px-3 py-2 text-xs font-semibold text-brand-600 md:mb-8 md:rounded-full md:px-5">
                   <Award className="w-4 h-4" />

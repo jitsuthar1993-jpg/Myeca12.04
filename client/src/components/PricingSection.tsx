@@ -6,7 +6,7 @@ import { getTaxFilingPlans } from "@/data/pricing";
 
 export default function PricingSection() {
   return (
-    <section className="bg-white border-y border-gray-100">
+    <section className="bg-white border-y border-slate-100">
       <StandardPricingSection
         mode="plan-grid"
         title="Plans for every tax need"
@@ -22,8 +22,8 @@ export default function PricingSection() {
               <Phone className="h-6 w-6" />
             </div>
             <div>
-              <h4 className="font-bold text-gray-900">Need help choosing?</h4>
-              <p className="text-sm text-gray-600">Request a scope callback before choosing a plan.</p>
+              <h4 className="font-bold text-slate-900">Need help choosing?</h4>
+              <p className="text-sm text-slate-600">Request a scope callback before choosing a plan.</p>
             </div>
           </div>
           <Link href="/expert-consultation?service=pricing-help">

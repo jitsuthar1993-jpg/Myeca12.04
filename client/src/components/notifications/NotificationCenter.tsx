@@ -103,7 +103,7 @@ export default function NotificationCenter() {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    
+
     if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
@@ -116,8 +116,8 @@ export default function NotificationCenter() {
         <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-lg p-0 text-slate-600 hover:bg-slate-100">
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
-            <Badge 
-              variant="destructive" 
+            <Badge
+              variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
             >
               {unreadCount > 9 ? "9+" : unreadCount}
@@ -139,17 +139,17 @@ export default function NotificationCenter() {
             </Button>
           )}
         </div>
-        
+
         <ScrollArea className="h-[400px]">
           {isLoading ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-slate-500">
               Loading notifications...
             </div>
           ) : notifications.length === 0 ? (
             <div className="p-8 text-center">
-              <Bell className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-500">No notifications yet</p>
-              <p className="text-sm text-gray-400 mt-1">
+              <Bell className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+              <p className="text-slate-500">No notifications yet</p>
+              <p className="text-sm text-slate-400 mt-1">
                 We'll notify you when something important happens
               </p>
             </div>
@@ -166,7 +166,7 @@ export default function NotificationCenter() {
                   }`}
                 >
                   <DropdownMenuItem
-                    className="p-4 cursor-pointer hover:bg-gray-50 focus:bg-gray-50"
+                    className="p-4 cursor-pointer hover:bg-slate-50 focus:bg-slate-50"
                     onClick={() => {
                       if (!notification.read) {
                         markAsReadMutation.mutate(notification.id);
@@ -195,10 +195,10 @@ export default function NotificationCenter() {
                               <X className="w-3 h-3" />
                             </Button>
                           </div>
-                          <p className="text-sm text-gray-600 mt-0.5">
+                          <p className="text-sm text-slate-600 mt-0.5">
                             {notification.message}
                           </p>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-slate-400 mt-1">
                             {formatTime(notification.createdAt)}
                           </p>
                         </div>
@@ -210,7 +210,7 @@ export default function NotificationCenter() {
             </AnimatePresence>
           )}
         </ScrollArea>
-        
+
       </DropdownMenuContent>
     </DropdownMenu>
   );

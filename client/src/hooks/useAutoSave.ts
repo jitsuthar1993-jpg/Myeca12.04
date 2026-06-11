@@ -47,7 +47,7 @@ export function useAutoSave<T>({
       const stored = localStorage.getItem(storageKey);
       if (stored) {
         const parsed: SavedData<T> = JSON.parse(stored);
-        
+
         // Check version compatibility
         if (parsed.version !== STORAGE_VERSION) {
           console.warn(`AutoSave: Version mismatch for ${key}, using default`);
@@ -79,21 +79,21 @@ export function useAutoSave<T>({
   // Save data when debounced value changes
   useEffect(() => {
     if (!isInitialized.current) return;
-    
+
     // Don't save if it's the initial load or default value
     if (JSON.stringify(debouncedData) === JSON.stringify(defaultValue)) {
       return;
     }
 
     setIsSaving(true);
-    
+
     try {
       const saveData: SavedData<T> = {
         data: debouncedData,
         savedAt: Date.now(),
         version: STORAGE_VERSION,
       };
-      
+
       localStorage.setItem(storageKey, JSON.stringify(saveData));
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
@@ -113,8 +113,8 @@ export function useAutoSave<T>({
   // Update data with change tracking
   const updateData = useCallback((newData: T | ((prev: T) => T)) => {
     setData(prev => {
-      const updated = typeof newData === 'function' 
-        ? (newData as (prev: T) => T)(prev) 
+      const updated = typeof newData === 'function'
+        ? (newData as (prev: T) => T)(prev)
         : newData;
       return updated;
     });
@@ -272,7 +272,7 @@ export function useFormAutoSave<T extends Record<string, any>>(
 // Utility to get all saved forms
 export function getSavedForms(): { key: string; savedAt: Date }[] {
   const saved: { key: string; savedAt: Date }[] = [];
-  
+
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key?.startsWith('autosave_')) {
@@ -289,21 +289,21 @@ export function getSavedForms(): { key: string; savedAt: Date }[] {
       }
     }
   }
-  
+
   return saved.sort((a, b) => b.savedAt.getTime() - a.savedAt.getTime());
 }
 
 // Clear all auto-saved data
 export function clearAllAutoSaved(): void {
   const keysToRemove: string[] = [];
-  
+
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key?.startsWith('autosave_')) {
       keysToRemove.push(key);
     }
   }
-  
+
   keysToRemove.forEach(key => localStorage.removeItem(key));
 }
 

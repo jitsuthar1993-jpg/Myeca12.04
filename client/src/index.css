@@ -5,97 +5,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin-variable.woff2") format("woff2");
+}
 
-/* Professional button styles and layout fixes */
 @layer base {
-
-  /* Ensure all buttons are properly visible with good text contrast */
-  button {
-    color: inherit;
-    transition: all 0.2s ease;
-  }
-
-  /* Standard button variants */
-  .btn-primary {
-    background: hsl(215, 70%, 50%);
-    color: hsl(0, 0%, 98%);
-    border: 1px solid hsl(215, 70%, 50%);
-  }
-
-  .btn-primary:hover {
-    background: hsl(215, 70%, 40%);
-    border-color: hsl(215, 70%, 40%);
-  }
-
-  .btn-secondary {
-    background: hsl(210, 40%, 96%);
-    color: hsl(215, 25%, 27%);
-    border: 1px solid hsl(210, 20%, 87%);
-  }
-
-  .btn-secondary:hover {
-    background: hsl(210, 40%, 94%);
-  }
-
-  /* Clean focus states */
-  button:focus,
-  a:focus {
-    outline: 2px solid hsl(215, 70%, 50%);
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
 }
 
 :root {
-  /* Header Layout Variables */
-  /* Header Layout Variables */
-  --header-promo-height: 28px;
-  --header-main-height: 64px;
-  --header-main-height-lg: 72px;
-  --header-total-height: 92px;
-  --header-total-height-lg: 100px;
-  --page-top-padding: 96px;
-  --page-top-padding-lg: 92px;
-
-  /* Light Theme Only - Premium Financial Services Colors v2.0 */
   --background: 0 0% 100%;
-  /* Pure white */
-  --foreground: 0 0% 20%;
-  /* Body text #333333 */
+  --foreground: 222.2 47.4% 11.2%;
   --heading: 0 0% 0%;
-  /* Headings #000000 */
-  --muted: 60 9% 97%;
-  /* Warm gray #FAFAF9 */
-  --muted-foreground: 25 6% 45%;
-  /* Medium warm gray #78716C */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
   --popover: 0 0% 100%;
-  --popover-foreground: 20 14% 12%;
+  --popover-foreground: 222.2 47.4% 11.2%;
   --card: 0 0% 100%;
-  --card-foreground: 20 14% 12%;
-  --border: 0 0% 88%;
-  /* Neutral border #E0E0E0 */
-  --input: 20 6% 90%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
 
-  /* Primary - MyeCA Deep Blue */
-  --primary: 219 100% 26%;
-  /* #315efb */
+  --primary: 226.63 96.19% 58.82%;
   --primary-foreground: 0 0% 100%;
-
-  /* Secondary - Light Gray */
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 84% 5%;
-
-  /* Accent - Subtle Blue */
-  --accent: 217 91% 60%;
-  /* Blue #3b82f6 */
-  --accent-foreground: 0 0% 100%;
-
-  --destructive: 0 84% 60%;
-  /* Red for errors */
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --accent: 224 100% 97%;
+  --accent-foreground: 226.63 96.19% 40%;
+  --destructive: 0 72.2% 50.6%;
   --destructive-foreground: 0 0% 100%;
-  --ring: 219 100% 26%;
-  /* MyeCA blue ring */
+  --ring: 226.63 96.19% 58.82%;
   --radius: 0.5rem;
-  /* Clean rounded corners */
 
   /* Status Colors */
   --success: 158 94% 25%;
@@ -189,7 +136,7 @@
     left: 50%;
     bottom: 16px;
     transform: translateX(-50%);
-    background-color: #315efb;
+    background-color: hsl(226.63 96.19% 58.82%);
     color: #ffffff;
     padding: 12px 24px;
     border-radius: 0.75rem;
@@ -201,7 +148,7 @@
   }
 
   .btn-explore:hover {
-    background-color: #2040d8;
+    background-color: #1f48db;
     transform: translateX(-50%) translateY(-2px) scale(1.02);
     box-shadow: 0 4px 8px rgba(0,0,0,0.12);
   }
@@ -229,9 +176,9 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
-  /* Brand Utilities — all aligned to #315efb navy */
+  /* Brand Utilities — all aligned to hsl(226.63 96.19% 58.82%) brand */
   .gradient-primary {
-    background: #315efb;
+    background: hsl(226.63 96.19% 58.82%);
   }
 
   .gradient-secondary {
@@ -247,17 +194,17 @@
   }
 
   .gradient-accent {
-    background: #315efb;
+    background: hsl(226.63 96.19% 58.82%);
   }
 
-  /* Brand text — solid navy, no shimmer */
+  /* Brand text — solid brand, no shimmer */
   .text-gradient {
-    color: #315efb;
+    color: hsl(226.63 96.19% 58.82%);
   }
 
-  /* Theme Color Utilities — aligned to brand navy */
+  /* Theme Color Utilities — aligned to the brand palette */
   .text-theme-primary {
-    color: #315efb;
+    color: hsl(226.63 96.19% 58.82%);
   }
 
   .text-theme-accent {
@@ -269,7 +216,7 @@
   }
 
   .bg-theme-primary {
-    background-color: #315efb;
+    background-color: hsl(226.63 96.19% 58.82%);
   }
 
   .bg-theme-primary-light {
@@ -290,19 +237,8 @@
     50% { transform: translateY(-6px); }
   }
 
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
   .animate-float {
     animation: float 4s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
   }
 
   /* Glass Morphism Effects */
@@ -358,11 +294,11 @@
   }
 
   /* Light theme utility classes */
-  .text-gray-900 {
+  .text-slate-900 {
     color: #111827;
   }
 
-  .text-gray-600 {
+  .text-slate-600 {
     color: #4b5563;
   }
 
@@ -370,11 +306,11 @@
     background-color: #ffffff;
   }
 
-  .bg-gray-50 {
+  .bg-slate-50 {
     background-color: #f9fafb;
   }
 
-  .border-gray-200 {
+  .border-slate-200 {
     border-color: #e5e7eb;
   }
 
@@ -397,10 +333,10 @@
     font-weight: 600;
     transition: all 200ms ease;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    background-color: #315efb; /* bg-cta-primary */
+    background-color: hsl(226.63 96.19% 58.82%); /* bg-brand-600 */
     color: white;
     &:hover {
-      background-color: #2040d8; /* primary-hover */
+      background-color: #1f48db; /* brand-700 */
       box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
       transform: translateY(-0.125rem);
     }
@@ -415,7 +351,7 @@
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
     &:hover {
-      background-color: #2040d8; /* primary-hover */
+      background-color: #1f48db; /* brand-700 */
       box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
       transform: translateY(-0.125rem);
     }
@@ -445,23 +381,6 @@
   }
 }
 
-/* Animation for bulletin banner */
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-scroll-left {
-  animation: scroll-left 30s linear infinite;
-}
-
-
-
 /* Mobile bottom navigation spacing */
 @media (max-width: 768px) {
   .mobile-safe-bottom {
@@ -470,40 +389,7 @@
 }
 
 /* Fix for all input fields - ensuring proper text visibility */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="tel"],
-input[type="url"],
-input[type="search"],
-input[type="date"],
-input[type="time"],
-input[type="datetime-local"],
-textarea,
-select {
-  color: #111827 !important;
-  /* text-gray-900 */
-  background-color: white !important;
-  border-color: #d1d5db !important;
-  /* border-gray-300 */
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #6b7280 !important;
-  /* text-gray-500 */
-}
-
-/* Focus states for all form elements — brand navy */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none !important;
-  border-color: #315efb !important;
-  box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.15) !important;
-}
-
+/* Focus states for all form elements — brand palette */
 /* Respect user prefers-reduced-motion to improve accessibility and performance */
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
@@ -573,6 +459,70 @@ img {
   }
 }
 
+/* Mobile-only motion: homepage hero cascade, scroll reveals, sticky bar entrance.
+   Hidden states are applied by JS (use-mobile-scroll-reveal), so content stays
+   visible when JS fails. The global prefers-reduced-motion block above also
+   neutralizes everything here. */
+@keyframes m-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .m-hero-rise {
+    animation: m-hero-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+
+  .m-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .m-reveal[data-reveal="pop"] {
+    transform: translateY(10px) scale(0.94);
+  }
+
+  .m-reveal[data-reveal="line"] {
+    opacity: 1;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+  }
+
+  .m-reveal.m-reveal-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes m-bar-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .m-bar-enter {
+    animation: m-bar-slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -590,66 +540,4 @@ img {
       #f0f0f0 80px);
   background-size: 1000px 100%;
   animation: shimmer 2s infinite linear;
-}
-
-/* ReactQuill Editor Custom Styles */
-.quill-editor-container .ql-editor {
-  min-height: 300px;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #1a202c; /* text-gray-900 equivalent */
-}
-
-.quill-editor-container .ql-toolbar.ql-snow {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-.quill-editor-container .ql-container.ql-snow {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-color: #e2e8f0;
-  background: white;
-}
-
-.quill-editor-container .ql-snow .ql-stroke {
-  stroke: #475569;
-}
-
-.quill-editor-container .ql-snow .ql-fill {
-  fill: #475569;
-}
-
-.quill-editor-container .ql-snow.ql-toolbar button:hover,
-.quill-editor-container .ql-snow.ql-toolbar button:focus,
-.quill-editor-container .ql-snow.ql-toolbar button.ql-active {
-  color: #315efb;
-}
-
-.quill-editor-container .ql-snow.ql-toolbar button:hover .ql-stroke,
-.quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-stroke {
-  stroke: #315efb;
-}
-
-.quill-editor-container .ql-snow.ql-toolbar button:hover .ql-fill,
-.quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-fill {
-  fill: #315efb;
-}
-
-.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-label::before {
-  content: 'Normal';
-}
-
-.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
-  content: 'Heading 1';
-}
-
-.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
-  content: 'Heading 2';
-}
-
-.quill-editor-container .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
-  content: 'Heading 3';
 }

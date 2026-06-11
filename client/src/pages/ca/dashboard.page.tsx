@@ -215,7 +215,7 @@ export default function CADashboard() {
                    <div className="relative group">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500" />
                       <Input
-                        placeholder="Search clients..." 
+                        placeholder="Search clients..."
                         className="h-9 w-60 rounded-lg border-slate-200 bg-slate-50 pl-9 text-xs font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

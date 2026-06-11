@@ -203,7 +203,7 @@ export default function LoginPage() {
           variant="outline"
           onClick={handleGoogle}
           disabled={loading || googleLoading || resendLoading}
-          className="h-10 w-full rounded-lg border-slate-300 bg-white font-bold text-slate-900 hover:border-[#315efb] hover:bg-slate-50"
+          className="h-10 w-full rounded-lg border-slate-300 bg-white font-bold text-slate-900 hover:border-brand-600 hover:bg-slate-50"
         >
           {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Chrome className="mr-2 h-4 w-4" />}
           Continue with Google
@@ -239,7 +239,7 @@ export default function LoginPage() {
             <Label htmlFor="password" className="text-sm font-bold text-slate-800">
               Password
             </Label>
-            <Link href="/forgot-password" className="text-sm font-bold text-[#315efb] hover:text-[#06439f]">
+            <Link href="/forgot-password" className="text-sm font-bold text-brand-600 hover:text-[#06439f]">
               Forgot?
             </Link>
           </div>

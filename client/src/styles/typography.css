@@ -94,8 +94,25 @@
     }
 
     .type-article-prose {
+        max-width: none;
         font-size: var(--type-article-body);
         line-height: 1.75;
+        color: var(--color-primary-700);
+    }
+
+    .type-article-prose-sm {
+        font-size: var(--text-sm);
+        line-height: var(--leading-relaxed);
+    }
+
+    .type-article-prose :where(h2, h3, h4) {
+        scroll-margin-top: 8rem;
+        color: var(--color-primary-900);
+        font-weight: var(--font-bold);
+    }
+
+    .type-article-prose :where(p, ul, ol, blockquote, table, pre, img) {
+        margin-block: 1.25em;
     }
 
     .type-article-prose :where(p, li) {
@@ -104,13 +121,61 @@
     }
 
     .type-article-prose :where(h2) {
+        margin-block: 2.5rem 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-primary-100);
         font-size: var(--type-section-title);
         line-height: var(--leading-tight);
     }
 
     .type-article-prose :where(h3) {
+        margin-block: 2rem 0.75rem;
         font-size: var(--text-xl);
         line-height: var(--leading-snug);
+    }
+
+    .type-article-prose :where(h4) {
+        margin-block: 1.5rem 0.5rem;
+        font-size: var(--text-base);
+    }
+
+    .type-article-prose :where(ul, ol) {
+        padding-inline-start: 1.5rem;
+    }
+
+    .type-article-prose :where(ul) {
+        list-style: disc;
+    }
+
+    .type-article-prose :where(ol) {
+        list-style: decimal;
+    }
+
+    .type-article-prose :where(li + li) {
+        margin-top: 0.5rem;
+    }
+
+    .type-article-prose :where(a) {
+        color: var(--color-accent-700);
+        font-weight: var(--font-medium);
+        text-decoration: none;
+    }
+
+    .type-article-prose :where(a:hover) {
+        text-decoration: underline;
+    }
+
+    .type-article-prose :where(strong) {
+        color: var(--color-primary-900);
+        font-weight: var(--font-semibold);
+    }
+
+    .type-article-prose :where(blockquote) {
+        border-left: 4px solid var(--color-accent-600);
+        border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+        background: var(--color-accent-50);
+        padding: 1rem 1.25rem;
+        color: var(--color-primary-700);
     }
 
     .type-article-prose :where(table) {
@@ -118,6 +183,52 @@
         width: 100%;
         max-width: 100%;
         overflow-x: auto;
+        border: 1px solid var(--color-primary-200);
+        border-radius: var(--radius-xl);
+        border-spacing: 0;
+    }
+
+    .type-article-prose :where(th) {
+        background: var(--color-accent-600);
+        padding: 0.75rem 1rem;
+        color: #ffffff;
+        font-size: var(--text-sm);
+        font-weight: var(--font-semibold);
+        text-align: left;
+    }
+
+    .type-article-prose :where(td) {
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--color-primary-200);
+        font-size: var(--text-sm);
+    }
+
+    .type-article-prose :where(code) {
+        border-radius: var(--radius-md);
+        background: var(--color-primary-100);
+        padding: 0.125rem 0.375rem;
+        color: var(--color-accent-700);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+    }
+
+    .type-article-prose :where(pre) {
+        overflow-x: auto;
+        border-radius: var(--radius-xl);
+        background: var(--color-primary-900);
+        padding: 1rem;
+        color: #ffffff;
+    }
+
+    .type-article-prose :where(pre code) {
+        background: transparent;
+        padding: 0;
+        color: inherit;
+    }
+
+    .type-article-prose :where(img) {
+        border: 1px solid var(--color-primary-100);
+        border-radius: var(--radius-xl);
     }
 
     @media (min-width: 768px) {

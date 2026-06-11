@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { m } from "framer-motion";
-import { 
-  Download, FileText, Table, FileSpreadsheet, File, 
+import {
+  Download, FileText, Table, FileSpreadsheet, File,
   Calendar, Filter, Check, AlertCircle, Loader2,
   TrendingUp, Users, Receipt, BarChart3, Clock, Shield
 } from "lucide-react";
@@ -135,7 +135,7 @@ export default function ExportCenterPage() {
         title: "Export completed",
         description: `Your ${currentExportType.name} has been exported successfully.`,
       });
-      
+
       // Simulate file download
       const blob = new Blob(['Export data'], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -187,8 +187,8 @@ export default function ExportCenterPage() {
                          onClick={() => setSelectedType(key)}
                          className={cn(
                            "w-full group p-4 rounded-3xl border-none transition-all flex items-center gap-4 text-left",
-                           selectedType === key 
-                             ? 'bg-indigo-600 shadow-lg shadow-indigo-100' 
+                           selectedType === key
+                             ? 'bg-indigo-600 shadow-lg shadow-indigo-100'
                              : 'hover:bg-slate-50'
                          )}
                        >
@@ -266,8 +266,8 @@ export default function ExportCenterPage() {
                           {currentExportType.formats.map(format => (
                             <div key={format}>
                               <RadioGroupItem value={format} id={format} className="peer sr-only" />
-                              <Label 
-                                htmlFor={format} 
+                              <Label
+                                htmlFor={format}
                                 className="flex flex-col items-center justify-center p-6 rounded-[32px] border-2 border-slate-50 bg-slate-50/50 hover:bg-white hover:border-indigo-100 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 transition-all cursor-pointer group"
                               >
                                 {format === "PDF" && <FileText className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />}
@@ -290,8 +290,8 @@ export default function ExportCenterPage() {
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="relative">
                                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
-                                  <Input 
-                                    type="date" 
+                                  <Input
+                                    type="date"
                                     value={format(dateRange.from, 'yyyy-MM-dd')}
                                     onChange={(e) => setDateRange(prev => ({ ...prev, from: new Date(e.target.value) }))}
                                     className="h-14 pl-12 rounded-2xl bg-slate-50 border-none type-meta font-black uppercase tracking-widest"
@@ -299,8 +299,8 @@ export default function ExportCenterPage() {
                                 </div>
                                 <div className="relative">
                                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
-                                  <Input 
-                                    type="date" 
+                                  <Input
+                                    type="date"
                                     value={format(dateRange.to, 'yyyy-MM-dd')}
                                     onChange={(e) => setDateRange(prev => ({ ...prev, to: new Date(e.target.value) }))}
                                     className="h-14 pl-12 rounded-2xl bg-slate-50 border-none type-meta font-black uppercase tracking-widest"
@@ -348,14 +348,14 @@ export default function ExportCenterPage() {
                         <div className="grid md:grid-cols-2 gap-4">
                           {currentExportType.fields.map(field => (
                             <div key={field.id} className="flex items-center space-x-4 p-4 rounded-3xl bg-slate-50 group hover:bg-indigo-50/50 transition-colors">
-                              <Checkbox 
+                              <Checkbox
                                 id={field.id}
                                 checked={selectedFields[field.id]}
                                 onCheckedChange={() => handleFieldToggle(field.id)}
                                 className="w-5 h-5 rounded-lg border-slate-200 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-none"
                               />
-                              <Label 
-                                htmlFor={field.id} 
+                              <Label
+                                htmlFor={field.id}
                                 className="flex-1 cursor-pointer type-meta font-black text-slate-600 uppercase tracking-tight group-hover:text-indigo-900"
                               >
                                 {field.label}
@@ -375,7 +375,7 @@ export default function ExportCenterPage() {
                          <h3 className="text-2xl font-black text-white tracking-tight mb-2">Initialize Data Pipeline</h3>
                          <p className="text-indigo-100 type-meta font-medium uppercase tracking-widest">Preparing {Object.values(selectedFields).filter(Boolean).length} Data Fields for {selectedFormat} Output</p>
                       </div>
-                      <Button 
+                      <Button
                         size="lg"
                         onClick={handleExport}
                         disabled={isExporting}
@@ -396,8 +396,8 @@ export default function ExportCenterPage() {
                    </div>
                    {isExporting && (
                      <div className="mt-10 h-1.5 w-full bg-indigo-700/50 rounded-full overflow-hidden">
-                        <div 
-                           className="h-full bg-white transition-all duration-300" 
+                        <div
+                           className="h-full bg-white transition-all duration-300"
                            style={{ width: `${exportProgress}%` }}
                         />
                      </div>

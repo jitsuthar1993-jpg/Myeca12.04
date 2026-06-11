@@ -70,31 +70,31 @@ export default function AnalyticsPage() {
     filteredReturns.forEach((return_: any) => {
       if (return_.formData) {
         const data = typeof return_.formData === 'string' ? JSON.parse(return_.formData) : return_.formData;
-        
+
         // Calculate income
         const salary = parseFloat(data.incomeDetails?.salary || '0');
         const businessIncome = parseFloat(data.businessIncome?.netProfit || '0');
         const capitalGains = data.capitalGains?.gains?.reduce((total: number, gain: any) => {
           return total + (parseFloat(gain.saleValue || '0') - parseFloat(gain.purchaseValue || '0'));
         }, 0) || 0;
-        
+
         analytics.totalIncome += salary + businessIncome + capitalGains;
-        
+
         // Calculate deductions
-        const deductions = parseFloat(data.deductions?.section80C || '0') + 
+        const deductions = parseFloat(data.deductions?.section80C || '0') +
                           parseFloat(data.deductions?.section80D || '0');
         analytics.totalDeductions += deductions;
-        
+
         // Calculate estimated tax
         const taxableIncome = Math.max(0, analytics.totalIncome - analytics.totalDeductions);
         analytics.totalTax += calculateEstimatedTax(taxableIncome);
       }
-      
+
       if (return_.status === 'filed') analytics.filedReturns++;
       if (return_.status === 'draft') analytics.draftReturns++;
     });
 
-    analytics.taxEfficiency = analytics.totalIncome > 0 ? 
+    analytics.taxEfficiency = analytics.totalIncome > 0 ?
       ((analytics.totalDeductions / analytics.totalIncome) * 100) : 0;
 
     return analytics;
@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
   };
 
   const analytics = calculateAnalytics();
-  
+
   const formatCurrency = (amount: number) => {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
@@ -128,7 +128,7 @@ export default function AnalyticsPage() {
   const getTaxOptimizationScore = () => {
     const maxDeductions = 150000; // Section 80C limit
     const utilizationRate = (analytics.totalDeductions / maxDeductions) * 100;
-    
+
     if (utilizationRate >= 80) return { score: 90, label: 'Excellent', color: 'emerald' };
     if (utilizationRate >= 60) return { score: 70, label: 'Good', color: 'blue' };
     if (utilizationRate >= 40) return { score: 50, label: 'Average', color: 'amber' };
@@ -222,7 +222,7 @@ export default function AnalyticsPage() {
              </CardContent>
           </Card>
 
-          <Button 
+          <Button
              className="w-full h-16 rounded-[32px] bg-white border border-slate-100 text-slate-900 hover:bg-slate-50 font-black text-xs uppercase tracking-widest shadow-sm transition-all hover:-translate-y-1"
           >
              <Download className="h-5 w-5 mr-3 text-blue-600" />
@@ -284,7 +284,7 @@ export default function AnalyticsPage() {
           {filteredReturns.length > 0 ? (
             <div className="space-y-10">
                <TaxSummaryDashboard formData={filteredReturns[0]?.formData || {}} />
-               
+
                {/* Filing History */}
                <Card className="border-none shadow-sm rounded-[48px] overflow-hidden bg-white border border-slate-100/50">
                   <CardHeader className="p-12 border-b border-slate-50">

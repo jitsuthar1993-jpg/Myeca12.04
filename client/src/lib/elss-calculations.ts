@@ -65,16 +65,16 @@ export function calculateSIPReturns(
   const monthlyRate = expectedReturn / 100 / 12;
   const totalMonths = years * 12;
   const yearlyInvestment = monthlyAmount * 12;
-  
+
   // Calculate future value with SIP formula
   let totalValue = 0;
   let totalInvested = 0;
   const monthWiseData: SIPProjection['monthWiseData'] = [];
-  
+
   for (let month = 1; month <= totalMonths; month++) {
     totalInvested += monthlyAmount;
     totalValue = (totalValue + monthlyAmount) * (1 + monthlyRate);
-    
+
     if (month % 12 === 0 || month === totalMonths) {
       monthWiseData.push({
         month,
@@ -83,25 +83,25 @@ export function calculateSIPReturns(
       });
     }
   }
-  
+
   const gains = totalValue - totalInvested;
-  
+
   // Calculate LTCG tax (only on gains above ₹1.25L)
   const taxableGains = Math.max(0, gains - LTCG_EXEMPTION);
   const ltcgTax = taxableGains * LTCG_TAX_RATE;
-  
+
   const netValue = totalValue - ltcgTax;
-  
+
   // Calculate tax saved under 80C
   const deductionPerYear = Math.min(yearlyInvestment, MAX_80C_DEDUCTION);
   const marginalRate = getMarginalTaxRate(annualIncome);
   const taxSavedPerYear = deductionPerYear * marginalRate * 1.04; // Include 4% cess
   const totalTaxSaved = taxSavedPerYear * years;
-  
+
   // Effective returns including tax benefit
   const effectiveTotalValue = netValue + totalTaxSaved;
   const effectiveReturns = ((effectiveTotalValue / totalInvested) - 1) * 100;
-  
+
   return {
     totalInvested: Math.round(totalInvested),
     expectedValue: Math.round(totalValue),
@@ -122,26 +122,26 @@ export function calculateLumpsumReturns(
   annualIncome: number
 ): LumpsumProjection {
   const annualRate = expectedReturn / 100;
-  
+
   // Future value
   const expectedValue = amount * Math.pow(1 + annualRate, years);
   const gains = expectedValue - amount;
-  
+
   // LTCG tax
   const taxableGains = Math.max(0, gains - LTCG_EXEMPTION);
   const ltcgTax = taxableGains * LTCG_TAX_RATE;
-  
+
   const netValue = expectedValue - ltcgTax;
-  
+
   // Tax saved
   const deduction = Math.min(amount, MAX_80C_DEDUCTION);
   const marginalRate = getMarginalTaxRate(annualIncome);
   const taxSaved = deduction * marginalRate * 1.04;
-  
+
   // Effective returns
   const effectiveTotalValue = netValue + taxSaved;
   const effectiveReturns = ((effectiveTotalValue / amount) - 1) * 100 / years;
-  
+
   return {
     invested: amount,
     expectedValue: Math.round(expectedValue),
@@ -162,10 +162,10 @@ export function calculateTaxSavings(
   const marginalRate = getMarginalTaxRate(annualIncome);
   const taxSaved = deductionClaimed * marginalRate * 1.04;
   const effectiveCost = investment - taxSaved;
-  
+
   // Break-even return needed to recover investment after tax benefit
   const breakEvenReturn = ((investment / effectiveCost) - 1) * 100 / LOCK_IN_YEARS;
-  
+
   return {
     investment,
     deductionClaimed,
@@ -184,11 +184,11 @@ export function calculateExpenseImpact(
 ): { grossValue: number; netValue: number; expenseCost: number } {
   const grossRate = grossReturn / 100;
   const netRate = (grossReturn - expenseRatio) / 100;
-  
+
   const grossValue = investment * Math.pow(1 + grossRate, years);
   const netValue = investment * Math.pow(1 + netRate, years);
   const expenseCost = grossValue - netValue;
-  
+
   return {
     grossValue: Math.round(grossValue),
     netValue: Math.round(netValue),
@@ -203,32 +203,32 @@ export function calculateXIRR(
 ): number {
   const maxIterations = 100;
   const tolerance = 0.0001;
-  
+
   let rate = guess;
-  
+
   for (let i = 0; i < maxIterations; i++) {
     let npv = 0;
     let dnpv = 0;
-    
+
     const firstDate = cashflows[0].date;
-    
+
     for (const cf of cashflows) {
       const days = (cf.date.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
       const years = days / 365;
-      
+
       npv += cf.amount / Math.pow(1 + rate, years);
       dnpv -= years * cf.amount / Math.pow(1 + rate, years + 1);
     }
-    
+
     const newRate = rate - npv / dnpv;
-    
+
     if (Math.abs(newRate - rate) < tolerance) {
       return newRate * 100;
     }
-    
+
     rate = newRate;
   }
-  
+
   return rate * 100;
 }
 
@@ -247,30 +247,30 @@ export function compareWith80COptions(
   const ppfReturn = 7.1;
   const fdReturn = 6.5; // Tax-saver FD
   const nscReturn = 7.7;
-  
+
   const marginalRate = 0.30; // Assume highest slab for comparison
   const deduction = Math.min(investment, MAX_80C_DEDUCTION);
   const taxBenefit = deduction * marginalRate * 1.04;
-  
+
   // ELSS (with LTCG)
   const elssValue = investment * Math.pow(1 + elssReturn / 100, years);
   const elssGains = elssValue - investment;
   const elssLTCG = Math.max(0, elssGains - LTCG_EXEMPTION) * LTCG_TAX_RATE;
-  
+
   // PPF (tax-free returns)
   const ppfValue = investment * Math.pow(1 + ppfReturn / 100, years);
-  
+
   // FD (interest taxable)
   const fdGrossValue = investment * Math.pow(1 + fdReturn / 100, years);
   const fdInterest = fdGrossValue - investment;
   const fdTax = fdInterest * marginalRate;
   const fdValue = fdGrossValue - fdTax;
-  
+
   // NSC (interest taxable but accrued)
   const nscValue = investment * Math.pow(1 + nscReturn / 100, years);
   const nscInterest = nscValue - investment;
   const nscTax = nscInterest * marginalRate;
-  
+
   return {
     elss: { value: Math.round(elssValue - elssLTCG), taxBenefit: Math.round(taxBenefit) },
     ppf: { value: Math.round(ppfValue), taxBenefit: Math.round(taxBenefit) },

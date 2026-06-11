@@ -577,25 +577,7 @@ export default function BlogArticle({ post, isPreview = false }: BlogArticleProp
 
             {/* Prose content */}
             <div
-              className={cn(
-                "prose prose-slate max-w-none",
-                "prose-headings:scroll-mt-32 prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900",
-                "prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-slate-100",
-                "prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3",
-                "prose-h4:text-base prose-h4:font-semibold prose-h4:mt-6",
-                "prose-p:text-base prose-p:leading-8 prose-p:text-slate-700",
-                "prose-li:text-base prose-li:leading-7 prose-li:text-slate-700",
-                "prose-strong:text-slate-900 prose-strong:font-semibold",
-                "prose-a:text-blue-600 prose-a:font-medium prose-a:no-underline hover:prose-a:underline",
-                "prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 prose-blockquote:rounded-r-xl prose-blockquote:py-3 prose-blockquote:px-5 prose-blockquote:not-italic prose-blockquote:text-slate-700",
-                "prose-table:rounded-xl prose-table:overflow-hidden prose-table:border prose-table:border-slate-200",
-                "prose-thead:bg-blue-600 prose-thead:text-white",
-                "prose-th:text-white prose-th:font-semibold prose-th:py-3 prose-th:px-4",
-                "prose-td:py-3 prose-td:px-4 prose-td:text-sm prose-td:text-slate-700",
-                "prose-code:bg-slate-100 prose-code:text-blue-700 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono",
-                "prose-pre:bg-blue-700 prose-pre:rounded-xl",
-                "prose-img:rounded-xl prose-img:shadow-sm prose-img:border prose-img:border-slate-200",
-              )}
+              className="type-article-prose"
               dangerouslySetInnerHTML={{ __html: safeArticleHtml }}
             />
 

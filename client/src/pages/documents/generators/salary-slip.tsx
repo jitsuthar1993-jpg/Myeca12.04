@@ -237,7 +237,7 @@ const generateHTML = (data: any) => {
         <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">${data.companyAddress}</p>
         <h3 style="margin: 15px 0 0 0; font-size: 16px; font-weight: bold;">PAYSLIP FOR ${data.monthYear.toUpperCase()}</h3>
       </div>
-      
+
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px;">
         <tbody>
           <tr>

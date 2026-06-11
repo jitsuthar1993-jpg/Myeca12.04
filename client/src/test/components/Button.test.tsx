@@ -18,7 +18,7 @@ describe('Button Component', () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click</Button>);
-    
+
     await user.click(screen.getByRole('button'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -34,7 +34,7 @@ describe('Button Component', () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
     render(<Button disabled onClick={handleClick}>Disabled</Button>);
-    
+
     await user.click(screen.getByRole('button'));
     expect(handleClick).not.toHaveBeenCalled();
   });

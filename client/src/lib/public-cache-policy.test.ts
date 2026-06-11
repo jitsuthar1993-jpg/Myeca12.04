@@ -44,8 +44,9 @@ describe("public performance cache policy", () => {
     const main = read("client/src/main.tsx");
     const errorBoundary = read("client/src/components/ErrorBoundary.tsx");
 
-    expect(html).toContain("Inter:wght@400;500;600;700&display=swap");
-    expect(html).not.toContain("Inter:wght@400;500;600;700;800;900&display=swap");
+    expect(html).toContain("/fonts/inter-latin-variable.woff2");
+    expect(html).not.toContain("fonts.googleapis.com");
+    expect(html).not.toContain("fonts.gstatic.com");
     expect(html).toContain('<link rel="preload" as="image" href="/icons/icon-192.png"');
     expect(html).toContain('content="https://myeca.in/og-image.jpg"');
     expect(app).toContain("import('@/components/pwa/PwaInstallBanner')");

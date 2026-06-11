@@ -4,12 +4,12 @@ import { Link } from "wouter";
 import { RouteSeo } from "@/components/seo/RouteSeo";
 import {
   ShoppingBag,
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -58,7 +58,7 @@ export default function TradeLicensePage() {
     {
       category: "Industries License",
       icon: Factory,
-      color: "green", 
+      color: "green",
       businesses: ["Small, medium, large-scale manufacturing", "Cyber cafes", "Industrial establishments", "Production units"],
       processingTime: "10-15 days",
       fees: "₹1,000-5,000"
@@ -209,7 +209,7 @@ export default function TradeLicensePage() {
       specialFeatures: "Digital certificate, online tracking"
     },
     {
-      city: "Hyderabad", 
+      city: "Hyderabad",
       portal: "ghmc.gov.in",
       processingTime: "5-7 days",
       specialFeatures: "Real-time status, SMS updates"
@@ -217,7 +217,7 @@ export default function TradeLicensePage() {
     {
       city: "Kolkata",
       portal: "kmcgov.in",
-      processingTime: "10-12 days", 
+      processingTime: "10-12 days",
       specialFeatures: "Online renewal, digital payments"
     },
     {
@@ -282,11 +282,11 @@ export default function TradeLicensePage() {
                 <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center soft-shadow">
                   <ShoppingBag className="w-8 h-8 text-blue-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Trade License Registration
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Mandatory municipal license for commercial establishments. Expert documentation and filing support.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -302,14 +302,14 @@ export default function TradeLicensePage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Before you apply</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <FileText className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Keep PAN, Aadhaar, and address proof ready.
@@ -342,10 +342,10 @@ export default function TradeLicensePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Trade License Categories
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Choose the appropriate license category based on your business type
             </p>
           </div>
@@ -363,14 +363,14 @@ export default function TradeLicensePage() {
                   <div className="space-y-3 mb-4">
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Processing:</span>
-                      <span className="text-gray-600">{category.processingTime}</span>
+                      <span className="text-slate-600">{category.processingTime}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Fees:</span>
                       <span className={`font-bold text-${category.color}-600`}>{category.fees}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Covers:</h4>
                     <ul className="space-y-1">
@@ -396,10 +396,10 @@ export default function TradeLicensePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Eligibility Criteria
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Basic requirements for trade license application
             </p>
           </div>
@@ -414,7 +414,7 @@ export default function TradeLicensePage() {
                   <CardTitle className="text-lg font-bold">{criteria.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-sm text-gray-700">{criteria.requirement}</p>
+                  <p className="text-sm text-slate-700">{criteria.requirement}</p>
                   <Badge className="mt-2 bg-green-100 text-green-700">
                     Mandatory
                   </Badge>
@@ -432,10 +432,10 @@ export default function TradeLicensePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Required Documents Checklist
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete document requirements for trade license application
             </p>
           </div>
@@ -454,7 +454,7 @@ export default function TradeLicensePage() {
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -472,10 +472,10 @@ export default function TradeLicensePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               7-Step Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete online process for trade license registration
             </p>
           </div>
@@ -495,7 +495,7 @@ export default function TradeLicensePage() {
                   <CardTitle className="text-lg font-bold">{step.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+                  <p className="text-sm text-slate-600 mb-3">{step.description}</p>
                   <div className="flex items-center text-xs text-blue-600">
                     <Clock className="w-3 h-3 mr-1" />
                     <span>{step.duration}</span>
@@ -504,7 +504,7 @@ export default function TradeLicensePage() {
               </Card>
             ))}
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6 mt-6">
             {registrationProcess.slice(4).map((step, index) => (
               <Card key={index + 4} className="relative overflow-hidden hover:shadow-lg transition-shadow">
@@ -520,7 +520,7 @@ export default function TradeLicensePage() {
                   <CardTitle className="text-lg font-bold">{step.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+                  <p className="text-sm text-slate-600 mb-3">{step.description}</p>
                   <div className="flex items-center text-xs text-blue-600">
                     <Clock className="w-3 h-3 mr-1" />
                     <span>{step.duration}</span>
@@ -539,10 +539,10 @@ export default function TradeLicensePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Major City Application Portals
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Official municipal corporation portals for trade license applications
             </p>
           </div>
@@ -566,7 +566,7 @@ export default function TradeLicensePage() {
                       <Badge variant="outline">{portal.processingTime}</Badge>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600">
+                  <div className="text-xs text-slate-600">
                     <strong>Features:</strong> {portal.specialFeatures}
                   </div>
                 </CardContent>
@@ -583,10 +583,10 @@ export default function TradeLicensePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Additional Requirements by Business Type
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Specific additional documents required for certain business categories
             </p>
           </div>
@@ -605,7 +605,7 @@ export default function TradeLicensePage() {
                     {req.requirements.map((requirement, reqIndex) => (
                       <li key={reqIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${req.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{requirement}</span>
+                        <span className="text-sm text-slate-700">{requirement}</span>
                       </li>
                     ))}
                   </ul>
@@ -627,7 +627,7 @@ export default function TradeLicensePage() {
                 Ready to Apply for Trade License?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Our municipal compliance experts handle complete documentation, application filing, 
+                Our municipal compliance experts handle complete documentation, application filing,
                 and follow-up for supported cities. We help organize the paperwork so you can focus on your business.
               </p>
 

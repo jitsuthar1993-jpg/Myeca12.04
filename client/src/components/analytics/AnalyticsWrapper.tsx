@@ -29,7 +29,7 @@ export default function AnalyticsWrapper({ children }: AnalyticsWrapperProps) {
   // Track time on page
   useEffect(() => {
     const startTime = Date.now();
-    
+
     return () => {
       const timeOnPage = Math.round((Date.now() - startTime) / 1000);
       if (timeOnPage > 5) { // Only track if user spent more than 5 seconds

@@ -64,7 +64,7 @@ export default function TaxCalculatorFeaturePage() {
             Updated for AY 2025–26
           </div>
           <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
-            Know Your Tax <span className="text-[#315efb]">Before You File</span>
+            Know Your Tax <span className="text-brand-600">Before You File</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
             Six calculators built for Indian taxpayers — income tax, HRA, capital gains, deductions, and more. Use them as estimates before review.
@@ -92,17 +92,17 @@ export default function TaxCalculatorFeaturePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {calculators.map((calc) => (
               <Link key={calc.title} href={calc.href}>
-                <div className="group h-full p-6 rounded-2xl border border-slate-100 hover:border-[#315efb]/30 hover:shadow-md transition-all cursor-pointer">
+                <div className="group h-full p-6 rounded-2xl border border-slate-100 hover:border-brand-600/30 hover:shadow-md transition-all cursor-pointer">
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-base font-bold text-slate-900 group-hover:text-[#315efb] transition-colors">{calc.title}</h3>
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{calc.title}</h3>
                     {calc.badge && (
-                      <span className="type-meta ml-2 shrink-0 rounded-full bg-[#315efb]/8 px-2 py-0.5 font-black text-[#315efb]">
+                      <span className="type-meta ml-2 shrink-0 rounded-full bg-brand-600/8 px-2 py-0.5 font-black text-brand-600">
                         {calc.badge}
                       </span>
                     )}
                   </div>
                   <p className="text-slate-500 text-sm leading-relaxed mb-4">{calc.desc}</p>
-                  <div className="flex items-center gap-1 text-[#315efb] text-sm font-semibold">
+                  <div className="flex items-center gap-1 text-brand-600 text-sm font-semibold">
                     Open Calculator <ChevronRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -140,8 +140,8 @@ export default function TaxCalculatorFeaturePage() {
                 { icon: Zap, label: "Browser-Based Results", desc: "Calculations run in the browser with no form submission required." },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex gap-4 p-4 bg-white rounded-xl border border-slate-100">
-                  <div className="w-9 h-9 shrink-0 rounded-lg bg-[#315efb]/8 flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-[#315efb]" />
+                  <div className="w-9 h-9 shrink-0 rounded-lg bg-brand-600/8 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-brand-600" />
                   </div>
                   <div>
                     <div className="font-bold text-slate-900 text-sm">{label}</div>
@@ -155,13 +155,13 @@ export default function TaxCalculatorFeaturePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-[#315efb] text-white text-center">
+      <section className="py-16 bg-brand-600 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <Calculator className="w-8 h-8 mx-auto mb-4 text-blue-300" />
           <h2 className="text-3xl font-extrabold mb-4">Calculated your tax? File it with a CA.</h2>
           <p className="text-blue-100 mb-8">Use the estimate to organize your filing records, then confirm the review scope before submission. Starting at ₹499.</p>
           <Link href="/which-itr-form-to-file?source=tax_calculator_feature_cta">
-            <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
+            <Button size="lg" className="bg-white text-brand-600 hover:bg-blue-50 gap-2">
               Start ITR Filing <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>

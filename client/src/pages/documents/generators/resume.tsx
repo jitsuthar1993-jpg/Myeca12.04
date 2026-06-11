@@ -233,12 +233,12 @@ const generateHTML = (data: any) => {
     <p style="margin: 5px 0;">${data.personalInfo?.email} | ${data.personalInfo?.phone}</p>
     <p style="margin: 5px 0;">${data.personalInfo?.address}</p>
   </div>
-  
+
   <div class="section">
     <h2>Professional Summary</h2>
     <p>${data.summary}</p>
   </div>
-  
+
   <div class="section">
     <h2>Work Experience</h2>
     ${data.experience

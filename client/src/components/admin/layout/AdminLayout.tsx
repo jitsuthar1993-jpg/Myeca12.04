@@ -16,15 +16,15 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
   return (
     <div className="min-h-screen bg-slate-50 lg:flex">
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-      
+
       {/* Main content area */}
       <div className="flex-1 lg:ml-64">
-        <AdminHeader 
+        <AdminHeader
           title={title}
           description={description}
           onMenuClick={() => setSidebarOpen(true)}
         />
-        
+
         {/* Page content */}
         <main className="p-4 lg:p-8 pt-24 min-h-screen">
           {children}

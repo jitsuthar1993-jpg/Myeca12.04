@@ -196,7 +196,7 @@ export const OptimizedInput: React.FC<OptimizedInputProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
-    
+
     if (currency) {
       // Only allow numbers and decimal points
       newValue = newValue.replace(/[^\d.]/g, '');
@@ -206,7 +206,7 @@ export const OptimizedInput: React.FC<OptimizedInputProps> = ({
         newValue = parts[0] + '.' + parts.slice(1).join('');
       }
     }
-    
+
     setInputValue(newValue);
     if (onChange) {
       onChange({
@@ -225,13 +225,13 @@ export const OptimizedInput: React.FC<OptimizedInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={label} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={label} className="block text-sm font-medium text-slate-700">
         {label}
       </label>
       <div className="relative">
         {currency && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-gray-500 sm:text-sm">₹</span>
+            <span className="text-slate-500 sm:text-sm">₹</span>
           </div>
         )}
         <input
@@ -240,7 +240,7 @@ export const OptimizedInput: React.FC<OptimizedInputProps> = ({
           value={currency ? inputValue : value}
           onChange={handleChange}
           className={cn(
-            'block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm',
+            'block w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm',
             touchTargetClasses,
             'px-3 py-2 text-base',
             {
@@ -260,7 +260,7 @@ export const OptimizedInput: React.FC<OptimizedInputProps> = ({
         </p>
       )}
       {helperText && !error && (
-        <p className="mt-2 text-sm text-gray-500" id={`${label}-description`}>
+        <p className="mt-2 text-sm text-slate-500" id={`${label}-description`}>
           {helperText}
         </p>
       )}
@@ -299,7 +299,7 @@ export const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={label} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={label} className="block text-sm font-medium text-slate-700">
         {label}
       </label>
       <div className="relative">
@@ -307,7 +307,7 @@ export const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
           type="button"
           id={label}
           className={cn(
-            'relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm',
+            'relative w-full bg-white border border-slate-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm',
             touchTargetClasses,
             {
               'border-red-300 text-red-900 focus:border-red-500 focus:ring-red-500': error,
@@ -322,7 +322,7 @@ export const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
             {options.find(opt => opt.value === value)?.label || 'Select an option'}
           </span>
           <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
           </span>
@@ -341,7 +341,7 @@ export const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
                   'cursor-default select-none relative py-2 pl-3 pr-9',
                   {
                     'text-white bg-primary': option.value === value,
-                    'text-gray-900': option.value !== value,
+                    'text-slate-900': option.value !== value,
                   }
                 )}
                 onClick={() => {
@@ -365,7 +365,7 @@ export const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
         </p>
       )}
       {helperText && !error && (
-        <p className="mt-2 text-sm text-gray-500" id={`${label}-description`}>
+        <p className="mt-2 text-sm text-slate-500" id={`${label}-description`}>
           {helperText}
         </p>
       )}
@@ -404,7 +404,7 @@ export const OptimizedCard: React.FC<OptimizedCardProps> = ({
   return (
     <div
       className={cn(
-        'bg-white rounded-lg border border-gray-200',
+        'bg-white rounded-lg border border-slate-200',
         elevationClasses,
         paddingClasses,
         className
@@ -477,7 +477,7 @@ export const OptimizedSwitch: React.FC<OptimizedSwitchProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200',
+        'flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200',
         touchTargetClasses,
         {
           'opacity-50 cursor-not-allowed': disabled,
@@ -489,9 +489,9 @@ export const OptimizedSwitch: React.FC<OptimizedSwitchProps> = ({
       {...touchHandlers}
     >
       <div className="flex-1">
-        <p className="text-base font-medium text-gray-900">{label}</p>
+        <p className="text-base font-medium text-slate-900">{label}</p>
         {description && (
-          <p className="text-sm text-gray-500 mt-1">{description}</p>
+          <p className="text-sm text-slate-500 mt-1">{description}</p>
         )}
       </div>
       <button
@@ -503,7 +503,7 @@ export const OptimizedSwitch: React.FC<OptimizedSwitchProps> = ({
           'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
           {
             'bg-primary': checked,
-            'bg-gray-200': !checked,
+            'bg-slate-200': !checked,
           }
         )}
       >
@@ -704,9 +704,9 @@ export const useFormValidation = () => {
  */
 export const formatCurrency = (amount: number | string, currency: string = 'INR'): string => {
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-  
+
   if (isNaN(numAmount)) return '₹0';
-  
+
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: currency,
@@ -720,9 +720,9 @@ export const formatCurrency = (amount: number | string, currency: string = 'INR'
  */
 export const formatPercentage = (value: number | string, decimals: number = 2): string => {
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
-  
+
   if (isNaN(numValue)) return '0%';
-  
+
   return `${numValue.toFixed(decimals)}%`;
 };
 

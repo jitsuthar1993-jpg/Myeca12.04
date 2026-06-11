@@ -8,7 +8,7 @@ export const SEO_DEFAULTS = {
   defaultImage: '/og-image.jpg',
   twitterHandle: '@myecain',
   facebookAppId: '', // Add when available
-  
+
   // Default keywords for all pages
   defaultKeywords: [
     'ITR filing',
@@ -22,7 +22,7 @@ export const SEO_DEFAULTS = {
     'tax refund',
     'MyeCA'
   ],
-  
+
   // Organization schema data
   organization: {
     "@type": "Organization",
@@ -49,7 +49,7 @@ export const SEO_DEFAULTS = {
       "areaServed": "IN"
     }
   },
-  
+
   // WebSite schema data
   website: {
     "@type": "WebSite",

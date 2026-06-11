@@ -54,7 +54,7 @@ export default function BottomNav() {
 
   const isActive = (item: NavItem) => {
     if (item.matchPaths) {
-      return item.matchPaths.some(path => 
+      return item.matchPaths.some(path =>
         path === "/" ? location === "/" : location.startsWith(path)
       );
     }
@@ -62,11 +62,11 @@ export default function BottomNav() {
   };
 
   return (
-    <nav 
+    <nav
       className={cn(
         "fixed bottom-0 left-0 right-0 z-40 md:hidden",
         "bg-white backdrop-blur-none",
-        "border-t border-gray-200/50",
+        "border-t border-slate-200/50",
         "shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.1)]",
         "safe-area-pb"
       )}
@@ -75,12 +75,12 @@ export default function BottomNav() {
         {navItems.map((item) => {
           const active = isActive(item);
           const colorClass = item.activeColor === "purple"
-            ? active 
-              ? "text-purple-600 bg-purple-50" 
-              : "text-gray-500"
-            : active 
-              ? "text-blue-600 bg-blue-50" 
-              : "text-gray-500";
+            ? active
+              ? "text-purple-600 bg-purple-50"
+              : "text-slate-500"
+            : active
+              ? "text-blue-600 bg-blue-50"
+              : "text-slate-500";
 
           return (
             <Link
@@ -98,7 +98,7 @@ export default function BottomNav() {
             >
               {/* Badge */}
               {item.badge}
-              
+
               {/* Icon */}
               <div className={cn(
                 "mb-1 transition-transform duration-200",
@@ -106,7 +106,7 @@ export default function BottomNav() {
               )}>
                 {item.icon}
               </div>
-              
+
               {/* Label */}
               <span className={cn(
                 "text-xs font-medium transition-opacity",
@@ -118,7 +118,7 @@ export default function BottomNav() {
           );
         })}
       </div>
-      
+
       {/* iOS safe area spacer */}
       <div className="h-safe-area-inset-bottom bg-white" />
     </nav>

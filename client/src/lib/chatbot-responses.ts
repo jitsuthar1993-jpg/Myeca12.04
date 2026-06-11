@@ -181,7 +181,7 @@ export const TAX_INTENTS: ChatIntent[] = [
 // Find the closest matching intent for user input
 export function findIntent(userMessage: string): ChatIntent | null {
   const normalizedMessage = userMessage.toLowerCase().trim();
-  
+
   // Check each intent's patterns
   for (const intent of TAX_INTENTS) {
     for (const pattern of intent.patterns) {
@@ -190,21 +190,21 @@ export function findIntent(userMessage: string): ChatIntent | null {
       }
     }
   }
-  
+
   return null;
 }
 
 // Generate bot response
 export function generateResponse(userMessage: string): { response: string; quickActions?: ChatIntent['quickActions'] } {
   const intent = findIntent(userMessage);
-  
+
   if (intent) {
     return {
       response: intent.response,
       quickActions: intent.quickActions,
     };
   }
-  
+
   // Default response for unrecognized queries
   return {
     response: "I'm not sure I understand that query. 🤔\n\nI can help you with:\n• Tax calculations and planning\n• ITR filing guidance\n• Tax-saving deductions (80C, 80D, etc.)\n• Deadlines and refund status\n\nCould you please rephrase your question, or choose from the options below?",

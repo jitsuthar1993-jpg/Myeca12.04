@@ -266,7 +266,7 @@ export const FocusManagementProvider: React.FC<{ children: React.ReactNode }> = 
       '[role="switch"]:not([disabled])',
       '[role="option"]:not([disabled])'
     ].join(', ');
-    
+
     return Array.from(container.querySelectorAll(focusableSelector));
   }, []);
 
@@ -274,14 +274,14 @@ export const FocusManagementProvider: React.FC<{ children: React.ReactNode }> = 
     const focusableElements = getFocusableElements(container);
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
-    
+
     let currentFocusedIndex = 0;
     let isShiftPressed = false;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Tab') {
         isShiftPressed = event.shiftKey;
-        
+
         if (event.shiftKey) {
           if (document.activeElement === firstElement) {
             event.preventDefault();
@@ -311,11 +311,11 @@ export const FocusManagementProvider: React.FC<{ children: React.ReactNode }> = 
     const deactivate = () => {
       container.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('click', handleClickOutside);
-      
+
       if (options.returnFocus !== false) {
         restoreFocus();
       }
-      
+
       activeTrapRef.current = null;
     };
 
@@ -325,10 +325,10 @@ export const FocusManagementProvider: React.FC<{ children: React.ReactNode }> = 
 
     // Set initial focus
     if (options.initialFocus) {
-      const initialElement = typeof options.initialFocus === 'string' 
+      const initialElement = typeof options.initialFocus === 'string'
         ? container.querySelector(options.initialFocus) as HTMLElement
         : options.initialFocus;
-      
+
       if (initialElement && focusableElements.includes(initialElement)) {
         initialElement.focus();
       } else if (firstElement) {
@@ -343,10 +343,10 @@ export const FocusManagementProvider: React.FC<{ children: React.ReactNode }> = 
   }, [getFocusableElements, restoreFocus]);
 
   const setInitialFocus = useCallback((element: HTMLElement | string) => {
-    const targetElement = typeof element === 'string' 
+    const targetElement = typeof element === 'string'
       ? document.querySelector(element) as HTMLElement
       : element;
-    
+
     if (targetElement) {
       targetElement.focus();
       setCurrentFocus(targetElement);
@@ -378,7 +378,7 @@ export const KeyboardShortcutsProvider: React.FC<{ children: React.ReactNode }> 
 
   const registerShortcut = useCallback((shortcut: KeyboardShortcut) => {
     setShortcuts(prev => {
-      const filtered = prev.filter(s => 
+      const filtered = prev.filter(s =>
         !(s.key === shortcut.key && JSON.stringify(s.modifiers) === JSON.stringify(shortcut.modifiers))
       );
       return [...filtered, shortcut].sort((a, b) => (b.priority || 0) - (a.priority || 0));
@@ -386,7 +386,7 @@ export const KeyboardShortcutsProvider: React.FC<{ children: React.ReactNode }> 
   }, []);
 
   const unregisterShortcut = useCallback((key: string, modifiers?: string[]) => {
-    setShortcuts(prev => prev.filter(s => 
+    setShortcuts(prev => prev.filter(s =>
       !(s.key === key && JSON.stringify(s.modifiers) === JSON.stringify(modifiers))
     ));
   }, []);
@@ -405,8 +405,8 @@ export const KeyboardShortcutsProvider: React.FC<{ children: React.ReactNode }> 
 
       const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase() ||
                       event.code.toLowerCase() === shortcut.key.toLowerCase();
-      
-      const modifierMatch = !shortcut.modifiers || 
+
+      const modifierMatch = !shortcut.modifiers ||
                            shortcut.modifiers.every(mod => {
                              switch (mod) {
                                case 'ctrl': return event.ctrlKey;
@@ -416,7 +416,7 @@ export const KeyboardShortcutsProvider: React.FC<{ children: React.ReactNode }> 
                                default: return false;
                              }
                            });
-      
+
       return keyMatch && modifierMatch;
     });
 
@@ -427,7 +427,7 @@ export const KeyboardShortcutsProvider: React.FC<{ children: React.ReactNode }> 
       if (matchingShortcut.stopPropagation) {
         event.stopPropagation();
       }
-      
+
       matchingShortcut.action(event);
     }
   }, [isEnabled, shortcuts]);
@@ -467,7 +467,7 @@ const KeyboardShortcutsHelp: React.FC = () => {
         returnFocus: true,
         escapeDeactivates: true
       });
-      
+
       return cleanup;
     }
   }, [isHelpVisible, trapFocus]);
@@ -510,12 +510,12 @@ const KeyboardShortcutsHelp: React.FC = () => {
         aria-modal="true"
       >
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 id="shortcuts-title" className="text-xl font-semibold text-gray-900">
+          <h2 id="shortcuts-title" className="text-xl font-semibold text-slate-900">
             Keyboard Shortcuts
           </h2>
           <button
             onClick={hideHelp}
-            className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+            className="text-slate-400 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
             aria-label="Close shortcuts help"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -523,22 +523,22 @@ const KeyboardShortcutsHelp: React.FC = () => {
             </svg>
           </button>
         </div>
-        
+
         <div className="overflow-y-auto max-h-[60vh]">
           <div className="p-6">
             {Object.entries(groupedShortcuts).map(([category, categoryShortcuts]) => (
               <div key={category} className="mb-8 last:mb-0">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 capitalize">
+                <h3 className="text-lg font-medium text-slate-900 mb-4 capitalize">
                   {category}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {categoryShortcuts.map((shortcut, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center space-x-3">
                         <kbd className="rounded border border-blue-100 bg-blue-50 px-3 py-1 font-mono text-sm text-blue-700">
                           {formatShortcut(shortcut)}
                         </kbd>
-                        <span className="text-gray-700">{shortcut.description}</span>
+                        <span className="text-slate-700">{shortcut.description}</span>
                       </div>
                       {shortcut.global && (
                         <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -552,13 +552,13 @@ const KeyboardShortcutsHelp: React.FC = () => {
             ))}
           </div>
         </div>
-        
-        <div className="p-6 border-t bg-gray-50">
+
+        <div className="p-6 border-t bg-slate-50">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Press <kbd className="px-2 py-1 bg-gray-200 text-gray-800 text-xs font-mono rounded">Esc</kbd> to close
+            <p className="text-sm text-slate-600">
+              Press <kbd className="px-2 py-1 bg-slate-200 text-slate-800 text-xs font-mono rounded">Esc</kbd> to close
             </p>
-            <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <div className="flex items-center space-x-2 text-xs text-slate-500">
               <span>Global shortcuts work everywhere</span>
               <span>•</span>
               <span>Context-specific shortcuts work in focused areas</span>
@@ -592,7 +592,7 @@ function handleEnter(event: KeyboardEvent) {
 
 function handleSpace(event: KeyboardEvent) {
   const target = event.target as HTMLElement;
-  if (target.tagName === 'BUTTON' || 
+  if (target.tagName === 'BUTTON' ||
       target.getAttribute('role') === 'button' ||
       target.getAttribute('role') === 'checkbox' ||
       target.getAttribute('role') === 'switch') {
@@ -604,27 +604,27 @@ function handleSpace(event: KeyboardEvent) {
 function handleArrowNavigation(event: KeyboardEvent, direction: 'up' | 'down' | 'left' | 'right') {
   const target = event.target as HTMLElement;
   const container = target.closest('[role="listbox"], [role="menu"], [role="tablist"], [role="radiogroup"], [role="grid"]') as HTMLElement;
-  
+
   if (!container) return;
 
   const items = container.querySelectorAll('[role="option"], [role="menuitem"], [role="tab"], [role="radio"], [role="gridcell"]');
   const currentIndex = Array.from(items).indexOf(target);
-  
+
   let nextIndex = currentIndex;
-  
+
   if (direction === 'up' || direction === 'left') {
     nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
   } else if (direction === 'down' || direction === 'right') {
     nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
   }
-  
+
   (items[nextIndex] as HTMLElement)?.focus();
 }
 
 function handleHome(event: KeyboardEvent) {
   const target = event.target as HTMLElement;
   const container = target.closest('[role="listbox"], [role="menu"], [role="tablist"], [role="radiogroup"]') as HTMLElement;
-  
+
   if (container) {
     const items = container.querySelectorAll('[role="option"], [role="menuitem"], [role="tab"], [role="radio"]');
     (items[0] as HTMLElement)?.focus();
@@ -640,7 +640,7 @@ function handleHome(event: KeyboardEvent) {
 function handleEnd(event: KeyboardEvent) {
   const target = event.target as HTMLElement;
   const container = target.closest('[role="listbox"], [role="menu"], [role="tablist"], [role="radiogroup"]') as HTMLElement;
-  
+
   if (container) {
     const items = container.querySelectorAll('[role="option"], [role="menuitem"], [role="tab"], [role="radio"]');
     (items[items.length - 1] as HTMLElement)?.focus();
@@ -706,10 +706,10 @@ export const useEnhancedFocus = (options: {
 };
 
 // Focus Ring Component
-export const FocusRing: React.FC<{ 
-  children: React.ReactNode; 
-  color?: string; 
-  width?: number; 
+export const FocusRing: React.FC<{
+  children: React.ReactNode;
+  color?: string;
+  width?: number;
   offset?: number;
   inset?: boolean;
 }> = ({ children, color = '#0066cc', width = 3, offset = 2, inset = false }) => {
@@ -719,7 +719,7 @@ export const FocusRing: React.FC<{
       box-shadow: ${inset ? 'inset' : ''} 0 0 0 ${width}px ${color}, 0 0 0 ${width + offset}px ${color}40;
       border-radius: 4px;
     }
-    
+
     .focus-ring:focus-visible {
       outline: none;
       box-shadow: ${inset ? 'inset' : ''} 0 0 0 ${width}px ${color}, 0 0 0 ${width + offset}px ${color}40;

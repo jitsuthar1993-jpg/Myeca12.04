@@ -8,14 +8,14 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  
+
   return function (this: any, ...args: Parameters<T>) {
     const context = this;
-    
+
     if (timeoutId !== null) {
       clearTimeout(timeoutId);
     }
-    
+
     timeoutId = setTimeout(() => {
       func.apply(context, args);
     }, wait);
@@ -30,14 +30,14 @@ export function throttle<T extends (...args: any[]) => any>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean = false;
-  
+
   return function (this: any, ...args: Parameters<T>) {
     const context = this;
-    
+
     if (!inThrottle) {
       func.apply(context, args);
       inThrottle = true;
-      
+
       setTimeout(() => {
         inThrottle = false;
       }, limit);
@@ -53,17 +53,17 @@ export function memoize<T extends (...args: any[]) => any>(
   getKey?: (...args: Parameters<T>) => string
 ): T {
   const cache = new Map<string, ReturnType<T>>();
-  
+
   return function (this: any, ...args: Parameters<T>): ReturnType<T> {
     const key = getKey ? getKey(...args) : JSON.stringify(args);
-    
+
     if (cache.has(key)) {
       return cache.get(key)!;
     }
-    
+
     const result = func.apply(this, args);
     cache.set(key, result);
-    
+
     return result;
   } as T;
 }
@@ -110,14 +110,14 @@ export function deferToIdle<T extends (...args: any[]) => any>(
  */
 export function lazyLoadImages(selector: string = 'img[data-src]') {
   const images = document.querySelectorAll<HTMLImageElement>(selector);
-  
+
   if ('IntersectionObserver' in window) {
     const imageObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const img = entry.target as HTMLImageElement;
           const src = img.dataset.src;
-          
+
           if (src) {
             img.src = src;
             img.removeAttribute('data-src');
@@ -126,7 +126,7 @@ export function lazyLoadImages(selector: string = 'img[data-src]') {
         }
       });
     });
-    
+
     images.forEach((img) => imageObserver.observe(img));
   } else {
     // Fallback for browsers without IntersectionObserver
@@ -147,7 +147,7 @@ export function preloadResource(url: string, type: 'script' | 'style' | 'font' |
   const link = document.createElement('link');
   link.rel = 'preload';
   link.href = url;
-  
+
   switch (type) {
     case 'script':
       link.as = 'script';
@@ -163,7 +163,7 @@ export function preloadResource(url: string, type: 'script' | 'style' | 'font' |
       link.as = 'image';
       break;
   }
-  
+
   document.head.appendChild(link);
 }
 
@@ -178,9 +178,9 @@ export function measurePerformance<T extends (...args: any[]) => any>(
     const start = performance.now();
     const result = func.apply(this, args);
     const end = performance.now();
-    
+
     console.log(`${name} took ${end - start}ms`);
-    
+
     return result;
   } as T;
 }
@@ -200,13 +200,13 @@ export function calculateVisibleItems<T>(
   options: VirtualScrollOptions
 ): { items: T[]; startIndex: number; endIndex: number } {
   const { itemHeight, containerHeight, buffer = 5 } = options;
-  
+
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - buffer);
   const endIndex = Math.min(
     items.length - 1,
     Math.ceil((scrollTop + containerHeight) / itemHeight) + buffer
   );
-  
+
   return {
     items: items.slice(startIndex, endIndex + 1),
     startIndex,
@@ -220,13 +220,13 @@ export function calculateVisibleItems<T>(
 export function getConnectionSpeed(): 'slow' | 'medium' | 'fast' | 'unknown' {
   const nav = navigator as any;
   const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
-  
+
   if (!connection) {
     return 'unknown';
   }
-  
+
   const effectiveType = connection.effectiveType;
-  
+
   switch (effectiveType) {
     case 'slow-2g':
     case '2g':
@@ -257,15 +257,15 @@ export function getMemoryUsage(): {
 } | null {
   const nav = navigator as any;
   const perf = performance as any;
-  
+
   if (!nav.deviceMemory || !perf.memory) {
     return null;
   }
-  
+
   const used = perf.memory.usedJSHeapSize;
   const total = perf.memory.jsHeapSizeLimit;
   const percentage = (used / total) * 100;
-  
+
   return { used, total, percentage };
 }
 
@@ -277,10 +277,10 @@ export function rafThrottle<T extends (...args: any[]) => any>(
 ): (...args: Parameters<T>) => void {
   let rafId: number | null = null;
   let lastArgs: Parameters<T> | null = null;
-  
+
   const throttled = function (this: any, ...args: Parameters<T>) {
     lastArgs = args;
-    
+
     if (rafId === null) {
       rafId = requestAnimationFrame(() => {
         func.apply(this, lastArgs!);
@@ -288,13 +288,13 @@ export function rafThrottle<T extends (...args: any[]) => any>(
       });
     }
   };
-  
+
   (throttled as any).cancel = () => {
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
       rafId = null;
     }
   };
-  
+
   return throttled;
 }

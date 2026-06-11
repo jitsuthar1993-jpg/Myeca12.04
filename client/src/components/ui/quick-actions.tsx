@@ -2,12 +2,12 @@ import { m } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calculator, 
-  FileText, 
-  Upload, 
-  Bot, 
-  TrendingUp, 
+import {
+  Calculator,
+  FileText,
+  Upload,
+  Bot,
+  TrendingUp,
   Clock,
   Zap,
   ArrowRight,
@@ -66,8 +66,8 @@ const quickActions = [
     description: "View detailed tax insights",
     icon: TrendingUp,
     href: "/analytics",
-    color: "bg-[#315efb]",
-    gradient: "from-[#315efb] to-[#2040d8]",
+    color: "bg-brand-600",
+    gradient: "from-brand-600 to-brand-700",
     priority: "medium",
     estimatedTime: "3 min"
   }
@@ -90,12 +90,12 @@ export default function QuickActions() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold text-slate-900 ">
           Quick Actions
         </h3>
         <Zap className="h-5 w-5 text-yellow-500" />
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {quickActions.map((action, index) => (
           <m.div
@@ -107,7 +107,7 @@ export default function QuickActions() {
             whileTap={{ scale: 0.98 }}
           >
             <Link href={action.href}>
-              <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+              <Card className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-white to-slate-50  ">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className={`p-2 rounded-lg bg-gradient-to-r ${action.gradient}`}>
@@ -115,21 +115,21 @@ export default function QuickActions() {
                     </div>
                     {getPriorityBadge(action.priority)}
                   </div>
-                  
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+
+                  <h4 className="font-semibold text-slate-900  mb-1">
                     {action.title}
                   </h4>
-                  
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+
+                  <p className="text-sm text-slate-600  mb-3">
                     {action.description}
                   </p>
-                  
+
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center text-xs text-slate-500 ">
                       <Clock className="h-3 w-3 mr-1" />
                       {action.estimatedTime}
                     </div>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
                   </div>
                 </CardContent>
               </Card>
@@ -137,7 +137,7 @@ export default function QuickActions() {
           </m.div>
         ))}
       </div>
-      
+
       {/* Smart Suggestions */}
       <m.div
         initial={{ opacity: 0 }}
@@ -145,19 +145,19 @@ export default function QuickActions() {
         transition={{ delay: 0.5 }}
         className="mt-6"
       >
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-0">
+        <Card className="bg-gradient-to-r from-blue-50 to-purple-50   border-0">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-yellow-500" />
-              <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
+              <h4 className="font-semibold text-slate-900  text-sm">
                 Smart Suggestion
               </h4>
             </div>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+            <p className="text-sm text-slate-700  mb-3">
               Based on your profile, you could save ₹15,600 by optimizing deductions under Section 80C and 80D.
             </p>
             <Link href="/calculators/tax-regime">
-              <Button size="sm" className="bg-[#315efb] hover:bg-[#2040d8]">
+              <Button size="sm" className="bg-brand-600 hover:bg-brand-700">
                 Optimize Tax →
               </Button>
             </Link>

@@ -4,7 +4,7 @@ import { FileText, ArrowRight } from "lucide-react";
 
 export default function ReadyToFileSection() {
   return (
-    <section className="bg-[#315efb] py-16">
+    <section className="bg-brand-600 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
           Ready to File Your ITR?
@@ -16,7 +16,7 @@ export default function ReadyToFileSection() {
           <Link href="/which-itr-form-to-file?source=ready_to_file_section">
             <Button
               size="lg"
-              className="bg-white text-[#315efb] px-8 py-4 rounded-sm font-semibold hover:bg-gray-50 transition-all duration-300 shadow-md"
+              className="bg-white text-brand-600 px-8 py-4 rounded-sm font-semibold hover:bg-slate-50 transition-all duration-300 shadow-md"
             >
               <FileText className="mr-2 h-5 w-5" />
               Start Filing Now
@@ -27,7 +27,7 @@ export default function ReadyToFileSection() {
             <Button
               variant="outline"
               size="lg"
-              className="border-2 border-white text-white px-8 py-4 rounded-sm font-semibold hover:bg-white hover:text-[#315efb] transition-all duration-300"
+              className="border-2 border-white text-white px-8 py-4 rounded-sm font-semibold hover:bg-white hover:text-brand-600 transition-all duration-300"
             >
               Talk to Expert
             </Button>

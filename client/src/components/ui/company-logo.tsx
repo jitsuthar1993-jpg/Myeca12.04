@@ -85,7 +85,7 @@ const CompanyLogo: React.FC<CompanyLogoProps> = ({ company, className = "w-8 h-8
   };
 
   return logoMap[company] || (
-    <div className={`${className} bg-gray-300 rounded flex items-center justify-center text-gray-600 text-xs font-bold`}>
+    <div className={`${className} bg-slate-300 rounded flex items-center justify-center text-slate-600 text-xs font-bold`}>
       {company.substring(0, 3)}
     </div>
   );

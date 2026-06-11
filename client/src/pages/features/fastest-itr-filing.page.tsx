@@ -30,7 +30,7 @@ const steps = [
     title: "File & E-Verify",
     desc: "Approve the return, e-sign via Aadhaar OTP, and it's submitted directly to the Income Tax Department.",
     icon: CheckCircle,
-    color: "bg-[#315efb]",
+    color: "bg-brand-600",
   },
 ];
 
@@ -56,7 +56,7 @@ export default function FastestITRFilingPage() {
             Guided filing workflow
           </div>
           <h1 className="type-hero-title mb-6 font-extrabold text-slate-900">
-            File Your ITR in <span className="text-[#315efb]">4 Simple Steps</span>
+            File Your ITR in <span className="text-brand-600">4 Simple Steps</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10">
             Upload your documents, review assisted extraction where available, choose CA review when needed, and file from one guided workflow.
@@ -120,7 +120,7 @@ export default function FastestITRFilingPage() {
             </div>
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-[#315efb] rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
                   <Shield className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -136,7 +136,7 @@ export default function FastestITRFilingPage() {
                 ].map((plan) => (
                   <div key={plan.label} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
                     <span className="text-slate-700 font-medium">{plan.label}</span>
-                    <span className="font-bold text-[#315efb]">{plan.price}</span>
+                    <span className="font-bold text-brand-600">{plan.price}</span>
                   </div>
                 ))}
               </div>
@@ -151,13 +151,13 @@ export default function FastestITRFilingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-[#315efb] text-white text-center">
+      <section className="py-16 bg-brand-600 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <Star className="w-8 h-8 mx-auto mb-4 text-yellow-400 fill-yellow-400" />
           <h2 className="text-3xl font-extrabold mb-4">Ready to file your ITR?</h2>
           <p className="text-blue-100 mb-8">Choose an assisted-review plan when you want a pre-submission document and computation check. Plans start at ₹499 excluding GST.</p>
           <Link href="/which-itr-form-to-file?source=fastest_itr_feature_cta">
-            <Button size="lg" className="bg-white text-[#315efb] hover:bg-blue-50 gap-2">
+            <Button size="lg" className="bg-white text-brand-600 hover:bg-blue-50 gap-2">
               Get Started <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>

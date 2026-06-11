@@ -10,9 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
+import {
   Zap, Plus, Edit2, Trash2, Clock,
-  Mail, Bell, FileText, Shield, 
+  Mail, Bell, FileText, Shield,
   Loader2, Activity, Cpu, Settings,
   Play, CheckCircle
 } from "lucide-react";
@@ -127,7 +127,7 @@ export default function WorkflowsPage() {
 
   const handleCreateWorkflow = () => {
     if (!selectedTemplate) return;
-    
+
     createMutation.mutate({
       name: selectedTemplate.name,
       description: selectedTemplate.description,
@@ -277,7 +277,7 @@ export default function WorkflowsPage() {
                                  {workflow.description && (
                                    <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-lg">{workflow.description}</p>
                                  )}
-                                 
+
                                  <div className="flex flex-wrap items-center gap-6 pt-2">
                                    <div className="flex items-center gap-2">
                                       <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center">
@@ -309,7 +309,7 @@ export default function WorkflowsPage() {
                                      </div>
                                    )}
                                  </div>
-                                 
+
                                  <div className="flex items-center gap-2 pt-2">
                                    {workflowActions.map((action, index) => {
                                      const ActionIcon = actionIcons[action.type] || Zap;
@@ -323,7 +323,7 @@ export default function WorkflowsPage() {
                                  </div>
                                </div>
                              </div>
-                             
+
                              <div className="flex items-center gap-4">
                                <Switch
                                  checked={workflow.enabled}
@@ -335,8 +335,8 @@ export default function WorkflowsPage() {
                                     <Edit2 className="h-4 w-4" />
                                   </Button>
                                   <div className="w-px h-4 bg-slate-100 mx-1" />
-                                  <Button 
-                                    variant="ghost" 
+                                  <Button
+                                    variant="ghost"
                                     size="icon"
                                     onClick={() => deleteMutation.mutate(workflow.id)}
                                     className="h-10 w-10 rounded-xl hover:bg-red-50 text-slate-300 hover:text-red-500"
@@ -393,7 +393,7 @@ export default function WorkflowsPage() {
                               );
                             })}
                           </div>
-                          <Button 
+                          <Button
                             size="sm"
                             onClick={() => handleCreateFromTemplate(template)}
                             className="h-10 px-6 rounded-xl bg-blue-700 text-white font-black type-meta uppercase tracking-widest border-none hover:bg-purple-600 transition-colors"
@@ -417,53 +417,53 @@ export default function WorkflowsPage() {
           <DialogHeader>
             <DialogTitle>Create New Workflow</DialogTitle>
             <DialogDescription>
-              {selectedTemplate ? 
-                `Create a workflow based on "${selectedTemplate.name}" template` : 
+              {selectedTemplate ?
+                `Create a workflow based on "${selectedTemplate.name}" template` :
                 "Choose a template to get started"
               }
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedTemplate ? (
             <div className="space-y-4">
               <div>
                 <Label>Workflow Name</Label>
-                <Input 
-                  value={selectedTemplate.name} 
-                  readOnly 
+                <Input
+                  value={selectedTemplate.name}
+                  readOnly
                   className="mt-1"
                 />
               </div>
-              
+
               <div>
                 <Label>Trigger Type</Label>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge>{selectedTemplate.trigger.type}</Badge>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-slate-600">
                     {JSON.stringify(selectedTemplate.trigger.config)}
                   </span>
                 </div>
               </div>
-              
+
               <div>
                 <Label>Actions</Label>
                 <div className="space-y-2 mt-1">
                   {selectedTemplate.actions.map((action, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <Badge variant="outline">{action.type}</Badge>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-slate-600">
                         {JSON.stringify(action.config)}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   onClick={handleCreateWorkflow}
                   disabled={createMutation.isPending}
                 >
@@ -480,7 +480,7 @@ export default function WorkflowsPage() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-500">Please select a template from the Templates tab</p>
+              <p className="text-slate-500">Please select a template from the Templates tab</p>
             </div>
           )}
         </DialogContent>

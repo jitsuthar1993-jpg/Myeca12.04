@@ -56,7 +56,7 @@ const FormComponent = ({ register, errors }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 14px; color: #333; max-width: 800px; margin: 0 auto; padding: 40px;">
-    
+
     <div style="border-bottom: 3px solid #1f2937; padding-bottom: 20px; margin-bottom: 30px;">
       <h1 style="color: #1f2937; margin: 0 0 10px 0; font-size: 28px;">${data.reportTitle}</h1>
       <div style="display: flex; justify-content: space-between; color: #6b7280; font-size: 13px;">
@@ -83,7 +83,7 @@ const generateHTML = (data: any) => `
 
     <h2 style="color: #1f2937; font-size: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 20px;">Financial Snapshot</h2>
     <div style="display: flex; justify-content: space-between; gap: 20px; margin-bottom: 40px;">
-      
+
       <div style="flex: 1; background-color: #ecfdf5; padding: 20px; border-radius: 8px; border: 1px solid #d1fae5; text-align: center;">
         <span style="display: block; color: #065f46; font-size: 13px; font-weight: bold; text-transform: uppercase;">Total Revenue</span>
         <span style="display: block; color: #059669; font-size: 24px; font-weight: 800; margin-top: 10px;">₹ ${Number(data.revenueAmount).toLocaleString('en-IN')}</span>
@@ -93,7 +93,7 @@ const generateHTML = (data: any) => `
         <span style="display: block; color: #991b1b; font-size: 13px; font-weight: bold; text-transform: uppercase;">Total Expenses</span>
         <span style="display: block; color: #dc2626; font-size: 24px; font-weight: 800; margin-top: 10px;">₹ ${Number(data.expenseAmount).toLocaleString('en-IN')}</span>
       </div>
-      
+
       <div style="flex: 1; background-color: #eff6ff; padding: 20px; border-radius: 8px; border: 1px solid #dbeafe; text-align: center;">
         <span style="display: block; color: #1e40af; font-size: 13px; font-weight: bold; text-transform: uppercase;">Net Income</span>
         <span style="display: block; color: #2563eb; font-size: 24px; font-weight: 800; margin-top: 10px;">₹ ${(Number(data.revenueAmount) - Number(data.expenseAmount)).toLocaleString('en-IN')}</span>

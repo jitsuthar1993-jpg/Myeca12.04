@@ -73,7 +73,7 @@ const FormComponent = ({ register, errors, control }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 16px; color: #000; line-height: 2; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <h1 style="text-align: center; text-decoration: underline; text-transform: uppercase; font-size: 24px; margin-bottom: 40px; letter-spacing: 2px;">LAST WILL AND TESTAMENT</h1>
 
     <p style="text-indent: 50px;">
@@ -95,7 +95,7 @@ const generateHTML = (data: any) => `
 
     <h3 style="text-decoration: underline; margin-top: 30px;">3. BEQUEST TO BENEFICIARY</h3>
     <p>
-      It is my sincere wish and desire that after my demise, all my movable and immovable properties, including but not limited to those described above, shall devolve absolutely and unconditionally upon my ${data.beneficiaryRelation}, <strong>${data.beneficiaryName}</strong>. 
+      It is my sincere wish and desire that after my demise, all my movable and immovable properties, including but not limited to those described above, shall devolve absolutely and unconditionally upon my ${data.beneficiaryRelation}, <strong>${data.beneficiaryName}</strong>.
     </p>
     <p>
       They shall become the absolute owner of my estate with full rights of ownership, mutation, and enjoyment. No other person, heir, or relative shall have any right, title, or interest in my properties unless specifically stated in a subsequent codicil.

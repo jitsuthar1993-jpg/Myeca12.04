@@ -1,10 +1,10 @@
 import { m } from "framer-motion";
-import { 
-  ArrowRight, 
-  IndianRupee, 
-  Globe, 
-  Building2, 
-  Users, 
+import {
+  ArrowRight,
+  IndianRupee,
+  Globe,
+  Building2,
+  Users,
   TrendingUp,
   FileText,
   CheckCircle,
@@ -323,17 +323,17 @@ const FundingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <SEO 
+    <div className="min-h-screen bg-slate-50">
+      <SEO
         title="Startup Funding Routes | Grants, Guarantees, VCs and Angels"
         description="Compare grants, incubators, accelerators, venture funds, and angel routes for Indian startups using current eligibility and application records."
         keywords="startup funding India, government grants, SISFS, CGSS, venture capital, angel investors, Peak XV Partners, Accel India, Tiger Global"
       />
 
       {/* Hero Section */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-8">
-          <m.div 
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col md:flex-row justify-between items-center gap-6"
@@ -343,15 +343,15 @@ const FundingPage = () => {
                 <div className="p-2 bg-purple-50 rounded-lg border border-purple-100">
                   <Rocket className="w-6 h-6 text-purple-600" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
                   Startup Funding & Grants
                 </h1>
               </div>
-              <p className="text-gray-600 text-lg max-w-2xl">
+              <p className="text-slate-600 text-lg max-w-2xl">
                 Compare grants, guarantee-backed credit, incubators, AIFs, venture funds, and angel routes by stage, eligibility, and evidence required.
               </p>
             </div>
-            
+
             <div className="flex gap-3">
                <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold">
                  <FileText className="w-4 h-4 mr-2" />
@@ -413,12 +413,12 @@ const FundingPage = () => {
                       <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-4">
                         {item.icon}
                       </div>
-                      <div className="text-2xl font-bold text-gray-400">
+                      <div className="text-2xl font-bold text-slate-400">
                         {item.step}
                       </div>
                     </div>
                     <h3 className="font-semibold mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.description}</p>
+                    <p className="text-sm text-slate-600">{item.description}</p>
                   </CardContent>
                 </Card>
               </m.div>
@@ -451,7 +451,7 @@ const FundingPage = () => {
                         <Badge className={`bg-${scheme.color}-100 text-${scheme.color}-700 border-0`}>
                           Government Funded
                         </Badge>
-                        <IndianRupee className="w-5 h-5 text-gray-400" />
+                        <IndianRupee className="w-5 h-5 text-slate-400" />
                       </div>
                       <CardTitle className="text-xl">{scheme.name}</CardTitle>
                       <div className="text-2xl font-bold text-blue-600 mt-2">
@@ -465,7 +465,7 @@ const FundingPage = () => {
                           <h4 className="font-semibold mb-2 text-sm">Key Highlights</h4>
                           <ul className="space-y-1">
                             {scheme.highlights.map((highlight, idx) => (
-                              <li key={idx} className="text-sm text-gray-600 flex items-start">
+                              <li key={idx} className="text-sm text-slate-600 flex items-start">
                                 <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                                 {highlight}
                               </li>
@@ -476,14 +476,14 @@ const FundingPage = () => {
                           <h4 className="font-semibold mb-2 text-sm">Eligibility</h4>
                           <ul className="space-y-1">
                             {scheme.eligibility.map((item, idx) => (
-                              <li key={idx} className="text-sm text-gray-600">
+                              <li key={idx} className="text-sm text-slate-600">
                                 • {item}
                               </li>
                             ))}
                           </ul>
                         </div>
-                        <Button 
-                          className="w-full" 
+                        <Button
+                          className="w-full"
                           variant="outline"
                           onClick={() => window.open(scheme.link, '_blank')}
                         >
@@ -518,7 +518,7 @@ const FundingPage = () => {
                       </div>
                       <CardTitle>{program.name}</CardTitle>
                       <CardDescription>{program.description}</CardDescription>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 mt-2 text-sm text-slate-600">
                         <span className="flex items-center">
                           <Clock className="w-4 h-4 mr-1" />
                           {program.duration}
@@ -532,7 +532,7 @@ const FundingPage = () => {
                           <h4 className="font-semibold mb-2">Benefits</h4>
                           <ul className="space-y-1">
                             {program.benefits.map((benefit, idx) => (
-                              <li key={idx} className="text-sm text-gray-600 flex items-start">
+                              <li key={idx} className="text-sm text-slate-600 flex items-start">
                                 <ArrowRight className="w-4 h-4 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
                                 {benefit}
                               </li>
@@ -540,10 +540,10 @@ const FundingPage = () => {
                           </ul>
                         </div>
                         <div className="pt-2 border-t">
-                          <p className="text-sm text-gray-600 mb-3">
+                          <p className="text-sm text-slate-600 mb-3">
                             <span className="font-semibold">Focus:</span> {program.focus}
                           </p>
-                          <Button 
+                          <Button
                             className="w-full"
                             onClick={() => window.open(program.link, '_blank')}
                           >
@@ -577,29 +577,29 @@ const FundingPage = () => {
                       </div>
                       <CardTitle>{vc.name}</CardTitle>
                       {vc.formerly !== "-" && (
-                        <p className="text-sm text-gray-500">Formerly {vc.formerly}</p>
+                        <p className="text-sm text-slate-500">Formerly {vc.formerly}</p>
                       )}
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Investment Focus</p>
-                          <p className="text-sm text-gray-600">{vc.focus}</p>
+                          <p className="text-sm font-semibold text-slate-700">Investment Focus</p>
+                          <p className="text-sm text-slate-600">{vc.focus}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Stage</p>
-                          <p className="text-sm text-gray-600">{vc.stage}</p>
+                          <p className="text-sm font-semibold text-slate-700">Stage</p>
+                          <p className="text-sm text-slate-600">{vc.stage}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Portfolio</p>
-                          <p className="text-sm text-gray-600">{vc.portfolio}</p>
+                          <p className="text-sm font-semibold text-slate-700">Portfolio</p>
+                          <p className="text-sm text-slate-600">{vc.portfolio}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Fund Size</p>
-                          <p className="text-sm text-gray-600">{vc.aum}</p>
+                          <p className="text-sm font-semibold text-slate-700">Fund Size</p>
+                          <p className="text-sm text-slate-600">{vc.aum}</p>
                         </div>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="w-full mt-4"
                           onClick={() => window.open(vc.website, '_blank')}
                         >
@@ -636,12 +636,12 @@ const FundingPage = () => {
                     <CardContent>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Notable Investments</p>
-                          <p className="text-sm text-gray-600">{angel.investments}</p>
+                          <p className="text-sm font-semibold text-slate-700">Notable Investments</p>
+                          <p className="text-sm text-slate-600">{angel.investments}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-700">Focus Areas</p>
-                          <p className="text-sm text-gray-600">{angel.focus}</p>
+                          <p className="text-sm font-semibold text-slate-700">Focus Areas</p>
+                          <p className="text-sm text-slate-600">{angel.focus}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -649,10 +649,10 @@ const FundingPage = () => {
                 </m.div>
               ))}
             </div>
-            
+
             <div className="mt-8 p-6 bg-blue-50 rounded-lg">
               <h3 className="font-semibold mb-2">How to Connect with Angel Investors</h3>
-              <ul className="space-y-2 text-sm text-gray-700">
+              <ul className="space-y-2 text-sm text-slate-700">
                 <li>• Build a strong LinkedIn presence and connect professionally</li>
                 <li>• Attend startup events, pitch competitions, and networking sessions</li>
                 <li>• Get warm introductions through mutual connections</li>
@@ -667,12 +667,12 @@ const FundingPage = () => {
         <m.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="mt-16 bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm"
+          className="mt-16 bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm"
         >
-          <h2 className="text-3xl font-bold mb-4 text-gray-900">
+          <h2 className="text-3xl font-bold mb-4 text-slate-900">
             Need Help with Funding Applications?
           </h2>
-          <p className="text-lg mb-6 text-gray-600">
+          <p className="text-lg mb-6 text-slate-600">
             Prepare the financial, ownership, compliance, and milestone records that an investor or scheme application may require
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
@@ -683,7 +683,7 @@ const FundingPage = () => {
               </Button>
             </Link>
             <Link href="/startup-services">
-              <Button size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+              <Button size="lg" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
                 View All Startup Services
               </Button>
             </Link>
@@ -696,7 +696,7 @@ const FundingPage = () => {
             <Clock className="w-5 h-5 mr-2 text-yellow-600" />
             Important Application Tips
           </h3>
-          <ul className="space-y-1 text-sm text-gray-700">
+          <ul className="space-y-1 text-sm text-slate-700">
             <li>• Always verify current eligibility criteria on official websites before applying</li>
             <li>• Most government schemes require DPIIT recognition - apply first at startupindia.gov.in</li>
             <li>• Prepare the business plan, financial statements, use-of-funds note, and pitch deck requested by the selected route</li>

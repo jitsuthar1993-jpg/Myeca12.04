@@ -45,7 +45,7 @@ export const ScrollToTop: React.FC<ScrollToTopProps> = ({
           whileTap={{ scale: 0.95 }}
           onClick={scrollToTop}
           className={cn(
-            'fixed bottom-8 right-8 z-50 p-3 bg-[#315efb] text-white rounded-full shadow-lg hover:shadow-xl hover:bg-[#2040d8] transition-all duration-300',
+            'fixed bottom-8 right-8 z-50 p-3 bg-brand-600 text-white rounded-full shadow-lg hover:shadow-xl hover:bg-brand-700 transition-all duration-300',
             className
           )}
           aria-label="Scroll to top"

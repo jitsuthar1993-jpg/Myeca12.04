@@ -101,7 +101,7 @@ const FormComponent = ({ register, errors, control, watch }: any) => {
       <div className="grid grid-cols-2 gap-8">
         {/* From Section */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700">Billed By (Your Details)</h3>
+          <h3 className="font-semibold text-slate-700">Billed By (Your Details)</h3>
           <div>
             <Label>Business Name</Label>
             <Input {...register('from.name')} placeholder="Company Name" />
@@ -134,7 +134,7 @@ const FormComponent = ({ register, errors, control, watch }: any) => {
 
         {/* To Section */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700">Billed To (Client Details)</h3>
+          <h3 className="font-semibold text-slate-700">Billed To (Client Details)</h3>
           <div>
             <Label>Client Name</Label>
             <Input {...register('to.name')} placeholder="Client Company" />
@@ -200,7 +200,7 @@ const FormComponent = ({ register, errors, control, watch }: any) => {
                     {...register(`items.${index}.taxRate`, { valueAsNumber: true })}
                   />
                 </div>
-                <div className="col-span-1 pt-8 text-right font-medium text-gray-700">
+                <div className="col-span-1 pt-8 text-right font-medium text-slate-700">
                   ₹{amt.toFixed(2)}
                 </div>
               </div>

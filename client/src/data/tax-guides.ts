@@ -645,7 +645,7 @@ export const TAX_GUIDES: TaxGuide[] = [
       },
     ],
   },
-  
+
   // Capital Gains Guides
   {
     id: 'stock-gains-guide',

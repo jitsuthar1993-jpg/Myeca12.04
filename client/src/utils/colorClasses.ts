@@ -74,10 +74,10 @@ export const getColorClasses = (color: string) => {
     },
     gray: {
       border: "border-l-gray-500",
-      bg: "bg-gray-100",
-      text: "text-gray-600",
-      textDark: "text-gray-900",
-      textLight: "text-gray-700"
+      bg: "bg-slate-100",
+      text: "text-slate-600",
+      textDark: "text-slate-900",
+      textLight: "text-slate-700"
     }
   };
 
@@ -95,9 +95,9 @@ export const getBgColorClass = (color: string): string => {
     indigo: "bg-indigo-500",
     pink: "bg-pink-500",
     teal: "bg-teal-500",
-    gray: "bg-gray-500"
+    gray: "bg-slate-500"
   };
-  return colorMap[color] || "bg-gray-500";
+  return colorMap[color] || "bg-slate-500";
 };
 
 export const getGradientColorClass = (color: string): string => {
@@ -111,7 +111,7 @@ export const getGradientColorClass = (color: string): string => {
     indigo: "from-indigo-500 to-indigo-600",
     pink: "from-pink-500 to-pink-600",
     teal: "from-teal-500 to-teal-600",
-    gray: "from-gray-500 to-gray-600"
+    gray: "from-slate-500 to-slate-600"
   };
-  return colorMap[color] || "from-gray-500 to-gray-600";
+  return colorMap[color] || "from-slate-500 to-slate-600";
 };

@@ -202,7 +202,7 @@ export class SEOAccessibilityTestSuite {
   private async testPageTitle(): Promise<TestResult> {
     const title = document.title;
     const score = this.calculateTitleScore(title);
-    
+
     return {
       id: 'seo-page-title',
       name: 'Page Title',
@@ -221,7 +221,7 @@ export class SEOAccessibilityTestSuite {
   private async testMetaDescription(): Promise<TestResult> {
     const metaDescription = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
     const score = this.calculateMetaDescriptionScore(metaDescription);
-    
+
     return {
       id: 'seo-meta-description',
       name: 'Meta Description',
@@ -240,7 +240,7 @@ export class SEOAccessibilityTestSuite {
   private async testMetaKeywords(): Promise<TestResult> {
     const metaKeywords = document.querySelector('meta[name="keywords"]')?.getAttribute('content') || '';
     const keywords = metaKeywords.split(',').map(k => k.trim()).filter(Boolean);
-    
+
     return {
       id: 'seo-meta-keywords',
       name: 'Meta Keywords',
@@ -256,7 +256,7 @@ export class SEOAccessibilityTestSuite {
 
   private async testCanonicalURL(): Promise<TestResult> {
     const canonicalLink = document.querySelector('link[rel="canonical"]')?.getAttribute('href');
-    
+
     return {
       id: 'seo-canonical-url',
       name: 'Canonical URL',
@@ -275,11 +275,11 @@ export class SEOAccessibilityTestSuite {
       url: document.querySelector('meta[property="og:url"]')?.getAttribute('content'),
       type: document.querySelector('meta[property="og:type"]')?.getAttribute('content')
     };
-    
+
     const missingTags = Object.entries(ogTags)
       .filter(([_, value]) => !value)
       .map(([key]) => key);
-    
+
     return {
       id: 'seo-open-graph',
       name: 'Open Graph Tags',
@@ -298,11 +298,11 @@ export class SEOAccessibilityTestSuite {
       image: document.querySelector('meta[name="twitter:image"]')?.getAttribute('content'),
       site: document.querySelector('meta[name="twitter:site"]')?.getAttribute('content')
     };
-    
+
     const missingTags = Object.entries(twitterTags)
       .filter(([_, value]) => !value)
       .map(([key]) => key);
-    
+
     return {
       id: 'seo-twitter-card',
       name: 'Twitter Card Tags',
@@ -316,7 +316,7 @@ export class SEOAccessibilityTestSuite {
   private async testStructuredData(): Promise<TestResult> {
     const structuredData = document.querySelectorAll('script[type="application/ld+json"]');
     const dataCount = structuredData.length;
-    
+
     return {
       id: 'seo-structured-data',
       name: 'Structured Data',
@@ -330,7 +330,7 @@ export class SEOAccessibilityTestSuite {
   private async testHeadingStructure(): Promise<TestResult> {
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     const h1Count = document.querySelectorAll('h1').length;
-    
+
     return {
       id: 'seo-heading-structure',
       name: 'Heading Structure',
@@ -348,7 +348,7 @@ export class SEOAccessibilityTestSuite {
   private async testImageAltText(): Promise<TestResult> {
     const images = document.querySelectorAll('img');
     const imagesWithoutAlt = Array.from(images).filter(img => !img.hasAttribute('alt'));
-    
+
     return {
       id: 'seo-image-alt-text',
       name: 'Image Alt Text',
@@ -365,7 +365,7 @@ export class SEOAccessibilityTestSuite {
       const href = link.getAttribute('href');
       return !href || href === '#' || href === '';
     });
-    
+
     return {
       id: 'seo-internal-links',
       name: 'Internal Links',
@@ -379,7 +379,7 @@ export class SEOAccessibilityTestSuite {
   private async testExternalLinks(): Promise<TestResult> {
     const externalLinks = Array.from(document.querySelectorAll('a[href^="http"]'));
     const noFollowLinks = externalLinks.filter(link => link.getAttribute('rel')?.includes('nofollow'));
-    
+
     return {
       id: 'seo-external-links',
       name: 'External Links',
@@ -431,7 +431,7 @@ export class SEOAccessibilityTestSuite {
   private async testMobileFriendliness(): Promise<TestResult> {
     const viewport = document.querySelector('meta[name="viewport"]');
     const hasViewport = !!viewport;
-    
+
     return {
       id: 'seo-mobile-friendly',
       name: 'Mobile Friendliness',
@@ -527,7 +527,7 @@ export class SEOAccessibilityTestSuite {
   // Best Practices Tests
   private async testHTTPS(): Promise<TestResult> {
     const isHTTPS = window.location.protocol === 'https:';
-    
+
     return {
       id: 'best-practices-https',
       name: 'HTTPS Usage',
@@ -557,7 +557,7 @@ export class SEOAccessibilityTestSuite {
 
   private async testContentSecurityPolicy(): Promise<TestResult> {
     const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
-    
+
     return {
       id: 'best-practices-csp',
       name: 'Content Security Policy',
@@ -581,7 +581,7 @@ export class SEOAccessibilityTestSuite {
 
   private async testMixedContent(): Promise<TestResult> {
     const mixedContent = Array.from(document.querySelectorAll('img[src^="http:"], script[src^="http:"], link[href^="http:"]'));
-    
+
     return {
       id: 'best-practices-mixed-content',
       name: 'Mixed Content',
@@ -595,7 +595,7 @@ export class SEOAccessibilityTestSuite {
   private async testDeprecatedAPIs(): Promise<TestResult> {
     // Check for deprecated APIs
     const deprecatedAPIs: string[] = [];
-    
+
     return {
       id: 'best-practices-deprecated-apis',
       name: 'Deprecated APIs',
@@ -668,19 +668,19 @@ export class SEOAccessibilityTestSuite {
     };
 
     const categories = {
-      seo: { 
+      seo: {
         score: this.calculateCategoryScore(results.filter(r => r.category === 'seo')),
         issues: results.filter(r => r.category === 'seo' && (r.status === 'fail' || r.status === 'warning')).length
       },
-      accessibility: { 
+      accessibility: {
         score: this.calculateCategoryScore(results.filter(r => r.category === 'accessibility')),
         issues: results.filter(r => r.category === 'accessibility' && (r.status === 'fail' || r.status === 'warning')).length
       },
-      performance: { 
+      performance: {
         score: this.calculateCategoryScore(results.filter(r => r.category === 'performance')),
         issues: results.filter(r => r.category === 'performance' && (r.status === 'fail' || r.status === 'warning')).length
       },
-      'best-practices': { 
+      'best-practices': {
         score: this.calculateCategoryScore(results.filter(r => r.category === 'best-practices')),
         issues: results.filter(r => r.category === 'best-practices' && (r.status === 'fail' || r.status === 'warning')).length
       }
@@ -710,28 +710,28 @@ export class SEOAccessibilityTestSuite {
 
   private generateRecommendations(results: TestResult[]): string[] {
     const recommendations: string[] = [];
-    
+
     const criticalIssues = results.filter(r => r.status === 'fail');
     const warnings = results.filter(r => r.status === 'warning');
-    
+
     if (criticalIssues.length > 0) {
       recommendations.push(`Address ${criticalIssues.length} critical issues immediately`);
     }
-    
+
     if (warnings.length > 0) {
       recommendations.push(`Review ${warnings.length} warnings for potential improvements`);
     }
-    
+
     const seoIssues = results.filter(r => r.category === 'seo' && (r.status === 'fail' || r.status === 'warning'));
     if (seoIssues.length > 5) {
       recommendations.push('Comprehensive SEO review recommended');
     }
-    
+
     const accessibilityIssues = results.filter(r => r.category === 'accessibility' && r.status === 'fail');
     if (accessibilityIssues.length > 0) {
       recommendations.push('Fix accessibility issues to ensure WCAG compliance');
     }
-    
+
     return recommendations;
   }
 }
@@ -748,14 +748,14 @@ export const useSEOAccessibilityTesting = (config: TestConfig) => {
   const runTests = useCallback(async () => {
     setIsTesting(true);
     setError(null);
-    
+
     try {
       const testResults = await testSuite.runFullTest();
       const testReport = testSuite.generateReport(testResults);
-      
+
       setResults(testResults);
       setReport(testReport);
-      
+
       return { results: testResults, report: testReport };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Testing failed';

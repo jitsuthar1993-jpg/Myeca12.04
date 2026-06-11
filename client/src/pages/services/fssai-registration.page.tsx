@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Utensils, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Utensils,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Users,
   Award,
@@ -93,7 +93,7 @@ export default function FSSAIRegistrationPage() {
 
   const stateLicenseDocs = [
     "Completed & signed Form B",
-    "2 passport-size photographs", 
+    "2 passport-size photographs",
     "Photo ID & address proof of applicant",
     "Business constitution documents",
     "Shop & establishment certificate",
@@ -160,7 +160,7 @@ export default function FSSAIRegistrationPage() {
 
   const specialCategories = [
     "Food businesses operating in 2+ states",
-    "Food importers & exporters", 
+    "Food importers & exporters",
     "Proprietary food & non-specified food",
     "Food/health supplements & nutraceuticals",
     "Radiation processing of foods",
@@ -211,7 +211,7 @@ export default function FSSAIRegistrationPage() {
         title="FSSAI Registration Online | Food License for Restaurants & Home Kitchens"
         description="Classify and prepare an FSSAI registration, State licence, or Central licence application using the current FoSCoS kind-of-business criteria."
         keywords={[
-          "FSSAI registration online", "food license India", "FSSAI Basic registration", 
+          "FSSAI registration online", "food license India", "FSSAI Basic registration",
           "State food license", "Central food license", "FoSCoS portal filing",
           "food safety license", "FSSAI renewal", "food business registration"
         ]}
@@ -251,11 +251,11 @@ export default function FSSAIRegistrationPage() {
                 <div className="w-14 h-14 bg-orange-50 rounded-full flex items-center justify-center soft-shadow">
                   <Utensils className="w-8 h-8 text-orange-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   FSSAI Food License Registration
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Determine the applicable FoSCoS category, prepare the required records, and track application queries.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -271,14 +271,14 @@ export default function FSSAIRegistrationPage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-orange-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Speed up your licensing</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Calculator className="w-4 h-4 mr-2 text-orange-600 mt-0.5" />
                     Check turnover to pick Basic/State/Central license.
@@ -311,10 +311,10 @@ export default function FSSAIRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Choose Your FSSAI License Type
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Classify the application using the current FoSCoS kind-of-business criteria, not turnover alone.
             </p>
           </div>
@@ -327,7 +327,7 @@ export default function FSSAIRegistrationPage() {
                     <license.icon className="w-8 h-8" />
                   </div>
                   <CardTitle className="text-xl font-bold">{license.type}</CardTitle>
-                  <CardDescription className="font-semibold text-gray-700">
+                  <CardDescription className="font-semibold text-slate-700">
                     {license.turnover}
                   </CardDescription>
                 </CardHeader>
@@ -339,18 +339,18 @@ export default function FSSAIRegistrationPage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Authority:</span>
-                      <span className="text-gray-600 text-xs">{license.authority}</span>
+                      <span className="text-slate-600 text-xs">{license.authority}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Processing:</span>
-                      <span className="text-gray-600">{license.processingTime}</span>
+                      <span className="text-slate-600">{license.processingTime}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Fees:</span>
                       <span className={`font-bold text-${license.color}-600`}>{license.fees}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Suitable for:</h4>
                     <ul className="space-y-1">
@@ -376,10 +376,10 @@ export default function FSSAIRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               FSSAI Registration Process
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Step-by-step process for obtaining your FSSAI food license
             </p>
           </div>
@@ -399,7 +399,7 @@ export default function FSSAIRegistrationPage() {
                   <CardTitle className="text-lg font-bold">{step.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+                  <p className="text-sm text-slate-600 mb-3">{step.description}</p>
                   <div className="flex items-center text-xs text-orange-600">
                     <Clock className="w-3 h-3 mr-1" />
                     <span>{step.duration}</span>
@@ -418,10 +418,10 @@ export default function FSSAIRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Required Documents by License Type
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete document checklist for each FSSAI license category
             </p>
           </div>
@@ -432,7 +432,7 @@ export default function FSSAIRegistrationPage() {
               <TabsTrigger value="state">State License</TabsTrigger>
               <TabsTrigger value="central">Central License</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="basic">
               <Card>
                 <CardHeader>
@@ -449,14 +449,14 @@ export default function FSSAIRegistrationPage() {
                     {basicRegistrationDocs.map((doc, index) => (
                       <div key={index} className="flex items-start">
                         <CheckCircle className="w-4 h-4 mr-3 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="state">
               <Card>
                 <CardHeader>
@@ -473,14 +473,14 @@ export default function FSSAIRegistrationPage() {
                     {stateLicenseDocs.map((doc, index) => (
                       <div key={index} className="flex items-start">
                         <CheckCircle className="w-4 h-4 mr-3 text-blue-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="central">
               <Card>
                 <CardHeader>
@@ -497,7 +497,7 @@ export default function FSSAIRegistrationPage() {
                     {centralLicenseDocs.map((doc, index) => (
                       <div key={index} className="flex items-start">
                         <CheckCircle className="w-4 h-4 mr-3 text-purple-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </div>
                     ))}
                   </div>
@@ -529,7 +529,7 @@ export default function FSSAIRegistrationPage() {
                 {specialCategories.map((category, index) => (
                   <div key={index} className="flex items-start">
                     <AlertCircle className="w-4 h-4 mr-3 text-purple-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">{category}</span>
+                    <span className="text-sm text-slate-700">{category}</span>
                   </div>
                 ))}
               </div>
@@ -545,10 +545,10 @@ export default function FSSAIRegistrationPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Post-License Compliance Requirements
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Maintain compliance to avoid penalties and ensure smooth operations
             </p>
           </div>
@@ -567,7 +567,7 @@ export default function FSSAIRegistrationPage() {
                     {compliance.requirements.map((req, reqIndex) => (
                       <li key={reqIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${compliance.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{req}</span>
+                        <span className="text-sm text-slate-700">{req}</span>
                       </li>
                     ))}
                   </ul>

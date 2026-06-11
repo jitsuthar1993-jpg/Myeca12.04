@@ -40,4 +40,14 @@ describe("app layout routing", () => {
       "const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome;",
     );
   });
+
+  it("keeps the public header shell and spacer at the same responsive heights", () => {
+    const appSource = readFileSync(resolve(__dirname, "App.tsx"), "utf8");
+    expect(appSource).toContain(
+      'className="mx-auto flex h-[60px] max-w-7xl items-center justify-between px-4 sm:px-6 md:h-[74px] lg:px-8"',
+    );
+    expect(appSource).toContain(
+      '<div className="h-[60px] md:h-[74px]"></div>',
+    );
+  });
 });

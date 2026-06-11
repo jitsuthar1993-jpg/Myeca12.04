@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { computeIndividualIncomeTax, type ResidentialStatus } from "@/lib/income-tax-engine";
 import type { TaxCalculationResult } from "@/types/calculator";
-import { 
-  TrendingUp, IndianRupee, 
+import {
+  TrendingUp, IndianRupee,
   Zap,
   ChevronRight, PieChart, ShieldCheck,
   Target, Info, ArrowLeft, ArrowRight,
@@ -26,7 +26,7 @@ import { CalculatorMiniBlog } from "@/features/calculators/components/Calculator
 
 export default function IncomeTaxCalculator() {
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   // States
   const [basicSalary, setBasicSalary] = useState<number>(710000);
   const [rentalIncome, setRentalIncome] = useState<number>(0);
@@ -37,12 +37,12 @@ export default function IncomeTaxCalculator() {
   const [ltcg112, setLtcg112] = useState<number>(0);
   const [cryptoAndWinnings, setCryptoAndWinnings] = useState<number>(0);
   const [dividendSurchargeCapIncome, setDividendSurchargeCapIncome] = useState<number>(0);
-  
+
   const [deductions80C, setDeductions80C] = useState<number>(150000);
   const [deductions80D, setDeductions80D] = useState<number>(25000);
   const [otherDeductions, setOtherDeductions] = useState<number>(50000);
   const [taxCredits, setTaxCredits] = useState<number>(0);
-  
+
   const [regime, setRegime] = useState<'old' | 'new'>('new');
   const [assessmentYear, setAssessmentYear] = useState('2026-27');
   const [ageCategory, setAgeCategory] = useState<AgeCategory>("regular");
@@ -316,7 +316,7 @@ export default function IncomeTaxCalculator() {
 
         {/* Main Calculator Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8 md:gap-8 md:mt-12">
-          
+
           {/* Left Column - Inputs */}
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm">
@@ -337,8 +337,8 @@ export default function IncomeTaxCalculator() {
                       onClick={() => setAssessmentYear(year)}
                       className={cn(
                         "px-5 py-1.5 rounded-lg text-xs font-normal transition-all",
-                        assessmentYear === year 
-                          ? "bg-white text-[#444CE7] shadow-sm border border-[#EAECF0]" 
+                        assessmentYear === year
+                          ? "bg-white text-[#444CE7] shadow-sm border border-[#EAECF0]"
                           : "text-[#667085] hover:text-[#101828]"
                       )}
                     >
@@ -417,7 +417,7 @@ export default function IncomeTaxCalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={basicSalary}
                         onChange={(e) => setBasicSalary(Number(e.target.value))}
@@ -425,12 +425,12 @@ export default function IncomeTaxCalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[basicSalary]} 
-                    onValueChange={(v) => setBasicSalary(v[0])} 
-                    max={5000000} 
-                    min={0} 
-                    step={10000} 
+                  <Slider
+                    value={[basicSalary]}
+                    onValueChange={(v) => setBasicSalary(v[0])}
+                    max={5000000}
+                    min={0}
+                    step={10000}
                     colorTheme="slate"
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -447,7 +447,7 @@ export default function IncomeTaxCalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={rentalIncome}
                         onChange={(e) => setRentalIncome(Number(e.target.value))}
@@ -455,12 +455,12 @@ export default function IncomeTaxCalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[rentalIncome]} 
-                    onValueChange={(v) => setRentalIncome(v[0])} 
-                    max={2000000} 
-                    min={0} 
-                    step={10000} 
+                  <Slider
+                    value={[rentalIncome]}
+                    onValueChange={(v) => setRentalIncome(v[0])}
+                    max={2000000}
+                    min={0}
+                    step={10000}
                     colorTheme="slate"
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -477,7 +477,7 @@ export default function IncomeTaxCalculator() {
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[110px] flex items-center gap-1.5 shadow-sm">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={savingInterest}
                           onChange={(e) => setSavingInterest(Number(e.target.value))}
@@ -485,12 +485,12 @@ export default function IncomeTaxCalculator() {
                         />
                       </div>
                     </div>
-                    <Slider 
-                      value={[savingInterest]} 
-                      onValueChange={(v) => setSavingInterest(v[0])} 
-                      max={100000} 
-                      min={0} 
-                      step={500} 
+                    <Slider
+                      value={[savingInterest]}
+                      onValueChange={(v) => setSavingInterest(v[0])}
+                      max={100000}
+                      min={0}
+                      step={500}
                       colorTheme="slate"
                     />
                     <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -507,7 +507,7 @@ export default function IncomeTaxCalculator() {
                       </div>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[110px] flex items-center gap-1.5 shadow-sm">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
-                        <input 
+                        <input
                           type="number"
                           value={otherIncome}
                           onChange={(e) => setOtherIncome(Number(e.target.value))}
@@ -515,12 +515,12 @@ export default function IncomeTaxCalculator() {
                         />
                       </div>
                     </div>
-                    <Slider 
-                      value={[otherIncome]} 
-                      onValueChange={(v) => setOtherIncome(v[0])} 
-                      max={1000000} 
-                      min={0} 
-                      step={5000} 
+                    <Slider
+                      value={[otherIncome]}
+                      onValueChange={(v) => setOtherIncome(v[0])}
+                      max={1000000}
+                      min={0}
+                      step={5000}
                       colorTheme="slate"
                     />
                     <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -574,8 +574,8 @@ export default function IncomeTaxCalculator() {
                         onClick={() => setRegime(r.id as 'old' | 'new')}
                         className={cn(
                           "p-6 rounded-[20px] border-2 text-left transition-all relative overflow-hidden",
-                          regime === r.id 
-                            ? "border-[#444CE7] bg-[#F5F8FF]" 
+                          regime === r.id
+                            ? "border-[#444CE7] bg-[#F5F8FF]"
                             : "border-[#EAECF0] bg-white hover:border-[#D0D5DD]"
                         )}
                       >
@@ -594,7 +594,7 @@ export default function IncomeTaxCalculator() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => setCurrentStep(1)}
                   className="w-full py-3.5 rounded-[20px] bg-[#101828] text-white font-normal text-base hover:bg-[#1C293E] transition-all flex items-center justify-center gap-3 shadow-lg shadow-[#101828]/10"
                 >
@@ -620,7 +620,7 @@ export default function IncomeTaxCalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={deductions80C}
                         onChange={(e) => setDeductions80C(Number(e.target.value))}
@@ -628,12 +628,12 @@ export default function IncomeTaxCalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[deductions80C]} 
-                    onValueChange={(v) => setDeductions80C(v[0])} 
-                    max={150000} 
-                    min={0} 
-                    step={5000} 
+                  <Slider
+                    value={[deductions80C]}
+                    onValueChange={(v) => setDeductions80C(v[0])}
+                    max={150000}
+                    min={0}
+                    step={5000}
                     colorTheme="slate"
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -650,7 +650,7 @@ export default function IncomeTaxCalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={deductions80D}
                         onChange={(e) => setDeductions80D(Number(e.target.value))}
@@ -658,12 +658,12 @@ export default function IncomeTaxCalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[deductions80D]} 
-                    onValueChange={(v) => setDeductions80D(v[0])} 
-                    max={100000} 
-                    min={0} 
-                    step={5000} 
+                  <Slider
+                    value={[deductions80D]}
+                    onValueChange={(v) => setDeductions80D(v[0])}
+                    max={100000}
+                    min={0}
+                    step={5000}
                     colorTheme="slate"
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -680,7 +680,7 @@ export default function IncomeTaxCalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={otherDeductions}
                         onChange={(e) => setOtherDeductions(Number(e.target.value))}
@@ -688,12 +688,12 @@ export default function IncomeTaxCalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[otherDeductions]} 
-                    onValueChange={(v) => setOtherDeductions(v[0])} 
-                    max={500000} 
-                    min={0} 
-                    step={5000} 
+                  <Slider
+                    value={[otherDeductions]}
+                    onValueChange={(v) => setOtherDeductions(v[0])}
+                    max={500000}
+                    min={0}
+                    step={5000}
                     colorTheme="slate"
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
@@ -733,14 +733,14 @@ export default function IncomeTaxCalculator() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#F2F4F7]">
-                  <button 
+                  <button
                     onClick={() => setCurrentStep(0)}
                     className="py-3.5 rounded-[20px] bg-white border border-[#EAECF0] text-[#344054] font-normal text-base hover:bg-[#F9FAFB] transition-all flex items-center justify-center gap-3"
                   >
                     <ArrowLeft className="w-5 h-5" />
                     Back to Income
                   </button>
-                  <button 
+                  <button
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     className="py-3.5 rounded-[20px] bg-[#101828] text-white font-normal text-base hover:bg-[#1C293E] transition-all flex items-center justify-center gap-3 shadow-lg shadow-[#101828]/10"
                   >
@@ -807,7 +807,7 @@ export default function IncomeTaxCalculator() {
                   <p className="text-xs text-[#667085] leading-relaxed">
                     {savingsValue > 0 ? (
                       <>
-                        by choosing <span className="font-normal text-[#101828]">{betterRegime}</span>. 
+                        by choosing <span className="font-normal text-[#101828]">{betterRegime}</span>.
                         That's <span className="font-normal text-[#027A48]">{savingsPercent}%</span> savings!
                       </>
                     ) : (
@@ -912,7 +912,7 @@ export default function IncomeTaxCalculator() {
 
         {/* Informational Content */}
         <div className="mt-32">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <Zap className="w-5 h-5" />,

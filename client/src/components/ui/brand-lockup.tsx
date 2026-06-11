@@ -46,7 +46,7 @@ export default function BrandLockup({
               wordmarkSizeClasses[wordmarkSize],
               dark
                 ? "bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent"
-                : "bg-gradient-to-r from-[#003087] to-[#315efb] bg-clip-text text-transparent",
+                : "bg-gradient-to-r from-[#003087] to-brand-600 bg-clip-text text-transparent",
             )}
           >
             MyeCA.in

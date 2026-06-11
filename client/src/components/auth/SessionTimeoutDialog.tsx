@@ -1,4 +1,4 @@
-﻿import { AlertTriangle, Clock, LogOut, RefreshCw } from "lucide-react";
+import { AlertTriangle, Clock, LogOut, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -52,7 +52,7 @@ export function SessionTimeoutDialog({
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <Button onClick={onStaySignedIn} className="bg-[#315efb] text-white hover:bg-[#082a5c]">
+          <Button onClick={onStaySignedIn} className="bg-brand-600 text-white hover:bg-[#082a5c]">
             <RefreshCw className="h-4 w-4" />
             Stay signed in
           </Button>

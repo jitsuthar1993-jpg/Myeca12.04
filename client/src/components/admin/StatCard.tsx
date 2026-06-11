@@ -15,7 +15,7 @@ interface StatCardProps {
 
 export function StatCard({ title, value, description, change, icon, className }: StatCardProps) {
   const isPositive = change !== undefined && change > 0;
-  
+
   return (
     <Card className={cn(
       'bg-white/80 backdrop-blur-xl border border-white/20 rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.05)] transition-all duration-500 overflow-hidden group',

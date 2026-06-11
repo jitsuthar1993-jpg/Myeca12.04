@@ -18,10 +18,10 @@ export function DailyUpdatesBanner() {
   });
 
   const updates = response?.updates || [];
-  
+
   // Filter out dismissed updates and find the highest priority one that is active
   const visibleUpdates = updates.filter(u => !dismissed.includes(u.id));
-  
+
   if (isLoading || visibleUpdates.length === 0) return null;
 
   // Grab the most recently created or highest priority update to show in the banner
@@ -37,25 +37,25 @@ export function DailyUpdatesBanner() {
 
   return (
     <AnimatePresence>
-      <m.div 
+      <m.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -100, opacity: 0 }}
         className="fixed top-20 left-0 right-0 z-[100] px-4 pointer-events-none"
       >
         <div className="max-w-4xl mx-auto pointer-events-auto">
-          <m.div 
+          <m.div
             whileHover={{ scale: 1.01 }}
             className={cn(
               "relative overflow-hidden p-1 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-2xl transition-all duration-500",
-              isCritical 
-                ? "bg-gradient-to-r from-red-600 to-orange-600 shadow-red-500/20" 
+              isCritical
+                ? "bg-gradient-to-r from-red-600 to-orange-600 shadow-red-500/20"
                 : "bg-white/10 border border-white/10 bg-blue-700 shadow-blue-500/10"
             )}
           >
             {/* Animated Glow for Critical Updates */}
             {isCritical && (
-              <m.div 
+              <m.div
                 animate={{ opacity: [0.3, 0.6, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="absolute inset-0 bg-gradient-to-r from-red-400 to-orange-400 blur-xl opacity-20"
@@ -89,13 +89,13 @@ export function DailyUpdatesBanner() {
 
               <div className="flex items-center gap-3">
                 <Link href="/blog">
-                  <m.button 
+                  <m.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={cn(
                       "hidden sm:flex items-center gap-2 px-6 py-2 rounded-full type-meta font-black uppercase tracking-widest transition-all",
-                      isCritical 
-                        ? "bg-white text-red-600 hover:bg-red-50" 
+                      isCritical
+                        ? "bg-white text-red-600 hover:bg-red-50"
                         : "bg-white/10 text-white border border-white/10 hover:bg-white/20"
                     )}
                   >

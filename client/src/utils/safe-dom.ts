@@ -23,7 +23,7 @@
     Node.prototype.insertBefore = function<T extends Node>(node: T, child: Node | null): T {
       try {
         if (child && child.parentNode !== this) {
-          // If the reference node is not a child of this parent, 
+          // If the reference node is not a child of this parent,
           // just append at the end to avoid crashing the whole React tree.
           return originalInsertBefore.call(this, node, null) as T;
         }

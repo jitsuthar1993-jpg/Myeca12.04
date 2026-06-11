@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
+import {
   PiggyBank, TrendingUp, IndianRupee, Clock, ArrowRight,
   ShieldCheck, Zap, Sparkles, AlertCircle, BarChart3,
   Calendar, PieChart, Info, CheckCircle
@@ -63,7 +63,7 @@ export default function WithdrawalPlannerPage() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      <CalcHero 
+      <CalcHero
         title="Withdrawal Planner"
         description="Strategize periodic withdrawals from your corpus while accounting for interest growth and depletion risks."
         category="Retirement Planning"
@@ -85,10 +85,10 @@ export default function WithdrawalPlannerPage() {
             <div className="space-y-1 pb-6 border-b border-white/20">
               <p className="type-meta font-normal uppercase tracking-widest text-slate-400">Ending Balance</p>
               <AnimatePresence mode="wait">
-                <motion.p 
-                  key={result.endingBalance} 
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }} 
+                <motion.p
+                  key={result.endingBalance}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className={cn(
                     "text-4xl font-normal tracking-tight tabular-nums",
                     result.depleted ? "text-red-600" : "text-slate-900"
@@ -108,12 +108,12 @@ export default function WithdrawalPlannerPage() {
             <div className="space-y-4 pt-6">
               <CalcResultRow label="Total Withdrawn" value={formatCurrency(result.totalWithdrawn)} variant="success" />
               <CalcResultRow label="Total Interest Earned" value={formatCurrency(result.totalInterestAccrued)} />
-              
+
               <div className="h-44 mt-5">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                       formatter={(value: number) => formatCurrency(value)}
                     />
@@ -137,7 +137,7 @@ export default function WithdrawalPlannerPage() {
           <CalcInputCard title="Corpus Details" icon={<IndianRupee className="w-5 h-5" />}>
              <CalcInputGroup label="Starting Principal" badgeValue={formatCurrency(principal)}>
                 <div className="relative">
-                  <Input 
+                  <Input
                     type="number"
                     value={principal}
                     onChange={(e) => setPrincipal(Number(e.target.value))}
@@ -147,8 +147,8 @@ export default function WithdrawalPlannerPage() {
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {[500000, 1000000, 2500000, 5000000].map((amt) => (
-                    <button 
-                      key={amt} 
+                    <button
+                      key={amt}
                       onClick={() => setPrincipal(amt)}
                       className={cn(
                         "type-meta rounded-lg border px-3 py-1.5 font-normal transition-all",
@@ -163,7 +163,7 @@ export default function WithdrawalPlannerPage() {
 
              <CalcInputGroup label="Annual Return (%)" badgeValue={`${annualRate}%`}>
                 <div className="relative">
-                  <Input 
+                  <Input
                     type="number"
                     step="0.1"
                     value={annualRate}
@@ -192,7 +192,7 @@ export default function WithdrawalPlannerPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Duration (Years)</label>
-                  <Input 
+                  <Input
                     type="number"
                     value={years}
                     onChange={(e) => setYears(Number(e.target.value))}
@@ -203,7 +203,7 @@ export default function WithdrawalPlannerPage() {
 
              <CalcInputGroup label="Withdrawal per Period" badgeValue={formatCurrency(withdrawalAmount)}>
                 <div className="relative">
-                  <Input 
+                  <Input
                     type="number"
                     value={withdrawalAmount}
                     onChange={(e) => setWithdrawalAmount(Number(e.target.value))}
@@ -219,15 +219,15 @@ export default function WithdrawalPlannerPage() {
                   <p className="type-meta font-normal uppercase tracking-widest text-amber-700">Sustainability Insight</p>
                 </div>
                 <p className="type-support font-normal text-amber-800">
-                  {withdrawalAmount * (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1) > principal * (annualRate/100) 
-                    ? "Your withdrawal rate exceeds the interest earned. Your principal will deplete over time." 
+                  {withdrawalAmount * (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1) > principal * (annualRate/100)
+                    ? "Your withdrawal rate exceeds the interest earned. Your principal will deplete over time."
                     : "Your withdrawal rate is lower than the interest earned. Your corpus is growing or stable!"}
                 </p>
              </div>
           </CalcInputCard>
         </div>
 
-        <CalculatorMiniBlog 
+        <CalculatorMiniBlog
           features={[
             {
               icon: <PiggyBank className="w-5 h-5" />,

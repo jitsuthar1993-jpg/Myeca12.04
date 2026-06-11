@@ -20,17 +20,17 @@ export default function TaxStepIndicator({ steps, currentStep, onStepClick }: Ta
       <div className="flex items-center justify-between relative">
         {/* Background Line */}
         <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-100 -z-10" />
-        
+
         {/* Active Progress Line */}
-        <div 
-          className="absolute top-5 left-0 h-0.5 bg-blue-600 transition-all duration-500 -z-10" 
+        <div
+          className="absolute top-5 left-0 h-0.5 bg-blue-600 transition-all duration-500 -z-10"
           style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
         />
 
         {steps.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
-          
+
           return (
             <button
               key={step.id}
@@ -38,7 +38,7 @@ export default function TaxStepIndicator({ steps, currentStep, onStepClick }: Ta
               disabled={!isCompleted && !isActive}
               className="flex flex-col items-center group relative flex-1"
             >
-              <div 
+              <div
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white",
                   isActive && "border-blue-600 text-blue-600 shadow-lg shadow-blue-100 scale-110",
@@ -52,7 +52,7 @@ export default function TaxStepIndicator({ steps, currentStep, onStepClick }: Ta
                   <span className="text-sm font-normal">{index + 1}</span>
                 )}
               </div>
-              
+
               <div className="mt-3 text-center">
                 <span className={cn(
                   "block type-meta font-normal uppercase tracking-wider transition-colors",

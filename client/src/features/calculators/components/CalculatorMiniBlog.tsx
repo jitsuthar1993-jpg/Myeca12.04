@@ -76,7 +76,7 @@ export function CalculatorMiniBlog({
           <div className="text-slate-500 leading-relaxed">
             {howItWorks?.description}
           </div>
-          
+
           {howItWorks?.formulaBox && (
             <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 space-y-5 border-l-4 border-l-blue-500 overflow-hidden">
               <div className="flex gap-2">

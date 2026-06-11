@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SEO from '@/components/SEO';
-import { 
-  Search, 
-  FileText, 
-  Calculator, 
-  Users, 
-  Shield, 
+import {
+  Search,
+  FileText,
+  Calculator,
+  Users,
+  Shield,
   CreditCard,
   HelpCircle,
   BookOpen,
@@ -98,7 +98,7 @@ const helpCategories = [
 ];
 
 const popularArticles = [
-  { 
+  {
     title: 'Complete ITR Filing Guide 2025-26',
     category: 'ITR Filing',
     readTime: '8 min',
@@ -154,18 +154,18 @@ export default function HelpCenterPage() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="Help Center - MyeCA.in"
         description="Find answers about tax filing, ITR forms, calculators, account access, documents, and support requests."
       />
-      
-      <div className="min-h-screen bg-gray-50">
+
+      <div className="min-h-screen bg-slate-50">
         {/* Hero Section */}
         <section className="bg-white border-b border-slate-100 py-16 relative overflow-hidden">
           {/* Abstract background decorative element */}
           <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-blue-50/50 rounded-full blur-3xl -mr-64 -mt-64"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl -ml-32 -mb-32"></div>
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="type-page-title mb-6 font-black text-slate-900">
@@ -174,7 +174,7 @@ export default function HelpCenterPage() {
               <p className="text-xl mb-10 text-slate-500 font-medium leading-relaxed">
                 Search our knowledge base or browse categories below
               </p>
-              
+
               {/* Search Bar */}
               <div className="relative max-w-2xl mx-auto">
                 <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -185,14 +185,14 @@ export default function HelpCenterPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-14 pr-4 py-8 text-lg bg-white text-slate-900 placeholder-slate-400 rounded-2xl border-2 border-slate-100 shadow-xl shadow-slate-200/20 focus:ring-4 focus:ring-blue-500/10 transition-all"
                 />
-                <Button 
+                <Button
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-8 h-12 font-bold shadow-lg shadow-blue-500/25"
                   size="lg"
                 >
                   Search
                 </Button>
               </div>
-              
+
               {/* Quick Links */}
               <div className="flex flex-wrap justify-center gap-4 mt-8">
                 <Badge variant="secondary" className="bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm">
@@ -223,7 +223,7 @@ export default function HelpCenterPage() {
                   <TabsTrigger value="popular">Recommended</TabsTrigger>
                   <TabsTrigger value="videos">Lessons</TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="categories" className="space-y-6 mt-6">
                   {helpCategories.map((category, index) => (
                     <Card key={index} className="hover:shadow-md transition-shadow">
@@ -233,7 +233,7 @@ export default function HelpCenterPage() {
                         </div>
                         <div className="flex-1">
                           <CardTitle className="text-xl">{category.title}</CardTitle>
-                          <p className="text-sm text-gray-500">{category.description}</p>
+                          <p className="text-sm text-slate-500">{category.description}</p>
                         </div>
                       </CardHeader>
                       <CardContent>
@@ -241,17 +241,17 @@ export default function HelpCenterPage() {
                           {category.articles.map((article, index) => (
                             <li key={index}>
                               <Link href={article.href}>
-                                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer group">
+                                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 cursor-pointer group">
                                   <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900 group-hover:text-blue-600">
+                                    <h4 className="font-medium text-slate-900 group-hover:text-blue-600">
                                       {article.title}
                                     </h4>
-                                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                                    <div className="flex items-center gap-4 mt-1 text-sm text-slate-500">
                                       <span>Help article</span>
                                       <span>Updated for current workflows</span>
                                     </div>
                                   </div>
-                                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600" />
+                                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
                                 </div>
                               </Link>
                             </li>
@@ -265,7 +265,7 @@ export default function HelpCenterPage() {
                     </Card>
                   ))}
                 </TabsContent>
-                
+
                 <TabsContent value="popular" className="space-y-4 mt-6">
                   <h3 className="text-2xl font-semibold mb-4">Recommended Articles</h3>
                   {popularArticles.map((article, index) => (
@@ -279,7 +279,7 @@ export default function HelpCenterPage() {
                             <h4 className="text-lg font-semibold mb-2">
                               {article.title}
                             </h4>
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <div className="flex items-center gap-4 text-sm text-slate-600">
                               <span className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
                                 {article.readTime}
@@ -298,13 +298,13 @@ export default function HelpCenterPage() {
                     </Card>
                   ))}
                 </TabsContent>
-                
+
                 <TabsContent value="videos" className="mt-6">
                   <h3 className="text-2xl font-semibold mb-4">Help Lessons</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {videoTutorials.map((video, index) => (
                       <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="aspect-video bg-gray-200 relative">
+                        <div className="aspect-video bg-slate-200 relative">
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
                               <BookOpen className="w-8 h-8 text-white" />
@@ -316,7 +316,7 @@ export default function HelpCenterPage() {
                         </div>
                         <CardContent className="p-4">
                           <h4 className="font-semibold mb-1">{video.title}</h4>
-                          <p className="text-sm text-gray-600">{video.status}</p>
+                          <p className="text-sm text-slate-600">{video.status}</p>
                         </CardContent>
                       </Card>
                     ))}
@@ -336,7 +336,7 @@ export default function HelpCenterPage() {
                   <p className="text-blue-800">
                     Can't find what you're looking for? Our support team is here to help.
                   </p>
-                  
+
                   <div className="space-y-3">
                     <Button className="w-full justify-start" variant="outline">
                       <MessageCircle className="w-4 h-4 mr-2" />
@@ -351,7 +351,7 @@ export default function HelpCenterPage() {
                       Email Support
                     </Button>
                   </div>
-                  
+
                   <div className="pt-4 border-t">
                     <p className="text-sm text-blue-700 mb-2">Support Hours:</p>
                     <p className="text-sm text-blue-600">
@@ -408,19 +408,19 @@ export default function HelpCenterPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Help Categories</span>
+                    <span className="text-slate-600">Help Categories</span>
                     <span className="font-semibold">{helpCategories.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Featured Articles</span>
+                    <span className="text-slate-600">Featured Articles</span>
                     <span className="font-semibold">{popularArticles.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Help Lessons</span>
+                    <span className="text-slate-600">Help Lessons</span>
                     <span className="font-semibold">{videoTutorials.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Support Channels</span>
+                    <span className="text-slate-600">Support Channels</span>
                     <span className="font-semibold">3</span>
                   </div>
                 </CardContent>

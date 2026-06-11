@@ -48,15 +48,15 @@ export function calculateHRA(salary: number, hra: number, rent: number, city: 'm
   };
 } {
   const cityAllowanceRate = city === 'metro' ? 0.5 : 0.4;
-  
+
   const actualHRA = hra;
   const rentMinus10Percent = Math.max(0, rent - (salary * 0.1));
   const cityAllowance = salary * cityAllowanceRate;
-  
+
   const exemption = Math.max(0, Math.min(actualHRA, rentMinus10Percent, cityAllowance));
   const taxableHRA = hra - exemption;
   const savings = exemption * 0.3; // Assuming 30% tax bracket
-  
+
   return {
     exemption: Math.round(exemption),
     taxableHRA: Math.round(taxableHRA),
@@ -84,21 +84,21 @@ export function calculateSIP(monthlyAmount: number, years: number, expectedRetur
 } {
   const monthlyRate = expectedReturn / 12 / 100;
   const totalMonths = years * 12;
-  
+
   const maturityAmount = monthlyAmount * (((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate) * (1 + monthlyRate));
   const totalInvestment = monthlyAmount * totalMonths;
   const totalGains = maturityAmount - totalInvestment;
   const annualizedReturn = (Math.pow(maturityAmount / totalInvestment, 1 / years) - 1) * 100;
-  
+
   // Monthly breakdown for chart
   const monthlyBreakdown = [];
   let cumulativeInvestment = 0;
   let cumulativeBalance = 0;
-  
+
   for (let month = 1; month <= Math.min(totalMonths, 60); month++) { // Show first 5 years
     cumulativeInvestment += monthlyAmount;
     cumulativeBalance = cumulativeBalance * (1 + monthlyRate) + monthlyAmount;
-    
+
     monthlyBreakdown.push({
       month,
       investment: cumulativeInvestment,
@@ -106,7 +106,7 @@ export function calculateSIP(monthlyAmount: number, years: number, expectedRetur
       gains: Math.round(cumulativeBalance - cumulativeInvestment)
     });
   }
-  
+
   return {
     totalInvestment: Math.round(totalInvestment),
     maturityAmount: Math.round(maturityAmount),
@@ -130,22 +130,22 @@ export function calculateEMI(principal: number, rate: number, tenure: number): {
 } {
   const monthlyRate = rate / 12 / 100;
   const totalMonths = tenure * 12;
-  
-  const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / 
+
+  const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
               (Math.pow(1 + monthlyRate, totalMonths) - 1);
-  
+
   const totalPayment = emi * totalMonths;
   const totalInterest = totalPayment - principal;
-  
+
   // Monthly breakdown for amortization schedule
   const monthlyBreakdown = [];
   let remainingBalance = principal;
-  
+
   for (let month = 1; month <= Math.min(totalMonths, 60); month++) { // Show first 5 years
     const interestPaid = remainingBalance * monthlyRate;
     const principalPaid = emi - interestPaid;
     remainingBalance = remainingBalance - principalPaid;
-    
+
     monthlyBreakdown.push({
       month,
       emi: Math.round(emi),
@@ -154,7 +154,7 @@ export function calculateEMI(principal: number, rate: number, tenure: number): {
       remainingBalance: Math.round(Math.max(0, remainingBalance))
     });
   }
-  
+
   return {
     emi: Math.round(emi),
     totalPayment: Math.round(totalPayment),
@@ -184,33 +184,33 @@ export function calculateFD(principal: number, rate: number, tenure: number, com
   const safeTenure = Math.max(0, tenure);
   const n = Math.max(1, compoundingFrequency); // At least annually
   const r = safeRate / 100;
-  
+
   const maturityAmountRaw = safePrincipal * Math.pow(1 + r / n, n * safeTenure);
   const maturityAmount = Math.max(0, maturityAmountRaw);
   const totalInterestRaw = maturityAmount - safePrincipal;
   const totalInterest = Math.max(0, totalInterestRaw);
   const effectiveRateRaw = (Math.pow(1 + r / n, n) - 1) * 100;
   const effectiveRate = Math.max(0, Math.round(effectiveRateRaw * 100) / 100);
-  
+
   // Yearly breakdown
   const yearlyBreakdown = [] as Array<{ year: number; principal: number; interest: number; total: number }>;
   let currentPrincipal = safePrincipal;
-  
+
   for (let year = 1; year <= safeTenure; year++) {
     const yearEndAmountRaw = safePrincipal * Math.pow(1 + r / n, n * year);
     const yearEndAmount = Math.max(0, yearEndAmountRaw);
     const yearInterest = Math.max(0, yearEndAmount - currentPrincipal);
-    
+
     yearlyBreakdown.push({
       year,
       principal: Math.round(Math.max(0, currentPrincipal)),
       interest: Math.round(yearInterest),
       total: Math.round(yearEndAmount)
     });
-    
+
     currentPrincipal = yearEndAmount;
   }
-  
+
   return {
     maturityAmount: Math.round(maturityAmount),
     totalInterest: Math.round(totalInterest),
@@ -234,18 +234,18 @@ export function calculatePPF(annualInvestment: number, years: number = 15): {
   const rate = 7.1 / 100; // Current PPF rate
   const maxTenure = 15;
   const actualYears = Math.min(years, maxTenure);
-  
+
   let balance = 0;
   let totalInvestment = 0;
   const yearlyBreakdown = [];
-  
+
   for (let year = 1; year <= actualYears; year++) {
     const investment = Math.min(annualInvestment, 150000); // Max limit
     totalInvestment += investment;
-    
+
     const interest = balance * rate;
     balance = balance + investment + interest;
-    
+
     yearlyBreakdown.push({
       year,
       investment: Math.round(investment),
@@ -253,10 +253,10 @@ export function calculatePPF(annualInvestment: number, years: number = 15): {
       balance: Math.round(balance)
     });
   }
-  
+
   const maturityAmount = balance;
   const totalInterest = maturityAmount - totalInvestment;
-  
+
   return {
     totalInvestment: Math.round(totalInvestment),
     maturityAmount: Math.round(maturityAmount),
@@ -287,12 +287,12 @@ export function calculateCapitalGains(
   const holdingPeriodMs = saleDate.getTime() - purchaseDate.getTime();
   const holdingPeriodDays = Math.floor(holdingPeriodMs / (1000 * 60 * 60 * 24));
   const holdingPeriod = Math.floor(holdingPeriodDays / 365);
-  
+
   const capitalGain = salePrice - purchasePrice;
   let gainType: 'STCG' | 'LTCG';
   let taxRate = 0;
   let ltcgExemption = 0;
-  
+
   // Determine gain type and tax rate based on asset type and holding period
   // As per Budget 2024:
   // - Equity: 12 months for LTCG, STCG @ 20%, LTCG @ 12.5% (₹1.25L exemption)
@@ -326,17 +326,17 @@ export function calculateCapitalGains(
       taxRate = gainType === 'LTCG' ? 12.5 : 30; // STCG as per slab
       break;
   }
-  
+
   // Calculate taxable gain after exemption
   const taxableGain = Math.max(0, capitalGain - ltcgExemption);
-  
+
   // Calculate tax with 4% Health & Education Cess
   const baseTax = taxableGain > 0 ? (taxableGain * taxRate) / 100 : 0;
   const cess = baseTax * 0.04;
   const taxPayable = baseTax + cess;
-  
+
   const netGain = capitalGain - taxPayable;
-  
+
   return {
     capitalGain: Math.round(capitalGain),
     gainType,

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { Link } from "wouter";
-import { 
-  Users, 
-  FileText, 
-  Clock, 
-  Shield, 
-  CheckCircle, 
-  Phone, 
-  Mail, 
+import {
+  Users,
+  FileText,
+  Clock,
+  Shield,
+  CheckCircle,
+  Phone,
+  Mail,
   Download,
   Award,
   TrendingUp,
@@ -175,7 +175,7 @@ export default function LabourLawCompliancePage() {
       benefits: ["Single source of truth", "Reduced paperwork", "Digital integration"]
     },
     {
-      form: "Form B", 
+      form: "Form B",
       description: "Attendance and Wage Register",
       replaces: "Separate attendance and wage books",
       benefits: ["Automated calculations", "Real-time updates", "Compliance tracking"]
@@ -188,7 +188,7 @@ export default function LabourLawCompliancePage() {
     },
     {
       form: "Form D",
-      description: "Statutory Deductions Register", 
+      description: "Statutory Deductions Register",
       replaces: "Multiple deduction registers",
       benefits: ["PF/ESI integration", "Tax calculations", "Compliance reporting"]
     }
@@ -202,7 +202,7 @@ export default function LabourLawCompliancePage() {
       url: "shramsuvidha.gov.in"
     },
     {
-      platform: "EPFO Portal", 
+      platform: "EPFO Portal",
       services: ["ECR filing", "Contribution deposits", "UAN services"],
       benefits: "Complete PF management",
       url: "epfindia.gov.in"
@@ -223,7 +223,7 @@ export default function LabourLawCompliancePage() {
       additionalConsequences: "Establishment closure, blacklisting from government contracts"
     },
     {
-      violation: "ESI Non-Compliance", 
+      violation: "ESI Non-Compliance",
       penalty: "12% interest + damages",
       criminalLiability: "6 months - 2 years",
       additionalConsequences: "Medical benefit suspension, legal prosecution"
@@ -289,11 +289,11 @@ export default function LabourLawCompliancePage() {
                 <div className="w-14 h-14 bg-orange-50 rounded-full flex items-center justify-center soft-shadow">
                   <Users className="w-8 h-8 text-orange-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Labour Law Compliance Services
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Prepare PF, ESI, Contract Labour, and Factory Act registrations, payroll records, and recurring filings.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -309,15 +309,15 @@ export default function LabourLawCompliancePage() {
                 </Link>
               </div>
               <div className="flex flex-wrap gap-6 mt-6 text-sm">
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Expert-led compliance review
                 </div>
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   PF, ESI and register support
                 </div>
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                   Deadline tracking and reminders
                 </div>
@@ -325,14 +325,14 @@ export default function LabourLawCompliancePage() {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-orange-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Stay compliant every month</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <CreditCard className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     Deposit TDS by 7th; PF by 15th; ESI by 21st monthly.
@@ -365,10 +365,10 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Key Labour Law Compliance Areas 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Updated requirements and contribution rates for major labor law compliances
             </p>
           </div>
@@ -393,21 +393,21 @@ export default function LabourLawCompliancePage() {
                   <div className="space-y-3 mb-4 text-sm">
                     <div className="flex justify-between">
                       <span className="font-medium">Contribution/Requirement:</span>
-                      <span className="text-gray-600 text-xs">{compliance.contribution || compliance.requirement}</span>
+                      <span className="text-slate-600 text-xs">{compliance.contribution || compliance.requirement}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="font-medium">Ceiling/Forms:</span>
-                      <span className="text-gray-600 text-xs">{compliance.ceiling || compliance.forms}</span>
+                      <span className="text-slate-600 text-xs">{compliance.ceiling || compliance.forms}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="font-medium">Due Date:</span>
                       <Badge variant="outline" className="text-xs">{compliance.dueDate}</Badge>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <h4 className="font-semibold text-sm mb-2">2025 Updates:</h4>
-                    <p className="text-xs text-gray-700 bg-gray-50 p-2 rounded">
+                    <p className="text-xs text-slate-700 bg-slate-50 p-2 rounded">
                       {compliance.changes2025}
                     </p>
                   </div>
@@ -440,10 +440,10 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Monthly Compliance Calendar
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Key compliance dates and deadlines for labour law obligations
             </p>
           </div>
@@ -459,7 +459,7 @@ export default function LabourLawCompliancePage() {
                 </CardHeader>
                 <CardContent className="text-center">
                   <h4 className="font-semibold text-sm mb-2">{calendar.compliance}</h4>
-                  <p className="text-xs text-gray-600 mb-2">{calendar.applicability}</p>
+                  <p className="text-xs text-slate-600 mb-2">{calendar.applicability}</p>
                   <Badge variant="outline" className="text-xs text-red-600 border-red-300">
                     {calendar.penalty}
                   </Badge>
@@ -477,10 +477,10 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Essential Documents & Records
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Complete documentation checklist for labour law compliance
             </p>
           </div>
@@ -499,7 +499,7 @@ export default function LabourLawCompliancePage() {
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{doc}</span>
+                        <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
                   </ul>
@@ -517,10 +517,10 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               New Simplified Forms Under "Ease of Compliance"
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Ministry of Labour's simplified forms replacing multiple existing registers
             </p>
           </div>
@@ -535,13 +535,13 @@ export default function LabourLawCompliancePage() {
                 <CardContent>
                   <div className="mb-3">
                     <h4 className="font-semibold text-xs mb-1">Replaces:</h4>
-                    <p className="text-xs text-gray-600">{form.replaces}</p>
+                    <p className="text-xs text-slate-600">{form.replaces}</p>
                   </div>
                   <div>
                     <h4 className="font-semibold text-xs mb-1">Benefits:</h4>
                     <ul className="space-y-1">
                       {form.benefits.map((benefit, benefitIndex) => (
-                        <li key={benefitIndex} className="text-xs text-gray-600">
+                        <li key={benefitIndex} className="text-xs text-slate-600">
                           • {benefit}
                         </li>
                       ))}
@@ -561,10 +561,10 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Digital Compliance Platforms
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Government digital platforms for streamlined labour law compliance
             </p>
           </div>
@@ -607,31 +607,31 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Penalties & Consequences for Non-Compliance
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Detailed penalty structure and legal consequences for labour law violations
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 rounded-lg">
-              <thead className="bg-gray-50">
+            <table className="w-full border border-slate-200 rounded-lg">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Violation</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Financial Penalty</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Criminal Liability</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Additional Consequences</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Violation</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Financial Penalty</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Criminal Liability</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Additional Consequences</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {penaltiesStructure.map((penalty, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-slate-50">
                     <td className="px-6 py-4 font-semibold text-orange-600">{penalty.violation}</td>
                     <td className="px-6 py-4 text-sm text-red-600 font-bold">{penalty.penalty}</td>
                     <td className="px-6 py-4 text-sm text-purple-600 font-semibold">{penalty.criminalLiability}</td>
-                    <td className="px-6 py-4 text-xs text-gray-600">{penalty.additionalConsequences}</td>
+                    <td className="px-6 py-4 text-xs text-slate-600">{penalty.additionalConsequences}</td>
                   </tr>
                 ))}
               </tbody>
@@ -647,10 +647,10 @@ export default function LabourLawCompliancePage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="type-section-title font-bold text-gray-900 mb-4">
+            <h2 className="type-section-title font-bold text-slate-900 mb-4">
               Labour Law Compliance Practices 2025
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Keep registrations, payroll records, return dates, and unresolved compliance items in one reviewable workflow
             </p>
           </div>
@@ -669,7 +669,7 @@ export default function LabourLawCompliancePage() {
                     {practice.practices.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
                         <CheckCircle className={`w-4 h-4 mr-3 text-${practice.color}-500 flex-shrink-0 mt-0.5`} />
-                        <span className="text-sm text-gray-700">{item}</span>
+                        <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -691,7 +691,7 @@ export default function LabourLawCompliancePage() {
                 Need Expert Labour Law Compliance?
               </h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                Our labour law experts ensure complete PF, ESI, Contract Labour Act, and Factory Act 
+                Our labour law experts ensure complete PF, ESI, Contract Labour Act, and Factory Act
                 compliance with update checks, deadline tracking and proactive management.
               </p>
 

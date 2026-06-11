@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import SEO from '@/components/SEO';
-import { 
+import {
   BookOpen,
   CheckCircle,
   ChevronRight,
@@ -206,26 +206,26 @@ export default function UserGuidePage() {
   const [completedSections, setCompletedSections] = useState<string[]>([]);
 
   const toggleSection = (sectionId: string) => {
-    setCompletedSections(prev => 
-      prev.includes(sectionId) 
+    setCompletedSections(prev =>
+      prev.includes(sectionId)
         ? prev.filter(id => id !== sectionId)
         : [...prev, sectionId]
     );
   };
 
   const guide = selectedGuide ? userGuides.find(g => g.id === selectedGuide) : null;
-  const progressPercentage = guide 
+  const progressPercentage = guide
     ? (completedSections.filter(id => id.startsWith(selectedGuide!)).length / guide.sections.length) * 100
     : 0;
 
   return (
     <>
-      <SEO 
+      <SEO
         title="User Guide - MyeCA.in"
         description="User guides for tax filing, ITR forms, tax planning, account tasks, and business compliance."
       />
-      
-      <div className="min-h-screen bg-gray-50">
+
+      <div className="min-h-screen bg-slate-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12">
           <div className="container mx-auto px-4">
@@ -245,7 +245,7 @@ export default function UserGuidePage() {
               {/* Guide Selection */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
                 {userGuides.map((guide) => (
-                  <Card 
+                  <Card
                     key={guide.id}
                     className="hover:shadow-lg transition-shadow cursor-pointer"
                     onClick={() => setSelectedGuide(guide.id)}
@@ -257,20 +257,20 @@ export default function UserGuidePage() {
                         </div>
                         <div>
                           <h3 className="text-xl font-semibold">{guide.title}</h3>
-                          <p className="text-sm text-gray-600">{guide.description}</p>
+                          <p className="text-sm text-slate-600">{guide.description}</p>
                         </div>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-4 text-sm text-slate-600">
                           <span className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
                             {guide.readTime}
                           </span>
                           <span>{guide.sections.length} sections</span>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                        <ChevronRight className="w-5 h-5 text-slate-400" />
                       </div>
                     </CardContent>
                   </Card>
@@ -286,7 +286,7 @@ export default function UserGuidePage() {
                       <CardContent className="pt-6">
                         <tip.icon className="w-10 h-10 mx-auto mb-3 text-blue-600" />
                         <h3 className="font-semibold mb-1">{tip.title}</h3>
-                        <p className="text-sm text-gray-600">{tip.description}</p>
+                        <p className="text-sm text-slate-600">{tip.description}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -297,21 +297,21 @@ export default function UserGuidePage() {
             <div className="max-w-4xl mx-auto">
               {/* Guide Header */}
               <div className="mb-8">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={() => setSelectedGuide(null)}
                   className="mb-4"
                 >
                   ← Back to Guides
                 </Button>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-3">
                       <guide.icon className="w-8 h-8 text-blue-600" />
                       <div className="flex-1">
                         <h1 className="type-section-title font-bold">{guide.title}</h1>
-                        <p className="text-gray-600 mt-1">{guide.description}</p>
+                        <p className="text-slate-600 mt-1">{guide.description}</p>
                       </div>
                       <Badge variant="secondary">
                         <Clock className="w-4 h-4 mr-1" />
@@ -336,19 +336,19 @@ export default function UserGuidePage() {
                 {guide.sections.map((section, index) => {
                   const sectionId = `${guide.id}-${index}`;
                   const isCompleted = completedSections.includes(sectionId);
-                  
+
                   return (
                     <Card key={index}>
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              isCompleted ? 'bg-green-100' : 'bg-gray-100'
+                              isCompleted ? 'bg-green-100' : 'bg-slate-100'
                             }`}>
                               {isCompleted ? (
                                 <CheckCircle className="w-5 h-5 text-green-600" />
                               ) : (
-                                <span className="text-gray-600 font-semibold">{index + 1}</span>
+                                <span className="text-slate-600 font-semibold">{index + 1}</span>
                               )}
                             </div>
                             <h3 className="text-lg font-semibold">{section.title}</h3>
@@ -367,7 +367,7 @@ export default function UserGuidePage() {
                           {section.content.map((item, itemIndex) => (
                             <li key={itemIndex} className="flex items-start gap-3">
                               <span className="text-blue-600 mt-0.5">•</span>
-                              <span className={isCompleted ? 'text-gray-600' : ''}>{item}</span>
+                              <span className={isCompleted ? 'text-slate-600' : ''}>{item}</span>
                             </li>
                           ))}
                         </ul>
@@ -383,7 +383,7 @@ export default function UserGuidePage() {
                   <CardContent className="text-center py-8">
                     <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-600" />
                     <h3 className="text-2xl font-semibold mb-3">Guide Completed!</h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-slate-600 mb-6">
                       Great job! You've completed all sections of this guide.
                     </p>
                     <div className="flex gap-4 justify-center">

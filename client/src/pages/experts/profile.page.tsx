@@ -1,13 +1,13 @@
 import React from "react";
 import { useParams, Link } from "wouter";
 import { m } from "framer-motion";
-import { 
-  Building2, 
-  MapPin, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Clock, 
-  Phone, 
+import {
+  Building2,
+  MapPin,
+  CheckCircle2,
+  ShieldCheck,
+  Clock,
+  Phone,
   ArrowLeft,
   ArrowRight,
   Briefcase,
@@ -109,18 +109,18 @@ export default function ExpertProfilePage() {
               Back to experts
             </Button>
           </Link>
-          
+
           <div className="flex flex-col lg:flex-row gap-12 items-start">
             <div className="w-full lg:w-96 flex-shrink-0">
               <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-                <LazyImage 
-                  src={expert.image} 
-                  alt={expert.name} 
+                <LazyImage
+                  src={expert.image}
+                  alt={expert.name}
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
-            
+
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-4">
                 <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 font-bold border-emerald-200">
@@ -128,7 +128,7 @@ export default function ExpertProfilePage() {
                   Verified Professional
                 </Badge>
               </div>
-              
+
               <h1 className="type-page-title text-slate-900 mb-2">
                 {expert.name}
               </h1>
@@ -136,7 +136,7 @@ export default function ExpertProfilePage() {
               <p className="text-lg text-slate-600 leading-relaxed mb-8">
                 {expert.bio}
               </p>
-              
+
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-14 px-8 rounded-xl shadow-lg">
                   Request a Consultation
@@ -159,7 +159,7 @@ export default function ExpertProfilePage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-12">
-            
+
             {/* Left Column: Stats & Education */}
             <div className="lg:col-span-1 space-y-8">
               <Card className="border-slate-200">

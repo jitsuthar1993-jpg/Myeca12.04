@@ -62,9 +62,9 @@ const numberToWords = (num: number) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; color: #000; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <h1 style="text-align: center; text-decoration: underline; text-transform: uppercase; letter-spacing: 2px;">PROMISSORY NOTE</h1>
-    
+
     <div style="display: flex; justify-content: space-between; margin-top: 40px; font-weight: bold; font-size: 16px;">
       <div>Amount: ₹ ${Number(data.principalAmount).toLocaleString('en-IN')}/-</div>
       <div style="text-align: right;">
@@ -90,7 +90,7 @@ const generateHTML = (data: any) => `
           <span style="font-size: 12px; font-weight: bold; text-align: center;">REVENUE<br/>STAMP<br/><small>(Sign Across)</small></span>
         </div>
       </div>
-      
+
       <div style="text-align: center; border-top: 1px dotted #000; padding-top: 10px; min-width: 250px;">
         <strong style="display: block; margin-bottom: 5px;">${data.makerName || '(Signature of Maker)'}</strong>
         <span style="font-size: 13px; color: #666;">Maker / Borrower</span>

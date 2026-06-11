@@ -44,7 +44,7 @@ const FormComponent = ({ register, errors, control }: any) => {
       <div className="grid grid-cols-2 gap-4">
         <div><Label>Old Full Name (Current/Existing)</Label><Input {...register('oldName')} /></div>
         <div><Label>New Full Name (Desired)</Label><Input {...register('newName')} /></div>
-        
+
         <div>
           <Label>Relation</Label>
           <Controller
@@ -65,7 +65,7 @@ const FormComponent = ({ register, errors, control }: any) => {
           />
         </div>
         <div><Label>Father / Husband's Name</Label><Input {...register('fatherOrHusbandName')} /></div>
-        
+
         <div><Label>Age (Years)</Label><Input type="number" {...register('age', { valueAsNumber: true })} /></div>
         <div className="col-span-2"><Label>Complete Permanent Address</Label><Textarea rows={2} {...register('address')} /></div>
       </div>
@@ -80,7 +80,7 @@ const FormComponent = ({ register, errors, control }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: 'Times New Roman', serif; font-size: 16px; color: #000; line-height: 2; max-width: 800px; margin: 0 auto; padding: 40px; text-align: justify;">
-    
+
     <div style="text-align: center; margin-bottom: 50px;">
       <h1 style="margin: 0; font-size: 20px; text-decoration: underline; text-transform: uppercase;">AFFIDAVIT FOR CHANGE OF NAME</h1>
       <p style="margin: 5px 0 0 0; font-size: 14px; font-style: italic;">(To be executed on Non-Judicial Stamp Paper of Rs. 20/- or Rs. 100/- and Notarized)</p>

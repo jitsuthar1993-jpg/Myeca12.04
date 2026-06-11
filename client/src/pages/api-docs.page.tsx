@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { m } from "framer-motion";
-import { 
-  Code2, Copy, Check, ChevronRight, Lock, Globe, 
+import {
+  Code2, Copy, Check, ChevronRight, Lock, Globe,
   Zap, Shield, Database, GitBranch, Key, AlertCircle
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -215,10 +215,10 @@ const login = async () => {
       email: 'user@example.com',
       password: 'securepassword'
     });
-    
+
     const { token, user } = response.data;
     console.log('Logged in:', user);
-    
+
     // Store token for subsequent requests
     axios.defaults.headers.common['Authorization'] = \`Bearer \${token}\`;
   } catch (error) {
@@ -232,7 +232,7 @@ const getTaxReturns = async () => {
     const response = await axios.get('https://api.myeca.in/api/tax/returns', {
       params: { year: '2024-25' }
     });
-    
+
     console.log('Tax returns:', response.data.returns);
   } catch (error) {
     console.error('Failed to fetch returns:', error.response.data);
@@ -251,7 +251,7 @@ def login(email, password):
         'email': email,
         'password': password
     })
-    
+
     if response.status_code == 200:
         data = response.json()
         token = data['token']
@@ -266,13 +266,13 @@ def login(email, password):
 def get_tax_returns(token, year=None):
     headers = {'Authorization': f'Bearer {token}'}
     params = {'year': year} if year else {}
-    
+
     response = requests.get(
         f'{BASE_URL}/api/tax/returns',
         headers=headers,
         params=params
     )
-    
+
     if response.status_code == 200:
         returns = response.json()['returns']
         for ret in returns:
@@ -343,11 +343,11 @@ export default function ApiDocsPage() {
       PUT: "bg-orange-100 text-orange-700",
       DELETE: "bg-red-100 text-red-700"
     };
-    return colors[method as keyof typeof colors] || "bg-gray-100 text-gray-700";
+    return colors[method as keyof typeof colors] || "bg-slate-100 text-slate-700";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6 pb-12">
+    <div className="min-h-screen bg-slate-50 pt-6 pb-12">
       <SEO
         title="API Documentation - MyeCA.in Developer Portal"
         description="Comprehensive API documentation for MyeCA.in platform. RESTful APIs for tax filing, services, and AI-powered features."
@@ -366,8 +366,8 @@ export default function ApiDocsPage() {
               <Code2 className="h-8 w-8 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">API Documentation</h1>
-              <p className="text-gray-600">RESTful API for developers</p>
+              <h1 className="text-3xl font-bold text-slate-900">API Documentation</h1>
+              <p className="text-slate-600">RESTful API for developers</p>
             </div>
           </div>
 
@@ -378,7 +378,7 @@ export default function ApiDocsPage() {
                 <div className="flex items-center gap-3">
                   <Globe className="h-5 w-5 text-blue-500" />
                   <div>
-                    <p className="text-sm text-gray-600">Base URL</p>
+                    <p className="text-sm text-slate-600">Base URL</p>
                     <p className="font-mono text-sm">api.myeca.in</p>
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export default function ApiDocsPage() {
                 <div className="flex items-center gap-3">
                   <Zap className="h-5 w-5 text-green-500" />
                   <div>
-                    <p className="text-sm text-gray-600">Version</p>
+                    <p className="text-sm text-slate-600">Version</p>
                     <p className="font-semibold">v2.0</p>
                   </div>
                 </div>
@@ -400,7 +400,7 @@ export default function ApiDocsPage() {
                 <div className="flex items-center gap-3">
                   <Shield className="h-5 w-5 text-purple-500" />
                   <div>
-                    <p className="text-sm text-gray-600">Auth Type</p>
+                    <p className="text-sm text-slate-600">Auth Type</p>
                     <p className="font-semibold">Bearer Token</p>
                   </div>
                 </div>
@@ -411,7 +411,7 @@ export default function ApiDocsPage() {
                 <div className="flex items-center gap-3">
                   <Database className="h-5 w-5 text-orange-500" />
                   <div>
-                    <p className="text-sm text-gray-600">Rate Limit</p>
+                    <p className="text-sm text-slate-600">Rate Limit</p>
                     <p className="font-semibold">1000 req/hour</p>
                   </div>
                 </div>
@@ -433,13 +433,13 @@ export default function ApiDocsPage() {
               <CardContent className="space-y-4">
                 {Object.entries(apiEndpoints).map(([category, endpoints]) => (
                   <div key={category}>
-                    <h3 className="font-semibold capitalize mb-2 text-gray-700">{category}</h3>
+                    <h3 className="font-semibold capitalize mb-2 text-slate-700">{category}</h3>
                     <div className="space-y-1">
                       {endpoints.map((endpoint, idx) => (
                         <button
                           key={idx}
                           onClick={() => setSelectedEndpoint(endpoint)}
-                          className={`w-full text-left p-2 rounded-lg hover:bg-gray-100 transition-colors ${
+                          className={`w-full text-left p-2 rounded-lg hover:bg-slate-100 transition-colors ${
                             selectedEndpoint === endpoint ? 'bg-blue-50 border-l-2 border-blue-500' : ''
                           }`}
                         >
@@ -478,22 +478,22 @@ export default function ApiDocsPage() {
 
                 <div>
                   <h3 className="font-semibold mb-2">Authentication</h3>
-                  <div className="bg-blue-700 text-gray-100 p-4 rounded-lg font-mono text-sm">
+                  <div className="bg-blue-700 text-slate-100 p-4 rounded-lg font-mono text-sm">
                     Authorization: Bearer YOUR_API_TOKEN
                   </div>
                 </div>
 
                 <div>
                   <h3 className="font-semibold mb-2">Base URL</h3>
-                  <div className="bg-blue-700 text-gray-100 p-4 rounded-lg font-mono text-sm">
+                  <div className="bg-blue-700 text-slate-100 p-4 rounded-lg font-mono text-sm">
                     https://api.myeca.in
                   </div>
                 </div>
 
                 <div>
                   <h3 className="font-semibold mb-2">Response Format</h3>
-                  <p className="text-sm text-gray-600 mb-2">All responses are returned in JSON format.</p>
-                  <div className="bg-blue-700 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <p className="text-sm text-slate-600 mb-2">All responses are returned in JSON format.</p>
+                  <div className="bg-blue-700 text-slate-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                     {`{
   "success": true,
   "data": { ... },
@@ -515,13 +515,13 @@ export default function ApiDocsPage() {
                       {selectedEndpoint.method}
                     </Badge>
                   </div>
-                  <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">
+                  <code className="text-sm font-mono bg-slate-100 px-2 py-1 rounded">
                     {selectedEndpoint.path}
                   </code>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-gray-600">{selectedEndpoint.description}</p>
+                    <p className="text-slate-600">{selectedEndpoint.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       {selectedEndpoint.auth ? (
                         <Badge variant="outline" className="text-xs">
@@ -540,7 +540,7 @@ export default function ApiDocsPage() {
                   {selectedEndpoint.query && (
                     <div>
                       <h4 className="font-semibold mb-2">Query Parameters</h4>
-                      <div className="bg-gray-100 p-3 rounded-lg">
+                      <div className="bg-slate-100 p-3 rounded-lg">
                         <pre className="text-sm">{JSON.stringify(selectedEndpoint.query, null, 2)}</pre>
                       </div>
                     </div>
@@ -549,7 +549,7 @@ export default function ApiDocsPage() {
                   {selectedEndpoint.body && (
                     <div>
                       <h4 className="font-semibold mb-2">Request Body</h4>
-                      <div className="bg-gray-100 p-3 rounded-lg">
+                      <div className="bg-slate-100 p-3 rounded-lg">
                         <pre className="text-sm">{JSON.stringify(selectedEndpoint.body, null, 2)}</pre>
                       </div>
                     </div>
@@ -557,7 +557,7 @@ export default function ApiDocsPage() {
 
                   <div>
                     <h4 className="font-semibold mb-2">Response</h4>
-                    <div className="bg-gray-100 p-3 rounded-lg">
+                    <div className="bg-slate-100 p-3 rounded-lg">
                       <pre className="text-sm">{JSON.stringify(selectedEndpoint.response, null, 2)}</pre>
                     </div>
                   </div>
@@ -594,7 +594,7 @@ export default function ApiDocsPage() {
                             <Copy className="h-4 w-4" />
                           )}
                         </Button>
-                        <div className="bg-blue-700 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                        <div className="bg-blue-700 text-slate-100 p-4 rounded-lg overflow-x-auto">
                           <pre className="text-sm font-mono">{code}</pre>
                         </div>
                       </div>
@@ -617,8 +617,8 @@ export default function ApiDocsPage() {
                       <GitBranch className="h-5 w-5 text-yellow-600" />
                       <h4 className="font-semibold">JavaScript SDK</h4>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">Official Node.js & Browser SDK</p>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs">npm install @myeca/sdk</code>
+                    <p className="text-sm text-slate-600 mb-3">Official Node.js & Browser SDK</p>
+                    <code className="bg-slate-100 px-2 py-1 rounded text-xs">npm install @myeca/sdk</code>
                   </div>
 
                   <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -626,8 +626,8 @@ export default function ApiDocsPage() {
                       <GitBranch className="h-5 w-5 text-blue-600" />
                       <h4 className="font-semibold">Python SDK</h4>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">Official Python SDK</p>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs">pip install myeca-sdk</code>
+                    <p className="text-sm text-slate-600 mb-3">Official Python SDK</p>
+                    <code className="bg-slate-100 px-2 py-1 rounded text-xs">pip install myeca-sdk</code>
                   </div>
 
                   <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -635,8 +635,8 @@ export default function ApiDocsPage() {
                       <GitBranch className="h-5 w-5 text-purple-600" />
                       <h4 className="font-semibold">PHP SDK</h4>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">Official PHP SDK</p>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs">composer require myeca/sdk</code>
+                    <p className="text-sm text-slate-600 mb-3">Official PHP SDK</p>
+                    <code className="bg-slate-100 px-2 py-1 rounded text-xs">composer require myeca/sdk</code>
                   </div>
 
                   <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -644,8 +644,8 @@ export default function ApiDocsPage() {
                       <GitBranch className="h-5 w-5 text-green-600" />
                       <h4 className="font-semibold">Java SDK</h4>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">Official Java SDK</p>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs">Coming Soon</code>
+                    <p className="text-sm text-slate-600 mb-3">Official Java SDK</p>
+                    <code className="bg-slate-100 px-2 py-1 rounded text-xs">Coming Soon</code>
                   </div>
                 </div>
               </CardContent>

@@ -54,7 +54,7 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
 
   const calculateTotalDeductions = () => {
     const values = form.getValues();
-    const total = 
+    const total =
       parseFloat(values.section80C || "0") +
       parseFloat(values.section80D || "0") +
       parseFloat(values.section80G || "0") +
@@ -88,9 +88,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                   <FormItem>
                     <FormLabel>Section 80C Deductions *<SectionReferenceBadge section="80C" /></FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="150000" 
-                        {...field} 
+                      <Input
+                        placeholder="150000"
+                        {...field}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           field.onChange(value);
@@ -125,9 +125,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                   <FormItem>
                     <FormLabel>Section 80D - Health Insurance<SectionReferenceBadge section="80D" /></FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="25000" 
-                        {...field} 
+                      <Input
+                        placeholder="25000"
+                        {...field}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           field.onChange(value);
@@ -163,9 +163,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                     <FormItem>
                       <FormLabel>Section 80E - Education Loan Interest<SectionReferenceBadge section="80E" /></FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="50000" 
-                          {...field} 
+                        <Input
+                          placeholder="50000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -188,9 +188,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                     <FormItem>
                       <FormLabel>Section 80G - Donations<SectionReferenceBadge section="80G" /></FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="10000" 
-                          {...field} 
+                        <Input
+                          placeholder="10000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -224,9 +224,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                     <FormItem>
                       <FormLabel>Section 24(b) - Home Loan Interest<SectionReferenceBadge section="24(b)" /></FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="200000" 
-                          {...field} 
+                        <Input
+                          placeholder="200000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -249,10 +249,10 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                     <FormItem>
                       <FormLabel>Standard Deduction</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="50000" 
+                        <Input
+                          placeholder="50000"
                           disabled
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormDescription>
@@ -272,9 +272,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                     <FormItem>
                       <FormLabel>Professional Tax</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="2500" 
-                          {...field} 
+                        <Input
+                          placeholder="2500"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -297,9 +297,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                     <FormItem>
                       <FormLabel>NPS (Section 80CCD)</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="50000" 
-                          {...field} 
+                        <Input
+                          placeholder="50000"
+                          {...field}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value);
@@ -332,9 +332,9 @@ export default function DeductionsForm({ data, onChange }: DeductionsFormProps) 
                   <FormItem>
                     <FormLabel>Other Deductions</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="0" 
-                        {...field} 
+                      <Input
+                        placeholder="0"
+                        {...field}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           field.onChange(value);

@@ -48,14 +48,14 @@ export function AnimatedFormExample() {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true)
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     console.log("Form data:", data)
     setIsSubmitting(false)
     setIsSuccess(true)
-    
+
     // Reset success state after 3 seconds
     setTimeout(() => setIsSuccess(false), 3000)
   }
@@ -69,12 +69,12 @@ export function AnimatedFormExample() {
       >
         <Card className="shadow-lg">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-gray-900">Contact Form</CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardTitle className="text-2xl font-bold text-slate-900">Contact Form</CardTitle>
+            <CardDescription className="text-slate-600">
               Experience smooth micro-animations on every field interaction
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="p-8">
             <Form {...form}>
               <AnimatedForm onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -90,7 +90,7 @@ export function AnimatedFormExample() {
                         required
                       >
                         <div className="relative">
-                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input {...field} placeholder="John" className="pl-10" />
                         </div>
                       </AnimatedFormField>
@@ -107,7 +107,7 @@ export function AnimatedFormExample() {
                         required
                       >
                         <div className="relative">
-                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input {...field} placeholder="Doe" className="pl-10" />
                         </div>
                       </AnimatedFormField>
@@ -128,7 +128,7 @@ export function AnimatedFormExample() {
                         required
                       >
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input {...field} type="email" placeholder="john@example.com" className="pl-10" />
                         </div>
                       </AnimatedFormField>
@@ -145,7 +145,7 @@ export function AnimatedFormExample() {
                         required
                       >
                         <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input {...field} placeholder="+91 9876543210" className="pl-10" />
                         </div>
                       </AnimatedFormField>
@@ -165,7 +165,7 @@ export function AnimatedFormExample() {
                         required
                       >
                         <div className="relative">
-                          <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input {...field} placeholder="Acme Corp" className="pl-10" />
                         </div>
                       </AnimatedFormField>
@@ -225,7 +225,7 @@ export function AnimatedFormExample() {
                         required
                       >
                         <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input {...field} placeholder="Mumbai, India" className="pl-10" />
                         </div>
                       </AnimatedFormField>

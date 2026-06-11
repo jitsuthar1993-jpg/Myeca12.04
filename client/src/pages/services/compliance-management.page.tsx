@@ -129,7 +129,7 @@ const ComplianceManagementPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <RouteSeo path="/services/compliance-management" />
 
       {/* Header */}
@@ -141,11 +141,11 @@ const ComplianceManagementPage = () => {
                 <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center soft-shadow">
                   <Shield className="w-8 h-8 text-green-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Startup Compliance Management
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Track statutory filings against a documented calendar, responsibility owner, and evidence checklist.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -160,14 +160,14 @@ const ComplianceManagementPage = () => {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-green-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Stay penalty-free</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Clock className="w-4 h-4 mr-2 text-green-600 mt-0.5" />
                     Track monthly GST and TDS deadlines proactively.
@@ -196,10 +196,10 @@ const ComplianceManagementPage = () => {
         {/* Compliance Services Tabs */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Compliance Services by Filing Type
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
               From incorporation to IPO, we handle all your compliance needs
             </p>
           </div>
@@ -220,7 +220,7 @@ const ComplianceManagementPage = () => {
                     transition={{ delay: index * 0.1 }}
                     viewport={{ once: true }}
                   >
-                    <Card className={`h-full ${service.critical ? 'border-red-200' : 'border-gray-200'}`}>
+                    <Card className={`h-full ${service.critical ? 'border-red-200' : 'border-slate-200'}`}>
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className={`w-12 h-12 ${service.critical ? 'bg-red-100' : 'bg-green-100'} rounded-lg flex items-center justify-center`}>
@@ -239,7 +239,7 @@ const ComplianceManagementPage = () => {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-2 text-sm">
-                          <div className="flex items-center text-gray-600">
+                          <div className="flex items-center text-slate-600">
                             <Clock className="h-4 w-4 mr-2" />
                             <span>Frequency: {service.frequency}</span>
                           </div>
@@ -278,10 +278,10 @@ const ComplianceManagementPage = () => {
                       <CardContent>
                         <div className="space-y-4">
                           <div>
-                            <p className="font-semibold text-sm text-gray-700 mb-2">Requirements:</p>
+                            <p className="font-semibold text-sm text-slate-700 mb-2">Requirements:</p>
                             <ul className="space-y-1">
                               {service.requirements.map((req, idx) => (
-                                <li key={idx} className="text-sm text-gray-600 flex items-start">
+                                <li key={idx} className="text-sm text-slate-600 flex items-start">
                                   <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                                   {req}
                                 </li>
@@ -289,10 +289,10 @@ const ComplianceManagementPage = () => {
                             </ul>
                           </div>
                           <div>
-                            <p className="font-semibold text-sm text-gray-700 mb-2">Benefits:</p>
+                            <p className="font-semibold text-sm text-slate-700 mb-2">Benefits:</p>
                             <ul className="space-y-1">
                               {service.benefits.map((benefit, idx) => (
-                                <li key={idx} className="text-sm text-gray-600 flex items-start">
+                                <li key={idx} className="text-sm text-slate-600 flex items-start">
                                   <CheckCircle2 className="h-4 w-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
                                   {benefit}
                                 </li>
@@ -327,21 +327,21 @@ const ComplianceManagementPage = () => {
                   <div
                     key={index}
                     className={`p-4 rounded-lg border ${
-                      item.critical 
-                        ? 'bg-red-50 border-red-200' 
-                        : 'bg-white border-gray-200'
+                      item.critical
+                        ? 'bg-red-50 border-red-200'
+                        : 'bg-white border-slate-200'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <span className="text-2xl font-bold text-gray-900">{item.day}</span>
-                      <Badge 
+                      <span className="text-2xl font-bold text-slate-900">{item.day}</span>
+                      <Badge
                         variant={item.critical ? "destructive" : "secondary"}
                         className={item.critical ? "bg-red-100 text-red-700" : ""}
                       >
                         {item.type}
                       </Badge>
                     </div>
-                    <p className="text-sm font-medium text-gray-700">{item.task}</p>
+                    <p className="text-sm font-medium text-slate-700">{item.task}</p>
                     {item.critical && (
                       <p className="text-xs text-red-600 mt-2 flex items-center">
                         <AlertCircle className="h-3 w-3 mr-1" />
@@ -358,10 +358,10 @@ const ComplianceManagementPage = () => {
         {/* Pricing Packages */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Compliance Packages for Every Stage
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
               Choose a package that fits your startup's needs and budget
             </p>
           </div>
@@ -375,7 +375,7 @@ const ComplianceManagementPage = () => {
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className={`h-full ${pkg.recommended ? 'border-green-500 border-2' : 'border-gray-200'}`}>
+                <Card className={`h-full ${pkg.recommended ? 'border-green-500 border-2' : 'border-slate-200'}`}>
                   {pkg.recommended && (
                     <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
                       MOST POPULAR
@@ -385,7 +385,7 @@ const ComplianceManagementPage = () => {
                     <CardTitle className="text-2xl">{pkg.name}</CardTitle>
                     <div className="mt-4">
                       <span className="text-3xl font-bold">₹pkg.price.replace('₹', '')</span>
-                      <span className="text-gray-600 ml-2">{pkg.period}</span>
+                      <span className="text-slate-600 ml-2">{pkg.period}</span>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -393,14 +393,14 @@ const ComplianceManagementPage = () => {
                       {pkg.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start">
                           <CheckCircle2 className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
+                          <span className="text-slate-700">{feature}</span>
                         </li>
                       ))}
                     </ul>
-                    <Button 
+                    <Button
                       className={`w-full mt-6 ${
-                        pkg.recommended 
-                          ? 'bg-green-600 hover:bg-green-700' 
+                        pkg.recommended
+                          ? 'bg-green-600 hover:bg-green-700'
                           : 'bg-blue-600 hover:bg-blue-700'
                       }`}
                     >
@@ -425,16 +425,16 @@ const ComplianceManagementPage = () => {
                 Get started with a free compliance audit.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-green-600 text-white hover:bg-green-700 font-semibold"
                 >
                   Get Free Compliance Audit
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="border-green-200 bg-white text-green-700 hover:bg-green-50"
                 >
                   Schedule Demo

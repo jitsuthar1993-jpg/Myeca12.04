@@ -535,7 +535,7 @@ export default function BlogPostPage() {
       {isCtaVisible && (
         <div className="relative overflow-hidden border-y border-blue-100 bg-blue-50/80 text-slate-700 shadow-sm">
           <div className="mx-auto flex min-h-12 max-w-7xl flex-nowrap items-center justify-center gap-5 px-4 sm:px-6 lg:px-8">
-            <div className="flex min-h-10 min-w-0 translate-y-2 items-center gap-3">
+            <div className="hidden min-h-10 min-w-0 translate-y-2 items-center gap-3 sm:flex">
               <Sparkles className="-translate-y-2 h-4 w-4 shrink-0 text-blue-600" />
               <p className="flex min-h-10 items-center gap-1 truncate text-sm font-semibold leading-none sm:text-base">
                 Need a document-based filing review? <span className="opacity-90">Check the scope before you start.</span>
@@ -672,20 +672,7 @@ export default function BlogPostPage() {
             )}
 
             <section
-              className={cn(
-                "type-article-prose prose prose-slate max-w-none prose-p:text-slate-700",
-                "prose-headings:scroll-mt-32 prose-headings:font-bold prose-headings:text-slate-950",
-                "prose-h2:mt-14 prose-h2:mb-6 prose-h2:border-b prose-h2:border-slate-100 prose-h2:pb-3",
-                "prose-h3:mt-9",
-                "prose-li:text-slate-700",
-                "prose-a:font-medium prose-a:text-blue-700 prose-a:no-underline hover:prose-a:underline",
-                "prose-strong:font-semibold prose-strong:text-slate-950",
-                "prose-blockquote:rounded-r-3xl prose-blockquote:border-l-[6px] prose-blockquote:border-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:px-8 prose-blockquote:py-6 prose-blockquote:not-italic prose-blockquote:text-slate-800 prose-blockquote:font-normal prose-blockquote:text-lg",
-                "prose-table:overflow-hidden prose-table:rounded-[2rem] prose-table:border prose-table:border-slate-200",
-                "prose-th:bg-blue-600 prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-th:uppercase prose-th:tracking-wider prose-th:text-white",
-                "prose-td:px-6 prose-td:py-4 prose-td:text-sm prose-td:text-slate-700",
-                "prose-img:rounded-[2rem] prose-img:border prose-img:border-slate-100",
-              )}
+              className="type-article-prose"
               dangerouslySetInnerHTML={{ __html: safeContentHtml }}
             />
 

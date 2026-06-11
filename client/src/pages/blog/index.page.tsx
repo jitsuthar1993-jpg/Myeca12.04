@@ -113,10 +113,10 @@ export default function BlogIndexPage() {
       {/* Main Hub Layout */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid lg:grid-cols-12 gap-16">
-          
+
           {/* Main Feed */}
           <div className="lg:col-span-8">
-            
+
             {/* Category Filter Pills */}
             <div className="flex flex-wrap gap-2 mb-12">
               <button
@@ -136,8 +136,8 @@ export default function BlogIndexPage() {
                   onClick={() => setSelectedCategory(cat.name)}
                   className={cn(
                     "px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all",
-                    selectedCategory === cat.name 
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10" 
+                    selectedCategory === cat.name
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10"
                       : "bg-slate-50 text-slate-400 hover:bg-slate-100"
                   )}
                 >
@@ -234,7 +234,7 @@ export default function BlogIndexPage() {
           {/* Simplistic Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-32 space-y-12">
-              
+
               {/* Newsletter Block */}
               <div className="bg-slate-50 rounded-[2rem] p-8 border border-slate-100">
                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4">Stay Current</h4>

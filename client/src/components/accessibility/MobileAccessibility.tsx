@@ -186,7 +186,7 @@ export const MobileAccessibleInput: React.FC<{
         {label}
         {required && <span className="required-indicator" aria-label="required">*</span>}
       </label>
-      
+
       <input
         id={inputId}
         type={type}
@@ -210,13 +210,13 @@ export const MobileAccessibleInput: React.FC<{
         style={inputStyles as any}
         {...props}
       />
-      
+
       {error && (
         <div id={errorId} className="mobile-input-error" role="alert">
           {error}
         </div>
       )}
-      
+
       {helperText && !error && (
         <div id={helperId} className="mobile-input-helper">
           {helperText}
@@ -445,7 +445,7 @@ export const MobileAccessibleSelect: React.FC<{
         {label}
         {required && <span className="required-indicator" aria-label="required">*</span>}
       </label>
-      
+
       <select
         id={selectId}
         value={value}
@@ -473,13 +473,13 @@ export const MobileAccessibleSelect: React.FC<{
           </option>
         ))}
       </select>
-      
+
       {error && (
         <div id={errorId} className="mobile-select-error" role="alert">
           {error}
         </div>
       )}
-      
+
       {helperText && !error && (
         <div id={helperId} className="mobile-select-helper">
           {helperText}
@@ -513,7 +513,7 @@ export const useTouchGestures = () => {
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distanceX = touchStart.x - touchEnd.x;
     const distanceY = touchStart.y - touchEnd.y;
     const isLeftSwipe = distanceX > minSwipeDistance;
@@ -542,7 +542,7 @@ export const useTouchGestures = () => {
 export const useMobileAccessibility = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTouchDevice = useMediaQuery({ query: '(hover: none)' });
-  
+
   const [viewport, setViewport] = useState({
     width: window.innerWidth,
     height: window.innerHeight
@@ -566,7 +566,7 @@ export const useMobileAccessibility = () => {
     element.style.setProperty('-webkit-tap-highlight-color', 'transparent');
     element.style.userSelect = 'none';
     element.style.webkitUserSelect = 'none';
-    
+
     // Ensure minimum touch target size
     const rect = element.getBoundingClientRect();
     if (rect.width < 44 || rect.height < 44) {
@@ -579,7 +579,7 @@ export const useMobileAccessibility = () => {
   const preventZoom = (inputElement: HTMLInputElement | HTMLTextAreaElement) => {
     // Set font size to 16px to prevent zoom on iOS
     inputElement.style.fontSize = 'var(--text-base)';
-    
+
     // Add touch event listeners to prevent zoom
     inputElement.addEventListener('touchstart', (e) => {
       e.preventDefault();

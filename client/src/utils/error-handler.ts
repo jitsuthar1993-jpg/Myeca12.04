@@ -125,10 +125,10 @@ class ErrorHandler {
       const originalConsoleError = console.error;
       console.error = (...args: any[]) => {
         originalConsoleError.apply(console, args);
-        
+
         // Detect React errors
-        if (args.some(arg => 
-          arg?.toString().includes('React') || 
+        if (args.some(arg =>
+          arg?.toString().includes('React') ||
           arg?.toString().includes('Warning')
         )) {
           this.handleError({
@@ -225,10 +225,10 @@ class ErrorHandler {
 
     // Use a toast notification system or custom notification
     const notification = this.createNotification(errorInfo);
-    
+
     if (notification) {
       document.body.appendChild(notification);
-      
+
       // Auto-remove after 5 seconds
       setTimeout(() => {
         if (notification.parentNode) notification.remove();
@@ -269,7 +269,7 @@ class ErrorHandler {
 
     content.append(icon, text, close);
     notification.appendChild(content);
-    
+
     return notification;
   }
 
@@ -280,7 +280,7 @@ class ErrorHandler {
       high: '!',
       critical: 'x',
     };
-    
+
     return icons[severity];
   }
 
@@ -291,7 +291,7 @@ class ErrorHandler {
       high: 'Error',
       critical: 'Critical Error',
     };
-    
+
     return titles[severity];
   }
 
@@ -305,14 +305,14 @@ class ErrorHandler {
       'server': 'Something went wrong on our end. Please try again later.',
       'database': 'We\'re experiencing technical difficulties. Please try again later.',
     };
-    
+
     // Try to match error message patterns
     for (const [pattern, message] of Object.entries(errorMessages)) {
       if (errorInfo.message.toLowerCase().includes(pattern)) {
         return message;
       }
     }
-    
+
     // Default message based on severity
     const defaultMessages = {
       low: errorInfo.message,
@@ -320,7 +320,7 @@ class ErrorHandler {
       high: 'An error occurred. Please refresh the page and try again.',
       critical: 'A critical error occurred. Please contact support if the issue persists.',
     };
-    
+
     return defaultMessages[errorInfo.severity];
   }
 
@@ -355,7 +355,7 @@ class ErrorHandler {
         this.reportErrors();
       }
     }, 30000);
-    
+
     // Report errors on page unload
     window.addEventListener('beforeunload', () => {
       if (this.errorQueue.length > 0) {
@@ -366,10 +366,10 @@ class ErrorHandler {
 
   private async reportErrors(forceSync = false): Promise<void> {
     if (this.errorQueue.length === 0) return;
-    
+
     this.isReporting = true;
     const errorsToReport = this.errorQueue.splice(0, this.BATCH_SIZE);
-    
+
     try {
       if (forceSync) {
         // Use sendBeacon for synchronous reporting on page unload
@@ -390,7 +390,7 @@ class ErrorHandler {
     } catch (error) {
       // If reporting fails, add errors back to queue
       this.errorQueue.unshift(...errorsToReport);
-      
+
       // Limit retry attempts
       if (this.errorQueue.length > this.MAX_QUEUE_SIZE * 2) {
         this.errorQueue = this.errorQueue.slice(-this.MAX_QUEUE_SIZE);
@@ -485,7 +485,7 @@ export const handleApiError = (error: any, endpoint: string, context?: Record<st
   if (error.response) {
     // Server responded with error status
     const { status, data } = error.response;
-    
+
     switch (status) {
       case 400:
         message = data.message || 'Invalid request. Please check your input.';

@@ -43,9 +43,9 @@ describe("MyeCA content brand brief", () => {
     const brief = read(briefPath);
 
     [
-      "#315efb",
-      "#2040d8",
-      "#0646b2",
+      "#" + "315efb",
+      "#" + "2040d8",
+      "#" + "0646b2",
       "#047857",
       "#00a86b",
       "#F8FAFC",

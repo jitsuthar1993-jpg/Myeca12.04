@@ -228,13 +228,13 @@ export default function UnifiedAccountPage() {
                     <h2 className="truncate text-base font-bold text-slate-950">{displayName}</h2>
                     <p className="mt-1 truncate text-sm text-slate-600">{displayEmail}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <Badge variant="outline" className="rounded-md border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-600">
+                      <Badge variant="outline" className="rounded-md border-slate-200 bg-slate-50 type-meta font-bold uppercase text-slate-600">
                         {roleLabel}
                       </Badge>
                       <Badge
                         variant="outline"
                         className={cn(
-                          "rounded-md text-[11px] font-bold uppercase",
+                          "rounded-md type-meta font-bold uppercase",
                           accountUser?.isVerified
                             ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                             : "border-amber-200 bg-amber-50 text-amber-700",

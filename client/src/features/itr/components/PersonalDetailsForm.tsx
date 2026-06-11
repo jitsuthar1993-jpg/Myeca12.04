@@ -33,11 +33,11 @@ interface PersonalDetailsFormProps {
   onProfileSelect: (profileId: number) => void;
 }
 
-export default function PersonalDetailsForm({ 
-  data, 
-  profiles, 
-  onChange, 
-  onProfileSelect 
+export default function PersonalDetailsForm({
+  data,
+  profiles,
+  onChange,
+  onProfileSelect
 }: PersonalDetailsFormProps) {
   const form = useForm<PersonalDetailsFormData>({
     resolver: zodResolver(personalDetailsSchema),
@@ -135,9 +135,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>PAN Number *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="ABCDE1234F" 
-                          {...field} 
+                        <Input
+                          placeholder="ABCDE1234F"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e.target.value.toUpperCase());
                             handleFormChange({ ...form.getValues(), pan: e.target.value.toUpperCase() });
@@ -159,9 +159,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>Aadhaar Number</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="1234 5678 9012" 
-                          {...field} 
+                        <Input
+                          placeholder="1234 5678 9012"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), aadhaar: e.target.value });
@@ -185,9 +185,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>First Name *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="First Name" 
-                          {...field} 
+                        <Input
+                          placeholder="First Name"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), firstName: e.target.value });
@@ -206,9 +206,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>Last Name *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Last Name" 
-                          {...field} 
+                        <Input
+                          placeholder="Last Name"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), lastName: e.target.value });
@@ -228,9 +228,9 @@ export default function PersonalDetailsForm({
                   <FormItem>
                     <FormLabel>Date of Birth *</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="date" 
-                        {...field} 
+                      <Input
+                        type="date"
+                        {...field}
                         onChange={(e) => {
                           field.onChange(e);
                           handleFormChange({ ...form.getValues(), dateOfBirth: e.target.value });
@@ -258,9 +258,9 @@ export default function PersonalDetailsForm({
                   <FormItem>
                     <FormLabel>Address *</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Complete address" 
-                        {...field} 
+                      <Input
+                        placeholder="Complete address"
+                        {...field}
                         onChange={(e) => {
                           field.onChange(e);
                           handleFormChange({ ...form.getValues(), address: e.target.value });
@@ -280,9 +280,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>City *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="City" 
-                          {...field} 
+                        <Input
+                          placeholder="City"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), city: e.target.value });
@@ -301,9 +301,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>State *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="State" 
-                          {...field} 
+                        <Input
+                          placeholder="State"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), state: e.target.value });
@@ -322,9 +322,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>Pincode *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="123456" 
-                          {...field} 
+                        <Input
+                          placeholder="123456"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), pincode: e.target.value });
@@ -345,10 +345,10 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>Email Address *</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="email" 
-                          placeholder="email@example.com" 
-                          {...field} 
+                        <Input
+                          type="email"
+                          placeholder="email@example.com"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), email: e.target.value });
@@ -367,9 +367,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>Mobile Number *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="9876543210" 
-                          {...field} 
+                        <Input
+                          placeholder="9876543210"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), mobile: e.target.value });
@@ -402,9 +402,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>Bank Account Number *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Account Number" 
-                          {...field} 
+                        <Input
+                          placeholder="Account Number"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e);
                             handleFormChange({ ...form.getValues(), bankAccount: e.target.value });
@@ -423,9 +423,9 @@ export default function PersonalDetailsForm({
                     <FormItem>
                       <FormLabel>IFSC Code *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="ABCD0123456" 
-                          {...field} 
+                        <Input
+                          placeholder="ABCD0123456"
+                          {...field}
                           onChange={(e) => {
                             field.onChange(e.target.value.toUpperCase());
                             handleFormChange({ ...form.getValues(), ifscCode: e.target.value.toUpperCase() });

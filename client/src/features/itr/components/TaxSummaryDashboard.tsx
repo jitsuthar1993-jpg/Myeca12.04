@@ -20,13 +20,13 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
       const exemption = parseFloat(gain.exemptionClaimed || "0");
       return total + Math.max(0, saleValue - purchaseValue - improvementCost - exemption);
     }, 0) || 0;
-    
+
     const totalIncome = salary + businessIncome + capitalGains;
-    const deductions = parseFloat(formData.deductions?.section80C || "0") + 
+    const deductions = parseFloat(formData.deductions?.section80C || "0") +
                       parseFloat(formData.deductions?.section80D || "0");
-    
+
     const taxableIncome = Math.max(0, totalIncome - deductions);
-    
+
     // Estimate tax liability (simplified)
     let estimatedTax = 0;
     if (taxableIncome > 1500000) {
@@ -40,13 +40,13 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
     } else if (taxableIncome > 300000) {
       estimatedTax = (taxableIncome - 300000) * 0.05;
     }
-    
+
     // Add cess
     estimatedTax = estimatedTax * 1.04;
-    
+
     const effectiveRate = totalIncome > 0 ? (estimatedTax / totalIncome) * 100 : 0;
     const marginalRate = getMarginalRate(taxableIncome);
-    
+
     return {
       totalIncome,
       salary,
@@ -72,7 +72,7 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
 
   const getTaxOptimizationTips = (metrics: any) => {
     const tips = [];
-    
+
     if (metrics.deductions < 150000) {
       tips.push({
         type: 'opportunity',
@@ -81,7 +81,7 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
         icon: Target
       });
     }
-    
+
     if (metrics.capitalGains > 100000 && !formData.capitalGains?.gains?.some((g: any) => parseFloat(g.exemptionClaimed || "0") > 0)) {
       tips.push({
         type: 'warning',
@@ -90,7 +90,7 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
         icon: AlertTriangle
       });
     }
-    
+
     if (metrics.salary > 1500000) {
       tips.push({
         type: 'info',
@@ -99,13 +99,13 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
         icon: TrendingUp
       });
     }
-    
+
     return tips;
   };
 
   const metrics = calculateTaxMetrics();
   const tips = getTaxOptimizationTips(metrics);
-  
+
   const formatCurrency = (amount: number) => {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
@@ -124,8 +124,8 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Income</p>
-                <p className="text-xl font-bold text-gray-900">{formatCurrency(metrics.totalIncome)}</p>
+                <p className="text-sm text-slate-600">Total Income</p>
+                <p className="text-xl font-bold text-slate-900">{formatCurrency(metrics.totalIncome)}</p>
               </div>
               <Coins className="h-8 w-8 text-blue-600" />
             </div>
@@ -136,8 +136,8 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Taxable Income</p>
-                <p className="text-xl font-bold text-gray-900">{formatCurrency(metrics.taxableIncome)}</p>
+                <p className="text-sm text-slate-600">Taxable Income</p>
+                <p className="text-xl font-bold text-slate-900">{formatCurrency(metrics.taxableIncome)}</p>
               </div>
               <Target className="h-8 w-8 text-orange-600" />
             </div>
@@ -148,7 +148,7 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Estimated Tax</p>
+                <p className="text-sm text-slate-600">Estimated Tax</p>
                 <p className="text-xl font-bold text-red-600">{formatCurrency(metrics.estimatedTax)}</p>
               </div>
               <TrendingDown className="h-8 w-8 text-red-600" />
@@ -160,7 +160,7 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Net Income</p>
+                <p className="text-sm text-slate-600">Net Income</p>
                 <p className="text-xl font-bold text-green-600">{formatCurrency(metrics.netIncome)}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-600" />
@@ -181,27 +181,27 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
           <CardContent className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Effective Tax Rate</span>
+                <span className="text-sm text-slate-600">Effective Tax Rate</span>
                 <span className="font-semibold">{metrics.effectiveRate.toFixed(2)}%</span>
               </div>
               <Progress value={metrics.effectiveRate} className="h-2" />
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Marginal Tax Rate</span>
+                <span className="text-sm text-slate-600">Marginal Tax Rate</span>
                 <span className="font-semibold">{metrics.marginalRate.toFixed(1)}%</span>
               </div>
               <Progress value={metrics.marginalRate} className="h-2" />
             </div>
-            
+
             <Separator />
-            
+
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-600">Tax Efficiency</p>
               <p className="text-lg font-bold text-blue-900">
-                {metrics.effectiveRate < 10 ? 'Excellent' : 
-                 metrics.effectiveRate < 20 ? 'Good' : 
+                {metrics.effectiveRate < 10 ? 'Excellent' :
+                 metrics.effectiveRate < 20 ? 'Good' :
                  metrics.effectiveRate < 30 ? 'Average' : 'Needs Optimization'}
               </p>
             </div>
@@ -218,16 +218,16 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
             {getIncomeBreakdown().map((item, index) => (
               <div key={index} className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">{item.label}</span>
+                  <span className="text-sm text-slate-600">{item.label}</span>
                   <span className="font-semibold">{formatCurrency(item.value)}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
                     className={`h-2 rounded-full ${item.color}`}
                     style={{ width: `${(item.value / metrics.totalIncome) * 100}%` }}
                   ></div>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-slate-500">
                   {((item.value / metrics.totalIncome) * 100).toFixed(1)}% of total income
                 </div>
               </div>
@@ -253,8 +253,8 @@ export default function TaxSummaryDashboard({ formData }: TaxSummaryProps) {
                     tip.type === 'warning' ? 'text-orange-600' : 'text-blue-600'
                   }`} />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">{tip.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{tip.description}</p>
+                    <h4 className="font-semibold text-slate-900">{tip.title}</h4>
+                    <p className="text-sm text-slate-600 mt-1">{tip.description}</p>
                   </div>
                   <Badge variant={
                     tip.type === 'opportunity' ? 'default' :

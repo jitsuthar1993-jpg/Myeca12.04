@@ -1,13 +1,13 @@
 import React from "react";
 import { useParams, Link } from "wouter";
 import { m } from "framer-motion";
-import { 
-  Building2, 
-  MapPin, 
-  CheckCircle, 
-  Shield, 
-  Clock, 
-  Phone, 
+import {
+  Building2,
+  MapPin,
+  CheckCircle,
+  Shield,
+  Clock,
+  Phone,
   ArrowRight,
   TrendingUp,
   Award,
@@ -26,15 +26,15 @@ const cityData: Record<string, { name: string; landmark: string; population: str
 };
 
 const serviceData: Record<string, { title: string; desc: string; icon: any }> = {
-  "company-registration": { 
-    title: "Company Registration", 
+  "company-registration": {
+    title: "Company Registration",
     desc: "Private Limited and LLP incorporation support with city-specific stamp-duty and authority checks.",
-    icon: Building2 
+    icon: Building2
   },
-  "gst-registration": { 
-    title: "GST Registration", 
+  "gst-registration": {
+    title: "GST Registration",
     desc: "Obtain your GSTIN with zero hassles and expert filing support.",
-    icon: TrendingUp 
+    icon: TrendingUp
   }
 };
 
@@ -42,7 +42,7 @@ export default function CityLandingPage() {
   const params = useParams<{ service: string; city: string }>();
   const cityKey = params.city?.toLowerCase() || "";
   const serviceKey = params.service?.toLowerCase() || "";
-  
+
   const city = cityData[cityKey];
   const service = serviceData[serviceKey];
 
@@ -93,14 +93,14 @@ export default function CityLandingPage() {
               <MapPin className="w-4 h-4" />
               Serving {city.name}: {city.population}
             </m.div>
-            
+
             <h1 className="type-page-title mb-6 text-slate-950">
               Expert <span className="text-blue-600">{service.title}</span>
               <br />Services in <span className="underline decoration-blue-300 underline-offset-8">{city.name}</span>
             </h1>
-            
+
             <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl">
-              Launch your venture with confidence. Our {city.name}-based CAs provide 
+              Launch your venture with confidence. Our {city.name}-based CAs provide
               document preparation, filing-scope review, and authority follow-up for businesses in {city.landmark} and across the NCR.
             </p>
 
@@ -129,7 +129,7 @@ export default function CityLandingPage() {
                 Requirements in {city.name} can depend on the business activity, premises, entity type, and responsible local authority.
                 Confirm the applicable ROC or municipal route and the documents it currently accepts before filing.
               </p>
-              
+
               <div className="space-y-4">
                 {[
                   `Local Office visits available in ${city.landmark}`,
@@ -144,7 +144,7 @@ export default function CityLandingPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-6">
               <Card className="bg-blue-50 border-blue-100">
                 <CardContent className="pt-8">
@@ -186,7 +186,7 @@ export default function CityLandingPage() {
               "Professionally assisted compliance services for businesses across {city.name}."
             </p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {["Business Hubs", "IT Parks", "Industrial Zones", "Retail Districts", "Startup Clusters"].map((area) => (
               <div key={area} className="bg-white p-6 rounded-2xl border border-slate-200 text-center hover:shadow-md transition-shadow">

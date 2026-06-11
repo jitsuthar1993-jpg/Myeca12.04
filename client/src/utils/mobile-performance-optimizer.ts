@@ -31,7 +31,7 @@ export class MobilePerformanceOptimizer {
     new PerformanceObserver((entryList) => {
       for (const entry of entryList.getEntries()) {
         this.performanceMetrics.set('LCP', entry.startTime);
-        
+
         // Optimize if LCP is poor on mobile
         if (this.isMobile() && entry.startTime > 2500) {
           this.optimizeForPoorLCP();
@@ -44,7 +44,7 @@ export class MobilePerformanceOptimizer {
     new PerformanceObserver((entryList) => {
       for (const entry of entryList.getEntries()) {
         this.performanceMetrics.set('FID', entry.processingStart - entry.startTime);
-        
+
         // Optimize if FID is poor on mobile
         if (this.isMobile() && (entry.processingStart - entry.startTime) > 100) {
           this.optimizeForPoorFID();
@@ -60,7 +60,7 @@ export class MobilePerformanceOptimizer {
         if (!entry.hadRecentInput) {
           clsValue += entry.value;
           this.performanceMetrics.set('CLS', clsValue);
-          
+
           // Optimize if CLS is poor on mobile
           if (this.isMobile() && clsValue > 0.1) {
             this.optimizeForPoorCLS();
@@ -76,7 +76,7 @@ export class MobilePerformanceOptimizer {
       connection.addEventListener('change', () => {
         this.optimizeForNetworkCondition(connection.effectiveType);
       });
-      
+
       // Initial optimization based on connection
       this.optimizeForNetworkCondition(connection.effectiveType);
     }
@@ -84,16 +84,14 @@ export class MobilePerformanceOptimizer {
 
   private optimizeForPoorLCP(): void {
     console.log('Optimizing for poor LCP on mobile');
-    
+
     // Implement critical optimizations
     this.deferNonCriticalImages();
-    this.optimizeFontLoading();
-    this.preloadCriticalResources();
   }
 
   private optimizeForPoorFID(): void {
     console.log('Optimizing for poor FID on mobile');
-    
+
     // Optimize input handling
     this.optimizeInputHandling();
     this.reduceLongTasks();
@@ -101,7 +99,7 @@ export class MobilePerformanceOptimizer {
 
   private optimizeForPoorCLS(): void {
     console.log('Optimizing for poor CLS on mobile');
-    
+
     // Reserve space for dynamic content
     this.reserveSpaceForImages();
     this.stabilizeLayout();
@@ -109,7 +107,7 @@ export class MobilePerformanceOptimizer {
 
   private optimizeForNetworkCondition(networkType: string): void {
     console.log(`Optimizing for network condition: ${networkType}`);
-    
+
     switch (networkType) {
       case 'slow-2g':
       case '2g':
@@ -136,10 +134,10 @@ export class MobilePerformanceOptimizer {
   private enableMobileSpecificOptimizations(): void {
     // Reduce animation complexity on mobile
     this.reduceAnimationComplexity();
-    
+
     // Optimize touch handling
     this.optimizeTouchHandling();
-    
+
     // Implement viewport optimizations
     this.optimizeViewport();
   }
@@ -153,7 +151,7 @@ export class MobilePerformanceOptimizer {
           animation-duration: 0.2s !important;
           transition-duration: 0.2s !important;
         }
-        
+
         .optional-animation {
           animation: none !important;
           transition: opacity 0.2s ease-out !important;
@@ -167,8 +165,8 @@ export class MobilePerformanceOptimizer {
     // Optimize touch events for better performance
     document.addEventListener('touchstart', (e) => {
       // Prevent default for better scrolling performance
-      if (e.target instanceof Element && 
-          (e.target.tagName === 'BUTTON' || 
+      if (e.target instanceof Element &&
+          (e.target.tagName === 'BUTTON' ||
            e.target.tagName === 'A' ||
            e.target.getAttribute('role') === 'button')) {
         // Fast tap response for buttons
@@ -203,7 +201,7 @@ export class MobilePerformanceOptimizer {
             }
           });
         });
-        
+
         imageObserver.observe(img);
       }
     });
@@ -216,13 +214,13 @@ export class MobilePerformanceOptimizer {
         if (battery.level < 0.2 || battery.saveMode) {
           this.enableBatterySaverMode();
         }
-        
+
         battery.addEventListener('levelchange', () => {
           if (battery.level < 0.2) {
             this.enableBatterySaverMode();
           }
         });
-        
+
         battery.addEventListener('chargingchange', () => {
           if (!battery.charging && battery.level < 0.3) {
             this.enableBatterySaverMode();
@@ -234,13 +232,13 @@ export class MobilePerformanceOptimizer {
 
   private enableBatterySaverMode(): void {
     console.log('Enabling battery saver mode');
-    
+
     // Reduce animation intensity
     document.documentElement.classList.add('battery-saver');
-    
+
     // Disable non-essential features
     this.disableNonEssentialFeatures();
-    
+
     // Reduce update frequency
     this.reduceUpdateFrequency();
   }
@@ -269,42 +267,13 @@ export class MobilePerformanceOptimizer {
     });
   }
 
-  private optimizeFontLoading(): void {
-    // Implement font-display: swap
-    const fonts = document.querySelectorAll('link[rel="stylesheet"]');
-    fonts.forEach(font => {
-      if (font.getAttribute('href')?.includes('fonts.googleapis')) {
-        font.setAttribute('media', 'print');
-        font.onload = () => {
-          font.setAttribute('media', 'all');
-        };
-      }
-    });
-  }
-
-  private preloadCriticalResources(): void {
-    // Preload critical CSS and JS
-    const criticalResources = [
-      '/css/critical.css',
-      '/js/critical.js'
-    ];
-    
-    criticalResources.forEach(resource => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.href = resource;
-      link.as = resource.endsWith('.css') ? 'style' : 'script';
-      document.head.appendChild(link);
-    });
-  }
-
   private optimizeInputHandling(): void {
     // Fast input response
     document.addEventListener('input', (e) => {
       if (e.target instanceof HTMLInputElement) {
         // Immediate visual feedback
         e.target.classList.add('input-active');
-        
+
         // Debounce actual processing
         clearTimeout((e.target as any).inputTimeout);
         (e.target as any).inputTimeout = setTimeout(() => {
@@ -334,22 +303,22 @@ export class MobilePerformanceOptimizer {
     // Process calculations in chunks
     const chunkSize = 100;
     let index = 0;
-    
+
     const processChunk = () => {
       const end = Math.min(index + chunkSize, this.calculations.length);
-      
+
       for (let i = index; i < end; i++) {
         // Process calculation
         this.processCalculation(this.calculations[i]);
       }
-      
+
       index = end;
-      
+
       if (index < this.calculations.length) {
         setTimeout(processChunk, 0);
       }
     };
-    
+
     processChunk();
   }
 
@@ -360,7 +329,7 @@ export class MobilePerformanceOptimizer {
       if (!img.height && img.dataset.aspectRatio) {
         const [width, height] = img.dataset.aspectRatio.split(':');
         const aspectRatio = parseInt(height) / parseInt(width);
-        
+
         img.style.height = `${img.clientWidth * aspectRatio}px`;
       }
     });
@@ -379,30 +348,30 @@ export class MobilePerformanceOptimizer {
 
   private enableAggressiveOptimizations(): void {
     console.log('Enabling aggressive optimizations for slow network');
-    
+
     // Disable images
     document.documentElement.classList.add('no-images');
-    
+
     // Reduce quality
     document.documentElement.classList.add('low-quality');
-    
+
     // Disable non-critical JavaScript
     this.disableNonCriticalJavaScript();
   }
 
   private enableModerateOptimizations(): void {
     console.log('Enabling moderate optimizations for 3G network');
-    
+
     // Lazy load images
     document.documentElement.classList.add('lazy-images');
-    
+
     // Optimize images
     document.documentElement.classList.add('optimized-images');
   }
 
   private enableStandardOptimizations(): void {
     console.log('Enabling standard optimizations for good network');
-    
+
     // Standard optimizations are already in place
     this.optimizationEnabled = true;
   }
@@ -420,7 +389,7 @@ export class MobilePerformanceOptimizer {
 
   // Utility methods
   private isMobile(): boolean {
-    return window.innerWidth <= 768 || 
+    return window.innerWidth <= 768 ||
            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 

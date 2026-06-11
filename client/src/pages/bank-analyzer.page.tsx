@@ -172,7 +172,7 @@ export default function BankAnalyzerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-blue-700">
+    <div className="min-h-screen bg-slate-50 ">
       {/* Header */}
       <div className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -217,7 +217,7 @@ export default function BankAnalyzerPage() {
             <CardContent>
               <div
                 className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
-                  isLoading ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50/50'
+                  isLoading ? 'border-blue-400 bg-blue-50' : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50/50'
                 }`}
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
@@ -225,17 +225,17 @@ export default function BankAnalyzerPage() {
                 {isLoading ? (
                   <div className="space-y-4">
                     <RefreshCcw className="h-12 w-12 mx-auto text-blue-500 animate-spin" />
-                    <p className="text-gray-600">Analyzing your statement...</p>
+                    <p className="text-slate-600">Analyzing your statement...</p>
                     <Progress value={66} className="w-48 mx-auto" />
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <Upload className="h-12 w-12 mx-auto text-gray-400" />
+                    <Upload className="h-12 w-12 mx-auto text-slate-400" />
                     <div>
-                      <p className="text-lg font-medium text-gray-700">
+                      <p className="text-lg font-medium text-slate-700">
                         Drag and drop your CSV file here
                       </p>
-                      <p className="text-gray-500 mt-1">or click to browse</p>
+                      <p className="text-slate-500 mt-1">or click to browse</p>
                     </div>
                     <Label htmlFor="file-upload">
                       <Input
@@ -262,12 +262,12 @@ export default function BankAnalyzerPage() {
               )}
 
               {/* Supported Formats */}
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <div className="mt-6 p-4 bg-slate-50 rounded-lg">
+                <h4 className="font-medium text-slate-700 mb-2 flex items-center gap-2">
                   <Info className="h-4 w-4" />
                   Supported Formats
                 </h4>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <ul className="text-sm text-slate-600 space-y-1">
                   <li>• Most Indian bank CSV exports (HDFC, ICICI, SBI, Axis, Kotak, etc.)</li>
                   <li>• Required columns: Date, Description/Narration, Debit, Credit</li>
                   <li>• Download statement from your bank's net banking portal</li>
@@ -511,7 +511,7 @@ export default function BankAnalyzerPage() {
                                 value={((cat.totalCredit + cat.totalDebit) / (parsedData.summary.totalCredits + parsedData.summary.totalDebits)) * 100}
                                 className="h-2 flex-1"
                               />
-                              <span className="text-xs text-gray-500">{cat.count} txns</span>
+                              <span className="text-xs text-slate-500">{cat.count} txns</span>
                               {cat.taxRelevance !== 'none' && (
                                 <Badge variant="secondary" className="text-xs">
                                   Tax: {cat.taxRelevance}
@@ -534,7 +534,7 @@ export default function BankAnalyzerPage() {
                       <CardTitle>All Transactions ({filteredTransactions.length})</CardTitle>
                       <div className="flex flex-wrap gap-2">
                         <div className="relative flex-1 min-w-[200px]">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input
                             placeholder="Search transactions..."
                             value={searchQuery}
@@ -575,7 +575,7 @@ export default function BankAnalyzerPage() {
                         <TableHeader>
                           <TableRow>
                             <TableHead
-                              className="cursor-pointer hover:bg-gray-50"
+                              className="cursor-pointer hover:bg-slate-50"
                               onClick={() => setSortConfig({ key: 'date', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}
                             >
                               Date <ArrowUpDown className="inline h-4 w-4 ml-1" />

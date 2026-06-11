@@ -84,7 +84,7 @@ const FormComponent = ({ register, errors, control }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 40px; border: 1px solid #ddd; background: #fff;">
-    
+
     <div style="text-align: center; margin-bottom: 40px; border-bottom: 2px solid #dc2626; padding-bottom: 20px;">
       <h1 style="color: #dc2626; margin: 0; font-size: 24px; text-transform: uppercase;">${data.companyName}</h1>
       <h2 style="margin: 10px 0 0 0; font-size: 20px; text-transform: uppercase; color: #1e293b;">EMPLOYEE WARNING NOTICE</h2>
@@ -142,7 +142,7 @@ const generateHTML = (data: any) => `
         <span style="font-size: 13px; color: #666;">Manager / HR Signature</span><br/>
         <span style="font-size: 13px;">Date: ______________</span>
       </div>
-      
+
       <div style="text-align: center; border-top: 1px solid #000; padding-top: 10px; width: 40%;">
         <strong>${data.employeeName || 'Employee'}</strong><br/>
         <span style="font-size: 13px; color: #666;">Employee Signature</span><br/>

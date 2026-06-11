@@ -27,9 +27,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   }, [src]);
 
   return (
-    <div 
+    <div
       className={cn(
-        "relative overflow-hidden bg-slate-100/50 dark:bg-blue-800/40",
+        "relative overflow-hidden bg-slate-100/50 ",
         !isLoaded && !error && "animate-pulse",
         containerClassName
       )}
@@ -38,7 +38,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         src={src}
         alt={alt}
         loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "auto"}
+        // React 18 only forwards the lowercase DOM attribute; camelCase fetchPriority is dropped with a console error.
+        {...({ fetchpriority: priority ? "high" : "auto" } as Record<string, string>)}
         decoding="async"
         onLoad={() => setIsLoaded(true)}
         onError={() => setError(true)}
@@ -49,9 +50,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         )}
         {...props}
       />
-      
+
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-blue-700 text-slate-400">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100  text-slate-400">
           <span className="text-xs italic">Failed to load image</span>
         </div>
       )}

@@ -91,7 +91,7 @@ const FormComponent = ({ register, errors, control }: any) => {
 
 const generateHTML = (data: any) => `
   <div style="font-family: Arial, sans-serif; font-size: 11px; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 20px;">
-    
+
     <div style="text-align: center; margin-bottom: 20px;">
       <h2 style="margin: 0; font-size: 16px;">FORM NO. 15H</h2>
       <p style="margin: 5px 0 0 0;">[See section 197A(1C) and rule 29C]</p>

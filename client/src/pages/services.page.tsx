@@ -268,7 +268,7 @@ export default function ServicesPage() {
 
             <div className="hidden lg:block">
               <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-slate-600">
-                <Sparkles className="h-3.5 w-3.5 text-[#315efb]" />
+                <Sparkles className="h-3.5 w-3.5 text-brand-600" />
                 Services marketplace
               </div>
               <h1 className="type-hero-title mt-5 max-w-4xl font-black text-slate-950">
@@ -291,7 +291,7 @@ export default function ServicesPage() {
                 />
               </div>
               <Link href="/expert-consultation?service=service-selection">
-                <Button className="h-11 w-full rounded-lg bg-[#315efb] px-5 font-bold text-white shadow-sm hover:bg-[#2040d8] md:h-12 sm:w-auto">
+                <Button className="h-11 w-full rounded-lg bg-brand-600 px-5 font-bold text-white shadow-sm hover:bg-brand-700 md:h-12 sm:w-auto">
                   <LifeBuoy className="h-4 w-4" />
                   Ask CA before paying
                 </Button>
@@ -310,7 +310,7 @@ export default function ServicesPage() {
 
           <div className="hidden rounded-lg border border-slate-200 bg-slate-50 p-5 lg:block">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg border border-slate-200 bg-white p-3 text-[#315efb]">
+              <div className="rounded-lg border border-slate-200 bg-white p-3 text-brand-600">
                 <Clock3 className="h-6 w-6" />
               </div>
               <div>
@@ -369,7 +369,7 @@ export default function ServicesPage() {
               className={cn(
                 "h-9 shrink-0 rounded-lg border px-3 text-xs font-bold transition md:h-10 md:px-4 md:text-sm",
                 activeFilter === filter.id
-                  ? "border-[#315efb] bg-[#315efb] text-white shadow-sm shadow-blue-200"
+                  ? "border-brand-600 bg-brand-600 text-white shadow-sm shadow-blue-200"
                   : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950",
               )}
             >
@@ -406,7 +406,7 @@ export default function ServicesPage() {
                 >
                   <div className="grid gap-4 md:gap-6 lg:grid-cols-[300px_1fr]">
                     <div className="flex gap-3 lg:block">
-                      <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[#315efb] md:h-auto md:w-auto md:p-3">
+                      <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-brand-600 md:h-auto md:w-auto md:p-3">
                         <Icon className="h-5 w-5 md:h-6 md:w-6" />
                       </div>
                       <div>
@@ -432,7 +432,7 @@ export default function ServicesPage() {
                             <span className="type-meta rounded-full border border-slate-200 bg-white px-2 py-1 font-black uppercase text-slate-600 md:px-2.5 md:normal-case">
                               {service.meta}
                             </span>
-                            <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-[#315efb]" />
+                            <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-brand-600" />
                           </div>
                           <h4 className="mt-3 text-base font-black leading-tight text-slate-950 md:mt-4 md:text-lg">
                             {service.title}
@@ -442,7 +442,7 @@ export default function ServicesPage() {
                           </p>
                           <div className="mt-3 flex items-center gap-2 border-t border-slate-200 pt-3 md:mt-5 md:pt-4">
                             <CheckCircle2 className="h-4 w-4 text-slate-500" />
-                            <span className="text-sm font-black text-[#315efb]">{service.price}</span>
+                            <span className="text-sm font-black text-brand-600">{service.price}</span>
                           </div>
                         </Link>
                       ))}
@@ -469,11 +469,11 @@ export default function ServicesPage() {
               return (
                 <div key={step.title} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
                   <div className="flex items-start gap-3 md:gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#315efb] text-sm font-black text-white">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-sm font-black text-white">
                       {index + 1}
                     </div>
                     <div>
-                      <Icon className="hidden h-5 w-5 text-[#315efb] md:block" />
+                      <Icon className="hidden h-5 w-5 text-brand-600 md:block" />
                       <h3 className="text-base font-black text-slate-950 md:mt-3 md:text-lg">{step.title}</h3>
                       <p className="mt-1 text-xs leading-5 text-slate-600 md:mt-2 md:text-sm md:leading-6">{step.description}</p>
                     </div>
@@ -498,7 +498,7 @@ export default function ServicesPage() {
               const Icon = card.icon;
               return (
                 <div key={card.title} className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:block md:p-5">
-                  <Icon className="h-5 w-5 shrink-0 text-[#315efb] md:h-7 md:w-7" />
+                  <Icon className="h-5 w-5 shrink-0 text-brand-600 md:h-7 md:w-7" />
                   <div>
                     <h3 className="font-black text-slate-950 md:mt-4">{card.title}</h3>
                     <p className="mt-1 text-xs leading-5 text-slate-600 md:mt-2 md:text-sm md:leading-6">{card.description}</p>
@@ -520,7 +520,7 @@ export default function ServicesPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Link href="/expert-consultation">
-              <Button className="h-11 w-full rounded-lg bg-white text-[#315efb] hover:bg-blue-50 sm:w-auto">
+              <Button className="h-11 w-full rounded-lg bg-white text-brand-600 hover:bg-blue-50 sm:w-auto">
                 Talk to expert
                 <ArrowRight className="h-4 w-4" />
               </Button>

@@ -126,9 +126,9 @@ const generateHTML = (data: any) => {
         <h2 style="margin: 0; color: #1e3a8a;">${data.companyName}</h2>
         <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">${data.companyAddress}</p>
       </div>
-      
+
       <p><strong>Date:</strong> ${data.date}</p>
-      
+
       <div style="margin: 30px 0;">
         <p style="margin: 0; font-weight: bold;">To,</p>
         <p style="margin: 5px 0 0 0; font-weight: bold;">${data.candidateName || '[Candidate Name]'}</p>
@@ -138,7 +138,7 @@ const generateHTML = (data: any) => {
       <h3 style="text-align: center; text-decoration: underline; margin: 30px 0;">Subject: Offer of Employment - ${data.jobTitle}</h3>
 
       <p>Dear <strong>${data.candidateName || 'Candidate'}</strong>,</p>
-      
+
       <p>Following our recent discussions, we are delighted to offer you the position of <strong>${data.jobTitle}</strong> at <strong>${data.companyName}</strong>. We are confident that your skills and experience will be an ideal fit for our team.</p>
 
       <p>Your employment will commence on <strong>${data.startDate}</strong>. Your initial place of work will be the <strong>${data.workLocation}</strong> office, and you will be reporting directly to the <strong>${data.reportingManager}</strong>.</p>

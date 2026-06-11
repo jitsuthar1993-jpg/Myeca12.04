@@ -4,13 +4,13 @@ import { m } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  Mail, 
-  Shield, 
-  Settings, 
-  LogOut, 
-  ChevronRight, 
+import {
+  User,
+  Mail,
+  Shield,
+  Settings,
+  LogOut,
+  ChevronRight,
   Bell,
   Zap,
   Briefcase,
@@ -30,7 +30,7 @@ export default function ProfilePage() {
   });
 
   const apiActiveServices = (dashboardData as any)?.activeServices || [];
-  
+
   const getInitials = () => {
     if (!user) return 'U';
     if (user.firstName && user.lastName) {
@@ -66,7 +66,7 @@ export default function ProfilePage() {
                       {user?.firstName} {user?.lastName}
                     </h2>
                     <p className="text-slate-500 font-medium text-xs mt-1">{user?.email}</p>
-                    
+
                     <div className="mt-4 flex items-center justify-center gap-2">
                       <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-none font-bold px-3 py-1 uppercase text-[9px] tracking-widest">
                         {user?.role || 'User'}
@@ -90,9 +90,9 @@ export default function ProfilePage() {
                       <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
                     </Button>
                   </Link>
-                  <Button 
+                  <Button
                     onClick={() => logout()}
-                    variant="ghost" 
+                    variant="ghost"
                     className="w-full justify-between h-11 rounded-xl hover:bg-red-50 text-red-600 group"
                   >
                     <div className="flex items-center gap-3">
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-8 flex justify-end">
                   <Button className="rounded-xl bg-blue-700 hover:bg-blue-700 px-6 h-11 font-bold text-sm shadow-sm">
                     Update Profile

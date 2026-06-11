@@ -9,12 +9,12 @@ interface CalcInputCardProps {
   icon?: React.ReactNode;
 }
 
-export default function CalcInputCard({ 
-  children, 
-  title, 
+export default function CalcInputCard({
+  children,
+  title,
   className,
   contentClassName,
-  icon 
+  icon
 }: CalcInputCardProps) {
   return (
     <div className={cn(
@@ -33,7 +33,7 @@ export default function CalcInputCard({
           </h3>
         </div>
       )}
-      
+
       <div className={cn("space-y-10", contentClassName)}>
         {children}
       </div>
@@ -41,16 +41,16 @@ export default function CalcInputCard({
   );
 }
 
-export function CalcInputGroup({ 
-  label, 
-  children, 
+export function CalcInputGroup({
+  label,
+  children,
   badgeValue,
   onBadgeClick,
   className,
   controlClassName
-}: { 
-  label: React.ReactNode; 
-  children: React.ReactNode; 
+}: {
+  label: React.ReactNode;
+  children: React.ReactNode;
   badgeValue?: string;
   onBadgeClick?: () => void;
   className?: string;
@@ -63,7 +63,7 @@ export function CalcInputGroup({
           {label}
         </label>
         {badgeValue && (
-          <button 
+          <button
             onClick={onBadgeClick}
             className="px-4 py-1.5 rounded-xl bg-primary/5 hover:bg-primary/10 text-primary font-normal text-sm transition-all border border-primary/10"
           >

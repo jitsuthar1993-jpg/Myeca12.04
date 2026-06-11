@@ -37,7 +37,7 @@ function CardSkeleton({ count = 3 }: { count?: number }) {
 function TableSkeleton({ count = 5 }: { count?: number }) {
   return (
     <div className="border rounded-lg overflow-hidden">
-      <div className="bg-gray-50 p-4 border-b">
+      <div className="bg-slate-50 p-4 border-b">
         <Skeleton className="h-4 w-full" />
       </div>
       {Array.from({ length: count }).map((_, i) => (
@@ -98,10 +98,10 @@ interface ErrorDisplayProps {
 }
 
 export function ErrorDisplay({ error, onRetry, compact = false }: ErrorDisplayProps) {
-  const isNetworkError = error.message.includes('network') || 
+  const isNetworkError = error.message.includes('network') ||
                          error.message.includes('fetch') ||
                          error.message.includes('Failed to fetch');
-  const isServerError = error.message.includes('500') || 
+  const isServerError = error.message.includes('500') ||
                         error.message.includes('server');
 
   if (compact) {
@@ -131,8 +131,8 @@ export function ErrorDisplay({ error, onRetry, compact = false }: ErrorDisplayPr
           )}
         </div>
         <h3 className="text-lg font-semibold text-red-800 mb-2">
-          {isNetworkError ? 'Connection Error' : 
-           isServerError ? 'Server Error' : 
+          {isNetworkError ? 'Connection Error' :
+           isServerError ? 'Server Error' :
            'Something went wrong'}
         </h3>
         <p className="text-red-600 mb-4 text-sm">
@@ -160,7 +160,7 @@ interface LoadingDisplayProps {
 export function LoadingDisplay({ message = 'Loading...', compact = false }: LoadingDisplayProps) {
   if (compact) {
     return (
-      <div className="flex items-center gap-2 p-3 text-gray-600">
+      <div className="flex items-center gap-2 p-3 text-slate-600">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span className="text-sm">{message}</span>
       </div>
@@ -170,7 +170,7 @@ export function LoadingDisplay({ message = 'Loading...', compact = false }: Load
   return (
     <div className="flex flex-col items-center justify-center p-12">
       <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-4" />
-      <p className="text-gray-600">{message}</p>
+      <p className="text-slate-600">{message}</p>
     </div>
   );
 }
@@ -183,8 +183,8 @@ interface EmptyDisplayProps {
   icon?: ReactNode;
 }
 
-export function EmptyDisplay({ 
-  title = 'No data found', 
+export function EmptyDisplay({
+  title = 'No data found',
   message = 'There is nothing to display here yet.',
   action,
   icon
@@ -192,11 +192,11 @@ export function EmptyDisplay({
   return (
     <Card>
       <CardContent className="p-12 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-          {icon || <AlertCircle className="h-8 w-8 text-gray-400" />}
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+          {icon || <AlertCircle className="h-8 w-8 text-slate-400" />}
         </div>
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">{title}</h3>
-        <p className="text-gray-500 mb-4">{message}</p>
+        <h3 className="text-lg font-semibold text-slate-700 mb-2">{title}</h3>
+        <p className="text-slate-500 mb-4">{message}</p>
         {action}
       </CardContent>
     </Card>

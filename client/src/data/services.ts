@@ -1,9 +1,9 @@
-import { 
-  Calculator, 
-  FileText, 
-  Building2, 
-  Shield, 
-  Award, 
+import {
+  Calculator,
+  FileText,
+  Building2,
+  Shield,
+  Award,
   Users,
   Zap,
   Rocket,

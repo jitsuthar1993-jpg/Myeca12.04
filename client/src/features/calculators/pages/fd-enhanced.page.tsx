@@ -78,7 +78,7 @@ export default function EnhancedFDCalculator() {
         breadcrumbs={seo?.breadcrumbs}
       />
 
-      <CalcHero 
+      <CalcHero
         title={isEnhancedRoute ? "Enhanced FD Planner" : "FD Calculator"}
         description={
           isEnhancedRoute
@@ -106,7 +106,7 @@ export default function EnhancedFDCalculator() {
               <CalcResultRow label="Total Interest" value={formatCurrency(result.interest)} variant="warning" />
               <CalcResultRow label="Maturity Value" value={formatCurrency(result.maturityValue)} variant="highlight" className="pt-4 border-t border-white/20" />
               <CalcResultRow label="Post-Tax Returns" value={formatCurrency(result.postTaxReturns)} variant="success" />
-              
+
               <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
                 <p className="type-meta font-normal text-slate-500 uppercase tracking-widest mb-2">Yield Analysis</p>
                 <div className="grid grid-cols-2 gap-4">
@@ -271,7 +271,7 @@ export default function EnhancedFDCalculator() {
           </TabsContent>
         </Tabs>
 
-        <CalculatorMiniBlog 
+        <CalculatorMiniBlog
           features={[
             {
               icon: <Calculator className="w-5 h-5" />,

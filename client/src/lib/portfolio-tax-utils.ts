@@ -100,16 +100,16 @@ export function getHoldingPeriodDays(buyDate: Date): number {
 // Check if holding qualifies for LTCG
 export function isLTCG(type: AssetType, buyDate: Date): boolean {
   const holdingDays = getHoldingPeriodDays(buyDate);
-  const threshold = type === 'equity' || type === 'equity_mf' 
-    ? TAX_CONFIG.equity.ltcgThreshold 
-    : type === 'debt_mf' 
+  const threshold = type === 'equity' || type === 'equity_mf'
+    ? TAX_CONFIG.equity.ltcgThreshold
+    : type === 'debt_mf'
     ? TAX_CONFIG.debt_mf.ltcgThreshold
     : type === 'gold'
     ? TAX_CONFIG.gold.ltcgThreshold
     : type === 'property'
     ? TAX_CONFIG.property.ltcgThreshold
     : TAX_CONFIG.bonds.ltcgThreshold;
-  
+
   return holdingDays >= threshold;
 }
 
@@ -138,20 +138,20 @@ export function analyzeHolding(holding: Holding): HoldingTaxAnalysis {
   const holdingPeriodDays = getHoldingPeriodDays(holding.buyDate);
   const holdingIsLTCG = isLTCG(holding.type, holding.buyDate);
   const taxRate = getTaxRate(holding.type, holdingIsLTCG);
-  
+
   // Calculate taxable gain (apply exemption for equity LTCG)
   let taxableGain = Math.max(0, unrealizedGain);
   if ((holding.type === 'equity' || holding.type === 'equity_mf') && holdingIsLTCG && unrealizedGain > 0) {
     // LTCG exemption is applied at portfolio level, not individual holding
     // For individual analysis, show full taxable amount
   }
-  
+
   const estimatedTax = taxableGain > 0 ? taxableGain * taxRate : 0;
-  
+
   // Generate recommendation
   let recommendation: 'hold' | 'sell' | 'book_loss' = 'hold';
   let recommendationReason = '';
-  
+
   if (unrealizedGain < 0) {
     // Loss position
     const daysToLTCG = getThresholdForType(holding.type) - holdingPeriodDays;
@@ -173,7 +173,7 @@ export function analyzeHolding(holding: Holding): HoldingTaxAnalysis {
       recommendationReason = 'Consider partial profit booking at lower LTCG rate';
     }
   }
-  
+
   return {
     holding,
     investedValue,
@@ -205,15 +205,15 @@ export function calculatePortfolioTax(holdings: Holding[]): PortfolioSummary {
   let stcgAmount = 0;
   let ltcgAmount = 0;
   let dividendIncome = 0;
-  
+
   holdings.forEach(holding => {
     const invested = holding.quantity * holding.buyPrice;
     const current = holding.quantity * holding.currentPrice;
     const gain = current - invested;
-    
+
     totalInvested += invested;
     currentValue += current;
-    
+
     if (gain > 0) {
       if (isLTCG(holding.type, holding.buyDate)) {
         ltcgAmount += gain;
@@ -221,34 +221,34 @@ export function calculatePortfolioTax(holdings: Holding[]): PortfolioSummary {
         stcgAmount += gain;
       }
     }
-    
+
     // Calculate dividend income
     if (holding.dividendYield && holding.dividendYield > 0) {
       dividendIncome += current * (holding.dividendYield / 100);
     }
   });
-  
+
   const unrealizedGain = currentValue - totalInvested;
   const unrealizedGainPercent = totalInvested > 0 ? (unrealizedGain / totalInvested) * 100 : 0;
-  
+
   // Calculate LTCG tax with exemption for equity
   const equityLTCG = holdings
     .filter(h => (h.type === 'equity' || h.type === 'equity_mf') && isLTCG(h.type, h.buyDate))
     .reduce((sum, h) => sum + Math.max(0, (h.quantity * h.currentPrice) - (h.quantity * h.buyPrice)), 0);
-  
+
   const otherLTCG = ltcgAmount - equityLTCG;
-  
+
   // Apply exemption only to equity LTCG
   const taxableEquityLTCG = Math.max(0, equityLTCG - TAX_CONFIG.equity.ltcgExemption);
   const equityLTCGTax = taxableEquityLTCG * TAX_CONFIG.equity.ltcgRate;
   const otherLTCGTax = otherLTCG * 0.20; // Generic LTCG rate for others
-  
+
   const ltcgTax = equityLTCGTax + otherLTCGTax;
   const stcgTax = stcgAmount * TAX_CONFIG.equity.stcgRate; // Using equity STCG rate
-  
+
   // Dividend TDS
   const dividendTDS = dividendIncome > 5000 ? dividendIncome * TAX_CONFIG.equity.dividendTDS : 0;
-  
+
   return {
     totalInvested: Math.round(totalInvested),
     currentValue: Math.round(currentValue),
@@ -268,31 +268,31 @@ export function calculatePortfolioTax(holdings: Holding[]): PortfolioSummary {
 // Generate tax-loss harvesting suggestions
 export function getTaxHarvestingSuggestions(holdings: Holding[]): TaxHarvestingSuggestion[] {
   const suggestions: TaxHarvestingSuggestion[] = [];
-  
+
   // Calculate total gains
   const totalGains = holdings
     .filter(h => (h.quantity * h.currentPrice) > (h.quantity * h.buyPrice))
     .reduce((sum, h) => sum + ((h.quantity * h.currentPrice) - (h.quantity * h.buyPrice)), 0);
-  
+
   holdings.forEach(holding => {
     const invested = holding.quantity * holding.buyPrice;
     const current = holding.quantity * holding.currentPrice;
     const gain = current - invested;
-    
+
     if (gain < 0) {
       // Loss position
       const loss = Math.abs(gain);
       const isSTCG = !isLTCG(holding.type, holding.buyDate);
       const taxRate = getTaxRate(holding.type, !isSTCG);
-      
+
       // Can offset STCG loss against STCG gains, LTCG loss against LTCG gains
       const potentialSavings = Math.min(loss, totalGains) * taxRate;
-      
+
       if (potentialSavings > 0) {
         suggestions.push({
           holding,
           action: 'sell',
-          reason: isSTCG 
+          reason: isSTCG
             ? `Book STCG loss to offset gains. Can save up to ₹${Math.round(potentialSavings).toLocaleString()} in taxes.`
             : `Book LTCG loss to offset LTCG gains.`,
           potentialSavings: Math.round(potentialSavings),
@@ -301,7 +301,7 @@ export function getTaxHarvestingSuggestions(holdings: Holding[]): TaxHarvestingS
       }
     }
   });
-  
+
   // Sort by potential savings
   return suggestions.sort((a, b) => b.potentialSavings - a.potentialSavings);
 }

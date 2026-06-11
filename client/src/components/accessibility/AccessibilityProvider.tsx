@@ -19,7 +19,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     if (announcer.current) {
       announcer.current.setAttribute("aria-live", priority);
       announcer.current.textContent = message;
-      
+
       // Clear the message after announcement
       setTimeout(() => {
         if (announcer.current) {
@@ -52,7 +52,7 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     const focusableElements = container.querySelectorAll(
       'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])'
     );
-    
+
     const firstFocusable = focusableElements[0] as HTMLElement;
     const lastFocusable = focusableElements[focusableElements.length - 1] as HTMLElement;
 

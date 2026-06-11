@@ -281,16 +281,16 @@ export function validateForm<T>(
   data: unknown
 ): { success: true; data: T } | { success: false; errors: ValidationError[] } {
   const result = schema.safeParse(data);
-  
+
   if (result.success) {
     return { success: true, data: result.data };
   }
-  
+
   const errors: ValidationError[] = result.error.errors.map(err => ({
     field: err.path.join('.'),
     message: err.message,
   }));
-  
+
   return { success: false, errors };
 }
 

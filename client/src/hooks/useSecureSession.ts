@@ -84,7 +84,7 @@ export function useSecureSession(options: SecureSessionOptions = {}) {
     if (!user) return;
 
     const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-    
+
     const handleActivity = () => {
       updateActivity();
     };

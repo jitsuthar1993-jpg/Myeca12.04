@@ -19,13 +19,13 @@ import {
   type ContentQualityIssue,
   type PublicContentContext,
 } from "../shared/public-content-quality.js";
+import { contentContextPath, distPublicDir, rootDir } from "./lib/build-artifact-paths.js";
 
 type Baseline = {
   needsRevision: number;
   issues?: Record<string, number>;
 };
 
-const rootDir = process.cwd();
 const LEGAL_SHARED_COPY_ALLOWLIST = [
   "This estimate is for general information only and does not replace a filing-position review using your complete records and the applicable law.",
 ];
@@ -430,7 +430,7 @@ function duplicateMetadataIssues(records: Array<{ route: string; title: string; 
 }
 
 function builtIssues(): { issues: ContentQualityIssue[]; count: number; needsRevision: number } {
-  const distDir = path.join(rootDir, "dist", "public");
+  const distDir = distPublicDir;
   if (!fs.existsSync(distDir)) {
     return {
       count: 0,
@@ -523,16 +523,15 @@ function builtIssues(): { issues: ContentQualityIssue[]; count: number; needsRev
   issues.push(...evaluateRepeatedTableRows(records));
   issues.push(...duplicateMetadataIssues(metadataRecords));
 
-  const contextPath = path.join(distDir, "content-context.json");
   let needsRevision = 0;
-  if (!fs.existsSync(contextPath)) {
+  if (!fs.existsSync(contentContextPath)) {
     issues.push({
       code: "missing_content_context_manifest",
       severity: "error",
       message: "Static SEO generation must emit content-context.json for every indexable route.",
     });
   } else {
-    const contexts = JSON.parse(fs.readFileSync(contextPath, "utf8")) as PublicContentContext[];
+    const contexts = JSON.parse(fs.readFileSync(contentContextPath, "utf8")) as PublicContentContext[];
     const contextsByRoute = new Map(contexts.map((context) => [context.route, context]));
     needsRevision = contexts.filter((context) => context.qualityStatus === "needs_revision").length;
     if (contexts.length !== count) {

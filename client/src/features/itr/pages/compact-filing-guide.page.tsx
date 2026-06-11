@@ -7,8 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  FileText, User, Building, Wallet, Calculator, Save, Send, 
+import {
+  FileText, User, Building, Wallet, Calculator, Save, Send,
   Check, AlertCircle, Download, Home, TrendingUp, Briefcase, FileJson
 } from "lucide-react";
 import { ITRGenerator, CompactFormData } from "@/utils/itr-generator";
@@ -18,27 +18,27 @@ export function CompactFilingGuidePage() {
   const { toast } = useToast();
   const currentYear = new Date().getFullYear();
   const assessmentYear = `${currentYear}-${(currentYear + 1).toString().slice(2)}`;
-  
+
   // Form Data States
   const [filingType, setFilingType] = useState("original");
   const [itrForm, setItrForm] = useState("ITR-1");
   const [taxRegime, setTaxRegime] = useState("new");
-  
+
   // Personal Info
   const [personalInfo, setPersonalInfo] = useState({
     pan: "", aadhaar: "", name: "", dob: "", mobile: "", email: "",
     bankName: "", accountNumber: "", ifscCode: "", address: "", pincode: ""
   });
-  
+
   // Income Details
   const [income, setIncome] = useState({
-    salary: "", houseProperty: "", business: "", capitalGains: "", 
+    salary: "", houseProperty: "", business: "", capitalGains: "",
     otherSources: "", tdsOnSalary: "", tdsOther: "", advanceTax: ""
   });
-  
+
   // Deductions
   const [deductions, setDeductions] = useState({
-    section80C: "", section80CCD: "", section80D: "", section80G: "", 
+    section80C: "", section80CCD: "", section80D: "", section80G: "",
     homeLoanInterest: "", section80DD: ""
   });
 
@@ -53,7 +53,7 @@ export function CompactFilingGuidePage() {
         duration: 1000,
       });
     }, 30000);
-    
+
     return () => clearInterval(interval);
   }, [filingType, itrForm, taxRegime, personalInfo, income, deductions]);
 
@@ -76,7 +76,7 @@ export function CompactFilingGuidePage() {
     const totalIncome = Object.values(income).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
     const totalDeductions = Object.values(deductions).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
     const taxableIncome = Math.max(0, totalIncome - totalDeductions);
-    
+
     let tax = 0;
     if (taxRegime === "new") {
       if (taxableIncome > 300000) tax += (Math.min(taxableIncome, 700000) - 300000) * 0.05;
@@ -89,10 +89,10 @@ export function CompactFilingGuidePage() {
       if (taxableIncome > 500000) tax += (Math.min(taxableIncome, 1000000) - 500000) * 0.20;
       if (taxableIncome > 1000000) tax += (taxableIncome - 1000000) * 0.30;
     }
-    
+
     const totalTaxPaid = (parseFloat(income.tdsOnSalary) || 0) + (parseFloat(income.tdsOther) || 0) + (parseFloat(income.advanceTax) || 0);
     const refundDue = totalTaxPaid - tax;
-    
+
     return { totalIncome, totalDeductions, taxableIncome, tax, totalTaxPaid, refundDue };
   };
 
@@ -131,7 +131,7 @@ export function CompactFilingGuidePage() {
     try {
       // Generate ITR-1
       const itrData = itrGenerator.generateITR1(formData);
-      
+
       // Validate ITR
       const validation = itrGenerator.validateITR(itrData);
       if (!validation.valid) {
@@ -146,7 +146,7 @@ export function CompactFilingGuidePage() {
       // Download ITR JSON
       const filename = `ITR1_${personalInfo.pan}_AY${assessmentYear.replace('-', '')}.json`;
       itrGenerator.downloadITRJSON(itrData, filename);
-      
+
       toast({
         title: "ITR Generated Successfully!",
         description: `Your ITR-1 for AY ${assessmentYear} has been generated and downloaded.`,
@@ -163,7 +163,7 @@ export function CompactFilingGuidePage() {
   const handleSubmit = () => {
     // First generate the ITR
     handleGenerateITR();
-    
+
     // Then show submission success
     setTimeout(() => {
       toast({
@@ -176,12 +176,12 @@ export function CompactFilingGuidePage() {
   const taxData = calculateTax();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-slate-50 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-4">
           <h1 className="type-page-title">ITR Filing Form - AY {assessmentYear}</h1>
-          <p className="type-support text-gray-600">Complete all sections below to file your return</p>
+          <p className="type-support text-slate-600">Complete all sections below to file your return</p>
         </div>
 
         {/* Main Form Grid */}
@@ -626,7 +626,7 @@ export function CompactFilingGuidePage() {
                   <Save className="h-3 w-3 mr-1" />
                   Save Draft
                 </Button>
-                <Button 
+                <Button
                   className="w-full h-8 type-meta bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={handleGenerateITR}
                 >
@@ -637,7 +637,7 @@ export function CompactFilingGuidePage() {
                   <FileText className="h-3 w-3 mr-1" />
                   Preview Return
                 </Button>
-                <Button 
+                <Button
                   className="w-full h-8 type-meta bg-green-600 hover:bg-green-700"
                   onClick={handleSubmit}
                 >

@@ -2,9 +2,9 @@
 import { captureTelemetryEvent, trackTelemetryPageView } from "@/telemetry/browser";
 
 export const trackEvent = (
-  action: string, 
-  category: string, 
-  label?: string, 
+  action: string,
+  category: string,
+  label?: string,
   value?: number
 ) => {
   // Only track in production

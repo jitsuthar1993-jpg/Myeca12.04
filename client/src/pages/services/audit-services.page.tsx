@@ -127,7 +127,7 @@ const AuditServicesPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <RouteSeo path="/services/audit-services" />
 
       {/* Header */}
@@ -139,16 +139,16 @@ const AuditServicesPage = () => {
                 <div className="w-14 h-14 bg-purple-50 rounded-full flex items-center justify-center soft-shadow">
                   <FileSearch className="w-8 h-8 text-purple-600" />
                 </div>
-                <h1 className="type-page-title font-bold text-gray-900">
+                <h1 className="type-page-title font-bold text-slate-900">
                   Professional Audit Services for Startups
                 </h1>
               </div>
-              <p className="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed mb-6">
                 Review financial records, controls, tax positions, and statutory filings before relying on the reported position.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 font-semibold"
                   onClick={() => setIsCheckoutOpen(true)}
                 >
@@ -162,14 +162,14 @@ const AuditServicesPage = () => {
             </div>
             <Card className="soft-shadow">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-purple-600" />
                   Quick Tips
                 </CardTitle>
                 <CardDescription>Plan audits efficiently</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start">
                     <Calendar className="w-4 h-4 mr-2 text-purple-600 mt-0.5" />
                     Schedule audits post year-end for complete data.
@@ -198,10 +198,10 @@ const AuditServicesPage = () => {
         {/* Audit Services Tabs */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Audit Scope by Business Need
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
               From statutory compliance to investor due diligence, we've got you covered
             </p>
           </div>
@@ -240,10 +240,10 @@ const AuditServicesPage = () => {
                       <CardContent>
                         <div className="space-y-4">
                           <div>
-                            <p className="font-semibold text-sm text-gray-700 mb-2">Scope:</p>
+                            <p className="font-semibold text-sm text-slate-700 mb-2">Scope:</p>
                             <ul className="space-y-1">
                               {service.scope.map((item, idx) => (
-                                <li key={idx} className="text-sm text-gray-600 flex items-start">
+                                <li key={idx} className="text-sm text-slate-600 flex items-start">
                                   <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                                   {item}
                                 </li>
@@ -251,7 +251,7 @@ const AuditServicesPage = () => {
                             </ul>
                           </div>
                           <div className="pt-3 border-t">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-600">
                               <AlertTriangle className="h-4 w-4 text-orange-500 inline mr-1" />
                               <span className="font-medium">Applicability:</span> {service.threshold}
                             </p>
@@ -287,10 +287,10 @@ const AuditServicesPage = () => {
                       <CardContent>
                         <div className="space-y-4">
                           <div>
-                            <p className="font-semibold text-sm text-gray-700 mb-2">Includes:</p>
+                            <p className="font-semibold text-sm text-slate-700 mb-2">Includes:</p>
                             <ul className="space-y-1">
                               {service.includes.map((item, idx) => (
-                                <li key={idx} className="text-sm text-gray-600 flex items-start">
+                                <li key={idx} className="text-sm text-slate-600 flex items-start">
                                   <CheckCircle className="h-4 w-4 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
                                   {item}
                                 </li>
@@ -298,7 +298,7 @@ const AuditServicesPage = () => {
                             </ul>
                           </div>
                           <div className="pt-3 border-t">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-600">
                               <span className="font-medium">Ideal for:</span> {service.ideal}
                             </p>
                           </div>
@@ -315,10 +315,10 @@ const AuditServicesPage = () => {
         {/* Audit Process */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Our Audit Process
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
               Systematic approach ensuring thorough review and timely completion
             </p>
           </div>
@@ -341,7 +341,7 @@ const AuditServicesPage = () => {
                     <CardTitle className="text-lg">{phase.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">{phase.description}</p>
+                    <p className="text-sm text-slate-600 mb-3">{phase.description}</p>
                     <Badge variant="secondary" className="text-xs">
                       {phase.duration}
                     </Badge>
@@ -370,8 +370,8 @@ const AuditServicesPage = () => {
                     <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
                       <benefit.icon className="h-8 w-8 text-purple-600" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 mb-2">{benefit.title}</h4>
-                    <p className="text-sm text-gray-600">{benefit.description}</p>
+                    <h4 className="font-semibold text-slate-900 mb-2">{benefit.title}</h4>
+                    <p className="text-sm text-slate-600">{benefit.description}</p>
                   </div>
                 ))}
               </div>
@@ -387,20 +387,20 @@ const AuditServicesPage = () => {
                 Ready for Your Next Audit?
               </h3>
               <p className="text-lg mb-8 text-slate-600 max-w-2xl mx-auto">
-                Get a clean audit report and build investor confidence. Our startup-focused 
+                Get a clean audit report and build investor confidence. Our startup-focused
                 CAs ensure smooth and timely audit completion.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-purple-600 text-white hover:bg-purple-700 font-semibold"
                 >
                   Schedule Audit
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="border-purple-200 bg-white text-purple-700 hover:bg-purple-50"
                 >
                   Get Quote

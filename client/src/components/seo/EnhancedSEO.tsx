@@ -81,7 +81,7 @@ export const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
       {/* Open Graph */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      {ogImage && <meta property="og:image" content={ogImage} />} 
+      {ogImage && <meta property="og:image" content={ogImage} />}
       {url && <meta property="og:url" content={url} />}
       <meta property="og:type" content={type} />
 

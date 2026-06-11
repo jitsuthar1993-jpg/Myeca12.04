@@ -124,7 +124,7 @@ export default function HRACalculator() {
               <div className="absolute top-0 right-0 p-6 opacity-5">
                 <Building2 className="w-24 h-24" />
               </div>
-              
+
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-[#F5F8FF] flex items-center justify-center text-[#444CE7] border border-[#D1E0FF]">
                   <Receipt className="w-5 h-5" />
@@ -145,7 +145,7 @@ export default function HRACalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={salary}
                         onChange={(e) => setSalary(Number(e.target.value))}
@@ -153,12 +153,12 @@ export default function HRACalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[salary]} 
-                    onValueChange={(v) => setSalary(v[0])} 
-                    max={5000000} 
-                    min={100000} 
-                    step={10000} 
+                  <Slider
+                    value={[salary]}
+                    onValueChange={(v) => setSalary(v[0])}
+                    max={5000000}
+                    min={100000}
+                    step={10000}
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 1L</span>
@@ -175,7 +175,7 @@ export default function HRACalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={hra}
                         onChange={(e) => setHra(Number(e.target.value))}
@@ -183,12 +183,12 @@ export default function HRACalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[hra]} 
-                    onValueChange={(v) => setHra(v[0])} 
-                    max={2000000} 
-                    min={0} 
-                    step={5000} 
+                  <Slider
+                    value={[hra]}
+                    onValueChange={(v) => setHra(v[0])}
+                    max={2000000}
+                    min={0}
+                    step={5000}
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 0</span>
@@ -205,7 +205,7 @@ export default function HRACalculator() {
                     </div>
                     <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                       <span className="text-xs font-normal text-[#667085]">₹</span>
-                      <input 
+                      <input
                         type="number"
                         value={rent}
                         onChange={(e) => setRent(Number(e.target.value))}
@@ -213,12 +213,12 @@ export default function HRACalculator() {
                       />
                     </div>
                   </div>
-                  <Slider 
-                    value={[rent]} 
-                    onValueChange={(v) => setRent(v[0])} 
-                    max={2000000} 
-                    min={0} 
-                    step={5000} 
+                  <Slider
+                    value={[rent]}
+                    onValueChange={(v) => setRent(v[0])}
+                    max={2000000}
+                    min={0}
+                    step={5000}
                   />
                   <div className="flex items-center justify-between type-meta text-[#667085] font-normal uppercase tracking-wider">
                     <span>Min: 0</span>
@@ -425,7 +425,7 @@ export default function HRACalculator() {
 
         {/* Informational Content */}
         <div className="mt-12">
-          <CalculatorMiniBlog 
+          <CalculatorMiniBlog
             features={[
               {
                 icon: <Zap className="w-5 h-5" />,

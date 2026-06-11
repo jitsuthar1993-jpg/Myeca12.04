@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calculator, Search, TrendingUp, Coins, FileText, Calendar, 
-  ArrowRight, ShieldCheck, Scale, IndianRupee, Info 
+import {
+  Calculator, Search, TrendingUp, Coins, FileText, Calendar,
+  ArrowRight, ShieldCheck, Scale, IndianRupee, Info
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -134,7 +134,7 @@ export default function TaxRegimeCalculator() {
     oldRegime: TaxCalculation | null;
     newRegime: TaxCalculation | null;
   }>({ oldRegime: null, newRegime: null });
-  
+
   const { toast } = useToast();
 
   const openOfficialTaxReferences = () => {
@@ -157,7 +157,7 @@ export default function TaxRegimeCalculator() {
     const slabs = regime === 'old' ? currentRates.oldRegime : currentRates.newRegime;
     const appliedDeductions = regime === 'old' ? totalDeds + STANDARD_DEDUCTION_BY_REGIME.old : currentRates.standardDeduction;
     const taxableIncome = Math.max(0, grossIncome - appliedDeductions);
-    
+
     let taxPayable = 0;
     const slabWiseBreakdown: Array<{slab: string; taxableAmount: number; tax: number;}> = [];
 
@@ -165,7 +165,7 @@ export default function TaxRegimeCalculator() {
       if (taxableIncome <= slab.min) break;
       const maxForSlab = slab.max || taxableIncome;
       const taxableInThisSlab = Math.min(taxableIncome, maxForSlab) - slab.min;
-      
+
       if (taxableInThisSlab > 0) {
         const taxForSlab = (taxableInThisSlab * slab.rate) / 100;
         taxPayable += taxForSlab;
@@ -214,7 +214,7 @@ export default function TaxRegimeCalculator() {
     if (!calculations.oldRegime || !calculations.newRegime) return null;
     const diff = calculations.oldRegime.taxPayable - calculations.newRegime.taxPayable;
     if (Math.abs(diff) < 500) return { regime: 'either', savings: 0, text: 'Both regimes are similar for you.' };
-    return diff > 0 
+    return diff > 0
       ? { regime: 'new', savings: diff, text: `New Regime saves you ₹${Math.abs(diff).toLocaleString()}` }
       : { regime: 'old', savings: Math.abs(diff), text: `Old Regime saves you ₹${Math.abs(diff).toLocaleString()}` };
   }, [calculations]);
@@ -290,7 +290,7 @@ export default function TaxRegimeCalculator() {
 
         <main className="max-w-7xl mx-auto px-4 -mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Left: Input Panel */}
             <div className="lg:col-span-5 space-y-6">
               <m.div
@@ -403,7 +403,7 @@ export default function TaxRegimeCalculator() {
                     {recommendation && (
                       <div className={cn(
                         "rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl",
-                        recommendation.regime === 'new' ? "bg-gradient-to-br from-emerald-500 to-teal-700 shadow-emerald-500/20" : 
+                        recommendation.regime === 'new' ? "bg-gradient-to-br from-emerald-500 to-teal-700 shadow-emerald-500/20" :
                         recommendation.regime === 'old' ? "bg-gradient-to-br from-indigo-500 to-blue-700 shadow-blue-500/20" :
                         "bg-gradient-to-br from-slate-600 to-slate-800 shadow-slate-500/20"
                       )}>
@@ -434,7 +434,7 @@ export default function TaxRegimeCalculator() {
 
                     {/* Side-by-side Comparison */}
                     <div className="grid sm:grid-cols-2 gap-6">
-                      
+
                       {/* Old Regime Card */}
                       <div className="bg-white rounded-[2.5rem] border-2 border-indigo-50 shadow-sm overflow-hidden flex flex-col">
                         <div className="p-6 bg-indigo-50/50 border-b border-indigo-50 text-center">
@@ -528,9 +528,9 @@ export default function TaxRegimeCalculator() {
                     </div>
                   </m.div>
                 ) : (
-                  <m.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
+                  <m.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-100 border-dashed rounded-[2.5rem]"
                   >
                     <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6">
@@ -557,7 +557,7 @@ export default function TaxRegimeCalculator() {
                 <p>
                   Choosing between the Old and New Tax Regimes is one of the most critical financial decisions taxpayers face. The New Tax Regime offers lower tax slab rates but strips away most deductions. In contrast, the Old Tax Regime retains higher tax rates but allows you to reduce your taxable income using deductions like Section 80C, HRA, and home loan interest.
                 </p>
-                
+
                 <h3 className="text-xl font-normal text-slate-900 tracking-tight mt-8 mb-4">
                   The New Tax Regime (Default)
                 </h3>

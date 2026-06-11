@@ -136,7 +136,7 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig, option
           // New content is available
           console.log('[SW] New content available');
           config?.onUpdate?.(registration);
-          
+
           // Show update notification
           showUpdateNotification(registration);
         }
@@ -277,7 +277,7 @@ function renderUpdateNotification(registration?: ServiceWorkerRegistration, conv
   dismiss.addEventListener('click', () => notification.remove());
 
   notification.append(icon, text, refresh, dismiss);
-  
+
   document.body.appendChild(notification);
 }
 
@@ -336,7 +336,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 export async function subscribeToPush(vapidPublicKey: string): Promise<PushSubscription | null> {
   try {
     const registration = await navigator.serviceWorker.ready;
-    
+
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as any,
@@ -384,13 +384,13 @@ export function setupInstallPrompt() {
     const e = event as BeforeInstallPromptEvent;
     e.preventDefault();
     deferredInstallPrompt = e;
-    
+
     // Show custom install button
     const installButton = document.getElementById('pwa-install-btn');
     if (installButton) {
       installButton.style.display = 'block';
     }
-    
+
     // Dispatch custom event
     window.dispatchEvent(new CustomEvent('pwainstallready'));
   });
@@ -398,13 +398,13 @@ export function setupInstallPrompt() {
   window.addEventListener('appinstalled', () => {
     console.log('[PWA] App installed');
     deferredInstallPrompt = null;
-    
+
     // Hide install button
     const installButton = document.getElementById('pwa-install-btn');
     if (installButton) {
       installButton.style.display = 'none';
     }
-    
+
     // Track installation
     window.dispatchEvent(new CustomEvent('pwainstalled'));
   });
@@ -419,10 +419,10 @@ export async function promptInstall(): Promise<boolean> {
   const promptEvent = deferredInstallPrompt;
   await promptEvent.prompt();
   const { outcome } = await promptEvent.userChoice;
-  
+
   console.log('[PWA] Install prompt outcome:', outcome);
   deferredInstallPrompt = null;
-  
+
   return outcome === 'accepted';
 }
 

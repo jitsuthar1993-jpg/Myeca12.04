@@ -21,7 +21,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const variantClasses = {
     primary: 'text-indigo-600',
     white: 'text-white',
-    gray: 'text-gray-400'
+    gray: 'text-slate-400'
   };
 
   return (
@@ -61,6 +61,6 @@ export const PulsingDots: React.FC<{ className?: string }> = ({ className }) => 
 // Premium shimmer effect
 export const ShimmerEffect: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={cn('animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]', className)} />
+    <div className={cn('animate-shimmer bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 bg-[length:200%_100%]', className)} />
   );
 };

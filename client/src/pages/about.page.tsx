@@ -103,7 +103,7 @@ export default function AboutPage() {
         <div className="flex justify-center gap-4">
           <a
             href="mailto:support@myeca.in?subject=Business Inquiry"
-            className="rounded-lg bg-[#315efb] px-8 py-4 font-bold text-white shadow-lg transition-all hover:-translate-y-1"
+            className="rounded-lg bg-brand-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:-translate-y-1"
           >
             Email Us
           </a>

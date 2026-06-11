@@ -15,7 +15,7 @@ export function useImagePreload(urls: string[], options: PreloadOptions = {}) {
       link.rel = priority === 'high' ? 'preload' : 'prefetch';
       link.as = as;
       link.href = url;
-      
+
       // Add crossorigin for images
       if (as === 'image') {
         link.crossOrigin = 'anonymous';

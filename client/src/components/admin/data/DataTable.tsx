@@ -161,7 +161,7 @@ export function DataTable<T extends { id: number | string }>({
       {searchable && (
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Search..."
               value={search}
@@ -231,7 +231,7 @@ export function DataTable<T extends { id: number | string }>({
                 <TableRow
                   key={row.id}
                   className={cn(
-                    onRowClick && 'cursor-pointer hover:bg-gray-50',
+                    onRowClick && 'cursor-pointer hover:bg-slate-50',
                     selectedRows.has(row.id) && 'bg-blue-50'
                   )}
                   onClick={() => onRowClick?.(row)}
@@ -290,7 +290,7 @@ export function DataTable<T extends { id: number | string }>({
       {/* Pagination */}
       {pagination && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-slate-500">
             Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
             {pagination.total} results
@@ -305,7 +305,7 @@ export function DataTable<T extends { id: number | string }>({
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-slate-500">
               Page {pagination.page} of {pagination.pages}
             </div>
             <Button

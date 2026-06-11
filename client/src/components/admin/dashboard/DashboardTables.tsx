@@ -24,7 +24,7 @@ function getActivityColor(action: string) {
   if (action.includes('user')) return 'text-blue-600 bg-blue-100';
   if (action.includes('calculation') || action.includes('tax')) return 'text-green-600 bg-green-100';
   if (action.includes('payment')) return 'text-yellow-600 bg-yellow-100';
-  return 'text-gray-600 bg-gray-100';
+  return 'text-slate-600 bg-slate-100';
 }
 
 export function RecentActivityTable({ stats, isLoading }: DashboardTablesProps) {
@@ -39,7 +39,7 @@ export function RecentActivityTable({ stats, isLoading }: DashboardTablesProps) 
         <CardContent>
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 rounded animate-pulse"></div>
+              <div key={i} className="h-16 bg-slate-200 rounded animate-pulse"></div>
             ))}
           </div>
         </CardContent>
@@ -57,7 +57,7 @@ export function RecentActivityTable({ stats, isLoading }: DashboardTablesProps) 
       </CardHeader>
       <CardContent>
         {activities.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-slate-500">
             <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
             <p>No recent activity</p>
           </div>
@@ -67,16 +67,16 @@ export function RecentActivityTable({ stats, isLoading }: DashboardTablesProps) 
               {activities.map((activity: any) => {
                 const Icon = getActivityIcon(activity.resourceType || '');
                 return (
-                  <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
                     <div className={cn('p-2 rounded-lg', getActivityColor(activity.action || ''))}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">{activity.action || 'Activity'}</p>
+                      <p className="text-sm font-medium text-slate-900">{activity.action || 'Activity'}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-500">{activity.user || 'System'}</span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                        <span className="text-xs text-slate-500">{activity.user || 'System'}</span>
+                        <span className="text-xs text-slate-400">•</span>
+                        <span className="text-xs text-slate-500 flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {formatTimeAgo(activity.timestamp)}
                         </span>
@@ -97,7 +97,7 @@ export function DashboardTables({ stats, isLoading }: DashboardTablesProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <RecentActivityTable stats={stats} isLoading={isLoading} />
-      
+
       {/* Quick Stats Card */}
       <Card className="h-full bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-indigo-100">
         <CardHeader>
@@ -107,24 +107,24 @@ export function DashboardTables({ stats, isLoading }: DashboardTablesProps) {
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Total Calculations</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.calculations.total.toLocaleString()}</p>
+                <p className="text-sm text-slate-600">Total Calculations</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.calculations.total.toLocaleString()}</p>
               </div>
               <FileText className="h-8 w-8 text-blue-600" />
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">New This Month</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.users.newThisMonth}</p>
+                <p className="text-sm text-slate-600">New This Month</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.users.newThisMonth}</p>
               </div>
               <User className="h-8 w-8 text-green-600" />
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Popular Services</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm text-slate-600">Popular Services</p>
+                <p className="text-lg font-semibold text-slate-900">
                   {stats.services.popular.length > 0
                     ? stats.services.popular.slice(0, 2).map((service) => service.name).join(', ')
                     : 'No service requests yet'}

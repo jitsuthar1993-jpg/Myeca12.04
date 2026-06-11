@@ -14,7 +14,7 @@ export interface VideoTutorial {
   relatedVideos: string[]; // IDs of related videos
 }
 
-export type VideoCategory = 
+export type VideoCategory =
   | 'itr-filing'
   | 'tax-saving'
   | 'calculators'
@@ -304,7 +304,7 @@ export function getRecentVideos(limit: number = 5): VideoTutorial[] {
 
 export function searchVideos(query: string): VideoTutorial[] {
   const lowerQuery = query.toLowerCase();
-  return VIDEO_TUTORIALS.filter(v => 
+  return VIDEO_TUTORIALS.filter(v =>
     v.title.toLowerCase().includes(lowerQuery) ||
     v.description.toLowerCase().includes(lowerQuery) ||
     v.tags.some(tag => tag.toLowerCase().includes(lowerQuery))

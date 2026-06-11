@@ -2,10 +2,10 @@ import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Search, 
-  BookOpen, 
-  ArrowUpRight, 
+import {
+  Search,
+  BookOpen,
+  ArrowUpRight,
   MessageCircle,
   Hash,
   Filter
@@ -78,7 +78,7 @@ export default function FinancialGlossary() {
 
   const filteredTerms = useMemo(() => {
     return glossaryTerms.filter(t => {
-      const matchesSearch = t.term.toLowerCase().includes(search.toLowerCase()) || 
+      const matchesSearch = t.term.toLowerCase().includes(search.toLowerCase()) ||
                            t.definition.toLowerCase().includes(search.toLowerCase());
       const matchesCategory = activeCategory === "All" || t.category === activeCategory;
       return matchesSearch && matchesCategory;
@@ -156,15 +156,15 @@ export default function FinancialGlossary() {
                     </span>
                     <ArrowUpRight className="h-4 w-4 text-slate-400 transition-colors group-hover:text-blue-700" />
                   </div>
-                  
+
                   <h3 className="text-base font-bold tracking-tight text-slate-950 transition-colors group-hover:text-blue-700">
                     {item.term}
                   </h3>
-                  
+
                   <p className="mt-2 text-sm leading-6 text-slate-600">
                     {item.definition}
                   </p>
-                  
+
                   <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
                     <span className="text-xs font-bold uppercase tracking-wide text-blue-700">Explore topic</span>
                     <ChevronIcon />

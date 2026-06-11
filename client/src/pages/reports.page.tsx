@@ -13,8 +13,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { invalidateReportCaches } from "@/lib/workspace-cache";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { 
-  FileText, Download, TrendingUp, Users, Shield, 
+import {
+  FileText, Download, TrendingUp, Users, Shield,
   DollarSign, Calendar as CalendarIcon, Filter,
   BarChart, PieChart, Activity, Loader2
 } from "lucide-react";
@@ -204,14 +204,14 @@ export default function ReportsPage() {
                     (templates || []).map((template: ReportTemplate) => {
                       const Icon = iconMap[template.icon] || FileText;
                       const isSelected = selectedTemplate === template.id;
-                      
+
                       return (
                         <m.div
                           key={template.id}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <Card 
+                          <Card
                             className={cn(
                               "cursor-pointer transition-all border-none shadow-sm rounded-[40px] overflow-hidden group",
                               isSelected ? "ring-2 ring-blue-600 shadow-xl shadow-blue-50" : "bg-white hover:bg-blue-50/20"
@@ -269,7 +269,7 @@ export default function ReportsPage() {
                                  />
                                </PopoverContent>
                              </Popover>
-                             
+
                              <Popover>
                                <PopoverTrigger asChild>
                                  <Button variant="outline" className="h-14 rounded-2xl bg-slate-50 border-none text-left font-black text-sm shadow-inner justify-start">
@@ -305,7 +305,7 @@ export default function ReportsPage() {
                        </div>
 
                        <div className="pt-6 border-t border-slate-50">
-                          <Button 
+                          <Button
                             onClick={handleGenerateReport}
                             disabled={generateMutation.isPending}
                             className="h-16 px-16 rounded-[32px] bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 transition-all hover:-translate-y-1"

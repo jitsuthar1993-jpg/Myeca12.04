@@ -50,7 +50,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function StatusChip({ status, size = "md", className, ...props }: StatusChipProps) {
   const key = String(status).toLowerCase();
-  const colorClass = STATUS_STYLES[key] ?? "bg-gray-100 text-gray-700 border-gray-200";
+  const colorClass = STATUS_STYLES[key] ?? "bg-slate-100 text-slate-700 border-slate-200";
   const icon = STATUS_ICONS[key] ?? <AlertCircle className="h-4 w-4" />;
   const label = STATUS_LABELS[key] ?? status;
 

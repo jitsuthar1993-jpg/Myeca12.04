@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { 
+import {
   Search, Home, Calculator, FileText, Settings, HelpCircle,
   Command, ArrowUp, ArrowDown, CornerDownLeft, X
 } from "lucide-react";
@@ -25,18 +25,18 @@ const shortcuts: Shortcut[] = [
   { keys: ["Alt", "A"], description: "Go to analytics", category: "navigation" },
   { keys: ["Alt", "P"], description: "Go to pricing", category: "navigation" },
   { keys: ["Escape"], description: "Close modal/dialog", icon: X, category: "navigation" },
-  
+
   // Search
   { keys: ["↑", "↓"], description: "Navigate search results", category: "search" },
   { keys: ["Enter"], description: "Select search result", icon: CornerDownLeft, category: "search" },
   { keys: ["Escape"], description: "Close search", icon: X, category: "search" },
-  
+
   // Actions
   { keys: ["Ctrl", "S"], description: "Save progress", category: "actions" },
   { keys: ["Ctrl", "P"], description: "Print page", category: "actions" },
   { keys: ["Ctrl", "D"], description: "Download data", category: "actions" },
   { keys: ["Ctrl", "N"], description: "Create new profile", category: "actions" },
-  
+
   // Help
   { keys: ["?"], description: "Show keyboard shortcuts", icon: HelpCircle, category: "help" },
   { keys: ["Alt", "F1"], description: "Open help center", category: "help" },
@@ -111,8 +111,8 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShor
           </div>
         </Tabs>
 
-        <div className="mt-6 pt-4 border-t text-center text-sm text-gray-600">
-          Press <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">?</kbd> anytime to view shortcuts
+        <div className="mt-6 pt-4 border-t text-center text-sm text-slate-600">
+          Press <kbd className="px-2 py-1 bg-slate-200 rounded text-xs">?</kbd> anytime to view shortcuts
         </div>
       </DialogContent>
     </Dialog>
@@ -137,7 +137,7 @@ function ShortcutSection({ title, shortcuts, formatKey }: ShortcutSectionProps) 
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card className="p-3 hover:bg-gray-50 transition-colors">
+            <Card className="p-3 hover:bg-slate-50 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {shortcut.icon && (
@@ -145,16 +145,16 @@ function ShortcutSection({ title, shortcuts, formatKey }: ShortcutSectionProps) 
                       <shortcut.icon className="h-4 w-4 text-blue-600" />
                     </div>
                   )}
-                  <span className="text-gray-700">{shortcut.description}</span>
+                  <span className="text-slate-700">{shortcut.description}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   {shortcut.keys.map((key, keyIndex) => (
                     <span key={keyIndex} className="flex items-center">
-                      <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">
+                      <kbd className="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-xs font-mono">
                         {formatKey(key)}
                       </kbd>
                       {keyIndex < shortcut.keys.length - 1 && (
-                        <span className="mx-1 text-gray-400">+</span>
+                        <span className="mx-1 text-slate-400">+</span>
                       )}
                     </span>
                   ))}

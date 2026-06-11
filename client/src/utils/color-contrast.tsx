@@ -62,22 +62,22 @@ export class ColorContrastAnalyzer {
   static getContrastRatio(color1: string, color2: string): number {
     const rgb1 = this.hexToRgb(color1);
     const rgb2 = this.hexToRgb(color2);
-    
+
     if (!rgb1 || !rgb2) return 1;
-    
+
     const lum1 = this.getLuminance(rgb1.r, rgb1.g, rgb1.b);
     const lum2 = this.getLuminance(rgb2.r, rgb2.g, rgb2.b);
-    
+
     const lighter = Math.max(lum1, lum2);
     const darker = Math.min(lum1, lum2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
   // Analyze contrast compliance
   static analyzeContrast(foreground: string, background: string): ColorContrastResult {
     const ratio = this.getContrastRatio(foreground, background);
-    
+
     return {
       ratio,
       levelAA: ratio >= WCAG_CONTRAST_REQUIREMENTS.AA.normal,
@@ -98,14 +98,14 @@ export class ColorContrastAnalyzer {
 
   // Find accessible color alternatives
   static findAccessibleAlternatives(
-    foreground: string, 
-    background: string, 
+    foreground: string,
+    background: string,
     targetLevel: 'AA' | 'AAA' = 'AA',
     textSize: 'normal' | 'large' = 'normal'
   ): { lighter: string; darker: string } {
     const targetRatio = WCAG_CONTRAST_REQUIREMENTS[targetLevel][textSize];
     const currentRatio = this.getContrastRatio(foreground, background);
-    
+
     if (currentRatio >= targetRatio) {
       return { lighter: foreground, darker: foreground };
     }
@@ -113,15 +113,15 @@ export class ColorContrastAnalyzer {
     // Generate lighter and darker alternatives
     const lighter = this.adjustColorForContrast(foreground, background, targetRatio, 'lighter');
     const darker = this.adjustColorForContrast(foreground, background, targetRatio, 'darker');
-    
+
     return { lighter, darker };
   }
 
   // Adjust color to meet contrast requirements
   private static adjustColorForContrast(
-    color: string, 
-    background: string, 
-    targetRatio: number, 
+    color: string,
+    background: string,
+    targetRatio: number,
     direction: 'lighter' | 'darker'
   ): string {
     const rgb = this.hexToRgb(color);
@@ -133,7 +133,7 @@ export class ColorContrastAnalyzer {
 
     while (iterations < maxIterations) {
       const currentRatio = this.getContrastRatio(adjustedColor, background);
-      
+
       if (currentRatio >= targetRatio) {
         break;
       }
@@ -143,7 +143,7 @@ export class ColorContrastAnalyzer {
       const newR = Math.min(255, Math.max(0, Math.round(rgb.r * adjustment)));
       const newG = Math.min(255, Math.max(0, Math.round(rgb.g * adjustment)));
       const newB = Math.min(255, Math.max(0, Math.round(rgb.b * adjustment)));
-      
+
       adjustedColor = this.rgbToHex(newR, newG, newB);
       iterations++;
     }
@@ -183,7 +183,7 @@ export class ColorContrastAnalyzer {
     } else {
       const d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      
+
       switch (max) {
         case r: h = (g - b) / d + (g < b ? 6 : 0); break;
         case g: h = (b - r) / d + 2; break;
@@ -203,7 +203,7 @@ export class ColorContrastAnalyzer {
   static isDarkColor(hex: string): boolean {
     const rgb = this.hexToRgb(hex);
     if (!rgb) return false;
-    
+
     const luminance = this.getLuminance(rgb.r, rgb.g, rgb.b);
     return luminance < 0.5;
   }
@@ -218,7 +218,7 @@ export class ColorContrastAnalyzer {
     info: string;
   } {
     const isDark = this.isDarkColor(backgroundColor);
-    
+
     return {
       primary: this.findAccessibleAlternatives(baseColor, backgroundColor, 'AA', 'normal').darker,
       secondary: this.findAccessibleAlternatives('#6B7280', backgroundColor, 'AA', 'normal').darker,
@@ -242,7 +242,7 @@ export const useColorContrast = (foreground: string, background: string) => {
     const result = ColorContrastAnalyzer.analyzeContrast(foreground, background);
     const fgInfo = ColorContrastAnalyzer.getColorInfo(foreground);
     const bgInfo = ColorContrastAnalyzer.getColorInfo(background);
-    
+
     setContrast(result);
     setColorInfo({
       foreground: fgInfo,
@@ -254,7 +254,7 @@ export const useColorContrast = (foreground: string, background: string) => {
     contrast,
     colorInfo,
     isAccessible: contrast?.levelAA || false,
-    alternatives: contrast && !contrast.levelAA 
+    alternatives: contrast && !contrast.levelAA
       ? ColorContrastAnalyzer.findAccessibleAlternatives(foreground, background)
       : null
   };
@@ -366,7 +366,7 @@ export const ColorContrastChecker: React.FC<ColorContrastCheckerProps> = ({
   onColorChange
 }) => {
   const { contrast, colorInfo, isAccessible, alternatives } = useColorContrast(foregroundColor, backgroundColor);
-  
+
   const [fgColor, setFgColor] = useState(foregroundColor);
   const [bgColor, setBgColor] = useState(backgroundColor);
 
@@ -385,12 +385,12 @@ export const ColorContrastChecker: React.FC<ColorContrastCheckerProps> = ({
   return (
     <div className="color-contrast-checker" style={{ backgroundColor: bgColor, color: fgColor, padding: '20px', borderRadius: '8px' }}>
       <h3>Color Contrast Analysis</h3>
-      
+
       <div className="contrast-results">
         <div className="contrast-ratio">
           <strong>Contrast Ratio:</strong> {contrast.ratio.toFixed(2)}:1
         </div>
-        
+
         <div className="compliance-status">
           <div className={`status ${contrast.levelAA ? 'pass' : 'fail'}`}>
             WCAG AA {textSize === 'large' ? 'Large Text' : 'Normal Text'}: {contrast.levelAA ? '✓ Pass' : '✗ Fail'}
@@ -399,7 +399,7 @@ export const ColorContrastChecker: React.FC<ColorContrastCheckerProps> = ({
             WCAG AAA {textSize === 'large' ? 'Large Text' : 'Normal Text'}: {contrast.levelAAA ? '✓ Pass' : '✗ Fail'}
           </div>
         </div>
-        
+
         <div className="recommendation">
           <strong>Recommendation:</strong> {contrast.recommendation}
         </div>
@@ -411,16 +411,16 @@ export const ColorContrastChecker: React.FC<ColorContrastCheckerProps> = ({
           <div className="alternative-colors">
             <div className="alternative">
               <span>Lighter:</span>
-              <div 
-                className="color-swatch" 
+              <div
+                className="color-swatch"
                 style={{ backgroundColor: alternatives.lighter, width: '40px', height: '40px', display: 'inline-block', marginLeft: '10px' }}
               />
               <span>{alternatives.lighter}</span>
             </div>
             <div className="alternative">
               <span>Darker:</span>
-              <div 
-                className="color-swatch" 
+              <div
+                className="color-swatch"
                 style={{ backgroundColor: alternatives.darker, width: '40px', height: '40px', display: 'inline-block', marginLeft: '10px' }}
               />
               <span>{alternatives.darker}</span>
@@ -445,7 +445,7 @@ export const ColorContrastChecker: React.FC<ColorContrastCheckerProps> = ({
             placeholder="#000000"
           />
         </div>
-        
+
         <div className="color-input-group">
           <label htmlFor="background-color">Background Color:</label>
           <input
@@ -510,12 +510,12 @@ export const FocusIndicator: React.FC<FocusIndicatorProps> = ({
       outline: ${width}px ${style} ${color} !important;
       outline-offset: ${offset}px !important;
     }
-    
+
     .accessible-focus:focus {
       outline: ${width}px ${style} ${color} !important;
       outline-offset: ${offset}px !important;
     }
-    
+
     .accessible-focus:focus-visible {
       outline: ${width}px ${style} ${color} !important;
       outline-offset: ${offset}px !important;
