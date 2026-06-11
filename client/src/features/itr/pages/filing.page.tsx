@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -9,8 +9,6 @@ import {
   Banknote,
   CheckCircle2,
   ClipboardCheck,
-  Eye,
-  EyeOff,
   FileCheck2,
   FileText,
   IndianRupee,
@@ -22,7 +20,6 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -37,17 +34,28 @@ import {
   FilingSummaryStrip,
   GuidedStepNav,
   IssueList,
-  NumberInput,
   TextInput,
   ToggleRow,
 } from "@/features/itr/components/filing/guided-filing-ui";
+import { CollapsibleFlags } from "@/features/itr/components/filing/CollapsibleFlags";
+import { CurrencyInput } from "@/features/itr/components/filing/CurrencyInput";
+import { DocumentCaptureCard, type DocumentCaptureStatus } from "@/features/itr/components/filing/DocumentCaptureCard";
+import { FilingProgressHeader, type FilingSaveState } from "@/features/itr/components/filing/FilingProgressHeader";
+import { AadhaarInput, IfscInput, PanInput } from "@/features/itr/components/filing/identity-inputs";
+import { LiabilityChip, LiabilitySheet } from "@/features/itr/components/filing/LiabilityChip";
+import { getPanesForStep, type FilingStepId } from "@/features/itr/components/filing/panes";
+import { RegimeComparator } from "@/features/itr/components/filing/RegimeComparator";
 import {
   clearItrStartHandoff,
   readItrStartHandoff,
   type ItrStartHandoffPayload,
 } from "@/features/itr/lib/start-selector";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { getAuthToken } from "@/lib/authToken";
+import { prepareDocumentForUpload } from "@/lib/file_utils";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
+import { captureTelemetryEvent } from "@/telemetry/browser";
 import type { CampaignAttribution } from "@shared/campaign-attribution";
 import {
   ITR_REVIEW_STATUSES,
@@ -63,7 +71,9 @@ import {
   validateItrIdentity,
   type ItrFilingDraft,
   type ItrFormRecommendation,
+  type ItrIncomeType,
   type ItrReviewPacket,
+  type ItrVerificationIssue,
 } from "@shared/itr-filing";
 
 export const ITR_FILING_STEPS = [
@@ -80,12 +90,12 @@ export const ITR_FILING_STEPS = [
   {
     id: "income",
     title: "Income",
-    description: "Select income types and enter AY 2026-27 figures.",
+    description: "Select income types and enter figures.",
   },
   {
     id: "documents",
     title: "Documents",
-    description: "Link only the documents required by the selected facts.",
+    description: "Link required documents.",
   },
   {
     id: "verify",
@@ -100,7 +110,7 @@ export const ITR_FILING_STEPS = [
   {
     id: "review",
     title: "Review",
-    description: "Prepare the self-prep packet for CA review.",
+    description: "Prepare for CA review.",
   },
 ] as const;
 
@@ -147,6 +157,24 @@ type CreateDraftInput = {
   attribution?: CampaignAttribution;
   clearHandoff?: boolean;
 };
+
+type DocumentUploadState = {
+  status: DocumentCaptureStatus;
+  error?: string;
+  file?: File;
+  documentId?: string;
+};
+
+const FILING_HISTORY_KEY = "myecaItrPane";
+
+function readFilingHistoryPosition() {
+  if (typeof window === "undefined" || window.location.pathname !== "/itr/filing") return { step: 0, pane: 0 };
+  const marker = window.history.state?.[FILING_HISTORY_KEY] as { step?: number; pane?: number } | undefined;
+  return {
+    step: typeof marker?.step === "number" ? Math.max(0, Math.min(marker.step, ITR_FILING_STEPS.length - 1)) : 0,
+    pane: typeof marker?.pane === "number" ? Math.max(0, marker.pane) : 0,
+  };
+}
 
 const STARTER_DRAFT = normalizeItrDraft({
   assessmentYear: "2026-27",
@@ -230,14 +258,23 @@ function savedTaxpayerLabel(returnRecord: TaxReturnRecord) {
 }
 
 function incomeToggleSelected(draft: ItrFilingDraft, key: (typeof INCOME_TOGGLES)[number]["key"]) {
-  if (key === "salary") return draft.income.salary + draft.income.pension > 0;
-  if (key === "otherSources") return draft.income.otherSources > 0;
-  if (key === "houseProperty") return draft.income.houseProperties > 0 || draft.income.housePropertyIncome > 0;
-  if (key === "capitalGains") {
-    return draft.income.shortTermCapitalGains + draft.income.section112aLtcg + draft.income.otherCapitalGains > 0;
+  return draft.income.selectedTypes.includes(key);
+}
+
+function incomeTypeHasValues(draft: ItrFilingDraft, key: ItrIncomeType) {
+  const hasValue = (...values: number[]) => values.some((value) => value !== 0);
+  if (key === "salary") return hasValue(draft.income.salary, draft.income.pension);
+  if (key === "otherSources") {
+    return hasValue(draft.income.otherSources, draft.income.agriculturalIncome, draft.income.winningsOrSpecialRateIncome);
   }
-  if (key === "business") return draft.income.businessIncome + draft.income.professionalIncome > 0;
-  return draft.income.foreignIncome > 0 || draft.flags.hasForeignAssets || draft.flags.hasForeignSigningAuthority;
+  if (key === "houseProperty") return draft.income.houseProperties > 0 || hasValue(draft.income.housePropertyIncome);
+  if (key === "capitalGains") {
+    return hasValue(draft.income.shortTermCapitalGains, draft.income.section112aLtcg, draft.income.otherCapitalGains);
+  }
+  if (key === "business") {
+    return hasValue(draft.income.businessIncome, draft.income.professionalIncome) || draft.income.presumptiveScheme !== "none";
+  }
+  return hasValue(draft.income.foreignIncome) || draft.flags.hasForeignAssets || draft.flags.hasForeignSigningAuthority;
 }
 
 function apiErrorMessage(error: unknown) {
@@ -247,7 +284,10 @@ function apiErrorMessage(error: unknown) {
 }
 
 export default function ITRFilingPage() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const isMobile = useIsMobile();
+  const [currentStep, setCurrentStep] = useState(() => readFilingHistoryPosition().step);
+  const [currentPane, setCurrentPane] = useState(() => readFilingHistoryPosition().pane);
+  const [visitedSteps, setVisitedSteps] = useState<number[]>([0]);
   const [activeReturnId, setActiveReturnId] = useState<string | null>(null);
   const [draft, setDraft] = useState<ItrFilingDraft>(STARTER_DRAFT);
   const [selectorHandoff, setSelectorHandoff] = useState<ItrStartHandoffPayload | null>(null);
@@ -256,10 +296,17 @@ export default function ITRFilingPage() {
   const [saveError, setSaveError] = useState<unknown>(null);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [showSensitive, setShowSensitive] = useState(false);
-  const aadhaarInputId = useId();
-  const aadhaarHelperId = `${aadhaarInputId}-helper`;
-  const accountTypeId = useId();
+  const [online, setOnline] = useState(() => typeof navigator === "undefined" || navigator.onLine);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [liabilityOpen, setLiabilityOpen] = useState(false);
+  const [documentUploadStates, setDocumentUploadStates] = useState<Record<string, DocumentUploadState>>({});
   const autoCreateHandoffRef = useRef<string | null>(null);
+  const latestDraftRef = useRef(draft);
+  const activeReturnIdRef = useRef(activeReturnId);
+  const draftRevisionRef = useRef(0);
+  const savedRevisionRef = useRef(0);
+  const savePromiseRef = useRef<Promise<boolean> | null>(null);
+  const saveTimerRef = useRef<number | null>(null);
 
   const taxReturnsQuery = useQuery<TaxReturnsResponse>({
     queryKey: ["/api/tax-returns"],
@@ -275,7 +322,7 @@ export default function ITRFilingPage() {
 
   const documentsQuery = useQuery<DocumentsResponse>({
     queryKey: ["/api/documents"],
-    enabled: Boolean(activeReturn),
+    enabled: Boolean(activeReturn) && currentStep >= 3,
     queryFn: async () => {
       const response = await apiRequest("/api/documents");
       return response.json();
@@ -293,8 +340,15 @@ export default function ITRFilingPage() {
     [draft, activeReturn?.id],
   );
   const currentStepId = ITR_FILING_STEPS[currentStep].id;
+  const currentPanes = useMemo(
+    () => getPanesForStep(currentStepId as FilingStepId, draft, documentChecklist),
+    [currentStepId, documentChecklist, draft],
+  );
+  const activePane = currentPanes[Math.min(currentPane, Math.max(currentPanes.length - 1, 0))];
   const requiredDocumentCount = documentChecklist.filter((item) => item.required).length;
   const openIssueCount = verificationReport.summary.critical + verificationReport.summary.warning;
+  const saveState: FilingSaveState = !online ? "offline" : saveError ? "error" : pendingSave ? "saving" : "saved";
+  const paneVisible = (paneId: string) => !isMobile || activePane?.id === paneId;
 
   useEffect(() => {
     if (!activeReturnId && taxReturns[0]?.id) {
@@ -310,32 +364,146 @@ export default function ITRFilingPage() {
 
   useEffect(() => {
     if (!activeReturn) return;
-    setDraft(normalizeItrDraft(activeReturn.formData));
+    const normalized = normalizeItrDraft(activeReturn.formData);
+    setDraft(normalized);
+    latestDraftRef.current = normalized;
+    draftRevisionRef.current = 0;
+    savedRevisionRef.current = 0;
     setPendingSave(false);
     setSaveError(null);
   }, [activeReturn?.id]);
 
   useEffect(() => {
-    if (!activeReturnId || !pendingSave) return;
+    latestDraftRef.current = draft;
+  }, [draft]);
 
-    const timer = window.setTimeout(async () => {
+  useEffect(() => {
+    activeReturnIdRef.current = activeReturnId;
+  }, [activeReturnId]);
+
+  useEffect(() => {
+    setCurrentPane((pane) => Math.min(pane, Math.max(currentPanes.length - 1, 0)));
+  }, [currentPanes.length]);
+
+  useEffect(() => {
+    setVisitedSteps((steps) => steps.includes(currentStep) ? steps : [...steps, currentStep]);
+    captureTelemetryEvent("itr_filing_step_viewed", {
+      step_id: currentStepId,
+      pane_id: activePane?.id ?? currentStepId,
+    });
+  }, [activePane?.id, currentStep, currentStepId]);
+
+  useEffect(() => {
+    if (!isMobile || typeof window === "undefined") return;
+    const state = { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: currentStep, pane: currentPane } };
+    window.History.prototype.replaceState.call(window.history, state, "", window.location.href);
+
+    const onPopState = (event: PopStateEvent) => {
+      const marker = event.state?.[FILING_HISTORY_KEY] as { step?: number; pane?: number } | undefined;
+      if (!marker || typeof marker.step !== "number" || typeof marker.pane !== "number") return;
+      setCurrentStep(Math.max(0, Math.min(marker.step, ITR_FILING_STEPS.length - 1)));
+      setCurrentPane(Math.max(0, marker.pane));
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || typeof window === "undefined" || !window.visualViewport) return;
+    const viewport = window.visualViewport;
+    const updateKeyboardState = () => setKeyboardOpen(window.innerHeight - viewport.height > 180);
+    viewport.addEventListener("resize", updateKeyboardState);
+    updateKeyboardState();
+    return () => viewport.removeEventListener("resize", updateKeyboardState);
+  }, [isMobile]);
+
+  async function persistLatestDraft(keepalive = false): Promise<boolean> {
+    const returnId = activeReturnIdRef.current;
+    if (!returnId) return false;
+    if (draftRevisionRef.current <= savedRevisionRef.current) return true;
+    if (savePromiseRef.current) return savePromiseRef.current;
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      setOnline(false);
+      setPendingSave(true);
+      return false;
+    }
+
+    const revision = draftRevisionRef.current;
+    const draftToSave = latestDraftRef.current;
+    let saveSucceeded = false;
+    const savePromise = (async () => {
       try {
-        await apiRequest(`/api/tax-returns/${activeReturnId}`, {
+        await apiRequest(`/api/tax-returns/${returnId}`, {
           method: "PATCH",
-          body: JSON.stringify({ draft }),
+          body: JSON.stringify({ draft: draftToSave }),
+          keepalive,
         });
+        savedRevisionRef.current = Math.max(savedRevisionRef.current, revision);
+        saveSucceeded = true;
         setLastSavedAt(new Date());
         setSaveError(null);
         queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
+        return true;
       } catch (error) {
         setSaveError(error);
+        captureTelemetryEvent("itr_filing_save_failed", { step_id: currentStepId });
+        return false;
       } finally {
-        setPendingSave(false);
+        savePromiseRef.current = null;
+        const hasNewerChanges = draftRevisionRef.current > savedRevisionRef.current;
+        setPendingSave(hasNewerChanges);
+        if (saveSucceeded && hasNewerChanges && (typeof navigator === "undefined" || navigator.onLine)) {
+          window.setTimeout(() => void persistLatestDraft(), 0);
+        }
       }
-    }, 700);
+    })();
+    savePromiseRef.current = savePromise;
+    return savePromise;
+  }
 
-    return () => window.clearTimeout(timer);
-  }, [activeReturnId, draft, pendingSave]);
+  async function flushLatestDraft() {
+    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    while (draftRevisionRef.current > savedRevisionRef.current) {
+      const saved = await persistLatestDraft();
+      if (!saved) return false;
+    }
+    return true;
+  }
+
+  useEffect(() => {
+    if (!activeReturnId || !pendingSave) return;
+    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = window.setTimeout(() => void persistLatestDraft(), 700);
+
+    return () => {
+      if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    };
+  }, [activeReturnId, draft, pendingSave, online]);
+
+  useEffect(() => {
+    const flush = () => {
+      if (draftRevisionRef.current > savedRevisionRef.current) void persistLatestDraft(true);
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    const onOnline = () => {
+      setOnline(true);
+      flush();
+    };
+    const onOffline = () => setOnline(false);
+
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, []);
 
   const createDraftMutation = useMutation({
     mutationFn: async (input?: CreateDraftInput) => {
@@ -402,12 +570,19 @@ export default function ITRFilingPage() {
   const submitReviewMutation = useMutation({
     mutationFn: async () => {
       if (!activeReturnId) throw new Error("Save a draft before submitting for review.");
+      if (!(await flushLatestDraft())) {
+        throw new Error("Save the latest changes before submitting for CA review.");
+      }
       const response = await apiRequest(`/api/tax-returns/${activeReturnId}/submit-review`, {
         method: "POST",
       });
       return response.json();
     },
     onSuccess: () => {
+      captureTelemetryEvent("itr_filing_review_submitted", {
+        recommended_form: recommendation.form,
+        warning_count: verificationReport.summary.warning,
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
     },
   });
@@ -421,16 +596,100 @@ export default function ITRFilingPage() {
       });
       return response.json() as Promise<{ taxReturn: TaxReturnRecord }>;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setDraft(normalizeItrDraft(data.taxReturn.formData));
+      setDocumentUploadStates((states) => {
+        const { [variables.checklistItemId]: _cleared, ...remainingStates } = states;
+        return remainingStates;
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/tax-returns"] });
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
     },
+    onError: (error, variables) => {
+      setDocumentUploadStates((states) => ({
+        ...states,
+        [variables.checklistItemId]: {
+          ...states[variables.checklistItemId],
+          status: "error",
+          documentId: variables.documentId,
+          error: `Could not link document. ${apiErrorMessage(error)}`,
+        },
+      }));
+    },
   });
+
+  const linkUploadedDocument = async (checklistItemId: string, documentId: string) => {
+    try {
+      await linkDocumentMutation.mutateAsync({ checklistItemId, documentId });
+      setDocumentUploadStates((states) => ({
+        ...states,
+        [checklistItemId]: { status: "uploaded", documentId },
+      }));
+    } catch (error) {
+      setDocumentUploadStates((states) => ({
+        ...states,
+        [checklistItemId]: {
+          ...states[checklistItemId],
+          status: "error",
+          documentId,
+          error: `Uploaded to your vault, but linking failed. ${apiErrorMessage(error)}`,
+        },
+      }));
+    }
+  };
+
+  const uploadDocument = async (checklistItemId: string, file: File) => {
+    if (!activeReturnId) return;
+    setDocumentUploadStates((states) => ({
+      ...states,
+      [checklistItemId]: { status: "uploading", file },
+    }));
+
+    try {
+      const preparedFile = await prepareDocumentForUpload(file);
+      const token = await getAuthToken();
+      const formData = new FormData();
+      formData.append("file", preparedFile);
+      formData.append("name", preparedFile.name);
+      formData.append("category", checklistItemId);
+      formData.append("year", draft.assessmentYear);
+      formData.append("taxReturnId", activeReturnId);
+      const response = await fetch("/api/documents/upload", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.document?.id) {
+        throw new Error(data.error || data.message || "Failed to upload document.");
+      }
+      setDocumentUploadStates((states) => ({
+        ...states,
+        [checklistItemId]: { status: "uploading", file, documentId: data.document.id },
+      }));
+      await linkUploadedDocument(checklistItemId, data.document.id);
+      queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+    } catch (error) {
+      setDocumentUploadStates((states) => ({
+        ...states,
+        [checklistItemId]: {
+          ...states[checklistItemId],
+          status: "error",
+          file,
+          error: apiErrorMessage(error),
+        },
+      }));
+    }
+  };
 
   const updateDraft = (updater: (current: ItrFilingDraft) => ItrFilingDraft) => {
     setSaveError(null);
-    setDraft((current) => normalizeItrDraft(updater(current)));
+    setDraft((current) => {
+      const next = normalizeItrDraft(updater(current));
+      latestDraftRef.current = next;
+      draftRevisionRef.current += 1;
+      return next;
+    });
     setPendingSave(Boolean(activeReturnId));
   };
 
@@ -473,18 +732,37 @@ export default function ITRFilingPage() {
   };
 
   const toggleIncomeType = (key: (typeof INCOME_TOGGLES)[number]["key"], selected: boolean) => {
-    if (key === "salary") updateIncome({ salary: selected ? 900000 : 0, pension: 0 });
-    if (key === "otherSources") updateIncome({ otherSources: selected ? 40000 : 0 });
-    if (key === "houseProperty") updateIncome({ houseProperties: selected ? 1 : 0, housePropertyIncome: selected ? 60000 : 0 });
-    if (key === "capitalGains") updateIncome({ shortTermCapitalGains: selected ? 50000 : 0, section112aLtcg: 0, otherCapitalGains: 0 });
-    if (key === "business") updateIncome({ professionalIncome: selected ? 900000 : 0, businessIncome: 0, presumptiveScheme: selected ? "44ADA" : "none" });
-    if (key === "foreign") {
-      updateDraft((current) => ({
-        ...current,
-        income: { ...current.income, foreignIncome: selected ? 25000 : 0 },
-        flags: { ...current.flags, hasForeignAssets: selected },
-      }));
+    if (!selected && incomeTypeHasValues(draft, key)) {
+      const confirmed = window.confirm("Removing this income type will clear the amounts entered for it. Continue?");
+      if (!confirmed) return;
     }
+
+    updateDraft((current) => {
+      const selectedTypes = selected
+        ? Array.from(new Set([...current.income.selectedTypes, key]))
+        : current.income.selectedTypes.filter((item) => item !== key);
+      const income = { ...current.income, selectedTypes };
+      const flags = { ...current.flags };
+
+      if (!selected && key === "salary") Object.assign(income, { salary: 0, pension: 0 });
+      if (!selected && key === "otherSources") {
+        Object.assign(income, { otherSources: 0, agriculturalIncome: 0, winningsOrSpecialRateIncome: 0 });
+      }
+      if (!selected && key === "houseProperty") Object.assign(income, { houseProperties: 0, housePropertyIncome: 0 });
+      if (!selected && key === "capitalGains") {
+        Object.assign(income, { shortTermCapitalGains: 0, section112aLtcg: 0, otherCapitalGains: 0 });
+      }
+      if (!selected && key === "business") {
+        Object.assign(income, { businessIncome: 0, professionalIncome: 0, presumptiveScheme: "none" });
+      }
+      if (!selected && key === "foreign") {
+        income.foreignIncome = 0;
+        flags.hasForeignAssets = false;
+        flags.hasForeignSigningAuthority = false;
+      }
+
+      return { ...current, income, flags };
+    });
   };
 
   const linkedVaultDocument = (checklistItemId: string) =>
@@ -495,8 +773,64 @@ export default function ITRFilingPage() {
     setSelectorHandoff(null);
   };
 
-  const previousStep = () => setCurrentStep((step) => Math.max(step - 1, 0));
-  const nextStep = () => setCurrentStep((step) => Math.min(step + 1, ITR_FILING_STEPS.length - 1));
+  const navigateTo = (step: number, pane = 0, pushHistory = true) => {
+    const nextStep = Math.max(0, Math.min(step, ITR_FILING_STEPS.length - 1));
+    const nextPane = Math.max(0, pane);
+    setCurrentStep(nextStep);
+    setCurrentPane(nextPane);
+    setVisitedSteps((steps) => steps.includes(nextStep) ? steps : [...steps, nextStep]);
+    if (isMobile && pushHistory && typeof window !== "undefined") {
+      window.History.prototype.replaceState.call(
+        window.history,
+        { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: currentStep, pane: currentPane } },
+        "",
+        window.location.href,
+      );
+      window.History.prototype.pushState.call(
+        window.history,
+        { ...(window.history.state ?? {}), [FILING_HISTORY_KEY]: { step: nextStep, pane: nextPane } },
+        "",
+        window.location.href,
+      );
+    }
+  };
+
+  const previousStep = () => {
+    if (isMobile && currentPane > 0) {
+      navigateTo(currentStep, currentPane - 1);
+      return;
+    }
+    const previousStepIndex = Math.max(currentStep - 1, 0);
+    const previousPanes = getPanesForStep(
+      ITR_FILING_STEPS[previousStepIndex].id as FilingStepId,
+      draft,
+      documentChecklist,
+    );
+    navigateTo(previousStepIndex, isMobile ? Math.max(previousPanes.length - 1, 0) : 0);
+  };
+
+  const nextStep = () => {
+    captureTelemetryEvent("itr_filing_step_completed", {
+      step_id: currentStepId,
+      pane_id: activePane?.id ?? currentStepId,
+      critical_count: verificationReport.summary.critical,
+    });
+    if (isMobile && currentPane < currentPanes.length - 1) {
+      navigateTo(currentStep, currentPane + 1);
+      return;
+    }
+    navigateTo(Math.min(currentStep + 1, ITR_FILING_STEPS.length - 1), 0);
+  };
+
+  const navigateToIssue = (issue: ItrVerificationIssue) => {
+    if (!issue.paneId) return;
+    const step = ITR_FILING_STEPS.findIndex((item) =>
+      getPanesForStep(item.id as FilingStepId, draft, documentChecklist).some((pane) => pane.id === issue.paneId)
+    );
+    if (step < 0) return;
+    const panes = getPanesForStep(ITR_FILING_STEPS[step].id as FilingStepId, draft, documentChecklist);
+    navigateTo(step, Math.max(0, panes.findIndex((pane) => pane.id === issue.paneId)));
+  };
 
   if (taxReturnsQuery.isLoading) {
     return (
@@ -545,7 +879,7 @@ export default function ITRFilingPage() {
           <SectionHeading
             eyebrow="MY ITR"
             title="Start a new AY 2026-27 filing draft"
-            description="Prepare your own ITR or another person's draft, then submit the self-prep packet for CA review."
+            description="Prepare an ITR draft, then submit it for CA review."
           />
           {createDraftMutation.isError ? (
             <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800" role="alert">
@@ -576,28 +910,38 @@ export default function ITRFilingPage() {
 
   return (
     <Layout title="MY ITR">
+      {isMobile ? <FilingProgressHeader
+        steps={ITR_FILING_STEPS}
+        currentStep={currentStep}
+        currentPane={currentPane}
+        paneCount={currentPanes.length}
+        saveState={saveState}
+        recommendation={recommendation.form.replace(/_/g, " ")}
+        visitedSteps={visitedSteps}
+        onStepChange={(step) => navigateTo(step, 0)}
+      /> : null}
       <div className="space-y-5 pb-28 md:pb-6">
-        <MyeCard className="p-5">
+        {!isMobile ? <MyeCard className="p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-700">MY ITR</p>
               <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">Self-prep with CA review</h1>
               <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">
-                AY 2026-27 guided filing workspace for owner details, identity, income, documents, verification, computation, and professional review.
+                AY 2026-27 filing workspace.
               </p>
             </div>
             <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[520px]">
               <StatusBadge status={recommendationStatus(recommendation) as any} label={recommendation.form.replace(/_/g, " ")} />
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">
                 <Save className="mr-2 inline h-4 w-4" />
-                {saveError ? "Save failed" : pendingSave ? "Saving..." : lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Saved draft"}
+                {!online ? "Changes not saved" : saveError ? "Save failed" : pendingSave ? "Saving..." : lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString()}` : "Saved draft"}
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">
                 {documentCountLabel(requiredDocumentCount)}
               </div>
             </div>
           </div>
-        </MyeCard>
+        </MyeCard> : null}
 
         {saveError ? (
           <MyeCard className="border-red-200 bg-red-50 p-4 shadow-none">
@@ -609,7 +953,7 @@ export default function ITRFilingPage() {
                 <Button
                   type="button"
                   size="sm"
-                  onClick={() => setPendingSave(Boolean(activeReturnId))}
+                  onClick={() => void persistLatestDraft()}
                   className="mt-3 bg-blue-600 text-white hover:bg-blue-700"
                 >
                   Retry save
@@ -626,7 +970,7 @@ export default function ITRFilingPage() {
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-700">Saved selector answers</p>
                 <h2 className="mt-2 text-xl font-black text-slate-950">Resume your ITR plan</h2>
                 <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-700">
-                  We found the plan you started from {selectorHandoff.source.replace(/_/g, " ")}. Apply it to this draft to carry forward the recommended {selectorHandoff.recommendation.form.replace(/_/g, " ")} path.
+                  Apply the saved answers from {selectorHandoff.source.replace(/_/g, " ")} to this draft.
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row lg:shrink-0">
@@ -653,18 +997,26 @@ export default function ITRFilingPage() {
           </MyeCard>
         ) : null}
 
-        <GuidedStepNav
-          steps={ITR_FILING_STEPS}
-          currentStep={currentStep}
-          onStepChange={setCurrentStep}
-        />
+        {!isMobile ? <div>
+          <GuidedStepNav
+            steps={ITR_FILING_STEPS}
+            currentStep={currentStep}
+            onStepChange={(step) => navigateTo(step, 0)}
+          />
+        </div> : null}
 
         <MyeCard className="p-5">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-700">Step {currentStep + 1} of {ITR_FILING_STEPS.length}</p>
-              <h2 className="mt-2 text-2xl font-black text-slate-950">{ITR_FILING_STEPS[currentStep].title}</h2>
-              <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-600">{ITR_FILING_STEPS[currentStep].description}</p>
+              <h2 className="mt-2 text-2xl font-black text-slate-950">
+                <span className="md:hidden">{activePane?.title ?? ITR_FILING_STEPS[currentStep].title}</span>
+                <span className="hidden md:inline">{ITR_FILING_STEPS[currentStep].title}</span>
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-600">
+                <span className="md:hidden">{activePane?.description ?? ITR_FILING_STEPS[currentStep].description}</span>
+                <span className="hidden md:inline">{ITR_FILING_STEPS[currentStep].description}</span>
+              </p>
             </div>
             <StatusBadge
               status={verificationReport.status === "blocked" ? "action_required" : verificationReport.status === "review" ? "ca_review" : "filed"}
@@ -675,7 +1027,7 @@ export default function ITRFilingPage() {
           <div className="mt-5">
             {currentStepId === "owner" && (
               <div className="space-y-5">
-                <div className="grid gap-3 md:grid-cols-2">
+                <PaneSection visible={paneVisible("owner-choice")} className="grid gap-3 md:grid-cols-2">
                   <ChoiceButton
                     selected={draft.filingOwner.mode === "self"}
                     title="My own ITR"
@@ -688,8 +1040,8 @@ export default function ITRFilingPage() {
                     description="Prepare an ITR draft for a family member, client, or saved taxpayer."
                     onClick={() => updateOwner({ mode: "other" })}
                   />
-                </div>
-                {draft.filingOwner.mode === "other" ? (
+                </PaneSection>
+                {draft.filingOwner.mode === "other" && paneVisible("owner-person") ? (
                   <div className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
                     <div>
                       <Label>Previous list</Label>
@@ -743,60 +1095,39 @@ export default function ITRFilingPage() {
 
             {currentStepId === "identity" && (
               <div className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <TextInput label="First name" value={draft.taxpayer.firstName} onChange={(value) => updateTaxpayer({ firstName: value })} />
-                  <TextInput label="Last name" value={draft.taxpayer.lastName} onChange={(value) => updateTaxpayer({ lastName: value })} />
-                  <TextInput label="Date of birth" type="date" value={draft.taxpayer.dateOfBirth} onChange={(value) => updateTaxpayer({ dateOfBirth: value })} />
-                  <TextInput
-                    label="PAN"
-                    value={draft.taxpayer.pan}
-                    onChange={(value) => updateTaxpayer({ pan: value.toUpperCase() })}
-                    helper={identityValidation.panFormatValid ? "PAN format valid" : "PAN format check only"}
-                  />
-                  <div>
-                    <Label htmlFor={aadhaarInputId}>Aadhaar</Label>
-                    <div className="mt-2 flex gap-2">
-                      <Input
-                        id={aadhaarInputId}
-                        type={showSensitive ? "text" : "password"}
-                        value={draft.taxpayer.aadhaar}
-                        aria-describedby={aadhaarHelperId}
-                        onChange={(event) => updateTaxpayer({ aadhaar: event.target.value })}
-                        className="h-11 rounded-lg"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="h-11 w-11 shrink-0 border-slate-200 p-0"
-                        onClick={() => setShowSensitive((current) => !current)}
-                        aria-label={showSensitive ? "Hide Aadhaar" : "Show Aadhaar"}
-                      >
-                        {showSensitive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    <p id={aadhaarHelperId} className="mt-1 text-xs font-semibold text-slate-500">
-                      Stored securely. Preview: {maskDigits(draft.taxpayer.aadhaar)}
-                    </p>
-                  </div>
-                  <TextInput label="Mobile" value={draft.taxpayer.mobile} onChange={(value) => updateTaxpayer({ mobile: value })} />
-                  <TextInput label="Email" value={draft.taxpayer.email} onChange={(value) => updateTaxpayer({ email: value })} />
-                </div>
+                <PaneSection visible={paneVisible("identity-name")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <TextInput label="First name" value={draft.taxpayer.firstName} autoComplete="given-name" autoCapitalize="words" maxLength={80} onChange={(value) => updateTaxpayer({ firstName: value })} />
+                  <TextInput label="Last name" value={draft.taxpayer.lastName} autoComplete="family-name" autoCapitalize="words" maxLength={80} onChange={(value) => updateTaxpayer({ lastName: value })} />
+                  <TextInput label="Date of birth" type="date" value={draft.taxpayer.dateOfBirth} autoComplete="bday" onChange={(value) => updateTaxpayer({ dateOfBirth: value })} />
+                </PaneSection>
+                <PaneSection visible={paneVisible("identity-pan-aadhaar")} className="grid gap-4 md:grid-cols-2">
+                  <PanInput value={draft.taxpayer.pan} onChange={(value) => updateTaxpayer({ pan: value })} />
+                  <AadhaarInput value={draft.taxpayer.aadhaar} onChange={(value) => updateTaxpayer({ aadhaar: value })} helper={`Stored securely. Preview: ${maskDigits(draft.taxpayer.aadhaar)}`} />
+                </PaneSection>
+                <PaneSection visible={paneVisible("identity-contact")} className="grid gap-4 md:grid-cols-2">
+                  <TextInput label="Mobile" value={draft.taxpayer.mobile} type="tel" inputMode="numeric" autoComplete="tel" maxLength={10} onChange={(value) => updateTaxpayer({ mobile: value.replace(/\D/g, "").slice(0, 10) })} helper="Enter the 10-digit mobile number used for filing updates." />
+                  <TextInput label="Email" value={draft.taxpayer.email} type="email" inputMode="email" autoComplete="email" maxLength={254} onChange={(value) => updateTaxpayer({ email: value })} />
+                </PaneSection>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <PaneSection visible={paneVisible("identity-bank")} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <div className="flex items-center gap-2">
                     <Banknote className="h-5 w-5 text-blue-700" />
                     <h3 className="text-lg font-black text-slate-950">Refund bank</h3>
                   </div>
                   <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <TextInput label="Account holder" value={draft.taxpayer.bankAccountHolder} onChange={(value) => updateTaxpayer({ bankAccountHolder: value })} />
-                    <TextInput label="Bank name" value={draft.taxpayer.bankName} onChange={(value) => updateTaxpayer({ bankName: value })} />
-                    <TextInput label="IFSC" value={draft.taxpayer.ifsc} onChange={(value) => updateTaxpayer({ ifsc: value.toUpperCase() })} helper={identityValidation.ifscFormatValid ? "Valid IFSC format" : "Enter valid IFSC format"} />
-                    <TextInput label="Account number" type={showSensitive ? "text" : "password"} value={draft.taxpayer.bankAccount} onChange={(value) => updateTaxpayer({ bankAccount: value })} helper={`Preview: ${maskDigits(draft.taxpayer.bankAccount)}`} />
-                    <TextInput label="Confirm account number" type={showSensitive ? "text" : "password"} value={draft.taxpayer.bankAccountConfirm} onChange={(value) => updateTaxpayer({ bankAccountConfirm: value })} helper={identityValidation.bankAccountConfirmed ? "Account numbers match" : "Enter the same account number again"} />
+                    <TextInput label="Account holder" value={draft.taxpayer.bankAccountHolder} autoComplete="name" autoCapitalize="words" maxLength={120} onChange={(value) => updateTaxpayer({ bankAccountHolder: value })} />
+                    <TextInput label="Bank name" value={draft.taxpayer.bankName} autoCapitalize="words" maxLength={120} onChange={(value) => updateTaxpayer({ bankName: value })} />
+                    <IfscInput value={draft.taxpayer.ifsc} onChange={(value) => updateTaxpayer({ ifsc: value })} />
+                  </div>
+                </PaneSection>
+                <PaneSection visible={paneVisible("identity-account")} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <TextInput label="Account number" type={showSensitive ? "text" : "password"} inputMode="numeric" autoComplete="off" maxLength={18} value={draft.taxpayer.bankAccount} onChange={(value) => updateTaxpayer({ bankAccount: value.replace(/\D/g, "").slice(0, 18) })} helper={`Preview: ${maskDigits(draft.taxpayer.bankAccount)}`} />
+                    <TextInput label="Confirm account number" type={showSensitive ? "text" : "password"} inputMode="numeric" autoComplete="off" maxLength={18} value={draft.taxpayer.bankAccountConfirm} onChange={(value) => updateTaxpayer({ bankAccountConfirm: value.replace(/\D/g, "").slice(0, 18) })} helper={identityValidation.bankAccountConfirmed ? "Account numbers match" : "Enter the same account number again"} />
                     <div>
-                      <Label htmlFor={accountTypeId}>Account type</Label>
+                      <Label>Account type</Label>
                       <Select value={draft.taxpayer.bankAccountType} onValueChange={(value) => updateTaxpayer({ bankAccountType: value as any })}>
-                        <SelectTrigger id={accountTypeId} className="mt-2 h-11 rounded-lg"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="mt-2 h-11 rounded-lg"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="savings">Savings</SelectItem>
                           <SelectItem value="current">Current</SelectItem>
@@ -804,14 +1135,20 @@ export default function ITRFilingPage() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <ToggleRow
+                      title={showSensitive ? "Hide account numbers" : "Show account numbers"}
+                      description="Use only while confirming the refund account."
+                      checked={showSensitive}
+                      onCheckedChange={setShowSensitive}
+                    />
                   </div>
-                </div>
+                </PaneSection>
               </div>
             )}
 
             {currentStepId === "income" && (
               <div className="space-y-6">
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                <PaneSection visible={paneVisible("income-types")} className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   {INCOME_TOGGLES.map((item) => {
                     const selected = incomeToggleSelected(draft, item.key);
                     return (
@@ -824,47 +1161,72 @@ export default function ITRFilingPage() {
                       />
                     );
                   })}
-                </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <NumberInput label="Salary" value={draft.income.salary} onChange={(value) => updateIncome({ salary: value })} />
-                  <NumberInput label="Pension" value={draft.income.pension} onChange={(value) => updateIncome({ pension: value })} />
-                  <NumberInput label="Other sources" value={draft.income.otherSources} onChange={(value) => updateIncome({ otherSources: value })} />
-                  <NumberInput label="House properties" value={draft.income.houseProperties} onChange={(value) => updateIncome({ houseProperties: Math.max(0, Math.round(value)) })} />
-                  <NumberInput label="House property income" value={draft.income.housePropertyIncome} onChange={(value) => updateIncome({ housePropertyIncome: value })} />
-                  <NumberInput label="Section 112A LTCG" value={draft.income.section112aLtcg} onChange={(value) => updateIncome({ section112aLtcg: value })} />
-                  <NumberInput label="Short-term capital gains" value={draft.income.shortTermCapitalGains} onChange={(value) => updateIncome({ shortTermCapitalGains: value })} />
-                  <NumberInput label="Business income" value={draft.income.businessIncome} onChange={(value) => updateIncome({ businessIncome: value })} />
-                  <NumberInput label="Professional income" value={draft.income.professionalIncome} onChange={(value) => updateIncome({ professionalIncome: value })} />
-                  <NumberInput label="Foreign income" value={draft.income.foreignIncome} onChange={(value) => updateIncome({ foreignIncome: value })} />
-                  <NumberInput label="80C" value={draft.deductions.section80C} onChange={(value) => updateDeductions({ section80C: value })} />
-                  <NumberInput label="80D" value={draft.deductions.section80D} onChange={(value) => updateDeductions({ section80D: value })} />
-                  <NumberInput label="TDS" value={draft.taxPaid.tds} onChange={(value) => updateTaxPaid({ tds: value })} />
-                  <NumberInput label="TCS" value={draft.taxPaid.tcs} onChange={(value) => updateTaxPaid({ tcs: value })} />
-                  <NumberInput label="Advance tax" value={draft.taxPaid.advanceTax} onChange={(value) => updateTaxPaid({ advanceTax: value })} />
-                </div>
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                </PaneSection>
+                <PaneSection visible={draft.income.selectedTypes.includes("salary") && paneVisible("income-salary")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="Salary" value={draft.income.salary} onChange={(value) => updateIncome({ salary: value })} />
+                  <CurrencyInput label="Pension" value={draft.income.pension} onChange={(value) => updateIncome({ pension: value })} />
+                </PaneSection>
+                <PaneSection visible={draft.income.selectedTypes.includes("otherSources") && paneVisible("income-other-sources")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="Other sources" value={draft.income.otherSources} onChange={(value) => updateIncome({ otherSources: value })} />
+                </PaneSection>
+                <PaneSection visible={draft.income.selectedTypes.includes("houseProperty") && paneVisible("income-house-property")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <TextInput label="House properties" value={String(draft.income.houseProperties || "")} inputMode="numeric" maxLength={2} onChange={(value) => updateIncome({ houseProperties: Math.max(0, Number.parseInt(value.replace(/\D/g, ""), 10) || 0) })} />
+                  <CurrencyInput label="House property income" value={draft.income.housePropertyIncome} onChange={(value) => updateIncome({ housePropertyIncome: value })} />
+                </PaneSection>
+                <PaneSection visible={draft.income.selectedTypes.includes("capitalGains") && paneVisible("income-capital-gains")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="Section 112A LTCG" value={draft.income.section112aLtcg} onChange={(value) => updateIncome({ section112aLtcg: value })} />
+                  <CurrencyInput label="Short-term capital gains" value={draft.income.shortTermCapitalGains} onChange={(value) => updateIncome({ shortTermCapitalGains: value })} />
+                </PaneSection>
+                <PaneSection visible={draft.income.selectedTypes.includes("business") && paneVisible("income-business")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="Business income" value={draft.income.businessIncome} onChange={(value) => updateIncome({ businessIncome: value })} />
+                  <CurrencyInput label="Professional income" value={draft.income.professionalIncome} onChange={(value) => updateIncome({ professionalIncome: value })} />
+                </PaneSection>
+                <PaneSection visible={draft.income.selectedTypes.includes("foreign") && paneVisible("income-foreign")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="Foreign income" value={draft.income.foreignIncome} onChange={(value) => updateIncome({ foreignIncome: value })} />
+                </PaneSection>
+                <PaneSection visible={paneVisible("income-deductions")} className="grid gap-4 border-t border-slate-200 pt-5 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="80C" value={draft.deductions.section80C} onChange={(value) => updateDeductions({ section80C: value })} />
+                  <CurrencyInput label="80D" value={draft.deductions.section80D} onChange={(value) => updateDeductions({ section80D: value })} />
+                </PaneSection>
+                <PaneSection visible={paneVisible("income-taxes-paid")} className="grid gap-4 border-t border-slate-200 pt-5 md:grid-cols-2 lg:grid-cols-3">
+                  <CurrencyInput label="TDS" value={draft.taxPaid.tds} onChange={(value) => updateTaxPaid({ tds: value })} />
+                  <CurrencyInput label="TCS" value={draft.taxPaid.tcs} onChange={(value) => updateTaxPaid({ tcs: value })} />
+                  <CurrencyInput label="Advance tax" value={draft.taxPaid.advanceTax} onChange={(value) => updateTaxPaid({ advanceTax: value })} />
+                </PaneSection>
+                <PaneSection visible={paneVisible("income-preferences")} className="space-y-3">
                   <ToggleRow
                     title="Old regime requested"
                     description="Stores the preference for computation and CA review."
                     checked={draft.filing.wantsOldRegime}
                     onCheckedChange={(checked) => updateFiling({ wantsOldRegime: checked })}
                   />
-                  {RISK_FLAGS.map((flag) => (
-                    <ToggleRow
-                      key={flag.key}
-                      title={flag.label}
-                      description={flag.helper}
-                      checked={Boolean(draft.flags[flag.key])}
-                      onCheckedChange={(checked) => updateFlag(flag.key, checked)}
-                    />
-                  ))}
-                </div>
+                  <div className="md:hidden">
+                    <CollapsibleFlags flags={RISK_FLAGS.map((flag) => ({
+                      id: flag.key,
+                      title: flag.label,
+                      description: flag.helper,
+                      checked: Boolean(draft.flags[flag.key]),
+                      onCheckedChange: (checked: boolean) => updateFlag(flag.key, checked),
+                    }))} />
+                  </div>
+                  <div className="hidden gap-3 md:grid md:grid-cols-2 xl:grid-cols-3">
+                    {RISK_FLAGS.map((flag) => (
+                      <ToggleRow
+                        key={flag.key}
+                        title={flag.label}
+                        description={flag.helper}
+                        checked={Boolean(draft.flags[flag.key])}
+                        onCheckedChange={(checked) => updateFlag(flag.key, checked)}
+                      />
+                    ))}
+                  </div>
+                </PaneSection>
               </div>
             )}
 
             {currentStepId === "documents" && (
               <div className="space-y-5">
-                <div className="grid gap-3 md:grid-cols-4">
+                <PaneSection visible={paneVisible("documents-overview")} className="grid gap-3 md:grid-cols-4">
                   {[
                     { label: "Form 16 parser", href: "/form16-parser" },
                     { label: "AIS viewer", href: "/ais-viewer" },
@@ -878,25 +1240,32 @@ export default function ITRFilingPage() {
                       </Button>
                     </Link>
                   ))}
-                </div>
+                </PaneSection>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {documentChecklist.map((document) => {
                     const linkedDocument = linkedVaultDocument(document.id);
                     const complete = Boolean(draft.documents[document.id]);
+                    const uploadState = documentUploadStates[document.id];
+                    const status: DocumentCaptureStatus = complete ? "uploaded" : uploadState?.status ?? "idle";
+                    if (!paneVisible(`document-${document.id}`)) return null;
 
                     return (
-                      <div key={document.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <FileText className="h-5 w-5 text-blue-700" />
-                            <p className="mt-2 text-sm font-black text-slate-950">{document.title}</p>
-                            <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{document.reason}</p>
-                          </div>
-                          <StatusBadge
-                            status={complete ? "filed" : document.required ? "action_required" : "not_started"}
-                            label={complete ? "Linked" : document.required ? "Required" : "Optional"}
-                          />
-                        </div>
+                      <div key={document.id}>
+                        <DocumentCaptureCard
+                          item={document}
+                          status={status}
+                          linkedDocumentName={linkedDocument?.name || linkedDocument?.originalName || (complete ? draft.documents[document.id] : undefined)}
+                          manualReference={linkedDocument ? "" : draft.documents[document.id] ?? ""}
+                          error={uploadState?.error}
+                          onUpload={(file) => void uploadDocument(document.id, file)}
+                          onRetry={uploadState?.documentId
+                            ? () => void linkUploadedDocument(document.id, uploadState.documentId!)
+                            : uploadState?.file
+                              ? () => void uploadDocument(document.id, uploadState.file!)
+                              : undefined}
+                          onDefer={isMobile ? nextStep : undefined}
+                          onManualReferenceChange={(value) => updateDocument(document.id, value)}
+                        />
                         <Select
                           value={linkedDocument?.id ?? "manual"}
                           onValueChange={(value) => {
@@ -906,7 +1275,7 @@ export default function ITRFilingPage() {
                           }}
                           disabled={!vaultDocuments.length || linkDocumentMutation.isPending}
                         >
-                          <SelectTrigger className="mt-4 h-11 rounded-lg bg-white">
+                          <SelectTrigger className="mt-3 h-11 rounded-lg bg-white">
                             <SelectValue placeholder="Select from document vault" />
                           </SelectTrigger>
                           <SelectContent>
@@ -918,13 +1287,6 @@ export default function ITRFilingPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                        <Input
-                          className="mt-3 h-11 rounded-lg bg-white"
-                          placeholder="Document name or vault reference"
-                          value={linkedDocument ? linkedDocument.name : draft.documents[document.id] ?? ""}
-                          readOnly={Boolean(linkedDocument)}
-                          onChange={(event) => updateDocument(document.id, event.target.value)}
-                        />
                       </div>
                     );
                   })}
@@ -945,17 +1307,20 @@ export default function ITRFilingPage() {
                     <CheckLine label="Computation details available" checked={taxLiability.status === "computed"} />
                   </div>
                 </div>
-                <IssueList issues={verificationReport.issues} />
+                <IssueList issues={verificationReport.issues} onIssueNavigate={navigateToIssue} />
               </div>
             )}
 
             {currentStepId === "compute" && (
               <div className="space-y-5">
-                <div className="grid gap-4 lg:grid-cols-2">
-                  <RegimePanel title="New regime" selected={taxLiability.activeRegime === "new"} computation={taxLiability.newRegime} />
-                  <RegimePanel title="Old regime" selected={taxLiability.activeRegime === "old"} computation={taxLiability.oldRegime} />
-                </div>
-                <div className="rounded-lg border border-blue-100 bg-blue-50 p-5">
+                <PaneSection visible={paneVisible("compute-regimes")}>
+                  <RegimeComparator
+                    liability={taxLiability}
+                    selectedRegime={draft.filing.wantsOldRegime ? "old" : "new"}
+                    onRegimeChange={(regime) => updateFiling({ wantsOldRegime: regime === "old" })}
+                  />
+                </PaneSection>
+                <PaneSection visible={paneVisible("compute-liability")} className="rounded-lg border border-blue-100 bg-blue-50 p-5">
                   <IndianRupee className="h-6 w-6 text-blue-700" />
                   <h3 className="mt-3 text-lg font-black text-blue-950">Tax liability</h3>
                   <div className="mt-4 grid gap-3 md:grid-cols-4">
@@ -969,7 +1334,7 @@ export default function ITRFilingPage() {
                       {taxLiability.unsupportedReasons.join(" ")}
                     </p>
                   ) : null}
-                </div>
+                </PaneSection>
               </div>
             )}
 
@@ -979,7 +1344,7 @@ export default function ITRFilingPage() {
                   <ClipboardCheck className="h-6 w-6 text-emerald-700" />
                   <h3 className="mt-3 text-lg font-black text-slate-950">Review packet</h3>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-                    The packet includes owner context, identity checks, selected income types, required documents, rule issues, form recommendation, and computation details for CA review.
+                    Includes checks, documents, and tax computation.
                   </p>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <StatusBadge status="in_progress" label={`${reviewPacket.documentChecklist.length} document checks`} />
@@ -1000,18 +1365,28 @@ export default function ITRFilingPage() {
                     <Button
                       type="button"
                       onClick={() => submitReviewMutation.mutate()}
-                      disabled={submitReviewMutation.isPending || reviewSubmitted}
+                      disabled={submitReviewMutation.isPending || reviewSubmitted || verificationReport.summary.critical > 0}
                       className="mt-5 w-full bg-blue-600 text-white hover:bg-blue-700"
                     >
                       {submitReviewMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <BadgeCheck className="h-4 w-4" />}
                       {reviewSubmitted ? "Submitted for CA review" : "Submit for CA review"}
                     </Button>
+                    {verificationReport.summary.critical > 0 ? (
+                      <p className="mt-2 text-sm font-semibold text-red-700">
+                        Resolve {verificationReport.summary.critical} critical {verificationReport.summary.critical === 1 ? "issue" : "issues"} before submitting.
+                      </p>
+                    ) : null}
+                    {submitReviewMutation.isError ? (
+                      <p className="mt-2 text-sm font-semibold text-red-700" role="alert">
+                        {apiErrorMessage(submitReviewMutation.error)}
+                      </p>
+                    ) : null}
                 </div>
               </div>
             )}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 hidden md:block">
             <FilingSummaryStrip
               recommendation={recommendation.form.replace(/_/g, " ")}
               requiredDocuments={requiredDocumentCount}
@@ -1021,12 +1396,29 @@ export default function ITRFilingPage() {
           </div>
         </MyeCard>
 
-        <div className="fixed inset-x-4 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-[60] flex items-center justify-between rounded-lg border border-slate-200 bg-white/95 p-3 shadow-[0_16px_50px_-35px_rgba(15,23,42,0.6)] backdrop-blur md:sticky md:bottom-4">
+        {currentStep >= 2 ? (
+          <div className="fixed inset-x-4 bottom-[calc(10.1rem+env(safe-area-inset-bottom))] z-[59] md:hidden">
+            <LiabilityChip liability={taxLiability} onClick={() => setLiabilityOpen(true)} />
+          </div>
+        ) : null}
+        <LiabilitySheet
+          open={liabilityOpen}
+          onOpenChange={setLiabilityOpen}
+          liability={taxLiability}
+          recommendation={recommendation.form.replace(/_/g, " ")}
+          requiredDocuments={requiredDocumentCount}
+          issueCount={openIssueCount}
+        />
+
+        <div className={cn(
+          "fixed inset-x-4 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-[60] flex items-center justify-between rounded-lg border border-slate-200 bg-white/95 p-3 shadow-[0_16px_50px_-35px_rgba(15,23,42,0.6)] backdrop-blur md:sticky md:bottom-4",
+          keyboardOpen && "hidden md:flex",
+        )}>
           <Button
             type="button"
             variant="outline"
             onClick={previousStep}
-            disabled={currentStep === 0}
+            disabled={currentStep === 0 && currentPane === 0}
             className="h-10 w-10 shrink-0 border-slate-200 bg-white px-0 font-black text-slate-700 sm:w-auto sm:px-4"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -1036,8 +1428,8 @@ export default function ITRFilingPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setPendingSave(Boolean(activeReturnId))}
-              disabled={!activeReturnId || pendingSave}
+              onClick={() => void persistLatestDraft()}
+              disabled={!activeReturnId || !online}
               className="h-10 border-blue-100 bg-blue-50 font-black text-blue-700 hover:bg-blue-100"
             >
               <Save className="h-4 w-4" />
@@ -1046,7 +1438,7 @@ export default function ITRFilingPage() {
             <Button
               type="button"
               onClick={nextStep}
-              disabled={currentStep === ITR_FILING_STEPS.length - 1}
+              disabled={currentStep === ITR_FILING_STEPS.length - 1 && (!isMobile || currentPane === currentPanes.length - 1)}
               className="h-10 bg-blue-600 font-black text-white hover:bg-blue-700"
             >
               Continue
@@ -1068,31 +1460,9 @@ function CheckLine({ label, checked }: { label: string; checked: boolean }) {
   );
 }
 
-function RegimePanel({
-  title,
-  selected,
-  computation,
-}: {
-  title: string;
-  selected: boolean;
-  computation: ReturnType<typeof computeItrTaxLiability>["newRegime"];
-}) {
-  return (
-    <div className={cn("rounded-lg border p-5", selected ? "border-blue-500 bg-blue-50" : "border-slate-200 bg-white")}>
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-black text-slate-950">{title}</h3>
-        {selected ? <StatusBadge status="filed" label="Active" /> : null}
-      </div>
-      <div className="mt-4 grid gap-2">
-        <SummaryLine label="Gross income" value={formatInr(computation.grossIncome)} />
-        <SummaryLine label="Standard deduction" value={formatInr(computation.standardDeduction)} />
-        <SummaryLine label="Eligible deductions" value={formatInr(computation.eligibleDeductions)} />
-        <SummaryLine label="Taxable income" value={formatInr(computation.taxableIncome)} />
-        <SummaryLine label="Tax before cess" value={formatInr(computation.taxBeforeCess)} />
-        <SummaryLine label="Cess" value={formatInr(computation.cess)} />
-      </div>
-    </div>
-  );
+function PaneSection({ visible, className, children }: { visible: boolean; className?: string; children: ReactNode }) {
+  if (!visible) return null;
+  return <div className={className}>{children}</div>;
 }
 
 function Metric({ label, value }: { label: string; value: string }) {

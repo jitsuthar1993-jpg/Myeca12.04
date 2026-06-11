@@ -49,6 +49,7 @@ export async function apiRequest(
   options?: {
     method?: string;
     body?: string;
+    keepalive?: boolean;
   }
 ): Promise<Response> {
   const token = await getAuthToken();
@@ -72,6 +73,7 @@ export async function apiRequest(
       headers,
       body: options?.body,
       credentials: "include",
+      keepalive: options?.keepalive,
     });
     status = res.status;
     ok = res.ok;

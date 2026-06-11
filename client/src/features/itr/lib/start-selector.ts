@@ -3,6 +3,7 @@ import {
   recommendItrForm,
   type ItrFilingDraft,
   type ItrFormRecommendation,
+  type ItrIncomeType,
 } from "@shared/itr-filing";
 import { normalizeCampaignAttribution, type CampaignAttribution } from "@shared/campaign-attribution";
 
@@ -96,6 +97,19 @@ function capitalGainsAmounts(value: ItrStartCapitalGains) {
   };
 }
 
+function selectedIncomeTypes(answers: ItrStartSelectorAnswers): ItrIncomeType[] {
+  const selectedTypes: ItrIncomeType[] = [];
+
+  if (answers.salaryOrPension) selectedTypes.push("salary");
+  if (answers.otherSources || answers.agriculturalIncomeAboveLimit) selectedTypes.push("otherSources");
+  if (answers.housePropertyCount !== "none") selectedTypes.push("houseProperty");
+  if (answers.capitalGains !== "none") selectedTypes.push("capitalGains");
+  if (answers.businessOrProfession !== "none") selectedTypes.push("business");
+  if (answers.foreignIncomeOrAssets || answers.residentialStatus !== "resident") selectedTypes.push("foreign");
+
+  return selectedTypes;
+}
+
 export function normalizeItrStartSelectorAnswers(input: Partial<ItrStartSelectorAnswers> = {}): ItrStartSelectorAnswers {
   const answers = {
     ...DEFAULT_ITR_START_SELECTOR_ANSWERS,
@@ -139,6 +153,7 @@ export function buildItrStartDraft(input: ItrStartSelectorAnswers): ItrFilingDra
       wantsOldRegime: false,
     },
     income: {
+      selectedTypes: selectedIncomeTypes(answers),
       salary: answers.salaryOrPension ? primarySimpleIncome : 0,
       pension: 0,
       houseProperties: propertyCountValue(answers.housePropertyCount),

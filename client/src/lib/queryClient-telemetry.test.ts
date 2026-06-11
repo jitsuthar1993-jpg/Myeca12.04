@@ -1,5 +1,9 @@
-import { describe, expect, it } from "vitest";
-import { normalizeApiPath } from "./queryClient";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { apiRequest, normalizeApiPath } from "./queryClient";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("normalizeApiPath", () => {
   it("returns the bare pathname for a plain URL", () => {
@@ -33,5 +37,21 @@ describe("normalizeApiPath", () => {
     // the URL-encoded pathname rather than the raw string. The key property the
     // telemetry sink cares about is that the result has no query string.
     expect(normalizeApiPath("not a url?with=params")).not.toContain("?");
+  });
+
+  it("passes keepalive through for lifecycle draft flushes", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiRequest("/api/tax-returns/return_1", {
+      method: "PATCH",
+      body: JSON.stringify({ draft: {} }),
+      keepalive: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/tax-returns/return_1",
+      expect.objectContaining({ keepalive: true }),
+    );
   });
 });

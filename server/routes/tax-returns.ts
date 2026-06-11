@@ -7,6 +7,7 @@ import {
   ITR_REVIEW_STATUSES,
   buildItrDraftJsonExport,
   buildItrReviewPacket,
+  buildItrVerificationReport,
   computeItrTaxLiability,
   calculateItrTotalDeductions,
   calculateItrTotalIncome,
@@ -434,6 +435,15 @@ router.post("/:id/submit-review", authenticateToken, async (req: AuthRequest, re
 
     const existing = doc.data() as Record<string, any>;
     const draft = parseStoredDraft(existing);
+    const verificationReport = buildItrVerificationReport(draft);
+    if (verificationReport.summary.critical > 0) {
+      return res.status(422).json({
+        success: false,
+        error: "Resolve critical verification issues before submitting for CA review.",
+        verificationReport,
+      });
+    }
+
     const recommendation = recommendItrForm(draft);
     const reviewPacket = buildItrReviewPacket(draft, doc.id);
     const taxSummary = buildTaxSummary(draft);

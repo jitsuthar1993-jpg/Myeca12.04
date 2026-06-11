@@ -6,7 +6,9 @@ import {
   buildItrVerificationReport,
   computeItrTaxLiability,
   getItrDocumentChecklist,
+  normalizeItrDraft,
   validateItrIdentity,
+  validateItrPane,
   recommendItrForm,
   type ItrFilingDraft,
 } from "@shared/itr-filing";
@@ -34,6 +36,7 @@ const baseDraft: ItrFilingDraft = {
     wantsOldRegime: false,
   },
   income: {
+    selectedTypes: ["salary", "otherSources"],
     salary: 900000,
     pension: 0,
     houseProperties: 0,
@@ -174,6 +177,35 @@ describe("ITR filing form selection", () => {
 });
 
 describe("ITR filing review helpers", () => {
+  it("derives selected income types for legacy drafts while preserving an explicit empty selection", () => {
+    const legacyDraft = normalizeItrDraft({
+      income: {
+        salary: 900000,
+        housePropertyIncome: -120000,
+        shortTermCapitalGains: -50000,
+        professionalIncome: 250000,
+      },
+      flags: {
+        hasForeignAssets: true,
+      },
+    });
+    const explicitEmptyDraft = normalizeItrDraft({
+      income: {
+        selectedTypes: [],
+        salary: 900000,
+      },
+    });
+
+    expect(legacyDraft.income.selectedTypes).toEqual([
+      "salary",
+      "houseProperty",
+      "capitalGains",
+      "business",
+      "foreign",
+    ]);
+    expect(explicitEmptyDraft.income.selectedTypes).toEqual([]);
+  });
+
   it("normalizes filing owner and validates identity fields without claiming API verification", () => {
     const validation = validateItrIdentity(draft({
       filingOwner: {
@@ -193,7 +225,7 @@ describe("ITR filing review helpers", () => {
   });
 
   it("builds critical verification issues for invalid identity and bank confirmation", () => {
-    const report = buildItrVerificationReport(draft({
+    const invalidDraft = draft({
       taxpayer: {
         pan: "abc",
         aadhaar: "111",
@@ -203,15 +235,38 @@ describe("ITR filing review helpers", () => {
         bankAccountConfirm: "999999999999",
         ifsc: "bad-ifsc",
       },
-    }));
+    });
+    const report = buildItrVerificationReport(invalidDraft);
 
     expect(report.status).toBe("blocked");
     expect(report.issues).toEqual(expect.arrayContaining([
-      expect.objectContaining({ id: "pan-format", severity: "critical" }),
-      expect.objectContaining({ id: "aadhaar-format", severity: "critical" }),
-      expect.objectContaining({ id: "bank-account-confirm", severity: "critical" }),
-      expect.objectContaining({ id: "ifsc-format", severity: "critical" }),
+      expect.objectContaining({ id: "pan-format", severity: "critical", paneId: "identity-pan-aadhaar" }),
+      expect.objectContaining({ id: "aadhaar-format", severity: "critical", paneId: "identity-pan-aadhaar" }),
+      expect.objectContaining({ id: "bank-account-confirm", severity: "critical", paneId: "identity-account" }),
+      expect.objectContaining({ id: "ifsc-format", severity: "critical", paneId: "identity-bank" }),
     ]));
+    expect(validateItrPane(invalidDraft, "identity-pan-aadhaar").map((issue) => issue.id)).toEqual([
+      "pan-format",
+      "aadhaar-format",
+    ]);
+  });
+
+  it("maps verification warnings to their source panes", () => {
+    const report = buildItrVerificationReport(draft({
+      filingOwner: {
+        mode: "other",
+      },
+      income: {
+        shortTermCapitalGains: 50000,
+      },
+    }));
+
+    expect(report.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "owner-other-person", paneId: "owner-person" }),
+      expect.objectContaining({ id: "document-capital-gains", paneId: "document-capital-gains" }),
+      expect.objectContaining({ id: "computation-gated", paneId: "compute-regimes" }),
+    ]));
+    expect(report.issues.find((issue) => issue.id.startsWith("form-blocker-"))?.paneId).toBe("income-capital-gains");
   });
 
   it("builds a document checklist from selected income sources and risk flags", () => {

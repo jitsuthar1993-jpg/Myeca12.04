@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ComponentPropsWithoutRef } from "react";
 import { CheckCircle2, CircleAlert, FileText, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,37 +110,43 @@ export function ChoiceButton({
   );
 }
 
+export type TextInputProps = Omit<ComponentPropsWithoutRef<typeof Input>, "value" | "onChange"> & {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  helper?: string;
+  error?: string;
+};
+
 export function TextInput({
   label,
   value,
   onChange,
   type = "text",
   helper,
-  autoComplete,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  type?: string;
-  helper?: string;
-  autoComplete?: string;
-}) {
+  error,
+  className,
+  ...inputProps
+}: TextInputProps) {
   const inputId = useId();
   const helperId = helper ? `${inputId}-helper` : undefined;
+  const errorId = error ? `${inputId}-error` : undefined;
 
   return (
     <div>
       <Label htmlFor={inputId}>{label}</Label>
       <Input
+        {...inputProps}
         id={inputId}
         type={type}
         value={value ?? ""}
-        autoComplete={autoComplete}
-        aria-describedby={helperId}
+        aria-invalid={Boolean(error)}
+        aria-describedby={[helperId, errorId].filter(Boolean).join(" ") || undefined}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 h-11 rounded-lg"
+        className={cn("mt-2 h-11 scroll-mb-24 rounded-lg", className)}
       />
       {helper ? <p id={helperId} className="mt-1 text-xs font-semibold text-slate-500">{helper}</p> : null}
+      {error ? <p id={errorId} className="mt-1 text-xs font-semibold text-red-700">{error}</p> : null}
     </div>
   );
 }
@@ -228,7 +234,13 @@ function SummaryItem({ label, value, emphasis = false }: { label: string; value:
   );
 }
 
-export function IssueList({ issues }: { issues: ItrVerificationIssue[] }) {
+export function IssueList({
+  issues,
+  onIssueNavigate,
+}: {
+  issues: ItrVerificationIssue[];
+  onIssueNavigate?: (issue: ItrVerificationIssue) => void;
+}) {
   if (!issues.length) {
     return (
       <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
@@ -260,7 +272,17 @@ export function IssueList({ issues }: { issues: ItrVerificationIssue[] }) {
             <div>
               <p className="text-sm font-black text-slate-950">{issue.title}</p>
               <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">{issue.detail}</p>
-              <p className="mt-2 text-xs font-black uppercase tracking-[0.12em] text-slate-500">{issue.action}</p>
+              {onIssueNavigate ? (
+                <button
+                  type="button"
+                  onClick={() => onIssueNavigate(issue)}
+                  className="mt-2 text-left text-xs font-black uppercase tracking-[0.12em] text-blue-700 underline-offset-4 hover:underline"
+                >
+                  {issue.action}
+                </button>
+              ) : (
+                <p className="mt-2 text-xs font-black uppercase tracking-[0.12em] text-slate-500">{issue.action}</p>
+              )}
             </div>
           </div>
         </div>

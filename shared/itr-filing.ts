@@ -2,6 +2,14 @@ import { z } from "zod";
 
 export const ITR_FORMS = ["ITR-1", "ITR-2", "ITR-3", "ITR-4"] as const;
 export const ITR_REVIEW_FORM = "CA_SCOPE_REVIEW" as const;
+export const ITR_INCOME_TYPES = [
+  "salary",
+  "otherSources",
+  "houseProperty",
+  "capitalGains",
+  "business",
+  "foreign",
+] as const;
 
 export const ITR_REVIEW_STATUSES = [
   "draft",
@@ -17,6 +25,7 @@ export const ITR_REVIEW_STATUSES = [
 export type ItrForm = (typeof ITR_FORMS)[number];
 export type ItrRecommendationForm = ItrForm | typeof ITR_REVIEW_FORM;
 export type ItrReviewStatus = (typeof ITR_REVIEW_STATUSES)[number];
+export type ItrIncomeType = (typeof ITR_INCOME_TYPES)[number];
 
 export const itrFilingOwnerSchema = z.object({
   mode: z.enum(["self", "other"]).default("self"),
@@ -52,6 +61,7 @@ export const itrFilingSchema = z.object({
 });
 
 export const itrIncomeSchema = z.object({
+  selectedTypes: z.array(z.enum(ITR_INCOME_TYPES)).default([]),
   salary: z.number().default(0),
   pension: z.number().default(0),
   houseProperties: z.number().int().min(0).default(0),
@@ -122,6 +132,7 @@ export type ItrVerificationIssue = {
   id: string;
   severity: ItrVerificationSeverity;
   area: "owner" | "identity" | "income" | "documents" | "computation" | "review";
+  paneId?: string;
   title: string;
   detail: string;
   action: string;
@@ -289,8 +300,59 @@ function addIssue(issues: ItrVerificationIssue[], issue: ItrVerificationIssue) {
   if (!issues.some((item) => item.id === issue.id)) issues.push(issue);
 }
 
+function deriveLegacyIncomeTypes(draft: ItrFilingDraft): ItrIncomeType[] {
+  const selectedTypes: ItrIncomeType[] = [];
+  const hasValue = (...values: number[]) => values.some((value) => (Number(value) || 0) !== 0);
+
+  if (hasValue(draft.income.salary, draft.income.pension)) selectedTypes.push("salary");
+  if (
+    hasValue(draft.income.otherSources, draft.income.agriculturalIncome, draft.income.winningsOrSpecialRateIncome)
+  ) {
+    selectedTypes.push("otherSources");
+  }
+  if (draft.income.houseProperties > 0 || hasValue(draft.income.housePropertyIncome)) selectedTypes.push("houseProperty");
+  if (
+    hasValue(draft.income.shortTermCapitalGains, draft.income.section112aLtcg, draft.income.otherCapitalGains)
+  ) {
+    selectedTypes.push("capitalGains");
+  }
+  if (
+    hasValue(draft.income.businessIncome, draft.income.professionalIncome) ||
+    draft.income.presumptiveScheme !== "none"
+  ) {
+    selectedTypes.push("business");
+  }
+  if (
+    hasValue(draft.income.foreignIncome) ||
+    draft.flags.hasForeignAssets ||
+    draft.flags.hasForeignSigningAuthority ||
+    draft.taxpayer.residentialStatus !== "resident"
+  ) {
+    selectedTypes.push("foreign");
+  }
+
+  return selectedTypes;
+}
+
 export function normalizeItrDraft(input: unknown): ItrFilingDraft {
-  return itrFilingDraftSchema.parse(input ?? {});
+  const rawDraft = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const rawIncome = rawDraft.income && typeof rawDraft.income === "object"
+    ? rawDraft.income as Record<string, unknown>
+    : {};
+  const hasPersistedSelections =
+    Object.prototype.hasOwnProperty.call(rawIncome, "selectedTypes") &&
+    rawIncome.selectedTypes !== undefined;
+  const draft = itrFilingDraftSchema.parse(input ?? {});
+
+  if (hasPersistedSelections) return draft;
+
+  return {
+    ...draft,
+    income: {
+      ...draft.income,
+      selectedTypes: deriveLegacyIncomeTypes(draft),
+    },
+  };
 }
 
 export function calculateItrTotalIncome(draftInput: ItrFilingDraft) {
@@ -439,6 +501,21 @@ function getItr4Blockers(draft: ItrFilingDraft) {
   return Array.from(new Set(blockers));
 }
 
+function paneIdForRequiredIdentityField(field: string) {
+  if (field === "pan" || field === "aadhaar") return "identity-pan-aadhaar";
+  if (field === "ifsc") return "identity-bank";
+  if (field === "bankAccount" || field === "bankAccountConfirm") return "identity-account";
+  return "identity-name";
+}
+
+function paneIdForFormBlocker(blocker: string) {
+  if (/capital gains|section 112a/i.test(blocker)) return "income-capital-gains";
+  if (/business|profession|presumptive/i.test(blocker)) return "income-business";
+  if (/foreign|rnor|nri/i.test(blocker)) return "income-foreign";
+  if (/house propert/i.test(blocker)) return "income-house-property";
+  return "income-preferences";
+}
+
 function canUseItr2(draft: ItrFilingDraft) {
   return ["individual", "huf"].includes(draft.taxpayer.type) && !hasBusinessOrProfession(draft);
 }
@@ -579,6 +656,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       id: "pan-format",
       severity: "critical",
       area: "identity",
+      paneId: "identity-pan-aadhaar",
       title: "PAN format needs correction",
       detail: "PAN must follow the ten-character format such as ABCDE1234F. This is a format check only.",
       action: "Enter the taxpayer PAN in valid format.",
@@ -590,6 +668,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       id: "aadhaar-format",
       severity: "critical",
       area: "identity",
+      paneId: "identity-pan-aadhaar",
       title: "Aadhaar format needs correction",
       detail: "Aadhaar must contain exactly 12 digits before the draft can move to review.",
       action: "Enter the full 12 digit Aadhaar number.",
@@ -601,6 +680,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       id: "ifsc-format",
       severity: "critical",
       area: "identity",
+      paneId: "identity-bank",
       title: "IFSC format needs correction",
       detail: "IFSC must use the standard 11-character bank branch format.",
       action: "Enter the refund bank IFSC in valid format.",
@@ -612,6 +692,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       id: "bank-account-confirm",
       severity: "critical",
       area: "identity",
+      paneId: "identity-account",
       title: "Refund bank account confirmation mismatch",
       detail: "The account number and confirmation field must match before review.",
       action: "Re-enter the refund bank account number in both fields.",
@@ -623,6 +704,7 @@ export function validateItrIdentity(draftInput: ItrFilingDraft): ItrIdentityVali
       id: `identity-required-${field}`,
       severity: "critical",
       area: "identity",
+      paneId: paneIdForRequiredIdentityField(field),
       title: "Required identity field missing",
       detail: `${field} is required for the filing draft.`,
       action: "Complete the identity step before continuing.",
@@ -775,6 +857,7 @@ export function buildItrVerificationReport(draftInput: ItrFilingDraft): ItrVerif
       id: "owner-other-person",
       severity: "warning",
       area: "owner",
+      paneId: "owner-person",
       title: "Other-person filing needs a taxpayer reference",
       detail: "A saved person or display name helps keep the draft separate from your own ITR.",
       action: "Select a saved taxpayer or add the person's name.",
@@ -786,6 +869,7 @@ export function buildItrVerificationReport(draftInput: ItrFilingDraft): ItrVerif
       id: `form-blocker-${blocker.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`,
       severity: "warning",
       area: "review",
+      paneId: paneIdForFormBlocker(blocker),
       title: "Form-selection review needed",
       detail: blocker,
       action: "Review the case before final portal filing.",
@@ -798,6 +882,7 @@ export function buildItrVerificationReport(draftInput: ItrFilingDraft): ItrVerif
         id: `document-${document.id}`,
         severity: "warning",
         area: "documents",
+        paneId: `document-${document.id}`,
         title: `${document.title} not linked`,
         detail: document.reason,
         action: "Upload or link this document before CA review.",
@@ -810,6 +895,7 @@ export function buildItrVerificationReport(draftInput: ItrFilingDraft): ItrVerif
       id: "computation-gated",
       severity: "warning",
       area: "computation",
+      paneId: "compute-regimes",
       title: "Computation needs CA review",
       detail: taxLiability.unsupportedReasons.join(" "),
       action: "Submit the draft for CA review after completing documents.",
@@ -827,6 +913,10 @@ export function buildItrVerificationReport(draftInput: ItrFilingDraft): ItrVerif
     issues,
     summary,
   };
+}
+
+export function validateItrPane(draftInput: ItrFilingDraft, paneId: string): ItrVerificationIssue[] {
+  return buildItrVerificationReport(draftInput).issues.filter((issue) => issue.paneId === paneId);
 }
 
 export function getItrDocumentChecklist(draftInput: ItrFilingDraft): ItrDocumentChecklistItem[] {

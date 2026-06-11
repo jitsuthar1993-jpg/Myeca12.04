@@ -319,14 +319,24 @@ describe("tax return routes", () => {
     expect(collectionStore("documents").get("doc_1")?.taxReturnId).toBe("return_1");
   });
 
-  it("submits a draft for CA review and stores the review packet snapshot", async () => {
+  it("allows missing-document warnings and stores the submitted review packet", async () => {
     seed("tax_returns", "return_1", {
       id: "return_1",
       userId: "user_1",
       assessmentYear: "2026-27",
       status: "draft",
       formData: JSON.stringify({
-        taxpayer: { type: "individual", residentialStatus: "resident" },
+        taxpayer: {
+          type: "individual",
+          residentialStatus: "resident",
+          firstName: "Asha",
+          lastName: "Rao",
+          pan: "ABCDE1234F",
+          aadhaar: "123412341234",
+          bankAccount: "123456789012",
+          bankAccountConfirm: "123456789012",
+          ifsc: "HDFC0001234",
+        },
         income: { salary: 900000, otherSources: 40000 },
         taxPaid: { tds: 65000 },
       }),
@@ -340,6 +350,8 @@ describe("tax return routes", () => {
     expect(json.taxReturn.status).toBe("ready_for_review");
     expect(json.reviewPacket.recommendation.form).toBe("ITR-1");
     expect(json.reviewPacket.summary.totalIncome).toBe(940000);
+    expect(json.reviewPacket.documentChecklist.some((item: any) => item.required)).toBe(true);
+    expect(collectionStore("user_services").size).toBe(1);
     expect(Array.from(collectionStore("workflow_events").values())).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -349,6 +361,47 @@ describe("tax return routes", () => {
         }),
       ]),
     );
+  });
+
+  it("returns a verification report and creates no review side effects when critical issues exist", async () => {
+    seed("tax_returns", "return_blocked", {
+      id: "return_blocked",
+      userId: "user_1",
+      assessmentYear: "2026-27",
+      status: "draft",
+      reviewStatus: "draft",
+      formData: JSON.stringify({
+        taxpayer: {
+          type: "individual",
+          residentialStatus: "resident",
+          firstName: "Asha",
+          lastName: "Rao",
+          pan: "invalid",
+        },
+        income: { salary: 900000 },
+      }),
+    });
+
+    const { response, json } = await request("/api/tax-returns/return_blocked/submit-review", {
+      method: "POST",
+    });
+
+    expect(response.status).toBe(422);
+    expect(json.success).toBe(false);
+    expect(json.verificationReport).toMatchObject({
+      status: "blocked",
+      summary: { critical: expect.any(Number) },
+      issues: expect.arrayContaining([
+        expect.objectContaining({ id: "pan-format", severity: "critical", paneId: "identity-pan-aadhaar" }),
+      ]),
+    });
+    expect(json.verificationReport.summary.critical).toBeGreaterThan(0);
+    expect(collectionStore("user_services").size).toBe(0);
+    expect(collectionStore("workflow_events").size).toBe(0);
+    expect(collectionStore("tax_returns").get("return_blocked")).toMatchObject({
+      status: "draft",
+      reviewStatus: "draft",
+    });
   });
 
   it("keeps lifecycle status changes out of the owner draft update route", async () => {

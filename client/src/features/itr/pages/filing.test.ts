@@ -10,6 +10,7 @@ import ITRFilingPage from "./filing.page";
 
 const apiRequestMock = vi.hoisted(() => vi.fn());
 const invalidateQueriesMock = vi.hoisted(() => vi.fn());
+let isMobile = false;
 
 vi.mock("@/lib/queryClient", () => ({
   apiRequest: apiRequestMock,
@@ -20,6 +21,14 @@ vi.mock("@/lib/queryClient", () => ({
 
 vi.mock("@/components/admin/Layout", () => ({
   Layout: ({ children }: { children: React.ReactNode }) => React.createElement("div", {}, children),
+}));
+
+vi.mock("@/hooks/use-mobile", () => ({
+  useIsMobile: () => isMobile,
+}));
+
+vi.mock("@/telemetry/browser", () => ({
+  captureTelemetryEvent: vi.fn(),
 }));
 
 vi.mock("wouter", () => ({
@@ -67,6 +76,32 @@ function taxReturn(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function validDraft() {
+  return {
+    assessmentYear: "2026-27",
+    filingOwner: { mode: "self" },
+    taxpayer: {
+      type: "individual",
+      residentialStatus: "resident",
+      firstName: "Mobile",
+      lastName: "Filer",
+      dateOfBirth: "1990-01-01",
+      pan: "ABCDE1234F",
+      aadhaar: "123412341234",
+      mobile: "9876543210",
+      email: "mobile@example.com",
+      bankAccountHolder: "Mobile Filer",
+      bankName: "Example Bank",
+      ifsc: "HDFC0001234",
+      bankAccount: "123456789012",
+      bankAccountConfirm: "123456789012",
+      bankAccountType: "savings",
+    },
+    income: { selectedTypes: ["salary"], salary: 900000 },
+    taxPaid: { tds: 65000 },
+  };
+}
+
 function setupApi(taxReturns: unknown[]) {
   apiRequestMock.mockImplementation(async (url: string, options?: { method?: string; body?: string }) => {
     if (url === "/api/tax-returns" && options?.method === "POST") {
@@ -105,6 +140,8 @@ describe("ITR filing workspace", () => {
   beforeEach(() => {
     apiRequestMock.mockReset();
     invalidateQueriesMock.mockReset();
+    isMobile = false;
+    Object.defineProperty(window.navigator, "onLine", { configurable: true, value: true });
     localStorage.clear();
     sessionStorage.clear();
   });
@@ -282,5 +319,231 @@ describe("ITR filing workspace", () => {
 
     expect(readItrStartHandoff()).toBeNull();
     expect(apiRequestMock.mock.calls.some(([url, options]) => String(url).includes("/return_1") && options?.method === "PATCH")).toBe(false);
+  });
+
+  it("shows one focused pane at a time on mobile", async () => {
+    isMobile = true;
+    setupApi([taxReturn()]);
+
+    renderFilingPage();
+
+    expect(await screen.findByText("My own ITR")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+
+    expect(await screen.findByLabelText("First name")).toBeInTheDocument();
+    expect(screen.queryByLabelText("PAN")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    expect(await screen.findByLabelText("PAN")).toBeInTheDocument();
+
+    window.dispatchEvent(new PopStateEvent("popstate", {
+      state: { myecaItrPane: { step: 1, pane: 0 } },
+    }));
+    expect(await screen.findByLabelText("First name")).toBeInTheDocument();
+    expect(screen.queryByLabelText("PAN")).not.toBeInTheDocument();
+  });
+
+  it("selects income types without inserting fake amounts", async () => {
+    setupApi([taxReturn({
+      formData: {
+        assessmentYear: "2026-27",
+        filingOwner: { mode: "self" },
+        taxpayer: { type: "individual", residentialStatus: "resident" },
+        income: { selectedTypes: [] },
+      },
+    })]);
+
+    renderFilingPage();
+    await userEvent.click((await screen.findByText("Income")).closest("button") as HTMLButtonElement);
+    await userEvent.click(screen.getByRole("button", { name: /Capital gains/i }));
+
+    await waitFor(() => {
+      const patchCall = apiRequestMock.mock.calls.find(([url, options]) =>
+        url === "/api/tax-returns/return_1" && options?.method === "PATCH"
+      );
+      expect(patchCall).toBeTruthy();
+      const body = JSON.parse(patchCall?.[1]?.body || "{}");
+      expect(body.draft.income.selectedTypes).toContain("capitalGains");
+      expect(body.draft.income.shortTermCapitalGains).toBe(0);
+      expect(body.draft.income.section112aLtcg).toBe(0);
+    });
+  });
+
+  it("does not mirror authenticated filing edits into browser storage", async () => {
+    setupApi([taxReturn()]);
+    const localStorageSpy = vi.spyOn(Storage.prototype, "setItem");
+
+    renderFilingPage();
+    await userEvent.click(await screen.findByRole("button", { name: /Identity/i }));
+    await userEvent.type(screen.getByLabelText("First name"), "A");
+
+    expect(localStorageSpy).not.toHaveBeenCalled();
+  });
+
+  it("flushes the latest revision with keepalive when the page is hidden", async () => {
+    setupApi([taxReturn()]);
+    renderFilingPage();
+    const identityStep = (await screen.findAllByText("Identity")).find((node) => node.closest("button"));
+    await userEvent.click(identityStep!.closest("button") as HTMLButtonElement);
+    await userEvent.type(screen.getByLabelText("First name"), "A");
+
+    window.dispatchEvent(new PageTransitionEvent("pagehide"));
+
+    await waitFor(() => {
+      expect(apiRequestMock).toHaveBeenCalledWith(
+        "/api/tax-returns/return_1",
+        expect.objectContaining({ method: "PATCH", keepalive: true }),
+      );
+    });
+  });
+
+  it("keeps offline edits pending and saves them after reconnect", async () => {
+    Object.defineProperty(window.navigator, "onLine", { configurable: true, value: false });
+    setupApi([taxReturn()]);
+    renderFilingPage();
+    const identityStep = (await screen.findAllByText("Identity")).find((node) => node.closest("button"));
+    await userEvent.click(identityStep!.closest("button") as HTMLButtonElement);
+    await userEvent.type(screen.getByLabelText("First name"), "A");
+
+    expect(screen.getByText("Changes not saved")).toBeInTheDocument();
+    expect(apiRequestMock.mock.calls.some(([url, options]) =>
+      url === "/api/tax-returns/return_1" && options?.method === "PATCH"
+    )).toBe(false);
+
+    Object.defineProperty(window.navigator, "onLine", { configurable: true, value: true });
+    window.dispatchEvent(new Event("online"));
+
+    await waitFor(() => {
+      expect(apiRequestMock.mock.calls.some(([url, options]) =>
+        url === "/api/tax-returns/return_1" && options?.method === "PATCH"
+      )).toBe(true);
+    });
+  });
+
+  it("queues edits made while an autosave request is in flight", async () => {
+    let resolveFirstSave: (() => void) | undefined;
+    let patchCount = 0;
+    apiRequestMock.mockImplementation(async (url: string, options?: { method?: string; body?: string }) => {
+      if (url === "/api/tax-returns") return jsonResponse({ taxReturns: [taxReturn()] });
+      if (url === "/api/documents") return jsonResponse({ documents: [] });
+      if (url === "/api/tax-returns/return_1" && options?.method === "PATCH") {
+        patchCount += 1;
+        if (patchCount === 1) {
+          await new Promise<void>((resolve) => {
+            resolveFirstSave = resolve;
+          });
+        }
+        return jsonResponse({ taxReturn: taxReturn({ formData: JSON.parse(options.body || "{}").draft }) });
+      }
+      return jsonResponse({});
+    });
+
+    renderFilingPage();
+    const identityStep = (await screen.findAllByText("Identity")).find((node) => node.closest("button"));
+    await userEvent.click(identityStep!.closest("button") as HTMLButtonElement);
+    const firstName = screen.getByLabelText("First name");
+    await userEvent.type(firstName, "A");
+
+    await waitFor(() => expect(patchCount).toBe(1), { timeout: 2000 });
+    await userEvent.type(firstName, "B");
+    resolveFirstSave?.();
+
+    await waitFor(() => expect(patchCount).toBe(2), { timeout: 2500 });
+    const lastPatch = apiRequestMock.mock.calls.filter(([url, options]) =>
+      url === "/api/tax-returns/return_1" && options?.method === "PATCH"
+    ).at(-1);
+    expect(JSON.parse(lastPatch?.[1]?.body || "{}").draft.taxpayer.firstName).toBe("AB");
+  });
+
+  it("shows a failed save without immediately retrying in a loop", async () => {
+    let patchCount = 0;
+    apiRequestMock.mockImplementation(async (url: string, options?: { method?: string }) => {
+      if (url === "/api/tax-returns") return jsonResponse({ taxReturns: [taxReturn()] });
+      if (url === "/api/documents") return jsonResponse({ documents: [] });
+      if (url === "/api/tax-returns/return_1" && options?.method === "PATCH") {
+        patchCount += 1;
+        throw new Error("Save unavailable");
+      }
+      return jsonResponse({});
+    });
+
+    renderFilingPage();
+    const identityStep = (await screen.findAllByText("Identity")).find((node) => node.closest("button"));
+    await userEvent.click(identityStep!.closest("button") as HTMLButtonElement);
+    await userEvent.type(screen.getByLabelText("First name"), "A");
+
+    expect(await screen.findByText("We couldn't save your latest draft changes")).toBeInTheDocument();
+    await new Promise((resolve) => window.setTimeout(resolve, 100));
+    expect(patchCount).toBe(1);
+  });
+
+  it("shows vault-link failures and clears them after a successful retry", async () => {
+    Object.defineProperties(HTMLElement.prototype, {
+      hasPointerCapture: { configurable: true, value: () => false },
+      setPointerCapture: { configurable: true, value: () => undefined },
+      releasePointerCapture: { configurable: true, value: () => undefined },
+      scrollIntoView: { configurable: true, value: () => undefined },
+    });
+    let linkAttempts = 0;
+    apiRequestMock.mockImplementation(async (url: string, options?: { method?: string }) => {
+      if (url === "/api/tax-returns") {
+        return jsonResponse({ taxReturns: [taxReturn({ formData: validDraft() })] });
+      }
+      if (url === "/api/documents") {
+        return jsonResponse({ documents: [{ id: "doc_form16", name: "Form 16.pdf", category: "form16" }] });
+      }
+      if (url === "/api/tax-returns/return_1/documents" && options?.method === "POST") {
+        linkAttempts += 1;
+        if (linkAttempts === 1) throw new Error("Link unavailable");
+        return jsonResponse({
+          taxReturn: taxReturn({
+            formData: { ...validDraft(), documents: { form16: "doc_form16" } },
+          }),
+        });
+      }
+      return jsonResponse({});
+    });
+
+    renderFilingPage();
+    const documentsStep = (await screen.findAllByText("Documents")).find((node) => node.closest("button"));
+    await userEvent.click(documentsStep!.closest("button") as HTMLButtonElement);
+    const vaultPicker = (await screen.findAllByRole("combobox"))[0];
+    await userEvent.click(vaultPicker);
+    await userEvent.click(await screen.findByRole("option", { name: "Form 16.pdf" }));
+
+    expect(await screen.findByText(/Could not link document/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Retry upload" }));
+
+    await waitFor(() => expect(screen.queryByText(/Could not link document/)).not.toBeInTheDocument());
+    expect(screen.getAllByText("Form 16.pdf").length).toBeGreaterThan(0);
+  });
+
+  it("flushes pending edits before submitting for CA review", async () => {
+    const mutationOrder: string[] = [];
+    apiRequestMock.mockImplementation(async (url: string, options?: { method?: string; body?: string }) => {
+      if (url === "/api/tax-returns") {
+        return jsonResponse({ taxReturns: [taxReturn({ formData: validDraft() })] });
+      }
+      if (url === "/api/documents") return jsonResponse({ documents: [] });
+      if (url === "/api/tax-returns/return_1" && options?.method === "PATCH") {
+        mutationOrder.push("patch");
+        return jsonResponse({ taxReturn: taxReturn({ formData: JSON.parse(options.body || "{}").draft }) });
+      }
+      if (url === "/api/tax-returns/return_1/submit-review" && options?.method === "POST") {
+        mutationOrder.push("submit");
+        return jsonResponse({ success: true });
+      }
+      return jsonResponse({});
+    });
+
+    renderFilingPage();
+    const identityStep = (await screen.findAllByText("Identity")).find((node) => node.closest("button"));
+    await userEvent.click(identityStep!.closest("button") as HTMLButtonElement);
+    await userEvent.type(screen.getByLabelText("First name"), "A");
+    const reviewStep = screen.getAllByText("Review").find((node) => node.closest("button"));
+    await userEvent.click(reviewStep!.closest("button") as HTMLButtonElement);
+    await userEvent.click(screen.getByRole("button", { name: "Submit for CA review" }));
+
+    await waitFor(() => expect(mutationOrder).toEqual(["patch", "submit"]));
   });
 });

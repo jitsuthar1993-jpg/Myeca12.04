@@ -30,18 +30,24 @@ describe("ITR start form selector mapper", () => {
   });
 
   it("maps the default public selector answers to ITR-1", () => {
-    const recommendation = recommendationFor({});
+    const draft = buildItrStartDraft(DEFAULT_ITR_START_SELECTOR_ANSWERS);
+    const recommendation = recommendItrForm(draft);
 
+    expect(draft.income.selectedTypes).toEqual(["salary", "otherSources"]);
     expect(recommendation.form).toBe("ITR-1");
     expect(recommendation.caReviewRequired).toBe(false);
     expect(recommendation.requiredSchedules).toContain("Schedule Salary");
   });
 
   it("maps non-business capital gains complexity to ITR-2", () => {
-    const recommendation = recommendationFor({
+    const answers = {
+      ...DEFAULT_ITR_START_SELECTOR_ANSWERS,
       capitalGains: "short-term",
-    });
+    } satisfies ItrStartSelectorAnswers;
+    const draft = buildItrStartDraft(answers);
+    const recommendation = recommendItrForm(draft);
 
+    expect(draft.income.selectedTypes).toEqual(["salary", "otherSources", "capitalGains"]);
     expect(recommendation.form).toBe("ITR-2");
     expect(recommendation.blockers).toContain("ITR-1 cannot be used for short-term capital gains.");
   });
@@ -57,12 +63,16 @@ describe("ITR start form selector mapper", () => {
   });
 
   it("maps eligible presumptive profession cases to ITR-4", () => {
-    const recommendation = recommendationFor({
+    const answers = {
+      ...DEFAULT_ITR_START_SELECTOR_ANSWERS,
       salaryOrPension: false,
       businessOrProfession: "profession",
       presumptiveScheme: "44ADA",
-    });
+    } satisfies ItrStartSelectorAnswers;
+    const draft = buildItrStartDraft(answers);
+    const recommendation = recommendItrForm(draft);
 
+    expect(draft.income.selectedTypes).toEqual(["otherSources", "business"]);
     expect(recommendation.form).toBe("ITR-4");
     expect(recommendation.requiredSchedules).toContain("Schedule 44ADA");
   });
@@ -109,6 +119,7 @@ describe("ITR start form selector mapper", () => {
       recommendation: { form: "ITR-2" },
     });
     expect(stored?.draft.taxpayer.type).toBe("individual");
+    expect(stored?.draft.income.selectedTypes).toEqual(["salary", "otherSources", "capitalGains"]);
     expect(stored?.draft.income.shortTermCapitalGains).toBeGreaterThan(0);
   });
 
