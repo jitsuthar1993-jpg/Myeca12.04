@@ -163,29 +163,31 @@ export default function AdminDashboard() {
                     <tbody className="divide-y divide-slate-50">
                       {workList.slice(0, 5).map((work: any) => (
                         <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors cursor-pointer" onClick={() => setSelectedWork(work)}>
-                          <td className="px-4 py-2.5 align-middle">
-                            <div className="flex items-center gap-3">
+                          <td className="px-4 py-2.5 align-bottom">
+                            <div className="flex items-end gap-3">
                               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                                  <Briefcase className="h-3.5 w-3.5" />
                               </div>
-                              <div className="flex flex-col justify-center">
-                                 <p className="text-xs font-bold text-slate-900 leading-tight mb-0.5">{work.title}</p>
+                              <div className="flex flex-col justify-end">
+                                 <p className="text-xs font-bold text-slate-900 leading-none mb-1">{work.title}</p>
                                  <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tight leading-none">{work.type.replace('_', ' ')}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-2.5 align-middle">
-                            <p className="text-xs font-bold text-slate-900">{work.userName}</p>
-                            <p className="text-[9px] font-medium text-slate-400 uppercase mt-0.5">#TRX-{work.id.toString().padStart(6, '0')}</p>
+                          <td className="px-4 py-2.5 align-bottom">
+                            <div className="flex flex-col justify-end">
+                              <p className="text-xs font-bold text-slate-900 leading-none">{work.userName}</p>
+                              <p className="text-[9px] font-medium text-slate-400 uppercase leading-none mt-1">#TRX-{work.id.toString().padStart(6, '0')}</p>
+                            </div>
                           </td>
-                          <td className="px-4 py-2.5 align-middle">
-                            <p className="text-[10px] text-slate-500 font-medium line-clamp-1 max-w-xs">
+                          <td className="px-4 py-2.5 align-bottom">
+                            <p className="text-[10px] text-slate-500 font-medium line-clamp-1 max-w-xs leading-normal">
                               {work.description || 'Routine platform transaction and compliance audit.'}
                             </p>
                           </td>
-                          <td className="px-4 py-2.5 align-middle">
+                          <td className="px-4 py-2.5 align-bottom">
                             <Badge className={cn(
-                              "rounded-full px-2 py-0.5 text-[8px] font-bold border-none shadow-sm",
+                              "rounded-full px-2 py-0.5 text-[8px] font-bold border-none shadow-sm leading-none",
                               work.status === 'pending' ? "bg-amber-50 text-amber-600" :
                               work.status === 'in_progress' ? "bg-blue-50 text-blue-600" :
                               "bg-emerald-50 text-emerald-600"
@@ -193,7 +195,7 @@ export default function AdminDashboard() {
                               {work.status.replace('_', ' ').toUpperCase()}
                             </Badge>
                           </td>
-                          <td className="px-4 py-2.5 align-middle text-right" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-4 py-2.5 align-bottom text-right" onClick={(e) => e.stopPropagation()}>
                             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50" onClick={() => setSelectedWork(work)}>
                               <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
