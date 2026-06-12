@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { GoogleAnalyticsDashboard } from '@/components/admin/analytics/GoogleAnalyticsDashboard';
 import { useAnalytics } from '@/hooks/admin/useAnalytics';
 import type { AnalyticsDateRange } from '@/lib/admin/types';
-import { Activity, FileText, FolderOpen, RefreshCw, Users } from 'lucide-react';
+import { Activity, ArrowUpRight, FileText, FolderOpen, RefreshCw, Users } from 'lucide-react';
 
 function formatNumber(value: number | undefined) {
   return new Intl.NumberFormat('en-IN').format(value || 0);
@@ -24,15 +24,22 @@ function StatCard({
   icon: typeof Users;
 }) {
   return (
-    <Card className="rounded-xl border border-indigo-100 bg-white/90 shadow-md backdrop-blur-sm">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-slate-600">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-blue-600" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-slate-900">{formatNumber(value)}</div>
-        <p className="mt-2 text-xs font-medium text-slate-500">{detail}</p>
-      </CardContent>
+    <Card className="border border-indigo-100 bg-white/90 p-3 rounded-lg shadow-md backdrop-blur-sm group transition-all">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+            <Icon className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">{title}</p>
+            <p className="text-[10px] font-medium text-slate-400 mt-0.5 leading-none">{detail}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-bold text-slate-900 leading-none">{formatNumber(value)}</span>
+          <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+        </div>
+      </div>
     </Card>
   );
 }

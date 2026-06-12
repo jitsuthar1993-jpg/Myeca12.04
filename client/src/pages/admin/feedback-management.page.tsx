@@ -39,6 +39,7 @@ import {
   Star,
   Trash2,
   Send,
+  ArrowUpRight,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -222,54 +223,79 @@ export default function AdminFeedbackManagement() {
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-          <Card className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">Total Feedback</p>
-                <p className="text-2xl font-bold">{stats?.total || 0}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <MessageSquare className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Total Feedback</p>
               </div>
-              <MessageSquare className="h-8 w-8 text-blue-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats?.total || 0}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+              </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">Pending</p>
-                <p className="text-2xl font-bold">{stats?.byStatus?.pending || 0}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Pending</p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats?.byStatus?.pending || 0}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-amber-500 transition-colors" />
+              </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">Resolved</p>
-                <p className="text-2xl font-bold">{stats?.byStatus?.resolved || 0}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <CheckCircle className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Resolved</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats?.byStatus?.resolved || 0}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+              </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">Avg Rating</p>
-                <p className="text-2xl font-bold">{stats?.avgRating ? stats.avgRating.toFixed(1) : '0.0'}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <Star className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Avg Rating</p>
               </div>
-              <Star className="h-8 w-8 text-yellow-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats?.avgRating ? stats.avgRating.toFixed(1) : '0.0'}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-amber-500 transition-colors" />
+              </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">Bug Reports</p>
-                <p className="text-2xl font-bold">{stats?.byType?.bug || 0}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-red-50 text-red-600 rounded-lg">
+                  <AlertCircle className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Bug Reports</p>
               </div>
-              <AlertCircle className="h-8 w-8 text-red-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats?.byType?.bug || 0}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-red-500 transition-colors" />
+              </div>
             </div>
           </Card>
         </div>

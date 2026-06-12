@@ -1,6 +1,6 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CalendarDays, Edit, Eye, ImagePlus, Plus, Search, Trash2, Upload, WandSparkles } from "lucide-react";
+import { CalendarDays, Edit, Eye, ImagePlus, Plus, Search, Trash2, Upload, WandSparkles, ArrowUpRight, FileText, Globe, FileEdit, Star } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import BlogArticle from "@/components/blog/BlogArticle";
 import { Badge } from "@/components/ui/badge";
@@ -450,7 +450,29 @@ export default function AdminBlog() {
           <Button className="rounded-full bg-blue-600 px-5 text-white hover:bg-blue-700" onClick={() => { setEditingId(null); setDialogOpen(true); }}><Plus className="mr-2 h-4 w-4" />New article</Button>
         </div>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-4">{[{ label: "Total", value: stats.total }, { label: "Published", value: stats.published }, { label: "Drafts", value: stats.drafts }, { label: "Featured", value: stats.featured }].map((stat) => <Card key={stat.label} className="rounded-3xl border-slate-200"><CardContent className="p-6"><p className="text-sm text-slate-500">{stat.label}</p><p className="mt-3 text-3xl font-semibold text-slate-900">{stat.value}</p></CardContent></Card>)}</div>
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Total", value: stats.total, icon: FileText, color: "text-blue-600 bg-blue-50", hoverColor: "group-hover:text-blue-500" },
+            { label: "Published", value: stats.published, icon: Globe, color: "text-emerald-600 bg-emerald-50", hoverColor: "group-hover:text-emerald-500" },
+            { label: "Drafts", value: stats.drafts, icon: FileEdit, color: "text-amber-600 bg-amber-50", hoverColor: "group-hover:text-amber-500" },
+            { label: "Featured", value: stats.featured, icon: Star, color: "text-purple-600 bg-purple-50", hoverColor: "group-hover:text-purple-500" },
+          ].map((stat) => (
+            <Card key={stat.label} className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-2 rounded-lg", stat.color)}>
+                    <stat.icon className="h-4 w-4" />
+                  </div>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">{stat.label}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold text-slate-900 leading-none">{stat.value}</span>
+                  <ArrowUpRight className={cn("h-3.5 w-3.5 text-slate-300 transition-colors", stat.hoverColor)} />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
 
         <Card className="mb-8 rounded-3xl border-slate-200"><CardContent className="grid gap-4 p-6 md:grid-cols-[1fr_180px_180px]"><div className="relative"><Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><Input className="pl-11" placeholder="Search articles" value={search} onChange={(e) => setSearch(e.target.value)} /></div><Select value={status} onValueChange={setStatus}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All statuses</SelectItem><SelectItem value="published">Published</SelectItem><SelectItem value="draft">Draft</SelectItem></SelectContent></Select><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All categories</SelectItem>{categories.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}</SelectContent></Select></CardContent></Card>
 

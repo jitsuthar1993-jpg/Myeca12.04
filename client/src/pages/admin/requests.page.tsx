@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import {
+  ArrowUpRight,
   Briefcase,
   CalendarClock,
   CheckCircle2,
@@ -277,23 +278,26 @@ export default function AdminRequestsPage() {
           </div>
         </section>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Pending Cases", value: pendingCases, icon: Briefcase, color: "text-blue-600 bg-blue-50" },
-            { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-amber-600 bg-amber-50" },
-            { label: "Open Payments", value: openPayments, icon: CreditCard, color: "text-emerald-600 bg-emerald-50" },
-            { label: "Total Cases", value: serviceCases.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100" },
+            { label: "Pending Cases", value: pendingCases, icon: Briefcase, color: "text-blue-600 bg-blue-50", hoverColor: "group-hover:text-blue-500" },
+            { label: "Open Consultations", value: openConsultations, icon: MessageSquare, color: "text-amber-600 bg-amber-50", hoverColor: "group-hover:text-amber-500" },
+            { label: "Open Payments", value: openPayments, icon: CreditCard, color: "text-emerald-600 bg-emerald-50", hoverColor: "group-hover:text-emerald-500" },
+            { label: "Total Cases", value: serviceCases.length, icon: ReceiptText, color: "text-slate-700 bg-slate-100", hoverColor: "group-hover:text-slate-500" },
           ].map((item) => (
-            <Card key={item.label} className="rounded-lg border-slate-200 shadow-none">
-              <CardContent className="flex items-center gap-4 p-5">
-                <div className={cn("flex h-11 w-11 items-center justify-center rounded-2xl", item.color)}>
-                  <item.icon className="h-5 w-5" />
+            <Card key={item.label} className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-2 rounded-lg", item.color)}>
+                    <item.icon className="h-4 w-4" />
+                  </div>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">{item.label}</p>
                 </div>
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
-                  <p className="mt-1 text-2xl font-black text-slate-950">{item.value}</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold text-slate-900 leading-none">{item.value}</span>
+                  <ArrowUpRight className={cn("h-3.5 w-3.5 text-slate-300 transition-colors", item.hoverColor)} />
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))}
         </div>

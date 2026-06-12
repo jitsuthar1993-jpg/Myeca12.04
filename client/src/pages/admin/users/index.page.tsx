@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useUsers } from '@/hooks/admin/useUsers';
 import type { User } from '@/lib/admin/types';
 import { formatTimeAgo } from '@/lib/admin/utils';
-import { Mail, User as UserIcon } from 'lucide-react';
+import { Mail, User as UserIcon, ArrowUpRight, UserCheck, ShieldCheck } from 'lucide-react';
 
 export default function UsersPage() {
   const [page, setPage] = useState(1);
@@ -84,38 +84,49 @@ export default function UsersPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-600">Total Users</p>
-                  <p className="text-2xl font-bold text-slate-900">
-                    {pagination?.total || users.length}
-                  </p>
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <UserIcon className="h-4 w-4" />
                 </div>
-                <UserIcon className="h-8 w-8 text-blue-600" />
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Total Users</p>
               </div>
-            </CardContent>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{pagination?.total || users.length}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+              </div>
+            </div>
           </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div>
-                <p className="text-sm text-slate-600">Active Users</p>
-                <p className="text-2xl font-bold text-slate-900">
-                  {users.filter((u) => u.status === 'active').length}
-                </p>
+
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <UserCheck className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Active Users</p>
               </div>
-            </CardContent>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{users.filter((u) => u.status === 'active').length}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+              </div>
+            </div>
           </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div>
-                <p className="text-sm text-slate-600">Admins</p>
-                <p className="text-2xl font-bold text-slate-900">
-                  {users.filter((u) => u.role === 'admin').length}
-                </p>
+
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <ShieldCheck className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Admins</p>
               </div>
-            </CardContent>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{users.filter((u) => u.role === 'admin').length}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-amber-500 transition-colors" />
+              </div>
+            </div>
           </Card>
         </div>
 

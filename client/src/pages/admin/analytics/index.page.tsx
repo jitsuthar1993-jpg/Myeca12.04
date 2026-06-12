@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { GoogleAnalyticsDashboard } from '@/components/admin/analytics/GoogleAnalyticsDashboard';
 import { useAnalytics } from '@/hooks/admin/useAnalytics';
 import type { AnalyticsDateRange } from '@/lib/admin/types';
-import { Activity, FileText, FolderOpen, RefreshCw, Users } from 'lucide-react';
+import { Activity, ArrowUpRight, FileText, FolderOpen, RefreshCw, Users } from 'lucide-react';
 
 function formatNumber(value: number | undefined) {
   return new Intl.NumberFormat('en-IN').format(value || 0);
@@ -23,15 +23,22 @@ function MetricCard({
   icon: typeof Users;
 }) {
   return (
-    <Card className="rounded-xl border-slate-200 bg-white shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-600">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-blue-600" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-black text-slate-950">{formatNumber(value)}</div>
-        <p className="mt-1 text-xs font-medium text-slate-500">{description}</p>
-      </CardContent>
+    <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+            <Icon className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">{title}</p>
+            <p className="text-[10px] font-medium text-slate-400 mt-0.5 leading-none">{description}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-bold text-slate-900 leading-none">{formatNumber(value)}</span>
+          <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+        </div>
+      </div>
     </Card>
   );
 }
