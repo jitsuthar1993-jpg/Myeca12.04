@@ -352,6 +352,8 @@ function serializeDocument(docId: string, data: Record<string, any>) {
   return {
     id: docId,
     userId: data.userId,
+    profileId: data.profileId ?? null,
+    taxReturnId: data.taxReturnId ?? null,
     fileName: data.fileName ?? null,
     originalName: data.originalName ?? data.name ?? "document",
     name: data.name,
@@ -402,7 +404,16 @@ async function streamToBuffer(stream: ReadableStream<Uint8Array>) {
 const createTaxReturnSchema = z.object({
   assessmentYear: z.string().trim().min(1).default("2026-27"),
   profileId: z.string().trim().min(1).nullable().optional(),
+  owner: z.enum(["self", "member"]).optional(),
   draft: z.unknown().optional(),
+}).superRefine((data, ctx) => {
+  if (data.owner === "member" && !data.profileId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["profileId"],
+      message: "Select the saved member to file for.",
+    });
+  }
 });
 
 const updateTaxReturnSchema = z.object({
@@ -580,6 +591,110 @@ async function profileCanBeLinked(userId: string, profileId?: string | null) {
   return profile.exists && profile.data()?.userId === userId;
 }
 
+const OPEN_TAX_RETURN_STATUSES = new Set(["draft", "changes_requested"]);
+
+function splitTaxpayerFullName(name: unknown) {
+  const parts = String(name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { firstName: "", lastName: "" };
+  if (parts.length === 1) return { firstName: parts[0], lastName: "" };
+  return { firstName: parts.slice(0, -1).join(" "), lastName: parts[parts.length - 1] };
+}
+
+function fillEmptyTaxpayerFields(
+  taxpayer: ItrFilingDraft["taxpayer"],
+  prefill: Partial<Record<string, string>>,
+) {
+  const next: Record<string, unknown> = { ...taxpayer };
+  for (const [field, value] of Object.entries(prefill)) {
+    if (!value) continue;
+    const current = next[field];
+    if (typeof current !== "string" || !current.trim()) {
+      next[field] = value;
+    }
+  }
+  return next as ItrFilingDraft["taxpayer"];
+}
+
+async function findSelfTaxpayerProfile(userId: string): Promise<Record<string, any> | null> {
+  const snapshot = await adminDb.collection("profiles").where("userId", "==", userId).get();
+  const profiles: Record<string, any>[] = snapshot.docs.map(
+    (doc: any) => ({ ...(doc.data() as Record<string, any>), id: doc.id }),
+  );
+  return profiles.find((profile) =>
+    String(profile.relation ?? "").toLowerCase() === "self" && profile.isActive !== false
+  ) ?? null;
+}
+
+async function buildTaxReturnOwnerPrefill(
+  user: Record<string, any>,
+  data: { owner?: "self" | "member"; profileId?: string | null },
+): Promise<{ filingOwner: ItrFilingDraft["filingOwner"]; taxpayer: Partial<Record<string, string>> } | null> {
+  if (!data.owner) return null;
+
+  if (data.owner === "member" && data.profileId) {
+    const profileDoc = await adminDb.collection("profiles").doc(data.profileId).get();
+    const profile = profileDoc.exists ? (profileDoc.data() as Record<string, any>) : null;
+    if (!profile) return null;
+    const { firstName, lastName } = splitTaxpayerFullName(profile.name);
+    return {
+      filingOwner: {
+        mode: "other",
+        personId: profileDoc.id,
+        relationship: String(profile.relation ?? ""),
+        displayName: String(profile.name ?? ""),
+      },
+      taxpayer: {
+        firstName,
+        lastName,
+        pan: decryptPII(profile.pan) ?? "",
+        aadhaar: decryptPII(profile.aadhaar) ?? "",
+        dateOfBirth: typeof profile.dateOfBirth === "string" ? profile.dateOfBirth : "",
+      },
+    };
+  }
+
+  const selfProfile = await findSelfTaxpayerProfile(String(user.id));
+  return {
+    filingOwner: { mode: "self", personId: "", relationship: "", displayName: "" },
+    taxpayer: {
+      firstName: String(user.firstName ?? ""),
+      lastName: String(user.lastName ?? ""),
+      email: String(user.email ?? ""),
+      mobile: String(user.phoneNumber ?? "").replace(/\D/g, "").slice(-10),
+      pan: selfProfile ? decryptPII(selfProfile.pan) ?? "" : "",
+      aadhaar: selfProfile ? decryptPII(selfProfile.aadhaar) ?? "" : "",
+      dateOfBirth: selfProfile && typeof selfProfile.dateOfBirth === "string" ? selfProfile.dateOfBirth : "",
+    },
+  };
+}
+
+function storedTaxReturnOwnerMode(record: Record<string, any>) {
+  try {
+    const raw = typeof record.formData === "string" ? JSON.parse(record.formData) : record.formData;
+    return raw?.filingOwner?.mode === "other" ? "other" : "self";
+  } catch {
+    return "self";
+  }
+}
+
+async function findResumableTaxReturn(
+  userId: string,
+  assessmentYear: string,
+  data: { owner?: "self" | "member"; profileId?: string | null },
+) {
+  if (!data.owner) return null;
+  const snapshot = await adminDb.collection("tax_returns").where("userId", "==", userId).get();
+  const records: Array<{ id: string; data: Record<string, any> }> = snapshot.docs.map(
+    (doc: any) => ({ id: doc.id, data: doc.data() as Record<string, any> }),
+  );
+  return records.find(({ data: record }) => {
+    if (String(record.assessmentYear ?? "") !== assessmentYear) return false;
+    if (!OPEN_TAX_RETURN_STATUSES.has(String(record.status ?? "draft"))) return false;
+    if (data.owner === "member") return record.profileId === data.profileId;
+    return !record.profileId && storedTaxReturnOwnerMode(record) === "self";
+  }) ?? null;
+}
+
 async function getOwnedTaxReturn(userId: string, id?: string | null) {
   if (!id) return null;
   const doc = await adminDb.collection("tax_returns").doc(id).get();
@@ -621,10 +736,29 @@ async function handleTaxReturnsApi(name: string, req: any, res: any, url: URL) {
           return sendJson(res, 400, { error: "Linked profile does not belong to this user." });
         }
 
-        const draft = normalizeItrDraft({
+        const resumable = await findResumableTaxReturn(user.id, data.assessmentYear, data);
+        if (resumable) {
+          const serialized = serializeTaxReturn(resumable.id, resumable.data);
+          return sendJson(res, 200, {
+            success: true,
+            taxReturn: serialized,
+            recommendation: serialized.recommendation,
+            resumed: true,
+          });
+        }
+
+        const baseDraft = normalizeItrDraft({
           ...(typeof data.draft === "object" && data.draft ? data.draft : {}),
           assessmentYear: data.assessmentYear,
         });
+        const ownerPrefill = await buildTaxReturnOwnerPrefill(user, data);
+        const draft = ownerPrefill
+          ? normalizeItrDraft({
+              ...baseDraft,
+              filingOwner: ownerPrefill.filingOwner,
+              taxpayer: fillEmptyTaxpayerFields(baseDraft.taxpayer, ownerPrefill.taxpayer),
+            })
+          : baseDraft;
         const recommendation = recommendItrForm(draft);
         const taxSummary = buildTaxReturnSummary(draft);
         const calculatedTax = computeItrTaxLiability(draft);
@@ -1171,6 +1305,7 @@ async function handleRequest(req: any, res: any) {
     const category = url.searchParams.get("category");
     const year = url.searchParams.get("year");
     const search = url.searchParams.get("search")?.toLowerCase();
+    const taxReturnId = url.searchParams.get("taxReturnId");
     let query: any = adminDb.collection("documents").where("userId", "==", user.id).where("status", "==", "active");
     if (category && category !== "all") query = query.where("category", "==", category);
     if (year && year !== "all") query = query.where("year", "==", year);
@@ -1181,6 +1316,9 @@ async function handleRequest(req: any, res: any) {
       documents = documents.filter((doc: any) =>
         [doc.name, doc.description, doc.originalName].some((value) => String(value ?? "").toLowerCase().includes(search)),
       );
+    }
+    if (taxReturnId) {
+      documents = documents.filter((doc: any) => doc.taxReturnId === taxReturnId);
     }
 
     return sendJson(res, 200, { success: true, documents, total: documents.length });

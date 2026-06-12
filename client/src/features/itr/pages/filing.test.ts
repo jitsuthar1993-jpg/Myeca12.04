@@ -148,7 +148,6 @@ describe("ITR filing workspace", () => {
 
   it("follows the signed-in draft-to-CA-review filing sequence", () => {
     expect(ITR_FILING_STEPS.map((step) => step.id)).toEqual([
-      "owner",
       "identity",
       "income",
       "documents",
@@ -180,7 +179,7 @@ describe("ITR filing workspace", () => {
     });
   });
 
-  it("renders the simplified guided owner step without false verification claims", async () => {
+  it("starts on identity with a prefilled owner chip and no false verification claims", async () => {
     setupApi([taxReturn({
       formData: {
         assessmentYear: "2026-27",
@@ -202,11 +201,29 @@ describe("ITR filing workspace", () => {
     renderFilingPage();
 
     expect(await screen.findByText("Self-prep with CA review")).toBeInTheDocument();
-    expect(screen.getByText("My own ITR")).toBeInTheDocument();
-    expect(screen.getByText("Another person")).toBeInTheDocument();
+    expect(screen.getByText("Filing for Self")).toBeInTheDocument();
+    expect(screen.getByText("CA-assisted")).toBeInTheDocument();
+    expect(screen.getByLabelText("First name")).toBeInTheDocument();
+    expect(screen.queryByText("My own ITR")).not.toBeInTheDocument();
     expect(screen.getByText("Tax liability")).toBeInTheDocument();
     expect(screen.queryByText(/API verified/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/UIDAI verified/i)).not.toBeInTheDocument();
+  });
+
+  it("labels member drafts with the saved person's name", async () => {
+    setupApi([taxReturn({
+      formData: {
+        assessmentYear: "2026-27",
+        filingOwner: { mode: "other", personId: "profile_1", relationship: "mother", displayName: "Asha Suthar" },
+        taxpayer: { type: "individual", residentialStatus: "resident" },
+        income: {},
+      },
+    })]);
+
+    renderFilingPage();
+
+    expect(await screen.findByText("Filing for Asha Suthar")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Change" })).toHaveAttribute("href", "/itr/filing/new");
   });
 
   it("shows a retryable error when filing drafts fail to load", async () => {
@@ -327,9 +344,6 @@ describe("ITR filing workspace", () => {
 
     renderFilingPage();
 
-    expect(await screen.findByText("My own ITR")).toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
-
     expect(await screen.findByLabelText("First name")).toBeInTheDocument();
     expect(screen.queryByLabelText("PAN")).not.toBeInTheDocument();
 
@@ -337,7 +351,7 @@ describe("ITR filing workspace", () => {
     expect(await screen.findByLabelText("PAN")).toBeInTheDocument();
 
     window.dispatchEvent(new PopStateEvent("popstate", {
-      state: { myecaItrPane: { step: 1, pane: 0 } },
+      state: { myecaItrPane: { step: 0, pane: 0 } },
     }));
     expect(await screen.findByLabelText("First name")).toBeInTheDocument();
     expect(screen.queryByLabelText("PAN")).not.toBeInTheDocument();
@@ -358,7 +372,6 @@ describe("ITR filing workspace", () => {
     renderFilingPage();
 
     await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
-    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
     expect(await screen.findByLabelText("PAN")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
@@ -409,7 +422,7 @@ describe("ITR filing workspace", () => {
     setupApi([taxReturn({ formData: validDraft() })]);
     renderFilingPage();
 
-    for (let index = 0; index < 5; index += 1) {
+    for (let index = 0; index < 4; index += 1) {
       await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
     }
     const accountInput = await screen.findByLabelText("Account number");
@@ -428,7 +441,6 @@ describe("ITR filing workspace", () => {
     setupApi([taxReturn({ formData: validDraft() })]);
     renderFilingPage();
 
-    await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
     const firstName = await screen.findByLabelText("First name");
     firstName.focus();
     await userEvent.keyboard("{Enter}");
@@ -450,7 +462,7 @@ describe("ITR filing workspace", () => {
     })]);
     renderFilingPage();
 
-    for (let index = 0; index < 6; index += 1) {
+    for (let index = 0; index < 5; index += 1) {
       await userEvent.click(await screen.findByRole("button", { name: /Continue/i }));
     }
     expect(await screen.findByText("No income to report")).toBeInTheDocument();

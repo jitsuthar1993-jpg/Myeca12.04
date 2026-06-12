@@ -33,8 +33,17 @@ const router = Router();
 const createTaxReturnSchema = z.object({
   assessmentYear: z.string().trim().min(1).default("2026-27"),
   profileId: z.string().trim().min(1).nullable().optional(),
+  owner: z.enum(["self", "member"]).optional(),
   draft: z.unknown().optional(),
   attribution: campaignAttributionSchema.optional(),
+}).superRefine((data, ctx) => {
+  if (data.owner === "member" && !data.profileId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["profileId"],
+      message: "Select the saved member to file for.",
+    });
+  }
 });
 
 const updateTaxReturnSchema = z.object({
@@ -202,6 +211,114 @@ async function resolveTargetUserId(req: AuthRequest) {
   return authUserId;
 }
 
+const OPEN_DRAFT_STATUSES = new Set(["draft", "changes_requested"]);
+
+function splitFullName(name: unknown) {
+  const parts = String(name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { firstName: "", lastName: "" };
+  if (parts.length === 1) return { firstName: parts[0], lastName: "" };
+  return { firstName: parts.slice(0, -1).join(" "), lastName: parts[parts.length - 1] };
+}
+
+function fillEmptyTaxpayerFields(
+  taxpayer: ItrFilingDraft["taxpayer"],
+  prefill: Partial<Record<string, string>>,
+) {
+  const next: Record<string, unknown> = { ...taxpayer };
+  for (const [field, value] of Object.entries(prefill)) {
+    if (!value) continue;
+    const current = next[field];
+    if (typeof current !== "string" || !current.trim()) {
+      next[field] = value;
+    }
+  }
+  return next as ItrFilingDraft["taxpayer"];
+}
+
+async function findSelfProfile(userId: string): Promise<Record<string, any> | null> {
+  const snapshot = await adminDb.collection("profiles").where("userId", "==", userId).get();
+  const profiles: Record<string, any>[] = snapshot.docs.map(
+    (doc) => ({ ...(doc.data() as Record<string, any>), id: doc.id }),
+  );
+  return profiles.find((profile) =>
+    String(profile.relation ?? "").toLowerCase() === "self" && profile.isActive !== false
+  ) ?? null;
+}
+
+type OwnerPrefill = {
+  filingOwner: ItrFilingDraft["filingOwner"];
+  taxpayer: Partial<Record<string, string>>;
+};
+
+async function buildOwnerPrefill(
+  req: AuthRequest,
+  userId: string,
+  data: { owner?: "self" | "member"; profileId?: string | null },
+): Promise<OwnerPrefill | null> {
+  if (!data.owner) return null;
+
+  if (data.owner === "member" && data.profileId) {
+    const profileDoc = await adminDb.collection("profiles").doc(data.profileId).get();
+    const profile = profileDoc.exists ? (profileDoc.data() as Record<string, any>) : null;
+    if (!profile) return null;
+    const { firstName, lastName } = splitFullName(profile.name);
+    return {
+      filingOwner: {
+        mode: "other",
+        personId: profileDoc.id,
+        relationship: String(profile.relation ?? ""),
+        displayName: String(profile.name ?? ""),
+      },
+      taxpayer: {
+        firstName,
+        lastName,
+        pan: decryptPII(profile.pan) ?? "",
+        aadhaar: decryptPII(profile.aadhaar) ?? "",
+        dateOfBirth: typeof profile.dateOfBirth === "string" ? profile.dateOfBirth : "",
+      },
+    };
+  }
+
+  const user = (req.user ?? {}) as Record<string, any>;
+  const selfProfile = await findSelfProfile(userId);
+  return {
+    filingOwner: { mode: "self", personId: "", relationship: "", displayName: "" },
+    taxpayer: {
+      firstName: String(user.firstName ?? ""),
+      lastName: String(user.lastName ?? ""),
+      email: String(user.email ?? ""),
+      mobile: String(user.phoneNumber ?? "").replace(/\D/g, "").slice(-10),
+      pan: selfProfile ? decryptPII(selfProfile.pan) ?? "" : "",
+      aadhaar: selfProfile ? decryptPII(selfProfile.aadhaar) ?? "" : "",
+      dateOfBirth: selfProfile && typeof selfProfile.dateOfBirth === "string" ? selfProfile.dateOfBirth : "",
+    },
+  };
+}
+
+function storedFilingOwnerMode(record: Record<string, any>) {
+  try {
+    const raw = typeof record.formData === "string" ? JSON.parse(record.formData) : record.formData;
+    return raw?.filingOwner?.mode === "other" ? "other" : "self";
+  } catch {
+    return "self";
+  }
+}
+
+async function findResumableTaxReturn(
+  userId: string,
+  assessmentYear: string,
+  data: { owner?: "self" | "member"; profileId?: string | null },
+) {
+  if (!data.owner) return null;
+  const records = await getUserOwnedRecords("tax_returns", userId);
+  return records.find((record) => {
+    if (String(record.assessmentYear ?? "") !== assessmentYear) return false;
+    if (!OPEN_DRAFT_STATUSES.has(String(record.status ?? "draft"))) return false;
+    if (data.owner === "member") return record.profileId === data.profileId;
+    return !record.profileId && storedFilingOwnerMode(record) === "self";
+  }) ?? null;
+}
+
 async function assertProfileCanBeLinked(userId: string, profileId?: string | null) {
   if (!profileId) return;
   if (await recordBelongsToUser("profiles", profileId, userId)) return;
@@ -254,10 +371,29 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     const data = createTaxReturnSchema.parse(req.body);
     await assertProfileCanBeLinked(userId, data.profileId);
 
-    const draft = normalizeItrDraft({
+    const resumable = await findResumableTaxReturn(userId, data.assessmentYear, data);
+    if (resumable) {
+      const serialized = serializeTaxReturn(String(resumable.id), resumable);
+      return res.json({
+        success: true,
+        taxReturn: serialized,
+        recommendation: serialized.recommendation,
+        resumed: true,
+      });
+    }
+
+    const baseDraft = normalizeItrDraft({
       ...(typeof data.draft === "object" && data.draft ? data.draft : {}),
       assessmentYear: data.assessmentYear,
     });
+    const ownerPrefill = await buildOwnerPrefill(req, userId, data);
+    const draft = ownerPrefill
+      ? normalizeItrDraft({
+          ...baseDraft,
+          filingOwner: ownerPrefill.filingOwner,
+          taxpayer: fillEmptyTaxpayerFields(baseDraft.taxpayer, ownerPrefill.taxpayer),
+        })
+      : baseDraft;
     const recommendation = recommendItrForm(draft);
     const taxSummary = buildTaxSummary(draft);
     const calculatedTax = computeItrTaxLiability(draft);

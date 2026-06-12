@@ -1,7 +1,6 @@
 import type { ItrDocumentChecklistItem } from "@shared/itr-filing";
 
 export const FILING_STEP_IDS = [
-  "owner",
   "identity",
   "income",
   "documents",
@@ -23,9 +22,6 @@ export type FilingStepId = (typeof FILING_STEP_IDS)[number];
 export type IncomePaneType = (typeof INCOME_PANE_TYPES)[number];
 
 export type FilingPaneDraft = {
-  filingOwner?: {
-    mode?: "self" | "other";
-  };
   income?: {
     selectedTypes?: readonly IncomePaneType[];
     [key: string]: unknown;
@@ -40,7 +36,7 @@ export type FilingPane = {
   document?: ItrDocumentChecklistItem;
 };
 
-const STATIC_PANES: Record<Exclude<FilingStepId, "owner" | "income" | "documents">, readonly FilingPane[]> = {
+const STATIC_PANES: Record<Exclude<FilingStepId, "income" | "documents">, readonly FilingPane[]> = {
   identity: [
     { id: "identity-name", stepId: "identity", title: "Name and date of birth", description: "Enter the taxpayer's basic identity details." },
     { id: "identity-pan-aadhaar", stepId: "identity", title: "PAN and Aadhaar", description: "Add the identifiers used for income-tax filing." },
@@ -74,15 +70,6 @@ export function getPanesForStep(
   draft: FilingPaneDraft,
   documentChecklist: readonly ItrDocumentChecklistItem[] = [],
 ): FilingPane[] {
-  if (stepId === "owner") {
-    return [
-      { id: "owner-choice", stepId, title: "Who are you filing for?", description: "Choose your own ITR or another person's draft." },
-      ...(draft.filingOwner?.mode === "other"
-        ? [{ id: "owner-person", stepId, title: "Identify the taxpayer", description: "Choose a saved taxpayer or add a private label." } satisfies FilingPane]
-        : []),
-    ];
-  }
-
   if (stepId === "income") {
     const selectedTypes = draft.income?.selectedTypes ?? [];
     return [

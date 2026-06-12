@@ -98,6 +98,7 @@ vi.mock("../../../server/middleware/auth.js", () => {
 });
 
 const { default: taxReturnsRouter } = await import("../../../server/routes/tax-returns.js");
+const { encryptPII } = await import("../../../server/utils/encryption.js");
 
 function resetStore() {
   mockState.store.clear();
@@ -220,6 +221,97 @@ describe("tax return routes", () => {
     expect(json.taxReturn.formData.taxpayer.bankAccount).toBe("123456789012");
     expect(json.taxReturn.calculatedTax.status).toBe("computed");
     expect(json.taxReturn.calculatedTax.refundDue).toBe(65000);
+  });
+
+  it("prefills a member draft from the saved profile and encrypts it at rest", async () => {
+    seed("profiles", "profile_mom", {
+      id: "profile_mom",
+      userId: "user_1",
+      name: "Asha Kumari Suthar",
+      relation: "mother",
+      pan: encryptPII("FGHIJ5678K"),
+      dateOfBirth: "1965-04-12",
+    });
+
+    const { response, json } = await request("/api/tax-returns", {
+      method: "POST",
+      body: JSON.stringify({
+        assessmentYear: "2026-27",
+        owner: "member",
+        profileId: "profile_mom",
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json.resumed).toBeUndefined();
+    expect(json.taxReturn.formData.filingOwner).toMatchObject({
+      mode: "other",
+      personId: "profile_mom",
+      relationship: "mother",
+      displayName: "Asha Kumari Suthar",
+    });
+    expect(json.taxReturn.formData.taxpayer.firstName).toBe("Asha Kumari");
+    expect(json.taxReturn.formData.taxpayer.lastName).toBe("Suthar");
+    expect(json.taxReturn.formData.taxpayer.pan).toBe("FGHIJ5678K");
+    expect(json.taxReturn.formData.taxpayer.dateOfBirth).toBe("1965-04-12");
+
+    const stored = collectionStore("tax_returns").get("tax_returns_1");
+    const storedDraft = JSON.parse(String(stored?.formData || "{}"));
+    expect(storedDraft.taxpayer.pan).toMatch(/^enc:v1:/);
+  });
+
+  it("prefills a self draft from the account and self profile", async () => {
+    seed("profiles", "profile_self", {
+      id: "profile_self",
+      userId: "user_1",
+      name: "Jit Suthar",
+      relation: "self",
+      pan: encryptPII("ABCDE1234F"),
+    });
+
+    const { response, json } = await request("/api/tax-returns", {
+      method: "POST",
+      body: JSON.stringify({ assessmentYear: "2026-27", owner: "self" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(json.taxReturn.formData.filingOwner.mode).toBe("self");
+    expect(json.taxReturn.formData.taxpayer.pan).toBe("ABCDE1234F");
+    expect(json.taxReturn.formData.taxpayer.email).toBe("user_1@example.com");
+  });
+
+  it("resumes an open draft for the same owner and assessment year instead of duplicating", async () => {
+    seed("profiles", "profile_mom", {
+      id: "profile_mom",
+      userId: "user_1",
+      name: "Asha Suthar",
+      relation: "mother",
+    });
+
+    const first = await request("/api/tax-returns", {
+      method: "POST",
+      body: JSON.stringify({ assessmentYear: "2026-27", owner: "member", profileId: "profile_mom" }),
+    });
+    const second = await request("/api/tax-returns", {
+      method: "POST",
+      body: JSON.stringify({ assessmentYear: "2026-27", owner: "member", profileId: "profile_mom" }),
+    });
+
+    expect(first.json.resumed).toBeUndefined();
+    expect(second.response.status).toBe(200);
+    expect(second.json.resumed).toBe(true);
+    expect(second.json.taxReturn.id).toBe(first.json.taxReturn.id);
+    expect(collectionStore("tax_returns").size).toBe(1);
+  });
+
+  it("requires a profile id when filing for a member", async () => {
+    const { response, json } = await request("/api/tax-returns", {
+      method: "POST",
+      body: JSON.stringify({ assessmentYear: "2026-27", owner: "member" }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(json.error).toContain("member");
   });
 
   it("blocks profile links that belong to another user", async () => {

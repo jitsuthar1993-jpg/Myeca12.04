@@ -19,6 +19,7 @@ export function FilingProgressHeader({
   paneCount = 1,
   saveState,
   recommendation,
+  ownerLabel,
   visitedSteps = [],
   onStepChange,
 }: {
@@ -28,6 +29,7 @@ export function FilingProgressHeader({
   paneCount?: number;
   saveState: FilingSaveState;
   recommendation?: string;
+  ownerLabel?: string;
   visitedSteps?: readonly number[];
   onStepChange?: (step: number) => void;
 }) {
@@ -47,6 +49,7 @@ export function FilingProgressHeader({
           </p>
           <p className="text-xs font-semibold text-slate-500">
             Pane {Math.min(currentPane + 1, paneCount)} of {paneCount}
+            {ownerLabel ? <> {"·"} {ownerLabel}</> : null}
           </p>
         </div>
         <div className="flex items-center gap-2">

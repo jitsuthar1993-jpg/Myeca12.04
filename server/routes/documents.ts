@@ -411,7 +411,7 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     const userId = await resolveTargetUserId(req);
     if (!userId) return errorResponse(res, 401, "Unauthorized");
 
-    const { category, year, search } = req.query;
+    const { category, year, search, taxReturnId } = req.query;
     let query: any = adminDb.collection("documents")
       .where("userId", "==", userId)
       .where("status", "==", "active");
@@ -426,6 +426,10 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
 
     const snapshot = await query.get();
     let docs = snapshot.docs.map((doc: any) => serializeDocument(doc.id, doc.data()));
+
+    if (taxReturnId && typeof taxReturnId === "string") {
+      docs = docs.filter((d: any) => d.taxReturnId === taxReturnId);
+    }
 
     if (search) {
       const searchTerm = (search as string).toLowerCase();

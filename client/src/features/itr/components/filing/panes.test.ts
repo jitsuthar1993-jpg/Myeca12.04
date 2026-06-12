@@ -4,7 +4,6 @@ import { getPanesForStep, type FilingPaneDraft, type FilingStepId } from "./pane
 
 function draft(overrides: Partial<FilingPaneDraft> = {}): FilingPaneDraft {
   return {
-    filingOwner: { mode: "self" },
     income: { selectedTypes: [] },
     ...overrides,
   };
@@ -13,7 +12,6 @@ function draft(overrides: Partial<FilingPaneDraft> = {}): FilingPaneDraft {
 describe("getPanesForStep", () => {
   it("defines panes for every macro step", () => {
     const steps: FilingStepId[] = [
-      "owner",
       "identity",
       "income",
       "documents",
@@ -25,20 +23,6 @@ describe("getPanesForStep", () => {
     for (const step of steps) {
       expect(getPanesForStep(step, draft(), [])).not.toHaveLength(0);
     }
-  });
-
-  it("adds the person pane only when filing for another person", () => {
-    expect(getPanesForStep("owner", draft(), []).map((pane) => pane.id)).toEqual([
-      "owner-choice",
-    ]);
-
-    expect(
-      getPanesForStep(
-        "owner",
-        draft({ filingOwner: { mode: "other" } }),
-        [],
-      ).map((pane) => pane.id),
-    ).toEqual(["owner-choice", "owner-person"]);
   });
 
   it("derives income panes from selectedTypes without inspecting amount values", () => {

@@ -16,8 +16,8 @@ import {
   ShieldCheck,
   Sparkles,
   UserRound,
-  UsersRound,
 } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -36,6 +36,7 @@ import {
   TextInput,
   ToggleRow,
 } from "@/features/itr/components/filing/guided-filing-ui";
+import { CaAssistStrip } from "@/features/itr/components/CaAssistStrip";
 import { CollapsibleFlags } from "@/features/itr/components/filing/CollapsibleFlags";
 import { CurrencyInput } from "@/features/itr/components/filing/CurrencyInput";
 import { DocumentCaptureCard, type DocumentCaptureStatus } from "@/features/itr/components/filing/DocumentCaptureCard";
@@ -80,11 +81,6 @@ import {
 } from "@shared/itr-filing";
 
 export const ITR_FILING_STEPS = [
-  {
-    id: "owner",
-    title: "Owner",
-    description: "Choose whether this is your own ITR or another person's draft.",
-  },
   {
     id: "identity",
     title: "Identity",
@@ -169,14 +165,22 @@ type DocumentUploadState = {
 };
 
 const FILING_HISTORY_KEY = "myecaItrPane";
+const FILING_RETURN_PATH_PATTERN = /^\/itr\/filing\/([^/?#]+)\/?$/;
 
 function readFilingHistoryPosition() {
-  if (typeof window === "undefined" || window.location.pathname !== "/itr/filing") return { step: 0, pane: 0 };
+  if (typeof window === "undefined" || !window.location.pathname.startsWith("/itr/filing")) return { step: 0, pane: 0 };
   const marker = window.history.state?.[FILING_HISTORY_KEY] as { step?: number; pane?: number } | undefined;
   return {
     step: typeof marker?.step === "number" ? Math.max(0, Math.min(marker.step, ITR_FILING_STEPS.length - 1)) : 0,
     pane: typeof marker?.pane === "number" ? Math.max(0, marker.pane) : 0,
   };
+}
+
+function readReturnIdFromPath() {
+  if (typeof window === "undefined") return null;
+  const match = window.location.pathname.match(FILING_RETURN_PATH_PATTERN);
+  if (!match || match[1] === "new") return null;
+  return decodeURIComponent(match[1]);
 }
 
 const STARTER_DRAFT = normalizeItrDraft({
@@ -254,12 +258,6 @@ function maskDigits(value: string, visible = 4) {
   return `${"X".repeat(digits.length - visible)}${digits.slice(-visible)}`;
 }
 
-function savedTaxpayerLabel(returnRecord: TaxReturnRecord) {
-  const taxpayer = normalizeItrDraft(returnRecord.formData).taxpayer;
-  const name = `${taxpayer.firstName} ${taxpayer.lastName}`.trim();
-  return name || taxpayer.pan || `Draft ${returnRecord.id}`;
-}
-
 function incomeToggleSelected(draft: ItrFilingDraft, key: (typeof INCOME_TOGGLES)[number]["key"]) {
   return draft.income.selectedTypes.includes(key);
 }
@@ -316,7 +314,7 @@ export default function ITRFilingPage() {
   const [currentStep, setCurrentStep] = useState(() => readFilingHistoryPosition().step);
   const [currentPane, setCurrentPane] = useState(() => readFilingHistoryPosition().pane);
   const [visitedSteps, setVisitedSteps] = useState<number[]>([0]);
-  const [activeReturnId, setActiveReturnId] = useState<string | null>(null);
+  const [activeReturnId, setActiveReturnId] = useState<string | null>(() => readReturnIdFromPath());
   const [draft, setDraft] = useState<ItrFilingDraft>(STARTER_DRAFT);
   const [selectorHandoff, setSelectorHandoff] = useState<ItrStartHandoffPayload | null>(null);
   const [handoffChecked, setHandoffChecked] = useState(false);
@@ -341,6 +339,9 @@ export default function ITRFilingPage() {
   const taxReturns = taxReturnsQuery.data?.taxReturns ?? [];
   const activeReturn = taxReturns.find((item) => item.id === activeReturnId) ?? taxReturns[0] ?? null;
   const reviewSubmitted = activeReturn?.status === "ready_for_review";
+  const filingOwnerName = draft.filingOwner.mode === "other"
+    ? (draft.filingOwner.displayName || "Family member")
+    : "Self";
   const saveDraft = useCallback(async (draftToSave: ItrFilingDraft, { keepalive }: { keepalive: boolean }) => {
     if (!activeReturnId) throw new Error("Save a draft before updating it.");
     try {
@@ -372,7 +373,7 @@ export default function ITRFilingPage() {
 
   const documentsQuery = useQuery<DocumentsResponse>({
     queryKey: ["/api/documents"],
-    enabled: Boolean(activeReturn) && currentStep >= 3,
+    enabled: Boolean(activeReturn) && currentStep >= 2,
     queryFn: async () => {
       const response = await apiRequest("/api/documents");
       return response.json();
@@ -408,10 +409,12 @@ export default function ITRFilingPage() {
   const paneVisible = (paneId: string) => !isMobile || activePane?.id === paneId;
 
   useEffect(() => {
-    if (!activeReturnId && taxReturns[0]?.id) {
+    if (taxReturnsQuery.isLoading) return;
+    if (activeReturnId && taxReturns.some((item) => item.id === activeReturnId)) return;
+    if (taxReturns[0]?.id) {
       setActiveReturnId(taxReturns[0].id);
     }
-  }, [activeReturnId, taxReturns]);
+  }, [activeReturnId, taxReturns, taxReturnsQuery.isLoading]);
 
   useEffect(() => {
     if (taxReturnsQuery.isLoading || handoffChecked) return;
@@ -662,10 +665,6 @@ export default function ITRFilingPage() {
     });
   };
 
-  const updateOwner = (patch: Partial<ItrFilingDraft["filingOwner"]>) => {
-    updateDraft((current) => ({ ...current, filingOwner: { ...current.filingOwner, ...patch } }));
-  };
-
   const updateTaxpayer = (patch: Partial<ItrFilingDraft["taxpayer"]>) => {
     updateDraft((current) => ({ ...current, taxpayer: { ...current.taxpayer, ...patch } }));
   };
@@ -889,17 +888,26 @@ export default function ITRFilingPage() {
               </div>
             </div>
           ) : null}
-          <Button
-            className="mt-6 bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => {
-              createDraftMutation.reset();
-              createDraftMutation.mutate({});
-            }}
-            disabled={createDraftMutation.isPending}
-          >
-            {createDraftMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Start from scratch
-          </Button>
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+            <Link href="/itr/filing/new">
+              <Button type="button" className="w-full bg-blue-600 text-white hover:bg-blue-700 sm:w-auto">
+                <UserRound className="h-4 w-4" />
+                Choose who you're filing for
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              className="border-blue-100 bg-blue-50 font-black text-blue-700 hover:bg-blue-100"
+              onClick={() => {
+                createDraftMutation.reset();
+                createDraftMutation.mutate({});
+              }}
+              disabled={createDraftMutation.isPending}
+            >
+              {createDraftMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              Start from scratch
+            </Button>
+          </div>
         </MyeCard>
       </Layout>
     );
@@ -914,6 +922,7 @@ export default function ITRFilingPage() {
         paneCount={currentPanes.length}
         saveState={saveState}
         recommendation={recommendation.form.replace(/_/g, " ")}
+        ownerLabel={filingOwnerName}
         visitedSteps={visitedSteps}
         onStepChange={(step) => navigateTo(step, 0)}
       /> : null}
@@ -926,6 +935,16 @@ export default function ITRFilingPage() {
               <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">
                 AY 2026-27 filing workspace.
               </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-800">
+                  <UserRound className="h-3.5 w-3.5" />
+                  Filing for {filingOwnerName}
+                </span>
+                <Link href="/itr/filing/new" className="text-xs font-black text-blue-700 underline-offset-2 hover:underline">
+                  Change
+                </Link>
+                <CaAssistStrip variant="pill" />
+              </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[520px]">
               <StatusBadge status={recommendationStatus(recommendation) as any} label={recommendation.form.replace(/_/g, " ")} />
@@ -1044,74 +1063,6 @@ export default function ITRFilingPage() {
                 ))}
               </div>
             ) : null}
-            {currentStepId === "owner" && (
-              <div className="space-y-5">
-                <PaneSection visible={paneVisible("owner-choice")} className="grid gap-3 md:grid-cols-2">
-                  <ChoiceButton
-                    selected={draft.filingOwner.mode === "self"}
-                    title="My own ITR"
-                    description="Prepare the signed-in user's income-tax draft."
-                    onClick={() => updateOwner({ mode: "self", personId: "", relationship: "", displayName: "" })}
-                  />
-                  <ChoiceButton
-                    selected={draft.filingOwner.mode === "other"}
-                    title="Another person"
-                    description="Prepare an ITR draft for a family member, client, or saved taxpayer."
-                    onClick={() => updateOwner({ mode: "other" })}
-                  />
-                </PaneSection>
-                {draft.filingOwner.mode === "other" && paneVisible("owner-person") ? (
-                  <div className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
-                    <div>
-                      <Label>Previous list</Label>
-                      <Select
-                        value={draft.filingOwner.personId || "manual"}
-                        onValueChange={(value) => {
-                          if (value === "manual") {
-                            updateOwner({ personId: "", displayName: "" });
-                            return;
-                          }
-
-                          const selectedReturn = taxReturns.find((item) => item.id === value);
-                          updateOwner({
-                            personId: value,
-                            displayName: selectedReturn ? savedTaxpayerLabel(selectedReturn) : "",
-                          });
-                        }}
-                      >
-                        <SelectTrigger className="mt-2 h-11 rounded-lg">
-                          <SelectValue placeholder="Select saved taxpayer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="manual">Add new person</SelectItem>
-                          {taxReturns.map((item) => (
-                            <SelectItem key={item.id} value={item.id}>{savedTaxpayerLabel(item)}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <TextInput
-                      label="Person label"
-                      value={draft.filingOwner.displayName}
-                      onChange={(value) => updateOwner({ displayName: value })}
-                      helper="Used only to identify this private draft."
-                    />
-                    <div className="flex items-end">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="h-11 border-blue-100 bg-blue-50 font-black text-blue-700 hover:bg-blue-100"
-                        onClick={() => updateOwner({ personId: "", displayName: "", relationship: "" })}
-                      >
-                        <UsersRound className="h-4 w-4" />
-                        Add new person
-                      </Button>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            )}
-
             {currentStepId === "identity" && (
               <div className="space-y-6">
                 <PaneSection visible={paneVisible("identity-name")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -1254,10 +1205,13 @@ export default function ITRFilingPage() {
 
             {currentStepId === "documents" && (
               <div className="space-y-5">
-                <PaneSection visible={paneVisible("documents-overview")} className="grid gap-3 sm:grid-cols-3">
-                  <Metric label="Required" value={String(requiredDocumentCount)} />
-                  <Metric label="Linked" value={String(documentChecklist.filter((document) => Boolean(draft.documents[document.id])).length)} />
-                  <Metric label="Provide later" value={String(documentChecklist.filter((document) => draft.documentDeferrals[document.id]).length)} />
+                <PaneSection visible={paneVisible("documents-overview")} className="space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <Metric label="Required" value={String(requiredDocumentCount)} />
+                    <Metric label="Linked" value={String(documentChecklist.filter((document) => Boolean(draft.documents[document.id])).length)} />
+                    <Metric label="Provide later" value={String(documentChecklist.filter((document) => draft.documentDeferrals[document.id]).length)} />
+                  </div>
+                  <CaAssistStrip variant="inline" />
                 </PaneSection>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {documentChecklist.map((document) => {
@@ -1429,7 +1383,7 @@ export default function ITRFilingPage() {
           </div>
         </MyeCard>
 
-        {currentStep >= 2 ? (
+        {currentStep >= 1 ? (
           <div className="fixed inset-x-4 bottom-[calc(10.1rem+env(safe-area-inset-bottom))] z-[59] md:hidden">
             <LiabilityChip liability={taxLiability} onClick={() => setLiabilityOpen(true)} />
           </div>

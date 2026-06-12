@@ -105,6 +105,7 @@ vi.mock("sharp", () => ({
 }));
 
 const { default: handler } = await import("../../../api/index.js");
+const { encryptPII } = await import("../../../server/utils/encryption.js");
 
 function resetStore() {
   mockState.store.clear();
@@ -221,5 +222,56 @@ describe("Vercel tax-return API dispatch", () => {
     const stored = collectionStore("tax_returns").get("tax_returns_1");
     const storedDraft = JSON.parse(String(stored?.formData || "{}"));
     expect(storedDraft.taxpayer.pan).toMatch(/^enc:v1:/);
+  });
+
+  it("prefills a member draft from the saved profile through api/index", async () => {
+    seed("profiles", "profile_mom", {
+      id: "profile_mom",
+      userId: "user_1",
+      name: "Asha Suthar",
+      relation: "mother",
+      pan: encryptPII("FGHIJ5678K"),
+      dateOfBirth: "1965-04-12",
+    });
+
+    const res = await callApi("/api/tax-returns", {
+      method: "POST",
+      body: { assessmentYear: "2026-27", owner: "member", profileId: "profile_mom" },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.taxReturn.formData.filingOwner).toMatchObject({
+      mode: "other",
+      personId: "profile_mom",
+      relationship: "mother",
+      displayName: "Asha Suthar",
+    });
+    expect(res.body.taxReturn.formData.taxpayer.firstName).toBe("Asha");
+    expect(res.body.taxReturn.formData.taxpayer.lastName).toBe("Suthar");
+    expect(res.body.taxReturn.formData.taxpayer.pan).toBe("FGHIJ5678K");
+  });
+
+  it("resumes an open draft for the same owner instead of duplicating through api/index", async () => {
+    seed("profiles", "profile_mom", {
+      id: "profile_mom",
+      userId: "user_1",
+      name: "Asha Suthar",
+      relation: "mother",
+    });
+
+    const first = await callApi("/api/tax-returns", {
+      method: "POST",
+      body: { assessmentYear: "2026-27", owner: "member", profileId: "profile_mom" },
+    });
+    const second = await callApi("/api/tax-returns", {
+      method: "POST",
+      body: { assessmentYear: "2026-27", owner: "member", profileId: "profile_mom" },
+    });
+
+    expect(first.body.resumed).toBeUndefined();
+    expect(second.statusCode).toBe(200);
+    expect(second.body.resumed).toBe(true);
+    expect(second.body.taxReturn.id).toBe(first.body.taxReturn.id);
+    expect(collectionStore("tax_returns").size).toBe(1);
   });
 });

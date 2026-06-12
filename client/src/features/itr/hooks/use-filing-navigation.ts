@@ -7,7 +7,7 @@ function clamp(value: number, maximum: number) {
 }
 
 function readPosition(stepPaneIds: readonly (readonly string[])[]) {
-  if (typeof window === "undefined" || window.location.pathname !== "/itr/filing") return { step: 0, pane: 0 };
+  if (typeof window === "undefined" || !window.location.pathname.startsWith("/itr/filing")) return { step: 0, pane: 0 };
   const marker = window.history.state?.[HISTORY_KEY] as { step?: number; pane?: number } | undefined;
   const step = clamp(typeof marker?.step === "number" ? marker.step : 0, stepPaneIds.length - 1);
   return {

@@ -157,6 +157,8 @@ const UpdatesManagementPage = lazyWithRetry(() => import("@/pages/admin/updates-
 const MediaManagementPage = lazyWithRetry(() => import("@/pages/admin/media-management.page"));
 const TeamDashboard = lazyWithRetry(() => import("@/pages/team/dashboard.page"));
 const ITRFilingPage = lazyWithRetry(() => import("@/features/itr/pages/filing.page"));
+const ITRHubPage = lazyWithRetry(() => import("@/features/itr/pages/hub.page"));
+const ITRNewFilingPage = lazyWithRetry(() => import("@/features/itr/pages/new-filing.page"));
 const ITRStartPage = lazyWithRetry(() => import("@/features/itr/pages/start.page"));
 const ITRFormSelectorPage = lazyWithRetry(() => import("@/features/itr/pages/form-selector.page"));
 const ITRFormRecommenderPage = lazyWithRetry(() => import("@/features/itr/pages/form-recommender.page"));
@@ -458,7 +460,9 @@ function RouteSwitch() {
         <Route path="/which-itr-form-to-file" component={ITRStartPage} />
         <Route path="/itr/form-selector" component={ITRFormSelectorPage} />
         <Route path="/itr/form-recommender" component={ITRFormRecommenderPage} />
-        <Route path="/itr/filing" component={() => <RequireAuth><ITRFilingPage /></RequireAuth>} />
+        <Route path="/itr/filing" component={() => <RequireAuth><ITRHubPage /></RequireAuth>} />
+        <Route path="/itr/filing/new" component={() => <RequireAuth><ITRNewFilingPage /></RequireAuth>} />
+        <Route path="/itr/filing/:returnId" component={() => <RequireAuth><ITRFilingPage /></RequireAuth>} />
         <Route path="/itr/success" component={ITRSuccessPage} />
         <Route path="/itr/step-by-step-guide" component={ITRStepByStepGuide} />
         <Route path="/itr/compact-filing" component={CompactFilingGuidePage} />
