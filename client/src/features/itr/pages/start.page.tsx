@@ -15,7 +15,6 @@ import {
   FileCheck2,
   FileText,
   Landmark,
-  ShieldCheck,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
@@ -477,40 +476,7 @@ export default function ITRStartPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 pb-32 pt-5 sm:px-6 sm:pt-8">
-        <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">
-                Step {currentStep + 1} of {ITR_START_STEPS.length}
-              </p>
-              <h1 className="mt-1 text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
-                Individual ITR form selector
-              </h1>
-            </div>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-          </div>
-          <Progress
-            value={progress}
-            aria-label="ITR selector progress"
-            className="mt-4 h-2 bg-slate-100"
-            indicatorClassName="bg-blue-600 motion-reduce:transition-none"
-          />
-          <div className="mt-3 flex items-center justify-between" aria-hidden="true">
-            {ITR_START_STEPS.map((step, index) => (
-              <span
-                key={step.id}
-                className={cn(
-                  "h-2.5 w-2.5 rounded-full transition-colors motion-reduce:transition-none",
-                  index < currentStep && "bg-emerald-500",
-                  index === currentStep && "bg-blue-600 ring-4 ring-blue-100",
-                  index > currentStep && "bg-slate-200",
-                )}
-              />
-            ))}
-          </div>
-        </section>
+        <h1 className="sr-only">Individual ITR form selector</h1>
 
         <AnimatePresence initial={false} mode="wait" custom={direction}>
           <m.section
@@ -677,27 +643,45 @@ export default function ITRStartPage() {
         </AnimatePresence>
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-14px_36px_-28px_rgba(15,23,42,0.55)] backdrop-blur sm:px-6">
-        <div className="mx-auto flex max-w-3xl items-center gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={goBack}
-            disabled={currentStep === 0}
-            className="h-12 min-w-[104px] rounded-xl font-black"
+      <div
+        data-testid="itr-selector-bottom-bar"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-14px_36px_-28px_rgba(15,23,42,0.55)] backdrop-blur sm:px-6"
+      >
+        <div className="mx-auto max-w-3xl">
+          <div
+            data-testid="itr-selector-progress-strip"
+            className="mb-2 px-1"
           >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <Button
-            type="button"
-            onClick={isResultStep ? handleContinue : goNext}
-            disabled={isLoading}
-            className="h-12 flex-1 rounded-xl bg-blue-700 font-black text-white shadow-sm hover:bg-blue-800"
-          >
-            {isResultStep ? "Continue to MY ITR" : "Next"}
-            {isResultStep ? <ArrowRight className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-          </Button>
+            <Progress
+              value={progress}
+              aria-label="ITR selector progress"
+              aria-valuenow={Math.round(progress)}
+              className="h-1.5 bg-slate-200"
+              indicatorClassName="bg-blue-600 motion-reduce:transition-none"
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={goBack}
+              disabled={currentStep === 0}
+              className="h-12 min-w-[104px] rounded-xl font-black"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <Button
+              type="button"
+              onClick={isResultStep ? handleContinue : goNext}
+              disabled={isLoading}
+              className="h-12 flex-1 rounded-xl bg-blue-700 font-black text-white shadow-sm hover:bg-blue-800"
+            >
+              {isResultStep ? "Continue to MY ITR" : "Next"}
+              {isResultStep ? <ArrowRight className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

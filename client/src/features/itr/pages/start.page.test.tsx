@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -55,11 +55,22 @@ describe("ITR start form selector page", () => {
     }
   }
 
+  function expectProgressPercent(expected: number) {
+    const progressbar = within(screen.getByTestId("itr-selector-progress-strip")).getByRole("progressbar", {
+      name: "ITR selector progress",
+    });
+
+    expect(progressbar).toHaveAttribute("aria-valuenow", expected.toString());
+  }
+
   it("renders a focused first step instead of the full selector", () => {
     render(<ITRStartPage />);
 
-    expect(screen.getByRole("heading", { name: /Individual ITR form selector/i })).toBeInTheDocument();
-    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Individual ITR form selector/i })).toHaveClass("sr-only");
+    expect(screen.queryByTestId("itr-selector-progress-card")).not.toBeInTheDocument();
+    expect(screen.getByTestId("itr-selector-bottom-bar")).toHaveClass("fixed", "bottom-0");
+    expect(screen.getByTestId("itr-selector-progress-strip").textContent).toBe("");
+    expectProgressPercent(17);
     expect(screen.getByText("Individual filing facts")).toBeInTheDocument();
     expect(screen.getByText("Residential status")).toBeInTheDocument();
     expect(screen.queryByText("Income heads")).not.toBeInTheDocument();
@@ -82,14 +93,15 @@ describe("ITR start form selector page", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
 
-    expect(screen.getByText("Step 2 of 6")).toBeInTheDocument();
+    expect(screen.getByTestId("itr-selector-progress-strip").textContent).toBe("");
+    expectProgressPercent(33);
     expect(screen.getByText("Income heads")).toBeInTheDocument();
     expect(screen.queryByText("Residential status")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Back$/i })).toBeEnabled();
 
     await userEvent.click(screen.getByRole("button", { name: /^Back$/i }));
 
-    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    expectProgressPercent(17);
     expect(screen.getByText("Individual filing facts")).toBeInTheDocument();
   });
 
@@ -105,7 +117,7 @@ describe("ITR start form selector page", () => {
     await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
     await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
 
-    expect(screen.getByText("Step 6 of 6")).toBeInTheDocument();
+    expectProgressPercent(100);
     expect(screen.getByRole("heading", { name: /Your likely form is ITR-2/i })).toBeInTheDocument();
     expect(screen.getByText("ITR-2")).toBeInTheDocument();
     expect(screen.getByText("ITR-1 cannot be used for short-term capital gains.")).toBeInTheDocument();
@@ -182,7 +194,7 @@ describe("ITR start form selector page", () => {
 
     render(<ITRStartPage />);
 
-    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    expectProgressPercent(17);
     expect(screen.queryByText("ITR-2")).not.toBeInTheDocument();
   });
 });
