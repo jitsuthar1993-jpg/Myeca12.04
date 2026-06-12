@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Layout } from '@/components/admin/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useStats } from '@/hooks/admin/useStats';
 import {
   RefreshCw, Users, Coins, Activity,
@@ -34,6 +36,7 @@ export default function AdminDashboard() {
   const { stats, isLoading, error, refetch } = useStats();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedWork, setSelectedWork] = useState<any | null>(null);
 
   const { data: users = [] } = useQuery({
     queryKey: ["/api/admin/users"],
@@ -159,28 +162,28 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                       {workList.slice(0, 5).map((work: any) => (
-                        <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors">
-                          <td className="px-4 py-2.5">
+                        <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors cursor-pointer" onClick={() => setSelectedWork(work)}>
+                          <td className="px-4 py-2.5 align-middle">
                             <div className="flex items-center gap-3">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                                  <Briefcase className="h-3.5 w-3.5" />
                               </div>
-                              <div>
+                              <div className="flex flex-col justify-center">
                                  <p className="text-xs font-bold text-slate-900 leading-tight mb-0.5">{work.title}</p>
-                                 <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tight">{work.type.replace('_', ' ')}</p>
+                                 <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tight leading-none">{work.type.replace('_', ' ')}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-4 py-2.5 align-middle">
                             <p className="text-xs font-bold text-slate-900">{work.userName}</p>
                             <p className="text-[9px] font-medium text-slate-400 uppercase mt-0.5">#TRX-{work.id.toString().padStart(6, '0')}</p>
                           </td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-4 py-2.5 align-middle">
                             <p className="text-[10px] text-slate-500 font-medium line-clamp-1 max-w-xs">
                               {work.description || 'Routine platform transaction and compliance audit.'}
                             </p>
                           </td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-4 py-2.5 align-middle">
                             <Badge className={cn(
                               "rounded-full px-2 py-0.5 text-[8px] font-bold border-none shadow-sm",
                               work.status === 'pending' ? "bg-amber-50 text-amber-600" :
@@ -190,8 +193,8 @@ export default function AdminDashboard() {
                               {work.status.replace('_', ' ').toUpperCase()}
                             </Badge>
                           </td>
-                          <td className="px-4 py-2.5 text-right">
-                            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50">
+                          <td className="px-4 py-2.5 align-middle text-right" onClick={(e) => e.stopPropagation()}>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-slate-300 hover:text-blue-600 hover:bg-blue-50" onClick={() => setSelectedWork(work)}>
                               <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                           </td>
@@ -213,7 +216,7 @@ export default function AdminDashboard() {
 
                 <div className="divide-y divide-slate-100 md:hidden">
                   {workList.slice(0, 5).map((work: any) => (
-                    <div key={work.id} className="space-y-2 p-3">
+                    <div key={work.id} className="space-y-2 p-3 hover:bg-slate-50/50 cursor-pointer transition-colors" onClick={() => setSelectedWork(work)}>
                       <div className="flex items-start gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
                           <Briefcase className="h-3.5 w-3.5" />
@@ -257,9 +260,54 @@ export default function AdminDashboard() {
                   </div>
                </div>
              </CardContent>
-           </Card>
-        </div>
-      </div>
-    </Layout>
+            </Card>
+         </div>
+       </div>
+
+       {/* Detail Dialog */}
+       {selectedWork && (
+         <Dialog open={!!selectedWork} onOpenChange={(open) => !open && setSelectedWork(null)}>
+           <DialogContent className="max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
+             <DialogHeader>
+               <DialogTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                 <Briefcase className="h-5 w-5 text-blue-600" />
+                 {selectedWork.title}
+               </DialogTitle>
+               <DialogDescription className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
+                 {selectedWork.type.replace('_', ' ')}
+               </DialogDescription>
+             </DialogHeader>
+             
+             <div className="mt-4 space-y-4">
+               <div className="grid grid-cols-2 gap-4 rounded-lg bg-slate-50 p-3 text-xs">
+                 <div>
+                   <p className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Identity / ID</p>
+                   <p className="font-bold text-slate-900 mt-1">{selectedWork.userName}</p>
+                   <p className="text-[10px] font-medium text-slate-400 mt-0.5">#TRX-{selectedWork.id.toString().padStart(6, '0')}</p>
+                 </div>
+                 <div>
+                   <p className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Status</p>
+                   <Badge className={cn(
+                     "rounded-full px-2 py-0.5 text-[10px] font-bold border-none shadow-sm mt-1 w-fit",
+                     selectedWork.status === 'pending' ? "bg-amber-50 text-amber-600" :
+                     selectedWork.status === 'in_progress' ? "bg-blue-50 text-blue-600" :
+                     "bg-emerald-50 text-emerald-600"
+                   )}>
+                     {selectedWork.status.replace('_', ' ').toUpperCase()}
+                   </Badge>
+                 </div>
+               </div>
+
+               <div className="space-y-1">
+                 <p className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Context Details</p>
+                 <p className="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50/50 rounded-lg p-3 border border-slate-100 whitespace-pre-wrap">
+                   {selectedWork.description || 'Routine platform transaction and compliance audit.'}
+                 </p>
+               </div>
+             </div>
+           </DialogContent>
+         </Dialog>
+       )}
+     </Layout>
   );
 }
