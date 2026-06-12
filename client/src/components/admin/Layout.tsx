@@ -148,21 +148,23 @@ export function Layout({ children, title = 'Workspace' }: LayoutProps) {
                   </div>
                 ))}
 
-                <div className="space-y-1 border-t border-slate-200 pt-4">
-                  <p className="type-meta px-3 font-bold uppercase tracking-[0.12em] text-slate-400">Support</p>
-                  <Link href="/help">
-                    <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
-                      <HelpCircle className="h-4 w-4 shrink-0" />
-                      <span>Knowledge Base</span>
-                    </div>
-                  </Link>
-                  <Link href="/expert-consultation">
-                    <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
-                      <MessageSquare className="h-4 w-4 shrink-0" />
-                      <span>Support Request</span>
-                    </div>
-                  </Link>
-                </div>
+                {isUserRole && (
+                  <div className="space-y-1 border-t border-slate-200 pt-4">
+                    <p className="type-meta px-3 font-bold uppercase tracking-[0.12em] text-slate-400">Support</p>
+                    <Link href="/help">
+                      <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
+                        <HelpCircle className="h-4 w-4 shrink-0" />
+                        <span>Knowledge Base</span>
+                      </div>
+                    </Link>
+                    <Link href="/expert-consultation">
+                      <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950">
+                        <MessageSquare className="h-4 w-4 shrink-0" />
+                        <span>Support Request</span>
+                      </div>
+                    </Link>
+                  </div>
+                )}
               </div>
             </ScrollArea>
 

@@ -161,6 +161,11 @@ function AppContent() {
   const isAuthScreen = isAuthLayoutPath(location);
   const isTaxAssistantPage = location === '/tax-assistant';
   const isFocusedPublicFlow = location === '/which-itr-form-to-file';
+  const isDashboardPath = [
+    '/admin', '/dashboard', '/user', '/team', '/ca', '/profile',
+    '/account', '/settings', '/documents', '/payments', '/itr/filing',
+    '/reports', '/workflows', '/teams', '/referrals', '/export'
+  ].some(path => location === path || location.startsWith(`${path}/`));
   const loadProductionTelemetry = hasBrowserTelemetryConfig && shouldLoadProductionTelemetry();
   const showDeferredGlobalChrome = useDeferredGlobalChrome();
 
@@ -241,7 +246,7 @@ function AppContent() {
         </ErrorBoundary>
       )}
 
-      {!isAuthScreen && !isTaxAssistantPage && !isFocusedPublicFlow && showDeferredGlobalChrome && (
+      {!isAuthScreen && !isDashboardPath && !isTaxAssistantPage && !isFocusedPublicFlow && showDeferredGlobalChrome && (
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
             <UnifiedFAB />

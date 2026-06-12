@@ -139,22 +139,26 @@ export default function TeamDashboard() {
         {/* Content Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {contentStats.map((stat, i) => (
-            <Card key={i} className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-               <div className="flex justify-between items-start mb-4">
-                  <div className={cn("rounded-lg p-3",
-                    stat.color === 'blue' ? "bg-blue-50 text-blue-600" :
-                    stat.color === 'amber' ? "bg-amber-50 text-amber-600" :
-                    stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600" :
-                    "bg-emerald-50 text-emerald-600"
-                  )}>
-                    <stat.icon className="h-5 w-5" />
+            <Card key={i} className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+               <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                     <div className={cn("rounded-lg p-2",
+                       stat.color === 'blue' ? "bg-blue-50 text-blue-600" :
+                       stat.color === 'amber' ? "bg-amber-50 text-amber-600" :
+                       stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600" :
+                       "bg-emerald-50 text-emerald-600"
+                     )}>
+                       <stat.icon className="h-4 w-4" />
+                     </div>
+                     <p className="mb-0 text-xs font-bold uppercase tracking-wider text-slate-500">{stat.label}</p>
                   </div>
-                  <Badge variant="outline" className="text-[9px] font-bold border-none bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full uppercase">
-                    {stat.change}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                     <span className="text-xl font-bold text-slate-900 leading-none">{stat.value}</span>
+                     <Badge variant="outline" className="text-[9px] font-bold border-none bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full uppercase leading-none">
+                       {stat.change}
+                     </Badge>
+                  </div>
                </div>
-               <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{stat.label}</p>
-               <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
             </Card>
           ))}
         </div>

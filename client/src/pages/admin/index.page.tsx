@@ -101,20 +101,24 @@ export default function AdminDashboard() {
             { label: 'Expert CA Applications', value: pendingCAs.length, icon: ShieldCheck, color: 'amber' },
             { label: 'Monthly Revenue (MTD)', value: formatCurrency(stats.revenue.thisMonth), icon: Coins, color: 'indigo' },
           ].map((item, i) => (
-            <Card key={i} className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-               <div className="flex justify-between items-start mb-4">
-                  <div className={cn("rounded-lg p-3",
-                    item.color === 'blue' ? "bg-blue-50 text-blue-600" :
-                    item.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
-                    item.color === 'amber' ? "bg-amber-50 text-amber-600" :
-                    "bg-indigo-50 text-indigo-600"
-                  )}>
-                    <item.icon className="h-5 w-5" />
+            <Card key={i} className="rounded-lg border-slate-200 bg-white p-3 shadow-none group transition-all">
+               <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                     <div className={cn("rounded-lg p-2",
+                       item.color === 'blue' ? "bg-blue-50 text-blue-600" :
+                       item.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
+                       item.color === 'amber' ? "bg-amber-50 text-amber-600" :
+                       "bg-indigo-50 text-indigo-600"
+                     )}>
+                       <item.icon className="h-4 w-4" />
+                     </div>
+                     <p className="mb-0 text-xs font-bold uppercase tracking-wider text-slate-500">{item.label}</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+                  <div className="flex items-center gap-2">
+                     <span className="text-xl font-bold text-slate-900 leading-none">{item.value}</span>
+                     <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                  </div>
                </div>
-               <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{item.label}</p>
-               <p className="text-2xl font-bold text-slate-900">{item.value}</p>
             </Card>
           ))}
         </div>

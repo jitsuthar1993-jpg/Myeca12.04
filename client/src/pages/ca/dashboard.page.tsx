@@ -129,70 +129,94 @@ export default function CADashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
-          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-            <div className="flex justify-between items-start mb-4">
-              <div className="rounded-lg bg-blue-50 p-3 text-blue-600">
-                <Users className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <Users className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Assigned Clients</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats.totalClients}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+              </div>
             </div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Assigned Clients</p>
-            <p className="text-2xl font-bold text-slate-900">{stats.totalClients}</p>
           </Card>
 
-          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-            <div className="flex justify-between items-start mb-4">
-              <div className="rounded-lg bg-emerald-50 p-3 text-emerald-600">
-                <CheckCircle className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <CheckCircle className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Returns Filed</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats.completedFilings}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+              </div>
             </div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Returns Filed</p>
-            <p className="text-2xl font-bold text-slate-900">{stats.completedFilings}</p>
           </Card>
 
-          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-            <div className="flex justify-between items-start mb-4">
-              <div className="rounded-lg bg-amber-50 p-3 text-amber-600">
-                <Clock className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Pending Actions</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-amber-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats.pendingFilings}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-amber-500 transition-colors" />
+              </div>
             </div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Pending Actions</p>
-            <p className="text-2xl font-bold text-slate-900">{stats.pendingFilings}</p>
           </Card>
 
-          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-            <div className="flex justify-between items-start mb-4">
-              <div className="rounded-lg bg-rose-50 p-3 text-rose-600">
-                <AlertCircle className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-50 text-rose-600 rounded-lg">
+                  <AlertCircle className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Reminders</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-rose-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{activeReminderCount}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-rose-500 transition-colors" />
+              </div>
             </div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Reminders</p>
-            <p className="text-2xl font-bold text-slate-900">{activeReminderCount}</p>
           </Card>
 
-          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-            <div className="flex justify-between items-start mb-4">
-              <div className="rounded-lg bg-blue-50 p-3 text-blue-600">
-                <Briefcase className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <Briefcase className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Assigned Cases</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{activeCaseCount}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+              </div>
             </div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Assigned Cases</p>
-            <p className="text-2xl font-bold text-slate-900">{activeCaseCount}</p>
           </Card>
 
-          <Card className="rounded-lg border-slate-200 bg-white p-5 shadow-none">
-            <div className="flex justify-between items-start mb-4">
-              <div className="rounded-lg bg-violet-50 p-3 text-violet-600">
-                <TrendingUp className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-violet-50 text-violet-600 rounded-lg">
+                  <TrendingUp className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Annual Volume</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-violet-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{stats.totalFilings}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-violet-500 transition-colors" />
+              </div>
             </div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Annual Volume</p>
-            <p className="text-2xl font-bold text-slate-900">{stats.totalFilings}</p>
           </Card>
         </div>
 

@@ -262,48 +262,64 @@ export default function UsersManagementPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                <Users className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <Users className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Total Identities</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{userCounts.total}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+              </div>
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Identities</p>
-            <p className="text-2xl font-bold text-slate-900">{userCounts.total}</p>
           </Card>
 
-          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                <UserCheck className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <UserCheck className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Active Profiles</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{userCounts.active}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+              </div>
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Profiles</p>
-            <p className="text-2xl font-bold text-slate-900">{userCounts.active}</p>
           </Card>
 
-          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
-                <Clock className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Pending Approval</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-amber-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{userCounts.pending}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-amber-500 transition-colors" />
+              </div>
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Approval</p>
-            <p className="text-2xl font-bold text-slate-900">{userCounts.pending}</p>
           </Card>
 
-          <Card className="border-slate-200 bg-white p-5 rounded-lg shadow-none group transition-all">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
-                <Shield className="h-5 w-5" />
+          <Card className="border-slate-200 bg-white p-3 rounded-lg shadow-none group transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                  <Shield className="h-4 w-4" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0">Expert Network</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-slate-900 leading-none">{userCounts.ca}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+              </div>
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Expert Network</p>
-            <p className="text-2xl font-bold text-slate-900">{userCounts.ca}</p>
           </Card>
         </div>
 
