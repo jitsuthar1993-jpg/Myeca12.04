@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
+import { AnimatePresence, m } from "framer-motion";
+import { Link, useLocation } from "wouter";
 import {
   AlertTriangle,
   ArrowRight,
@@ -7,19 +8,24 @@ import {
   BriefcaseBusiness,
   Building2,
   CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CircleAlert,
   FileCheck2,
   FileText,
   Landmark,
-  ListChecks,
   ShieldCheck,
   UserRound,
+  type LucideIcon,
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { ItrDeadlineNotice } from "@/components/campaign/ItrDeadlineNotice";
 import { useAuth } from "@/components/AuthProvider";
+import BrandLockup from "@/components/ui/brand-lockup";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { captureCampaignAttribution } from "@/lib/campaign-attribution";
 import { captureTelemetryEvent } from "@/telemetry/browser";
@@ -133,10 +139,48 @@ const riskFlags: Array<{
   { key: "governedByPortugueseCivilCode", label: "Portuguese Civil Code", helper: "Needs separate income-sharing review" },
 ];
 
-const itrStartProofItems = [
-  ["No PAN here", "Public facts only"],
-  ["Rules engine", "Same ITR logic"],
-  ["Next step", "Filing draft"],
+export const ITR_START_STEPS: Array<{
+  id: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}> = [
+  {
+    id: "filing-facts",
+    title: "Individual filing facts",
+    description: "Confirm the basic facts that decide which individual ITR forms remain possible.",
+    icon: UserRound,
+  },
+  {
+    id: "income-heads",
+    title: "Income heads",
+    description: "Choose every broad income category that applied during the financial year.",
+    icon: Landmark,
+  },
+  {
+    id: "capital-gains",
+    title: "Capital gains",
+    description: "Choose the closest capital-gains fact. Exact schedules and amounts come later.",
+    icon: FileText,
+  },
+  {
+    id: "business-profession",
+    title: "Business or profession",
+    description: "Confirm whether business, professional, freelance, or presumptive income applies.",
+    icon: BriefcaseBusiness,
+  },
+  {
+    id: "disclosures",
+    title: "Blockers and disclosures",
+    description: "Select anything that applies. Leave every option unselected if none apply.",
+    icon: Building2,
+  },
+  {
+    id: "recommendation",
+    title: "Your recommendation",
+    description: "Review the likely form and continue to your private filing draft.",
+    icon: FileCheck2,
+  },
 ];
 
 const legacyLoginFileSources = new Set(["header_desktop_login_file", "mobile_menu_login_file"]);
@@ -182,24 +226,41 @@ function ChoiceGrid<T extends string>({
   columns?: string;
 }) {
   return (
-    <div className={cn("mt-3 grid gap-2", columns)}>
-      {options.map((option) => (
-        <button
-          key={option.id}
-          type="button"
-          aria-pressed={value === option.id}
-          onClick={() => onChange(option.id)}
-          className={cn(
-            "min-h-[74px] rounded-lg border p-3 text-left transition-colors",
-            value === option.id
-              ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
-              : "border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50",
-          )}
-        >
-          <span className="block text-sm font-black text-slate-950">{option.label}</span>
-          <span className="mt-1 block text-xs font-semibold leading-5 text-slate-600">{option.helper}</span>
-        </button>
-      ))}
+    <div className={cn("mt-3 grid gap-3", columns)}>
+      {options.map((option) => {
+        const selected = value === option.id;
+
+        return (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(option.id)}
+            className={cn(
+              "min-h-[76px] rounded-xl border p-4 text-left transition duration-200 motion-reduce:transition-none",
+              selected
+                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50",
+            )}
+          >
+            <span className="flex items-start justify-between gap-3">
+              <span>
+                <span className="block text-sm font-black text-slate-950">{option.label}</span>
+                <span className="mt-1 block text-xs font-semibold leading-5 text-slate-600">{option.helper}</span>
+              </span>
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors",
+                  selected ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-transparent",
+                )}
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+              </span>
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -221,23 +282,21 @@ function BooleanTile({
       aria-pressed={selected}
       onClick={onClick}
       className={cn(
-        "min-h-[72px] rounded-lg border p-3 text-left transition-colors",
+        "min-h-[76px] rounded-xl border p-4 text-left transition duration-200 motion-reduce:transition-none",
         selected
           ? "border-blue-500 bg-blue-50 text-slate-950 ring-2 ring-blue-100"
-          : "border-slate-200 bg-white text-slate-900 hover:border-blue-200 hover:bg-slate-50",
+          : "border-slate-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-slate-50",
       )}
     >
-      <span className="flex items-start gap-2">
+      <span className="flex items-start gap-3">
         {selected ? (
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-700" />
+          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
         ) : (
-          <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+          <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
         )}
         <span>
           <span className="block text-sm font-black">{label}</span>
-          <span className="mt-1 block text-xs font-semibold leading-5 text-slate-600">
-            {helper}
-          </span>
+          <span className="mt-1 block text-xs font-semibold leading-5 text-slate-600">{helper}</span>
         </span>
       </span>
     </button>
@@ -250,12 +309,12 @@ function RecommendationList({ title, items, empty }: { title: string; items: str
       <p className="text-sm font-black text-slate-950">{title}</p>
       <div className="mt-2 space-y-2">
         {items.length ? items.map((item) => (
-          <div key={item} className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold leading-5 text-slate-700">
+          <div key={item} className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm font-semibold leading-5 text-slate-700">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
             <span>{item}</span>
           </div>
         )) : (
-          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm font-semibold leading-5 text-slate-500">
+          <div className="rounded-xl border border-slate-200 bg-white p-3 text-sm font-semibold leading-5 text-slate-500">
             {empty}
           </div>
         )}
@@ -267,7 +326,14 @@ function RecommendationList({ title, items, empty }: { title: string; items: str
 export default function ITRStartPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const [, navigate] = useLocation();
+  const reduceMotion =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const [answers, setAnswers] = useState<ItrStartSelectorAnswers>(() => readInitialAnswers());
+  const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const params = new URLSearchParams(window.location.search);
   const conversionSource = params.get("source") || "itr_start_page";
   const attribution = useMemo(() => captureCampaignAttribution(params), []);
@@ -276,6 +342,14 @@ export default function ITRStartPage() {
   const recommendation = useMemo(() => recommendItrForm(draft), [draft]);
   const resultStatus = recommendation.caReviewRequired ? "CA review expected" : "Simple form path";
   const continuePath = `/itr/filing?source=${encodeURIComponent(conversionSource)}`;
+  const activeStep = ITR_START_STEPS[currentStep];
+  const ActiveStepIcon = activeStep.icon;
+  const isResultStep = currentStep === ITR_START_STEPS.length - 1;
+  const progress = ((currentStep + 1) / ITR_START_STEPS.length) * 100;
+  const visibleResultReasons = Array.from(new Set([
+    ...recommendation.reasons,
+    ...recommendation.blockers,
+  ])).slice(0, 3);
 
   useEffect(() => {
     if (isLoading || !isLegacyLoginFileSource) return;
@@ -317,6 +391,11 @@ export default function ITRStartPage() {
     isLegacyLoginFileSource,
   ]);
 
+  useEffect(() => {
+    const heading = document.getElementById("itr-selector-step-heading");
+    heading?.focus({ preventScroll: false });
+  }, [currentStep]);
+
   const updateAnswer = <K extends keyof ItrStartSelectorAnswers>(key: K, value: ItrStartSelectorAnswers[K]) => {
     setAnswers((current) => normalizeItrStartSelectorAnswers({ ...current, [key]: value }));
   };
@@ -331,6 +410,19 @@ export default function ITRStartPage() {
             value === "profession" && (current.presumptiveScheme === "44AD" || current.presumptiveScheme === "44AE") ? "none" :
               current.presumptiveScheme,
     }));
+  };
+
+  const goNext = () => {
+    if (isResultStep) return;
+    setDirection(1);
+    setCurrentStep((step) => Math.min(step + 1, ITR_START_STEPS.length - 1));
+  };
+
+  const goBack = () => {
+    if (currentStep === 0) return;
+    setDirection(-1);
+    setDetailsOpen(false);
+    setCurrentStep((step) => Math.max(step - 1, 0));
   };
 
   const handleContinue = () => {
@@ -375,294 +467,239 @@ export default function ITRStartPage() {
         ]}
       />
 
-      <section className="border-b border-slate-200 bg-white px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-sm font-black text-blue-800">
-                <ShieldCheck className="h-4 w-4" />
-                <span>AY 2026-27 form selection</span>
-              </div>
-              <h1 className="mt-4 type-page-title font-black tracking-tight text-slate-950">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-[60px] max-w-3xl items-center justify-between px-4 sm:px-6">
+          <Link href="/" aria-label="MyeCA.in home" className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+            <BrandLockup logoSize="sm" wordmarkSize="sm" compact />
+          </Link>
+          <span className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">ITR form selector</span>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-3xl px-4 pb-32 pt-5 sm:px-6 sm:pt-8">
+        <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">
+                Step {currentStep + 1} of {ITR_START_STEPS.length}
+              </p>
+              <h1 className="mt-1 text-xl font-black tracking-tight text-slate-950 sm:text-2xl">
                 Individual ITR form selector
               </h1>
-              <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-slate-600 md:text-lg">
-                Answer individual filing facts only. MyeCA will identify the likely ITR form and then you can continue inside the signed-in filing draft.
-              </p>
             </div>
-            <div className="grid grid-cols-3 gap-2 lg:w-[440px]">
-              {itrStartProofItems.map(([label, helper]) => (
-                <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-center sm:p-3 lg:text-left">
-                  <p className="text-[0.68rem] font-black leading-tight text-slate-950 sm:text-sm">{label}</p>
-                  <p className="mt-1 hidden text-xs font-semibold text-slate-500 sm:block">{helper}</p>
-                </div>
-              ))}
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+              <ShieldCheck className="h-5 w-5" />
             </div>
           </div>
-        </div>
-      </section>
+          <Progress
+            value={progress}
+            aria-label="ITR selector progress"
+            className="mt-4 h-2 bg-slate-100"
+            indicatorClassName="bg-blue-600 motion-reduce:transition-none"
+          />
+          <div className="mt-3 flex items-center justify-between" aria-hidden="true">
+            {ITR_START_STEPS.map((step, index) => (
+              <span
+                key={step.id}
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full transition-colors motion-reduce:transition-none",
+                  index < currentStep && "bg-emerald-500",
+                  index === currentStep && "bg-blue-600 ring-4 ring-blue-100",
+                  index > currentStep && "bg-slate-200",
+                )}
+              />
+            ))}
+          </div>
+        </section>
 
-      <main className="px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-5 max-w-7xl">
-          <ItrDeadlineNotice category={answers.businessOrProfession === "none" ? "salaried" : "business-profession"} />
-        </div>
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,0.64fr)_minmax(360px,0.36fr)] lg:items-start">
-          <div className="space-y-5">
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+        <AnimatePresence initial={false} mode="wait" custom={direction}>
+          <m.section
+            key={activeStep.id}
+            custom={direction}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction > 0 ? 28 : -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction > 0 ? -28 : 28 }}
+            transition={{ duration: reduceMotion ? 0 : 0.22, ease: "easeOut" }}
+            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+          >
+            <div className="border-b border-slate-100 p-4 sm:p-6">
               <div className="flex items-start gap-3">
-                <UserRound className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
+                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                  <ActiveStepIcon className="h-5 w-5" />
+                </div>
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">Individual filing facts</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    These answers decide which individual ITR form path applies.
-                  </p>
+                  <h2
+                    id="itr-selector-step-heading"
+                    tabIndex={-1}
+                    className="text-xl font-black tracking-tight text-slate-950 outline-none sm:text-2xl"
+                  >
+                    {activeStep.title}
+                  </h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{activeStep.description}</p>
                 </div>
               </div>
+            </div>
 
-              <div className="mt-5 space-y-5">
-                <div>
-                  <p className="text-sm font-black text-slate-950">Assessment year</p>
-                  <ChoiceGrid
-                    options={assessmentYears}
-                    value={answers.assessmentYear}
-                    onChange={(value) => updateAnswer("assessmentYear", value)}
-                  />
-                </div>
-
-                <div>
-                  <p className="text-sm font-black text-slate-950">Residential status</p>
-                  <ChoiceGrid
-                    options={residentialStatusOptions}
-                    value={answers.residentialStatus}
-                    onChange={(value) => updateAnswer("residentialStatus", value)}
-                    columns="sm:grid-cols-3"
-                  />
-                </div>
-
-                <div>
-                  <p className="text-sm font-black text-slate-950">Total income before deductions</p>
-                  <ChoiceGrid
-                    options={totalIncomeOptions}
-                    value={answers.totalIncomeRange}
-                    onChange={(value) => updateAnswer("totalIncomeRange", value)}
-                  />
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:hidden">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Current recommendation</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <span className={cn("rounded-lg border px-3 py-1.5 text-2xl font-black", resultTone(recommendation))}>
-                      {formLabel(recommendation)} path
-                    </span>
-                    <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100">{resultStatus}</Badge>
+            <div className="p-4 sm:p-6">
+              {currentStep === 0 ? (
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-sm font-black text-slate-950">Assessment year</p>
+                    <ChoiceGrid options={assessmentYears} value={answers.assessmentYear} onChange={(value) => updateAnswer("assessmentYear", value)} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-slate-950">Residential status</p>
+                    <ChoiceGrid options={residentialStatusOptions} value={answers.residentialStatus} onChange={(value) => updateAnswer("residentialStatus", value)} columns="sm:grid-cols-3" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-slate-950">Total income before deductions</p>
+                    <ChoiceGrid options={totalIncomeOptions} value={answers.totalIncomeRange} onChange={(value) => updateAnswer("totalIncomeRange", value)} />
                   </div>
                 </div>
-                <FileCheck2 className="h-7 w-7 shrink-0 text-blue-700" />
-              </div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-slate-600" aria-live="polite">
-                {recommendation.reasons[0] ?? "Answer more facts to refine the filing path."}
-              </p>
-            </section>
+              ) : null}
 
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-              <div className="flex items-start gap-3">
-                <Landmark className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
-                <div>
-                  <h2 className="text-xl font-black text-slate-950">Income heads</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    Select the broad income categories. Exact amounts are captured later in the filing draft.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                <BooleanTile
-                  selected={answers.salaryOrPension}
-                  label="Salary or pension"
-                  helper="Form 16, pension certificate, or employer TDS"
-                  onClick={() => updateAnswer("salaryOrPension", !answers.salaryOrPension)}
-                />
-                <BooleanTile
-                  selected={answers.otherSources}
-                  label="Other sources"
-                  helper="Interest, dividend, family pension, or similar income"
-                  onClick={() => updateAnswer("otherSources", !answers.otherSources)}
-                />
-                <BooleanTile
-                  selected={answers.agriculturalIncomeAboveLimit}
-                  label="Agricultural income above Rs 5,000"
-                  helper="This blocks ITR-1/4 simple paths"
-                  onClick={() => updateAnswer("agriculturalIncomeAboveLimit", !answers.agriculturalIncomeAboveLimit)}
-                />
-              </div>
-
-              <div className="mt-5">
-                <p className="text-sm font-black text-slate-950">House property count</p>
-                <ChoiceGrid
-                  options={housePropertyOptions}
-                  value={answers.housePropertyCount}
-                  onChange={(value) => updateAnswer("housePropertyCount", value)}
-                  columns="sm:grid-cols-2 xl:grid-cols-4"
-                />
-              </div>
-            </section>
-
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-              <div className="flex items-start gap-3">
-                <FileText className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
-                <div>
-                  <h2 className="text-xl font-black text-slate-950">Capital gains</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    Choose the closest capital-gains fact. Broker statements and schedule details come later.
-                  </p>
-                </div>
-              </div>
-              <ChoiceGrid
-                options={capitalGainOptions}
-                value={answers.capitalGains}
-                onChange={(value) => updateAnswer("capitalGains", value)}
-                columns="sm:grid-cols-2 xl:grid-cols-3"
-              />
-            </section>
-
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-              <div className="flex items-start gap-3">
-                <BriefcaseBusiness className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
-                <div>
-                  <h2 className="text-xl font-black text-slate-950">Business or profession</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    Presumptive eligibility decides whether ITR-4 is possible or ITR-3 is needed.
-                  </p>
-                </div>
-              </div>
-
-              <ChoiceGrid
-                options={businessOptions}
-                value={answers.businessOrProfession}
-                onChange={updateBusiness}
-                columns="sm:grid-cols-3"
-              />
-
-              {answers.businessOrProfession !== "none" ? (
-                <div className="mt-5">
-                  <p className="text-sm font-black text-slate-950">Presumptive scheme</p>
-                  <ChoiceGrid
-                    options={presumptiveOptions.filter((option) => option.when.includes(answers.businessOrProfession))}
-                    value={answers.presumptiveScheme}
-                    onChange={(value) => updateAnswer("presumptiveScheme", value)}
-                    columns="sm:grid-cols-2"
-                  />
+              {currentStep === 1 ? (
+                <div className="space-y-6">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <BooleanTile selected={answers.salaryOrPension} label="Salary or pension" helper="Form 16, pension certificate, or employer TDS" onClick={() => updateAnswer("salaryOrPension", !answers.salaryOrPension)} />
+                    <BooleanTile selected={answers.otherSources} label="Other sources" helper="Interest, dividend, family pension, or similar income" onClick={() => updateAnswer("otherSources", !answers.otherSources)} />
+                    <BooleanTile selected={answers.agriculturalIncomeAboveLimit} label="Agricultural income above Rs 5,000" helper="This blocks ITR-1/4 simple paths" onClick={() => updateAnswer("agriculturalIncomeAboveLimit", !answers.agriculturalIncomeAboveLimit)} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-slate-950">House property count</p>
+                    <ChoiceGrid options={housePropertyOptions} value={answers.housePropertyCount} onChange={(value) => updateAnswer("housePropertyCount", value)} columns="sm:grid-cols-2" />
+                  </div>
                 </div>
               ) : null}
-            </section>
 
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-              <div className="flex items-start gap-3">
-                <Building2 className="mt-1 h-5 w-5 shrink-0 text-blue-700" />
+              {currentStep === 2 ? (
+                <ChoiceGrid options={capitalGainOptions} value={answers.capitalGains} onChange={(value) => updateAnswer("capitalGains", value)} columns="sm:grid-cols-2" />
+              ) : null}
+
+              {currentStep === 3 ? (
+                <div className="space-y-6">
+                  <ChoiceGrid options={businessOptions} value={answers.businessOrProfession} onChange={updateBusiness} columns="sm:grid-cols-3" />
+                  {answers.businessOrProfession !== "none" ? (
+                    <div>
+                      <p className="text-sm font-black text-slate-950">Presumptive scheme</p>
+                      <ChoiceGrid
+                        options={presumptiveOptions.filter((option) => option.when.includes(answers.businessOrProfession))}
+                        value={answers.presumptiveScheme}
+                        onChange={(value) => updateAnswer("presumptiveScheme", value)}
+                        columns="sm:grid-cols-2"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {currentStep === 4 ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {riskFlags.map((flag) => (
+                    <BooleanTile
+                      key={flag.key}
+                      selected={Boolean(answers[flag.key])}
+                      label={flag.label}
+                      helper={flag.helper}
+                      onClick={() => updateAnswer(flag.key, !answers[flag.key])}
+                    />
+                  ))}
+                </div>
+              ) : null}
+
+              {currentStep === 5 ? (
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">Blockers and disclosures</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    Select any special facts that usually move the return into detailed schedules or CA review.
+                  <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">Recommended form</p>
+                        <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+                          Your likely form is {formLabel(recommendation)}
+                        </h3>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <span className={cn("rounded-lg border px-3 py-1.5 text-lg font-black", resultTone(recommendation))}>
+                            {formLabel(recommendation)}
+                          </span>
+                          <Badge className="bg-white text-slate-700 hover:bg-white">{resultStatus}</Badge>
+                        </div>
+                      </div>
+                      <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border", resultTone(recommendation))}>
+                        <FileCheck2 className="h-6 w-6" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <p className="text-sm font-black text-slate-950">Why this path</p>
+                    <div className="mt-3 space-y-2">
+                      {visibleResultReasons.map((reason) => (
+                        <div key={reason} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold leading-6 text-slate-700">
+                          <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
+                          <span>{reason}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen} className="mt-5">
+                    <CollapsibleTrigger asChild>
+                      <Button type="button" variant="outline" className="h-11 w-full justify-between rounded-xl">
+                        View recommendation details
+                        <ChevronDown className={cn("h-4 w-4 transition-transform motion-reduce:transition-none", detailsOpen && "rotate-180")} />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-4 space-y-5">
+                      <RecommendationList title="Blockers" items={recommendation.blockers} empty="No blockers for the currently recommended form." />
+                      <RecommendationList title="Required schedules" items={recommendation.requiredSchedules} empty="No additional schedules identified." />
+                      <div className="rounded-xl border border-slate-200 bg-white p-4">
+                        <div className="flex items-start gap-3">
+                          {recommendation.exportAvailable ? (
+                            <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                          ) : (
+                            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                          )}
+                          <div>
+                            <p className="text-sm font-black text-slate-950">Export status</p>
+                            <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{recommendation.exportStatus.reason}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  <p className="mt-5 text-xs font-semibold leading-5 text-slate-500">
+                    Your answers can be resumed after login. This recommendation guides the MyeCA draft and CA-assisted review flow; official portal filing remains a separate authorized workflow.
                   </p>
                 </div>
-              </div>
-
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                {riskFlags.map((flag) => (
-                  <BooleanTile
-                    key={flag.key}
-                    selected={Boolean(answers[flag.key])}
-                    label={flag.label}
-                    helper={flag.helper}
-                    onClick={() => updateAnswer(flag.key, !answers[flag.key])}
-                  />
-                ))}
-              </div>
-            </section>
-          </div>
-
-          <aside className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:p-5 lg:sticky lg:top-24">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-black text-slate-500">Recommended form</p>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className={cn("rounded-lg border px-4 py-2 text-3xl font-black", resultTone(recommendation))}>
-                    {formLabel(recommendation)}
-                  </span>
-                  <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100">{resultStatus}</Badge>
-                </div>
-              </div>
-              <FileCheck2 className="h-8 w-8 shrink-0 text-blue-700" />
+              ) : null}
             </div>
-
-            <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-start gap-3">
-                <ListChecks className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
-                <div>
-                  <p className="text-sm font-black text-slate-950">Selection basis</p>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    This panel uses the same ITR-1 to ITR-4 rule engine as the signed-in filing workspace.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 space-y-5">
-              <RecommendationList
-                title="Reasons"
-                items={recommendation.reasons}
-                empty="Select facts above to build a clearer recommendation."
-              />
-
-              <RecommendationList
-                title="Blockers"
-                items={recommendation.blockers}
-                empty="No blockers for the currently recommended form."
-              />
-
-              <RecommendationList
-                title="Required schedules"
-                items={recommendation.requiredSchedules}
-                empty="Schedules will appear as facts are selected."
-              />
-            </div>
-
-            <div className="mt-5 rounded-lg border border-slate-200 bg-white p-4">
-              <div className="flex items-start gap-3">
-                {recommendation.exportAvailable ? (
-                  <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                ) : (
-                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
-                )}
-                <div>
-                  <p className="text-sm font-black text-slate-950">Export status</p>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
-                    {recommendation.exportStatus.reason}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              onClick={handleContinue}
-              disabled={isLoading}
-              className="mt-5 h-12 w-full rounded-lg bg-slate-900 font-black text-white hover:bg-slate-800"
-            >
-              Continue to MY ITR
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-
-            <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">
-              Your selector answers can be resumed after login. Form selection is guidance for the MyeCA draft and CA-assisted review flow. Official portal filing remains a separate authorized workflow.
-            </p>
-          </aside>
-        </div>
+          </m.section>
+        </AnimatePresence>
       </main>
+
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-14px_36px_-28px_rgba(15,23,42,0.55)] backdrop-blur sm:px-6">
+        <div className="mx-auto flex max-w-3xl items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={goBack}
+            disabled={currentStep === 0}
+            className="h-12 min-w-[104px] rounded-xl font-black"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <Button
+            type="button"
+            onClick={isResultStep ? handleContinue : goNext}
+            disabled={isLoading}
+            className="h-12 flex-1 rounded-xl bg-blue-700 font-black text-white shadow-sm hover:bg-blue-800"
+          >
+            {isResultStep ? "Continue to MY ITR" : "Next"}
+            {isResultStep ? <ArrowRight className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

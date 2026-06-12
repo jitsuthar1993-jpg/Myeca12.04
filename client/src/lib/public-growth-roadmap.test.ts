@@ -96,9 +96,10 @@ describe("public growth roadmap implementation", () => {
     expect(itrStartSource).toContain("Individual ITR form selector");
     expect(itrStartSource).toContain("Individual filing facts");
     expect(itrStartSource).toContain("recommendItrForm");
-    expect(itrStartSource).toContain("itrStartProofItems");
-    expect(itrStartSource).toContain("Current recommendation");
-    expect(itrStartSource).toContain("lg:hidden");
+    expect(itrStartSource).toContain("ITR_START_STEPS");
+    expect(itrStartSource).toContain("Step {currentStep + 1} of {ITR_START_STEPS.length}");
+    expect(itrStartSource).toContain("Your likely form is");
+    expect(itrStartSource).toContain("AnimatePresence");
     expect(itrStartSource).toContain("Continue to MY ITR");
     expect(itrStartSource).not.toContain("taxpayerOptions");
     expect(itrStartSource).not.toContain("Taxpayer type");

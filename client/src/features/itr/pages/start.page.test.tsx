@@ -49,16 +49,24 @@ describe("ITR start form selector page", () => {
     clearItrStartHandoff();
   });
 
-  it("renders a form-selection-only public page", () => {
+  async function advanceToResult() {
+    for (let step = 0; step < 5; step += 1) {
+      await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    }
+  }
+
+  it("renders a focused first step instead of the full selector", () => {
     render(<ITRStartPage />);
 
     expect(screen.getByRole("heading", { name: /Individual ITR form selector/i })).toBeInTheDocument();
+    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
     expect(screen.getByText("Individual filing facts")).toBeInTheDocument();
     expect(screen.getByText("Residential status")).toBeInTheDocument();
-    expect(screen.getByText("Recommended form")).toBeInTheDocument();
-    expect(screen.getByText("ITR-1")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Continue to MY ITR/i })).toBeInTheDocument();
-    expect(screen.getByText(/can be resumed after login/i)).toBeInTheDocument();
+    expect(screen.queryByText("Income heads")).not.toBeInTheDocument();
+    expect(screen.queryByText("Recommended form")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Continue to MY ITR/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Back$/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /^Next$/i })).toBeEnabled();
 
     expect(screen.queryByText("Taxpayer type")).not.toBeInTheDocument();
     for (const unsupportedType of ["HUF", "Firm", "LLP", "Company", "Trust / other"]) {
@@ -69,17 +77,45 @@ describe("ITR start form selector page", () => {
     expect(screen.queryByText(/Compare pricing/i)).not.toBeInTheDocument();
   });
 
-  it("updates the recommended form when a blocker is selected", async () => {
+  it("moves through one section at a time with bottom navigation", async () => {
     render(<ITRStartPage />);
 
-    await userEvent.click(screen.getByRole("button", { name: /Short-term gains/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
 
+    expect(screen.getByText("Step 2 of 6")).toBeInTheDocument();
+    expect(screen.getByText("Income heads")).toBeInTheDocument();
+    expect(screen.queryByText("Residential status")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Back$/i })).toBeEnabled();
+
+    await userEvent.click(screen.getByRole("button", { name: /^Back$/i }));
+
+    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    expect(screen.getByText("Individual filing facts")).toBeInTheDocument();
+  });
+
+  it("reveals the updated recommendation only after every section is reviewed", async () => {
+    render(<ITRStartPage />);
+
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Short-term gains/i }));
+    expect(screen.queryByText("ITR-2")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+
+    expect(screen.getByText("Step 6 of 6")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Your likely form is ITR-2/i })).toBeInTheDocument();
     expect(screen.getByText("ITR-2")).toBeInTheDocument();
     expect(screen.getByText("ITR-1 cannot be used for short-term capital gains.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Continue to MY ITR/i })).toBeInTheDocument();
   });
 
   it("keeps selected boolean facts light like the other selected choices", async () => {
     render(<ITRStartPage />);
+
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
 
     const salaryOption = screen.getByRole("button", { name: /Salary or pension/i });
     const agriculturalIncomeOption = screen.getByRole("button", { name: /Agricultural income above Rs 5,000/i });
@@ -97,6 +133,7 @@ describe("ITR start form selector page", () => {
   it("routes unauthenticated users through auth and back to the filing draft", async () => {
     render(<ITRStartPage />);
 
+    await advanceToResult();
     await userEvent.click(screen.getByRole("button", { name: /Continue to MY ITR/i }));
 
     expect(navigateMock).toHaveBeenCalledWith(
@@ -118,7 +155,12 @@ describe("ITR start form selector page", () => {
   it("stores the selector handoff before routing to auth", async () => {
     render(<ITRStartPage />);
 
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
     await userEvent.click(screen.getByRole("button", { name: /Short-term gains/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^Next$/i }));
     await userEvent.click(screen.getByRole("button", { name: /Continue to MY ITR/i }));
 
     expect(readItrStartHandoff()).toMatchObject({
@@ -140,7 +182,7 @@ describe("ITR start form selector page", () => {
 
     render(<ITRStartPage />);
 
-    expect(screen.getByText("ITR-2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Short-term gains/i })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    expect(screen.queryByText("ITR-2")).not.toBeInTheDocument();
   });
 });

@@ -37,7 +37,10 @@ describe("app layout routing", () => {
       "const usesAdaptiveWorkspaceChrome = isAdaptiveWorkspacePath && (isAuthenticated || authLoading);",
     );
     expect(appSource).toContain(
-      "const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome;",
+      "const usesFocusedPublicFlow = currentPath === '/which-itr-form-to-file';",
+    );
+    expect(appSource).toContain(
+      "const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome && !usesFocusedPublicFlow;",
     );
   });
 

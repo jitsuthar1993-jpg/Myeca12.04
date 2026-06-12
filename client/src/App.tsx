@@ -120,7 +120,8 @@ function Router() {
 
   const isAdaptiveWorkspacePath = adaptiveWorkspacePaths.includes(currentPath);
   const usesAdaptiveWorkspaceChrome = isAdaptiveWorkspacePath && (isAuthenticated || authLoading);
-  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome;
+  const usesFocusedPublicFlow = currentPath === '/which-itr-form-to-file';
+  const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome && !usesFocusedPublicFlow;
   const hideFooter = currentPath === '/tax-assistant';
   const showMobileConversionBar = showLayoutComponents && !hideFooter && !currentPath.startsWith('/which-itr-form-to-file');
 
@@ -159,6 +160,7 @@ function AppContent() {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const isAuthScreen = isAuthLayoutPath(location);
   const isTaxAssistantPage = location === '/tax-assistant';
+  const isFocusedPublicFlow = location === '/which-itr-form-to-file';
   const loadProductionTelemetry = hasBrowserTelemetryConfig && shouldLoadProductionTelemetry();
   const showDeferredGlobalChrome = useDeferredGlobalChrome();
 
@@ -221,7 +223,7 @@ function AppContent() {
       <ErrorBoundary>
         <Router />
       </ErrorBoundary>
-      {showDeferredGlobalChrome && (
+      {showDeferredGlobalChrome && !isFocusedPublicFlow && (
         <Suspense fallback={null}>
           <PwaInstallBanner currentPath={location} />
         </Suspense>
@@ -239,7 +241,7 @@ function AppContent() {
         </ErrorBoundary>
       )}
 
-      {!isAuthScreen && !isTaxAssistantPage && showDeferredGlobalChrome && (
+      {!isAuthScreen && !isTaxAssistantPage && !isFocusedPublicFlow && showDeferredGlobalChrome && (
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
             <UnifiedFAB />

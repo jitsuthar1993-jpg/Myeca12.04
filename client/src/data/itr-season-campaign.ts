@@ -1,39 +1,29 @@
-export interface CampaignLink {
+export interface SeasonGuideLink {
   label: string;
   href: string;
 }
 
-export interface ItrSeasonCampaignAsset {
+export interface ItrSeasonGuide {
   slug: string;
   title: string;
   shortTitle: string;
   eyebrow: string;
   description: string;
   audience: string;
-  intent: string;
+  purpose: string;
   icon: "search" | "form" | "gains" | "calendar";
   coverImage: string;
   checklist: string[];
-  outreachAngles: string[];
-  toolLink: CampaignLink;
-  conversionLink: CampaignLink;
-  relatedBlogLink: CampaignLink;
-  learnGuideLink: CampaignLink;
+  toolLink: SeasonGuideLink;
+  conversionLink: SeasonGuideLink;
+  relatedBlogLink: SeasonGuideLink;
+  learnGuideLink: SeasonGuideLink;
   reviewNote: string;
   disclaimer: string;
-  sourceLinks: CampaignLink[];
+  sourceLinks: SeasonGuideLink[];
 }
 
-export const ITR_SEASON_CAMPAIGN_BASE = "/itr-season-2026";
-
-export const campaignUtmMediums = ["pr", "community", "partner", "newsletter", "outreach"] as const;
-
-export type CampaignUtmMedium = (typeof campaignUtmMediums)[number];
-
-export function buildCampaignUrl(path: string, medium: CampaignUtmMedium, content: string) {
-  const separator = path.includes("?") ? "&" : "?";
-  return `${path}${separator}utm_campaign=itr-season-2026&utm_medium=${medium}&utm_content=${content}`;
-}
+export const ITR_SEASON_HUB_BASE = "/itr-season-2026";
 
 const commonReviewNote =
   "Updated for FY 2025-26 / AY 2026-27 ITR season. Re-check the Income Tax e-Filing portal before filing because utilities, forms, and portal messages can change during the season.";
@@ -61,9 +51,9 @@ const officialSources = {
     label: "How to e-Verify FAQ",
     href: "https://www.incometax.gov.in/iec/foportal/help/e-filing-e-verify-your-return-faq",
   },
-} satisfies Record<string, CampaignLink>;
+} satisfies Record<string, SeasonGuideLink>;
 
-export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
+export const itrSeasonGuides: ItrSeasonGuide[] = [
   {
     slug: "ais-form-26as-mismatch-checklist",
     title: "AIS and Form 26AS Mismatch Checklist for AY 2026-27",
@@ -71,8 +61,8 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
     eyebrow: "Data reconciliation",
     description:
       "A practical checklist for matching AIS, TIS, Form 26AS, bank credits, salary TDS, and return values before filing.",
-    audience: "Salaried taxpayers, investors, refund claimants, and anyone with mismatched income or TDS data.",
-    intent: "Help users decide what to verify before filing or requesting expert review.",
+    audience: "For you if your AIS, TIS, or Form 26AS entries do not match your salary, bank, broker, or TDS records.",
+    purpose: "Decide which entries to verify, what evidence to keep, and when a mismatch needs review before you file.",
     icon: "search",
     coverImage: "/assets/blog/text-covers/handle-ais-mismatch-before-after-itr.svg",
     checklist: [
@@ -81,11 +71,6 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
       "Flag entries with wrong PAN, wrong amount, duplicate reporting, or missing TDS.",
       "Keep evidence for feedback submitted on the income-tax portal.",
       "Use expert review before filing when the mismatch affects refund, demand, or notice risk.",
-    ],
-    outreachAngles: [
-      "Offer this as an HR/payroll pre-filing checklist for employees.",
-      "Pitch it to personal finance newsletters during AIS update periods.",
-      "Use it in community replies where users ask why their refund or TDS does not match.",
     ],
     toolLink: { label: "Check filing path", href: "/itr/form-selector" },
     conversionLink: { label: "Request AIS review", href: "/expert-consultation?service=tax-consultation" },
@@ -102,8 +87,8 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
     eyebrow: "Salary filing workflow",
     description:
       "A step-by-step workflow for extracting salary, TDS, deductions, and employer details from Form 16 before ITR filing.",
-    audience: "Salary earners, job switchers, HR teams, and users preparing ITR-1 or ITR-2.",
-    intent: "Move users from document preparation into a guided filing or professional review workflow.",
+    audience: "For you if you file ITR-1 or ITR-2 from a Form 16, including a year with a job switch and two employers.",
+    purpose: "Turn your Form 16 into checked salary, TDS, and deduction figures before you start the return.",
     icon: "form",
     coverImage: "/assets/blog/text-covers/mye-ca-complete-tax-filing-playbook.svg",
     checklist: [
@@ -112,11 +97,6 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
       "Check standard deduction, HRA, Chapter VI-A deductions, and professional tax fields.",
       "Export or copy the parser notes before moving into the filing workflow.",
       "Ask for expert review when there are two Form 16s, arrears, or missing TDS entries.",
-    ],
-    outreachAngles: [
-      "Pitch as a free utility for salary filing explainers.",
-      "Offer HR teams a neutral pre-filing document checklist for employees.",
-      "Use short demos in LinkedIn and community posts around Form 16 release windows.",
     ],
     toolLink: { label: "Open Form 16 parser", href: "/form16-parser" },
     conversionLink: { label: "Start ITR filing", href: "/which-itr-form-to-file?source=itr_season_form16_workflow" },
@@ -133,8 +113,8 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
     eyebrow: "Investor filing",
     description:
       "A broker-statement checklist for organizing equity, mutual fund, intraday, F&O, and VDA records before ITR filing.",
-    audience: "Investors, traders, startup employees with ESOP/RSU questions, and capital-gains filers.",
-    intent: "Help document-heavy users prepare clean inputs before capital-gains computation or CA review.",
+    audience: "For you if you sold equity, mutual funds, F&O, VDAs, or ESOP/RSU shares and your case lands in ITR-2 or ITR-3.",
+    purpose: "Organize broker statements into clean capital-gains inputs before you compute the return or hand it to a CA.",
     icon: "gains",
     coverImage: "/assets/blog/text-covers/which-itr-form-salary-plus-capital-gains-ay-2026-27.svg",
     checklist: [
@@ -143,11 +123,6 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
       "Check acquisition dates, cost, sale value, STT, expenses, and grandfathering fields where relevant.",
       "Map the case to ITR-2 or ITR-3 before starting the return.",
       "Use CA review when there is F&O loss, foreign stock, unlisted shares, or large set-off questions.",
-    ],
-    outreachAngles: [
-      "Pitch to investor communities as a practical pre-filing record checklist.",
-      "Offer finance creators a quote on common broker-statement mistakes.",
-      "Use resource-page outreach around capital-gains and ITR-2 filing guides.",
     ],
     toolLink: { label: "Import broker statement", href: "/capital-gains-import" },
     conversionLink: { label: "Request capital gains review", href: "/expert-consultation?service=capital-gains" },
@@ -164,8 +139,8 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
     eyebrow: "Filing operations",
     description:
       "A tracker-style guide for moving from Form 16 readiness to ITR submission, e-verification, refund follow-up, and notice monitoring.",
-    audience: "Taxpayers tracking filing start dates, refund status, revised returns, or post-filing notices.",
-    intent: "Connect awareness traffic to filing readiness, refund tracking, and expert consultation.",
+    audience: "For you if you want to know when filing opens, what happens after you submit, and where your refund is.",
+    purpose: "Follow your return from Form 16 readiness through submission, e-verification, refund, and any follow-up notice.",
     icon: "calendar",
     coverImage: "/assets/blog/text-covers/when-will-itr-filing-start-ay-2026-27.svg",
     checklist: [
@@ -174,11 +149,6 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
       "Save the acknowledgment number and e-verification confirmation.",
       "Check refund status only after processing starts and bank validation is complete.",
       "Use expert review for defective return notices, demand notices, or revised return decisions.",
-    ],
-    outreachAngles: [
-      "Pitch as a seasonal reference for ITR filing start and refund-status stories.",
-      "Share with HR/payroll newsletters as an employee filing timeline.",
-      "Use it as a linkable resource in communities asking when refunds will arrive.",
     ],
     toolLink: { label: "Track refund context", href: "/tds-refund-tracker" },
     conversionLink: { label: "Start filing path", href: "/which-itr-form-to-file?source=itr_season_deadline_tracker" },
@@ -190,10 +160,6 @@ export const itrSeasonCampaignAssets: ItrSeasonCampaignAsset[] = [
   },
 ];
 
-export function getItrSeasonAsset(slug: string) {
-  return itrSeasonCampaignAssets.find((asset) => asset.slug === slug);
-}
-
-export function getItrSeasonCampaignRoutes() {
-  return [ITR_SEASON_CAMPAIGN_BASE, ...itrSeasonCampaignAssets.map((asset) => `${ITR_SEASON_CAMPAIGN_BASE}/${asset.slug}`)];
+export function getItrSeasonGuide(slug: string) {
+  return itrSeasonGuides.find((guide) => guide.slug === slug);
 }

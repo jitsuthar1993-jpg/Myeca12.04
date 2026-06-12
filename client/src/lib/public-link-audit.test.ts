@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { SEO_CONFIG } from "../config/seo.config";
 import { allServices } from "../data/all-services";
 import { competitorPages } from "../data/competitive-growth";
-import { itrSeasonCampaignAssets } from "../data/itr-season-campaign";
+import { itrSeasonGuides } from "../data/itr-season-campaign";
 import { TAX_GUIDES } from "../data/tax-guides";
 import {
   generatedServicePages,
@@ -335,8 +335,8 @@ describe("public link audit", () => {
     });
   });
 
-  it("keeps each ITR season asset source-reviewed and conversion-linked", () => {
-    itrSeasonCampaignAssets.forEach((asset) => {
+  it("keeps each ITR season guide source-reviewed and conversion-linked", () => {
+    itrSeasonGuides.forEach((asset) => {
       expect(asset.reviewNote, asset.slug).toMatch(/FY 2025-26|AY 2026-27/);
       expect(asset.disclaimer, asset.slug).toMatch(/educational/i);
       expect(asset.sourceLinks.length, asset.slug).toBeGreaterThanOrEqual(2);
