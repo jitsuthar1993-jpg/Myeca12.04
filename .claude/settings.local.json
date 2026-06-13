@@ -56,7 +56,8 @@
       "Bash(grep -i \"twilio\\\\|whatsapp\" .env.example)",
       "Bash(Get-ChildItem -Directory)",
       "Bash(Select-Object Name)",
-      "Bash(cd \"C:\\\\Users\\\\jitsu\\\\OneDOne\\\\Desktop\\\\Websites\\\\Myeca.in\\\\Myeca12.04\" && find client/src -type f -name \"*.tsx\" | grep -i \"route\\\\|page\\\\|app\" | head -20)"
+      "Bash(cd \"C:\\\\Users\\\\jitsu\\\\OneDOne\\\\Desktop\\\\Websites\\\\Myeca.in\\\\Myeca12.04\" && find client/src -type f -name \"*.tsx\" | grep -i \"route\\\\|page\\\\|app\" | head -20)",
+      "WebSearch"
     ]
   }
 }

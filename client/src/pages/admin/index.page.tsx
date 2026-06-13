@@ -164,10 +164,8 @@ export default function AdminDashboard() {
                       {workList.slice(0, 5).map((work: any) => (
                         <tr key={work.id} className="group hover:bg-slate-50/50 transition-colors cursor-pointer" onClick={() => setSelectedWork(work)}>
                           <td className="px-4 py-2.5 align-bottom">
-                            <div className="flex items-end gap-3">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
-                                 <Briefcase className="h-3.5 w-3.5" />
-                              </div>
+                            <div className="flex items-end gap-2">
+                              <Briefcase className="h-4 w-4 text-blue-600 shrink-0 mb-[3px]" />
                               <div className="flex flex-col justify-end">
                                  <p className="text-xs font-bold text-slate-900 leading-none mb-1">{work.title}</p>
                                  <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tight leading-none">{work.type.replace('_', ' ')}</p>
@@ -175,9 +173,9 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-4 py-2.5 align-bottom">
-                            <div className="flex flex-col justify-end">
-                              <p className="text-xs font-bold text-slate-900 leading-none">{work.userName}</p>
-                              <p className="text-[9px] font-medium text-slate-400 uppercase leading-none mt-1">#TRX-{work.id.toString().padStart(6, '0')}</p>
+                            <div className="flex items-baseline gap-1.5 leading-none mb-[2px]">
+                              <span className="text-xs font-bold text-slate-900 leading-none">{work.userName}</span>
+                              <span className="text-[9px] font-medium text-slate-400 uppercase leading-none">#TRX-{work.id.toString().padStart(6, '0')}</span>
                             </div>
                           </td>
                           <td className="px-4 py-2.5 align-bottom">
@@ -219,19 +217,17 @@ export default function AdminDashboard() {
                 <div className="divide-y divide-slate-100 md:hidden">
                   {workList.slice(0, 5).map((work: any) => (
                     <div key={work.id} className="space-y-2 p-3 hover:bg-slate-50/50 cursor-pointer transition-colors" onClick={() => setSelectedWork(work)}>
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600">
-                          <Briefcase className="h-3.5 w-3.5" />
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="h-4 w-4 text-blue-600 shrink-0" />
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-bold leading-tight text-slate-900">{work.title}</p>
                           <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-blue-500">{work.type.replace('_', ' ')}</p>
                         </div>
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-bold text-slate-900">{work.userName}</p>
-                          <p className="text-[9px] font-medium uppercase text-slate-400">#TRX-{work.id.toString().padStart(6, '0')}</p>
+                        <div className="flex items-baseline gap-1.5 min-w-0">
+                          <span className="truncate text-xs font-bold text-slate-900 leading-none">{work.userName}</span>
+                          <span className="text-[9px] font-medium uppercase text-slate-400 leading-none">#TRX-{work.id.toString().padStart(6, '0')}</span>
                         </div>
                         <Badge className={cn(
                           "shrink-0 rounded-full border-none px-2 py-0.5 text-[8px] font-bold",
