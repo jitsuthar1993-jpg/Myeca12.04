@@ -39,7 +39,7 @@ const processSteps = [
 
 export default function NoticeComplianceSection() {
   return (
-    <section id="notices" className="scroll-mt-20 border-b border-slate-200 bg-white py-14">
+    <section id="notices" className="scroll-mt-20 border-y border-red-100 bg-gradient-to-br from-red-50 to-orange-50 py-14">
       <div className="container mx-auto px-4">
         <m.div
           initial={{ opacity: 0, y: 18 }}
@@ -49,7 +49,7 @@ export default function NoticeComplianceSection() {
           className="mx-auto mb-8 grid max-w-7xl gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-end"
         >
           <div>
-            <div className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-amber-700">
+            <div className="inline-flex items-center rounded-full border border-red-200 bg-red-100 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-red-700">
               <AlertTriangle className="mr-2 h-3.5 w-3.5" />
               Income tax notice support
             </div>
@@ -103,7 +103,7 @@ export default function NoticeComplianceSection() {
           <div className="grid gap-3 md:grid-cols-4">
             {processSteps.map((step, index) => (
               <div key={step} className="rounded-lg border border-slate-200 bg-white p-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-sm font-bold text-red-700">
                   {index + 1}
                 </div>
                 <p className="mt-3 text-sm font-bold leading-6 text-slate-800">{step}</p>
@@ -112,9 +112,9 @@ export default function NoticeComplianceSection() {
           </div>
         </m.div>
 
-        <div className="mx-auto mt-4 max-w-7xl rounded-lg border border-blue-100 bg-blue-50 p-5 shadow-sm md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-6">
+        <div className="mx-auto mt-4 max-w-7xl rounded-lg border border-red-100 bg-white/70 p-5 shadow-sm md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-6">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-700">
               <Phone className="h-5 w-5" />
             </div>
             <div>
