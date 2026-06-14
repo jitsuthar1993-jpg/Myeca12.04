@@ -341,17 +341,15 @@ const HomePage = () => {
                   key={item.title}
                   data-reveal="pop"
                   style={revealDelay(index * 60)}
-                  className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:rounded-lg sm:p-4"
+                  className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:rounded-lg sm:p-4"
                 >
-                  <div className="flex items-center gap-2.5 sm:items-start sm:gap-3">
+                  <div className="flex items-end gap-2.5 sm:gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
                       <item.icon className="h-4 w-4" />
                     </div>
-                    <div>
-                      <p className="text-sm font-bold leading-tight text-slate-950">{item.title}</p>
-                      <p className="mt-1 hidden text-xs leading-5 text-slate-600 sm:block">{item.text}</p>
-                    </div>
+                    <p className="mb-0 text-sm font-bold leading-none text-slate-950">{item.title}</p>
                   </div>
+                  <p className="mb-0 mt-2.5 hidden text-xs leading-5 text-slate-600 sm:block">{item.text}</p>
                 </div>
               ))}
             </div>
