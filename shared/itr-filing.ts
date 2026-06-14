@@ -60,6 +60,24 @@ export const itrFilingSchema = z.object({
   form10IEAAcknowledgement: z.string().trim().optional().default(""),
 });
 
+export const ITR_CAPITAL_GAIN_ASSET_CLASSES = [
+  "listed_equity",
+  "immovable",
+  "unlisted",
+  "debt",
+  "other",
+] as const;
+
+export const itrCapitalGainEntrySchema = z.object({
+  assetClass: z.enum(ITR_CAPITAL_GAIN_ASSET_CLASSES).default("listed_equity"),
+  acquisitionDate: z.string().trim().default(""),
+  saleDate: z.string().trim().default(""),
+  cost: z.number().default(0),
+  proceeds: z.number().default(0),
+  expenses: z.number().default(0),
+  fmv31Jan2018: z.number().default(0),
+});
+
 export const itrIncomeSchema = z.object({
   selectedTypes: z.array(z.enum(ITR_INCOME_TYPES)).default([]),
   noIncomeConfirmed: z.boolean().default(false),
@@ -72,9 +90,12 @@ export const itrIncomeSchema = z.object({
   shortTermCapitalGains: z.number().default(0),
   section112aLtcg: z.number().default(0),
   otherCapitalGains: z.number().default(0),
+  capitalGainsEntries: z.array(itrCapitalGainEntrySchema).default([]),
+  vdaIncome: z.number().default(0),
   businessIncome: z.number().default(0),
   professionalIncome: z.number().default(0),
   presumptiveScheme: z.enum(["none", "44AD", "44ADA", "44AE"]).default("none"),
+  cashReceiptsWithinFivePercent: z.boolean().default(false),
   foreignIncome: z.number().default(0),
   winningsOrSpecialRateIncome: z.number().default(0),
 });
@@ -172,6 +193,7 @@ export type ItrRegimeComputation = {
   specialRateTax: number;
   rebate87A: number;
   marginalRelief: number;
+  surcharge: number;
   taxBeforeCess: number;
   cess: number;
   grossTaxLiability: number;
@@ -255,6 +277,40 @@ const STANDARD_DEDUCTION = {
   old: 50_000,
   new: 75_000,
 } as const;
+
+// Capital gains — Finance (No. 2) Act 2024 (effective 23 Jul 2024).
+const CG_RATE_PIVOT_MS = Date.parse("2024-07-23");
+const GRANDFATHER_DATE_MS = Date.parse("2018-01-31");
+const DEBT_50AA_CUTOFF_MS = Date.parse("2023-04-01");
+const STCG_111A_RATE = 0.2;
+const LTCG_112A_RATE = 0.125;
+const LTCG_OTHER_RATE = 0.125;
+const LTCG_INDEXED_RATE = 0.2;
+const VDA_RATE = 0.3;
+const SPECIAL_WINNINGS_RATE = 0.3;
+const CG_CURRENT_FY = "2025-26";
+// CBDT Cost Inflation Index. FY 2025-26 = 376 (not 363; 363 is FY 2024-25).
+const COST_INFLATION_INDEX: Record<string, number> = {
+  "2001-02": 100, "2011-12": 184, "2012-13": 200, "2013-14": 220, "2014-15": 240,
+  "2015-16": 254, "2016-17": 264, "2017-18": 272, "2018-19": 280, "2019-20": 289,
+  "2020-21": 301, "2021-22": 317, "2022-23": 331, "2023-24": 348, "2024-25": 363,
+  "2025-26": 376,
+};
+
+// Surcharge on income-tax by total-income band. New regime caps at 25%.
+const SURCHARGE_BANDS = [
+  { threshold: 5_00_00_000, rate: 0.37 },
+  { threshold: 2_00_00_000, rate: 0.25 },
+  { threshold: 1_00_00_000, rate: 0.15 },
+  { threshold: 50_00_000, rate: 0.10 },
+] as const;
+const SURCHARGE_SPECIAL_CAP_RATE = 0.15;
+const NEW_REGIME_MAX_SURCHARGE_RATE = 0.25;
+
+// Presumptive taxation.
+const PRESUMPTIVE_44AD_DIGITAL_RATE = 0.06;
+const PRESUMPTIVE_44AD_CASH_RATE = 0.08;
+const PRESUMPTIVE_44ADA_RATE = 0.5;
 const NEW_REGIME_SLABS = [
   { min: 0, max: 400_000, rate: 0 },
   { min: 400_000, max: 800_000, rate: 0.05 },
@@ -370,6 +426,7 @@ export function calculateItrTotalIncome(draftInput: ItrFilingDraft) {
     amount(income.shortTermCapitalGains) +
     amount(income.section112aLtcg) +
     amount(income.otherCapitalGains) +
+    amount(income.vdaIncome) +
     amount(income.businessIncome) +
     amount(income.professionalIncome) +
     amount(income.foreignIncome) +
@@ -427,6 +484,17 @@ function getCommonBlockers(draft: ItrFilingDraft, form: "ITR-1" | "ITR-4") {
 
   if (amount(draft.income.otherCapitalGains) > 0) {
     blockers.push(`${prefix} for capital gains other than eligible Section 112A LTCG.`);
+  }
+
+  if (draft.income.capitalGainsEntries.length) {
+    const entryGains = capitalGainsFromEntries(draft.income.capitalGainsEntries);
+    if (entryGains.normalAddition > 0 || entryGains.specialTaxableIncome > 0) {
+      blockers.push(`${prefix} for the reported capital-gain transactions.`);
+    }
+  }
+
+  if (amount(draft.income.vdaIncome) > 0) {
+    blockers.push(`${prefix} for virtual digital asset (crypto) income.`);
   }
 
   if (draft.income.houseProperties > 2) {
@@ -752,33 +820,188 @@ function slabTax(
   }, 0);
 }
 
+function financialYearOf(ms: number): string {
+  if (!Number.isFinite(ms)) return CG_CURRENT_FY;
+  const date = new Date(ms);
+  const fyStart = date.getUTCMonth() >= 3 ? date.getUTCFullYear() : date.getUTCFullYear() - 1;
+  return `${fyStart}-${String((fyStart + 1) % 100).padStart(2, "0")}`;
+}
+
+function monthsHeld(acquisitionMs: number, saleMs: number): number {
+  if (!Number.isFinite(acquisitionMs) || !Number.isFinite(saleMs)) return 0;
+  return (saleMs - acquisitionMs) / (1000 * 60 * 60 * 24 * 30.4375);
+}
+
+function indexedCost(cost: number, acquisitionMs: number): number {
+  const acquisitionCii = COST_INFLATION_INDEX[financialYearOf(acquisitionMs)];
+  const saleCii = COST_INFLATION_INDEX[CG_CURRENT_FY];
+  if (!acquisitionCii || !saleCii) return cost;
+  return cost * (saleCii / acquisitionCii);
+}
+
+type SpecialRateBlock = {
+  normalAddition: number;
+  specialTaxableIncome: number;
+  specialCappedTax: number;
+  specialUncappedTax: number;
+};
+
+function capitalGainsFromEntries(entries: ItrFilingDraft["income"]["capitalGainsEntries"]): SpecialRateBlock {
+  let normalAddition = 0;
+  let specialTaxableIncome = 0;
+  let specialCappedTax = 0;
+  let gross112a = 0;
+
+  for (const entry of entries) {
+    const cost = amount(entry.cost);
+    const proceeds = amount(entry.proceeds);
+    const netProceeds = Math.max(0, proceeds - amount(entry.expenses));
+    const acquisitionMs = Date.parse(entry.acquisitionDate);
+    const saleMs = Date.parse(entry.saleDate);
+    const isEquity = entry.assetClass === "listed_equity";
+    // Section 50AA: debt acquired on/after 1 Apr 2023 is always short-term (slab).
+    const debtAlwaysShort = entry.assetClass === "debt"
+      && Number.isFinite(acquisitionMs) && acquisitionMs >= DEBT_50AA_CUTOFF_MS;
+    const longTermMonths = isEquity ? 12 : 24;
+    const isLong = !debtAlwaysShort && monthsHeld(acquisitionMs, saleMs) > longTermMonths;
+
+    if (isEquity && isLong) {
+      let effectiveCost = cost;
+      if (Number.isFinite(acquisitionMs) && acquisitionMs < GRANDFATHER_DATE_MS && amount(entry.fmv31Jan2018) > 0) {
+        effectiveCost = Math.max(cost, Math.min(proceeds, amount(entry.fmv31Jan2018)));
+      }
+      gross112a += Math.max(0, netProceeds - effectiveCost);
+      continue;
+    }
+    if (isEquity) {
+      const gain = Math.max(0, netProceeds - cost);
+      specialTaxableIncome += gain;
+      specialCappedTax += gain * STCG_111A_RATE;
+      continue;
+    }
+    if (!isLong) {
+      // Short-term non-equity (immovable / unlisted / debt / other) is taxed at slab.
+      normalAddition += Math.max(0, netProceeds - cost);
+      continue;
+    }
+    if (entry.assetClass === "immovable" && Number.isFinite(acquisitionMs) && acquisitionMs < CG_RATE_PIVOT_MS) {
+      // Pre-23-Jul-2024 immovable property: lower of 12.5% without index or 20% with index.
+      const gainNoIndex = Math.max(0, netProceeds - cost);
+      const gainIndexed = Math.max(0, netProceeds - indexedCost(cost, acquisitionMs));
+      specialTaxableIncome += gainNoIndex;
+      specialCappedTax += Math.min(gainNoIndex * LTCG_OTHER_RATE, gainIndexed * LTCG_INDEXED_RATE);
+      continue;
+    }
+    const gain = Math.max(0, netProceeds - cost);
+    specialTaxableIncome += gain;
+    specialCappedTax += gain * LTCG_OTHER_RATE;
+  }
+
+  const taxable112a = Math.max(0, gross112a - ITR_112A_SIMPLE_LIMIT);
+  specialTaxableIncome += taxable112a;
+  specialCappedTax += taxable112a * LTCG_112A_RATE;
+  return { normalAddition, specialTaxableIncome, specialCappedTax, specialUncappedTax: 0 };
+}
+
+function capitalGainsFromAggregates(draft: ItrFilingDraft): SpecialRateBlock {
+  const stcg = amount(draft.income.shortTermCapitalGains);
+  const taxable112a = Math.max(0, amount(draft.income.section112aLtcg) - ITR_112A_SIMPLE_LIMIT);
+  const otherCg = amount(draft.income.otherCapitalGains);
+  return {
+    normalAddition: 0,
+    specialTaxableIncome: stcg + taxable112a + otherCg,
+    specialCappedTax: stcg * STCG_111A_RATE + taxable112a * LTCG_112A_RATE + otherCg * LTCG_OTHER_RATE,
+    specialUncappedTax: 0,
+  };
+}
+
+function computeSpecialRateBlock(draft: ItrFilingDraft): SpecialRateBlock {
+  const capitalGains = draft.income.capitalGainsEntries.length
+    ? capitalGainsFromEntries(draft.income.capitalGainsEntries)
+    : capitalGainsFromAggregates(draft);
+  const vda = amount(draft.income.vdaIncome);
+  const winnings = amount(draft.income.winningsOrSpecialRateIncome);
+  return {
+    normalAddition: capitalGains.normalAddition,
+    specialTaxableIncome: capitalGains.specialTaxableIncome + vda + winnings,
+    specialCappedTax: capitalGains.specialCappedTax,
+    specialUncappedTax: vda * VDA_RATE + winnings * SPECIAL_WINNINGS_RATE,
+  };
+}
+
+function computePresumptiveIncome(draft: ItrFilingDraft): number {
+  if (draft.income.presumptiveScheme === "44AD") {
+    const rate = draft.income.cashReceiptsWithinFivePercent
+      ? PRESUMPTIVE_44AD_DIGITAL_RATE
+      : PRESUMPTIVE_44AD_CASH_RATE;
+    return amount(draft.income.businessIncome) * rate;
+  }
+  if (draft.income.presumptiveScheme === "44ADA") {
+    return amount(draft.income.professionalIncome) * PRESUMPTIVE_44ADA_RATE;
+  }
+  return 0;
+}
+
+function surchargeRateFor(taxableIncome: number, regime: "old" | "new") {
+  for (const band of SURCHARGE_BANDS) {
+    if (taxableIncome > band.threshold) {
+      return {
+        rate: regime === "new" ? Math.min(band.rate, NEW_REGIME_MAX_SURCHARGE_RATE) : band.rate,
+        threshold: band.threshold,
+      };
+    }
+  }
+  return { rate: 0, threshold: 0 };
+}
+
+function computeSurcharge(args: {
+  regime: "old" | "new";
+  normalTaxAfterRebate: number;
+  specialCappedTax: number;
+  specialUncappedTax: number;
+  specialTaxableIncome: number;
+  taxableIncome: number;
+  slabs: readonly { min: number; max: number; rate: number }[];
+}): number {
+  const { rate, threshold } = surchargeRateFor(args.taxableIncome, args.regime);
+  if (rate === 0) return 0;
+
+  const cappedRate = Math.min(rate, SURCHARGE_SPECIAL_CAP_RATE);
+  const surchargeRaw =
+    (args.normalTaxAfterRebate + args.specialUncappedTax) * rate +
+    args.specialCappedTax * cappedRate;
+
+  // Marginal relief: income-tax plus surcharge above a threshold may not exceed
+  // the income-tax at the threshold plus the income earned beyond it.
+  const baseTax = args.normalTaxAfterRebate + args.specialCappedTax + args.specialUncappedTax;
+  const normalTaxAtThreshold = slabTax(Math.max(0, threshold - args.specialTaxableIncome), args.slabs);
+  const taxAtThreshold = normalTaxAtThreshold + args.specialCappedTax + args.specialUncappedTax;
+  const baseline = taxAtThreshold + (args.taxableIncome - threshold);
+  const relief = Math.max(0, baseTax + surchargeRaw - baseline);
+  return Math.max(0, surchargeRaw - relief);
+}
+
 function computeRegimeTax(draft: ItrFilingDraft, regime: "old" | "new"): ItrRegimeComputation {
   const salaryOrPension = amount(draft.income.salary) + amount(draft.income.pension);
+  const special = computeSpecialRateBlock(draft);
+  const presumptiveIncome = computePresumptiveIncome(draft);
   const normalGrossIncome =
     salaryOrPension +
     amount(draft.income.housePropertyIncome) +
     amount(draft.income.otherSources) +
-    amount(draft.income.agriculturalIncome);
+    amount(draft.income.agriculturalIncome) +
+    presumptiveIncome +
+    special.normalAddition;
   const standardDeduction = Math.min(salaryOrPension, STANDARD_DEDUCTION[regime]);
   const eligibleDeductions = regime === "old" ? calculateItrTotalDeductions(draft) : 0;
   const normalTaxableIncome = Math.max(0, normalGrossIncome - standardDeduction - eligibleDeductions);
-  const taxable112a = Math.max(0, amount(draft.income.section112aLtcg) - ITR_112A_SIMPLE_LIMIT);
-  const specialRateTax =
-    amount(draft.income.shortTermCapitalGains) * 0.2 +
-    taxable112a * 0.125 +
-    amount(draft.income.otherCapitalGains) * 0.125 +
-    amount(draft.income.winningsOrSpecialRateIncome) * 0.3;
-  const specialRateTaxableIncome =
-    amount(draft.income.shortTermCapitalGains) +
-    taxable112a +
-    amount(draft.income.otherCapitalGains) +
-    amount(draft.income.winningsOrSpecialRateIncome);
+  const specialRateTax = special.specialCappedTax + special.specialUncappedTax;
+  const specialRateTaxableIncome = special.specialTaxableIncome;
   const taxableIncome = normalTaxableIncome + specialRateTaxableIncome;
   const slabs = regime === "new"
     ? NEW_REGIME_SLABS
     : OLD_REGIME_SLABS[ageCategoryFor(draft.taxpayer.dateOfBirth)];
   const normalSlabTax = slabTax(normalTaxableIncome, slabs);
-  const taxBeforeRebate = normalSlabTax + specialRateTax;
   const isResidentIndividual = draft.taxpayer.type === "individual" && draft.taxpayer.residentialStatus === "resident";
   let rebate87A = 0;
   let marginalRelief = 0;
@@ -800,7 +1023,16 @@ function computeRegimeTax(draft: ItrFilingDraft, regime: "old" | "new"): ItrRegi
     normalTaxAfterRebate = Math.max(0, normalSlabTax - rebate87A);
   }
 
-  const taxBeforeCess = normalTaxAfterRebate + specialRateTax;
+  const surcharge = computeSurcharge({
+    regime,
+    normalTaxAfterRebate,
+    specialCappedTax: special.specialCappedTax,
+    specialUncappedTax: special.specialUncappedTax,
+    specialTaxableIncome: specialRateTaxableIncome,
+    taxableIncome,
+    slabs,
+  });
+  const taxBeforeCess = normalTaxAfterRebate + specialRateTax + surcharge;
   const cess = taxBeforeCess * HEALTH_AND_EDUCATION_CESS_RATE;
   const grossTaxLiability = taxBeforeCess + cess;
 
@@ -814,6 +1046,7 @@ function computeRegimeTax(draft: ItrFilingDraft, regime: "old" | "new"): ItrRegi
     specialRateTax: roundAmount(specialRateTax),
     rebate87A: roundAmount(rebate87A),
     marginalRelief: roundAmount(marginalRelief),
+    surcharge: roundAmount(surcharge),
     taxBeforeCess: roundAmount(taxBeforeCess),
     cess: roundAmount(cess),
     grossTaxLiability: roundAmount(grossTaxLiability),

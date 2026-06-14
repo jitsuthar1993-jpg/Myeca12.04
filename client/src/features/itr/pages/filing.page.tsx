@@ -1155,10 +1155,33 @@ export default function ITRFilingPage() {
                   <CurrencyInput label="Section 112A LTCG" value={draft.income.section112aLtcg} onChange={(value) => updateIncome({ section112aLtcg: value })} />
                   <CurrencyInput label="Short-term capital gains" value={draft.income.shortTermCapitalGains} allowNegative onChange={(value) => updateIncome({ shortTermCapitalGains: value })} />
                   <CurrencyInput label="Other capital gains" value={draft.income.otherCapitalGains} allowNegative onChange={(value) => updateIncome({ otherCapitalGains: value })} />
+                  <CurrencyInput label="Crypto / VDA gains" value={draft.income.vdaIncome} onChange={(value) => updateIncome({ vdaIncome: value })} helper="Taxed at a flat 30% with no loss set-off (Section 115BBH)." />
                 </PaneSection>
-                <PaneSection visible={draft.income.selectedTypes.includes("business") && paneVisible("income-business")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <CurrencyInput label="Business income" value={draft.income.businessIncome} onChange={(value) => updateIncome({ businessIncome: value })} />
-                  <CurrencyInput label="Professional income" value={draft.income.professionalIncome} onChange={(value) => updateIncome({ professionalIncome: value })} />
+                <PaneSection visible={draft.income.selectedTypes.includes("business") && paneVisible("income-business")} className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <CurrencyInput label={draft.income.presumptiveScheme === "44AD" ? "Business turnover" : "Business income"} value={draft.income.businessIncome} onChange={(value) => updateIncome({ businessIncome: value })} />
+                    <CurrencyInput label={draft.income.presumptiveScheme === "44ADA" ? "Professional receipts" : "Professional income"} value={draft.income.professionalIncome} onChange={(value) => updateIncome({ professionalIncome: value })} />
+                    <div>
+                      <Label>Presumptive scheme</Label>
+                      <Select value={draft.income.presumptiveScheme} onValueChange={(value) => updateIncome({ presumptiveScheme: value as "none" | "44AD" | "44ADA" | "44AE" })}>
+                        <SelectTrigger className="mt-2 h-11 rounded-lg"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Not presumptive</SelectItem>
+                          <SelectItem value="44AD">44AD — business (6%/8%)</SelectItem>
+                          <SelectItem value="44ADA">44ADA — profession (50%)</SelectItem>
+                          <SelectItem value="44AE">44AE — goods carriage</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  {draft.income.presumptiveScheme === "44AD" ? (
+                    <ToggleRow
+                      title="Cash receipts within 5%"
+                      description="Applies the 6% presumptive rate on digitally received turnover instead of 8%."
+                      checked={draft.income.cashReceiptsWithinFivePercent}
+                      onCheckedChange={(checked) => updateIncome({ cashReceiptsWithinFivePercent: checked })}
+                    />
+                  ) : null}
                 </PaneSection>
                 <PaneSection visible={draft.income.selectedTypes.includes("foreign") && paneVisible("income-foreign")} className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <CurrencyInput label="Foreign income" value={draft.income.foreignIncome} onChange={(value) => updateIncome({ foreignIncome: value })} />

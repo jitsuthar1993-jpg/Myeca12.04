@@ -407,3 +407,182 @@ describe("ITR filing review helpers", () => {
     )).toBe(false);
   });
 });
+
+// Pins the verified AY 2026-27 (FY 2025-26) tax parameters so any drift in the
+// slabs, rebate, standard deduction, special rates, or age-based exemptions is
+// caught. See docs/ITR_AY2026-27_DETAILS_AUDIT_AND_PLAN.md (Part 5).
+describe("AY 2026-27 verified parameters", () => {
+  const salaryDraft = (salary: number, otherSources = 0) =>
+    draft({ income: { salary, otherSources, section112aLtcg: 0, shortTermCapitalGains: 0, otherCapitalGains: 0 } });
+
+  it("makes ₹12.75L salary tax-free under the new regime via the ₹60k rebate", () => {
+    const liability = computeItrTaxLiability(salaryDraft(1_275_000));
+
+    expect(liability.status).toBe("computed");
+    expect(liability.newRegime.standardDeduction).toBe(75_000);
+    expect(liability.newRegime.rebate87A).toBe(60_000);
+    expect(liability.newRegime.grossTaxLiability).toBe(0);
+  });
+
+  it("applies new-regime marginal relief just above the ₹12L taxable ceiling", () => {
+    // Salary 12.85L − 75k std = 12.10L taxable; slab tax 61,500 capped to ₹10k excess.
+    const liability = computeItrTaxLiability(salaryDraft(1_285_000));
+
+    expect(liability.newRegime.rebate87A).toBe(0);
+    expect(liability.newRegime.marginalRelief).toBe(51_500);
+    expect(liability.newRegime.grossTaxLiability).toBe(10_400);
+  });
+
+  it("taxes §112A LTCG above ₹1.25L at 12.5% (no rebate) and routes to CA review", () => {
+    const liability = computeItrTaxLiability(
+      draft({ income: { salary: 0, pension: 0, otherSources: 0, section112aLtcg: 325_000 } }),
+    );
+
+    // 325k − 125k exemption = 200k taxed at 12.5% = 25,000; +4% cess = 26,000.
+    expect(liability.newRegime.specialRateTax).toBe(25_000);
+    expect(liability.newRegime.grossTaxLiability).toBe(26_000);
+    expect(liability.newRegime.rebate87A).toBe(0);
+    expect(liability.status).toBe("review_required");
+    expect(liability.unsupportedReasons.join(" ")).toMatch(/gated for CA review/i);
+  });
+
+  it("honours the old-regime senior-citizen ₹3L basic exemption", () => {
+    const seniorOld = computeItrTaxLiability(draft({
+      taxpayer: { dateOfBirth: "1960-01-01" },
+      filing: { wantsOldRegime: true },
+      income: { salary: 800_000, otherSources: 0 },
+      deductions: { section80C: 0, section80D: 0, otherChapterVia: 0 },
+    }));
+    const regularOld = computeItrTaxLiability(draft({
+      taxpayer: { dateOfBirth: "1990-01-01" },
+      filing: { wantsOldRegime: true },
+      income: { salary: 800_000, otherSources: 0 },
+      deductions: { section80C: 0, section80D: 0, otherChapterVia: 0 },
+    }));
+
+    expect(seniorOld.oldRegime.grossTaxLiability).toBe(62_400);
+    expect(regularOld.oldRegime.grossTaxLiability).toBe(65_000);
+  });
+});
+
+// Phases 1–4 of docs/ITR_AY2026-27_DETAILS_AUDIT_AND_PLAN.md: capital-gains
+// detail, surcharge, VDA, and presumptive computation. Advanced forms stay
+// gated to CA review (status "review_required") while the estimate is computed.
+describe("AY 2026-27 advanced computation (Phases 1-4)", () => {
+  it("Phase 2 — applies 10% surcharge above ₹50L with no marginal relief when well clear", () => {
+    const liability = computeItrTaxLiability(draft({ income: { salary: 6_000_000, otherSources: 0 } }));
+
+    expect(liability.newRegime.surcharge).toBe(135_750);
+    expect(liability.newRegime.grossTaxLiability).toBe(1_552_980);
+    expect(liability.status).toBe("review_required");
+  });
+
+  it("Phase 2 — caps tax+surcharge via marginal relief just above ₹50L", () => {
+    const liability = computeItrTaxLiability(draft({ income: { salary: 5_100_000, otherSources: 0 } }));
+
+    // Without relief surcharge would be 108,750; relief trims it to 17,500.
+    expect(liability.newRegime.surcharge).toBe(17_500);
+    expect(liability.newRegime.grossTaxLiability).toBe(1_149_200);
+  });
+
+  it("Phase 3 — taxes VDA/crypto at a flat 30% with no rebate and routes to CA review", () => {
+    const liability = computeItrTaxLiability(
+      draft({ income: { salary: 0, otherSources: 0, vdaIncome: 100_000 } }),
+    );
+
+    expect(liability.newRegime.specialRateTax).toBe(30_000);
+    expect(liability.newRegime.grossTaxLiability).toBe(31_200);
+    expect(liability.status).toBe("review_required");
+    expect(liability.unsupportedReasons.join(" ")).toMatch(/gated for CA review/i);
+  });
+
+  it("Phase 4 — computes §44ADA presumptive income at 50% of professional receipts", () => {
+    const liability = computeItrTaxLiability(draft({
+      income: { salary: 0, otherSources: 0, professionalIncome: 1_000_000, presumptiveScheme: "44ADA" },
+    }));
+
+    expect(liability.newRegime.taxableIncome).toBe(500_000);
+    expect(liability.newRegime.normalSlabTax).toBe(5_000);
+    expect(liability.status).toBe("review_required");
+  });
+
+  it("Phase 4 — uses 6% §44AD for digital turnover and 8% for cash-heavy turnover", () => {
+    const digital = computeItrTaxLiability(draft({
+      income: { salary: 0, otherSources: 0, businessIncome: 2_000_000, presumptiveScheme: "44AD", cashReceiptsWithinFivePercent: true },
+    }));
+    const cashHeavy = computeItrTaxLiability(draft({
+      income: { salary: 0, otherSources: 0, businessIncome: 2_000_000, presumptiveScheme: "44AD", cashReceiptsWithinFivePercent: false },
+    }));
+
+    expect(digital.newRegime.taxableIncome).toBe(120_000);
+    expect(cashHeavy.newRegime.taxableIncome).toBe(160_000);
+  });
+
+  it("Phase 1 — applies §112A grandfathering and the ₹1.25L exemption to listed-equity LTCG", () => {
+    const liability = computeItrTaxLiability(draft({
+      income: {
+        salary: 0,
+        otherSources: 0,
+        capitalGainsEntries: [{
+          assetClass: "listed_equity",
+          acquisitionDate: "2017-01-01",
+          saleDate: "2025-06-01",
+          cost: 100_000,
+          proceeds: 500_000,
+          expenses: 0,
+          fmv31Jan2018: 300_000,
+        }],
+      },
+    }));
+
+    // Grandfathered cost 300k → gain 200k; minus ₹1.25L = 75k @ 12.5% = 9,375 (+cess).
+    expect(liability.newRegime.specialRateTax).toBe(9_375);
+    expect(liability.newRegime.grossTaxLiability).toBe(9_750);
+    expect(liability.status).toBe("review_required");
+  });
+
+  it("Phase 1 — picks the lower of 12.5% unindexed vs 20% indexed (CII 376) for pre-July-2024 property", () => {
+    const liability = computeItrTaxLiability(draft({
+      income: {
+        salary: 0,
+        otherSources: 0,
+        capitalGainsEntries: [{
+          assetClass: "immovable",
+          acquisitionDate: "2014-08-01",
+          saleDate: "2025-06-01",
+          cost: 1_000_000,
+          proceeds: 2_000_000,
+          expenses: 0,
+          fmv31Jan2018: 0,
+        }],
+      },
+    }));
+
+    // Unindexed: 1,000,000 @ 12.5% = 125,000. Indexed (376/240): gain 433,333 @ 20% = 86,667 → lower wins.
+    expect(liability.newRegime.specialRateTax).toBe(86_667);
+    expect(liability.newRegime.grossTaxLiability).toBe(90_133);
+  });
+
+  it("Phase 1 — treats post-April-2023 debt funds as slab-rate short-term gains (§50AA)", () => {
+    const liability = computeItrTaxLiability(draft({
+      income: {
+        salary: 0,
+        otherSources: 0,
+        capitalGainsEntries: [{
+          assetClass: "debt",
+          acquisitionDate: "2023-06-01",
+          saleDate: "2025-06-01",
+          cost: 100_000,
+          proceeds: 150_000,
+          expenses: 0,
+          fmv31Jan2018: 0,
+        }],
+      },
+    }));
+
+    // 50k gain taxed at slab → flows into normal taxable income, not the special block.
+    expect(liability.newRegime.taxableIncome).toBe(50_000);
+    expect(liability.newRegime.specialRateTax).toBe(0);
+    expect(liability.status).toBe("review_required");
+  });
+});
