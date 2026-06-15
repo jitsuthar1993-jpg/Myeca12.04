@@ -13,6 +13,7 @@ describe("public performance cache policy", () => {
     const textCoverHeaders = vercel.headers.find((entry) => entry.source === "/assets/blog/text-covers/(.*)")?.headers ?? [];
     const assetHeaders = vercel.headers.find((entry) => entry.source === "/assets/(.*)")?.headers ?? [];
     const bootstrapHeaders = vercel.headers.find((entry) => entry.source === "/app-bootstrap.js")?.headers ?? [];
+    const fontHeaders = vercel.headers.find((entry) => entry.source === "/fonts/(.*)")?.headers ?? [];
 
     expect(textCoverHeaders).toContainEqual({
       key: "Cache-Control",
@@ -25,6 +26,10 @@ describe("public performance cache policy", () => {
     expect(bootstrapHeaders).toContainEqual({
       key: "Cache-Control",
       value: "public, max-age=3600, stale-while-revalidate=86400",
+    });
+    expect(fontHeaders).toContainEqual({
+      key: "Cache-Control",
+      value: "public, max-age=31536000, immutable",
     });
   });
 
@@ -74,7 +79,8 @@ describe("public performance cache policy", () => {
     const consentIndex = bootstrap.indexOf('"consent", "default"');
     const gtmIndex = bootstrap.indexOf("googletagmanager.com/gtm.js");
 
-    expect(html).toContain('<script src="/gtm-consent-bootstrap.js" data-gtm-id="%VITE_GTM_ID%"></script>');
+    expect(html).toContain('<script defer src="/gtm-consent-bootstrap.js" data-gtm-id="%VITE_GTM_ID%"></script>');
+    expect(html).not.toContain('<script src="/gtm-consent-bootstrap.js" data-gtm-id="%VITE_GTM_ID%"></script>');
     expect(html).toMatch(/<body>\s*<!-- Google Tag Manager \(noscript\) -->/);
     expect(html).toContain("googletagmanager.com/ns.html?id=%VITE_GTM_ID%");
     expect(html).not.toContain("GTM-5H5QSCJC");

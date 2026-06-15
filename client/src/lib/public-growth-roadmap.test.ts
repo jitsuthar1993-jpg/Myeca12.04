@@ -9,6 +9,36 @@ function readSource(path: string) {
   return readFileSync(resolve(process.cwd(), path), "utf8");
 }
 
+function hexToRgb(hex: string) {
+  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!match) throw new Error(`Invalid hex color: ${hex}`);
+
+  return {
+    r: Number.parseInt(match[1], 16),
+    g: Number.parseInt(match[2], 16),
+    b: Number.parseInt(match[3], 16),
+  };
+}
+
+function luminance(hex: string) {
+  const { r, g, b } = hexToRgb(hex);
+  const [rs, gs, bs] = [r, g, b].map((value) => {
+    const channel = value / 255;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+function contrastRatio(foreground: string, background: string) {
+  const foregroundLuminance = luminance(foreground);
+  const backgroundLuminance = luminance(background);
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 describe("public growth roadmap implementation", () => {
   it("keeps the homepage hero stable and conversion-focused", () => {
     const source = readSource("client/src/pages/home.page.tsx");
@@ -21,7 +51,7 @@ describe("public growth roadmap implementation", () => {
     expect(source).toContain("Free Notice Assistance");
     expect(source).toContain("ITR FILING 2026-27 STARTED");
     expect(source).toContain("rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent");
-    expect(source).toContain("text-emerald-700/85");
+    expect(source).toContain("text-emerald-800");
     expect(source).not.toContain("for tax, GST, notices");
     expect(source).not.toContain("ITR Filing Started");
     expect(source).not.toContain("<HeroTypingPhrase");
@@ -36,6 +66,22 @@ describe("public growth roadmap implementation", () => {
     expect(source).toContain("/calculators/regime-comparator");
     expect(source).toContain("/calculators/tds");
     expect(source).toContain("/calculators/capital-gains");
+  });
+
+  it("keeps the mobile homepage hero contrast-safe and first-paint visible", () => {
+    const source = readSource("client/src/pages/home.page.tsx");
+    const heroStart = source.indexOf("<section className=\"bg-gradient-to-b");
+    const heroEnd = source.indexOf("<section className=\"py-6 md:py-8\"", heroStart);
+    const heroSource = source.slice(heroStart, heroEnd);
+
+    expect(heroSource).toContain('<span className="text-emerald-800">AY 2026-27</span>');
+    expect(heroSource).not.toContain('<span className="text-emerald-600">AY 2026-27</span>');
+    expect(heroSource).toContain("text-emerald-800");
+    expect(heroSource).not.toContain("text-emerald-700/85");
+    expect(heroSource).not.toContain("m-hero-rise");
+    expect(source).toContain('window.matchMedia("(max-width: 767px)")');
+    expect(source).toContain("setShouldAnimateTypewriter(!reduceMotionQuery.matches && !mobileQuery.matches)");
+    expect(contrastRatio("#065f46", "#ffffff")).toBeGreaterThanOrEqual(4.5);
   });
 
   it("adds public mobile conversion chrome outside authenticated surfaces", () => {

@@ -64,7 +64,6 @@ const heroProofItems = [
   "Expert support",
 ];
 
-const riseDelay = (ms: number) => ({ "--rise-delay": `${ms}ms` }) as CSSProperties;
 const revealDelay = (ms: number) => ({ "--reveal-delay": `${ms}ms` }) as CSSProperties;
 
 const pricingPlans = [
@@ -77,19 +76,28 @@ const HeroTypewriter = ({ phrases }: { phrases: readonly string[] }) => {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [typedLength, setTypedLength] = useState(phrases[0].length);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const [shouldAnimateTypewriter, setShouldAnimateTypewriter] = useState(false);
   const currentPhrase = phrases[phraseIndex];
 
   useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduceMotion(query.matches);
-    const onChange = (event: MediaQueryListEvent) => setReduceMotion(event.matches);
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
+    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+    const syncTypewriterMode = () => {
+      setShouldAnimateTypewriter(!reduceMotionQuery.matches && !mobileQuery.matches);
+    };
+
+    syncTypewriterMode();
+    reduceMotionQuery.addEventListener("change", syncTypewriterMode);
+    mobileQuery.addEventListener("change", syncTypewriterMode);
+
+    return () => {
+      reduceMotionQuery.removeEventListener("change", syncTypewriterMode);
+      mobileQuery.removeEventListener("change", syncTypewriterMode);
+    };
   }, []);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (!shouldAnimateTypewriter) return;
 
     const typingDelay = isDeleting ? 38 : 76;
     const holdDelay = 1250;
@@ -121,9 +129,9 @@ const HeroTypewriter = ({ phrases }: { phrases: readonly string[] }) => {
     }, delay);
 
     return () => window.clearTimeout(timeout);
-  }, [currentPhrase, typedLength, isDeleting, reduceMotion, phrases.length]);
+  }, [currentPhrase, typedLength, isDeleting, shouldAnimateTypewriter, phrases.length]);
 
-  const typedPhrase = reduceMotion ? phrases[0] : currentPhrase.slice(0, typedLength);
+  const typedPhrase = shouldAnimateTypewriter ? currentPhrase.slice(0, typedLength) : phrases[0];
 
   return (
     <span
@@ -131,7 +139,7 @@ const HeroTypewriter = ({ phrases }: { phrases: readonly string[] }) => {
       className="inline-flex min-w-[14ch] items-center justify-center text-center text-blue-600 sm:min-w-[18ch]"
     >
       <span>{typedPhrase || "\u00a0"}</span>
-      {!reduceMotion && (
+      {shouldAnimateTypewriter && (
         <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" />
       )}
     </span>
@@ -189,35 +197,34 @@ const HomePage = () => {
         <section className="bg-gradient-to-b from-blue-50/70 via-white to-white py-8 md:bg-gradient-to-br md:from-slate-50 md:via-blue-50/20 md:to-white md:py-12 lg:py-14">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-5xl text-center">
-              <div className="m-hero-rise inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
+              <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 shadow-sm">
                 <Shield className="h-4 w-4 shrink-0 text-blue-600" />
                 <span>Smart tax filing</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-300" aria-hidden="true" />
-                <span className="text-emerald-600">AY 2026-27</span>
+                <span className="text-emerald-800">AY 2026-27</span>
               </div>
 
               <div className="relative mx-auto mt-6 max-w-5xl">
-                <span className="hero-filing-stamp pointer-events-none absolute -left-28 top-[5.75rem] hidden rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-700/85 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:inline-flex">
+                <span className="hero-filing-stamp pointer-events-none absolute -left-28 top-[5.75rem] hidden rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-800 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:inline-flex">
                   ITR FILING 2026-27 STARTED
                 </span>
 
                 <h1
                   aria-label="File your Income Tax Returns, GST Returns, TDS Returns, and Compliances"
-                  className="m-hero-rise type-hero-title mx-auto max-w-5xl text-center text-slate-950"
-                  style={riseDelay(70)}
+                  className="type-hero-title mx-auto max-w-5xl text-center text-slate-950"
                 >
                   File your{" "}
                   <HeroTypewriter phrases={HERO_TYPING_PHRASES} />
                 </h1>
-                <p className="m-hero-rise mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl" style={riseDelay(140)}>
+                <p className="mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
                   With <span className="font-bold text-slate-700">Expert eCA Assistance</span> and <span className="font-bold text-slate-700">Free Notice Assistance</span>.
                 </p>
-                <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-700/85 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:hidden">
+                <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-800 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:hidden">
                   ITR FILING 2026-27 STARTED
                 </span>
               </div>
 
-              <div className="m-hero-rise mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7" style={riseDelay(210)}>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7">
                 <Link
                   href="/which-itr-form-to-file?source=homepage_hero"
                   onClick={() => trackPublicCtaClick("Start Filing Now", "homepage_hero")}
@@ -237,7 +244,7 @@ const HomePage = () => {
                 </Link>
               </div>
 
-              <div className="m-hero-rise mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-2 md:mt-7 md:gap-3" style={riseDelay(280)}>
+              <div className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-2 md:mt-7 md:gap-3">
                 {heroProofItems.map((item) => (
                   <span
                     key={item}
