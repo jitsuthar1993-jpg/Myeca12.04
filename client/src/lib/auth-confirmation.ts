@@ -1,11 +1,13 @@
+import { getSafeRedirectPath } from "./role-redirect";
+
 export const DEFAULT_AUTH_REDIRECT_PATH = "/dashboard";
 
 function stripPrefix(value: string, prefix: string) {
   return value.startsWith(prefix) ? value.slice(prefix.length) : value;
 }
 
-export function getAuthRedirectPath(_rawRedirect: string | null | undefined, _origin = window.location.origin) {
-  return DEFAULT_AUTH_REDIRECT_PATH;
+export function getAuthRedirectPath(rawRedirect: string | null | undefined, origin = window.location.origin) {
+  return getSafeRedirectPath(rawRedirect || null, origin) || DEFAULT_AUTH_REDIRECT_PATH;
 }
 
 export function buildSignupConfirmationRedirectUrl(

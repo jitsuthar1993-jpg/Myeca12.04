@@ -12,9 +12,9 @@ import {
 const origin = "https://myeca.in";
 
 describe("auth confirmation redirects", () => {
-  it("builds Supabase signup callback URLs that return to the dashboard", () => {
+  it("builds Supabase signup callback URLs that preserve safe internal return targets", () => {
     expect(buildSignupConfirmationRedirectUrl("/documents?tab=tax#files", origin)).toBe(
-      "https://myeca.in/auth/callback?next=%2Fdashboard",
+      "https://myeca.in/auth/callback?next=%2Fdocuments%3Ftab%3Dtax%23files",
     );
   });
 
@@ -28,6 +28,13 @@ describe("auth confirmation redirects", () => {
     expect(getAuthRedirectPath("https://evil.example/dashboard", origin)).toBe("/dashboard");
     expect(getAuthRedirectPath("/auth/login?next=%2Fdashboard", origin)).toBe("/dashboard");
     expect(getAuthCallbackTarget("?next=https%3A%2F%2Fevil.example%2Fdashboard", "", origin)).toBe("/dashboard");
+  });
+
+  it("reads callback targets from query strings and hash fragments", () => {
+    expect(getAuthCallbackTarget("?next=%2Fdocuments%3Ftab%3Dtax%23files", "", origin)).toBe(
+      "/documents?tab=tax#files",
+    );
+    expect(getAuthCallbackTarget("", "#next=%2Fitr%2Ffiling", origin)).toBe("/itr/filing");
   });
 
   it("reads callback code, tokens, and errors from Supabase callback URLs", () => {

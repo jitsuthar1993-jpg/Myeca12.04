@@ -10,14 +10,16 @@ describe("role redirect rules", () => {
     expect(getRoleHome("team_member")).toBe("/team/dashboard");
   });
 
-  it("lands successful logins on the role home dashboard instead of a saved target", () => {
+  it("keeps safe saved targets when the role may access them", () => {
     expect(resolvePostLoginRedirect("team_member", "/team/dashboard")).toBe("/team/dashboard");
-    expect(resolvePostLoginRedirect("team_member", "/admin/blog-management")).toBe("/team/dashboard");
+    expect(resolvePostLoginRedirect("team_member", "/admin/blog-management")).toBe("/admin/blog-management");
+    expect(resolvePostLoginRedirect("team_member", "/admin/blog-management?tab=drafts")).toBe("/admin/blog-management?tab=drafts");
     expect(resolvePostLoginRedirect("team_member", "/admin/users")).toBe("/team/dashboard");
-    expect(resolvePostLoginRedirect("user", "/documents")).toBe("/dashboard");
+    expect(resolvePostLoginRedirect("user", "/documents")).toBe("/documents");
     expect(resolvePostLoginRedirect("user", "/admin/dashboard")).toBe("/dashboard");
+    expect(resolvePostLoginRedirect("ca", "/ca/dashboard?tab=cases#case-1")).toBe("/ca/dashboard?tab=cases#case-1");
     expect(resolvePostLoginRedirect("ca", "/admin/dashboard")).toBe("/ca/dashboard");
-    expect(resolvePostLoginRedirect("admin", "/ca/dashboard")).toBe("/admin/dashboard");
+    expect(resolvePostLoginRedirect("admin", "/ca/dashboard")).toBe("/ca/dashboard");
   });
 
   it("rejects auth loops and external redirects", () => {

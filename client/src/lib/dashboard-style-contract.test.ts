@@ -55,6 +55,8 @@ describe("dashboard style contract", () => {
   it("keeps user dashboard metrics compact and aligns service identity rows", () => {
     const source = readFileSync("client/src/pages/user-dashboard.page.tsx", "utf8");
 
+    expect(source).toContain("aria-label=\"What's next\"");
+    expect(source).toContain("nextActions.map((action)");
     expect(source).toContain(
       'className="grid min-h-[60px] grid-cols-[36px_minmax(0,1fr)] items-center gap-3 px-3 py-2 sm:px-4"',
     );

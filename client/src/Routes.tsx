@@ -22,6 +22,12 @@ function LegacyItrStartRedirect() {
   return <Redirect to={buildItrStartRedirectLocation(sourceUrl)} replace />;
 }
 
+function CanonicalRouteRedirect({ to }: { to: string }) {
+  const suffix = typeof window === "undefined" ? "" : `${window.location.search}${window.location.hash}`;
+
+  return <Redirect to={`${to}${suffix}`} replace />;
+}
+
 // Route components loaded lazily to reduce initial bundle size
 const NotFound = lazyWithRetry(() => import("@/pages/not-found"));
 const IncomeTaxCalculator = lazyWithRetry(() => import("@/features/calculators/pages/income-tax.page"));
@@ -297,7 +303,7 @@ function RouteSwitch() {
         <Route path="/services/tds-filing" component={TdsFilingPage} />
         <Route path="/itr-filing" component={GeneratedServicePage} />
         <Route path="/gst-filing" component={GSTReturnsPage} />
-        <Route path="/salary" component={ITRForSalariedPage} />
+        <Route path="/salary" component={() => <CanonicalRouteRedirect to="/services/itr-for-salaried" />} />
         <Route path="/services/itr-for-salaried" component={ITRForSalariedPage} />
         <Route path="/services/gst-registration" component={GstRegistrationPage} />
         <Route path="/services/company-registration" component={CompanyRegistrationPage} />
@@ -334,10 +340,10 @@ function RouteSwitch() {
         <Route path="/trust" component={TrustPage} />
         <Route path="/auth/callback" component={AuthCallbackPage} />
         <Route path="/auth/login" component={LoginPage} />
-        <Route path="/login" component={LoginPage} />
+        <Route path="/login" component={() => <CanonicalRouteRedirect to="/auth/login" />} />
         <Route path="/auth/admin-login" component={AdminLoginPage} />
         <Route path="/auth/register" component={RegisterPage} />
-        <Route path="/register" component={RegisterPage} />
+        <Route path="/register" component={() => <CanonicalRouteRedirect to="/auth/register" />} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/logout" component={LogoutPage} />
         <Route path="/dashboard/services/:id" component={() => <RequireAuth><ServiceDetailPage /></RequireAuth>} />

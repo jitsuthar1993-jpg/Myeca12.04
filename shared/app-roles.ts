@@ -50,16 +50,17 @@ export function getRoleLabel(role: unknown): string {
 export function isRoleAllowedPath(role: unknown, path: string) {
   const normalizedRole = normalizeAppRole(role);
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const isAdminPath = normalizedPath === "/admin" || normalizedPath.startsWith("/admin/");
-  const isCaPath = normalizedPath === "/ca" || normalizedPath.startsWith("/ca/");
-  const isTeamPath = normalizedPath === "/team" || normalizedPath.startsWith("/team/");
+  const pathOnly = normalizedPath.split(/[?#]/)[0] || "/";
+  const isAdminPath = pathOnly === "/admin" || pathOnly.startsWith("/admin/");
+  const isCaPath = pathOnly === "/ca" || pathOnly.startsWith("/ca/");
+  const isTeamPath = pathOnly === "/team" || pathOnly.startsWith("/team/");
 
   if (normalizedRole === "admin") return true;
   if (normalizedRole === "ca") return !isAdminPath && !isTeamPath;
   if (normalizedRole === "team_member") {
     return (
       !isCaPath &&
-      (!isAdminPath || TEAM_MEMBER_ADMIN_PATHS.some((prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`)))
+      (!isAdminPath || TEAM_MEMBER_ADMIN_PATHS.some((prefix) => pathOnly === prefix || pathOnly.startsWith(`${prefix}/`)))
     );
   }
 

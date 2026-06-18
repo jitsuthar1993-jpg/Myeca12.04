@@ -33,6 +33,15 @@ type DashboardService = {
   metadata?: Record<string, any>;
 };
 
+type DashboardNextAction = {
+  id: string;
+  label: string;
+  detail: string;
+  href: string;
+  source?: 'reminder' | 'payment' | 'document' | 'ca' | 'service' | 'filing' | 'empty';
+  tone?: 'amber' | 'blue' | 'emerald' | 'slate';
+};
+
 type DashboardData = {
   stats?: {
     totalReturns?: number;
@@ -40,6 +49,7 @@ type DashboardData = {
     pendingTasks?: number;
     savedAmount?: number;
   };
+  nextActions?: DashboardNextAction[];
   activeServices?: DashboardService[];
 };
 
@@ -58,6 +68,21 @@ function serviceStatus(service: DashboardService) {
   return service.status || 'pending';
 }
 
+function nextActionIcon(source: DashboardNextAction['source']) {
+  if (source === 'document' || source === 'filing') return FileText;
+  if (source === 'payment' || source === 'ca') return ShieldCheck;
+  if (source === 'service') return Briefcase;
+  if (source === 'empty') return Target;
+  return Clock;
+}
+
+function nextActionTone(tone: DashboardNextAction['tone']) {
+  if (tone === 'amber') return 'border-amber-200 bg-amber-50 text-amber-700';
+  if (tone === 'emerald') return 'border-emerald-200 bg-emerald-50 text-emerald-700';
+  if (tone === 'slate') return 'border-slate-200 bg-slate-50 text-slate-700';
+  return 'border-blue-200 bg-blue-50 text-blue-700';
+}
+
 export default function UserDashboard() {
   const { user } = useAuth();
 
@@ -70,6 +95,7 @@ export default function UserDashboard() {
   });
 
   const activeServices = data?.activeServices || [];
+  const nextActions = data?.nextActions || [];
   const stats = data?.stats || {};
   const displayName = user?.firstName || user?.email?.split('@')[0] || 'User';
 
@@ -119,6 +145,36 @@ export default function UserDashboard() {
             </Card>
           ))}
         </div>
+
+        <section aria-label="What's next" className="rounded-lg border border-blue-100 bg-blue-50/60 px-4 py-4 md:px-5">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+            <div className="min-w-0 xl:w-60 [&>p]:mb-0">
+              <p className="type-meta font-bold uppercase text-blue-500">What's next</p>
+              <h2 className="type-card-title mt-1 text-slate-900">Your next useful move</h2>
+              <p className="type-support mt-1 text-slate-500">Built from live services, reminders, payments, and returns.</p>
+            </div>
+            <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+              {nextActions.map((action) => {
+                const Icon = nextActionIcon(action.source);
+
+                return (
+                  <Link key={action.id} href={action.href}>
+                    <div className="flex min-h-[74px] items-center gap-3 rounded-lg border border-white bg-white px-3 py-2 shadow-sm transition hover:border-blue-200 hover:shadow-md">
+                      <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border', nextActionTone(action.tone))}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0 flex-1 [&>p]:mb-0">
+                        <p className="truncate text-sm font-bold text-slate-900">{action.label}</p>
+                        <p className="mt-1 line-clamp-2 text-xs font-medium leading-snug text-slate-500">{action.detail}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 shrink-0 text-slate-300" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         <div className="rounded-lg border border-slate-200 bg-white px-4 py-4 md:px-5">
           <div className="flex flex-wrap items-center justify-between gap-6">

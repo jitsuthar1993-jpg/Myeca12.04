@@ -65,6 +65,13 @@ describe("SEO indexing policy", () => {
       permanent: true,
       source: "/itr/start",
     });
+    expect(vercelConfig.redirects).toEqual(
+      expect.arrayContaining([
+        { destination: "/auth/login", permanent: true, source: "/login" },
+        { destination: "/auth/register", permanent: true, source: "/register" },
+        { destination: "/services/itr-for-salaried", permanent: true, source: "/salary" },
+      ]),
+    );
     expect(SEO_CONFIG["/which-itr-form-to-file"]).toBeDefined();
     expect(SEO_CONFIG["/itr/start"]).toBeUndefined();
 

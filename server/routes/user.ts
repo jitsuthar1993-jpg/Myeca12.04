@@ -133,6 +133,138 @@ function isPendingStatus(status: unknown) {
   return ["draft", "pending", "in_progress", "link_requested", "requested", "new"].includes(normalized);
 }
 
+type DashboardNextAction = {
+  id: string;
+  label: string;
+  detail: string;
+  href: string;
+  source: "reminder" | "payment" | "document" | "ca" | "service" | "filing" | "empty";
+  tone: "amber" | "blue" | "emerald" | "slate";
+};
+
+function internalHref(value: unknown, fallback: string) {
+  if (typeof value !== "string") return fallback;
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) return fallback;
+  if (trimmed.startsWith("/auth/") || trimmed === "/login" || trimmed === "/register") return fallback;
+  return trimmed;
+}
+
+function serviceTitle(service: Record<string, any>) {
+  return service.serviceTitle || service.serviceId || "Service request";
+}
+
+function paymentNeedsAttention(service: Record<string, any>) {
+  const serviceStatus = String(service.status || "").toLowerCase();
+  if (["completed", "filed", "cancelled", "closed"].includes(serviceStatus)) return false;
+
+  const status = String(service.paymentStatus || "pending").toLowerCase();
+  return !["paid", "not_required", "not required", "waived", "completed"].includes(status);
+}
+
+function clientResponseNeeded(status: unknown) {
+  return ["changes_requested", "client_response_needed", "action_required"].includes(String(status || "").toLowerCase());
+}
+
+function buildDashboardNextActions({
+  services,
+  returns,
+  documentsUploaded,
+  reminders,
+}: {
+  services: Array<Record<string, any>>;
+  returns: Array<Record<string, any>>;
+  documentsUploaded: number;
+  reminders: Array<Record<string, any>>;
+}): DashboardNextAction[] {
+  const actions: DashboardNextAction[] = [];
+  const reminder = reminders[0];
+
+  if (reminder) {
+    const fallbackHref = reminder.caseId ? `/dashboard/services/${reminder.caseId}` : "/dashboard";
+    actions.push({
+      id: `reminder-${reminder.id}`,
+      label: reminder.title || "Reminder pending",
+      detail: reminder.message || "Review the pending reminder in your workspace.",
+      href: internalHref(reminder.metadata?.actionUrl, fallbackHref),
+      source: "reminder",
+      tone: reminder.priority === "high" || reminder.priority === "urgent" ? "amber" : "blue",
+    });
+  }
+
+  const paymentService = services.find(paymentNeedsAttention);
+  if (paymentService) {
+    actions.push({
+      id: `payment-${paymentService.id}`,
+      label: "Payment pending",
+      detail: `${serviceTitle(paymentService)} needs payment before the next fulfillment step.`,
+      href: "/payments",
+      source: "payment",
+      tone: "amber",
+    });
+  }
+
+  const responseService = services.find((service) => clientResponseNeeded(service.status));
+  if (responseService) {
+    actions.push({
+      id: `response-${responseService.id}`,
+      label: "CA response needed",
+      detail: `${serviceTitle(responseService)} is waiting for your reply or document update.`,
+      href: `/dashboard/services/${responseService.id}`,
+      source: "ca",
+      tone: "amber",
+    });
+  }
+
+  const draftReturn = returns.find((entry) => isPendingStatus(entry.status) || entry.status === "changes_requested");
+  if (draftReturn) {
+    actions.push({
+      id: `filing-${draftReturn.id}`,
+      label: "Continue ITR draft",
+      detail: "Resume the saved return and complete the remaining filing steps.",
+      href: `/itr/filing/${draftReturn.id}`,
+      source: "filing",
+      tone: "blue",
+    });
+  }
+
+  if (documentsUploaded === 0) {
+    actions.push({
+      id: "document-upload",
+      label: "Upload documents",
+      detail: "Add Form 16, AIS, Form 26AS, or other reusable records to your vault.",
+      href: "/documents",
+      source: "document",
+      tone: "blue",
+    });
+  }
+
+  const activeService = services.find((service) => isPendingStatus(service.status) || clientResponseNeeded(service.status));
+  if (activeService) {
+    actions.push({
+      id: `service-${activeService.id}`,
+      label: "Track active case",
+      detail: `${serviceTitle(activeService)} is currently ${activeService.status || "pending"}.`,
+      href: `/dashboard/services/${activeService.id}`,
+      source: "service",
+      tone: "slate",
+    });
+  }
+
+  if (!actions.length) {
+    actions.push({
+      id: "workspace-clear",
+      label: "Workspace is up to date",
+      detail: "No pending payments, reminders, or active filing tasks are waiting right now.",
+      href: "/dashboard/services",
+      source: "empty",
+      tone: "emerald",
+    });
+  }
+
+  return actions.slice(0, 4);
+}
+
 async function getOwnedUserService(serviceId: string, userId: string) {
   return getUserOwnedSnapshot("user_services", serviceId, userId);
 }
@@ -208,6 +340,7 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
       pendingServicesCount,
       recentReturnsSnapshot,
       activeServicesSnapshot,
+      pendingReminders,
     ] = await Promise.all([
       returnsRef.count().get(),
       docsRef.count().get(),
@@ -216,11 +349,19 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
       countByUserAndStatus(schema.userServices, user.id, ["pending", "in_progress", "requested", "new"]),
       returnsRef.orderBy("updatedAt", "desc").limit(5).get(),
       servicesRef.orderBy("updatedAt", "desc").limit(50).get(),
+      listReminders({ targetUserId: user.id, status: "pending" }),
     ]);
 
     const activeServices = activeServicesSnapshot.docs.map(normalizeUserService);
     const userReturns = recentReturnsSnapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     const pendingTasks = pendingReturnsCount + pendingServicesCount;
+    const documentsUploaded = totalDocsAgg.data().count;
+    const nextActions = buildDashboardNextActions({
+      services: activeServices,
+      returns: userReturns,
+      documentsUploaded,
+      reminders: pendingReminders as Array<Record<string, any>>,
+    });
 
     const recentActivity = [
       ...activeServices.map((service) => ({
@@ -244,11 +385,12 @@ router.get("/user/dashboard", requireAnyAuth, async (req: AuthRequest, res: Resp
       success: true,
       stats: {
         totalReturns: totalReturnsAgg.data().count,
-        documentsUploaded: totalDocsAgg.data().count,
+        documentsUploaded,
         profiles: totalProfilesAgg.data().count,
         pendingTasks,
         savedAmount: 0,
       },
+      nextActions,
       activeServices,
       recentActivity,
       taxReturns: userReturns,

@@ -21,6 +21,11 @@ import { isAllowedOrigin, isLocalHost } from "./lib/origin-policy.js";
 
 initServerSentry();
 const app = express();
+const CANONICAL_ROUTE_REDIRECTS = new Map([
+  ["/login", "/auth/login"],
+  ["/register", "/auth/register"],
+  ["/salary", "/services/itr-for-salaried"],
+]);
 
 app.use(requestIdMiddleware);
 app.use(compress());
@@ -51,6 +56,17 @@ app.use((req, res, next) => {
 
 app.all(LEGACY_ITR_START_ROUTE, (req, res) => {
   res.redirect(308, buildItrStartRedirectLocation(req.originalUrl));
+});
+
+app.use((req, res, next) => {
+  if (!["GET", "HEAD"].includes(req.method)) return next();
+
+  const destination = CANONICAL_ROUTE_REDIRECTS.get(req.path);
+  if (!destination) return next();
+
+  const queryIndex = req.originalUrl.indexOf("?");
+  const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : "";
+  return res.redirect(301, `${destination}${query}`);
 });
 
 app.use(express.json({ limit: "10mb" }));

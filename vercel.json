@@ -171,6 +171,21 @@
   ],
   "redirects": [
     {
+      "source": "/login",
+      "destination": "/auth/login",
+      "permanent": true
+    },
+    {
+      "source": "/register",
+      "destination": "/auth/register",
+      "permanent": true
+    },
+    {
+      "source": "/salary",
+      "destination": "/services/itr-for-salaried",
+      "permanent": true
+    },
+    {
       "source": "/itr/start",
       "destination": "/which-itr-form-to-file",
       "permanent": true

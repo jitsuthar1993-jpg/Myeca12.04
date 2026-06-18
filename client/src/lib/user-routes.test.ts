@@ -377,6 +377,20 @@ describe("user service routes", () => {
     seed("profiles", "profile_1", {
       userId: "user_1",
     });
+    seed("reminders", "reminder_1", {
+      title: "Upload Form 16",
+      message: "Your CA needs the latest Form 16 before review.",
+      targetRole: "user",
+      targetUserId: "user_1",
+      caseId: "service_1",
+      sourceType: "document",
+      sourceId: "doc_missing",
+      priority: "high",
+      status: "pending",
+      dueAt: new Date("2026-05-12T08:00:00.000Z"),
+      createdAt: new Date("2026-05-12T08:00:00.000Z"),
+      updatedAt: new Date("2026-05-12T08:00:00.000Z"),
+    });
 
     const { response, json } = await request("/api/user/dashboard");
 
@@ -391,6 +405,29 @@ describe("user service routes", () => {
     expect(json.recentActivity[0]).toMatchObject({
       id: "service-service_1",
       type: "service",
+    });
+    expect(json.nextActions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "reminder-reminder_1",
+          source: "reminder",
+          href: "/dashboard/services/service_1",
+        }),
+        expect.objectContaining({
+          id: "payment-service_1",
+          source: "payment",
+          href: "/payments",
+        }),
+        expect.objectContaining({
+          id: "filing-return_1",
+          source: "filing",
+          href: "/itr/filing/return_1",
+        }),
+      ]),
+    );
+    expect(json.nextActions[0]).toMatchObject({
+      id: "reminder-reminder_1",
+      label: "Upload Form 16",
     });
     expect(json.recentActivity.map((entry: any) => entry.action)).not.toContain("Logged in");
     expect(json.recentActivity.map((entry: any) => entry.action)).not.toContain("Viewed dashboard");
