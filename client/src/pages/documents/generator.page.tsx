@@ -7,12 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
@@ -24,21 +23,41 @@ import {
   EyeOff,
   RotateCcw,
   File,
-  FileCode,
   Loader2,
   AlertCircle,
   CheckCircle,
   ArrowRight,
   ShieldCheck,
   X,
+  ChevronDown,
 } from 'lucide-react';
 import { getDocumentGeneratorPreviewData, loadDocumentGenerator } from './generators';
 import { DocumentGeneratorConfig, type DocumentExportFormat } from './generators/types';
 import { convertFinancialDocument, type FinancialDocumentKind } from './financial';
 import { useToast } from '@/hooks/use-toast';
 import { captureTelemetryEvent } from '@/telemetry/browser';
+import { apiRequest } from '@/lib/queryClient';
 
 const A4_PAGE_HEIGHT_MM = 297;
+
+const escapeHtmlText = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const buildWordDocumentHtml = (htmlContent: string, title: string) => `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="utf-8" />
+  <title>${escapeHtmlText(title)}</title>
+</head>
+<body>
+${htmlContent}
+</body>
+</html>`;
 
 function DocumentPreview({ htmlContent }: { htmlContent: string }) {
   const sanitizedHtml = useMemo(() => sanitizeHTML(htmlContent), [htmlContent]);
@@ -158,7 +177,6 @@ export default function DocumentGenerator() {
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const [exportFormat, setExportFormat] = useState<DocumentExportFormat>('pdf');
   const [documentId, setDocumentId] = useState<string | null>(null);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -184,7 +202,6 @@ export default function DocumentGenerator() {
 
   const pendingDraftKey = `myeca_generator_pending_${documentType}`;
   const conversionDraftKey = `myeca_generator_conversion_${documentType}`;
-  const availableExportFormats = config?.exportFormats || ['pdf', 'html', 'markdown'];
 
   const requireAuthenticatedGeneratorAction = (action: 'save' | 'export' | 'convert') => {
     if (user) return true;
@@ -240,9 +257,6 @@ export default function DocumentGenerator() {
 
   useEffect(() => {
     if (!config) return;
-    if (!availableExportFormats.includes(exportFormat)) {
-      setExportFormat(availableExportFormats[0] || 'pdf');
-    }
     captureTelemetryEvent('generator_viewed', { generator_type: documentType });
   }, [config, documentType]);
 
@@ -337,27 +351,42 @@ export default function DocumentGenerator() {
   };
 
   const onSubmit = async (data: any) => {
-    if (!requireAuthenticatedGeneratorAction('save') || !user) return;
+    if (!requireAuthenticatedGeneratorAction('save') || !user || !config) return;
 
     setIsSaving(true);
     try {
       const draftId = documentId || crypto.randomUUID();
+      const htmlContent = sanitizeHTML(config.generateHTML(data));
       const draftData = {
         id: draftId,
         userId: user.id,
         type: documentType,
-        title: config?.title || "Untitled Document",
+        title: config.title || "Untitled Document",
         content: data,
         updatedAt: new Date().toISOString(),
         isCertified: false // Future flag
       };
 
       localStorage.setItem(`myeca_doc_latest_${user.id}_${documentType}`, JSON.stringify(draftData));
-      setDocumentId(draftId);
+      const response = await apiRequest("/api/documents/generated", {
+        method: "POST",
+        body: JSON.stringify({
+          name: config.title || "Generated Document",
+          generatorType: documentType,
+          htmlContent,
+          description: `Saved ${config.title || "document"} draft from the document generator.`,
+        }),
+      });
+      const result = await response.json().catch(() => null);
+      setDocumentId(result?.document?.id || draftId);
 
       setSaveStatus('saved');
       setLastSaved(new Date());
       captureTelemetryEvent('generator_draft_saved', { generator_type: documentType });
+      toast({
+        title: "Saved to My Documents",
+        description: "Your generated document is now available in the document vault.",
+      });
     } catch (error) {
       console.error('Failed to save document draft:', error);
       toast({
@@ -370,7 +399,7 @@ export default function DocumentGenerator() {
     }
   };
 
-  const handleExport = async () => {
+  const handleExport = async (format: DocumentExportFormat) => {
     if (!config) {
       toast({
         title: "Export unavailable",
@@ -399,7 +428,7 @@ export default function DocumentGenerator() {
       // exportHistory table is not yet implemented in the backend.
       // Proceeding directly to local export formatting.
 
-      switch (exportFormat) {
+      switch (format) {
         case 'pdf':
           const printWindow = window.open('', '_blank');
           if (printWindow) {
@@ -408,22 +437,22 @@ export default function DocumentGenerator() {
             printWindow.print();
           }
           break;
-        case 'html':
-          downloadFile(htmlContent, `${documentType}_${Date.now()}.html`, 'text/html');
-          break;
-        case 'markdown':
-          const markdown = config.generateMarkdown(data);
-          downloadFile(markdown, `${documentType}_${Date.now()}.md`, 'text/markdown');
+        case 'word':
+          downloadFile(
+            buildWordDocumentHtml(htmlContent, config.title),
+            `${documentType}_${Date.now()}.doc`,
+            'application/msword',
+          );
           break;
       }
 
       captureTelemetryEvent('generator_export_completed', {
         generator_type: documentType,
-        export_format: exportFormat,
+        export_format: format,
       });
       toast({
         title: "Document exported",
-        description: `Exported as ${exportFormat.toUpperCase()}.`,
+        description: `Exported as ${format === 'word' ? 'Word' : 'PDF'}.`,
       });
     } catch (error) {
       console.error('Export failed:', error);
@@ -563,7 +592,6 @@ export default function DocumentGenerator() {
                 <h1 className="truncate text-base font-black leading-tight text-slate-950 sm:text-lg">
                   {config.title}
                 </h1>
-                <p className="mt-0.5 hidden truncate text-xs font-semibold text-slate-500 md:block">{config.description}</p>
               </div>
             </div>
           </div>
@@ -609,32 +637,6 @@ export default function DocumentGenerator() {
               Preview
             </Button>
 
-            <Select value={exportFormat} onValueChange={(value: any) => setExportFormat(value)}>
-              <SelectTrigger className="h-9 w-28 shrink-0 rounded-lg border-slate-200 bg-white text-xs font-black text-slate-700 shadow-none focus:ring-blue-500 sm:w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="rounded-lg border-slate-200 shadow-xl">
-                {availableExportFormats.includes('pdf') && <SelectItem value="pdf" className="font-medium cursor-pointer">
-                  <div className="flex items-center space-x-2">
-                    <File className="w-4 h-4 text-red-500" />
-                    <span>PDF Document</span>
-                  </div>
-                </SelectItem>}
-                {availableExportFormats.includes('html') && <SelectItem value="html" className="font-medium cursor-pointer">
-                  <div className="flex items-center space-x-2">
-                    <FileCode className="w-4 h-4 text-green-500" />
-                    <span>Raw HTML</span>
-                  </div>
-                </SelectItem>}
-                {availableExportFormats.includes('markdown') && <SelectItem value="markdown" className="font-medium cursor-pointer">
-                  <div className="flex items-center space-x-2">
-                    <FileText className="w-4 h-4 text-slate-500" />
-                    <span>Markdown</span>
-                  </div>
-                </SelectItem>}
-              </SelectContent>
-            </Select>
-
             <Button
               variant="ghost"
               size="sm"
@@ -661,19 +663,33 @@ export default function DocumentGenerator() {
               <span>{user ? 'Save' : 'Sign in to Save'}</span>
             </Button>
 
-            <Button
-              size="sm"
-              onClick={handleExport}
-              disabled={isExporting}
-              className="h-9 shrink-0 rounded-lg bg-slate-950 px-3 font-black text-white shadow-none hover:bg-slate-800"
-            >
-              {isExporting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              <span>{user ? 'Export' : 'Sign in to Export'}</span>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  disabled={isExporting}
+                  className="h-9 shrink-0 rounded-lg bg-slate-950 px-3 font-black text-white shadow-none hover:bg-slate-800"
+                >
+                  {isExporting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  <span>{user ? 'Export' : 'Sign in to Export'}</span>
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44 rounded-lg border-slate-200 shadow-xl">
+                <DropdownMenuItem onClick={() => handleExport('pdf')} className="cursor-pointer gap-2 font-medium">
+                  <File className="h-4 w-4 text-red-500" />
+                  <span>Export as PDF</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('word')} className="cursor-pointer gap-2 font-medium">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  <span>Export as Word</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>

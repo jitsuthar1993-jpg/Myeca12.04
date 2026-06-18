@@ -5,7 +5,8 @@ import type {
   FinancialDocumentKind,
 } from '../financial';
 
-export type DocumentExportFormat = 'pdf' | 'html' | 'markdown';
+export type DocumentExportFormat = 'pdf' | 'word';
+export type LegacyDocumentExportFormat = DocumentExportFormat | 'html' | 'markdown';
 
 export interface DocumentGeneratorSEO {
   keywords: string[];
@@ -23,7 +24,7 @@ export interface DocumentGeneratorConfig {
   defaultValues: Record<string, any>;
   generateHTML: (data: any) => string;
   generateMarkdown: (data: any) => string;
-  exportFormats?: DocumentExportFormat[];
+  exportFormats?: LegacyDocumentExportFormat[];
   complianceNotice?: string;
   conversionTargets?: Array<{ kind: FinancialDocumentKind; label: string }>;
   relatedLinks?: Array<{ href: string; label: string }>;

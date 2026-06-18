@@ -392,6 +392,48 @@ describe("document routes", () => {
     });
   });
 
+  it("stores generated document drafts as private vault documents", async () => {
+    const generated = await request("/api/documents/generated", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Commercial Lease Agreement",
+        generatorType: "rent-agreement-comm",
+        htmlContent: "<article><h1>Commercial Lease Agreement</h1><script>bad()</script></article>",
+        description: "Saved from the document generator",
+      }),
+    });
+
+    expect(generated.response.status).toBe(200);
+    expect(generated.json.document).toMatchObject({
+      userId: "user_1",
+      name: "Commercial Lease Agreement",
+      category: "generated_document",
+      mimeType: "application/msword",
+      isExternal: false,
+      metadata: expect.objectContaining({
+        generatorType: "rent-agreement-comm",
+        source: "document_generator",
+      }),
+    });
+
+    const stored = collectionStore("documents").get(generated.json.document.id);
+    expect(stored?.originalName).toContain("commercial-lease-agreement");
+    expect(mockState.blobs.get(stored?.blobUrl)?.contentType).toBe("application/msword");
+    expect(mockState.blobs.get(stored?.blobUrl)?.buffer.toString("utf8")).toContain("Commercial Lease Agreement");
+    expect(mockState.blobs.get(stored?.blobUrl)?.buffer.toString("utf8")).not.toContain("<script>");
+
+    const listed = await request("/api/documents");
+    expect(listed.json.documents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: generated.json.document.id,
+          category: "generated_document",
+          metadata: expect.objectContaining({ generatorType: "rent-agreement-comm" }),
+        }),
+      ]),
+    );
+  });
+
   it("enforces owner-only downloads and reports missing blob objects", async () => {
     seed("documents", "doc_cross", {
       userId: "user_2",

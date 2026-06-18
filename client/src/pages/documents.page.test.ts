@@ -7,6 +7,9 @@ describe("documents workspace", () => {
     const pageSource = readFileSync(resolve(__dirname, "documents.page.tsx"), "utf8");
 
     expect(pageSource).toContain("My Documents");
+    expect(pageSource).toContain("Generated Drafts");
+    expect(pageSource).toContain("Open editor");
+    expect(pageSource).toContain("isGeneratedDocument");
     expect(pageSource).toContain("Upload Documents");
     expect(pageSource).toContain("Pending Upload");
     expect(pageSource).not.toContain("Security Vault");

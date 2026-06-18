@@ -188,6 +188,7 @@ describe("Indian financial document suite", () => {
     );
     expect(generatorPageSource).toContain("requireAuthenticatedGeneratorAction");
     expect(generatorPageSource).toContain("sessionStorage");
+    expect(generatorPageSource).toContain("Export as Word");
     expect(generatorPageSource).not.toContain("value=\"docx\"");
   });
 

@@ -85,6 +85,7 @@ function serializeDocument(docId: string, data: Record<string, any>) {
     tags: data.tags ?? [],
     description: data.description ?? null,
     year: data.year ?? null,
+    metadata: data.metadata ?? null,
     status: data.status,
     version: data.version ?? 1,
     createdAt: data.createdAt,
@@ -96,6 +97,27 @@ function serializeDocument(docId: string, data: Record<string, any>) {
 
 function safePathSegment(value: string) {
   return value.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").slice(0, 160);
+}
+
+function sanitizeGeneratedHtml(value: string) {
+  return value
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    .replace(/\son\w+=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/\s(href|src)=("|')javascript:[^"']*\2/gi, "");
+}
+
+function buildGeneratedWordHtml(htmlContent: string, title: string) {
+  return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="utf-8" />
+  <title>${title.replace(/[<>&"']/g, "")}</title>
+</head>
+<body>
+${sanitizeGeneratedHtml(htmlContent)}
+</body>
+</html>`;
 }
 
 async function streamToBuffer(stream: ReadableStream<Uint8Array>) {
@@ -403,6 +425,101 @@ router.post("/register", authenticateToken, async (req: AuthRequest, res: Respon
   } catch (error) {
     if (error instanceof z.ZodError) return errorResponse(res, 400, error.errors[0].message);
     return documentRouteError(res, error, "Failed to register document");
+  }
+});
+
+router.post("/generated", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = await resolveTargetUserId(req);
+    if (!userId || !req.auth) return errorResponse(res, 401, "Unauthorized");
+
+    const schema = z.object({
+      name: z.string().trim().min(1).max(255),
+      generatorType: z.string().trim().min(1).max(120),
+      htmlContent: z.string().trim().min(1).max(1_500_000),
+      description: z.string().trim().max(500).optional().nullable(),
+      year: z.string().trim().max(20).optional().nullable(),
+      profileId: z.string().trim().min(1).optional().nullable(),
+      serviceId: z.string().trim().min(1).optional().nullable(),
+      userServiceId: z.string().trim().min(1).optional().nullable(),
+      taxReturnId: z.string().trim().min(1).optional().nullable(),
+    });
+
+    const data = schema.parse(req.body);
+    await validateDocumentLinks(userId, {
+      profileId: normalizeLink(data.profileId),
+      userServiceId: normalizeLink(data.userServiceId || data.serviceId),
+      taxReturnId: normalizeLink(data.taxReturnId),
+    });
+
+    const docRef = adminDb.collection("documents").doc();
+    const originalName = `${safePathSegment(data.name.toLowerCase()) || "generated-document"}.doc`;
+    const fileName = `${Date.now()}-${originalName}`;
+    const pathname = `documents/${userId}/${docRef.id}/${fileName}`;
+    const wordHtml = buildGeneratedWordHtml(data.htmlContent, data.name);
+    const fileBuffer = Buffer.from(wordHtml, "utf8");
+    const blob = await putPrivateDocument(pathname, fileBuffer, {
+      contentType: "application/msword",
+    });
+
+    const newDoc = {
+      userId,
+      name: data.name,
+      fileName,
+      originalName,
+      mimeType: "application/msword",
+      size: fileBuffer.length,
+      originalSize: fileBuffer.length,
+      storedSize: fileBuffer.length,
+      compressionType: "none",
+      compressionStatus: "not_applicable",
+      profileId: normalizeLink(data.profileId),
+      serviceId: normalizeLink(data.serviceId),
+      userServiceId: normalizeLink(data.userServiceId || data.serviceId),
+      taxReturnId: normalizeLink(data.taxReturnId),
+      uploadPath: blob.pathname,
+      blobUrl: blob.url,
+      downloadUrl: blob.downloadUrl,
+      category: "generated_document",
+      tags: ["generated", data.generatorType],
+      description: data.description || "Saved from the MyeCA document generator.",
+      year: data.year || null,
+      status: "active",
+      version: 1,
+      metadata: {
+        source: "document_generator",
+        generatorType: data.generatorType,
+        editablePath: `/documents/generator/${data.generatorType}`,
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isExternal: false,
+    };
+
+    await docRef.set(newDoc);
+    await recordWorkflowEvent({
+      type: "document_generated",
+      title: "Generated document saved",
+      message: `${data.name} was saved from the document generator.`,
+      sourceType: "document",
+      sourceId: docRef.id,
+      caseId: newDoc.userServiceId ?? null,
+      userId,
+      targetRole: "admin",
+      actorUserId: req.user?.id || req.auth?.userId || null,
+      actorRole: req.user?.role || null,
+      priority: "low",
+      metadata: {
+        documentId: docRef.id,
+        generatorType: data.generatorType,
+        category: newDoc.category,
+      },
+    });
+
+    res.json({ success: true, document: serializeDocument(docRef.id, newDoc) });
+  } catch (error) {
+    if (error instanceof z.ZodError) return errorResponse(res, 400, error.errors[0].message);
+    return documentRouteError(res, error, "Failed to save generated document");
   }
 });
 

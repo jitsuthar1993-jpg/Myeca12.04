@@ -24,6 +24,12 @@ describe("document generator workspace contract", () => {
     expect(editorSource).toContain('data-testid="focused-document-editor"');
     expect(editorSource).toContain('data-testid="mobile-document-preview"');
     expect(editorSource).toContain("Back to Document Generator");
+    expect(editorSource).not.toContain("config.description}</p>");
+    expect(editorSource).toContain("Export as PDF");
+    expect(editorSource).toContain("Export as Word");
+    expect(editorSource).not.toContain("PDF Document");
+    expect(editorSource).not.toContain("Raw HTML");
+    expect(editorSource).not.toContain("Markdown");
     expect(editorSource).toContain("lg:hidden");
   });
 

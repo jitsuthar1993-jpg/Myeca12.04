@@ -4,9 +4,11 @@ import {
   CheckCircle2,
   Download,
   Eye,
+  FilePenLine,
   FileText,
   FolderOpen,
   Search,
+  ShieldCheck,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -38,6 +40,11 @@ interface Document {
   year?: string;
   createdAt: string;
   status: string;
+  metadata?: {
+    source?: string;
+    generatorType?: string;
+    editablePath?: string;
+  } | null;
 }
 
 const documentCategories = [
@@ -46,6 +53,15 @@ const documentCategories = [
   { key: "investment_proof", label: "Investment proofs", prompt: "80C / 80D proofs" },
   { key: "bank_statement", label: "Bank statements", prompt: "Interest and income checks" },
 ];
+
+const categoryLabels: Record<string, string> = {
+  form16: "Form 16",
+  ais: "AIS / 26AS",
+  investment_proof: "Investment proofs",
+  bank_statement: "Bank statements",
+  generated_document: "Generated draft",
+  other: "Other",
+};
 
 async function trackDocumentEvent(name: string, properties: Record<string, string>) {
   if (!shouldLoadProductionTelemetry()) return;
@@ -66,6 +82,18 @@ function formatDocumentDate(value: string) {
 
 function statusLabel(value?: string | null) {
   return (value || "active").replace(/_/g, " ");
+}
+
+function categoryLabel(value: string) {
+  return categoryLabels[value] || value.replace(/_/g, " ");
+}
+
+function isGeneratedDocument(doc: Document) {
+  return doc.category === "generated_document" || doc.metadata?.source === "document_generator";
+}
+
+function generatedEditorPath(doc: Document) {
+  return doc.metadata?.editablePath || (doc.metadata?.generatorType ? `/documents/generator/${doc.metadata.generatorType}` : "/documents/generator");
 }
 
 export default function DocumentsPage() {
@@ -145,7 +173,10 @@ export default function DocumentsPage() {
     },
   });
 
-  const documents = data?.documents || [];
+  const documents = [...(data?.documents || [])].sort(
+    (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(),
+  );
+  const generatedDocuments = documents.filter(isGeneratedDocument);
   const uploadedCategories = new Set(documents.map((doc) => doc.category));
   const pendingUploadItems = documentCategories.filter((item) => !uploadedCategories.has(item.key));
 
@@ -189,8 +220,25 @@ export default function DocumentsPage() {
           <p className="type-meta font-black uppercase tracking-[0.16em] text-blue-700">Documents</p>
           <h1 className="mt-2 type-page-title font-black text-slate-950">Document Vault</h1>
           <p className="mt-2 max-w-2xl type-body text-slate-600">
-            Keep uploaded documents, new uploads, and pending document needs in one simple workspace.
+            Keep uploaded files, generated drafts, and pending document needs in one simple workspace.
           </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="type-meta font-black uppercase tracking-[0.12em] text-slate-500">Vault files</p>
+              <p className="mt-1 text-2xl font-black text-slate-950">{documents.length}</p>
+            </div>
+            <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
+              <p className="type-meta font-black uppercase tracking-[0.12em] text-blue-700">Generated Drafts</p>
+              <p className="mt-1 text-2xl font-black text-blue-950">{generatedDocuments.length}</p>
+            </div>
+            <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-4">
+              <p className="type-meta font-black uppercase tracking-[0.12em] text-emerald-700">Protected</p>
+              <p className="mt-1 flex items-center gap-2 text-sm font-black text-emerald-900">
+                <ShieldCheck className="h-4 w-4" />
+                Private access
+              </p>
+            </div>
+          </div>
         </section>
 
         <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -199,7 +247,7 @@ export default function DocumentsPage() {
               <div className="[&>p]:mb-0">
                 <CardTitle className="type-card-title font-black text-slate-950">My Documents</CardTitle>
                 <CardDescription className="type-support text-slate-500">
-                  Uploaded files connected to your account.
+                  Uploaded files and saved generator drafts connected to your account.
                 </CardDescription>
               </div>
               <div className="relative w-full sm:w-64">
@@ -213,6 +261,52 @@ export default function DocumentsPage() {
               </div>
             </CardHeader>
             <CardContent className="p-0">
+              {!isLoading && generatedDocuments.length > 0 && (
+                <div className="border-b border-blue-100 bg-blue-50/60 p-5">
+                  <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="[&>p]:mb-0">
+                      <p className="type-meta font-black uppercase tracking-[0.14em] text-blue-700">Generated Drafts</p>
+                      <p className="type-support text-blue-950">Documents saved from the generator appear here instantly.</p>
+                    </div>
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {generatedDocuments.slice(0, 4).map((doc) => (
+                      <div key={doc.id} className="rounded-lg border border-blue-100 bg-white p-4 shadow-sm">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-white">
+                            <FilePenLine className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1 [&>p]:mb-0">
+                            <p className="truncate type-support font-black text-slate-950">{doc.name}</p>
+                            <p className="mt-1 type-meta font-semibold text-slate-500">
+                              {formatDocumentDate(doc.createdAt)} - {formatFileSize(doc.size)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            className="h-9 rounded-lg bg-blue-700 px-3 text-xs font-black text-white hover:bg-blue-800"
+                            onClick={() => window.location.assign(generatedEditorPath(doc))}
+                          >
+                            <FilePenLine className="mr-2 h-4 w-4" />
+                            Open editor
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-9 rounded-lg border-blue-100 px-3 text-xs font-black text-blue-700"
+                            onClick={() => handleDownload(doc)}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Download
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[680px] text-left">
                   <thead className="bg-slate-50">
@@ -234,21 +328,21 @@ export default function DocumentsPage() {
                     )}
                     {!isLoading &&
                       documents.map((doc) => (
-                        <tr key={doc.id} className="hover:bg-slate-50">
+                        <tr key={doc.id} className={isGeneratedDocument(doc) ? "bg-blue-50/30 hover:bg-blue-50" : "hover:bg-slate-50"}>
                           <td className="px-5 py-4">
                             <div className="flex min-w-0 items-center gap-3">
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                                <FileText className="h-5 w-5" />
+                              <div className={isGeneratedDocument(doc) ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-white" : "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700"}>
+                                {isGeneratedDocument(doc) ? <FilePenLine className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
                               </div>
                               <div className="min-w-0 [&>p]:mb-0">
                                 <p className="truncate type-support font-black text-slate-950">{doc.name}</p>
                                 <p className="mt-0.5 type-meta font-semibold text-slate-500">
-                                  {formatFileSize(doc.size)}
+                                  {isGeneratedDocument(doc) ? "Saved from document generator" : formatFileSize(doc.size)}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-5 py-4 type-support font-semibold text-slate-700">{doc.category}</td>
+                          <td className="px-5 py-4 type-support font-semibold text-slate-700">{categoryLabel(doc.category)}</td>
                           <td className="px-5 py-4 type-support font-semibold text-slate-700">
                             {formatDocumentDate(doc.createdAt)}
                           </td>
@@ -259,6 +353,17 @@ export default function DocumentsPage() {
                           </td>
                           <td className="px-5 py-4">
                             <div className="flex items-center justify-end gap-1">
+                              {isGeneratedDocument(doc) && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9 rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-700"
+                                  onClick={() => window.location.assign(generatedEditorPath(doc))}
+                                  aria-label={`Open editor for ${doc.name}`}
+                                >
+                                  <FilePenLine className="h-4 w-4" />
+                                </Button>
+                              )}
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -294,8 +399,8 @@ export default function DocumentsPage() {
                       <tr>
                         <td colSpan={5} className="px-5 py-14 text-center">
                           <FolderOpen className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-                          <p className="type-support font-black text-slate-950">No documents uploaded yet</p>
-                          <p className="mt-1 type-support text-slate-500">Your uploaded files will appear here.</p>
+                          <p className="type-support font-black text-slate-950">No documents saved yet</p>
+                          <p className="mt-1 type-support text-slate-500">Uploaded files and generator drafts will appear here.</p>
                         </td>
                       </tr>
                     )}
@@ -409,10 +514,19 @@ export default function DocumentsPage() {
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
               <p className="type-support font-black text-slate-950">{selectedDoc?.name}</p>
               <p className="mt-2 type-support text-slate-500">
-                {selectedDoc?.category} - {selectedDoc ? formatFileSize(selectedDoc.size) : ""}
+                {selectedDoc ? categoryLabel(selectedDoc.category) : ""} - {selectedDoc ? formatFileSize(selectedDoc.size) : ""}
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
+              {selectedDoc && isGeneratedDocument(selectedDoc) && (
+                <Button
+                  className="h-11 flex-1 rounded-lg bg-slate-950 font-black text-white hover:bg-slate-800"
+                  onClick={() => window.location.assign(generatedEditorPath(selectedDoc))}
+                >
+                  <FilePenLine className="mr-2 h-4 w-4" />
+                  Open editor
+                </Button>
+              )}
               <Button
                 className="h-11 flex-1 rounded-lg bg-blue-700 font-black text-white hover:bg-blue-600"
                 onClick={() => selectedDoc && handleDownload(selectedDoc)}
