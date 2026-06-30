@@ -146,6 +146,12 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string)
   });
 }
 
+function logoutRedirectPath(reason: LogoutReason) {
+  if (reason === "timeout") return "/auth/login?reason=timeout";
+  if (reason === "session_expired") return "/auth/login?reason=session_expired";
+  return "/";
+}
+
 async function fetchAppUser(token: string, authUser?: SupabaseUser | null) {
   if (authUser?.email) {
     await fetch("/api/v1/auth/sync", {
@@ -510,7 +516,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setResolvedAppUser(null);
 
     if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", "/");
+      window.history.replaceState({}, "", logoutRedirectPath(reason));
       window.dispatchEvent(new Event("popstate"));
     }
   };

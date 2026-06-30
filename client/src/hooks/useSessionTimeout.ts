@@ -18,6 +18,12 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const channelRef = useRef<BroadcastChannel | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
+  const hasLoggedOutRef = useRef(false);
+  const onLogoutRef = useRef(onLogout);
+
+  useEffect(() => {
+    onLogoutRef.current = onLogout;
+  }, [onLogout]);
 
   const clearAllTimers = useCallback(() => {
     if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
@@ -26,10 +32,12 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
   }, []);
 
   const handleLogout = useCallback(() => {
+    if (hasLoggedOutRef.current) return;
+    hasLoggedOutRef.current = true;
     clearAllTimers();
-    onLogout();
+    onLogoutRef.current();
     channelRef.current?.postMessage('LOGOUT');
-  }, [onLogout, clearAllTimers]);
+  }, [clearAllTimers]);
 
   const startTimers = useCallback(() => {
     clearAllTimers();
@@ -59,6 +67,7 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
   }, [isAuthenticated, handleLogout, clearAllTimers]);
 
   const resetSession = useCallback((broadcast = true) => {
+    hasLoggedOutRef.current = false;
     lastActivityRef.current = Date.now();
     setShowWarning(false);
     startTimers();
@@ -70,23 +79,26 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
 
   useEffect(() => {
     if (!isAuthenticated) {
+      hasLoggedOutRef.current = false;
       clearAllTimers();
       setShowWarning(false);
       return;
     }
 
     // Initialize BroadcastChannel
-    channelRef.current = new BroadcastChannel(SYNC_CHANNEL);
-    channelRef.current.onmessage = (event) => {
-      if (event.data === 'RESET') {
-        resetSession(false);
-      } else if (event.data === 'LOGOUT') {
-        onLogout();
-      }
-    };
+    if (typeof BroadcastChannel !== 'undefined') {
+      channelRef.current = new BroadcastChannel(SYNC_CHANNEL);
+      channelRef.current.onmessage = (event) => {
+        if (event.data === 'RESET') {
+          resetSession(false);
+        } else if (event.data === 'LOGOUT') {
+          handleLogout();
+        }
+      };
+    }
 
     // Activity listeners — only mousedown and keydown (fewer events, lower overhead)
-    const events = ['mousedown', 'keydown'] as const;
+    const events = ['pointerdown', 'mousedown', 'keydown', 'touchstart', 'scroll'] as const;
 
     const throttledReset = () => {
       const now = Date.now();
@@ -105,8 +117,9 @@ export function useSessionTimeout({ onLogout, isAuthenticated }: SessionTimeoutO
       events.forEach(event => window.removeEventListener(event, throttledReset));
       clearAllTimers();
       channelRef.current?.close();
+      channelRef.current = null;
     };
-  }, [isAuthenticated, resetSession, startTimers, onLogout, clearAllTimers]);
+  }, [isAuthenticated, resetSession, startTimers, handleLogout, clearAllTimers]);
 
   return { showWarning, timeLeft, resetSession, handleLogout };
 }

@@ -1,5 +1,5 @@
 import { useLocation } from 'wouter';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { queryClient } from './lib/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -10,11 +10,14 @@ import { Suspense } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { PageSkeleton } from '@/components/ui/page-skeleton';
 import { SafeAuthProvider, useAuth } from '@/components/AuthProvider';
+import { SessionWarningModal } from '@/components/auth/SessionWarningModal';
 import Routes from './Routes';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { lazyWithRetry } from '@/utils/lazy-with-retry';
 import { shouldLoadProductionTelemetry } from '@/utils/runtime-env';
 import { useRouteScrollManager } from '@/hooks/use-route-scroll-manager';
+import { useSessionTimeout } from '@/hooks/useSessionTimeout';
+import { getSafeRedirectPath, resolvePostLoginRedirect } from '@/lib/role-redirect';
 import { shouldMaskTelemetryRoute } from '@/telemetry/privacy';
 import { hasBrowserTelemetryConfig } from '@/telemetry/config';
 
@@ -62,6 +65,15 @@ const HeaderLoadingShell = () => (
   </header>
 );
 const authLayoutRoutes = ['/login', '/register', '/forgot-password'];
+const authenticatedEntryRedirectRoutes = new Set([
+  '/',
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password',
+]);
 const adaptiveWorkspacePaths = ['/expert-consultation', '/consultation'];
 
 function isAuthLayoutPath(path: string) {
@@ -85,9 +97,17 @@ function useDeferredGlobalChrome(timeout = 800) {
 }
 
 function Router() {
-  const [currentPath] = useLocation();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const [currentPath, setLocation] = useLocation();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   useRouteScrollManager(currentPath);
+
+  useEffect(() => {
+    if (authLoading || !isAuthenticated || !authenticatedEntryRedirectRoutes.has(currentPath)) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedRedirectPath = getSafeRedirectPath(params.get('redirect_url') || params.get('next'));
+    setLocation(resolvePostLoginRedirect(user?.role, requestedRedirectPath));
+  }, [authLoading, currentPath, isAuthenticated, setLocation, user?.role]);
 
   // Define paths that should NOT show the global site header and footer
   // These are typically dashboard, admin, and account-related pages
@@ -151,6 +171,26 @@ function Router() {
         </Suspense>
       )}
     </div>
+  );
+}
+
+function SessionTimeoutManager() {
+  const { isAuthenticated, logout } = useAuth();
+  const handleTimeoutLogout = useCallback(() => {
+    void logout("timeout");
+  }, [logout]);
+  const { showWarning, timeLeft, resetSession, handleLogout } = useSessionTimeout({
+    isAuthenticated,
+    onLogout: handleTimeoutLogout,
+  });
+
+  return (
+    <SessionWarningModal
+      isOpen={showWarning}
+      timeLeft={timeLeft}
+      onContinue={() => resetSession()}
+      onLogout={handleLogout}
+    />
   );
 }
 
@@ -228,6 +268,7 @@ function AppContent() {
       <ErrorBoundary>
         <Router />
       </ErrorBoundary>
+      <SessionTimeoutManager />
       {showDeferredGlobalChrome && !isFocusedPublicFlow && (
         <Suspense fallback={null}>
           <PwaInstallBanner currentPath={location} />

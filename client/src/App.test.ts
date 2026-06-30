@@ -31,7 +31,7 @@ describe("app layout routing", () => {
       "/consultation",
     ]);
     expect(appSource).toContain(
-      "const { isAuthenticated, isLoading: authLoading } = useAuth();",
+      "const { user, isAuthenticated, isLoading: authLoading } = useAuth();",
     );
     expect(appSource).toContain(
       "const usesAdaptiveWorkspaceChrome = isAdaptiveWorkspacePath && (isAuthenticated || authLoading);",
@@ -42,6 +42,23 @@ describe("app layout routing", () => {
     expect(appSource).toContain(
       "const showLayoutComponents = !isAuthLayoutPath(currentPath) && !isDashboardPath && !usesAdaptiveWorkspaceChrome && !usesFocusedPublicFlow;",
     );
+  });
+
+  it("redirects authenticated users away from entry routes and mounts session timeout", () => {
+    const appSource = readFileSync(resolve(__dirname, "App.tsx"), "utf8");
+
+    expect(appSource).toContain(
+      "const authenticatedEntryRedirectRoutes = new Set([",
+    );
+    expect(appSource).toContain("'/forgot-password',");
+    expect(appSource).toContain("'/auth/forgot-password',");
+    expect(appSource).toContain(
+      "setLocation(resolvePostLoginRedirect(user?.role, requestedRedirectPath));",
+    );
+    expect(appSource).toContain(
+      "const { showWarning, timeLeft, resetSession, handleLogout } = useSessionTimeout({",
+    );
+    expect(appSource).toContain("<SessionWarningModal");
   });
 
   it("keeps the public header shell and spacer at the same responsive heights", () => {
