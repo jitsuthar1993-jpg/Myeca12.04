@@ -1,5 +1,6 @@
 import express from "express";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
 import { validateEnv } from "../../../server/lib/env-validation.js";
 import { getAllowedOrigins, isAllowedOrigin } from "../../../server/lib/origin-policy.js";
 import { getServerListenConfig } from "../../../server/lib/listen-config.js";
@@ -76,6 +77,15 @@ describe("backend hardening utilities", () => {
 
     expect(() => getSupabaseUrl()).toThrow(/SUPABASE_URL/);
     expect(() => getSupabaseAnonKey()).toThrow(/SUPABASE_ANON_KEY/);
+  });
+
+  it("does not keep placeholder JWT secrets in the security configuration", () => {
+    const source = readFileSync("server/config/security-config.ts", "utf8");
+
+    expect(source).not.toContain("your-super-secret");
+    expect(source).not.toContain("SmartTaxCalculator");
+    expect(source).toContain("primarySecret: process.env.JWT_PRIMARY_SECRET");
+    expect(source).toContain("secondarySecret: process.env.JWT_SECONDARY_SECRET");
   });
 
   it("attaches request ids to headers and standardized error responses", async () => {

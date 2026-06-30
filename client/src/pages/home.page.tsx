@@ -612,19 +612,24 @@ const HomePage = () => {
               <ProfessionalServicesSection />
             </Suspense>
           </section>
-          <Suspense fallback={<SectionFallback />}>
-            <NoticeComplianceSection />
-          </Suspense>
+        </div>
 
-          <Suspense fallback={<SectionFallback />}>
-            <GSTNoticeSection />
-          </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <NoticeComplianceSection />
+        </Suspense>
 
+        <Suspense fallback={<SectionFallback />}>
+          <GSTNoticeSection />
+        </Suspense>
+
+        <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
+          <Suspense fallback={<SectionFallback />}>
+            <Testimonials />
+          </Suspense>
+        </section>
+
+        <div className="hidden md:block">
           <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
-            <Suspense fallback={<SectionFallback />}>
-              <Testimonials />
-            </Suspense>
-
             <Suspense fallback={<SectionFallback />}>
               <TrustedBySection />
             </Suspense>

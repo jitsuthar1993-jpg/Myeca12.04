@@ -258,8 +258,17 @@ function appShellHtml() {
   return appShellHtmlCache;
 }
 
-function fallbackRequestPath(req: any, url: URL) {
-  const value = url.searchParams.get("path") || req.headers?.["x-original-path"] || req.url || "/";
+export function fallbackRequestPath(req: any, url: URL) {
+  const originalPathHeader = req.headers?.["x-original-path"] || req.headers?.["x-vercel-original-path"];
+  const requestUrlPath = (() => {
+    const value = req.url || req.originalUrl || "/";
+    try {
+      return new URL(String(value), "https://myeca.in").pathname;
+    } catch {
+      return String(value).split("?")[0] || "/";
+    }
+  })();
+  const value = originalPathHeader || url.searchParams.get("path") || requestUrlPath;
   const pathValue = Array.isArray(value) ? value[0] : String(value);
   return pathValue.startsWith("/") ? pathValue : `/${pathValue}`;
 }

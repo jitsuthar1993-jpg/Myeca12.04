@@ -124,10 +124,24 @@ describe("SEO indexing policy", () => {
     const appFallbacks = vercelConfig.rewrites.filter((rewrite) =>
       rewrite.destination === "/api/index?route=app-fallback&path=/:path*"
     );
+    const explicitFallbacks = vercelConfig.rewrites.filter((rewrite) =>
+      rewrite.destination.includes("route=app-fallback") &&
+      rewrite.destination !== "/api/index?route=app-fallback&path=/:path*"
+    );
     const fallbackSources = appFallbacks.map((rewrite) => rewrite.source);
     const globalHeaders =
       vercelConfig.headers.find((entry) => entry.source === "/(.*)")?.headers ?? [];
 
+    expect(explicitFallbacks).toEqual([
+      {
+        source: "/documents/generator/:type/:extra*",
+        destination: "/api/index?route=app-fallback&path=/documents/generator/:type/:extra*",
+      },
+      {
+        source: "/services/activate/:serviceId",
+        destination: "/api/index?route=app-fallback&path=/services/activate/:serviceId",
+      },
+    ]);
     expect(fallbackSources).toEqual(["/:path*/", "/:path*"]);
     expect(appFallbacks.some((rewrite) => rewrite.destination === "/index.html")).toBe(false);
     expect(globalHeaders).not.toContainEqual({ key: "X-Robots-Tag", value: "index, follow" });
@@ -360,6 +374,7 @@ describe("SEO indexing policy", () => {
     [
       "/dashboard/services/example-id",
       "/services/activate/itr-filing",
+      "/services/activate/partnership-deed",
       "/services/company-registration/mumbai",
       "/experts/ca-amit-verma",
       "/search",

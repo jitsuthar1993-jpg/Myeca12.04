@@ -45,6 +45,16 @@ describe("public anti-AI copy audit", () => {
     forbidden.forEach((term) => expect(sources, term).not.toContain(term));
   });
 
+  it("keeps the homepage filing situations section document-first", () => {
+    const source = read("client/src/components/Testimonials.tsx");
+
+    expect(source).toContain("Document intake");
+    expect(source).toContain("Match records before filing");
+    expect(source).toContain("Documents to line up");
+    expect(source).toContain("Review lens");
+    expect(source).toContain("Named client stories stay private unless approved.");
+  });
+
   it("keeps public story pages away from generic mission-and-pillars language", () => {
     const sources = [
       "client/src/pages/about.page.tsx",

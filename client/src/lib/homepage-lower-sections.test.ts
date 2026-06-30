@@ -19,6 +19,13 @@ describe("homepage lower-section redesign", () => {
     expect(home).not.toContain("LowerHomepageMobileSummary");
     expect(home).not.toContain("Compact mobile summaries");
     expect(home).not.toContain("Know your number? Check the ITR path.");
+    expect(home).toContain("<NoticeComplianceSection />");
+    expect(home).toContain(`<Suspense fallback={<SectionFallback />}>
+          <NoticeComplianceSection />
+        </Suspense>
+
+        <Suspense fallback={<SectionFallback />}>
+          <GSTNoticeSection />`);
 
     // Hero typewriter stays out of the accessibility tree and respects reduced motion.
     expect(home).toContain("prefers-reduced-motion");
@@ -41,15 +48,19 @@ describe("homepage lower-section redesign", () => {
     expect(advisory).toContain("Request scoped review");
   });
 
-  it("keeps notice and resource sections premium and AI-search friendly", () => {
+  it("keeps the old red notice section and AI-search resource sections", () => {
     const notice = readSource("client/src/components/NoticeComplianceSection.tsx");
     const gst = readSource("client/src/components/GSTNoticeSection.tsx");
     const glossary = readSource("client/src/components/seo/FinancialGlossary.tsx");
     const resources = readSource("client/src/components/seo/FeaturedResources.tsx");
 
-    expect(notice).not.toContain("from-red-50 to-orange-50");
-    expect(notice).not.toContain("Don't Panic");
-    expect(notice).toContain("Income tax notice support");
+    expect(notice).toContain("from-red-50 to-orange-50");
+    expect(notice).toContain("Notice compliance support");
+    expect(notice).toContain("Income Tax Notice?");
+    expect(notice).toContain("Start with the facts.");
+    expect(notice).toContain("Get notice review");
+    expect(notice).toContain("Request Callback");
+    expect(notice).not.toContain(["text", "gray"].join("-") + "-");
     expect(gst).toContain("GST support without guesswork");
     expect(glossary).toContain("People also ask before filing");
     expect(resources).toContain("Questions people ask before choosing a tax service");

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { fallbackRequestPath } from "../../../api/index.js";
 import { readTemporaryAuth, roleFromSupabaseUser, sendJson } from "../../../api/_test-api.js";
 import { TEMPORARY_TEST_USERS } from "../../../shared/temporary-test-users.js";
 
@@ -58,5 +59,17 @@ describe("serverless API entry hardening", () => {
     expect(roleFromSupabaseUser({ app_metadata: { role: "business" } })).toBe("user");
     expect(roleFromSupabaseUser({ user_metadata: { role: "team_member" } })).toBe("team_member");
     expect(roleFromSupabaseUser({ app_metadata: { role: "ca" }, user_metadata: { role: "admin" } })).toBe("ca");
+  });
+
+  it("prefers the original request path for serverless app fallback classification", () => {
+    const url = new URL("https://myeca.in/api/index?route=app-fallback&path=/documents/generator/gst-quotation");
+    const req = {
+      headers: {
+        "x-original-path": "/documents/generator/gst-quotation/face-serum-gxrcld",
+      },
+      url: "/api/index?route=app-fallback&path=/documents/generator/gst-quotation",
+    };
+
+    expect(fallbackRequestPath(req, url)).toBe("/documents/generator/gst-quotation/face-serum-gxrcld");
   });
 });

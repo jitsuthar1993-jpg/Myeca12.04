@@ -30,6 +30,7 @@ export const SPA_FALLBACK_EXACT_ROUTES = [
 const CITY_LANDING_SERVICE_SLUGS = ["company-registration", "gst-registration"] as const;
 const CITY_LANDING_CITY_SLUGS = ["bangalore", "mumbai", "delhi", "hyderabad", "chennai"] as const;
 const EXPERT_PROFILE_SLUGS = ["ca-rahul-sharma", "ca-priya-nair", "ca-amit-verma"] as const;
+const LEGACY_SERVICE_ACTIVATION_SLUGS = ["partnership-deed"] as const;
 const API_ROUTE_PREFIX = "/api";
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,120}$/;
 
@@ -68,7 +69,13 @@ function isKnownServiceActivationRoute(path: string, activationServiceIds: reado
   }
 
   const serviceId = segments[2];
-  return isValidSlug(serviceId) && activationServiceIds.includes(serviceId);
+  return (
+    isValidSlug(serviceId) &&
+    (
+      activationServiceIds.includes(serviceId) ||
+      LEGACY_SERVICE_ACTIVATION_SLUGS.includes(serviceId as (typeof LEGACY_SERVICE_ACTIVATION_SLUGS)[number])
+    )
+  );
 }
 
 function isKnownCityLandingRoute(path: string) {

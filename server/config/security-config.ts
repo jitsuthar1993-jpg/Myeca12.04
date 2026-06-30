@@ -1,4 +1,4 @@
-// Comprehensive Security Configuration for SmartTaxCalculator
+// Comprehensive Security Configuration for MyeCA
 import { config } from 'dotenv';
 config();
 
@@ -6,11 +6,11 @@ config();
 export const securityConfig = {
   // JWT Configuration
   jwt: {
-    primarySecret: process.env.JWT_PRIMARY_SECRET || 'your-super-secret-jwt-primary-key-minimum-32-characters',
-    secondarySecret: process.env.JWT_SECONDARY_SECRET || 'your-super-secret-jwt-secondary-key-minimum-32-characters',
+    primarySecret: process.env.JWT_PRIMARY_SECRET,
+    secondarySecret: process.env.JWT_SECONDARY_SECRET,
     algorithm: 'HS256' as const,
-    issuer: 'SmartTaxCalculator',
-    audience: 'tax-calculator-users',
+    issuer: 'MyeCA',
+    audience: 'myeca-users',
     accessTokenExpiry: '15m',
     refreshTokenExpiry: '7d',
     rotationInterval: 24 * 60 * 60 * 1000, // 24 hours
@@ -374,7 +374,7 @@ export const securityConfig = {
     enabled: process.env.NODE_ENV !== 'production',
     timeout: 30000,
     maxRedirects: 5,
-    userAgent: 'SmartTaxCalculator-SecurityTest/1.0',
+    userAgent: 'MyeCA-SecurityTest/1.0',
     followRedirects: true,
     validateSSL: true,
     headers: {

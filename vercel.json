@@ -236,6 +236,8 @@
     { "source": "/llms.txt", "destination": "/api/index?route=llms" },
     { "source": "/llms-full.txt", "destination": "/api/index?route=llms-full" },
     { "source": "/:indexNowKey.txt", "destination": "/api/index?route=indexnow-key&key=:indexNowKey" },
+    { "source": "/documents/generator/:type/:extra*", "destination": "/api/index?route=app-fallback&path=/documents/generator/:type/:extra*" },
+    { "source": "/services/activate/:serviceId", "destination": "/api/index?route=app-fallback&path=/services/activate/:serviceId" },
     { "source": "/:path*/", "destination": "/api/index?route=app-fallback&path=/:path*" },
     { "source": "/:path*", "destination": "/api/index?route=app-fallback&path=/:path*" }
   ]
